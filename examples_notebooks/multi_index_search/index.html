@@ -2571,35 +2571,28 @@ Cell <span class="ansi-green-fg">In[6], line 2</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_nodes.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
-<span class="p">]</span>
-<span class="n">entities</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_entities.parquet"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">entities</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/entities.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">]</span>
+<span class="n">communities</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/communities.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
 <span class="p">]</span>
 <span class="n">community_reports</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_community_reports.parquet"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/community_reports.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
 <span class="p">]</span>
 <span class="n">covariates</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_covariates.parquet"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/covariates.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
 <span class="p">]</span>
 <span class="n">text_units</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_text_units.parquet"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/text_units.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
 <span class="p">]</span>
 <span class="n">relationships</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_relationships.parquet"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/relationships.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
 <span class="p">]</span>
 
 <span class="n">task</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span>
     <span class="n">multi_index_local_search</span><span class="p">(</span>
         <span class="n">parameters</span><span class="p">,</span>
-        <span class="n">nodes</span><span class="p">,</span>
         <span class="n">entities</span><span class="p">,</span>
+        <span class="n">communities</span><span class="p">,</span>
         <span class="n">community_reports</span><span class="p">,</span>
         <span class="n">text_units</span><span class="p">,</span>
         <span class="n">relationships</span><span class="p">,</span>
@@ -2613,35 +2606,28 @@ Cell <span class="ansi-green-fg">In[6], line 2</span>
 <span class="p">)</span>
 <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">task</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-7">nodes = [
-    pd.read_parquet(f"inputs/{index}/create_final_nodes.parquet") for index in indexes
-]
-entities = [
-    pd.read_parquet(f"inputs/{index}/create_final_entities.parquet")
-    for index in indexes
+<div class="clipboard-copy-txt" id="cell-7">entities = [pd.read_parquet(f"inputs/{index}/entities.parquet") for index in indexes]
+communities = [
+    pd.read_parquet(f"inputs/{index}/communities.parquet") for index in indexes
 ]
 community_reports = [
-    pd.read_parquet(f"inputs/{index}/create_final_community_reports.parquet")
-    for index in indexes
+    pd.read_parquet(f"inputs/{index}/community_reports.parquet") for index in indexes
 ]
 covariates = [
-    pd.read_parquet(f"inputs/{index}/create_final_covariates.parquet")
-    for index in indexes
+    pd.read_parquet(f"inputs/{index}/covariates.parquet") for index in indexes
 ]
 text_units = [
-    pd.read_parquet(f"inputs/{index}/create_final_text_units.parquet")
-    for index in indexes
+    pd.read_parquet(f"inputs/{index}/text_units.parquet") for index in indexes
 ]
 relationships = [
-    pd.read_parquet(f"inputs/{index}/create_final_relationships.parquet")
-    for index in indexes
+    pd.read_parquet(f"inputs/{index}/relationships.parquet") for index in indexes
 ]
 
 task = loop.create_task(
     multi_index_local_search(
         parameters,
-        nodes,
         entities,
+        communities,
         community_reports,
         text_units,
         relationships,
@@ -2669,30 +2655,22 @@ results = await task</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[7], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> nodes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">[</span>
-<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/create_final_nodes.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">for</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,0,255)">in</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">indexes</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-yellow-bg">]</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> entities <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/create_final_entities.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
+<span class="ansi-green-fg">----&gt; 1</span> entities <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/entities.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">for</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,0,255)">in</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">indexes</span><span class="ansi-yellow-bg">]</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> communities <span style="color: rgb(98,98,98)">=</span> [
+<span class="ansi-green-intense-fg ansi-bold">      3</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/communities.parquet</span><span style="color: rgb(175,0,0)">"</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
+<span class="ansi-green-intense-fg ansi-bold">      4</span> ]
+<span class="ansi-green-intense-fg ansi-bold">      5</span> community_reports <span style="color: rgb(98,98,98)">=</span> [
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/community_reports.parquet</span><span style="color: rgb(175,0,0)">"</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
 <span class="ansi-green-intense-fg ansi-bold">      7</span> ]
-<span class="ansi-green-intense-fg ansi-bold">      8</span> community_reports <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/create_final_community_reports.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">     10</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
-<span class="ansi-green-intense-fg ansi-bold">     11</span> ]
 
-Cell <span class="ansi-green-fg">In[7], line 2</span>, in <span class="ansi-cyan-fg">&lt;listcomp&gt;</span><span class="ansi-blue-fg">(.0)</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> nodes <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-fg">----&gt; 2</span>     <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/create_final_nodes.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
-<span class="ansi-green-intense-fg ansi-bold">      3</span> ]
-<span class="ansi-green-intense-fg ansi-bold">      4</span> entities <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/create_final_entities.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
+Cell <span class="ansi-green-fg">In[7], line 1</span>, in <span class="ansi-cyan-fg">&lt;listcomp&gt;</span><span class="ansi-blue-fg">(.0)</span>
+<span class="ansi-green-fg">----&gt; 1</span> entities <span style="color: rgb(98,98,98)">=</span> [<span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/entities.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes]
+<span class="ansi-green-intense-fg ansi-bold">      2</span> communities <span style="color: rgb(98,98,98)">=</span> [
+<span class="ansi-green-intense-fg ansi-bold">      3</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/communities.parquet</span><span style="color: rgb(175,0,0)">"</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
+<span class="ansi-green-intense-fg ansi-bold">      4</span> ]
+<span class="ansi-green-intense-fg ansi-bold">      5</span> community_reports <span style="color: rgb(98,98,98)">=</span> [
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/community_reports.parquet</span><span style="color: rgb(175,0,0)">"</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
 <span class="ansi-green-intense-fg ansi-bold">      7</span> ]
-<span class="ansi-green-intense-fg ansi-bold">      8</span> community_reports <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/create_final_community_reports.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">     10</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
-<span class="ansi-green-intense-fg ansi-bold">     11</span> ]
 
 File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:667</span>, in <span class="ansi-cyan-fg">read_parquet</span><span class="ansi-blue-fg">(path, engine, columns, storage_options, use_nullable_dtypes, dtype_backend, filesystem, filters, **kwargs)</span>
 <span class="ansi-green-intense-fg ansi-bold">    664</span>     use_nullable_dtypes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>
@@ -2752,7 +2730,7 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 <span class="ansi-green-intense-fg ansi-bold">    883</span>     handles<span style="color: rgb(98,98,98)">.</span>append(handle)
 <span class="ansi-green-intense-fg ansi-bold">    885</span> <span style="color: rgb(95,135,135)"># Convert BytesIO or file objects passed with an encoding</span>
 
-<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: 'inputs/alaska/create_final_nodes.parquet'</pre>
+<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: 'inputs/alaska/entities.parquet'</pre>
 </div>
 </div>
 </div>
@@ -3061,31 +3039,25 @@ Cell <span class="ansi-green-fg">In[9], line 2</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_nodes.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
-<span class="p">]</span>
-<span class="n">entities</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_entities.parquet"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">entities</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/entities.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">]</span>
+<span class="n">communities</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/communities.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
 <span class="p">]</span>
 <span class="n">community_reports</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_community_reports.parquet"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/community_reports.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
 <span class="p">]</span>
 <span class="n">text_units</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_text_units.parquet"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/text_units.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
 <span class="p">]</span>
 <span class="n">relationships</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_relationships.parquet"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/relationships.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
 <span class="p">]</span>
 
 <span class="n">task</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span>
     <span class="n">multi_index_drift_search</span><span class="p">(</span>
         <span class="n">parameters</span><span class="p">,</span>
-        <span class="n">nodes</span><span class="p">,</span>
         <span class="n">entities</span><span class="p">,</span>
+        <span class="n">communities</span><span class="p">,</span>
         <span class="n">community_reports</span><span class="p">,</span>
         <span class="n">text_units</span><span class="p">,</span>
         <span class="n">relationships</span><span class="p">,</span>
@@ -3098,31 +3070,25 @@ Cell <span class="ansi-green-fg">In[9], line 2</span>
 <span class="p">)</span>
 <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">task</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-10">nodes = [
-    pd.read_parquet(f"inputs/{index}/create_final_nodes.parquet") for index in indexes
-]
-entities = [
-    pd.read_parquet(f"inputs/{index}/create_final_entities.parquet")
-    for index in indexes
+<div class="clipboard-copy-txt" id="cell-10">entities = [pd.read_parquet(f"inputs/{index}/entities.parquet") for index in indexes]
+communities = [
+    pd.read_parquet(f"inputs/{index}/communities.parquet") for index in indexes
 ]
 community_reports = [
-    pd.read_parquet(f"inputs/{index}/create_final_community_reports.parquet")
-    for index in indexes
+    pd.read_parquet(f"inputs/{index}/community_reports.parquet") for index in indexes
 ]
 text_units = [
-    pd.read_parquet(f"inputs/{index}/create_final_text_units.parquet")
-    for index in indexes
+    pd.read_parquet(f"inputs/{index}/text_units.parquet") for index in indexes
 ]
 relationships = [
-    pd.read_parquet(f"inputs/{index}/create_final_relationships.parquet")
-    for index in indexes
+    pd.read_parquet(f"inputs/{index}/relationships.parquet") for index in indexes
 ]
 
 task = loop.create_task(
     multi_index_drift_search(
         parameters,
-        nodes,
         entities,
+        communities,
         community_reports,
         text_units,
         relationships,
@@ -3149,30 +3115,22 @@ results = await task</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[10], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> nodes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">[</span>
-<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/create_final_nodes.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">for</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,0,255)">in</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">indexes</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-yellow-bg">]</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> entities <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/create_final_entities.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
+<span class="ansi-green-fg">----&gt; 1</span> entities <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/entities.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">for</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,0,255)">in</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">indexes</span><span class="ansi-yellow-bg">]</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> communities <span style="color: rgb(98,98,98)">=</span> [
+<span class="ansi-green-intense-fg ansi-bold">      3</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/communities.parquet</span><span style="color: rgb(175,0,0)">"</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
+<span class="ansi-green-intense-fg ansi-bold">      4</span> ]
+<span class="ansi-green-intense-fg ansi-bold">      5</span> community_reports <span style="color: rgb(98,98,98)">=</span> [
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/community_reports.parquet</span><span style="color: rgb(175,0,0)">"</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
 <span class="ansi-green-intense-fg ansi-bold">      7</span> ]
-<span class="ansi-green-intense-fg ansi-bold">      8</span> community_reports <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/create_final_community_reports.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">     10</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
-<span class="ansi-green-intense-fg ansi-bold">     11</span> ]
 
-Cell <span class="ansi-green-fg">In[10], line 2</span>, in <span class="ansi-cyan-fg">&lt;listcomp&gt;</span><span class="ansi-blue-fg">(.0)</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> nodes <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-fg">----&gt; 2</span>     <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/create_final_nodes.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
-<span class="ansi-green-intense-fg ansi-bold">      3</span> ]
-<span class="ansi-green-intense-fg ansi-bold">      4</span> entities <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/create_final_entities.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
+Cell <span class="ansi-green-fg">In[10], line 1</span>, in <span class="ansi-cyan-fg">&lt;listcomp&gt;</span><span class="ansi-blue-fg">(.0)</span>
+<span class="ansi-green-fg">----&gt; 1</span> entities <span style="color: rgb(98,98,98)">=</span> [<span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/entities.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes]
+<span class="ansi-green-intense-fg ansi-bold">      2</span> communities <span style="color: rgb(98,98,98)">=</span> [
+<span class="ansi-green-intense-fg ansi-bold">      3</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/communities.parquet</span><span style="color: rgb(175,0,0)">"</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
+<span class="ansi-green-intense-fg ansi-bold">      4</span> ]
+<span class="ansi-green-intense-fg ansi-bold">      5</span> community_reports <span style="color: rgb(98,98,98)">=</span> [
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/community_reports.parquet</span><span style="color: rgb(175,0,0)">"</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
 <span class="ansi-green-intense-fg ansi-bold">      7</span> ]
-<span class="ansi-green-intense-fg ansi-bold">      8</span> community_reports <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inputs/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>index<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/create_final_community_reports.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">     10</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
-<span class="ansi-green-intense-fg ansi-bold">     11</span> ]
 
 File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:667</span>, in <span class="ansi-cyan-fg">read_parquet</span><span class="ansi-blue-fg">(path, engine, columns, storage_options, use_nullable_dtypes, dtype_backend, filesystem, filters, **kwargs)</span>
 <span class="ansi-green-intense-fg ansi-bold">    664</span>     use_nullable_dtypes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>
@@ -3232,7 +3190,7 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 <span class="ansi-green-intense-fg ansi-bold">    883</span>     handles<span style="color: rgb(98,98,98)">.</span>append(handle)
 <span class="ansi-green-intense-fg ansi-bold">    885</span> <span style="color: rgb(95,135,135)"># Convert BytesIO or file objects passed with an encoding</span>
 
-<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: 'inputs/alaska/create_final_nodes.parquet'</pre>
+<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: 'inputs/alaska/entities.parquet'</pre>
 </div>
 </div>
 </div>
@@ -3474,8 +3432,7 @@ Cell <span class="ansi-green-fg">In[12], line 2</span>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">text_units</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/create_final_text_units.parquet"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"inputs/</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">/text_units.parquet"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span>
 <span class="p">]</span>
 
 <span class="n">task</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span>
@@ -3486,8 +3443,7 @@ Cell <span class="ansi-green-fg">In[12], line 2</span>
 <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">task</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-13">text_units = [
-    pd.read_parquet(f"inputs/{index}/create_final_text_units.parquet")
-    for index in indexes
+    pd.read_parquet(f"inputs/{index}/text_units.parquet") for index in indexes
 ]
 
 task = loop.create_task(
@@ -3512,27 +3468,25 @@ results = await task</div>
 <span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[13], line 1</span>
 <span class="ansi-green-fg">----&gt; 1</span> text_units <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">[</span>
-<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/create_final_text_units.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">for</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,0,255)">in</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">indexes</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-yellow-bg">]</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span> task <span style="color: rgb(98,98,98)">=</span> loop<span style="color: rgb(98,98,98)">.</span>create_task(
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     multi_index_basic_search(
-<span class="ansi-green-intense-fg ansi-bold">      8</span>         parameters, text_units, indexes, <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">industry in maryland</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     )
-<span class="ansi-green-intense-fg ansi-bold">     10</span> )
-<span class="ansi-green-intense-fg ansi-bold">     11</span> results <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> task
+<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/text_units.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">for</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,0,255)">in</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">indexes</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-yellow-bg">]</span>
+<span class="ansi-green-intense-fg ansi-bold">      5</span> task <span style="color: rgb(98,98,98)">=</span> loop<span style="color: rgb(98,98,98)">.</span>create_task(
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     multi_index_basic_search(
+<span class="ansi-green-intense-fg ansi-bold">      7</span>         parameters, text_units, indexes, <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">industry in maryland</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">      8</span>     )
+<span class="ansi-green-intense-fg ansi-bold">      9</span> )
+<span class="ansi-green-intense-fg ansi-bold">     10</span> results <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> task
 
 Cell <span class="ansi-green-fg">In[13], line 2</span>, in <span class="ansi-cyan-fg">&lt;listcomp&gt;</span><span class="ansi-blue-fg">(.0)</span>
 <span class="ansi-green-intense-fg ansi-bold">      1</span> text_units <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-fg">----&gt; 2</span>     <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/create_final_text_units.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
-<span class="ansi-green-intense-fg ansi-bold">      4</span> ]
-<span class="ansi-green-intense-fg ansi-bold">      6</span> task <span style="color: rgb(98,98,98)">=</span> loop<span style="color: rgb(98,98,98)">.</span>create_task(
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     multi_index_basic_search(
-<span class="ansi-green-intense-fg ansi-bold">      8</span>         parameters, text_units, indexes, <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">industry in maryland</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     )
-<span class="ansi-green-intense-fg ansi-bold">     10</span> )
-<span class="ansi-green-intense-fg ansi-bold">     11</span> results <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> task
+<span class="ansi-green-fg">----&gt; 2</span>     <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">inputs/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">index</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/text_units.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> index <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> indexes
+<span class="ansi-green-intense-fg ansi-bold">      3</span> ]
+<span class="ansi-green-intense-fg ansi-bold">      5</span> task <span style="color: rgb(98,98,98)">=</span> loop<span style="color: rgb(98,98,98)">.</span>create_task(
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     multi_index_basic_search(
+<span class="ansi-green-intense-fg ansi-bold">      7</span>         parameters, text_units, indexes, <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">industry in maryland</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">      8</span>     )
+<span class="ansi-green-intense-fg ansi-bold">      9</span> )
+<span class="ansi-green-intense-fg ansi-bold">     10</span> results <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> task
 
 File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:667</span>, in <span class="ansi-cyan-fg">read_parquet</span><span class="ansi-blue-fg">(path, engine, columns, storage_options, use_nullable_dtypes, dtype_backend, filesystem, filters, **kwargs)</span>
 <span class="ansi-green-intense-fg ansi-bold">    664</span>     use_nullable_dtypes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>
@@ -3592,7 +3546,7 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 <span class="ansi-green-intense-fg ansi-bold">    883</span>     handles<span style="color: rgb(98,98,98)">.</span>append(handle)
 <span class="ansi-green-intense-fg ansi-bold">    885</span> <span style="color: rgb(95,135,135)"># Convert BytesIO or file objects passed with an encoding</span>
 
-<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: 'inputs/alaska/create_final_text_units.parquet'</pre>
+<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: 'inputs/alaska/text_units.parquet'</pre>
 </div>
 </div>
 </div>

@@ -2037,8 +2037,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2061,13 +2061,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tiktoken</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.models.language_model_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LanguageModelConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.language_model.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.indexer_adapters</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">read_indexer_communities</span><span class="p">,</span>
     <span class="n">read_indexer_entities</span><span class="p">,</span>
     <span class="n">read_indexer_reports</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.llm.oai.chat_openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOpenAI</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.llm.oai.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenaiApiType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.structured_search.global_search.community_context</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">GlobalCommunityContext</span><span class="p">,</span>
 <span class="p">)</span>
@@ -2078,45 +2079,18 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 import pandas as pd
 import tiktoken
 
+from graphrag.config.enums import ModelType
+from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.language_model.manager import ModelManager
 from graphrag.query.indexer_adapters import (
     read_indexer_communities,
     read_indexer_entities,
     read_indexer_reports,
 )
-from graphrag.query.llm.oai.chat_openai import ChatOpenAI
-from graphrag.query.llm.oai.typing import OpenaiApiType
 from graphrag.query.structured_search.global_search.community_context import (
     GlobalCommunityContext,
 )
 from graphrag.query.structured_search.global_search.search import GlobalSearch</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[2], line 11</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">tiktoken</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">indexer_adapters</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> (
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     read_indexer_communities,
-<span class="ansi-green-intense-fg ansi-bold">      8</span>     read_indexer_entities,
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     read_indexer_reports,
-<span class="ansi-green-intense-fg ansi-bold">     10</span> )
-<span class="ansi-green-fg">---&gt; 11</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">llm</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">oai</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">chat_openai</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ChatOpenAI
-<span class="ansi-green-intense-fg ansi-bold">     12</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">llm</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">oai</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">typing</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> OpenaiApiType
-<span class="ansi-green-intense-fg ansi-bold">     13</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">structured_search</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">global_search</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">community_context</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> (
-<span class="ansi-green-intense-fg ansi-bold">     14</span>     GlobalCommunityContext,
-<span class="ansi-green-intense-fg ansi-bold">     15</span> )
-
-<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'graphrag.query.llm.oai'</pre>
 </div>
 </div>
 </div>
@@ -2166,11 +2140,16 @@ Cell <span class="ansi-green-fg">In[2], line 11</span>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"GRAPHRAG_API_KEY"</span><span class="p">]</span>
 <span class="n">llm_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"GRAPHRAG_LLM_MODEL"</span><span class="p">]</span>
 
-<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">LanguageModelConfig</span><span class="p">(</span>
     <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">ModelType</span><span class="o">.</span><span class="n">OpenAIChat</span><span class="p">,</span>
     <span class="n">model</span><span class="o">=</span><span class="n">llm_model</span><span class="p">,</span>
-    <span class="n">api_type</span><span class="o">=</span><span class="n">OpenaiApiType</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">,</span>  <span class="c1"># OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI</span>
     <span class="n">max_retries</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="p">()</span><span class="o">.</span><span class="n">get_or_create_chat_model</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"global_search"</span><span class="p">,</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="n">ModelType</span><span class="o">.</span><span class="n">OpenAIChat</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">token_encoder</span> <span class="o">=</span> <span class="n">tiktoken</span><span class="o">.</span><span class="n">encoding_for_model</span><span class="p">(</span><span class="n">llm_model</span><span class="p">)</span>
@@ -2178,11 +2157,16 @@ Cell <span class="ansi-green-fg">In[2], line 11</span>
 <div class="clipboard-copy-txt" id="cell-3">api_key = os.environ["GRAPHRAG_API_KEY"]
 llm_model = os.environ["GRAPHRAG_LLM_MODEL"]
 
-llm = ChatOpenAI(
+config = LanguageModelConfig(
     api_key=api_key,
+    type=ModelType.OpenAIChat,
     model=llm_model,
-    api_type=OpenaiApiType.OpenAI,  # OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI
     max_retries=20,
+)
+model = ModelManager().get_or_create_chat_model(
+    name="global_search",
+    model_type=ModelType.OpenAIChat,
+    config=config,
 )
 
 token_encoder = tiktoken.encoding_for_model(llm_model)</div>
@@ -2199,19 +2183,38 @@ token_encoder = tiktoken.encoding_for_model(llm_model)</div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-red-fg">ValidationError</span>                           Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[3], line 4</span>
 <span class="ansi-green-intense-fg ansi-bold">      1</span> api_key <span style="color: rgb(98,98,98)">=</span> os<span style="color: rgb(98,98,98)">.</span>environ[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GRAPHRAG_API_KEY</span><span style="color: rgb(175,0,0)">"</span>]
 <span class="ansi-green-intense-fg ansi-bold">      2</span> llm_model <span style="color: rgb(98,98,98)">=</span> os<span style="color: rgb(98,98,98)">.</span>environ[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GRAPHRAG_LLM_MODEL</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-fg">----&gt; 4</span> llm <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">ChatOpenAI</span>(
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     api_key<span style="color: rgb(98,98,98)">=</span>api_key,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     model<span style="color: rgb(98,98,98)">=</span>llm_model,
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     api_type<span style="color: rgb(98,98,98)">=</span>OpenaiApiType<span style="color: rgb(98,98,98)">.</span>OpenAI,  <span style="color: rgb(95,135,135)"># OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI</span>
-<span class="ansi-green-intense-fg ansi-bold">      8</span>     max_retries<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">20</span>,
-<span class="ansi-green-intense-fg ansi-bold">      9</span> )
-<span class="ansi-green-intense-fg ansi-bold">     11</span> token_encoder <span style="color: rgb(98,98,98)">=</span> tiktoken<span style="color: rgb(98,98,98)">.</span>encoding_for_model(llm_model)
+<span class="ansi-green-fg">----&gt; 4</span> config <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">LanguageModelConfig</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">api_key</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">api_key</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">type</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">ModelType</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">OpenAIChat</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">model</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">llm_model</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      8</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">max_retries</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">20</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">      9</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     10</span> model <span style="color: rgb(98,98,98)">=</span> ModelManager()<span style="color: rgb(98,98,98)">.</span>get_or_create_chat_model(
+<span class="ansi-green-intense-fg ansi-bold">     11</span>     name<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">global_search</span><span style="color: rgb(175,0,0)">"</span>,
+<span class="ansi-green-intense-fg ansi-bold">     12</span>     model_type<span style="color: rgb(98,98,98)">=</span>ModelType<span style="color: rgb(98,98,98)">.</span>OpenAIChat,
+<span class="ansi-green-intense-fg ansi-bold">     13</span>     config<span style="color: rgb(98,98,98)">=</span>config,
+<span class="ansi-green-intense-fg ansi-bold">     14</span> )
+<span class="ansi-green-intense-fg ansi-bold">     16</span> token_encoder <span style="color: rgb(98,98,98)">=</span> tiktoken<span style="color: rgb(98,98,98)">.</span>encoding_for_model(llm_model)
 
-<span class="ansi-red-fg">NameError</span>: name 'ChatOpenAI' is not defined</pre>
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pydantic/main.py:214</span>, in <span class="ansi-cyan-fg">BaseModel.__init__</span><span class="ansi-blue-fg">(self, **data)</span>
+<span class="ansi-green-intense-fg ansi-bold">    212</span> <span style="color: rgb(95,135,135)"># `__tracebackhide__` tells pytest and some other tools to omit this function from tracebacks</span>
+<span class="ansi-green-intense-fg ansi-bold">    213</span> __tracebackhide__ <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>
+<span class="ansi-green-fg">--&gt; 214</span> validated_self <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">__pydantic_validator__</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">validate_python</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">data</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">self_instance</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    215</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span> <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> validated_self:
+<span class="ansi-green-intense-fg ansi-bold">    216</span>     warnings<span style="color: rgb(98,98,98)">.</span>warn(
+<span class="ansi-green-intense-fg ansi-bold">    217</span>         <span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">A custom validator is returning a value other than `self`.</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">'</span>
+<span class="ansi-green-intense-fg ansi-bold">    218</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Returning anything other than `self` from a top level model validator isn</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">t supported when validating via `__init__`.</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">    219</span>         <span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">See the `model_validator` docs (https://docs.pydantic.dev/latest/concepts/validators/#model-validators) for more details.</span><span style="color: rgb(175,0,0)">'</span>,
+<span class="ansi-green-intense-fg ansi-bold">    220</span>         stacklevel<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">2</span>,
+<span class="ansi-green-intense-fg ansi-bold">    221</span>     )
+
+<span class="ansi-red-fg">ValidationError</span>: 1 validation error for LanguageModelConfig
+  Value error, API Key is required for ModelType.OpenAIChat when using api_key authentication. Please rerun `graphrag init` and set the API_KEY. [type=value_error, input_value={'api_key': '', 'type': "...-4o', 'max_retries': 20}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/value_error</pre>
 </div>
 </div>
 </div>
@@ -2333,74 +2336,90 @@ report_df.head()</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[5], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> community_df <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">INPUT_DIR</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">COMMUNITY_TABLE</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      2</span> entity_df <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>ENTITY_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      3</span> report_df <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>COMMUNITY_REPORT_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>)
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Total report count: 2
+Report count after filtering by community level 2: 2
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:667</span>, in <span class="ansi-cyan-fg">read_parquet</span><span class="ansi-blue-fg">(path, engine, columns, storage_options, use_nullable_dtypes, dtype_backend, filesystem, filters, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    664</span>     use_nullable_dtypes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>
-<span class="ansi-green-intense-fg ansi-bold">    665</span> check_dtype_backend(dtype_backend)
-<span class="ansi-green-fg">--&gt; 667</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">impl</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    668</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    669</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    670</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    671</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    672</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    673</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    674</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    675</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    676</span> <span class="ansi-yellow-bg">)</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:267</span>, in <span class="ansi-cyan-fg">PyArrowImpl.read</span><span class="ansi-blue-fg">(self, path, columns, filters, use_nullable_dtypes, dtype_backend, storage_options, filesystem, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    264</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> manager <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">array</span><span style="color: rgb(175,0,0)">"</span>:
-<span class="ansi-green-intense-fg ansi-bold">    265</span>     to_pandas_kwargs[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">split_blocks</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>  <span style="color: rgb(95,135,135)"># type: ignore[assignment]</span>
-<span class="ansi-green-fg">--&gt; 267</span> path_or_handle, handles, filesystem <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_get_path_or_handle</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    268</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    269</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    270</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    271</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">rb</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    272</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    273</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    274</span>     pa_table <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>api<span style="color: rgb(98,98,98)">.</span>parquet<span style="color: rgb(98,98,98)">.</span>read_table(
-<span class="ansi-green-intense-fg ansi-bold">    275</span>         path_or_handle,
-<span class="ansi-green-intense-fg ansi-bold">    276</span>         columns<span style="color: rgb(98,98,98)">=</span>columns,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    279</span>         <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
-<span class="ansi-green-intense-fg ansi-bold">    280</span>     )
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:140</span>, in <span class="ansi-cyan-fg">_get_path_or_handle</span><span class="ansi-blue-fg">(path, fs, storage_options, mode, is_dir)</span>
-<span class="ansi-green-intense-fg ansi-bold">    130</span> handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">    131</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (
-<span class="ansi-green-intense-fg ansi-bold">    132</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> fs
-<span class="ansi-green-intense-fg ansi-bold">    133</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> is_dir
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    138</span>     <span style="color: rgb(95,135,135)"># fsspec resources can also point to directories</span>
-<span class="ansi-green-intense-fg ansi-bold">    139</span>     <span style="color: rgb(95,135,135)"># this branch is used for example when reading from non-fsspec URLs</span>
-<span class="ansi-green-fg">--&gt; 140</span>     handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">get_handle</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    141</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">path_or_handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">is_text</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">False</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span>
-<span class="ansi-green-intense-fg ansi-bold">    142</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    143</span>     fs <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">    144</span>     path_or_handle <span style="color: rgb(98,98,98)">=</span> handles<span style="color: rgb(98,98,98)">.</span>handle
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/common.py:882</span>, in <span class="ansi-cyan-fg">get_handle</span><span class="ansi-blue-fg">(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)</span>
-<span class="ansi-green-intense-fg ansi-bold">    873</span>         handle <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">open</span>(
-<span class="ansi-green-intense-fg ansi-bold">    874</span>             handle,
-<span class="ansi-green-intense-fg ansi-bold">    875</span>             ioargs<span style="color: rgb(98,98,98)">.</span>mode,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    878</span>             newline<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">    879</span>         )
-<span class="ansi-green-intense-fg ansi-bold">    880</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-intense-fg ansi-bold">    881</span>         <span style="color: rgb(95,135,135)"># Binary mode</span>
-<span class="ansi-green-fg">--&gt; 882</span>         handle <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ioargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    883</span>     handles<span style="color: rgb(98,98,98)">.</span>append(handle)
-<span class="ansi-green-intense-fg ansi-bold">    885</span> <span style="color: rgb(95,135,135)"># Convert BytesIO or file objects passed with an encoding</span>
-
-<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: './inputs/operation dulce/communities.parquet'</pre>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>human_readable_id</th>
+<th>community</th>
+<th>level</th>
+<th>parent</th>
+<th>children</th>
+<th>title</th>
+<th>summary</th>
+<th>full_content</th>
+<th>rank</th>
+<th>rating_explanation</th>
+<th>findings</th>
+<th>full_content_json</th>
+<th>period</th>
+<th>size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>6c3a555680d647ac8be866a129c7b0ea</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-1</td>
+<td>[]</td>
+<td>Operation: Dulce and Dulce Base Exploration</td>
+<td>The community revolves around 'Operation: Dulc...</td>
+<td># Operation: Dulce and Dulce Base Exploration\...</td>
+<td>8.5</td>
+<td>The impact severity rating is high due to the ...</td>
+<td>[{'explanation': 'Operation: Dulce is a signif...</td>
+<td>{\n    "title": "Operation: Dulce and Dulce Ba...</td>
+<td>2025-03-04</td>
+<td>7</td>
+</tr>
+<tr>
+<th>1</th>
+<td>0127331a1ea34b8ba19de2c2a4cb3bc9</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>-1</td>
+<td>[]</td>
+<td>Paranormal Military Squad and Operation: Dulce</td>
+<td>The community centers around the Paranormal Mi...</td>
+<td># Paranormal Military Squad and Operation: Dul...</td>
+<td>8.5</td>
+<td>The impact severity rating is high due to the ...</td>
+<td>[{'explanation': 'Agent Alex Mercer is a key f...</td>
+<td>{\n    "title": "Paranormal Military Squad and...</td>
+<td>2025-03-04</td>
+<td>9</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -2463,15 +2482,15 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[6], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> context_builder <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">GlobalCommunityContext</span>(
+Cell <span class="ansi-green-fg">In[6], line 5</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> context_builder <span style="color: rgb(98,98,98)">=</span> GlobalCommunityContext(
 <span class="ansi-green-intense-fg ansi-bold">      2</span>     community_reports<span style="color: rgb(98,98,98)">=</span>reports,
 <span class="ansi-green-intense-fg ansi-bold">      3</span>     communities<span style="color: rgb(98,98,98)">=</span>communities,
 <span class="ansi-green-intense-fg ansi-bold">      4</span>     entities<span style="color: rgb(98,98,98)">=</span>entities,  <span style="color: rgb(95,135,135)"># default to None if you don't want to use community weights for ranking</span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
+<span class="ansi-green-fg">----&gt; 5</span>     token_encoder<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">token_encoder</span>,
 <span class="ansi-green-intense-fg ansi-bold">      6</span> )
 
-<span class="ansi-red-fg">NameError</span>: name 'GlobalCommunityContext' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'token_encoder' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2579,7 +2598,7 @@ reduce_llm_params = {
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">search_engine</span> <span class="o">=</span> <span class="n">GlobalSearch</span><span class="p">(</span>
-    <span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
     <span class="n">context_builder</span><span class="o">=</span><span class="n">context_builder</span><span class="p">,</span>
     <span class="n">token_encoder</span><span class="o">=</span><span class="n">token_encoder</span><span class="p">,</span>
     <span class="n">max_data_tokens</span><span class="o">=</span><span class="mi">12_000</span><span class="p">,</span>  <span class="c1"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
@@ -2593,7 +2612,7 @@ reduce_llm_params = {
 <span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-8">search_engine = GlobalSearch(
-    llm=llm,
+    model=model,
     context_builder=context_builder,
     token_encoder=token_encoder,
     max_data_tokens=12_000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
@@ -2619,9 +2638,9 @@ reduce_llm_params = {
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[8], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> search_engine <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">GlobalSearch</span>(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     llm<span style="color: rgb(98,98,98)">=</span>llm,
+Cell <span class="ansi-green-fg">In[8], line 2</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> search_engine <span style="color: rgb(98,98,98)">=</span> GlobalSearch(
+<span class="ansi-green-fg">----&gt; 2</span>     model<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">model</span>,
 <span class="ansi-green-intense-fg ansi-bold">      3</span>     context_builder<span style="color: rgb(98,98,98)">=</span>context_builder,
 <span class="ansi-green-intense-fg ansi-bold">      4</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
 <span class="ansi-green-intense-fg ansi-bold">      5</span>     max_data_tokens<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">12_000</span>,  <span style="color: rgb(95,135,135)"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
@@ -2634,7 +2653,7 @@ Cell <span class="ansi-green-fg">In[8], line 1</span>
 <span class="ansi-green-intense-fg ansi-bold">     12</span>     response_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">multiple paragraphs</span><span style="color: rgb(175,0,0)">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
 <span class="ansi-green-intense-fg ansi-bold">     13</span> )
 
-<span class="ansi-red-fg">NameError</span>: name 'GlobalSearch' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'model' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2659,15 +2678,11 @@ Cell <span class="ansi-green-fg">In[8], line 1</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
-    <span class="s2">"What is Cosmic Vocalization and who are involved in it?"</span>
-<span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">"What is operation dulce?"</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-9">result = await search_engine.search(
-    "What is Cosmic Vocalization and who are involved in it?"
-)
+<div class="clipboard-copy-txt" id="cell-9">result = await search_engine.search("What is operation dulce?")
 
 print(result.response)</div>
 </div>
@@ -2685,10 +2700,8 @@ print(result.response)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[9], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>search(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">What is Cosmic Vocalization and who are involved in it?</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> )
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
+<span class="ansi-green-fg">----&gt; 1</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>search(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">What is operation dulce?</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-intense-fg ansi-bold">      3</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
 
 <span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
 </div>

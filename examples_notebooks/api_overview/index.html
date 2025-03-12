@@ -1407,15 +1407,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#load-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Load configuration
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#generate-a-object" class="md-nav__link">
     <span class="md-ellipsis">
       Generate a object
@@ -1972,11 +1963,23 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">graphrag.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">api</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineRunResult</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="kn">import</span> <span class="n">pprint</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">graphrag.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">api</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.load_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.typing.pipeline_run_result</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineRunResult</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">import graphrag.api as api
-from graphrag.index.typing import PipelineRunResult</div>
+<div class="clipboard-copy-txt" id="cell-2">from pathlib import Path
+from pprint import pprint
+
+import pandas as pd
+
+import graphrag.api as api
+from graphrag.config.load_config import load_config
+from graphrag.index.typing.pipeline_run_result import PipelineRunResult</div>
 </div>
 </div>
 </div>
@@ -1992,37 +1995,11 @@ from graphrag.index.typing import PipelineRunResult</div>
 </pre>
 </div>
 </div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[2], line 2</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">api</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">api</span>
-<span class="ansi-green-fg">----&gt; 2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">typing</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> PipelineRunResult
-
-<span class="ansi-red-fg">ImportError</span>: cannot import name 'PipelineRunResult' from 'graphrag.index.typing' (/home/runner/work/graphrag/graphrag/graphrag/index/typing/__init__.py)</pre>
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="prerequisite">Prerequisite<a class="anchor-link" href="#prerequisite">¶</a></h2><p>As a prerequisite to all API operations, a <code>GraphRagConfig</code> object is required. It is the primary means to control the behavior of graphrag and can be instantiated from a <code>settings.yaml</code> configuration file.</p>
-<p>Please refer to the <a href="https://microsoft.github.io/graphrag/cli/#init">CLI docs</a> for more detailed information on how to generate the <code>settings.yaml</code> file.</p>
-<h4 id="load-settingsyaml-configuration">Load <code>settings.yaml</code> configuration<a class="anchor-link" href="#load-settingsyaml-configuration">¶</a></h4>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2040,44 +2017,9 @@ Cell <span class="ansi-green-fg">In[2], line 2</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-
-<span class="n">PROJECT_DIRECTORY</span> <span class="o">=</span> <span class="s2">"&lt;project_directory&gt;"</span>
-<span class="n">settings</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">PROJECT_DIRECTORY</span><span class="si">}</span><span class="s2">/settings.yaml"</span><span class="p">))</span>  <span class="c1"># noqa: PTH123, SIM115</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">PROJECT_DIRECTORY</span> <span class="o">=</span> <span class="s2">"&lt;your project directory&gt;"</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">import yaml
-
-PROJECT_DIRECTORY = "<project_directory>"
-settings = yaml.safe_load(open(f"{PROJECT_DIRECTORY}/settings.yaml"))  # noqa: PTH123, SIM115</project_directory></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[3], line 4</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">yaml</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> PROJECT_DIRECTORY <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">&lt;project_directory&gt;</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">----&gt; 4</span> settings <span style="color: rgb(98,98,98)">=</span> yaml<span style="color: rgb(98,98,98)">.</span>safe_load(<span class="ansi-yellow-bg" style="color: rgb(0,135,0)">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">PROJECT_DIRECTORY</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/settings.yaml</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>)  <span style="color: rgb(95,135,135)"># noqa: PTH123, SIM115</span>
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/IPython/core/interactiveshell.py:324</span>, in <span class="ansi-cyan-fg">_modified_open</span><span class="ansi-blue-fg">(file, *args, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    317</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> file <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> {<span style="color: rgb(98,98,98)">0</span>, <span style="color: rgb(98,98,98)">1</span>, <span style="color: rgb(98,98,98)">2</span>}:
-<span class="ansi-green-intense-fg ansi-bold">    318</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(
-<span class="ansi-green-intense-fg ansi-bold">    319</span>         <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">IPython won</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">t let you open fd=</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>file<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> by default </span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">    320</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">as it is likely to crash IPython. If you know what you are doing, </span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">    321</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">you can use builtins</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)"> open.</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">    322</span>     )
-<span class="ansi-green-fg">--&gt; 324</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">io_open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">file</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
-
-<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: '&lt;project_directory&gt;/settings.yaml'</pre>
+<div class="clipboard-copy-txt" id="cell-3">PROJECT_DIRECTORY = "<your directory="" project="">"</your></div>
 </div>
 </div>
 </div>
@@ -2090,7 +2032,8 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>At this point, you can modify the imported settings to align with your application's requirements. For example, if building a UI application, the application might need to change the input and/or storage destinations dynamically in order to enable users to build and query different indexes.</p>
+<h2 id="prerequisite">Prerequisite<a class="anchor-link" href="#prerequisite">¶</a></h2><p>As a prerequisite to all API operations, a <code>GraphRagConfig</code> object is required. It is the primary means to control the behavior of graphrag and can be instantiated from a <code>settings.yaml</code> configuration file.</p>
+<p>Please refer to the <a href="https://microsoft.github.io/graphrag/cli/#init">CLI docs</a> for more detailed information on how to generate the <code>settings.yaml</code> file.</p>
 </div>
 </div>
 </div>
@@ -2124,13 +2067,9 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.create_graphrag_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_graphrag_config</span>
-
-<span class="n">graphrag_config</span> <span class="o">=</span> <span class="n">create_graphrag_config</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="n">PROJECT_DIRECTORY</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">graphrag_config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">PROJECT_DIRECTORY</span><span class="p">))</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">from graphrag.config.create_graphrag_config import create_graphrag_config
-
-graphrag_config = create_graphrag_config(values=settings, root_dir=PROJECT_DIRECTORY)</div>
+<div class="clipboard-copy-txt" id="cell-4">graphrag_config = load_config(Path(PROJECT_DIRECTORY))</div>
 </div>
 </div>
 </div>
@@ -2144,12 +2083,37 @@ graphrag_config = create_graphrag_config(values=settings, root_dir=PROJECT_DIREC
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[4], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">config</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">create_graphrag_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_graphrag_config
-<span class="ansi-green-fg">----&gt; 3</span> graphrag_config <span style="color: rgb(98,98,98)">=</span> create_graphrag_config(values<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">settings</span>, root_dir<span style="color: rgb(98,98,98)">=</span>PROJECT_DIRECTORY)
+<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[4], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> graphrag_config <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">load_config</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">Path</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">PROJECT_DIRECTORY</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
 
-<span class="ansi-red-fg">NameError</span>: name 'settings' is not defined</pre>
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:183</span>, in <span class="ansi-cyan-fg">load_config</span><span class="ansi-blue-fg">(root_dir, config_filepath, cli_overrides)</span>
+<span class="ansi-green-intense-fg ansi-bold">    151</span> <span style="color: rgb(175,0,0)">"""Load configuration from a file.</span>
+<span class="ansi-green-intense-fg ansi-bold">    152</span> 
+<span class="ansi-green-intense-fg ansi-bold">    153</span> <span style="color: rgb(175,0,0)">Parameters</span>
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    180</span> <span style="color: rgb(175,0,0)">    If there are pydantic validation errors when instantiating the config.</span>
+<span class="ansi-green-intense-fg ansi-bold">    181</span> <span style="color: rgb(175,0,0)">"""</span>
+<span class="ansi-green-intense-fg ansi-bold">    182</span> root <span style="color: rgb(98,98,98)">=</span> root_dir<span style="color: rgb(98,98,98)">.</span>resolve()
+<span class="ansi-green-fg">--&gt; 183</span> config_path <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_get_config_path</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">root</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">config_filepath</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    184</span> _load_dotenv(config_path)
+<span class="ansi-green-intense-fg ansi-bold">    185</span> config_extension <span style="color: rgb(98,98,98)">=</span> config_path<span style="color: rgb(98,98,98)">.</span>suffix
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:106</span>, in <span class="ansi-cyan-fg">_get_config_path</span><span class="ansi-blue-fg">(root_dir, config_filepath)</span>
+<span class="ansi-green-intense-fg ansi-bold">    104</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">FileNotFoundError</span>(msg)
+<span class="ansi-green-intense-fg ansi-bold">    105</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">--&gt; 106</span>     config_path <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_search_for_config_in_root_dir</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">root_dir</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    108</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> config_path:
+<span class="ansi-green-intense-fg ansi-bold">    109</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Config file not found in root directory: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>root_dir<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:40</span>, in <span class="ansi-cyan-fg">_search_for_config_in_root_dir</span><span class="ansi-blue-fg">(root)</span>
+<span class="ansi-green-intense-fg ansi-bold">     38</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> root<span style="color: rgb(98,98,98)">.</span>is_dir():
+<span class="ansi-green-intense-fg ansi-bold">     39</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid config path: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>root<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> is not a directory</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-fg">---&gt; 40</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">FileNotFoundError</span>(msg)
+<span class="ansi-green-intense-fg ansi-bold">     42</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> file <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> _default_config_files:
+<span class="ansi-green-intense-fg ansi-bold">     43</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (root <span style="color: rgb(98,98,98)">/</span> file)<span style="color: rgb(98,98,98)">.</span>is_file():
+
+<span class="ansi-red-fg">FileNotFoundError</span>: Invalid config path: /home/runner/work/graphrag/graphrag/docs/examples_notebooks/&lt;your project directory&gt; is not a directory</pre>
 </div>
 </div>
 </div>
@@ -2264,38 +2228,34 @@ Cell <span class="ansi-green-fg">In[5], line 1</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-
-<span class="n">final_entities</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">PROJECT_DIRECTORY</span><span class="si">}</span><span class="s2">/output/entities.parquet"</span><span class="p">)</span>
-<span class="n">final_communities</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">PROJECT_DIRECTORY</span><span class="si">}</span><span class="s2">/output/communities.parquet"</span><span class="p">)</span>
-<span class="n">final_community_reports</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">entities</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">PROJECT_DIRECTORY</span><span class="si">}</span><span class="s2">/output/entities.parquet"</span><span class="p">)</span>
+<span class="n">communities</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">PROJECT_DIRECTORY</span><span class="si">}</span><span class="s2">/output/communities.parquet"</span><span class="p">)</span>
+<span class="n">community_reports</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span>
     <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">PROJECT_DIRECTORY</span><span class="si">}</span><span class="s2">/output/community_reports.parquet"</span>
 <span class="p">)</span>
 
 <span class="n">response</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="k">await</span> <span class="n">api</span><span class="o">.</span><span class="n">global_search</span><span class="p">(</span>
     <span class="n">config</span><span class="o">=</span><span class="n">graphrag_config</span><span class="p">,</span>
-    <span class="n">entities</span><span class="o">=</span><span class="n">final_entities</span><span class="p">,</span>
-    <span class="n">communities</span><span class="o">=</span><span class="n">final_communities</span><span class="p">,</span>
-    <span class="n">community_reports</span><span class="o">=</span><span class="n">final_community_reports</span><span class="p">,</span>
+    <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span>
+    <span class="n">communities</span><span class="o">=</span><span class="n">communities</span><span class="p">,</span>
+    <span class="n">community_reports</span><span class="o">=</span><span class="n">community_reports</span><span class="p">,</span>
     <span class="n">community_level</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="n">dynamic_community_selection</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">response_type</span><span class="o">=</span><span class="s2">"Multiple Paragraphs"</span><span class="p">,</span>
     <span class="n">query</span><span class="o">=</span><span class="s2">"Who is Scrooge and what are his main relationships?"</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-6">import pandas as pd
-
-final_entities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/entities.parquet")
-final_communities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/communities.parquet")
-final_community_reports = pd.read_parquet(
+<div class="clipboard-copy-txt" id="cell-6">entities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/entities.parquet")
+communities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/communities.parquet")
+community_reports = pd.read_parquet(
     f"{PROJECT_DIRECTORY}/output/community_reports.parquet"
 )
 
 response, context = await api.global_search(
     config=graphrag_config,
-    entities=final_entities,
-    communities=final_communities,
-    community_reports=final_community_reports,
+    entities=entities,
+    communities=communities,
+    community_reports=community_reports,
     community_level=2,
     dynamic_community_selection=False,
     response_type="Multiple Paragraphs",
@@ -2315,13 +2275,12 @@ response, context = await api.global_search(
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[6], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">pandas</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">pd</span>
-<span class="ansi-green-fg">----&gt; 3</span> final_entities <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">PROJECT_DIRECTORY</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/output/entities.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> final_communities <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>PROJECT_DIRECTORY<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/output/communities.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      5</span> final_community_reports <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>PROJECT_DIRECTORY<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/output/community_reports.parquet</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> )
+Cell <span class="ansi-green-fg">In[6], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> entities <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">PROJECT_DIRECTORY</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/output/entities.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> communities <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>PROJECT_DIRECTORY<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/output/communities.parquet</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-intense-fg ansi-bold">      3</span> community_reports <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(
+<span class="ansi-green-intense-fg ansi-bold">      4</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>PROJECT_DIRECTORY<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/output/community_reports.parquet</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">      5</span> )
 
 File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:667</span>, in <span class="ansi-cyan-fg">read_parquet</span><span class="ansi-blue-fg">(path, engine, columns, storage_options, use_nullable_dtypes, dtype_backend, filesystem, filters, **kwargs)</span>
 <span class="ansi-green-intense-fg ansi-bold">    664</span>     use_nullable_dtypes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>
@@ -2381,7 +2340,7 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 <span class="ansi-green-intense-fg ansi-bold">    883</span>     handles<span style="color: rgb(98,98,98)">.</span>append(handle)
 <span class="ansi-green-intense-fg ansi-bold">    885</span> <span style="color: rgb(95,135,135)"># Convert BytesIO or file objects passed with an encoding</span>
 
-<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: '&lt;project_directory&gt;/output/entities.parquet'</pre>
+<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: '&lt;your project directory&gt;/output/entities.parquet'</pre>
 </div>
 </div>
 </div>
@@ -2473,13 +2432,9 @@ Cell <span class="ansi-green-fg">In[7], line 1</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="kn">import</span> <span class="n">pprint</span>
-
-<span class="n">pprint</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>  <span class="c1"># noqa: T203</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>  <span class="c1"># noqa: T203</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-8">from pprint import pprint
-
-pprint(context)  # noqa: T203</div>
+<div class="clipboard-copy-txt" id="cell-8">pprint(context)  # noqa: T203</div>
 </div>
 </div>
 </div>
@@ -2494,9 +2449,8 @@ pprint(context)  # noqa: T203</div>
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[8], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">pprint</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> pprint
-<span class="ansi-green-fg">----&gt; 3</span> pprint(<span class="ansi-yellow-bg">context</span>)  <span style="color: rgb(95,135,135)"># noqa: T203</span>
+Cell <span class="ansi-green-fg">In[8], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> pprint(<span class="ansi-yellow-bg">context</span>)  <span style="color: rgb(95,135,135)"># noqa: T203</span>
 
 <span class="ansi-red-fg">NameError</span>: name 'context' is not defined</pre>
 </div>
