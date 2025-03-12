@@ -188,6 +188,8 @@ upvote
 # Misc
 Arxiv
 kwds
+jsons
+txts
 
 # Dulce
 astrotechnician

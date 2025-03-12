@@ -1,0 +1,22 @@
+{
+  "changes": [
+    {
+      "description": "Add support for JSON input files.",
+      "type": "minor"
+    },
+    {
+      "description": "Updated the prompt tunning client to support csv-metadata injection and updated output file types to match the new naming convention.",
+      "type": "minor"
+    },
+    {
+      "description": "Add check for custom model types while config loading",
+      "type": "patch"
+    },
+    {
+      "description": "Adds general-purpose pipeline run state object.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2025-03-11T23:53:00+00:00",
+  "version": "2.1.0"
+}

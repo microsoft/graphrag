@@ -1,6 +1,13 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 2.1.0
+
+- minor: Add support for JSON input files.
+- minor: Updated the prompt tunning client to support csv-metadata injection and updated output file types to match the new naming convention.
+- patch: Add check for custom model types while config loading
+- patch: Adds general-purpose pipeline run state object.
+
 ## 2.0.0
 
 - major: Add children to communities to avoid re-compute.

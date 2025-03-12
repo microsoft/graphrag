@@ -6,7 +6,7 @@
 These tests will test the LLMFactory class and the creation of custom and provided LLMs.
 """
 
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Generator
 from typing import Any
 
 from graphrag.language_model.factory import ModelFactory
@@ -35,11 +35,12 @@ async def test_create_custom_chat_model():
 
         async def achat_stream(
             self, prompt: str, history: list | None = None, **kwargs: Any
-        ) -> AsyncGenerator[str, None]: ...
+        ) -> AsyncGenerator[str, None]:
+            yield ""
 
         def chat_stream(
             self, prompt: str, history: list | None = None, **kwargs: Any
-        ) -> AsyncGenerator[str, None]: ...
+        ) -> Generator[str, None]: ...
 
     ModelFactory.register_chat("custom_chat", CustomChatModel)
     model = ModelManager().get_or_create_chat_model("custom", "custom_chat")
