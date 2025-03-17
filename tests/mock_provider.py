@@ -3,7 +3,7 @@
 
 """A module containing mock model provider definitions."""
 
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Generator
 from typing import Any
 
 from pydantic import BaseModel
@@ -85,7 +85,7 @@ class MockChatLLM:
         prompt: str,
         history: list | None = None,
         **kwargs,
-    ) -> AsyncGenerator[str, None]:
+    ) -> Generator[str, None]:
         """Return the next response in the list."""
         raise NotImplementedError
 

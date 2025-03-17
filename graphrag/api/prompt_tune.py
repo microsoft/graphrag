@@ -11,13 +11,16 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
+from typing import Annotated
+
+import annotated_types
 from pydantic import PositiveInt, validate_call
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
-from graphrag.config.defaults import language_model_defaults
+from graphrag.config.defaults import graphrag_config_defaults, language_model_defaults
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.language_model.manager import ModelManager
-from graphrag.logger.print_progress import PrintProgressLogger
+from graphrag.logger.base import ProgressLogger
 from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT, PROMPT_TUNING_MODEL_ID
 from graphrag.prompt_tune.generator.community_report_rating import (
     generate_community_report_rating,
@@ -41,15 +44,19 @@ from graphrag.prompt_tune.generator.extract_graph_prompt import (
 )
 from graphrag.prompt_tune.generator.language import detect_language
 from graphrag.prompt_tune.generator.persona import generate_persona
-from graphrag.prompt_tune.loader.input import MIN_CHUNK_SIZE, load_docs_in_chunks
+from graphrag.prompt_tune.loader.input import load_docs_in_chunks
 from graphrag.prompt_tune.types import DocSelectionType
 
 
-@validate_call
+@validate_call(config={"arbitrary_types_allowed": True})
 async def generate_indexing_prompts(
     config: GraphRagConfig,
+    logger: ProgressLogger,
     root: str,
-    chunk_size: PositiveInt = MIN_CHUNK_SIZE,
+    chunk_size: PositiveInt = graphrag_config_defaults.chunks.size,
+    overlap: Annotated[
+        int, annotated_types.Gt(-1)
+    ] = graphrag_config_defaults.chunks.overlap,
     limit: PositiveInt = 15,
     selection_method: DocSelectionType = DocSelectionType.RANDOM,
     domain: str | None = None,
@@ -65,6 +72,8 @@ async def generate_indexing_prompts(
     Parameters
     ----------
     - config: The GraphRag configuration.
+    - logger: The logger to use for progress updates.
+    - root: The root directory.
     - output_path: The path to store the prompts.
     - chunk_size: The chunk token size to use for input text units.
     - limit: The limit of chunks to load.
@@ -81,9 +90,8 @@ async def generate_indexing_prompts(
     -------
     tuple[str, str, str]: entity extraction prompt, entity summarization prompt, community summarization prompt
     """
-    logger = PrintProgressLogger("")
-
     # Retrieve documents
+    logger.info("Chunking documents...")
     doc_list = await load_docs_in_chunks(
         root=root,
         config=config,
@@ -91,12 +99,14 @@ async def generate_indexing_prompts(
         select_method=selection_method,
         logger=logger,
         chunk_size=chunk_size,
+        overlap=overlap,
         n_subset_max=n_subset_max,
         k=k,
     )
 
     # Create LLM from config
     # TODO: Expose a way to specify Prompt Tuning model ID through config
+    logger.info("Retrieving language model configuration...")
     default_llm_settings = config.get_language_model_config(PROMPT_TUNING_MODEL_ID)
 
     # if max_retries is not set, inject a dynamically assigned value based on the number of expected LLM calls
@@ -105,7 +115,10 @@ async def generate_indexing_prompts(
         default_llm_settings.max_retries = min(
             len(doc_list), language_model_defaults.max_retries
         )
+        msg = f"max_retries not set, using default value: {default_llm_settings.max_retries}"
+        logger.warning(msg)
 
+    logger.info("Creating language model...")
     llm = ModelManager().register_chat(
         name="prompt_tuning",
         model_type=default_llm_settings.type,
@@ -117,7 +130,6 @@ async def generate_indexing_prompts(
     if not domain:
         logger.info("Generating domain...")
         domain = await generate_domain(llm, doc_list)
-        logger.info(f"Generated domain: {domain}")  # noqa
 
     if not language:
         logger.info("Detecting language...")
@@ -185,6 +197,10 @@ async def generate_indexing_prompts(
         report_rating_description=community_report_ranking,
         language=language,
     )
+
+    logger.info(f"\nGenerated domain: {domain}")  # noqa: G004
+    logger.info(f"\nDetected language: {language}")  # noqa: G004
+    logger.info(f"\nGenerated persona: {persona}")  # noqa: G004
 
     return (
         extract_graph_prompt,

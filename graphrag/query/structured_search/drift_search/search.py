@@ -83,7 +83,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             "max_tokens": self.context_builder.config.local_search_max_data_tokens,
         }
 
-        llm_params = {
+        model_params = {
             "max_tokens": self.context_builder.config.local_search_llm_max_gen_tokens,
             "temperature": self.context_builder.config.local_search_temperature,
             "response_format": {"type": "json_object"},
@@ -94,7 +94,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             system_prompt=self.context_builder.local_system_prompt,
             context_builder=self.context_builder.local_mixed_context,
             token_encoder=self.token_encoder,
-            model_params=llm_params,
+            model_params=model_params,
             context_builder_params=local_context_params,
             response_type="multiple paragraphs",
             callbacks=self.callbacks,

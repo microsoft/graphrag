@@ -188,9 +188,15 @@ upvote
 # Misc
 Arxiv
 kwds
+jsons
+txts
 
 # Dulce
 astrotechnician
 epitheg
 unspooled
 unnavigated
+
+# Names
+Hochul
+Ashish
