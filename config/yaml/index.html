@@ -1455,7 +1455,7 @@
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  api_key: ${GRAPHRAG_API_KEY}
 </code></pre></div>
 <h1 id="config-sections">Config Sections</h1>
-<h2 id="indexing">Indexing</h2>
+<h2 id="language-model-setup">Language Model Setup</h2>
 <h3 id="models">models</h3>
 <p>This is a dict of model configurations. The dict key is used to reference this configuration elsewhere when a model instance is desired. In this way, you can specify as many different models as you need, and reference them differentially in the workflow steps.</p>
 <p>For example:
@@ -1473,137 +1473,155 @@
 <h4 id="fields">Fields</h4>
 <ul>
 <li><code>api_key</code> <strong>str</strong> - The OpenAI API key to use.</li>
-<li><code>type</code> <strong>openai_chat|azure_openai_chat|openai_embedding|azure_openai_embedding</strong> - The type of LLM to use.</li>
+<li><code>auth_type</code> <strong>api_key|managed_identity</strong> - Indicate how you want to authenticate requests.</li>
+<li><code>type</code> <strong>openai_chat|azure_openai_chat|openai_embedding|azure_openai_embedding|mock_chat|mock_embeddings</strong> - The type of LLM to use.</li>
 <li><code>model</code> <strong>str</strong> - The model name.</li>
 <li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset).</li>
-<li><code>max_tokens</code> <strong>int</strong> - The maximum number of output tokens.</li>
-<li><code>request_timeout</code> <strong>float</strong> - The per-request timeout.</li>
 <li><code>api_base</code> <strong>str</strong> - The API base url to use.</li>
 <li><code>api_version</code> <strong>str</strong> - The API version.</li>
+<li><code>deployment_name</code> <strong>str</strong> - The deployment name to use (Azure).</li>
 <li><code>organization</code> <strong>str</strong> - The client organization.</li>
 <li><code>proxy</code> <strong>str</strong> - The proxy URL to use.</li>
-<li><code>azure_auth_type</code> <strong>api_key|managed_identity</strong> - if using Azure, please indicate how you want to authenticate requests.</li>
 <li><code>audience</code> <strong>str</strong> - (Azure OpenAI only) The URI of the target Azure resource/service for which a managed identity token is requested. Used if <code>api_key</code> is not defined. Default=<code>https://cognitiveservices.azure.com/.default</code></li>
-<li><code>deployment_name</code> <strong>str</strong> - The deployment name to use (Azure).</li>
 <li><code>model_supports_json</code> <strong>bool</strong> - Whether the model supports JSON-mode output.</li>
+<li><code>request_timeout</code> <strong>float</strong> - The per-request timeout.</li>
 <li><code>tokens_per_minute</code> <strong>int</strong> - Set a leaky-bucket throttle on tokens-per-minute.</li>
 <li><code>requests_per_minute</code> <strong>int</strong> - Set a leaky-bucket throttle on requests-per-minute.</li>
+<li><code>retry_strategy</code> <strong>str</strong> - Retry strategy to use, "native" is the default and uses the strategy built into the OpenAI SDK. Other allowable values include "exponential_backoff", "random_wait", and "incremental_wait".</li>
 <li><code>max_retries</code> <strong>int</strong> - The maximum number of retries to use.</li>
 <li><code>max_retry_wait</code> <strong>float</strong> - The maximum backoff time.</li>
-<li><code>sleep_on_rate_limit_recommendation</code> <strong>bool</strong> - Whether to adhere to sleep recommendations (Azure).</li>
 <li><code>concurrent_requests</code> <strong>int</strong> The number of open requests to allow at once.</li>
+<li><code>async_mode</code> <strong>asyncio|threaded</strong> The async mode to use. Either <code>asyncio</code> or <code>threaded</code>.</li>
+<li><code>responses</code> <strong>list[str]</strong> - If this model type is mock, this is a list of response strings to return.</li>
+<li><code>max_tokens</code> <strong>int</strong> - The maximum number of output tokens.</li>
 <li><code>temperature</code> <strong>float</strong> - The temperature to use.</li>
 <li><code>top_p</code> <strong>float</strong> - The top-p value to use.</li>
 <li><code>n</code> <strong>int</strong> - The number of completions to generate.</li>
-<li><code>parallelization_stagger</code> <strong>float</strong> - The threading stagger value.</li>
-<li><code>parallelization_num_threads</code> <strong>int</strong> - The maximum number of work threads.</li>
-<li><code>async_mode</code> <strong>asyncio|threaded</strong> The async mode to use. Either <code>asyncio</code> or `threaded.</li>
+<li><code>frequency_penalty</code> <strong>float</strong> - Frequency penalty for token generation.</li>
+<li><code>presence_penalty</code> <strong>float</strong> - Frequency penalty for token generation.</li>
 </ul>
-<h3 id="embed_text">embed_text</h3>
-<p>By default, the GraphRAG indexer will only export embeddings required for our query methods. However, the model has embeddings defined for all plaintext fields, and these can be customized by setting the <code>target</code> and <code>names</code> fields.</p>
-<p>Supported embeddings names are:
-- <code>text_unit.text</code>
-- <code>document.text</code>
-- <code>entity.title</code>
-- <code>entity.description</code>
-- <code>relationship.description</code>
-- <code>community.title</code>
-- <code>community.summary</code>
-- <code>community.full_content</code></p>
+<h2 id="input-files-and-chunking">Input Files and Chunking</h2>
+<h3 id="input">input</h3>
+<p>Our pipeline can ingest .csv, .txt, or .json data from an input folder. See the <a href="../../index/inputs/">inputs page</a> for more details and examples.</p>
 <h4 id="fields_1">Fields</h4>
 <ul>
+<li><code>type</code> <strong>file|blob</strong> - The input type to use. Default=<code>file</code></li>
+<li><code>file_type</code> <strong>text|csv|json</strong> - The type of input data to load. Default is <code>text</code></li>
+<li><code>base_dir</code> <strong>str</strong> - The base directory to read input from, relative to the root.</li>
+<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
+<li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
+<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
+<li><code>encoding</code> <strong>str</strong> - The encoding of the input file. Default is <code>utf-8</code></li>
+<li><code>file_pattern</code> <strong>str</strong> - A regex to match input files. Default is <code>.*\.csv$</code>, <code>.*\.txt$</code>, or <code>.*\.json$</code> depending on the specified <code>file_type</code>, but you can customize it if needed.</li>
+<li><code>file_filter</code> <strong>dict</strong> - Key/value pairs to filter. Default is None.</li>
+<li><code>text_column</code> <strong>str</strong> - (CSV/JSON only) The text column name. If unset we expect a column named <code>text</code>.</li>
+<li><code>title_column</code> <strong>str</strong> - (CSV/JSON only) The title column name, filename will be used if unset.</li>
+<li><code>metadata</code> <strong>list[str]</strong> - (CSV/JSON only) The additional document attributes fields to keep.</li>
+</ul>
+<h3 id="chunks">chunks</h3>
+<p>These settings configure how we parse documents into text chunks. This is necessary because very large documents may not fit into a single context window, and graph extraction accuracy can be modulated. Also note the <code>metadata</code> setting in the input document config, which will replicate document metadata into each chunk.</p>
+<h4 id="fields_2">Fields</h4>
+<ul>
+<li><code>size</code> <strong>int</strong> - The max chunk size in tokens.</li>
+<li><code>overlap</code> <strong>int</strong> - The chunk overlap in tokens.</li>
+<li><code>group_by_columns</code> <strong>list[str]</strong> - Group documents by these fields before chunking.</li>
+<li><code>strategy</code> <strong>str</strong>[tokens|sentences] - How to chunk the text. </li>
+<li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use for splitting on token boundaries.</li>
+<li><code>prepend_metadata</code> <strong>bool</strong> - Determines if metadata values should be added at the beginning of each chunk. Default=<code>False</code>.</li>
+<li><code>chunk_size_includes_metadata</code> <strong>bool</strong> - Specifies whether the chunk size calculation should include metadata tokens. Default=<code>False</code>.</li>
+</ul>
+<h2 id="outputs-and-storage">Outputs and Storage</h2>
+<h3 id="output">output</h3>
+<p>This section controls the storage mechanism used by the pipeline used for exporting output tables.</p>
+<h4 id="fields_3">Fields</h4>
+<ul>
+<li><code>type</code> <strong>file|memory|blob|cosmosdb</strong> - The storage type to use. Default=<code>file</code></li>
+<li><code>base_dir</code> <strong>str</strong> - The base directory to write output artifacts to, relative to the root.</li>
+<li><code>connection_string</code> <strong>str</strong> - (blob/cosmosdb only) The Azure Storage connection string.</li>
+<li><code>container_name</code> <strong>str</strong> - (blob/cosmosdb only) The Azure Storage container name.</li>
+<li><code>storage_account_blob_url</code> <strong>str</strong> - (blob only) The storage account blob URL to use.</li>
+<li><code>cosmosdb_account_blob_url</code> <strong>str</strong> - (cosmosdb only) The CosmosDB account blob URL to use.</li>
+</ul>
+<h3 id="update_index_output">update_index_output</h3>
+<p>The section defines a secondary storage location for running incremental indexing, to preserve your original outputs.</p>
+<h4 id="fields_4">Fields</h4>
+<ul>
+<li><code>type</code> <strong>file|memory|blob|cosmosdb</strong> - The storage type to use. Default=<code>file</code></li>
+<li><code>base_dir</code> <strong>str</strong> - The base directory to write output artifacts to, relative to the root.</li>
+<li><code>connection_string</code> <strong>str</strong> - (blob/cosmosdb only) The Azure Storage connection string.</li>
+<li><code>container_name</code> <strong>str</strong> - (blob/cosmosdb only) The Azure Storage container name.</li>
+<li><code>storage_account_blob_url</code> <strong>str</strong> - (blob only) The storage account blob URL to use.</li>
+<li><code>cosmosdb_account_blob_url</code> <strong>str</strong> - (cosmosdb only) The CosmosDB account blob URL to use.</li>
+</ul>
+<h3 id="cache">cache</h3>
+<p>This section controls the cache mechanism used by the pipeline. This is used to cache LLM invocation results for faster performance when re-running the indexing process.</p>
+<h4 id="fields_5">Fields</h4>
+<ul>
+<li><code>type</code> <strong>file|memory|blob|cosmosdb</strong> - The storage type to use. Default=<code>file</code></li>
+<li><code>base_dir</code> <strong>str</strong> - The base directory to write output artifacts to, relative to the root.</li>
+<li><code>connection_string</code> <strong>str</strong> - (blob/cosmosdb only) The Azure Storage connection string.</li>
+<li><code>container_name</code> <strong>str</strong> - (blob/cosmosdb only) The Azure Storage container name.</li>
+<li><code>storage_account_blob_url</code> <strong>str</strong> - (blob only) The storage account blob URL to use.</li>
+<li><code>cosmosdb_account_blob_url</code> <strong>str</strong> - (cosmosdb only) The CosmosDB account blob URL to use.</li>
+</ul>
+<h3 id="reporting">reporting</h3>
+<p>This section controls the reporting mechanism used by the pipeline, for common events and error messages. The default is to write reports to a file in the output directory. However, you can also choose to write reports to the console or to an Azure Blob Storage container.</p>
+<h4 id="fields_6">Fields</h4>
+<ul>
+<li><code>type</code> <strong>file|console|blob</strong> - The reporting type to use. Default=<code>file</code></li>
+<li><code>base_dir</code> <strong>str</strong> - The base directory to write reports to, relative to the root.</li>
+<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
+<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
+<li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
+</ul>
+<h3 id="vector_store">vector_store</h3>
+<p>Where to put all vectors for the system. Configured for lancedb by default. This is a dict, with the key used to identify individual store parameters (e.g., for text embedding).</p>
+<h4 id="fields_7">Fields</h4>
+<ul>
+<li><code>type</code> <strong>lancedb|azure_ai_search|cosmosdb</strong> - Type of vector store. Default=<code>lancedb</code></li>
+<li><code>db_uri</code> <strong>str</strong> (only for lancedb) - The database uri. Default=<code>storage.base_dir/lancedb</code></li>
+<li><code>url</code> <strong>str</strong> (only for AI Search) - AI Search endpoint</li>
+<li><code>api_key</code> <strong>str</strong> (optional - only for AI Search) - The AI Search api key to use.</li>
+<li><code>audience</code> <strong>str</strong> (only for AI Search) - Audience for managed identity token if managed identity authentication is used.</li>
+<li><code>container_name</code> <strong>str</strong> - The name of a vector container. This stores all indexes (tables) for a given dataset ingest. Default=<code>default</code></li>
+<li><code>database_name</code> <strong>str</strong> - (cosmosdb only) Name of the database.</li>
+<li><code>overwrite</code> <strong>bool</strong> (only used at index creation time) - Overwrite collection if it exist. Default=<code>True</code></li>
+</ul>
+<h2 id="workflow-configurations">Workflow Configurations</h2>
+<p>These settings control each individual workflow as they execute.</p>
+<h3 id="workflows">workflows</h3>
+<p><strong>list[str]</strong> - This is a list of workflow names to run, in order. GraphRAG has built-in pipelines to configure this, but you can run exactly and only what you want by specifying the list here. Useful if you have done part of the processing yourself.</p>
+<h3 id="embed_text">embed_text</h3>
+<p>By default, the GraphRAG indexer will only export embeddings required for our query methods. However, the model has embeddings defined for all plaintext fields, and these can be customized by setting the <code>target</code> and <code>names</code> fields.</p>
+<p>Supported embeddings names are:</p>
+<ul>
+<li><code>text_unit.text</code></li>
+<li><code>document.text</code></li>
+<li><code>entity.title</code></li>
+<li><code>entity.description</code></li>
+<li><code>relationship.description</code></li>
+<li><code>community.title</code></li>
+<li><code>community.summary</code></li>
+<li><code>community.full_content</code></li>
+</ul>
+<h4 id="fields_8">Fields</h4>
+<ul>
 <li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for text embedding.</li>
+<li><code>vector_store_id</code> <strong>str</strong> - Name of vector store definition to write to.</li>
 <li><code>batch_size</code> <strong>int</strong> - The maximum batch size to use.</li>
 <li><code>batch_max_tokens</code> <strong>int</strong> - The maximum batch # of tokens.</li>
 <li><code>target</code> <strong>required|all|selected|none</strong> - Determines which set of embeddings to export.</li>
 <li><code>names</code> <strong>list[str]</strong> - If target=selected, this should be an explicit list of the embeddings names we support.</li>
 </ul>
-<h3 id="vector_store">vector_store</h3>
-<p>Where to put all vectors for the system. Configured for lancedb by default.</p>
-<h4 id="fields_2">Fields</h4>
-<ul>
-<li><code>type</code> <strong>str</strong> - <code>lancedb</code> or <code>azure_ai_search</code>. Default=<code>lancedb</code></li>
-<li><code>db_uri</code> <strong>str</strong> (only for lancedb) - The database uri. Default=<code>storage.base_dir/lancedb</code></li>
-<li><code>url</code> <strong>str</strong> (only for AI Search) - AI Search endpoint</li>
-<li><code>api_key</code> <strong>str</strong> (optional - only for AI Search) - The AI Search api key to use.</li>
-<li><code>audience</code> <strong>str</strong> (only for AI Search) - Audience for managed identity token if managed identity authentication is used.</li>
-<li><code>overwrite</code> <strong>bool</strong> (only used at index creation time) - Overwrite collection if it exist. Default=<code>True</code></li>
-<li><code>container_name</code> <strong>str</strong> - The name of a vector container. This stores all indexes (tables) for a given dataset ingest. Default=<code>default</code></li>
-</ul>
-<h3 id="input">input</h3>
-<p>Our pipeline can ingest .csv or .txt data from an input folder. These files can be nested within subfolders. In general, CSV-based data provides the most customizability. Each CSV should at least contain a <code>text</code> field. You can use the <code>metadata</code> list to specify additional columns from the CSV to include as headers in each text chunk, allowing you to repeat document content within each chunk for better LLM inclusion.</p>
-<h4 id="fields_3">Fields</h4>
-<ul>
-<li><code>type</code> <strong>file|blob</strong> - The input type to use. Default=<code>file</code></li>
-<li><code>file_type</code> <strong>text|csv</strong> - The type of input data to load. Either <code>text</code> or <code>csv</code>. Default is <code>text</code></li>
-<li><code>base_dir</code> <strong>str</strong> - The base directory to read input from, relative to the root.</li>
-<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
-<li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
-<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
-<li><code>file_encoding</code> <strong>str</strong> - The encoding of the input file. Default is <code>utf-8</code></li>
-<li><code>file_pattern</code> <strong>str</strong> - A regex to match input files. Default is <code>.*\.csv$</code> if in csv mode and <code>.*\.txt$</code> if in text mode.</li>
-<li><code>file_filter</code> <strong>dict</strong> - Key/value pairs to filter. Default is None.</li>
-<li><code>text_column</code> <strong>str</strong> - (CSV Mode Only) The text column name.</li>
-<li><code>metadata</code> <strong>list[str]</strong> - (CSV Mode Only) The additional document attributes to include.</li>
-</ul>
-<h3 id="chunks">chunks</h3>
-<p>These settings configure how we parse documents into text chunks. This is necessary because very large documents may not fit into a single context window, and graph extraction accuracy can be modulated. Also note the <code>metadata</code> setting in the input document config, which will replicate document metadata into each chunk.</p>
-<h4 id="fields_4">Fields</h4>
-<ul>
-<li><code>size</code> <strong>int</strong> - The max chunk size in tokens.</li>
-<li><code>overlap</code> <strong>int</strong> - The chunk overlap in tokens.</li>
-<li><code>group_by_columns</code> <strong>list[str]</strong> - group documents by fields before chunking.</li>
-<li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use for splitting on token boundaries.</li>
-<li><code>prepend_metadata</code> <strong>bool</strong> - Determines if metadata values should be added at the beginning of each chunk. Default=<code>False</code>.</li>
-<li><code>chunk_size_includes_metadata</code> <strong>bool</strong> - Specifies whether the chunk size calculation should include metadata tokens. Default=<code>False</code>.</li>
-</ul>
-<h3 id="cache">cache</h3>
-<p>This section controls the cache mechanism used by the pipeline. This is used to cache LLM invocation results.</p>
-<h4 id="fields_5">Fields</h4>
-<ul>
-<li><code>type</code> <strong>file|memory|none|blob</strong> - The cache type to use. Default=<code>file</code></li>
-<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
-<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
-<li><code>base_dir</code> <strong>str</strong> - The base directory to write cache to, relative to the root.</li>
-<li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
-</ul>
-<h3 id="output">output</h3>
-<p>This section controls the storage mechanism used by the pipeline used for exporting output tables.</p>
-<h4 id="fields_6">Fields</h4>
-<ul>
-<li><code>type</code> <strong>file|memory|blob</strong> - The storage type to use. Default=<code>file</code></li>
-<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
-<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
-<li><code>base_dir</code> <strong>str</strong> - The base directory to write output artifacts to, relative to the root.</li>
-<li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
-</ul>
-<h3 id="update_index_storage">update_index_storage</h3>
-<p>The section defines a secondary storage location for running incremental indexing, to preserve your original outputs.</p>
-<h4 id="fields_7">Fields</h4>
-<ul>
-<li><code>type</code> <strong>file|memory|blob</strong> - The storage type to use. Default=<code>file</code></li>
-<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
-<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
-<li><code>base_dir</code> <strong>str</strong> - The base directory to write output artifacts to, relative to the root.</li>
-<li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
-</ul>
-<h3 id="reporting">reporting</h3>
-<p>This section controls the reporting mechanism used by the pipeline, for common events and error messages. The default is to write reports to a file in the output directory. However, you can also choose to write reports to the console or to an Azure Blob Storage container.</p>
-<h4 id="fields_8">Fields</h4>
-<ul>
-<li><code>type</code> <strong>file|console|blob</strong> - The reporting type to use. Default=<code>file</code></li>
-<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
-<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
-<li><code>base_dir</code> <strong>str</strong> - The base directory to write reports to, relative to the root.</li>
-<li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
-</ul>
 <h3 id="extract_graph">extract_graph</h3>
+<p>Tune the language model-based graph extraction process.</p>
 <h4 id="fields_9">Fields</h4>
 <ul>
 <li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for API calls.</li>
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
 <li><code>entity_types</code> <strong>list[str]</strong> - The entity types to identify.</li>
 <li><code>max_gleanings</code> <strong>int</strong> - The maximum number of gleaning cycles to use.</li>
+<li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset). This is only used for gleanings during the logit_bias check.</li>
 </ul>
 <h3 id="summarize_descriptions">summarize_descriptions</h3>
 <h4 id="fields_10">Fields</h4>
@@ -1629,26 +1647,9 @@
 <li>noun_phrase_tags <strong>list[str]</strong> - List of noun phrase tags to ignore.</li>
 <li>noun_phrase_grammars <strong>dict[str, str]</strong> - Noun phrase grammars for the model (cfg-only).</li>
 </ul>
-<h3 id="extract_claims">extract_claims</h3>
-<h4 id="fields_12">Fields</h4>
-<ul>
-<li><code>enabled</code> <strong>bool</strong> - Whether to enable claim extraction. Off by default, because claim prompts really need user tuning.</li>
-<li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for API calls.</li>
-<li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
-<li><code>description</code> <strong>str</strong> - Describes the types of claims we want to extract.</li>
-<li><code>max_gleanings</code> <strong>int</strong> - The maximum number of gleaning cycles to use.</li>
-</ul>
-<h3 id="community_reports">community_reports</h3>
-<h4 id="fields_13">Fields</h4>
-<ul>
-<li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for API calls.</li>
-<li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
-<li><code>max_length</code> <strong>int</strong> - The maximum number of output tokens per report.</li>
-<li><code>max_input_length</code> <strong>int</strong> - The maximum number of input tokens to use when generating reports.</li>
-</ul>
 <h3 id="prune_graph">prune_graph</h3>
 <p>Parameters for manual graph pruning. This can be used to optimize the modularity of your graph clusters, by removing overly-connected or rare nodes.</p>
-<h4 id="fields_14">Fields</h4>
+<h4 id="fields_12">Fields</h4>
 <ul>
 <li>min_node_freq <strong>int</strong> - The minimum node frequency to allow.</li>
 <li>max_node_freq_std <strong>float | None</strong> - The maximum standard deviation of node frequency to allow.</li>
@@ -1660,17 +1661,36 @@
 </ul>
 <h3 id="cluster_graph">cluster_graph</h3>
 <p>These are the settings used for Leiden hierarchical clustering of the graph to create communities.</p>
-<h4 id="fields_15">Fields</h4>
+<h4 id="fields_13">Fields</h4>
 <ul>
 <li><code>max_cluster_size</code> <strong>int</strong> - The maximum cluster size to export.</li>
 <li><code>use_lcc</code> <strong>bool</strong> - Whether to only use the largest connected component.</li>
 <li><code>seed</code> <strong>int</strong> - A randomization seed to provide if consistent run-to-run results are desired. We do provide a default in order to guarantee clustering stability.</li>
 </ul>
+<h3 id="extract_claims">extract_claims</h3>
+<h4 id="fields_14">Fields</h4>
+<ul>
+<li><code>enabled</code> <strong>bool</strong> - Whether to enable claim extraction. Off by default, because claim prompts really need user tuning.</li>
+<li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for API calls.</li>
+<li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
+<li><code>description</code> <strong>str</strong> - Describes the types of claims we want to extract.</li>
+<li><code>max_gleanings</code> <strong>int</strong> - The maximum number of gleaning cycles to use.</li>
+<li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset). This is only used for gleanings during the logit_bias check.</li>
+</ul>
+<h3 id="community_reports">community_reports</h3>
+<h4 id="fields_15">Fields</h4>
+<ul>
+<li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for API calls.</li>
+<li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
+<li><code>max_length</code> <strong>int</strong> - The maximum number of output tokens per report.</li>
+<li><code>max_input_length</code> <strong>int</strong> - The maximum number of input tokens to use when generating reports.</li>
+</ul>
 <h3 id="embed_graph">embed_graph</h3>
-<p>We use node2vec to embed the graph. This is primarily used for visualization, so it is not turned on by default. However, if you do prefer to embed the graph for secondary analysis, you can turn this on and we will persist the embeddings to your configured vector store.</p>
+<p>We use node2vec to embed the graph. This is primarily used for visualization, so it is not turned on by default.</p>
 <h4 id="fields_16">Fields</h4>
 <ul>
 <li><code>enabled</code> <strong>bool</strong> - Whether to enable graph embeddings.</li>
+<li><code>dimensions</code> <strong>int</strong> - Number of vector dimensions to produce.</li>
 <li><code>num_walks</code> <strong>int</strong> - The node2vec number of walks.</li>
 <li><code>walk_length</code> <strong>int</strong> - The node2vec walk length.</li>
 <li><code>window_size</code> <strong>int</strong> - The node2vec window size.</li>
@@ -1778,8 +1798,6 @@
 <li><code>max_tokens</code> <strong>int</strong> - The maximum tokens.</li>
 <li><code>llm_max_tokens</code> <strong>int</strong> - The LLM maximum tokens.</li>
 </ul>
-<h3 id="workflows">workflows</h3>
-<p><strong>list[str]</strong> - This is a list of workflow names to run, in order. GraphRAG has built-in pipelines to configure this, but you can run exactly and only what you want by specifying the list here. Useful if you have done part of the processing yourself.</p>
 
 
 
