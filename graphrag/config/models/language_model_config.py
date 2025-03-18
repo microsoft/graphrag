@@ -109,34 +109,6 @@ class LanguageModelConfig(BaseModel):
         if self.encoding_model.strip() == "":
             self.encoding_model = tiktoken.encoding_name_for_model(self.model)
 
-    max_tokens: int = Field(
-        description="The maximum number of tokens to generate.",
-        default=language_model_defaults.max_tokens,
-    )
-    temperature: float = Field(
-        description="The temperature to use for token generation.",
-        default=language_model_defaults.temperature,
-    )
-    top_p: float = Field(
-        description="The top-p value to use for token generation.",
-        default=language_model_defaults.top_p,
-    )
-    n: int = Field(
-        description="The number of completions to generate.",
-        default=language_model_defaults.n,
-    )
-    frequency_penalty: float = Field(
-        description="The frequency penalty to use for token generation.",
-        default=language_model_defaults.frequency_penalty,
-    )
-    presence_penalty: float = Field(
-        description="The presence penalty to use for token generation.",
-        default=language_model_defaults.presence_penalty,
-    )
-    request_timeout: float = Field(
-        description="The request timeout to use.",
-        default=language_model_defaults.request_timeout,
-    )
     api_base: str | None = Field(
         description="The base URL for the LLM API.",
         default=language_model_defaults.api_base,
@@ -216,6 +188,10 @@ class LanguageModelConfig(BaseModel):
         description="Whether the model supports JSON output mode.",
         default=language_model_defaults.model_supports_json,
     )
+    request_timeout: float = Field(
+        description="The request timeout to use.",
+        default=language_model_defaults.request_timeout,
+    )
     tokens_per_minute: int = Field(
         description="The number of tokens per minute to use for the LLM service.",
         default=language_model_defaults.tokens_per_minute,
@@ -240,12 +216,36 @@ class LanguageModelConfig(BaseModel):
         description="Whether to use concurrent requests for the LLM service.",
         default=language_model_defaults.concurrent_requests,
     )
+    async_mode: AsyncType = Field(
+        description="The async mode to use.", default=language_model_defaults.async_mode
+    )
     responses: list[str | BaseModel] | None = Field(
         default=language_model_defaults.responses,
         description="Static responses to use in mock mode.",
     )
-    async_mode: AsyncType = Field(
-        description="The async mode to use.", default=language_model_defaults.async_mode
+    max_tokens: int = Field(
+        description="The maximum number of tokens to generate.",
+        default=language_model_defaults.max_tokens,
+    )
+    temperature: float = Field(
+        description="The temperature to use for token generation.",
+        default=language_model_defaults.temperature,
+    )
+    top_p: float = Field(
+        description="The top-p value to use for token generation.",
+        default=language_model_defaults.top_p,
+    )
+    n: int = Field(
+        description="The number of completions to generate.",
+        default=language_model_defaults.n,
+    )
+    frequency_penalty: float = Field(
+        description="The frequency penalty to use for token generation.",
+        default=language_model_defaults.frequency_penalty,
+    )
+    presence_penalty: float = Field(
+        description="The presence penalty to use for token generation.",
+        default=language_model_defaults.presence_penalty,
     )
 
     def _validate_azure_settings(self) -> None:

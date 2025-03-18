@@ -55,17 +55,6 @@ models:
     tokens_per_minute: 0              # set to 0 to disable rate limiting
     requests_per_minute: 0            # set to 0 to disable rate limiting
 
-vector_store:
-  {defs.DEFAULT_VECTOR_STORE_ID}:
-    type: {vector_store_defaults.type}
-    db_uri: {vector_store_defaults.db_uri}
-    container_name: {vector_store_defaults.container_name}
-    overwrite: {vector_store_defaults.overwrite}
-
-embed_text:
-  model_id: {graphrag_config_defaults.embed_text.model_id}
-  vector_store_id: {graphrag_config_defaults.embed_text.vector_store_id}
-
 ### Input settings ###
 
 input:
@@ -78,10 +67,14 @@ chunks:
   overlap: {graphrag_config_defaults.chunks.overlap}
   group_by_columns: [{",".join(graphrag_config_defaults.chunks.group_by_columns)}]
 
-### Output settings ###
+### Output/storage settings ###
 ## If blob storage is specified in the following four sections,
 ## connection_string and container_name must be provided
 
+output:
+  type: {graphrag_config_defaults.output.type.value} # [file, blob, cosmosdb]
+  base_dir: "{graphrag_config_defaults.output.base_dir}"
+    
 cache:
   type: {graphrag_config_defaults.cache.type.value} # [file, blob, cosmosdb]
   base_dir: "{graphrag_config_defaults.cache.base_dir}"
@@ -90,11 +83,18 @@ reporting:
   type: {graphrag_config_defaults.reporting.type.value} # [file, blob, cosmosdb]
   base_dir: "{graphrag_config_defaults.reporting.base_dir}"
 
-output:
-  type: {graphrag_config_defaults.output.type.value} # [file, blob, cosmosdb]
-  base_dir: "{graphrag_config_defaults.output.base_dir}"
+vector_store:
+  {defs.DEFAULT_VECTOR_STORE_ID}:
+    type: {vector_store_defaults.type}
+    db_uri: {vector_store_defaults.db_uri}
+    container_name: {vector_store_defaults.container_name}
+    overwrite: {vector_store_defaults.overwrite}
 
 ### Workflow settings ###
+
+embed_text:
+  model_id: {graphrag_config_defaults.embed_text.model_id}
+  vector_store_id: {graphrag_config_defaults.embed_text.vector_store_id}
 
 extract_graph:
   model_id: {graphrag_config_defaults.extract_graph.model_id}
@@ -111,6 +111,9 @@ extract_graph_nlp:
   text_analyzer:
     extractor_type: {graphrag_config_defaults.extract_graph_nlp.text_analyzer.extractor_type.value} # [regex_english, syntactic_parser, cfg]
 
+cluster_graph:
+  max_cluster_size: {graphrag_config_defaults.cluster_graph.max_cluster_size}
+
 extract_claims:
   enabled: false
   model_id: {graphrag_config_defaults.extract_claims.model_id}
@@ -124,9 +127,6 @@ community_reports:
   text_prompt: "prompts/community_report_text.txt"
   max_length: {graphrag_config_defaults.community_reports.max_length}
   max_input_length: {graphrag_config_defaults.community_reports.max_input_length}
-
-cluster_graph:
-  max_cluster_size: {graphrag_config_defaults.cluster_graph.max_cluster_size}
 
 embed_graph:
   enabled: false # if true, will generate node2vec embeddings for nodes
