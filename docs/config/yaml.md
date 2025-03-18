@@ -170,7 +170,7 @@ Where to put all vectors for the system. Configured for lancedb by default. This
 - `database_name` **str** - (cosmosdb only) Name of the database.
 - `overwrite` **bool** (only used at index creation time) - Overwrite collection if it exist. Default=`True`
 
-## Worfklow Configurations
+## Workflow Configurations
 
 These settings control each individual workflow as they execute.
 
