@@ -13,7 +13,7 @@ from graphrag.config.models.language_model_config import LanguageModelConfig
 
 class ExtractGraphConfig(BaseModel):
     """Configuration section for entity extraction."""
-    
+
     model_id: str = Field(
         description="The model ID to use for text embeddings.",
         default=graphrag_config_defaults.extract_graph.model_id,

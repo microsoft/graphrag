@@ -12,7 +12,7 @@ from graphrag.config.models.language_model_config import LanguageModelConfig
 
 class TextEmbeddingConfig(BaseModel):
     """Configuration section for text embeddings."""
-    
+
     model_id: str = Field(
         description="The model ID to use for text embeddings.",
         default=graphrag_config_defaults.embed_text.model_id,

@@ -13,7 +13,7 @@ from graphrag.config.models.language_model_config import LanguageModelConfig
 
 class CommunityReportsConfig(BaseModel):
     """Configuration section for community reports."""
-    
+
     model_id: str = Field(
         description="The model ID to use for community reports.",
         default=graphrag_config_defaults.community_reports.model_id,

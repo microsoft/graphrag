@@ -89,7 +89,6 @@ class GraphRagConfig(BaseModel):
         if defs.DEFAULT_EMBEDDING_MODEL_ID not in self.models:
             raise LanguageModelConfigMissingError(defs.DEFAULT_EMBEDDING_MODEL_ID)
 
-
     input: InputConfig = Field(
         description="The input configuration.", default=InputConfig()
     )
@@ -124,7 +123,6 @@ class GraphRagConfig(BaseModel):
             self.output.base_dir = str(
                 (Path(self.root_dir) / self.output.base_dir).resolve()
             )
-
 
     outputs: dict[str, OutputConfig] | None = Field(
         description="A list of output configurations used for multi-index query.",
@@ -208,7 +206,6 @@ class GraphRagConfig(BaseModel):
         default=ExtractGraphConfig(),
     )
     """The entity extraction configuration to use."""
-
 
     summarize_descriptions: SummarizeDescriptionsConfig = Field(
         description="The description summarization configuration to use.",
