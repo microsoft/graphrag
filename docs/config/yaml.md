@@ -113,7 +113,7 @@ This section controls the storage mechanism used by the pipeline used for export
 - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
-- `container_name` **str** - (blob/cosmodb only) The Azure Storage container name.
+- `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
 - `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
 - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
 
@@ -126,7 +126,7 @@ The section defines a secondary storage location for running incremental indexin
 - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
-- `container_name` **str** - (blob/cosmodb only) The Azure Storage container name.
+- `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
 - `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
 - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
 
@@ -139,7 +139,7 @@ This section controls the cache mechanism used by the pipeline. This is used to 
 - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
-- `container_name` **str** - (blob/cosmodb only) The Azure Storage container name.
+- `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
 - `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
 - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
 
