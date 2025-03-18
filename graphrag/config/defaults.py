@@ -365,6 +365,7 @@ class SummarizeDescriptionsDefaults:
 
     prompt: None = None
     max_length: int = 500
+    max_input_tokens: int = 4_000
     strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
 
