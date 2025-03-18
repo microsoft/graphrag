@@ -3018,8 +3018,8 @@ text_unit_df.head()</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3110,51 +3110,6 @@ text_embedder = ModelManager().get_or_create_embedding_model(
 </div>
 </div>
 </div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ValidationError</span>                           Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[9], line 9</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span> llm_model <span style="color: rgb(98,98,98)">=</span> os<span style="color: rgb(98,98,98)">.</span>environ[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GRAPHRAG_LLM_MODEL</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-intense-fg ansi-bold">      7</span> embedding_model <span style="color: rgb(98,98,98)">=</span> os<span style="color: rgb(98,98,98)">.</span>environ[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GRAPHRAG_EMBEDDING_MODEL</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-fg">----&gt; 9</span> chat_config <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">LanguageModelConfig</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">     10</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">api_key</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">api_key</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     11</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">type</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">ModelType</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">OpenAIChat</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     12</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">model</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">llm_model</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     13</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">max_retries</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">20</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     14</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     15</span> chat_model <span style="color: rgb(98,98,98)">=</span> ModelManager()<span style="color: rgb(98,98,98)">.</span>get_or_create_chat_model(
-<span class="ansi-green-intense-fg ansi-bold">     16</span>     name<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">local_search</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     17</span>     model_type<span style="color: rgb(98,98,98)">=</span>ModelType<span style="color: rgb(98,98,98)">.</span>OpenAIChat,
-<span class="ansi-green-intense-fg ansi-bold">     18</span>     config<span style="color: rgb(98,98,98)">=</span>chat_config,
-<span class="ansi-green-intense-fg ansi-bold">     19</span> )
-<span class="ansi-green-intense-fg ansi-bold">     21</span> token_encoder <span style="color: rgb(98,98,98)">=</span> tiktoken<span style="color: rgb(98,98,98)">.</span>encoding_for_model(llm_model)
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pydantic/main.py:214</span>, in <span class="ansi-cyan-fg">BaseModel.__init__</span><span class="ansi-blue-fg">(self, **data)</span>
-<span class="ansi-green-intense-fg ansi-bold">    212</span> <span style="color: rgb(95,135,135)"># `__tracebackhide__` tells pytest and some other tools to omit this function from tracebacks</span>
-<span class="ansi-green-intense-fg ansi-bold">    213</span> __tracebackhide__ <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>
-<span class="ansi-green-fg">--&gt; 214</span> validated_self <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">__pydantic_validator__</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">validate_python</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">data</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">self_instance</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    215</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span> <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> validated_self:
-<span class="ansi-green-intense-fg ansi-bold">    216</span>     warnings<span style="color: rgb(98,98,98)">.</span>warn(
-<span class="ansi-green-intense-fg ansi-bold">    217</span>         <span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">A custom validator is returning a value other than `self`.</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">'</span>
-<span class="ansi-green-intense-fg ansi-bold">    218</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Returning anything other than `self` from a top level model validator isn</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">t supported when validating via `__init__`.</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">    219</span>         <span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">See the `model_validator` docs (https://docs.pydantic.dev/latest/concepts/validators/#model-validators) for more details.</span><span style="color: rgb(175,0,0)">'</span>,
-<span class="ansi-green-intense-fg ansi-bold">    220</span>         stacklevel<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">2</span>,
-<span class="ansi-green-intense-fg ansi-bold">    221</span>     )
-
-<span class="ansi-red-fg">ValidationError</span>: 1 validation error for LanguageModelConfig
-  Value error, API Key is required for ModelType.OpenAIChat when using api_key authentication. Please rerun `graphrag init` and set the API_KEY. [type=value_error, input_value={'api_key': '', 'type': "...-4o', 'max_retries': 20}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.10/v/value_error</pre>
-</div>
-</div>
-</div>
-</div>
 </div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
@@ -3167,8 +3122,8 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3211,35 +3166,6 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
     text_embedder=text_embedder,
     token_encoder=token_encoder,
 )</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[10], line 10</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> context_builder <span style="color: rgb(98,98,98)">=</span> LocalSearchMixedContext(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     community_reports<span style="color: rgb(98,98,98)">=</span>reports,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     text_units<span style="color: rgb(98,98,98)">=</span>text_units,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     entities<span style="color: rgb(98,98,98)">=</span>entities,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     relationships<span style="color: rgb(98,98,98)">=</span>relationships,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     <span style="color: rgb(95,135,135)"># if you did not run covariates during indexing, set this to None</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     covariates<span style="color: rgb(98,98,98)">=</span>covariates,
-<span class="ansi-green-intense-fg ansi-bold">      8</span>     entity_text_embeddings<span style="color: rgb(98,98,98)">=</span>description_embedding_store,
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     embedding_vectorstore_key<span style="color: rgb(98,98,98)">=</span>EntityVectorStoreKey<span style="color: rgb(98,98,98)">.</span>ID,  <span style="color: rgb(95,135,135)"># if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE</span>
-<span class="ansi-green-fg">---&gt; 10</span>     text_embedder<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">text_embedder</span>,
-<span class="ansi-green-intense-fg ansi-bold">     11</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">     12</span> )
-
-<span class="ansi-red-fg">NameError</span>: name 'text_embedder' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3351,8 +3277,8 @@ model_params = {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3387,31 +3313,6 @@ model_params = {
     context_builder_params=local_context_params,
     response_type="multiple paragraphs",  # free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report
 )</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[12], line 2</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> search_engine <span style="color: rgb(98,98,98)">=</span> LocalSearch(
-<span class="ansi-green-fg">----&gt; 2</span>     model<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">chat_model</span>,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     context_builder<span style="color: rgb(98,98,98)">=</span>context_builder,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     model_params<span style="color: rgb(98,98,98)">=</span>model_params,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     context_builder_params<span style="color: rgb(98,98,98)">=</span>local_context_params,
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     response_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">multiple paragraphs</span><span style="color: rgb(175,0,0)">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
-<span class="ansi-green-intense-fg ansi-bold">      8</span> )
-
-<span class="ansi-red-fg">NameError</span>: name 'chat_model' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3462,15 +3363,25 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[13], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>search(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Tell me about Agent Mercer</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      2</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>### Overview of Agent Alex Mercer
 
-<span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
+Agent Alex Mercer is a prominent member of the Paranormal Military Squad, an elite group tasked with executing Operation: Dulce. He plays a crucial role in the mission, providing guidance and emphasizing the importance of intuition and trust among his team members. Mercer's leadership and mentorship are particularly significant, as he serves as a mentor to Sam Rivera, offering valuable support and leadership [Data: Reports (1); Entities (0); Relationships (2, 15)].
+
+### Role in Operation: Dulce
+
+In Operation: Dulce, Alex Mercer is one of the agents exploring the Dulce base, a mysterious and secretive location associated with advanced alien technology. His involvement in the mission is critical, as he is responsible for leading the team into the Dulce base and navigating its complexities. Mercer's leadership is characterized by a balance between compliance with protocols and a natural inclination to question and explore all details, which sometimes leads to internal conflict [Data: Reports (1); Entities (0, 8); Relationships (23, 4); Claims (3, 5)].
+
+### Relationships and Interactions
+
+Agent Mercer maintains professional relationships with other key members of the Paranormal Military Squad, including Taylor Cruz, Jordan Hayes, and Sam Rivera. His relationship with Taylor Cruz is primarily professional, with Mercer acknowledging Cruz's authority while also experiencing a competitive undercurrent due to Cruz's authoritative nature. With Jordan Hayes, Mercer shares a mutual respect and understanding, particularly admiring each other's expertise and analytical abilities. His mentorship of Sam Rivera highlights his role as a guiding figure within the team [Data: Reports (1); Entities (0, 1, 2, 3); Relationships (0, 1, 2, 15)].
+
+### Leadership and Mentorship
+
+Alex Mercer's leadership style is marked by his emphasis on intuition and trust, which he believes are essential for the success of their mission. His mentorship of Sam Rivera is a testament to his commitment to nurturing the skills and potential of his team members. This mentorship is not only about imparting knowledge but also about fostering a sense of confidence and readiness in facing the unknown challenges of Operation: Dulce [Data: Reports (1); Entities (0, 3); Relationships (2, 15)].
+
+In summary, Agent Alex Mercer is a key figure in the Paranormal Military Squad, whose leadership and mentorship are vital to the success of Operation: Dulce. His ability to balance protocol with intuition, along with his strong professional relationships, underscores his importance in the mission and his role as a mentor to his colleagues.
+</pre>
 </div>
 </div>
 </div>
@@ -3512,16 +3423,29 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[14], line 2</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> question <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Tell me about Dr. Jordan Hayes</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">----&gt; 2</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>search(question)
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>### Overview of Dr. Jordan Hayes
 
-<span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
+Dr. Jordan Hayes is a prominent scientist and a key member of the Paranormal Military Squad, known for their expertise in physics and composed demeanor. They play a significant role in Operation: Dulce, particularly in working with alien technology, which is a central element of the mission [Data: Entities (2); Reports (1)].
+
+### Role in Operation: Dulce
+
+Dr. Hayes is deeply involved in the exploration of the Dulce base, where they contribute their analytical skills to the mission. Their work primarily focuses on understanding and analyzing alien technology, which is crucial for the success of Operation: Dulce. This role highlights their importance in the mission, as they provide valuable insights and expertise in dealing with the complexities of alien technology [Data: Reports (1); Entities (2, 13); Relationships (26, 48, 51)].
+
+### Professional Relationships
+
+Dr. Hayes maintains professional relationships with other key members of the Paranormal Military Squad, including Taylor Cruz, Sam Rivera, and Alex Mercer. Their interactions with these team members emphasize the importance of adaptability and analytical thinking in the mission. Dr. Hayes is known for their skepticism towards strict adherence to protocols, advocating for a more flexible approach to the unknown variables encountered during the mission [Data: Reports (1); Relationships (1, 5, 9, 25)].
+
+### Analytical and Skeptical Nature
+
+Dr. Hayes is portrayed as a skeptical and analytical member of the team, often contemplating the layers of data and the complexities of their missions. This skepticism is particularly evident in their interactions with Taylor Cruz, where they emphasize the need for adaptability over rigid protocols. Their analytical insights are crucial in identifying hidden elements within the Dulce base, such as a suspicious panel that seemed out of place [Data: Claims (2, 6, 10); Sources (0, 2)].
+
+### Contribution to the Team
+
+Dr. Hayes' contribution to the Paranormal Military Squad is significant, as they bring a reflective and analytical perspective to the mission. Their ability to navigate the complexities of alien technology and their composed demeanor make them a valuable asset to the team. Their role in Operation: Dulce underscores the importance of scientific expertise and adaptability in dealing with the unknown challenges posed by the mission [Data: Reports (1); Entities (2); Relationships (10, 18, 21)].
+
+In summary, Dr. Jordan Hayes is a critical member of the Paranormal Military Squad, whose expertise in physics and alien technology plays a vital role in the success of Operation: Dulce. Their analytical nature and professional relationships with other team members highlight the importance of adaptability and scientific insight in navigating the complexities of the mission.
+</pre>
 </div>
 </div>
 </div>
@@ -3568,16 +3492,78 @@ Cell <span class="ansi-green-fg">In[14], line 2</span>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[15], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">entities</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>head()
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[15]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>entity</th>
+<th>description</th>
+<th>number of relationships</th>
+<th>in_context</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>2</td>
+<td>JORDAN HAYES</td>
+<td>Dr. Jordan Hayes is a scientist and a member o...</td>
+<td>9</td>
+<td>True</td>
+</tr>
+<tr>
+<th>1</th>
+<td>13</td>
+<td>LAB</td>
+<td>A lab where Dr. Jordan Hayes works on alien te...</td>
+<td>1</td>
+<td>True</td>
+</tr>
+<tr>
+<th>2</th>
+<td>10</td>
+<td>AGENT HAYES</td>
+<td>Agent Hayes is a member of the team exploring ...</td>
+<td>5</td>
+<td>True</td>
+</tr>
+<tr>
+<th>3</th>
+<td>12</td>
+<td>AGENT CRUZ</td>
+<td></td>
+<td>5</td>
+<td>True</td>
+</tr>
+<tr>
+<th>4</th>
+<td>15</td>
+<td>BRIEFING ROOM</td>
+<td></td>
+<td>2</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -3613,23 +3599,97 @@ Cell <span class="ansi-green-fg">In[15], line 1</span>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[16], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">relationships</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>head()
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>source</th>
+<th>target</th>
+<th>description</th>
+<th>weight</th>
+<th>links</th>
+<th>in_context</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>24</td>
+<td>ALEX MERCER</td>
+<td>OPERATION: DULCE</td>
+<td>Alex Mercer is involved in and is part of Oper...</td>
+<td>24.0</td>
+<td>10</td>
+<td>True</td>
+</tr>
+<tr>
+<th>1</th>
+<td>27</td>
+<td>JORDAN HAYES</td>
+<td>OPERATION: DULCE</td>
+<td>Jordan Hayes is part of Operation: Dulce</td>
+<td>8.0</td>
+<td>10</td>
+<td>True</td>
+</tr>
+<tr>
+<th>2</th>
+<td>48</td>
+<td>OPERATION: DULCE</td>
+<td>JORDAN HAYES</td>
+<td>Jordan Hayes is working on alien technology as...</td>
+<td>16.0</td>
+<td>10</td>
+<td>True</td>
+</tr>
+<tr>
+<th>3</th>
+<td>1</td>
+<td>ALEX MERCER</td>
+<td>JORDAN HAYES</td>
+<td>Alex Mercer and Jordan Hayes are both agents w...</td>
+<td>42.0</td>
+<td>7</td>
+<td>True</td>
+</tr>
+<tr>
+<th>4</th>
+<td>29</td>
+<td>TAYLOR CRUZ</td>
+<td>OPERATION: DULCE</td>
+<td>Taylor Cruz is part of Operation: Dulce</td>
+<td>8.0</td>
+<td>10</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3652,25 +3712,6 @@ Cell <span class="ansi-green-fg">In[16], line 1</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-17">if "reports" in result.context_data:
     result.context_data["reports"].head()</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[17], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">reports</span><span style="color: rgb(175,0,0)">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data:
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     result<span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">reports</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>head()
-
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3706,16 +3747,60 @@ Cell <span class="ansi-green-fg">In[17], line 1</span>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[18], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">sources</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>head()
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>0</td>
+<td># Operation: Dulce\n\n## Chapter 1\n\nThe thru...</td>
+</tr>
+<tr>
+<th>1</th>
+<td>2</td>
+<td>differently than praise from others. This was...</td>
+</tr>
+<tr>
+<th>2</th>
+<td>3</td>
+<td>contrast to the rigid silence enveloping the ...</td>
+</tr>
+<tr>
+<th>3</th>
+<td>1</td>
+<td>, the hollow echo of the bay a stark reminder ...</td>
+</tr>
+<tr>
+<th>4</th>
+<td>4</td>
+<td>a mask of duty.\n\nIn the midst of the descen...</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -3755,15 +3840,21 @@ Cell <span class="ansi-green-fg">In[18], line 1</span>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[19], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">claims</span><span style="color: rgb(175,0,0)">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data:
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">claims</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>head())
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>   id        entity object_id     status start_date end_date  \
+0   2  JORDAN HAYES      NONE  SUSPECTED       NONE     NONE   
+1   6  JORDAN HAYES      NONE  SUSPECTED       NONE     NONE   
+2  10  JORDAN HAYES      NONE       TRUE       NONE     NONE   
+3   1   TAYLOR CRUZ      NONE  SUSPECTED       NONE     NONE   
+4   7   TAYLOR CRUZ      NONE  SUSPECTED       NONE     NONE   
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+                                         description  in_context  
+0  Jordan Hayes is portrayed as skeptical of Tayl...        True  
+1  Jordan Hayes is providing analytical insights ...        True  
+2  Jordan Hayes identified a suspicious panel tha...        True  
+3  Taylor Cruz's leadership style is described as...        True  
+4  Taylor Cruz is asserting command over the miss...        True  
+</pre>
 </div>
 </div>
 </div>
@@ -3791,8 +3882,8 @@ Cell <span class="ansi-green-fg">In[19], line 1</span>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3825,30 +3916,6 @@ Cell <span class="ansi-green-fg">In[19], line 1</span>
     model_params=model_params,
     context_builder_params=local_context_params,
 )</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[20], line 2</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> question_generator <span style="color: rgb(98,98,98)">=</span> LocalQuestionGen(
-<span class="ansi-green-fg">----&gt; 2</span>     model<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">chat_model</span>,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     context_builder<span style="color: rgb(98,98,98)">=</span>context_builder,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     model_params<span style="color: rgb(98,98,98)">=</span>model_params,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     context_builder_params<span style="color: rgb(98,98,98)">=</span>local_context_params,
-<span class="ansi-green-intense-fg ansi-bold">      7</span> )
-
-<span class="ansi-red-fg">NameError</span>: name 'chat_model' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3900,21 +3967,9 @@ print(candidate_questions.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[21], line 5</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> question_history <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Tell me about Agent Mercer</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">What happens in Dulce military base?</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      4</span> ]
-<span class="ansi-green-fg">----&gt; 5</span> candidate_questions <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">question_generator</span><span style="color: rgb(98,98,98)">.</span>agenerate(
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     question_history<span style="color: rgb(98,98,98)">=</span>question_history, context_data<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, question_count<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">5</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> )
-<span class="ansi-green-intense-fg ansi-bold">      8</span> <span style="color: rgb(0,135,0)">print</span>(candidate_questions<span style="color: rgb(98,98,98)">.</span>response)
-
-<span class="ansi-red-fg">NameError</span>: name 'question_generator' is not defined</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>['- What is the role of Agent Alex Mercer in Operation: Dulce?', "- How does Agent Taylor Cruz's leadership style impact the team's mission at Dulce base?", '- What expertise does Dr. Jordan Hayes bring to the exploration of the Dulce base?', '- How does Sam Rivera contribute to the mission at Dulce base with their cybersecurity skills?', '- What are the dynamics and relationships among the Paranormal Military Squad members during Operation: Dulce?']
+</pre>
 </div>
 </div>
 </div>

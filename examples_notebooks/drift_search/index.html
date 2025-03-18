@@ -2176,8 +2176,8 @@ Text unit records: 5
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2260,51 +2260,6 @@ text_embedder = ModelManager().get_or_create_embedding_model(
 </div>
 </div>
 </div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ValidationError</span>                           Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[3], line 5</span>
-<span class="ansi-green-intense-fg ansi-bold">      2</span> llm_model <span style="color: rgb(98,98,98)">=</span> os<span style="color: rgb(98,98,98)">.</span>environ[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GRAPHRAG_LLM_MODEL</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-intense-fg ansi-bold">      3</span> embedding_model <span style="color: rgb(98,98,98)">=</span> os<span style="color: rgb(98,98,98)">.</span>environ[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GRAPHRAG_EMBEDDING_MODEL</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-fg">----&gt; 5</span> chat_config <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">LanguageModelConfig</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">api_key</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">api_key</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">type</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">ModelType</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">OpenAIChat</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      8</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">model</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">llm_model</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      9</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">max_retries</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">20</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     10</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     11</span> chat_model <span style="color: rgb(98,98,98)">=</span> ModelManager()<span style="color: rgb(98,98,98)">.</span>get_or_create_chat_model(
-<span class="ansi-green-intense-fg ansi-bold">     12</span>     name<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">local_search</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     13</span>     model_type<span style="color: rgb(98,98,98)">=</span>ModelType<span style="color: rgb(98,98,98)">.</span>OpenAIChat,
-<span class="ansi-green-intense-fg ansi-bold">     14</span>     config<span style="color: rgb(98,98,98)">=</span>chat_config,
-<span class="ansi-green-intense-fg ansi-bold">     15</span> )
-<span class="ansi-green-intense-fg ansi-bold">     17</span> token_encoder <span style="color: rgb(98,98,98)">=</span> tiktoken<span style="color: rgb(98,98,98)">.</span>encoding_for_model(llm_model)
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pydantic/main.py:214</span>, in <span class="ansi-cyan-fg">BaseModel.__init__</span><span class="ansi-blue-fg">(self, **data)</span>
-<span class="ansi-green-intense-fg ansi-bold">    212</span> <span style="color: rgb(95,135,135)"># `__tracebackhide__` tells pytest and some other tools to omit this function from tracebacks</span>
-<span class="ansi-green-intense-fg ansi-bold">    213</span> __tracebackhide__ <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>
-<span class="ansi-green-fg">--&gt; 214</span> validated_self <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">__pydantic_validator__</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">validate_python</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">data</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">self_instance</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    215</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span> <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> validated_self:
-<span class="ansi-green-intense-fg ansi-bold">    216</span>     warnings<span style="color: rgb(98,98,98)">.</span>warn(
-<span class="ansi-green-intense-fg ansi-bold">    217</span>         <span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">A custom validator is returning a value other than `self`.</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">'</span>
-<span class="ansi-green-intense-fg ansi-bold">    218</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Returning anything other than `self` from a top level model validator isn</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">t supported when validating via `__init__`.</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">    219</span>         <span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">See the `model_validator` docs (https://docs.pydantic.dev/latest/concepts/validators/#model-validators) for more details.</span><span style="color: rgb(175,0,0)">'</span>,
-<span class="ansi-green-intense-fg ansi-bold">    220</span>         stacklevel<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">2</span>,
-<span class="ansi-green-intense-fg ansi-bold">    221</span>     )
-
-<span class="ansi-red-fg">ValidationError</span>: 1 validation error for LanguageModelConfig
-  Value error, API Key is required for ModelType.OpenAIChat when using api_key authentication. Please rerun `graphrag init` and set the API_KEY. [type=value_error, input_value={'api_key': '', 'type': "...-4o', 'max_retries': 20}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.10/v/value_error</pre>
-</div>
-</div>
-</div>
-</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
@@ -2365,8 +2320,8 @@ read_indexer_report_embeddings(reports, full_content_embedding_store)</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2437,43 +2392,6 @@ search = DRIFTSearch(
 </div>
 </div>
 </div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[5], line 11</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> drift_params <span style="color: rgb(98,98,98)">=</span> DRIFTSearchConfig(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     temperature<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">0</span>,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     max_tokens<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">12_000</span>,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     n<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">1</span>,
-<span class="ansi-green-intense-fg ansi-bold">      8</span> )
-<span class="ansi-green-intense-fg ansi-bold">     10</span> context_builder <span style="color: rgb(98,98,98)">=</span> DRIFTSearchContextBuilder(
-<span class="ansi-green-fg">---&gt; 11</span>     model<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">chat_model</span>,
-<span class="ansi-green-intense-fg ansi-bold">     12</span>     text_embedder<span style="color: rgb(98,98,98)">=</span>text_embedder,
-<span class="ansi-green-intense-fg ansi-bold">     13</span>     entities<span style="color: rgb(98,98,98)">=</span>entities,
-<span class="ansi-green-intense-fg ansi-bold">     14</span>     relationships<span style="color: rgb(98,98,98)">=</span>relationships,
-<span class="ansi-green-intense-fg ansi-bold">     15</span>     reports<span style="color: rgb(98,98,98)">=</span>reports,
-<span class="ansi-green-intense-fg ansi-bold">     16</span>     entity_text_embeddings<span style="color: rgb(98,98,98)">=</span>description_embedding_store,
-<span class="ansi-green-intense-fg ansi-bold">     17</span>     text_units<span style="color: rgb(98,98,98)">=</span>text_units,
-<span class="ansi-green-intense-fg ansi-bold">     18</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">     19</span>     config<span style="color: rgb(98,98,98)">=</span>drift_params,
-<span class="ansi-green-intense-fg ansi-bold">     20</span> )
-<span class="ansi-green-intense-fg ansi-bold">     22</span> search <span style="color: rgb(98,98,98)">=</span> DRIFTSearch(
-<span class="ansi-green-intense-fg ansi-bold">     23</span>     model<span style="color: rgb(98,98,98)">=</span>chat_model, context_builder<span style="color: rgb(98,98,98)">=</span>context_builder, token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder
-<span class="ansi-green-intense-fg ansi-bold">     24</span> )
-
-<span class="ansi-red-fg">NameError</span>: name 'chat_model' is not defined</pre>
-</div>
-</div>
-</div>
-</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell">
@@ -2508,13 +2426,127 @@ Cell <span class="ansi-green-fg">In[5], line 11</span>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[6], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> resp <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search</span><span style="color: rgb(98,98,98)">.</span>search(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Who is agent Mercer?</span><span style="color: rgb(175,0,0)">"</span>)
-
-<span class="ansi-red-fg">NameError</span>: name 'search' is not defined</pre>
+<pre>  0%|          | 0/1 [00:00&lt;?, ?it/s]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>100%|██████████| 1/1 [00:12&lt;00:00, 12.57s/it]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>                                             </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre></pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>  0%|          | 0/3 [00:00&lt;?, ?it/s]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre> 33%|███▎      | 1/3 [00:14&lt;00:29, 14.67s/it]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre> 67%|██████▋   | 2/3 [00:18&lt;00:08,  8.46s/it]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>                                             </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre></pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>  0%|          | 0/3 [00:00&lt;?, ?it/s]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre> 33%|███▎      | 1/3 [00:10&lt;00:21, 10.91s/it]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre> 67%|██████▋   | 2/3 [00:11&lt;00:04,  4.96s/it]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>100%|██████████| 3/3 [00:14&lt;00:00,  3.79s/it]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>                                             </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre></pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>  0%|          | 0/3 [00:00&lt;?, ?it/s]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre> 33%|███▎      | 1/3 [00:08&lt;00:16,  8.49s/it]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre> 67%|██████▋   | 2/3 [00:09&lt;00:03,  4.00s/it]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>100%|██████████| 3/3 [00:09&lt;00:00,  2.23s/it]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>                                             </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre></pre>
 </div>
 </div>
 </div>
@@ -2550,16 +2582,10 @@ Cell <span class="ansi-green-fg">In[6], line 1</span>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[7], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">resp</span><span style="color: rgb(98,98,98)">.</span>response
-
-<span class="ansi-red-fg">NameError</span>: name 'resp' is not defined</pre>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>"Agent Alex Mercer is a pivotal figure within the Paranormal Military Squad, playing a crucial role in Operation: Dulce, which involves exploring and investigating the Dulce base rumored to house advanced alien technology. Mercer is recognized for his leadership qualities and serves as a mentor to fellow agent Sam Rivera, emphasizing intuition and trust in navigating the mission's uncertainties [Data: Reports (0, 1)].\n\nMercer's leadership style is collaborative and supportive, fostering open communication and valuing team members' insights and instincts. This approach helps build camaraderie and mutual respect within the team [Data: Reports (1)]. He works closely with other key team members, such as Dr. Jordan Hayes, who provides expertise in alien technology, and Taylor Cruz, whose authoritative leadership style contrasts with Mercer's more intuitive approach [Data: Reports (0, 1)].\n\nOverall, Mercer's ability to foster trust and intuition among his team members, coupled with his collaborative efforts, highlights his significance in the mission to explore and understand the Dulce base and its alien technology [Data: Reports (0)]."</pre>
 </div>
 </div>
 </div>
@@ -2597,14 +2623,108 @@ Cell <span class="ansi-green-fg">In[7], line 1</span>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[8], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-bg">resp</span><span style="color: rgb(98,98,98)">.</span>context_data)
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>{"How does Alex Mercer's leadership style differ from Taylor Cruz's?": {'reports':   id                                           title  \
+0  1  Paranormal Military Squad and Operation: Dulce   
 
-<span class="ansi-red-fg">NameError</span>: name 'resp' is not defined</pre>
+                                             content  
+0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
+Columns: [in_context]
+Index: [], 'sources':   id                                               text
+0  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
+1  2   differently than praise from others. This was...
+2  3   contrast to the rigid silence enveloping the ...
+3  1  , the hollow echo of the bay a stark reminder ...
+4  4   a mask of duty.\n\nIn the midst of the descen...}, 'What is the significance of the Dulce base in Operation: Dulce?': {'reports':   id                                           title  \
+0  1  Paranormal Military Squad and Operation: Dulce   
+
+                                             content  
+0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
+Columns: [in_context]
+Index: [], 'sources':   id                                               text
+0  2   differently than praise from others. This was...
+1  3   contrast to the rigid silence enveloping the ...
+2  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
+3  4   a mask of duty.\n\nIn the midst of the descen...
+4  1  , the hollow echo of the bay a stark reminder ...}, "How does Sam Rivera benefit from Alex Mercer's mentorship?": {'reports':   id                                           title  \
+0  1  Paranormal Military Squad and Operation: Dulce   
+
+                                             content  
+0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
+Columns: [in_context]
+Index: [], 'sources':   id                                               text
+0  3   contrast to the rigid silence enveloping the ...
+1  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
+2  1  , the hollow echo of the bay a stark reminder ...
+3  2   differently than praise from others. This was...
+4  4   a mask of duty.\n\nIn the midst of the descen...}, 'What are the key challenges faced by the Paranormal Military Squad in Operation: Dulce?': {'reports':   id                                           title  \
+0  1  Paranormal Military Squad and Operation: Dulce   
+
+                                             content  
+0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
+Columns: [in_context]
+Index: [], 'sources':   id                                               text
+0  2   differently than praise from others. This was...
+1  3   contrast to the rigid silence enveloping the ...
+2  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
+3  4   a mask of duty.\n\nIn the midst of the descen...
+4  1  , the hollow echo of the bay a stark reminder ...}, 'What challenges does Sam Rivera face during Operation: Dulce?': {'reports':   id                                           title  \
+0  1  Paranormal Military Squad and Operation: Dulce   
+
+                                             content  
+0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
+Columns: [in_context]
+Index: [], 'sources':   id                                               text
+0  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
+1  2   differently than praise from others. This was...
+2  1  , the hollow echo of the bay a stark reminder ...
+3  3   contrast to the rigid silence enveloping the ...
+4  4   a mask of duty.\n\nIn the midst of the descen...}, 'What specific role does Alex Mercer play in overcoming these challenges?': {'reports':   id                                           title  \
+0  1  Paranormal Military Squad and Operation: Dulce   
+
+                                             content  
+0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
+Columns: [in_context]
+Index: [], 'sources':   id                                               text
+0  3   contrast to the rigid silence enveloping the ...
+1  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
+2  1  , the hollow echo of the bay a stark reminder ...
+3  2   differently than praise from others. This was...
+4  4   a mask of duty.\n\nIn the midst of the descen...}, "What specific instances demonstrate Alex Mercer's mentorship approach?": {'reports':   id                                           title  \
+0  1  Paranormal Military Squad and Operation: Dulce   
+
+                                             content  
+0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
+Columns: [in_context]
+Index: [], 'sources':   id                                               text
+0  3   contrast to the rigid silence enveloping the ...
+1  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
+2  1  , the hollow echo of the bay a stark reminder ...
+3  2   differently than praise from others. This was...
+4  4   a mask of duty.\n\nIn the midst of the descen...}, "In what ways do Alex Mercer's and Taylor Cruz's leadership styles complement each other?": {'reports':   id                                           title  \
+0  1  Paranormal Military Squad and Operation: Dulce   
+
+                                             content  
+0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
+Columns: [in_context]
+Index: [], 'sources':   id                                               text
+0  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
+1  2   differently than praise from others. This was...
+2  3   contrast to the rigid silence enveloping the ...
+3  1  , the hollow echo of the bay a stark reminder ...
+4  4   a mask of duty.\n\nIn the midst of the descen...}, 'What specific protocols does Taylor Cruz emphasize during Operation: Dulce?': {'reports':   id                                           title  \
+0  1  Paranormal Military Squad and Operation: Dulce   
+
+                                             content  
+0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
+Columns: [in_context]
+Index: [], 'sources':   id                                               text
+0  2   differently than praise from others. This was...
+1  3   contrast to the rigid silence enveloping the ...
+2  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
+3  4   a mask of duty.\n\nIn the midst of the descen...
+4  1  , the hollow echo of the bay a stark reminder ...}}
+</pre>
 </div>
 </div>
 </div>
