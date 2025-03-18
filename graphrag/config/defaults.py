@@ -271,8 +271,9 @@ class LanguageModelDefaults:
     api_key: None = None
     auth_type = AuthType.APIKey
     encoding_model: str = ""
-    max_tokens: int = 4000
+    max_tokens: int | None = None
     temperature: float = 0
+    max_completion_tokens: int | None = None
     top_p: float = 1
     n: int = 1
     frequency_penalty: float = 0.0

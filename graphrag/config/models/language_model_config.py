@@ -109,13 +109,17 @@ class LanguageModelConfig(BaseModel):
         if self.encoding_model.strip() == "":
             self.encoding_model = tiktoken.encoding_name_for_model(self.model)
 
-    max_tokens: int = Field(
-        description="The maximum number of tokens to generate.",
+    max_tokens: int | None = Field(
+        description="The maximum number of tokens to consume. For non-reasoning models, this can effectively truncate the response.",
         default=language_model_defaults.max_tokens,
     )
     temperature: float = Field(
-        description="The temperature to use for token generation.",
+        description="The temperature to use for token generation. Not supported with o* reasoning models.",
         default=language_model_defaults.temperature,
+    )
+    max_completion_tokens: int | None = Field(
+        description="The maximum number of tokens to consume. This includes reasoning tokens for the o* reasoning models.",
+        default=language_model_defaults.max_completion_tokens,
     )
     top_p: float = Field(
         description="The top-p value to use for token generation.",
