@@ -15,7 +15,7 @@ jobs:
     env:
       GH_PAGES: 1
       DEBUG: 1
-      GRAPHRAG_API_KEY: ${{ secrets.OPENAI_NOTEBOOK_KEY }}
+      GRAPHRAG_API_KEY: ${{ secrets.GRAPHRAG_API_KEY }}
       GRAPHRAG_LLM_MODEL: ${{ secrets.GRAPHRAG_LLM_MODEL }}
       GRAPHRAG_EMBEDDING_MODEL: ${{ secrets.GRAPHRAG_EMBEDDING_MODEL }}
 
