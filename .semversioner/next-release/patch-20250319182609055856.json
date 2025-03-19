@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Added batching logic to the prompt tuning autoselection embeddings workflow"
+}

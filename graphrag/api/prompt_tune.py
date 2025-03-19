@@ -111,7 +111,7 @@ async def generate_indexing_prompts(
 
     # if max_retries is not set, inject a dynamically assigned value based on the number of expected LLM calls
     # to be made or fallback to a default value in the worst case
-    if default_llm_settings.max_retries == -1:
+    if default_llm_settings.max_retries < -1:
         default_llm_settings.max_retries = min(
             len(doc_list), language_model_defaults.max_retries
         )
