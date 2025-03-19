@@ -14,6 +14,10 @@ from graphrag.config.models.language_model_config import LanguageModelConfig
 class ExtractGraphConfig(BaseModel):
     """Configuration section for entity extraction."""
 
+    model_id: str = Field(
+        description="The model ID to use for text embeddings.",
+        default=graphrag_config_defaults.extract_graph.model_id,
+    )
     prompt: str | None = Field(
         description="The entity extraction prompt to use.",
         default=graphrag_config_defaults.extract_graph.prompt,
@@ -29,10 +33,6 @@ class ExtractGraphConfig(BaseModel):
     strategy: dict | None = Field(
         description="Override the default entity extraction strategy",
         default=graphrag_config_defaults.extract_graph.strategy,
-    )
-    model_id: str = Field(
-        description="The model ID to use for text embeddings.",
-        default=graphrag_config_defaults.extract_graph.model_id,
     )
 
     def resolved_strategy(
