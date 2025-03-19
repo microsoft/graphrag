@@ -168,7 +168,6 @@ class ExtractClaimsDefaults:
     )
     max_gleanings: int = 1
     strategy: None = None
-    encoding_model: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
 
 
@@ -182,7 +181,6 @@ class ExtractGraphDefaults:
     )
     max_gleanings: int = 1
     strategy: None = None
-    encoding_model: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
 
 
