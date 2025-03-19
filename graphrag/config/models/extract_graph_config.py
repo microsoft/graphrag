@@ -30,10 +30,6 @@ class ExtractGraphConfig(BaseModel):
         description="Override the default entity extraction strategy",
         default=graphrag_config_defaults.extract_graph.strategy,
     )
-    encoding_model: str | None = Field(
-        default=graphrag_config_defaults.extract_graph.encoding_model,
-        description="The encoding model to use.",
-    )
     model_id: str = Field(
         description="The model ID to use for text embeddings.",
         default=graphrag_config_defaults.extract_graph.model_id,
@@ -57,5 +53,4 @@ class ExtractGraphConfig(BaseModel):
             if self.prompt
             else None,
             "max_gleanings": self.max_gleanings,
-            "encoding_name": model_config.encoding_model,
         }

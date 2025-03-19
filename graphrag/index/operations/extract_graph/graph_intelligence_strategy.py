@@ -53,7 +53,6 @@ async def run_extract_graph(
     record_delimiter = args.get("record_delimiter", None)
     completion_delimiter = args.get("completion_delimiter", None)
     extraction_prompt = args.get("extraction_prompt", None)
-    encoding_model = args.get("encoding_name", None)
     max_gleanings = args.get(
         "max_gleanings", graphrag_config_defaults.extract_graph.max_gleanings
     )
@@ -61,7 +60,6 @@ async def run_extract_graph(
     extractor = GraphExtractor(
         model_invoker=model,
         prompt=extraction_prompt,
-        encoding_model=encoding_model,
         max_gleanings=max_gleanings,
         on_error=lambda e, s, d: (
             callbacks.error("Entity Extraction Error", e, s, d) if callbacks else None
