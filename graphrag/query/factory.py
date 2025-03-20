@@ -78,6 +78,8 @@ def get_local_search_engine(
 
     ls_config = config.local_search
 
+    model_params = get_openai_model_parameters(model_settings)
+
     return LocalSearch(
         model=chat_model,
         system_prompt=system_prompt,
@@ -93,12 +95,7 @@ def get_local_search_engine(
             token_encoder=token_encoder,
         ),
         token_encoder=token_encoder,
-        model_params={
-            "max_tokens": ls_config.llm_max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
-            "temperature": ls_config.temperature,
-            "top_p": ls_config.top_p,
-            "n": ls_config.n,
-        },
+        model_params=model_params,
         context_builder_params={
             "text_unit_prop": ls_config.text_unit_prop,
             "community_prop": ls_config.community_prop,
@@ -111,7 +108,7 @@ def get_local_search_engine(
             "include_community_rank": False,
             "return_candidate_context": False,
             "embedding_vectorstore_key": EntityVectorStoreKey.ID,  # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
-            "max_tokens": ls_config.max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+            "max_context_tokens": ls_config.max_context_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
         },
         response_type=response_type,
         callbacks=callbacks,
@@ -164,6 +161,8 @@ def get_global_search_engine(
             "max_level": gs_config.dynamic_search_max_level,
         })
 
+    model_params = get_openai_model_parameters(model_settings)
+
     return GlobalSearch(
         model=model,
         map_system_prompt=map_system_prompt,
@@ -179,18 +178,10 @@ def get_global_search_engine(
         ),
         token_encoder=token_encoder,
         max_data_tokens=gs_config.data_max_tokens,
-        map_llm_params={
-            "max_tokens": gs_config.map_max_tokens,
-            "temperature": gs_config.temperature,
-            "top_p": gs_config.top_p,
-            "n": gs_config.n,
-        },
-        reduce_llm_params={
-            "max_tokens": gs_config.reduce_max_tokens,
-            "temperature": gs_config.temperature,
-            "top_p": gs_config.top_p,
-            "n": gs_config.n,
-        },
+        map_llm_params={**model_params},
+        reduce_llm_params={**model_params},
+        map_max_length=gs_config.map_max_length,
+        reduce_max_length=gs_config.reduce_max_length,
         allow_general_knowledge=False,
         json_mode=False,
         context_builder_params={
@@ -202,10 +193,10 @@ def get_global_search_engine(
             "include_community_weight": True,
             "community_weight_name": "occurrence weight",
             "normalize_community_weight": True,
-            "max_tokens": gs_config.max_tokens,
+            "max_context_tokens": gs_config.max_context_tokens,
             "context_name": "Reports",
         },
-        concurrent_coroutines=gs_config.concurrency,
+        concurrent_coroutines=model_settings.concurrent_requests,
         response_type=response_type,
         callbacks=callbacks,
     )

@@ -220,14 +220,10 @@ class GlobalSearchDefaults:
     map_prompt: None = None
     reduce_prompt: None = None
     knowledge_prompt: None = None
-    temperature: float = 0
-    top_p: float = 1
-    n: int = 1
-    max_tokens: int = 12_000
+    max_context_tokens: int = 12_000
     data_max_tokens: int = 12_000
-    map_max_tokens: int = 1000
-    reduce_max_tokens: int = 2000
-    concurrency: int = 32
+    map_max_length: int = 1000
+    reduce_max_length: int = 2000
     dynamic_search_llm: str = "gpt-4o-mini"
     dynamic_search_threshold: int = 1
     dynamic_search_keep_parent: bool = False
@@ -298,11 +294,7 @@ class LocalSearchDefaults:
     conversation_history_max_turns: int = 5
     top_k_entities: int = 10
     top_k_relationships: int = 10
-    temperature: float = 0
-    top_p: float = 1
-    n: int = 1
-    max_tokens: int = 12_000
-    llm_max_tokens: int = 2000
+    max_context_tokens: int = 12_000
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 

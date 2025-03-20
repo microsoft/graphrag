@@ -317,11 +317,7 @@ def assert_local_search_configs(
     )
     assert actual.top_k_entities == expected.top_k_entities
     assert actual.top_k_relationships == expected.top_k_relationships
-    assert actual.temperature == expected.temperature
-    assert actual.top_p == expected.top_p
-    assert actual.n == expected.n
-    assert actual.max_tokens == expected.max_tokens
-    assert actual.llm_max_tokens == expected.llm_max_tokens
+    assert actual.max_context_tokens == expected.max_context_tokens
 
 
 def assert_global_search_configs(
@@ -330,14 +326,10 @@ def assert_global_search_configs(
     assert actual.map_prompt == expected.map_prompt
     assert actual.reduce_prompt == expected.reduce_prompt
     assert actual.knowledge_prompt == expected.knowledge_prompt
-    assert actual.temperature == expected.temperature
-    assert actual.top_p == expected.top_p
-    assert actual.n == expected.n
-    assert actual.max_tokens == expected.max_tokens
+    assert actual.max_context_tokens == expected.max_context_tokens
     assert actual.data_max_tokens == expected.data_max_tokens
-    assert actual.map_max_tokens == expected.map_max_tokens
-    assert actual.reduce_max_tokens == expected.reduce_max_tokens
-    assert actual.concurrency == expected.concurrency
+    assert actual.map_max_length == expected.map_max_length
+    assert actual.reduce_max_length == expected.reduce_max_length
     assert actual.dynamic_search_llm == expected.dynamic_search_llm
     assert actual.dynamic_search_threshold == expected.dynamic_search_threshold
     assert actual.dynamic_search_keep_parent == expected.dynamic_search_keep_parent
