@@ -36,3 +36,23 @@ class CacheConfig(BaseModel):
         description="The cosmosdb account url to use.",
         default=graphrag_config_defaults.cache.cosmosdb_account_url,
     )
+    bucket_name: str | None = Field(
+        description="The S3 bucket name to use.",
+        default=graphrag_config_defaults.cache.bucket_name,
+    )
+    prefix: str = Field(
+        description="The S3 prefix to use.",
+        default=graphrag_config_defaults.cache.prefix,
+    )
+    aws_access_key_id: str | None = Field(
+        description="The AWS access key ID to use.",
+        default=graphrag_config_defaults.cache.aws_access_key_id,
+    )
+    aws_secret_access_key: str | None = Field(
+        description="The AWS secret access key to use.",
+        default=graphrag_config_defaults.cache.aws_secret_access_key,
+    )
+    region_name: str | None = Field(
+        description="The AWS region name to use.",
+        default=graphrag_config_defaults.cache.region_name,
+    )

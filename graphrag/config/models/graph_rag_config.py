@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
+from graphrag.config.enums import OutputType
 from graphrag.config.errors import LanguageModelConfigMissingError
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
@@ -290,6 +291,30 @@ class GraphRagConfig(BaseModel):
                     msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
                     raise ValueError(msg)
                 store.db_uri = str((Path(self.root_dir) / store.db_uri).resolve())
+    
+    def _validate_s3_configurations(self) -> None:
+        """Validate S3 storage configurations for input, output, and reporting.
+        
+        Ensures that when S3 is selected as a storage type, the required bucket_name is provided.
+        """
+        s3_validations = [
+            (self.input.type, self.input.bucket_name, "S3 input", "input"),
+            (self.output.type, self.output.bucket_name, "S3 output", "output"),
+            (self.update_index_output.type, self.update_index_output.bucket_name, "S3 update index output", "update_index_output"),
+            (self.reporting.type, self.reporting.bucket_name, "S3 reporting", "reporting"),
+            (self.cache.type, self.cache.bucket_name, "S3 cache", "cache"),
+        ]
+        
+        for storage_type, bucket_name, desc, config in s3_validations:
+            if storage_type == OutputType.s3 and not bucket_name:
+                msg = f"S3 bucket name is required for {desc}. Please rerun `graphrag init` and set the {config} configuration."
+                raise ValueError(msg)
+        
+        if self.outputs:
+            for output_id, output in self.outputs.items():
+                if output.type == OutputType.s3 and not output.bucket_name:
+                    msg = f"S3 bucket name is required for S3 output '{output_id}'. Please rerun `graphrag init` and set the output configuration."
+                    raise ValueError(msg)
 
     def get_language_model_config(self, model_id: str) -> LanguageModelConfig:
         """Get a model configuration by ID.
@@ -350,4 +375,5 @@ class GraphRagConfig(BaseModel):
         self._validate_multi_output_base_dirs()
         self._validate_update_index_output_base_dir()
         self._validate_vector_store_db_uri()
+        self._validate_s3_configurations()
         return self

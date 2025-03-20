@@ -11,6 +11,7 @@ from graphrag.config.enums import CacheType
 from graphrag.storage.blob_pipeline_storage import create_blob_storage
 from graphrag.storage.cosmosdb_pipeline_storage import create_cosmosdb_storage
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage
+from graphrag.storage.s3_pipeline_storage import create_s3_storage
 
 if TYPE_CHECKING:
     from graphrag.cache.pipeline_cache import PipelineCache
@@ -56,6 +57,8 @@ class CacheFactory:
                 return JsonPipelineCache(create_blob_storage(**kwargs))
             case CacheType.cosmosdb:
                 return JsonPipelineCache(create_cosmosdb_storage(**kwargs))
+            case CacheType.s3:
+                return JsonPipelineCache(create_s3_storage(**kwargs))
             case _:
                 if cache_type in cls.cache_types:
                     return cls.cache_types[cache_type](**kwargs)

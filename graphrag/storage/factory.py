@@ -12,6 +12,7 @@ from graphrag.storage.blob_pipeline_storage import create_blob_storage
 from graphrag.storage.cosmosdb_pipeline_storage import create_cosmosdb_storage
 from graphrag.storage.file_pipeline_storage import create_file_storage
 from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
+from graphrag.storage.s3_pipeline_storage import create_s3_storage
 
 if TYPE_CHECKING:
     from graphrag.storage.pipeline_storage import PipelineStorage
@@ -47,6 +48,8 @@ class StorageFactory:
                 return create_file_storage(**kwargs)
             case OutputType.memory:
                 return MemoryPipelineStorage()
+            case OutputType.s3:
+                return create_s3_storage(**kwargs)
             case _:
                 if storage_type in cls.storage_types:
                     return cls.storage_types[storage_type](**kwargs)

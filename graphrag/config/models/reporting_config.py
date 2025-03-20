@@ -32,3 +32,23 @@ class ReportingConfig(BaseModel):
         description="The storage account blob url to use.",
         default=graphrag_config_defaults.reporting.storage_account_blob_url,
     )
+    bucket_name: str | None = Field(
+        description="The S3 bucket name to use.",
+        default=graphrag_config_defaults.reporting.bucket_name,
+    )
+    prefix: str = Field(
+        description="The S3 prefix to use.",
+        default=graphrag_config_defaults.reporting.prefix,
+    )
+    aws_access_key_id: str | None = Field(
+        description="The AWS access key ID to use.",
+        default=graphrag_config_defaults.reporting.aws_access_key_id,
+    )
+    aws_secret_access_key: str | None = Field(
+        description="The AWS secret access key to use.",
+        default=graphrag_config_defaults.reporting.aws_secret_access_key,
+    )
+    region_name: str | None = Field(
+        description="The AWS region name to use.",
+        default=graphrag_config_defaults.reporting.region_name,
+    )
