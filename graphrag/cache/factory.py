@@ -58,7 +58,10 @@ class CacheFactory:
             case CacheType.cosmosdb:
                 return JsonPipelineCache(create_cosmosdb_storage(**kwargs))
             case CacheType.s3:
-                return JsonPipelineCache(create_s3_storage(**kwargs))
+                storage = create_s3_storage(**kwargs)
+                if "base_dir" in kwargs:
+                    storage = storage.child(kwargs["base_dir"])
+                return JsonPipelineCache(storage)
             case _:
                 if cache_type in cls.cache_types:
                     return cls.cache_types[cache_type](**kwargs)

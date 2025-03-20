@@ -49,7 +49,10 @@ class StorageFactory:
             case OutputType.memory:
                 return MemoryPipelineStorage()
             case OutputType.s3:
-                return create_s3_storage(**kwargs)
+                storage = create_s3_storage(**kwargs)
+                if "base_dir" in kwargs:
+                    return storage.child(kwargs["base_dir"])
+                return storage
             case _:
                 if storage_type in cls.storage_types:
                     return cls.storage_types[storage_type](**kwargs)
