@@ -53,17 +53,7 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
     json_strategy = (
         JsonStrategy.VALID if config.model_supports_json else JsonStrategy.LOOSE
     )
-    chat_parameters = OpenAIChatParameters(
-        frequency_penalty=config.frequency_penalty,
-        presence_penalty=config.presence_penalty,
-        top_p=config.top_p,
-        n=config.n,
-    )
-    if is_reasoning_model(config.model):
-        chat_parameters["max_completion_tokens"] = config.max_completion_tokens
-    else:
-        chat_parameters["temperature"] = config.temperature
-        chat_parameters["max_tokens"] = config.max_tokens
+    chat_parameters = OpenAIChatParameters(**get_openai_model_parameters(config))
 
     if azure:
         if config.api_base is None:
@@ -138,3 +128,18 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T]) -> T:
 def is_reasoning_model(model: str) -> bool:
     """Return whether the model uses a known OpenAI reasoning model."""
     return model.lower() in {"o1", "o1-mini", "o3-mini"}
+
+
+def get_openai_model_parameters(config: LanguageModelConfig) -> dict[str, Any]:
+    """Get the model parameters for a given config, adjusting for reasoning API differences."""
+    params: dict[str, Any] = {
+        "top_p": config.top_p,
+        "frequency_penalty": config.frequency_penalty,
+        "presence_penalty": config.presence_penalty,
+    }
+    if is_reasoning_model(config.model):
+        params["max_completion_tokens"] = config.max_completion_tokens
+    else:
+        params["max_tokens"] = config.max_tokens
+        params["temperature"] = config.temperature
+    return params

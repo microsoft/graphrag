@@ -41,13 +41,7 @@ class BasicSearchDefaults:
     """Default values for basic search."""
 
     prompt: None = None
-    text_unit_prop: float = 0.5
-    conversation_history_max_turns: int = 5
-    temperature: float = 0
-    top_p: float = 1
-    n: int = 1
-    max_tokens: int = 12_000
-    llm_max_tokens: int = 2000
+    k: int = 10
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 

@@ -391,15 +391,7 @@ def assert_basic_search_configs(
     actual: BasicSearchConfig, expected: BasicSearchConfig
 ) -> None:
     assert actual.prompt == expected.prompt
-    assert actual.text_unit_prop == expected.text_unit_prop
-    assert (
-        actual.conversation_history_max_turns == expected.conversation_history_max_turns
-    )
-    assert actual.temperature == expected.temperature
-    assert actual.top_p == expected.top_p
-    assert actual.n == expected.n
-    assert actual.max_tokens == expected.max_tokens
-    assert actual.llm_max_tokens == expected.llm_max_tokens
+    assert actual.k == expected.k
 
 
 def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) -> None:

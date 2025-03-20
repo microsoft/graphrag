@@ -14,6 +14,7 @@ from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
 from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.providers.fnllm.utils import get_openai_model_parameters
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.structured_search.basic_search.basic_context import (
     BasicSearchContext,
@@ -310,7 +311,9 @@ def get_basic_search_engine(
 
     token_encoder = tiktoken.get_encoding(chat_model_settings.encoding_model)
 
-    ls_config = config.basic_search
+    bs_config = config.basic_search
+
+    model_params = get_openai_model_parameters(chat_model_settings)
 
     return BasicSearch(
         model=chat_model,
@@ -322,19 +325,10 @@ def get_basic_search_engine(
             token_encoder=token_encoder,
         ),
         token_encoder=token_encoder,
-        model_params={
-            "max_tokens": ls_config.llm_max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
-            "temperature": ls_config.temperature,
-            "top_p": ls_config.top_p,
-            "n": ls_config.n,
-        },
+        model_params=model_params,
         context_builder_params={
-            "text_unit_prop": ls_config.text_unit_prop,
-            "conversation_history_max_turns": ls_config.conversation_history_max_turns,
-            "conversation_history_user_turns_only": True,
-            "return_candidate_context": False,
             "embedding_vectorstore_key": "id",
-            "max_tokens": ls_config.max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+            "k": bs_config.k,
         },
         callbacks=callbacks,
     )
