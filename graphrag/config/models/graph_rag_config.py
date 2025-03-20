@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import OutputType
+from graphrag.config.enums import CacheType, InputType, OutputType, ReportingType
 from graphrag.config.errors import LanguageModelConfigMissingError
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
@@ -297,19 +297,28 @@ class GraphRagConfig(BaseModel):
         
         Ensures that when S3 is selected as a storage type, the required bucket_name is provided.
         """
-        s3_validations = [
-            (self.input.type, self.input.bucket_name, "S3 input", "input"),
-            (self.output.type, self.output.bucket_name, "S3 output", "output"),
-            (self.update_index_output.type, self.update_index_output.bucket_name, "S3 update index output", "update_index_output"),
-            (self.reporting.type, self.reporting.bucket_name, "S3 reporting", "reporting"),
-            (self.cache.type, self.cache.bucket_name, "S3 cache", "cache"),
-        ]
+        # Check each configuration with its appropriate enum type
+        if self.input.type == InputType.s3 and not self.input.bucket_name:
+            msg = "S3 bucket name is required for S3 input. Please rerun `graphrag init` and set the input configuration."
+            raise ValueError(msg)
+            
+        if self.output.type == OutputType.s3 and not self.output.bucket_name:
+            msg = "S3 bucket name is required for S3 output. Please rerun `graphrag init` and set the output configuration."
+            raise ValueError(msg)
+            
+        if self.update_index_output.type == OutputType.s3 and not self.update_index_output.bucket_name:
+            msg = "S3 bucket name is required for S3 update index output. Please rerun `graphrag init` and set the update_index_output configuration."
+            raise ValueError(msg)
+            
+        if self.reporting.type == ReportingType.s3 and not self.reporting.bucket_name:
+            msg = "S3 bucket name is required for S3 reporting. Please rerun `graphrag init` and set the reporting configuration."
+            raise ValueError(msg)
+            
+        if self.cache.type == CacheType.s3 and not self.cache.bucket_name:
+            msg = "S3 bucket name is required for S3 cache. Please rerun `graphrag init` and set the cache configuration."
+            raise ValueError(msg)
         
-        for storage_type, bucket_name, desc, config in s3_validations:
-            if storage_type == OutputType.s3 and not bucket_name:
-                msg = f"S3 bucket name is required for {desc}. Please rerun `graphrag init` and set the {config} configuration."
-                raise ValueError(msg)
-        
+        # Check outputs dictionary if it exists
         if self.outputs:
             for output_id, output in self.outputs.items():
                 if output.type == OutputType.s3 and not output.bucket_name:
