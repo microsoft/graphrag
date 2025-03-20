@@ -73,6 +73,7 @@ def assert_language_model_configs(
     assert actual.encoding_model == expected.encoding_model
     assert actual.max_tokens == expected.max_tokens
     assert actual.temperature == expected.temperature
+    assert actual.max_completion_tokens == expected.max_completion_tokens
     assert actual.top_p == expected.top_p
     assert actual.n == expected.n
     assert actual.frequency_penalty == expected.frequency_penalty

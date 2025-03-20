@@ -57,10 +57,13 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
         frequency_penalty=config.frequency_penalty,
         presence_penalty=config.presence_penalty,
         top_p=config.top_p,
-        max_tokens=config.max_tokens,
         n=config.n,
-        temperature=config.temperature,
     )
+    if is_reasoning_model(config.model):
+        chat_parameters["max_completion_tokens"] = config.max_completion_tokens
+    else:
+        chat_parameters["temperature"] = config.temperature
+        chat_parameters["max_tokens"] = config.max_tokens
 
     if azure:
         if config.api_base is None:
@@ -130,3 +133,8 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T]) -> T:
         _thr.start()
     future = asyncio.run_coroutine_threadsafe(coroutine, _loop)
     return future.result()
+
+
+def is_reasoning_model(model: str) -> bool:
+    """Return whether the model uses a known OpenAI reasoning model."""
+    return model.lower() in {"o1", "o1-mini", "o3-mini"}
