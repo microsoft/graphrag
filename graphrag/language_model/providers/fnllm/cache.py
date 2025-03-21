@@ -42,3 +42,7 @@ class FNLLMCacheProvider(FNLLMCache):
         """Create a child cache."""
         child_cache = self._cache.child(key)
         return FNLLMCacheProvider(child_cache)
+
+    async def sweep(self) -> None:
+        """Clear expired or unnecessary cache entries."""
+        await self._cache.sweep()
