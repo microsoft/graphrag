@@ -128,7 +128,6 @@ def get_global_search_engine(
     callbacks: list[QueryCallbacks] | None = None,
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
-    # TODO: Global search should select model based on config??
     model_settings = config.get_language_model_config(
         config.global_search.chat_model_id
     )
@@ -141,6 +140,8 @@ def get_global_search_engine(
         config=model_settings,
     )
 
+    model_params = get_openai_model_parameters(model_settings)
+
     # Here we get encoding based on specified encoding name
     token_encoder = tiktoken.get_encoding(model_settings.encoding_model)
     gs_config = config.global_search
@@ -151,17 +152,15 @@ def get_global_search_engine(
 
         dynamic_community_selection_kwargs.update({
             "model": model,
-            # And here we get encoding based on model
-            "token_encoder": tiktoken.encoding_for_model(model_settings.model),
+            "token_encoder": token_encoder,
             "keep_parent": gs_config.dynamic_search_keep_parent,
             "num_repeats": gs_config.dynamic_search_num_repeats,
             "use_summary": gs_config.dynamic_search_use_summary,
-            "concurrent_coroutines": gs_config.dynamic_search_concurrent_coroutines,
+            "concurrent_coroutines": model_settings.concurrent_requests,
             "threshold": gs_config.dynamic_search_threshold,
             "max_level": gs_config.dynamic_search_max_level,
+            "model_params": {**model_params},
         })
-
-    model_params = get_openai_model_parameters(model_settings)
 
     return GlobalSearch(
         model=model,

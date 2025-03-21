@@ -330,15 +330,10 @@ def assert_global_search_configs(
     assert actual.data_max_tokens == expected.data_max_tokens
     assert actual.map_max_length == expected.map_max_length
     assert actual.reduce_max_length == expected.reduce_max_length
-    assert actual.dynamic_search_llm == expected.dynamic_search_llm
     assert actual.dynamic_search_threshold == expected.dynamic_search_threshold
     assert actual.dynamic_search_keep_parent == expected.dynamic_search_keep_parent
     assert actual.dynamic_search_num_repeats == expected.dynamic_search_num_repeats
     assert actual.dynamic_search_use_summary == expected.dynamic_search_use_summary
-    assert (
-        actual.dynamic_search_concurrent_coroutines
-        == expected.dynamic_search_concurrent_coroutines
-    )
     assert actual.dynamic_search_max_level == expected.dynamic_search_max_level
 
 

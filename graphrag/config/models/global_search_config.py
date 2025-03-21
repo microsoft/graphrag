@@ -45,10 +45,6 @@ class GlobalSearchConfig(BaseModel):
     )
 
     # configurations for dynamic community selection
-    dynamic_search_llm: str = Field(
-        description="LLM model to use for dynamic community selection",
-        default=graphrag_config_defaults.global_search.dynamic_search_llm,
-    )
     dynamic_search_threshold: int = Field(
         description="Rating threshold in include a community report",
         default=graphrag_config_defaults.global_search.dynamic_search_threshold,
@@ -64,10 +60,6 @@ class GlobalSearchConfig(BaseModel):
     dynamic_search_use_summary: bool = Field(
         description="Use community summary instead of full_context",
         default=graphrag_config_defaults.global_search.dynamic_search_use_summary,
-    )
-    dynamic_search_concurrent_coroutines: int = Field(
-        description="Number of concurrent coroutines to rate community reports",
-        default=graphrag_config_defaults.global_search.dynamic_search_concurrent_coroutines,
     )
     dynamic_search_max_level: int = Field(
         description="The maximum level of community hierarchy to consider if none of the processed communities are relevant",

@@ -224,12 +224,10 @@ class GlobalSearchDefaults:
     data_max_tokens: int = 12_000
     map_max_length: int = 1000
     reduce_max_length: int = 2000
-    dynamic_search_llm: str = "gpt-4o-mini"
     dynamic_search_threshold: int = 1
     dynamic_search_keep_parent: bool = False
     dynamic_search_num_repeats: int = 1
     dynamic_search_use_summary: bool = False
-    dynamic_search_concurrent_coroutines: int = 16
     dynamic_search_max_level: int = 2
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
 
