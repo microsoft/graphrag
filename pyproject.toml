@@ -56,7 +56,7 @@ lancedb = "^0.17.0"
 aiofiles = "^24.1.0"
 
 # LLM
-fnllm = {extras = ["azure", "openai"], version = "^0.2.3"}
+fnllm = {extras = ["azure", "openai"], version = "0.2.3"}
 json-repair = "^0.30.3"
 openai = "^1.57.0"
 nltk = "3.9.1"
