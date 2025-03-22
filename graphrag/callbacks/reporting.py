@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 from graphrag.callbacks.blob_workflow_callbacks import BlobWorkflowCallbacks
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.callbacks.file_workflow_callbacks import FileWorkflowCallbacks
+from graphrag.callbacks.s3_workflow_callbacks import S3WorkflowCallbacks
 from graphrag.config.enums import ReportingType
 from graphrag.config.models.reporting_config import ReportingConfig
 
@@ -36,4 +37,13 @@ def create_pipeline_reporter(
                 config.container_name,
                 base_dir=config.base_dir,
                 storage_account_blob_url=config.storage_account_blob_url,
+            )
+        case ReportingType.s3:
+            if not config.bucket_name:
+                msg = "No bucket name provided for S3 storage."
+                raise ValueError(msg)
+            return S3WorkflowCallbacks(
+                bucket_name=config.bucket_name,
+                base_dir=config.prefix or "",
+                log_file_name=config.base_dir,
             )

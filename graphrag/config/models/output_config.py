@@ -36,3 +36,23 @@ class OutputConfig(BaseModel):
         description="The cosmosdb account url to use.",
         default=graphrag_config_defaults.output.cosmosdb_account_url,
     )
+    bucket_name: str | None = Field(
+        description="The S3 bucket name to use.",
+        default=graphrag_config_defaults.output.bucket_name,
+    )
+    prefix: str = Field(
+        description="The S3 prefix to use.",
+        default=graphrag_config_defaults.output.prefix,
+    )
+    aws_access_key_id: str | None = Field(
+        description="The AWS access key ID to use.",
+        default=graphrag_config_defaults.output.aws_access_key_id,
+    )
+    aws_secret_access_key: str | None = Field(
+        description="The AWS secret access key to use.",
+        default=graphrag_config_defaults.output.aws_secret_access_key,
+    )
+    region_name: str | None = Field(
+        description="The AWS region name to use.",
+        default=graphrag_config_defaults.output.region_name,
+    )

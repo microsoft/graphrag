@@ -61,3 +61,23 @@ class InputConfig(BaseModel):
         description="The document attribute columns to use.",
         default=graphrag_config_defaults.input.metadata,
     )
+    bucket_name: str | None = Field(
+        description="The S3 bucket name to use.",
+        default=graphrag_config_defaults.input.bucket_name,
+    )
+    prefix: str = Field(
+        description="The S3 prefix to use.",
+        default=graphrag_config_defaults.input.prefix,
+    )
+    aws_access_key_id: str | None = Field(
+        description="The AWS access key ID to use.",
+        default=graphrag_config_defaults.input.aws_access_key_id,
+    )
+    aws_secret_access_key: str | None = Field(
+        description="The AWS secret access key to use.",
+        default=graphrag_config_defaults.input.aws_secret_access_key,
+    )
+    region_name: str | None = Field(
+        description="The AWS region name to use.",
+        default=graphrag_config_defaults.input.region_name,
+    )
