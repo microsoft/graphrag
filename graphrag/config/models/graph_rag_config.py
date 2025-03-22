@@ -290,7 +290,21 @@ class GraphRagConfig(BaseModel):
                 if not store.db_uri or store.db_uri.strip == "":
                     msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
                     raise ValueError(msg)
-                store.db_uri = str((Path(self.root_dir) / store.db_uri).resolve())
+                
+                # Check if the URI is a remote URI (starts with schemes like 's3://', 'hdfs://', etc.)
+                # Common URI schemes that LanceDB supports
+                remote_uri_prefixes = [
+                    "s3://",
+                    "hdfs://",
+                    "az://",
+                    "gs://",
+                    "http://",
+                    "https://"
+                ]
+
+                # Only prepend the root path if it's a local path
+                if not any(store.db_uri.startswith(prefix) for prefix in remote_uri_prefixes):
+                    store.db_uri = str((Path(self.root_dir) / store.db_uri).resolve())
     
     def _validate_s3_configurations(self) -> None:
         """Validate S3 storage configurations for input, output, and reporting.

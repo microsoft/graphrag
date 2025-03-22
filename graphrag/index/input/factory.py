@@ -19,6 +19,7 @@ from graphrag.logger.base import ProgressLogger
 from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage
+from graphrag.storage.s3_pipeline_storage import S3PipelineStorage
 
 log = logging.getLogger(__name__)
 loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
@@ -61,6 +62,18 @@ async def create_input(
             storage = FilePipelineStorage(
                 root_dir=str(Path(root_dir) / (config.base_dir or ""))
             )
+        case InputType.s3:
+            log.info("Using s3 storage for input")
+            if not config.bucket_name:
+                msg = "Bucket name required for s3 storage"
+                raise ValueError(msg)
+            storage = S3PipelineStorage(
+                bucket_name=config.bucket_name,
+                prefix=config.prefix,
+                encoding=config.encoding,
+                aws_access_key_id=config.aws_access_key_id,
+                aws_secret_access_key=config.aws_secret_access_key,
+                region_name=config.region_name)
         case _:
             log.info("using file storage for input")
             storage = FilePipelineStorage(
