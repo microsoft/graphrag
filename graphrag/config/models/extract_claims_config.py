@@ -3,12 +3,11 @@
 
 """Parameterization settings for the default configuration."""
 
-from pathlib import Path
-
 from pydantic import BaseModel, Field
 
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.config.prompt_getter import get_prompt_content
 
 
 class ClaimExtractionConfig(BaseModel):
@@ -50,11 +49,7 @@ class ClaimExtractionConfig(BaseModel):
         return self.strategy or {
             "llm": model_config.model_dump(),
             "num_threads": model_config.concurrent_requests,
-            "extraction_prompt": (Path(root_dir) / self.prompt).read_text(
-                encoding="utf-8"
-            )
-            if self.prompt
-            else None,
+            "extraction_prompt": get_prompt_content(self.prompt, root_dir),
             "claim_description": self.description,
             "max_gleanings": self.max_gleanings,
             "encoding_name": model_config.encoding_model,
