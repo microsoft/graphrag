@@ -45,7 +45,6 @@ class ClaimExtractionConfig(BaseModel):
         """Get the resolved claim extraction strategy."""
         return self.strategy or {
             "llm": model_config.model_dump(),
-            "num_threads": model_config.concurrent_requests,
             "extraction_prompt": (Path(root_dir) / self.prompt).read_text(
                 encoding="utf-8"
             )
