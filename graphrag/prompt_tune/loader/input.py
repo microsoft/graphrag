@@ -99,4 +99,8 @@ async def load_docs_in_chunks(
         chunks_df = _sample_chunks_from_embeddings(chunks_df, embeddings, k=k)
 
     # Convert the dataset to list form, so we have a list of documents
-    return chunks_df["text"].tolist()
+    return [
+        # need this to prevent the str.format() function from breaking when parsing LaTeX from markdown files
+        i.replace("{", "{{").replace("}", "}}")
+        for i in chunks_df["text"]
+    ]
