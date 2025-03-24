@@ -342,10 +342,6 @@ def assert_drift_search_configs(
 ) -> None:
     assert actual.prompt == expected.prompt
     assert actual.reduce_prompt == expected.reduce_prompt
-    assert actual.temperature == expected.temperature
-    assert actual.top_p == expected.top_p
-    assert actual.n == expected.n
-    assert actual.max_tokens == expected.max_tokens
     assert actual.data_max_tokens == expected.data_max_tokens
     assert actual.reduce_max_tokens == expected.reduce_max_tokens
     assert actual.reduce_temperature == expected.reduce_temperature

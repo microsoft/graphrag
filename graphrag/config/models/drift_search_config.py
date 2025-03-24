@@ -27,28 +27,12 @@ class DRIFTSearchConfig(BaseModel):
         description="The model ID to use for drift search.",
         default=graphrag_config_defaults.drift_search.embedding_model_id,
     )
-    temperature: float = Field(
-        description="The temperature to use for token generation.",
-        default=graphrag_config_defaults.drift_search.temperature,
-    )
-    top_p: float = Field(
-        description="The top-p value to use for token generation.",
-        default=graphrag_config_defaults.drift_search.top_p,
-    )
-    n: int = Field(
-        description="The number of completions to generate.",
-        default=graphrag_config_defaults.drift_search.n,
-    )
-    max_tokens: int = Field(
-        description="The maximum context size in tokens.",
-        default=graphrag_config_defaults.drift_search.max_tokens,
-    )
     data_max_tokens: int = Field(
         description="The data llm maximum tokens.",
         default=graphrag_config_defaults.drift_search.data_max_tokens,
     )
 
-    reduce_max_tokens: int = Field(
+    reduce_max_tokens: int | None = Field(
         description="The reduce llm maximum tokens response to produce.",
         default=graphrag_config_defaults.drift_search.reduce_max_tokens,
     )
@@ -56,6 +40,11 @@ class DRIFTSearchConfig(BaseModel):
     reduce_temperature: float = Field(
         description="The temperature to use for token generation in reduce.",
         default=graphrag_config_defaults.drift_search.reduce_temperature,
+    )
+
+    reduce_max_completion_tokens: int | None = Field(
+        description="The reduce llm maximum tokens response to produce.",
+        default=graphrag_config_defaults.drift_search.reduce_max_completion_tokens,
     )
 
     concurrency: int = Field(
@@ -123,7 +112,12 @@ class DRIFTSearchConfig(BaseModel):
         default=graphrag_config_defaults.drift_search.local_search_n,
     )
 
-    local_search_llm_max_gen_tokens: int = Field(
+    local_search_llm_max_gen_tokens: int | None = Field(
         description="The maximum number of generated tokens for the LLM in local search.",
         default=graphrag_config_defaults.drift_search.local_search_llm_max_gen_tokens,
+    )
+
+    local_search_llm_max_gen_completion_tokens: int | None = Field(
+        description="The maximum number of generated tokens for the LLM in local search.",
+        default=graphrag_config_defaults.drift_search.local_search_llm_max_gen_completion_tokens,
     )

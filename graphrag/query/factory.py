@@ -14,7 +14,9 @@ from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
 from graphrag.language_model.manager import ModelManager
-from graphrag.language_model.providers.fnllm.utils import get_openai_model_parameters
+from graphrag.language_model.providers.fnllm.utils import (
+    get_openai_model_parameters_from_config,
+)
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.structured_search.basic_search.basic_context import (
     BasicSearchContext,
@@ -78,7 +80,7 @@ def get_local_search_engine(
 
     ls_config = config.local_search
 
-    model_params = get_openai_model_parameters(model_settings)
+    model_params = get_openai_model_parameters_from_config(model_settings)
 
     return LocalSearch(
         model=chat_model,
@@ -140,7 +142,7 @@ def get_global_search_engine(
         config=model_settings,
     )
 
-    model_params = get_openai_model_parameters(model_settings)
+    model_params = get_openai_model_parameters_from_config(model_settings)
 
     # Here we get encoding based on specified encoding name
     token_encoder = tiktoken.get_encoding(model_settings.encoding_model)
@@ -234,6 +236,7 @@ def get_drift_search_engine(
     embedding_model_settings = config.get_language_model_config(
         config.drift_search.embedding_model_id
     )
+
     if embedding_model_settings.max_retries == -1:
         embedding_model_settings.max_retries = (
             len(reports) + len(entities) + len(relationships)
@@ -244,6 +247,7 @@ def get_drift_search_engine(
         model_type=embedding_model_settings.type,
         config=embedding_model_settings,
     )
+
     token_encoder = tiktoken.get_encoding(chat_model_settings.encoding_model)
 
     return DRIFTSearch(
@@ -303,7 +307,7 @@ def get_basic_search_engine(
 
     bs_config = config.basic_search
 
-    model_params = get_openai_model_parameters(chat_model_settings)
+    model_params = get_openai_model_parameters_from_config(chat_model_settings)
 
     return BasicSearch(
         model=chat_model,

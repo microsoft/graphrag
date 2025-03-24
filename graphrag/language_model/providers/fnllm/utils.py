@@ -53,7 +53,9 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
     json_strategy = (
         JsonStrategy.VALID if config.model_supports_json else JsonStrategy.LOOSE
     )
-    chat_parameters = OpenAIChatParameters(**get_openai_model_parameters(config))
+    chat_parameters = OpenAIChatParameters(
+        **get_openai_model_parameters_from_config(config)
+    )
 
     if azure:
         if config.api_base is None:
@@ -130,16 +132,28 @@ def is_reasoning_model(model: str) -> bool:
     return model.lower() in {"o1", "o1-mini", "o3-mini"}
 
 
-def get_openai_model_parameters(config: LanguageModelConfig) -> dict[str, Any]:
+def get_openai_model_parameters_from_config(
+    config: LanguageModelConfig,
+) -> dict[str, Any]:
     """Get the model parameters for a given config, adjusting for reasoning API differences."""
-    params: dict[str, Any] = {
-        "top_p": config.top_p,
-        "frequency_penalty": config.frequency_penalty,
-        "presence_penalty": config.presence_penalty,
+    return get_openai_model_parameters_from_dict(config.model_dump())
+
+
+def get_openai_model_parameters_from_dict(config: dict[str, Any]) -> dict[str, Any]:
+    """Get the model parameters for a given config, adjusting for reasoning API differences."""
+    params = {
+        "n": config.get("n"),
     }
-    if is_reasoning_model(config.model):
-        params["max_completion_tokens"] = config.max_completion_tokens
+    if is_reasoning_model(config["model"]):
+        params["max_completion_tokens"] = config.get("max_completion_tokens")
     else:
-        params["max_tokens"] = config.max_tokens
-        params["temperature"] = config.temperature
+        params["max_tokens"] = config.get("max_tokens")
+        params["temperature"] = config.get("temperature")
+        params["frequency_penalty"] = config.get("frequency_penalty")
+        params["presence_penalty"] = config.get("presence_penalty")
+        params["top_p"] = config.get("top_p")
+
+    if config.get("response_format"):
+        params["response_format"] = config["response_format"]
+
     return params

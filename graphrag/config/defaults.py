@@ -98,13 +98,10 @@ class DriftSearchDefaults:
 
     prompt: None = None
     reduce_prompt: None = None
-    temperature: float = 0
-    top_p: float = 1
-    n: int = 1
-    max_tokens: int = 12_000
     data_max_tokens: int = 12_000
-    reduce_max_tokens: int = 2_000
+    reduce_max_tokens: None = None
     reduce_temperature: float = 0
+    reduce_max_completion_tokens: None = None
     concurrency: int = 32
     drift_k_followups: int = 20
     primer_folds: int = 5
@@ -118,7 +115,8 @@ class DriftSearchDefaults:
     local_search_temperature: float = 0
     local_search_top_p: float = 1
     local_search_n: int = 1
-    local_search_llm_max_gen_tokens: int = 4_096
+    local_search_llm_max_gen_tokens = None
+    local_search_llm_max_gen_completion_tokens = None
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
