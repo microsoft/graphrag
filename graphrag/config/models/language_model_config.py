@@ -235,6 +235,10 @@ class LanguageModelConfig(BaseModel):
         description="The maximum number of tokens to consume. This includes reasoning tokens for the o* reasoning models.",
         default=language_model_defaults.max_completion_tokens,
     )
+    reasoning_effort: str | None = Field(
+        description="Level of effort OpenAI reasoning models should expend. Supported options are 'low', 'medium', 'high'; and OAI defaults to 'medium'.",
+        default=language_model_defaults.reasoning_effort,
+    )
     top_p: float = Field(
         description="The top-p value to use for token generation.",
         default=language_model_defaults.top_p,

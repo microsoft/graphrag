@@ -258,6 +258,7 @@ class LanguageModelDefaults:
     max_tokens: int | None = None
     temperature: float = 0
     max_completion_tokens: int | None = None
+    reasoning_effort: str | None = None
     top_p: float = 1
     n: int = 1
     frequency_penalty: float = 0.0

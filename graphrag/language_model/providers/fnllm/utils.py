@@ -146,6 +146,7 @@ def get_openai_model_parameters_from_dict(config: dict[str, Any]) -> dict[str, A
     }
     if is_reasoning_model(config["model"]):
         params["max_completion_tokens"] = config.get("max_completion_tokens")
+        params["reasoning_effort"] = config.get("reasoning_effort")
     else:
         params["max_tokens"] = config.get("max_tokens")
         params["temperature"] = config.get("temperature")
