@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator
+    from collections.abc import AsyncGenerator, Generator
 
     from graphrag.language_model.response.base import ModelResponse
 
@@ -120,6 +120,7 @@ class ChatModel(Protocol):
         -------
             A generator that yields strings representing the response.
         """
+        yield ""  # Yield an empty string so that the function is recognized as a generator
         ...
 
     def chat(
@@ -142,7 +143,7 @@ class ChatModel(Protocol):
 
     def chat_stream(
         self, prompt: str, history: list | None = None, **kwargs: Any
-    ) -> AsyncGenerator[str, None]:
+    ) -> Generator[str, None]:
         """
         Generate a response for the given text using a streaming interface.
 

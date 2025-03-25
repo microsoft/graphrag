@@ -3,21 +3,16 @@
 
 """A module containing fnllm model provider definitions."""
 
-from collections.abc import AsyncGenerator
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from fnllm.openai import (
     create_openai_chat_llm,
     create_openai_client,
     create_openai_embeddings_llm,
 )
-from fnllm.openai.types.client import OpenAIChatLLM as FNLLMChatLLM
-from fnllm.openai.types.client import OpenAIEmbeddingsLLM as FNLLMEmbeddingLLM
 
-from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.language_model_config import (
-    LanguageModelConfig,
-)
 from graphrag.language_model.providers.fnllm.events import FNLLMEvents
 from graphrag.language_model.providers.fnllm.utils import (
     _create_cache,
@@ -30,6 +25,18 @@ from graphrag.language_model.response.base import (
     BaseModelResponse,
     ModelResponse,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator, Generator
+
+    from fnllm.openai.types.client import OpenAIChatLLM as FNLLMChatLLM
+    from fnllm.openai.types.client import OpenAIEmbeddingsLLM as FNLLMEmbeddingLLM
+
+    from graphrag.cache.pipeline_cache import PipelineCache
+    from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+    from graphrag.config.models.language_model_config import (
+        LanguageModelConfig,
+    )
 
 
 class OpenAIChatFNLLM:
@@ -121,7 +128,7 @@ class OpenAIChatFNLLM:
 
     def chat_stream(
         self, prompt: str, history: list | None = None, **kwargs
-    ) -> AsyncGenerator[str, None]:
+    ) -> Generator[str, None]:
         """
         Stream Chat with the Model using the given prompt.
 
@@ -319,7 +326,7 @@ class AzureOpenAIChatFNLLM:
 
     def chat_stream(
         self, prompt: str, history: list | None = None, **kwargs
-    ) -> AsyncGenerator[str, None]:
+    ) -> Generator[str, None]:
         """
         Stream Chat with the Model using the given prompt.
 

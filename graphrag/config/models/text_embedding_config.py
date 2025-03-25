@@ -13,6 +13,14 @@ from graphrag.config.models.language_model_config import LanguageModelConfig
 class TextEmbeddingConfig(BaseModel):
     """Configuration section for text embeddings."""
 
+    model_id: str = Field(
+        description="The model ID to use for text embeddings.",
+        default=graphrag_config_defaults.embed_text.model_id,
+    )
+    vector_store_id: str = Field(
+        description="The vector store ID to use for text embeddings.",
+        default=graphrag_config_defaults.embed_text.vector_store_id,
+    )
     batch_size: int = Field(
         description="The batch size to use.",
         default=graphrag_config_defaults.embed_text.batch_size,
@@ -32,14 +40,6 @@ class TextEmbeddingConfig(BaseModel):
     strategy: dict | None = Field(
         description="The override strategy to use.",
         default=graphrag_config_defaults.embed_text.strategy,
-    )
-    model_id: str = Field(
-        description="The model ID to use for text embeddings.",
-        default=graphrag_config_defaults.embed_text.model_id,
-    )
-    vector_store_id: str = Field(
-        description="The vector store ID to use for text embeddings.",
-        default=graphrag_config_defaults.embed_text.vector_store_id,
     )
 
     def resolved_strategy(self, model_config: LanguageModelConfig) -> dict:

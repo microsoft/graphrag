@@ -70,6 +70,33 @@ class ModelFactory:
             raise ValueError(msg)
         return cls._embedding_registry[model_type](**kwargs)
 
+    @classmethod
+    def get_chat_models(cls) -> list[str]:
+        """Get the registered ChatModel implementations."""
+        return list(cls._chat_registry.keys())
+
+    @classmethod
+    def get_embedding_models(cls) -> list[str]:
+        """Get the registered EmbeddingModel implementations."""
+        return list(cls._embedding_registry.keys())
+
+    @classmethod
+    def is_supported_chat_model(cls, model_type: str) -> bool:
+        """Check if the given model type is supported."""
+        return model_type in cls._chat_registry
+
+    @classmethod
+    def is_supported_embedding_model(cls, model_type: str) -> bool:
+        """Check if the given model type is supported."""
+        return model_type in cls._embedding_registry
+
+    @classmethod
+    def is_supported_model(cls, model_type: str) -> bool:
+        """Check if the given model type is supported."""
+        return cls.is_supported_chat_model(
+            model_type
+        ) or cls.is_supported_embedding_model(model_type)
+
 
 # --- Register default implementations ---
 ModelFactory.register_chat(
