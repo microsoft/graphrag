@@ -79,6 +79,8 @@ mkdocs
 fnllm
 typer
 spacy
+kwargs
+ollama
 
 # Library Methods
 iterrows
