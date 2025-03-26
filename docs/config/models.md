@@ -96,3 +96,5 @@ extract_graph:
   entity_types: [organization,person,geo,event]
   max_gleanings: 1
 ```
+
+Note that your custom model will be passed the same params for init and method calls that we use throughout GraphRAG. There is not currently any ability to define custom parameters, so you may need to use closure scope or a factory pattern within your implementation to get custom config values.
