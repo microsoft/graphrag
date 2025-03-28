@@ -1,0 +1,37 @@
+vector_store:
+  default_vector_store:
+    type: "local"
+    db_uri: "./data/vector_store"
+    container_name: "graph_data"
+    max_chunk_size: 1000
+    compression_enabled: true
+
+models:
+  default_chat_model:
+    type: "openai_chat"
+    model: "gpt-4-turbo-preview"
+    auth_type: "api_key"
+    api_key: "${OPENAI_API_KEY}"
+
+  default_embedding_model:
+    type: "openai_embedding"
+    model: "text-embedding-3-small"
+    auth_type: "api_key"
+    api_key: "${OPENAI_API_KEY}"
+
+input:
+  type: local
+  file_type: text
+  base_dir: input
+
+cache:
+  type: local
+  base_dir: cache
+
+storage:
+  type: local
+  base_dir: output
+
+reporting:
+  type: local
+  base_dir: reports 
