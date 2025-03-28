@@ -214,3 +214,15 @@ class CosmosDBVectoreStore(BaseVectorStore):
             text=item.get("text", ""),
             attributes=(json.loads(item.get("attributes", "{}"))),
         )
+
+    def clear(self) -> None:
+        """Clear the vector store."""
+        if self._database_client is None:
+            msg = "Database client is not initialized."
+            raise ValueError(msg)
+        if self._container_client is None:
+            msg = "Container client is not initialized."
+            raise ValueError(msg)
+
+        self._delete_container()
+        self._delete_database()

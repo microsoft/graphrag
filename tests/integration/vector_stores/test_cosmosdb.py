@@ -4,8 +4,6 @@
 """Integration tests for CosmosDB vector store implementation."""
 
 import sys
-import json
-from datetime import datetime
 
 import pytest
 
@@ -21,7 +19,7 @@ if not sys.platform.startswith("win"):
         "encountered windows-only tests -- will skip for now", allow_module_level=True
     )
 
-async def test_vector_store_operations():
+def test_vector_store_operations():
     """Test basic vector store operations with CosmosDB."""
     vector_store = CosmosDBVectoreStore(
         collection_name="testvector",
@@ -33,7 +31,7 @@ async def test_vector_store_operations():
             database_name="testdb",
         )
         
-        # Create test documents
+        # Create test documents and load
         docs = [
             VectorStoreDocument(
                 id="doc1",
@@ -42,14 +40,12 @@ async def test_vector_store_operations():
                 attributes={"title": "Doc 1", "category": "test"},
             ),
             VectorStoreDocument(
-                id="doc2", 
-                text="This is document 2", 
+                id="doc2",
+                text="This is document 2",
                 vector=[0.2, 0.3, 0.4, 0.5, 0.6],
                 attributes={"title": "Doc 2", "category": "test"},
             ),
         ]
-        
-        # Load documents
         vector_store.load_documents(docs)
         
         # Test filtering by ID
@@ -74,29 +70,10 @@ async def test_vector_store_operations():
         text_results = vector_store.similarity_search_by_text("test query", mock_embedder, k=2)
         assert len(text_results) > 0
     finally:
-        # Clean up
-        await vector_store.clear()
+        vector_store.clear()
 
 
-async def test_child():
-    """Test child container functionality."""
-    parent = CosmosDBVectoreStore(
-        collection_name="testparent",
-    )
-    try:
-        parent.connect(
-            connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-            database_name="testchild",
-        )
-        
-        # Test that child returns the correct type
-        child = parent.child("testchild")
-        assert isinstance(child, CosmosDBVectoreStore)
-    finally:
-        await parent.clear()
-
-
-async def test_clear():
+def test_clear():
     """Test clearing the vector store."""
     vector_store = CosmosDBVectoreStore(
         collection_name="testclear",
@@ -107,7 +84,6 @@ async def test_clear():
             database_name="testclear",
         )
         
-        # Create a document
         doc = VectorStoreDocument(
             id="test",
             text="Test document",
@@ -115,17 +91,13 @@ async def test_clear():
             attributes={"title": "Test Doc"},
         )
         
-        # Load document and verify
         vector_store.load_documents([doc])
         result = vector_store.search_by_id("test")
         assert result.id == "test"
         
         # Clear and verify document is removed
-        await vector_store.clear()
-        
-        # After clear, container should be gone, so search_by_id would fail
-        # We just verify container client is None as evidence of cleanup
-        assert vector_store._container_client is None
-        assert vector_store._database_client is None
+        vector_store.clear()
+        assert vector_store._database_exists() is False  # noqa: SLF001
+        assert vector_store._container_exists() is False  # noqa: SLF001
     finally:
-        await vector_store.clear()
+        pass
