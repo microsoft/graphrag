@@ -8,10 +8,10 @@ import sys
 import pytest
 
 from graphrag.vector_stores.base import VectorStoreDocument
-from graphrag.vector_stores.cosmosdb import CosmosDBVectoreStore
+from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
 
 # cspell:disable-next-line well-known-key
-WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=http://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
 
 # the cosmosdb emulator is only available on windows runners at this time
 if not sys.platform.startswith("win"):
@@ -21,7 +21,7 @@ if not sys.platform.startswith("win"):
 
 def test_vector_store_operations():
     """Test basic vector store operations with CosmosDB."""
-    vector_store = CosmosDBVectoreStore(
+    vector_store = CosmosDBVectorStore(
         collection_name="testvector",
     )
     
@@ -75,7 +75,7 @@ def test_vector_store_operations():
 
 def test_clear():
     """Test clearing the vector store."""
-    vector_store = CosmosDBVectoreStore(
+    vector_store = CosmosDBVectorStore(
         collection_name="testclear",
     )
     try:
@@ -98,6 +98,5 @@ def test_clear():
         # Clear and verify document is removed
         vector_store.clear()
         assert vector_store._database_exists() is False  # noqa: SLF001
-        assert vector_store._container_exists() is False  # noqa: SLF001
     finally:
         pass

@@ -15,7 +15,6 @@ from graphrag.vector_stores.base import VectorStoreDocument
 TEST_AZURE_AI_SEARCH_URL = os.environ.get("TEST_AZURE_AI_SEARCH_URL", "https://test-url.search.windows.net")
 TEST_AZURE_AI_SEARCH_KEY = os.environ.get("TEST_AZURE_AI_SEARCH_KEY", "test_api_key")
 
-@pytest.mark.integration
 class TestAzureAISearchVectorStore:
     """Test class for AzureAISearchVectorStore."""
 
