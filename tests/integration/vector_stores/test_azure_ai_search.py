@@ -95,16 +95,13 @@ class TestAzureAISearchVectorStore:
             "attributes": '{"title": "Doc 1", "category": "test"}'
         }
         
-        # Test loading documents
         vector_store.load_documents(sample_documents)
         assert mock_index_client.create_or_update_index.called
         assert mock_search_client.upload_documents.called
         
-        # Test filter_by_id
         filter_query = vector_store.filter_by_id(["doc1", "doc2"])
         assert filter_query == "search.in(id, 'doc1,doc2', ',')"
         
-        # Test vector similarity search
         vector_results = vector_store.similarity_search_by_vector([0.1, 0.2, 0.3, 0.4, 0.5], k=2)
         assert len(vector_results) == 2
         assert vector_results[0].document.id == "doc1"
@@ -112,13 +109,11 @@ class TestAzureAISearchVectorStore:
         
         # Define a simple text embedder function for testing
         def mock_embedder(text: str) -> list[float]:
-            return [0.1, 0.2, 0.3, 0.4, 0.5]  # Return fixed embedding
+            return [0.1, 0.2, 0.3, 0.4, 0.5]
             
-        # Test text similarity search
         text_results = vector_store.similarity_search_by_text("test query", mock_embedder, k=2)
         assert len(text_results) == 2
         
-        # Test search by ID
         doc = vector_store.search_by_id("doc1")
         assert doc.id == "doc1"
         assert doc.text == "This is document 1"
@@ -126,15 +121,10 @@ class TestAzureAISearchVectorStore:
         
     async def test_empty_embedding(self, vector_store, mock_search_client):
         """Test similarity search by text with empty embedding."""
-        # Create a mock embedder that returns None
+        # Create a mock embedder that returns None and verify that no results are produced
         def none_embedder(text: str) -> None:
             return None
         
-        # Test the search
         results = vector_store.similarity_search_by_text("test query", none_embedder, k=1)
-        
-        # Verify no search was performed
         assert not mock_search_client.search.called
-        
-        # Verify empty results
         assert len(results) == 0
