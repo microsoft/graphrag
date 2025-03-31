@@ -161,24 +161,28 @@ class CosmosDBVectorStore(BaseVectorStore):
         try:
             query = f"SELECT TOP {k} c.id, c.text, c.vector, c.attributes, VectorDistance(c.vector, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.vector, @embedding)"  # noqa: S608
             query_params = [{"name": "@embedding", "value": query_embedding}]
-            items = list(self._container_client.query_items(
-                query=query,
-                parameters=query_params,
-                enable_cross_partition_query=True,
-            ))
+            items = list(
+                self._container_client.query_items(
+                    query=query,
+                    parameters=query_params,
+                    enable_cross_partition_query=True,
+                )
+            )
         except (CosmosHttpResponseError, ValueError):
             # Currently, the CosmosDB emulator does not support the VectorDistance function.
             # For emulator or test environments - fetch all items and calculate distance locally
             query = "SELECT c.id, c.text, c.vector, c.attributes FROM c"
-            items = list(self._container_client.query_items(
-                query=query,
-                enable_cross_partition_query=True,
-            ))
+            items = list(
+                self._container_client.query_items(
+                    query=query,
+                    enable_cross_partition_query=True,
+                )
+            )
 
             # Calculate cosine similarity locally (1 - cosine distance)
             from numpy import dot
             from numpy.linalg import norm
-            
+
             def cosine_similarity(a, b):
                 if norm(a) * norm(b) == 0:
                     return 0.0
@@ -191,7 +195,9 @@ class CosmosDBVectorStore(BaseVectorStore):
                 item["SimilarityScore"] = similarity
 
             # Sort by similarity score (higher is better) and take top k
-            items = sorted(items, key=lambda x: x.get("SimilarityScore", 0.0), reverse=True)[:k]
+            items = sorted(
+                items, key=lambda x: x.get("SimilarityScore", 0.0), reverse=True
+            )[:k]
 
         return [
             VectorStoreSearchResult(
