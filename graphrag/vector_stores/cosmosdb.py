@@ -251,9 +251,5 @@ class CosmosDBVectorStore(BaseVectorStore):
 
     def clear(self) -> None:
         """Clear the vector store."""
-        if self._container_client is None:
-            msg = "Container client is not initialized."
-            raise ValueError(msg)
-
         self._delete_container()
         self._delete_database()

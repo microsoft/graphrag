@@ -29,7 +29,7 @@ def test_vector_store_operations():
     try:
         vector_store.connect(
             connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-            database_name="testdb",
+            database_name="test_db",
         )
 
         docs = [

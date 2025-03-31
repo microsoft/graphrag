@@ -50,7 +50,7 @@ def test_vector_store_operations():
 
         # Changed to compare vectors using np.allclose for approximate equality
         assert doc.vector is not None
-        assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5], rtol=1e-5)
+        assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
         assert doc.attributes["title"] == "Doc 1"
 
         filter_query = vector_store.filter_by_id(["1"])
