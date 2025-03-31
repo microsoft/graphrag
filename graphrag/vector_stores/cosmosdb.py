@@ -100,16 +100,32 @@ class CosmosDBVectorStore(BaseVectorStore):
             "automatic": True,
             "includedPaths": [{"path": "/*"}],
             "excludedPaths": [{"path": "/_etag/?"}, {"path": "/vector/*"}],
-            "vectorIndexes": [{"path": "/vector", "type": "diskANN"}],
         }
 
-        # Create the container and container client
-        self._database_client.create_container_if_not_exists(
-            id=self._container_name,
-            partition_key=partition_key,
-            indexing_policy=indexing_policy,
-            vector_embedding_policy=vector_embedding_policy,
-        )
+        # Currently, the CosmosDB emulator does not support the diskANN policy.
+        try:
+            # First try with the standard diskANN policy
+            indexing_policy["vectorIndexes"] = [{"path": "/vector", "type": "diskANN"}]
+
+            # Create the container and container client
+            self._database_client.create_container_if_not_exists(
+                id=self._container_name,
+                partition_key=partition_key,
+                indexing_policy=indexing_policy,
+                vector_embedding_policy=vector_embedding_policy,
+            )
+        except CosmosHttpResponseError:
+            # If diskANN fails (likely in emulator), retry without vector indexes
+            indexing_policy.pop("vectorIndexes", None)
+
+            # Create the container with compatible indexing policy
+            self._database_client.create_container_if_not_exists(
+                id=self._container_name,
+                partition_key=partition_key,
+                indexing_policy=indexing_policy,
+                vector_embedding_policy=vector_embedding_policy,
+            )
+
         self._container_client = self._database_client.get_container_client(
             self._container_name
         )
