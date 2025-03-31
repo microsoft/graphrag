@@ -31,7 +31,6 @@ def test_vector_store_operations():
             database_name="testdb",
         )
         
-        # Create test documents and load
         docs = [
             VectorStoreDocument(
                 id="doc1",
@@ -48,10 +47,8 @@ def test_vector_store_operations():
         ]
         vector_store.load_documents(docs)
         
-        # Test filtering by ID
         vector_store.filter_by_id(["doc1"])
         
-        # Test search by ID
         doc = vector_store.search_by_id("doc1")
         assert doc.id == "doc1"
         assert doc.text == "This is document 1"
@@ -62,11 +59,9 @@ def test_vector_store_operations():
         def mock_embedder(text: str) -> list[float]:
             return [0.1, 0.2, 0.3, 0.4, 0.5]  # Return fixed embedding
             
-        # Test vector similarity search
         vector_results = vector_store.similarity_search_by_vector([0.1, 0.2, 0.3, 0.4, 0.5], k=2)
         assert len(vector_results) > 0
         
-        # Test text similarity search
         text_results = vector_store.similarity_search_by_text("test query", mock_embedder, k=2)
         assert len(text_results) > 0
     finally:

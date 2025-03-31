@@ -18,11 +18,9 @@ def test_vector_store_operations():
     # Create a temporary directory for the test database
     temp_dir = tempfile.mkdtemp()
     try:
-        # Initialize the vector store
         vector_store = LanceDBVectorStore(collection_name="test_collection")
         vector_store.connect(db_uri=temp_dir)
         
-        # Create test documents
         docs = [
             VectorStoreDocument(
                 id="1",
@@ -43,14 +41,10 @@ def test_vector_store_operations():
                 attributes={"title": "Doc 3", "category": "test"},
             ),
         ]
-        
-        # Load documents
         vector_store.load_documents(docs[:2])
         
-        # Test collection exists
         assert vector_store.collection_name in vector_store.db_connection.table_names()
         
-        # Test search by ID
         doc = vector_store.search_by_id("1")
         assert doc.id == "1"
         assert doc.text == "This is document 1"
@@ -60,14 +54,10 @@ def test_vector_store_operations():
         assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5], rtol=1e-5)
         assert doc.attributes["title"] == "Doc 1"
         
-        # Test filter by ID
         filter_query = vector_store.filter_by_id(["1"])
         assert filter_query == "id in ('1')"
         
-        # Test vector similarity search
         results = vector_store.similarity_search_by_vector([0.1, 0.2, 0.3, 0.4, 0.5], k=2)
-
-        # Modified to be more flexible with result count since we only have 2 documents total
         assert 1 <= len(results) <= 2
         assert isinstance(results[0].score, float)
         
@@ -81,7 +71,6 @@ def test_vector_store_operations():
         def mock_embedder(text: str) -> list[float]:
             return [0.1, 0.2, 0.3, 0.4, 0.5]
         
-        # Test text similarity search
         text_results = vector_store.similarity_search_by_text("test query", mock_embedder, k=2)
         assert 1 <= len(text_results) <= 2
         assert isinstance(text_results[0].score, float)
@@ -92,7 +81,6 @@ def test_vector_store_operations():
         assert non_existent.text is None
         assert non_existent.vector is None
     finally:
-        # Clean up - remove the temporary directory
         shutil.rmtree(temp_dir)
 
 
@@ -101,11 +89,10 @@ def test_empty_collection():
     # Create a temporary directory for the test database
     temp_dir = tempfile.mkdtemp()
     try:
-        # Initialize the vector store
         vector_store = LanceDBVectorStore(collection_name="empty_collection")
         vector_store.connect(db_uri=temp_dir)
         
-        # First create a schema with a sample document, then delete it
+        # Load the vector store with a document, then delete it
         sample_doc = VectorStoreDocument(
             id="tmp",
             text="Temporary document to create schema",
@@ -113,8 +100,6 @@ def test_empty_collection():
             attributes={"title": "Tmp"}
         )
         vector_store.load_documents([sample_doc])
-        
-        # Now clear and check the collection still exists
         vector_store.db_connection.open_table(vector_store.collection_name).delete("id = 'tmp'")
         
         # Should still have the collection
@@ -142,7 +127,6 @@ def test_filter_search():
     # Create a temporary directory for the test database
     temp_dir = tempfile.mkdtemp()
     try:
-        # Initialize the vector store
         vector_store = LanceDBVectorStore(collection_name="filter_collection")
         vector_store.connect(db_uri=temp_dir)
         
@@ -167,14 +151,10 @@ def test_filter_search():
                 attributes={"category": "vehicles"},
             ),
         ]
-        
-        # Load documents
         vector_store.load_documents(docs)
         
         # Filter to include only documents about animals
         vector_store.filter_by_id(["1", "2"])
-        
-        # Search with the filter applied
         results = vector_store.similarity_search_by_vector([0.1, 0.2, 0.3, 0.4, 0.5], k=3)
         
         # Should return at most 2 documents (the filtered ones)
@@ -183,5 +163,4 @@ def test_filter_search():
         assert "3" not in ids
         assert set(ids).issubset({"1", "2"})
     finally:
-        # Clean up - remove the temporary directory
         shutil.rmtree(temp_dir)

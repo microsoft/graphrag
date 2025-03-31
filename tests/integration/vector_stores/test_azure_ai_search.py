@@ -11,7 +11,6 @@ import pytest
 from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
 from graphrag.vector_stores.base import VectorStoreDocument
 
-# This could be set to real testing values when running in a pipeline
 TEST_AZURE_AI_SEARCH_URL = os.environ.get("TEST_AZURE_AI_SEARCH_URL", "https://test-url.search.windows.net")
 TEST_AZURE_AI_SEARCH_KEY = os.environ.get("TEST_AZURE_AI_SEARCH_KEY", "test_api_key")
 
