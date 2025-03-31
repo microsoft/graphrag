@@ -74,9 +74,9 @@ class CommunityReportsExtractor:
         output = None
         try:
             input_text = inputs[self._input_text_key]
-            prompt = self._extraction_prompt.replace(
-                "{" + self._input_text_key + "}", input_text
-            )
+            prompt = self._extraction_prompt.format(**{
+                self._input_text_key: input_text
+            })
             response = await self._model.achat(
                 prompt,
                 json=True,  # Leaving this as True to avoid creating new cache entries
