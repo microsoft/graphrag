@@ -48,7 +48,6 @@ def test_vector_store_operations():
         assert doc.id == "1"
         assert doc.text == "This is document 1"
 
-        # Changed to compare vectors using np.allclose for approximate equality
         assert doc.vector is not None
         assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
         assert doc.attributes["title"] == "Doc 1"

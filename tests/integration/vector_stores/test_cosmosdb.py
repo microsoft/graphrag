@@ -5,6 +5,7 @@
 
 import sys
 
+import numpy as np
 import pytest
 
 from graphrag.vector_stores.base import VectorStoreDocument
@@ -53,7 +54,8 @@ def test_vector_store_operations():
         doc = vector_store.search_by_id("doc1")
         assert doc.id == "doc1"
         assert doc.text == "This is document 1"
-        assert doc.vector == [0.1, 0.2, 0.3, 0.4, 0.5]
+        assert doc.vector is not None
+        assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
         assert doc.attributes["title"] == "Doc 1"
 
         # Define a simple text embedder function for testing
