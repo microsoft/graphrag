@@ -69,6 +69,7 @@ networkx = "^3.4.2"
 pandas = "^2.2.3"
 pyarrow = "^15.0.0"
 umap-learn = "^0.5.6"
+scipy = "^1.12.0"
 
 # Configuration
 pyyaml = "^6.0.2"
