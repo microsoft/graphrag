@@ -13,19 +13,19 @@ snapshots:
 embed_graph:
   enabled: true # will generate node2vec embeddings for nodes
 umap:
-  enabled: true # will generate UMAP embeddings for nodes
+  enabled: true # will generate UMAP embeddings for nodes, giving the entities table an x/y position to plot
 ```
 After running the indexing pipeline over your data, there will be an output folder (defined by the `storage.base_dir` setting).
 
 - **Output Folder**: Contains artifacts from the LLM’s indexing pass.
 
 ## 2. Locate the Knowledge Graph
-In the output folder, look for a file named `merged_graph.graphml`. graphml is a standard [file format](http://graphml.graphdrawing.org) supported by many visualization tools. We recommend trying [Gephi](https://gephi.org).
+In the output folder, look for a file named `graph.graphml`. graphml is a standard [file format](http://graphml.graphdrawing.org) supported by many visualization tools. We recommend trying [Gephi](https://gephi.org).
 
 ## 3. Open the Graph in Gephi
 1. Install and open Gephi
 2. Navigate to the `output` folder containing the various parquet files.
-3. Import the `merged_graph.graphml` file into Gephi. This will result in a fairly plain view of the undirected graph nodes and edges.
+3. Import the `graph.graphml` file into Gephi. This will result in a fairly plain view of the undirected graph nodes and edges.
 
 <p align="center">
    <img src="../img/viz_guide/gephi-initial-graph-example.png" alt="A basic graph visualization by Gephi" width="300"/>
