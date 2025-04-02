@@ -20,6 +20,8 @@ from graphrag.language_model.response.base import (
 
 async def test_create_custom_chat_model():
     class CustomChatModel:
+        config: Any
+
         def __init__(self, **kwargs):
             pass
 
@@ -54,6 +56,8 @@ async def test_create_custom_chat_model():
 
 async def test_create_custom_embedding_llm():
     class CustomEmbeddingModel:
+        config: Any
+
         def __init__(self, **kwargs):
             pass
 

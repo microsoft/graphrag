@@ -213,7 +213,7 @@ def test_sort_context():
 
 
 def test_sort_context_max_tokens():
-    ctx = sort_context(context, max_tokens=800)
+    ctx = sort_context(context, max_context_tokens=800)
     assert ctx is not None, "Context is none"
     num = num_tokens(ctx)
     assert num <= 800, f"num_tokens is not less than or equal to 800: {num}"

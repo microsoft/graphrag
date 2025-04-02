@@ -64,7 +64,7 @@ async def summarize_communities(
             community_hierarchy_df=community_hierarchy,
             local_context_df=local_contexts,
             level=level,
-            max_tokens=max_input_length,
+            max_context_tokens=max_input_length,
         )
         level_contexts.append(level_context)
 

@@ -58,7 +58,7 @@ def get_context_string(
 def sort_context(
     local_context: list[dict],
     sub_community_reports: list[dict] | None = None,
-    max_tokens: int | None = None,
+    max_context_tokens: int | None = None,
 ) -> str:
     """Sort local context (list of text units) by total degree of associated nodes in descending order."""
     sorted_text_units = sorted(
@@ -69,11 +69,11 @@ def sort_context(
     context_string = ""
     for record in sorted_text_units:
         current_text_units.append(record)
-        if max_tokens:
+        if max_context_tokens:
             new_context_string = get_context_string(
                 current_text_units, sub_community_reports
             )
-            if num_tokens(new_context_string) > max_tokens:
+            if num_tokens(new_context_string) > max_context_tokens:
                 break
 
             context_string = new_context_string

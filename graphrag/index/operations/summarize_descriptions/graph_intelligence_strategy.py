@@ -47,22 +47,18 @@ async def run_summarize_descriptions(
     """Run the entity extraction chain."""
     # Extraction Arguments
     summarize_prompt = args.get("summarize_prompt", None)
-    entity_name_key = args.get("entity_name_key", "entity_name")
-    input_descriptions_key = args.get("input_descriptions_key", "description_list")
-    max_tokens = args.get("max_tokens", None)
-
+    max_input_tokens = args["max_input_tokens"]
+    max_summary_length = args["max_summary_length"]
     extractor = SummarizeExtractor(
         model_invoker=model,
         summarization_prompt=summarize_prompt,
-        entity_name_key=entity_name_key,
-        input_descriptions_key=input_descriptions_key,
         on_error=lambda e, stack, details: (
             callbacks.error("Entity Extraction Error", e, stack, details)
             if callbacks
             else None
         ),
-        max_summary_length=args.get("max_summary_length", None),
-        max_input_tokens=max_tokens,
+        max_summary_length=max_summary_length,
+        max_input_tokens=max_input_tokens,
     )
 
     result = await extractor(id=id, descriptions=descriptions)

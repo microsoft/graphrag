@@ -42,6 +42,7 @@ where 1, 2, 3, 7, 34, 46, and 64 represent the id (not the index) of the relevan
 
 Do not include information where the supporting evidence for it is not provided.
 
+Limit your response length to {max_length} words.
 
 ---Data tables---
 
@@ -71,6 +72,8 @@ For example:
 where 1, 2, 3, 7, 34, 46, and 64 represent the id (not the index) of the relevant data report in the provided tables.
 
 Do not include information where the supporting evidence for it is not provided.
+
+Limit your response length to {max_length} words.
 
 The response should be JSON formatted as follows:
 {{

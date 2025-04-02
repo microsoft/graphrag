@@ -73,6 +73,7 @@ def assert_language_model_configs(
     assert actual.encoding_model == expected.encoding_model
     assert actual.max_tokens == expected.max_tokens
     assert actual.temperature == expected.temperature
+    assert actual.max_completion_tokens == expected.max_completion_tokens
     assert actual.top_p == expected.top_p
     assert actual.n == expected.n
     assert actual.frequency_penalty == expected.frequency_penalty
@@ -224,7 +225,6 @@ def assert_extract_graph_configs(
     assert actual.entity_types == expected.entity_types
     assert actual.max_gleanings == expected.max_gleanings
     assert actual.strategy == expected.strategy
-    assert actual.encoding_model == expected.encoding_model
     assert actual.model_id == expected.model_id
 
 
@@ -291,7 +291,6 @@ def assert_extract_claims_configs(
     assert actual.description == expected.description
     assert actual.max_gleanings == expected.max_gleanings
     assert actual.strategy == expected.strategy
-    assert actual.encoding_model == expected.encoding_model
     assert actual.model_id == expected.model_id
 
 
@@ -318,11 +317,7 @@ def assert_local_search_configs(
     )
     assert actual.top_k_entities == expected.top_k_entities
     assert actual.top_k_relationships == expected.top_k_relationships
-    assert actual.temperature == expected.temperature
-    assert actual.top_p == expected.top_p
-    assert actual.n == expected.n
-    assert actual.max_tokens == expected.max_tokens
-    assert actual.llm_max_tokens == expected.llm_max_tokens
+    assert actual.max_context_tokens == expected.max_context_tokens
 
 
 def assert_global_search_configs(
@@ -331,23 +326,14 @@ def assert_global_search_configs(
     assert actual.map_prompt == expected.map_prompt
     assert actual.reduce_prompt == expected.reduce_prompt
     assert actual.knowledge_prompt == expected.knowledge_prompt
-    assert actual.temperature == expected.temperature
-    assert actual.top_p == expected.top_p
-    assert actual.n == expected.n
-    assert actual.max_tokens == expected.max_tokens
+    assert actual.max_context_tokens == expected.max_context_tokens
     assert actual.data_max_tokens == expected.data_max_tokens
-    assert actual.map_max_tokens == expected.map_max_tokens
-    assert actual.reduce_max_tokens == expected.reduce_max_tokens
-    assert actual.concurrency == expected.concurrency
-    assert actual.dynamic_search_llm == expected.dynamic_search_llm
+    assert actual.map_max_length == expected.map_max_length
+    assert actual.reduce_max_length == expected.reduce_max_length
     assert actual.dynamic_search_threshold == expected.dynamic_search_threshold
     assert actual.dynamic_search_keep_parent == expected.dynamic_search_keep_parent
     assert actual.dynamic_search_num_repeats == expected.dynamic_search_num_repeats
     assert actual.dynamic_search_use_summary == expected.dynamic_search_use_summary
-    assert (
-        actual.dynamic_search_concurrent_coroutines
-        == expected.dynamic_search_concurrent_coroutines
-    )
     assert actual.dynamic_search_max_level == expected.dynamic_search_max_level
 
 
@@ -356,10 +342,6 @@ def assert_drift_search_configs(
 ) -> None:
     assert actual.prompt == expected.prompt
     assert actual.reduce_prompt == expected.reduce_prompt
-    assert actual.temperature == expected.temperature
-    assert actual.top_p == expected.top_p
-    assert actual.n == expected.n
-    assert actual.max_tokens == expected.max_tokens
     assert actual.data_max_tokens == expected.data_max_tokens
     assert actual.reduce_max_tokens == expected.reduce_max_tokens
     assert actual.reduce_temperature == expected.reduce_temperature
@@ -392,15 +374,7 @@ def assert_basic_search_configs(
     actual: BasicSearchConfig, expected: BasicSearchConfig
 ) -> None:
     assert actual.prompt == expected.prompt
-    assert actual.text_unit_prop == expected.text_unit_prop
-    assert (
-        actual.conversation_history_max_turns == expected.conversation_history_max_turns
-    )
-    assert actual.temperature == expected.temperature
-    assert actual.top_p == expected.top_p
-    assert actual.n == expected.n
-    assert actual.max_tokens == expected.max_tokens
-    assert actual.llm_max_tokens == expected.llm_max_tokens
+    assert actual.k == expected.k
 
 
 def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) -> None:

@@ -55,7 +55,7 @@ async def run(
         splitter,
     )
     log.info(
-        "embedding %d inputs via %d snippets using %d batches. max_batch_size=%d, max_tokens=%d",
+        "embedding %d inputs via %d snippets using %d batches. max_batch_size=%d, batch_max_tokens=%d",
         len(input),
         len(texts),
         len(text_batches),
