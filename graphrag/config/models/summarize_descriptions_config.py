@@ -3,12 +3,11 @@
 
 """Parameterization settings for the default configuration."""
 
-from pathlib import Path
-
 from pydantic import BaseModel, Field
 
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.config.prompt_getter import get_prompt_content
 
 
 class SummarizeDescriptionsConfig(BaseModel):
@@ -43,10 +42,6 @@ class SummarizeDescriptionsConfig(BaseModel):
             "type": SummarizeStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
             "num_threads": model_config.concurrent_requests,
-            "summarize_prompt": (Path(root_dir) / self.prompt).read_text(
-                encoding="utf-8"
-            )
-            if self.prompt
-            else None,
+            "summarize_prompt": get_prompt_content(self.prompt, root_dir),
             "max_summary_length": self.max_length,
         }

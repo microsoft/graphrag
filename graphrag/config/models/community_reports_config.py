@@ -3,12 +3,11 @@
 
 """Parameterization settings for the default configuration."""
 
-from pathlib import Path
-
 from pydantic import BaseModel, Field
 
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.config.prompt_getter import get_prompt_content
 
 
 class CommunityReportsConfig(BaseModel):
@@ -51,16 +50,8 @@ class CommunityReportsConfig(BaseModel):
             "type": CreateCommunityReportsStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
             "num_threads": model_config.concurrent_requests,
-            "graph_prompt": (Path(root_dir) / self.graph_prompt).read_text(
-                encoding="utf-8"
-            )
-            if self.graph_prompt
-            else None,
-            "text_prompt": (Path(root_dir) / self.text_prompt).read_text(
-                encoding="utf-8"
-            )
-            if self.text_prompt
-            else None,
+            "graph_prompt": get_prompt_content(self.graph_prompt, root_dir),
+            "text_prompt": get_prompt_content(self.text_prompt, root_dir),
             "max_report_length": self.max_length,
             "max_input_length": self.max_input_length,
         }

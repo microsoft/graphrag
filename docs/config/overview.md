@@ -8,4 +8,5 @@ The default configuration mode is the simplest way to get started with the Graph
 
 - [Init command](init.md) (recommended)
 - [Using YAML for deeper control](yaml.md)
+- [Using Amazon S3 for storage](s3.md)
 - [Purely using environment variables](env_vars.md) (not recommended)
