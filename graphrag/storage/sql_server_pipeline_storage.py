@@ -3,14 +3,12 @@
 
 """Azure SQL Server implementation of PipelineStorage."""
 
-import json
 import logging
 import re
 import struct
 from collections.abc import Iterator
-from datetime import datetime, timezone
-from typing import Any
 from io import BytesIO
+from typing import Any
 
 import pandas as pd
 import pyodbc
@@ -77,7 +75,8 @@ class SQLServerPipelineStorage(PipelineStorage):
             file_filter: Optional filter dictionary
             max_count: Maximum number of results to return
             
-        Returns:
+        Returns
+        -------
             Iterator of tuples with table name and match groups
         """
         log.info(
@@ -134,66 +133,55 @@ class SQLServerPipelineStorage(PipelineStorage):
         """Get data from SQL Server.
         
         For parquet files, this will query all rows from the table corresponding to the key.
-        For other files, this will look for a special metadata table.
         
         Args:
             key: The name of the table/file to retrieve
             as_bytes: If True, returns parquet bytes for DataFrame data
             encoding: Not used for SQL Server
             
-        Returns:
+        Returns
+        -------
             Parquet bytes or JSON string representation of the data
         """
         try:
-            # If this is a parquet file request, return the table contents as parquet
-            if as_bytes and key.endswith('.parquet'):
-                table_name = key.split('.')[0]
+            # Only retrieve table contents for parquet files
+            if as_bytes and key.endswith(".parquet"):
+                table_name = key.split(".")[0]
                 
                 # Query all data from the table
-                query = f"SELECT * FROM [{table_name}]"
-                df = pd.read_sql(query, self._connection)
-                
-                # Convert to parquet bytes
+                query = f"SELECT * FROM [{table_name}]"  # noqa: S608
+                df = pd.read_sql(query, self._connection)  # noqa: PD901
                 return df.to_parquet()
-            else:
-                # For other types of data, assume it's stored in a metadata table
-                cursor = self._connection.cursor()
-                cursor.execute("SELECT metadata_value FROM metadata_store WHERE metadata_key = ?", key)
-                row = cursor.fetchone()
-                if row:
-                    return row[0]  # Return the stored JSON string
-                return None
+            
         except Exception:
             log.exception("Error reading data %s", key)
+        else:
             return None
             
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Set data in SQL Server.
         
         For parquet files, this creates or replaces a table with the DataFrame data.
-        For other files, this stores the data in a special metadata table.
         
         Args:
             key: The table/file name
-            value: Either bytes (parquet) or string (JSON)
+            value: Either bytes (parquet) or string (JSON) (only parquet files are written to SQL Server)
             encoding: Not used for SQL Server
         """
         try:
             cursor = self._connection.cursor()
             
-            # For parquet files (DataFrame data)
-            if isinstance(value, bytes) and key.endswith('.parquet'):
-                table_name = key.split('.')[0]
+            # Only store parquet file data
+            if isinstance(value, bytes) and key.endswith(".parquet"):
+                table_name = key.split(".")[0]
+                df = pd.read_parquet(BytesIO(value))  # noqa: PD901
                 
-                # Read DataFrame from parquet bytes
-                df = pd.read_parquet(BytesIO(value))
-                
-                # Create table (overwrite if exists)
+                # Overwrite the table if it already exists
                 cursor.execute(f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]")
                 
                 # Build CREATE TABLE statement based on DataFrame columns
                 columns = []
-                for col_name, dtype in zip(df.columns, df.dtypes):
+                for col_name, dtype in zip(df.columns, df.dtypes, strict=False):
                     sql_type = "NVARCHAR(MAX)"  # Default type
                     
                     # Map pandas dtypes to SQL Server types
@@ -211,39 +199,16 @@ class SQLServerPipelineStorage(PipelineStorage):
                 create_table_sql = f"CREATE TABLE [{table_name}] ({', '.join(columns)})"
                 cursor.execute(create_table_sql)
                 
-                # Insert data
+                # Insert parquet data into SQL server
                 for _, row in df.iterrows():
                     placeholders = ", ".join(["?" for _ in range(len(df.columns))])
                     column_names = ", ".join([f"[{col}]" for col in df.columns])
-                    insert_sql = f"INSERT INTO [{table_name}] ({column_names}) VALUES ({placeholders})"
+                    insert_sql = f"INSERT INTO [{table_name}] ({column_names}) VALUES ({placeholders})"  # noqa: S608
                     
                     # Handle None/NaN values and convert to list
                     values = [None if pd.isna(val) else val for val in row.tolist()]
                     cursor.execute(insert_sql, values)
-            else:
-                # For other types (metadata/JSON data), store in a metadata table
-                
-                # Ensure metadata table exists
-                cursor.execute("""
-                IF OBJECT_ID('metadata_store', 'U') IS NULL
-                CREATE TABLE metadata_store (
-                    metadata_key NVARCHAR(255) PRIMARY KEY,
-                    metadata_value NVARCHAR(MAX),
-                    created_at DATETIME2 DEFAULT GETUTCDATE()
-                )
-                """)
-                
-                # Upsert the metadata value
-                cursor.execute("""
-                MERGE metadata_store AS target
-                USING (SELECT ? AS metadata_key, ? AS metadata_value) AS source
-                ON target.metadata_key = source.metadata_key
-                WHEN MATCHED THEN
-                    UPDATE SET target.metadata_value = source.metadata_value, target.created_at = GETUTCDATE()
-                WHEN NOT MATCHED THEN
-                    INSERT (metadata_key, metadata_value) VALUES (source.metadata_key, source.metadata_value);
-                """, key, value)
-                
+
             self._connection.commit()
         except Exception:
             self._connection.rollback()
@@ -255,23 +220,21 @@ class SQLServerPipelineStorage(PipelineStorage):
         Args:
             key: The table/file name to check
             
-        Returns:
+        Returns
+        -------
             True if the table or metadata entry exists
         """
         try:
             cursor = self._connection.cursor()
-            
-            if key.endswith('.parquet'):
-                # Check for table existence
-                table_name = key.split('.')[0]
+            if key.endswith(".parquet"):
+                table_name = key.split(".")[0]
                 cursor.execute("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = ?", table_name)
-                return cursor.fetchone() is not None
-            else:
-                # Check for metadata entry
-                cursor.execute("SELECT 1 FROM metadata_store WHERE metadata_key = ?", key)
                 return cursor.fetchone() is not None
         except Exception:
             log.exception("Error checking existence of %s", key)
+            return False
+        else:
+            # Only dataframe outputs are stored in SQL server, so return false
             return False
     
     async def delete(self, key: str) -> None:
@@ -282,14 +245,9 @@ class SQLServerPipelineStorage(PipelineStorage):
         """
         try:
             cursor = self._connection.cursor()
-            
-            if key.endswith('.parquet'):
-                # Delete table
-                table_name = key.split('.')[0]
+            if key.endswith(".parquet"):
+                table_name = key.split(".")[0]
                 cursor.execute(f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]")
-            else:
-                # Delete metadata entry
-                cursor.execute("DELETE FROM metadata_store WHERE metadata_key = ?", key)
                 
             self._connection.commit()
         except Exception:
@@ -316,17 +274,18 @@ class SQLServerPipelineStorage(PipelineStorage):
         Args:
             key: The table/file name
             
-        Returns:
+        Returns
+        -------
             Formatted timestamp of creation date or empty string
         """
         try:
             cursor = self._connection.cursor()
             
-            if key.endswith('.parquet'):
+            if key.endswith(".parquet"):
                 # Get table creation date from system tables
-                table_name = key.split('.')[0]
+                table_name = key.split(".")[0]
                 cursor.execute("""
-                    SELECT create_date 
+                    SELECT create_date
                     FROM sys.tables t
                     JOIN sys.objects o ON t.object_id = o.object_id
                     WHERE t.name = ?
@@ -340,10 +299,10 @@ class SQLServerPipelineStorage(PipelineStorage):
                 row = cursor.fetchone()
                 if row:
                     return get_timestamp_formatted_with_local_tz(row[0])
-            
-            return ""
         except Exception:
             log.exception("Error getting creation date for %s", key)
+            return ""
+        else:
             return ""
     
 def _create_progress_status(
