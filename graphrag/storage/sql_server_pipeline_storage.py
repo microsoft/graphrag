@@ -55,6 +55,11 @@ class SQLServerPipelineStorage(PipelineStorage):
         # Create initial connection to database
         connection = pyodbc.connect(self._local_connection_string, attrs_before={sql_copt_ss_access_token: token_struct})
         self._connection = connection
+        log.info(
+            "Creating connection to SQL Server database %s on server %s",
+            database_name,
+            database_server_name,
+        )
 
     def find(
         self,
@@ -147,8 +152,6 @@ class SQLServerPipelineStorage(PipelineStorage):
             # Only retrieve table contents for parquet files
             if as_bytes and key.endswith(".parquet"):
                 table_name = key.split(".")[0]
-                
-                # Query all data from the table
                 query = f"SELECT * FROM [{table_name}]"  # noqa: S608
                 df = pd.read_sql(query, self._connection)  # noqa: PD901
                 return df.to_parquet()
@@ -248,6 +251,8 @@ class SQLServerPipelineStorage(PipelineStorage):
         """
         try:
             cursor = self._connection.cursor()
+
+            # Only delete from SQL Server if the key is a parquet file
             if key.endswith(".parquet"):
                 table_name = key.split(".")[0]
                 cursor.execute(f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]")
@@ -286,8 +291,8 @@ class SQLServerPipelineStorage(PipelineStorage):
         try:
             cursor = self._connection.cursor()
             
+            # Only get creation date for parquet files
             if key.endswith(".parquet"):
-                # Get table creation date from system tables
                 table_name = key.split(".")[0]
                 cursor.execute("""
                     SELECT create_date
