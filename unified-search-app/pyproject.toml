@@ -29,8 +29,8 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
-start = "streamlit run app/home.py"
-start_prod = "streamlit run app/home.py --server.port=8501 --server.address=0.0.0.0"
+start = "streamlit run app/home_page.py"
+start_prod = "streamlit run app/home_page.py --server.port=8501 --server.address=0.0.0.0"
 
 [tool.pyright]
 include = ["app"]

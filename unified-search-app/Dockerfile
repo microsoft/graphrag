@@ -17,4 +17,4 @@ RUN poetry install --no-root
 
 # Run application
 EXPOSE 8501
-ENTRYPOINT ["poetry","run","streamlit", "run", "./app/home.py"]
+ENTRYPOINT ["poetry","run","streamlit", "run", "./app/home_page.py"]
