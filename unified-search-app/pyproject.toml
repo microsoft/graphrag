@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "unified-copilot"
+version = "1.0.0"
+description = ""
+authors = ["GraphRAG team"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+streamlit = "1.43.0"
+azure-search-documents = "^11.4.0"
+azure-storage-blob = "^12.20.0"
+azure-identity = "^1.16.0"
+graphrag = "2.0.0"
+altair = "^5.3.0"
+streamlit-agraph = "^0.0.45"
+st-tabs = "^0.1.1"
+spacy = ">=3.8.4,<4.0.0"
+
+[tool.poetry.group.dev.dependencies]
+poethepoet = "^0.26.1"
+ipykernel = "^6.29.4"
+pyright = "^1.1.349"
+ruff = "^0.4.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+start = "streamlit run app/home_page.py"
+start_prod = "streamlit run app/home_page.py --server.port=8501 --server.address=0.0.0.0"
+
+[tool.pyright]
+include = ["app"]
+exclude = ["**/node_modules", "**/__pycache__"]
