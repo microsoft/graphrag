@@ -187,8 +187,6 @@ class SQLServerPipelineStorage(PipelineStorage):
 
                 # Create DataFrame from processed data
                 data_frame = pd.DataFrame(data, columns=columns)
-
-                # Parquet files are always returned in binary format
                 buffer = BytesIO()
                 data_frame.to_parquet(buffer)
                 buffer.seek(0)
@@ -218,8 +216,6 @@ class SQLServerPipelineStorage(PipelineStorage):
             if isinstance(value, bytes) and key.endswith(".parquet"):
                 cursor = self._connection.cursor()
                 table_name = key.split(".")[0]
-
-                # Convert parquet bytes to DataFrame
                 data_frame = pd.read_parquet(BytesIO(value))
 
                 # Overwrite the table if it already exists
@@ -261,7 +257,6 @@ class SQLServerPipelineStorage(PipelineStorage):
                     values = []
                     for val in row:
                         if isinstance(val, np.ndarray | list):
-                            # Convert arrays/lists to string representation
                             values.append(str(val))
                         elif pd.isna(val):
                             values.append(None)
@@ -291,6 +286,7 @@ class SQLServerPipelineStorage(PipelineStorage):
             True if the table or metadata entry exists
         """
         try:
+            # Only check existence for parquet files, otherwise return False
             if key.endswith(".parquet"):
                 cursor = self._connection.cursor()
                 table_name = key.split(".")[0]
@@ -315,6 +311,7 @@ class SQLServerPipelineStorage(PipelineStorage):
         Args:
             key: The table/file name to delete
         """
+        # Only delete parquet files
         if key.endswith(".parquet"):
             try:
                 table_name = key.split(".")[0]
