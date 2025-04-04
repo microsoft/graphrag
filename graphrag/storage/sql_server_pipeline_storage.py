@@ -100,11 +100,9 @@ class SQLServerPipelineStorage(PipelineStorage):
             )
         
         try:
-            # Query SQL Server for all table names in the current database
             cursor = self._connection.cursor()
             cursor.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
             
-            # Get all tables
             tables = [row[0] for row in cursor.fetchall()]
             num_total = len(tables)
             num_loaded = 0
@@ -150,22 +148,18 @@ class SQLServerPipelineStorage(PipelineStorage):
             Parquet bytes or JSON string representation of the data
         """
         # Only retrieve table contents for parquet files
-        if key.endswith(".parquet"):
+        if key.endswith(".parquet") and as_bytes:
             try:
                 table_name = key.split(".")[0]
                 query = f"SELECT * FROM [{table_name}]"  # noqa: S608
                 
-                # Execute query directly with pyodbc cursor
                 cursor = self._connection.cursor()
                 cursor.execute(query)
-                
-                # Get column names from cursor description
+
                 columns = [column[0] for column in cursor.description]
-                
-                # Fetch all rows
                 rows = cursor.fetchall()
                 
-                # Convert to DataFrame manually
+                # Construct a dataframe from the query results
                 data = []
                 for row in rows:
                     # Convert row to Python native types
@@ -182,21 +176,17 @@ class SQLServerPipelineStorage(PipelineStorage):
                 # Create DataFrame from processed data
                 data_frame = pd.DataFrame(data, columns=columns)
                 
-                # Return binary content if requested
-                if as_bytes:
-                    buffer = BytesIO()
-                    data_frame.to_parquet(buffer)
-                    buffer.seek(0)
-                    return buffer.read()
-                else:
-                    # Otherwise return DataFrame
-                    return data_frame
-                    
-            except Exception as e:
+                # Parquet files are always returned in binary format
+                buffer = BytesIO()
+                data_frame.to_parquet(buffer)
+                buffer.seek(0)
+                return buffer.read()
+            except Exception:
                 log.exception("Error reading data %s", key)
                 return None
-        log.warning("Attempted to call get() on SQL Server storage with non-parquet key %s. Skipping...", key)
-        return None
+        else:
+            log.warning("Attempted to call get() on SQL Server storage with non-parquet key %s. Skipping...", key)
+            return None
             
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Set data in SQL Server.
@@ -262,9 +252,9 @@ class SQLServerPipelineStorage(PipelineStorage):
                 log.debug("Successfully stored %s in SQL Server", key)
             else:
                 log.warning("Attempted to call set() on SQL Server storage with non-parquet key %s. Skipping...", key)
-        except Exception as e:
+        except Exception:
             self._connection.rollback()
-            log.exception("Error writing data %s: %s", key, str(e))
+            log.exception("Error writing data %s: %s", key)
     
     async def has(self, key: str) -> bool:
         """Check if a table/file exists in SQL Server.
@@ -282,8 +272,8 @@ class SQLServerPipelineStorage(PipelineStorage):
                 table_name = key.split(".")[0]
                 cursor.execute("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = ?", table_name)
                 return cursor.fetchone() is not None
-        except Exception as e:
-            log.exception("Error checking existence of %s: %s", key, str(e))
+        except Exception:
+            log.exception("Error checking existence of %s: %s", key)
             return False
         else:
             log.debug("Attempted to call has() on SQL Server storage with non-parquet key %s", key)
@@ -302,9 +292,9 @@ class SQLServerPipelineStorage(PipelineStorage):
                 cursor.execute(f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]")
                 self._connection.commit()
                 log.debug("Successfully deleted %s from SQL Server", key)
-            except Exception as e:
+            except Exception:
                 self._connection.rollback()
-                log.exception("Error deleting %s: %s", key, str(e))
+                log.exception("Error deleting %s: %s", key)
         else:
             log.debug("Attempted to call delete() on SQL Server storage with non-parquet key %s. Skipping...", key)
 
@@ -347,8 +337,8 @@ class SQLServerPipelineStorage(PipelineStorage):
                 if row:
                     return get_timestamp_formatted_with_local_tz(row[0])
                 return ""
-        except Exception as e:
-            log.exception("Error getting creation date for %s: %s", key, str(e))
+        except Exception:
+            log.exception("Error getting creation date for %s: %s", key)
             return ""
         else:
             log.debug("Attempted to call get_creation_date() on SQL Server storage with non-parquet key %s", key)
