@@ -25,6 +25,7 @@ from graphrag.storage.pipeline_storage import (
 
 log = logging.getLogger(__name__)
 
+
 class SQLServerPipelineStorage(PipelineStorage):
     """Azure SQL Server implementation of PipelineStorage."""
 
@@ -49,12 +50,19 @@ class SQLServerPipelineStorage(PipelineStorage):
         credential = DefaultAzureCredential()
 
         # These connection options are recommended by Microsoft
-        token_bytes = credential.get_token("https://database.windows.net/.default").token.encode("UTF-16-LE")
-        token_struct = struct.pack(f"<I{len(token_bytes)}s", len(token_bytes), token_bytes)
+        token_bytes = credential.get_token(
+            "https://database.windows.net/.default"
+        ).token.encode("UTF-16-LE")
+        token_struct = struct.pack(
+            f"<I{len(token_bytes)}s", len(token_bytes), token_bytes
+        )
         sql_copt_ss_access_token = 1256
 
         # Create initial connection to database
-        connection = pyodbc.connect(self._local_connection_string, attrs_before={sql_copt_ss_access_token: token_struct})
+        connection = pyodbc.connect(
+            self._local_connection_string,
+            attrs_before={sql_copt_ss_access_token: token_struct},
+        )
         self._connection = connection
         log.info(
             "Creating connection to SQL Server database %s on server %s",
@@ -71,16 +79,16 @@ class SQLServerPipelineStorage(PipelineStorage):
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:
         """Find tables in SQL Server matching a file pattern.
-        
+
         This method lists available tables that match the pattern (table names in SQL Server).
-        
+
         Args:
             file_pattern: The regex pattern to match against table names
             base_dir: Not used for SQL Server
             progress: Optional progress logger
             file_filter: Optional filter dictionary
             max_count: Maximum number of results to return
-            
+
         Returns
         -------
             Iterator of tuples with table name and match groups
@@ -90,7 +98,7 @@ class SQLServerPipelineStorage(PipelineStorage):
             self._database_name,
             file_pattern.pattern,
         )
-        
+
         def item_filter(item: dict[str, Any]) -> bool:
             if file_filter is None:
                 return True
@@ -98,19 +106,21 @@ class SQLServerPipelineStorage(PipelineStorage):
                 re.search(value, item.get(key, ""))
                 for key, value in file_filter.items()
             )
-        
+
         try:
             cursor = self._connection.cursor()
-            cursor.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
-            
+            cursor.execute(
+                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'"
+            )
+
             tables = [row[0] for row in cursor.fetchall()]
             num_total = len(tables)
             num_loaded = 0
             num_filtered = 0
-            
+
             if num_total == 0:
                 return
-                
+
             for table_name in tables:
                 match = file_pattern.search(table_name)
                 if match:
@@ -124,25 +134,27 @@ class SQLServerPipelineStorage(PipelineStorage):
                         num_filtered += 1
                 else:
                     num_filtered += 1
-                
+
                 if progress is not None:
-                    progress(_create_progress_status(num_loaded, num_filtered, num_total))
-        
+                    progress(
+                        _create_progress_status(num_loaded, num_filtered, num_total)
+                    )
+
         except Exception:
             log.exception("An error occurred while searching for tables in SQL Server")
-            
+
     async def get(
         self, key: str, as_bytes: bool | None = None, encoding: str | None = None
     ) -> Any:
         """Get data from SQL Server.
-        
+
         For parquet files, this will query all rows from the table corresponding to the key.
-        
+
         Args:
             key: The name of the table/file to retrieve
             as_bytes: If True, returns parquet bytes for DataFrame data
             encoding: Not used for SQL Server
-            
+
         Returns
         -------
             Parquet bytes or JSON string representation of the data
@@ -152,13 +164,13 @@ class SQLServerPipelineStorage(PipelineStorage):
             try:
                 table_name = key.split(".")[0]
                 query = f"SELECT * FROM [{table_name}]"  # noqa: S608
-                
+
                 cursor = self._connection.cursor()
                 cursor.execute(query)
 
                 columns = [column[0] for column in cursor.description]
                 rows = cursor.fetchall()
-                
+
                 # Construct a dataframe from the query results
                 data = []
                 for row in rows:
@@ -172,10 +184,10 @@ class SQLServerPipelineStorage(PipelineStorage):
                         else:
                             processed_row.append(val)
                     data.append(processed_row)
-                
+
                 # Create DataFrame from processed data
                 data_frame = pd.DataFrame(data, columns=columns)
-                
+
                 # Parquet files are always returned in binary format
                 buffer = BytesIO()
                 data_frame.to_parquet(buffer)
@@ -185,14 +197,17 @@ class SQLServerPipelineStorage(PipelineStorage):
                 log.exception("Error reading data %s", key)
                 return None
         else:
-            log.warning("Attempted to call get() on SQL Server storage with non-parquet key %s. Skipping...", key)
+            log.warning(
+                "Attempted to call get() on SQL Server storage with non-parquet key %s. Skipping...",
+                key,
+            )
             return None
-            
+
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Set data in SQL Server.
-        
+
         For parquet files, this creates or replaces a table with the DataFrame data.
-        
+
         Args:
             key: The table/file name
             value: Either bytes (parquet) or string (JSON) (only parquet files are written to SQL Server)
@@ -203,18 +218,22 @@ class SQLServerPipelineStorage(PipelineStorage):
             if isinstance(value, bytes) and key.endswith(".parquet"):
                 cursor = self._connection.cursor()
                 table_name = key.split(".")[0]
-                
+
                 # Convert parquet bytes to DataFrame
                 data_frame = pd.read_parquet(BytesIO(value))
-                
+
                 # Overwrite the table if it already exists
-                cursor.execute(f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]")
-                
+                cursor.execute(
+                    f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]"
+                )
+
                 # Build CREATE TABLE statement based on DataFrame columns
                 columns = []
-                for col_name, dtype in zip(data_frame.columns, data_frame.dtypes, strict=False):
+                for col_name, dtype in zip(
+                    data_frame.columns, data_frame.dtypes, strict=False
+                ):
                     sql_type = "NVARCHAR(MAX)"  # Default type
-                    
+
                     # Map pandas dtypes to SQL Server types
                     if pd.api.types.is_integer_dtype(dtype):
                         sql_type = "BIGINT"
@@ -224,18 +243,20 @@ class SQLServerPipelineStorage(PipelineStorage):
                         sql_type = "BIT"
                     elif pd.api.types.is_datetime64_dtype(dtype):
                         sql_type = "DATETIME2"
-                        
+
                     columns.append(f"[{col_name}] {sql_type}")
-                
+
                 create_table_sql = f"CREATE TABLE [{table_name}] ({', '.join(columns)})"
                 cursor.execute(create_table_sql)
-                
+
                 # Insert parquet data into SQL server
                 for _, row in data_frame.iterrows():
-                    placeholders = ", ".join(["?" for _ in range(len(data_frame.columns))])
+                    placeholders = ", ".join([
+                        "?" for _ in range(len(data_frame.columns))
+                    ])
                     column_names = ", ".join([f"[{col}]" for col in data_frame.columns])
                     insert_sql = f"INSERT INTO [{table_name}] ({column_names}) VALUES ({placeholders})"  # noqa: S608
-                    
+
                     # Handle various value types, converting complex types to strings
                     values = []
                     for val in row:
@@ -246,22 +267,25 @@ class SQLServerPipelineStorage(PipelineStorage):
                             values.append(None)
                         else:
                             values.append(val)
-                    
+
                     cursor.execute(insert_sql, values)
                 self._connection.commit()
                 log.debug("Successfully stored %s in SQL Server", key)
             else:
-                log.warning("Attempted to call set() on SQL Server storage with non-parquet key %s. Skipping...", key)
+                log.warning(
+                    "Attempted to call set() on SQL Server storage with non-parquet key %s. Skipping...",
+                    key,
+                )
         except Exception:
             self._connection.rollback()
             log.exception("Error writing data %s: %s", key)
-    
+
     async def has(self, key: str) -> bool:
         """Check if a table/file exists in SQL Server.
-        
+
         Args:
             key: The table/file name to check
-            
+
         Returns
         -------
             True if the table or metadata entry exists
@@ -270,18 +294,24 @@ class SQLServerPipelineStorage(PipelineStorage):
             if key.endswith(".parquet"):
                 cursor = self._connection.cursor()
                 table_name = key.split(".")[0]
-                cursor.execute("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = ?", table_name)
+                cursor.execute(
+                    "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = ?",
+                    table_name,
+                )
                 return cursor.fetchone() is not None
         except Exception:
             log.exception("Error checking existence of %s: %s", key)
             return False
         else:
-            log.debug("Attempted to call has() on SQL Server storage with non-parquet key %s", key)
+            log.debug(
+                "Attempted to call has() on SQL Server storage with non-parquet key %s",
+                key,
+            )
             return False
-    
+
     async def delete(self, key: str) -> None:
         """Delete a table/file from SQL Server.
-        
+
         Args:
             key: The table/file name to delete
         """
@@ -289,35 +319,40 @@ class SQLServerPipelineStorage(PipelineStorage):
             try:
                 table_name = key.split(".")[0]
                 cursor = self._connection.cursor()
-                cursor.execute(f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]")
+                cursor.execute(
+                    f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]"
+                )
                 self._connection.commit()
                 log.debug("Successfully deleted %s from SQL Server", key)
             except Exception:
                 self._connection.rollback()
                 log.exception("Error deleting %s: %s", key)
         else:
-            log.debug("Attempted to call delete() on SQL Server storage with non-parquet key %s. Skipping...", key)
+            log.debug(
+                "Attempted to call delete() on SQL Server storage with non-parquet key %s. Skipping...",
+                key,
+            )
 
     async def clear(self) -> None:
         """Clear the pipeline storage."""
         msg = "SQL Server storage does not yet support the clear operation."
         raise NotImplementedError(msg)
-    
+
     def child(self, name: str | None) -> "PipelineStorage":
         """Create a child pipeline storage."""
         return self
-    
+
     def keys(self) -> list[str]:
         """List all keys in the storage."""
         msg = "SQL Server storage does not yet support listing keys."
         raise NotImplementedError(msg)
-    
+
     async def get_creation_date(self, key: str) -> str:
         """Get the creation date for a table or metadata entry.
-        
+
         Args:
             key: The table/file name
-            
+
         Returns
         -------
             Formatted timestamp of creation date or empty string
@@ -327,12 +362,15 @@ class SQLServerPipelineStorage(PipelineStorage):
             if key.endswith(".parquet"):
                 cursor = self._connection.cursor()
                 table_name = key.split(".")[0]
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT create_date
                     FROM sys.tables t
                     JOIN sys.objects o ON t.object_id = o.object_id
                     WHERE t.name = ?
-                """, table_name)
+                """,
+                    table_name,
+                )
                 row = cursor.fetchone()
                 if row:
                     return get_timestamp_formatted_with_local_tz(row[0])
@@ -341,8 +379,12 @@ class SQLServerPipelineStorage(PipelineStorage):
             log.exception("Error getting creation date for %s: %s", key)
             return ""
         else:
-            log.debug("Attempted to call get_creation_date() on SQL Server storage with non-parquet key %s", key)
+            log.debug(
+                "Attempted to call get_creation_date() on SQL Server storage with non-parquet key %s",
+                key,
+            )
             return ""
+
 
 def _create_progress_status(
     num_loaded: int, num_filtered: int, num_total: int
@@ -352,4 +394,3 @@ def _create_progress_status(
         completed_items=num_loaded + num_filtered,
         description=f"{num_loaded} files loaded ({num_filtered} filtered)",
     )
-
