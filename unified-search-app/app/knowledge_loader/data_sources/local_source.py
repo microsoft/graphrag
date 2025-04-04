@@ -49,7 +49,7 @@ class LocalDatasource(Datasource):
             if throw_on_missing:
                 raise FileNotFoundError(f"Table {table} does not exist")
             else:
-                print(f"Table {table} does not exist")
+                print(f"Table {table} does not exist") # noqa T201
             return (
                 pd.DataFrame(data=[], columns=columns)
                 if columns is not None

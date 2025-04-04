@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 @st.cache_data(ttl=60 * 60 * 24)
 def _get_container(account_name: str, container_name: str) -> ContainerClient:
-    print("LOGIN---------------")
+    print("LOGIN---------------") # noqa T201
     account_url = f"https://{account_name}.blob.core.windows.net"
     default_credential = DefaultAzureCredential()
     blob_service_client = BlobServiceClient(account_url, credential=default_credential)

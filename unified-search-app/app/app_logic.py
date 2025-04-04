@@ -145,7 +145,7 @@ async def run_local_search(
     query: str,
     sv: SessionVariables,
 ) -> SearchResult:
-    print(f"Local search query: {query}")
+    print(f"Local search query: {query}") # noqa T201
 
     # build local search engine
     response_placeholder = st.session_state[
@@ -170,8 +170,8 @@ async def run_local_search(
                 query=query,
             )
 
-            print(f"Local Response: {response}")
-            print(f"Context data: {context_data}")
+            print(f"Local Response: {response}") # noqa T201
+            print(f"Context data: {context_data}") # noqa T201
 
     # display response and reference context to UI
     search_result = SearchResult(
@@ -196,7 +196,7 @@ async def run_local_search(
 
 
 async def run_global_search(query: str, sv: SessionVariables) -> SearchResult:
-    print(f"Global search query: {query}")
+    print(f"Global search query: {query}") # noqa T201
 
     # build global search engine
     response_placeholder = st.session_state[
@@ -222,8 +222,8 @@ async def run_global_search(query: str, sv: SessionVariables) -> SearchResult:
                 query=query,
             )
 
-            print(f"Context data: {context_data}")
-            print(f"Global Response: {response}")
+            print(f"Context data: {context_data}") # noqa T201
+            print(f"Global Response: {response}") # noqa T201
 
     # display response and reference context to UI
     search_result = SearchResult(
@@ -251,7 +251,7 @@ async def run_drift_search(
     query: str,
     sv: SessionVariables,
 ) -> SearchResult:
-    print(f"Drift search query: {query}")
+    print(f"Drift search query: {query}") # noqa T201
 
     # build drift search engine
     response_placeholder = st.session_state[
@@ -275,8 +275,8 @@ async def run_drift_search(
                 query=query,
             )
 
-            print(f"Drift Response: {response}")
-            print(f"Context data: {context_data}")
+            print(f"Drift Response: {response}") # noqa T201
+            print(f"Context data: {context_data}") # noqa T201
 
     # display response and reference context to UI
     search_result = SearchResult(
@@ -304,7 +304,7 @@ async def run_basic_search(
     query: str,
     sv: SessionVariables,
 ) -> SearchResult:
-    print(f"Basic search query: {query}")
+    print(f"Basic search query: {query}") # noqa T201
 
     # build local search engine
     response_placeholder = st.session_state[
@@ -322,8 +322,8 @@ async def run_basic_search(
                 query=query,
             )
 
-            print(f"Basic Response: {response}")
-            print(f"Context data: {context_data}")
+            print(f"Basic Response: {response}") # noqa T201
+            print(f"Context data: {context_data}") # noqa T201
 
     # display response and reference context to UI
     search_result = SearchResult(
@@ -348,7 +348,7 @@ async def run_basic_search(
 
 
 def load_knowledge_model(sv: SessionVariables):
-    print("Loading knowledge model...", sv.dataset.value, sv.dataset_config.value)
+    print("Loading knowledge model...", sv.dataset.value, sv.dataset_config.value) # noqa T201
     model = load_model(sv.dataset.value, sv.datasource.value)
 
     sv.generated_questions.value = []

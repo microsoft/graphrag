@@ -57,7 +57,7 @@ async def main():
                     sv.generated_questions.value = questions
                     sv.show_text_input.value = False
             except Exception as e:
-                print(f"Search exception: {e}")
+                print(f"Search exception: {e}") # noqa T201
                 st.write(e)
 
     if sv.show_text_input.value is True:
@@ -232,7 +232,7 @@ async def main():
                                 result=result["result"],
                             )
                 except Exception as e:
-                    print(f"Search exception: {e}")
+                    print(f"Search exception: {e}") # noqa T201
                     st.write(e)
 
     if tab_id == 1:

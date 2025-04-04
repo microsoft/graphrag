@@ -25,8 +25,8 @@ def get_entity_data(dataset: str, _datasource: Datasource) -> pd.DataFrame:
     """
     entity_details_df = _datasource.read(config.entity_table)
 
-    print(f"Entity records: {len(entity_details_df)}")
-    print(f"Dataset: {dataset}")
+    print(f"Entity records: {len(entity_details_df)}") # noqa T201
+    print(f"Dataset: {dataset}") # noqa T201
     return entity_details_df
 
 
@@ -36,8 +36,8 @@ def get_relationship_data(dataset: str, _datasource: Datasource) -> pd.DataFrame
     Returns a dataframe with entity-entity relationship data from the indexed-data.
     """
     relationship_df = _datasource.read(config.relationship_table)
-    print(f"Relationship records: {len(relationship_df)}")
-    print(f"Dataset: {dataset}")
+    print(f"Relationship records: {len(relationship_df)}") # noqa T201
+    print(f"Dataset: {dataset}") # noqa T201
     return relationship_df
 
 
@@ -47,8 +47,8 @@ def get_covariate_data(dataset: str, _datasource: Datasource) -> pd.DataFrame:
     Returns a dataframe with covariate data from the indexed-data.
     """
     covariate_df = _datasource.read(config.covariate_table)
-    print(f"Covariate records: {len(covariate_df)}")
-    print(f"Dataset: {dataset}")
+    print(f"Covariate records: {len(covariate_df)}") # noqa T201
+    print(f"Dataset: {dataset}") # noqa T201
     return covariate_df
 
 
@@ -58,8 +58,8 @@ def get_text_unit_data(dataset: str, _datasource: Datasource) -> pd.DataFrame:
     Returns a dataframe with text units (i.e. chunks of text from the raw documents) from the indexed-data.
     """
     text_unit_df = _datasource.read(config.text_unit_table)
-    print(f"Text unit records: {len(text_unit_df)}")
-    print(f"Dataset: {dataset}")
+    print(f"Text unit records: {len(text_unit_df)}") # noqa T201
+    print(f"Dataset: {dataset}") # noqa T201
     return text_unit_df
 
 
@@ -71,7 +71,7 @@ def get_community_report_data(
     Returns a dataframe with community report data from the indexed-data.
     """
     report_df = _datasource.read(config.community_report_table)
-    print(f"Report records: {len(report_df)}")
+    print(f"Report records: {len(report_df)}") # noqa T201
 
     return report_df
 

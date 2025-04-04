@@ -56,7 +56,7 @@ def load_dataset_listing() -> list[DatasetConfig]:
             if datasets_str:
                 datasets = json.loads(datasets_str)
         except Exception as e:
-            print(f"Error loading dataset config: {e}")
+            print(f"Error loading dataset config: {e}") # noqa T201
             return []
     else:
         base_path = _get_base_path(None, local_data_root, LISTING_FILE)
