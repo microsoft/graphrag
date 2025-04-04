@@ -1,3 +1,8 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Report details module."""
+
 import json
 
 import pandas as pd
@@ -10,7 +15,8 @@ from ui.search import (
 )
 
 
-async def create_report_details_ui(sv: SessionVariables):
+def create_report_details_ui(sv: SessionVariables):
+    """Return report details UI component."""
     if sv.selected_report.value is not None and sv.selected_report.value.empty is False:
         text = ""
         entity_ids = []
@@ -60,7 +66,7 @@ async def create_report_details_ui(sv: SessionVariables):
 
         # extract entities
         selected_entities = []
-        for index, row in sv.entities.value.iterrows():
+        for _index, row in sv.entities.value.iterrows():
             if str(row["human_readable_id"]) in entity_ids:
                 selected_entities.append({
                     "id": str(row["human_readable_id"]),
@@ -72,7 +78,7 @@ async def create_report_details_ui(sv: SessionVariables):
 
         # extract relationships
         selected_relationships = []
-        for index, row in sv.relationships.value.iterrows():
+        for _index, row in sv.relationships.value.iterrows():
             if str(row["human_readable_id"]) in relationship_ids:
                 selected_relationships.append({
                     "id": str(row["human_readable_id"]),
@@ -85,7 +91,7 @@ async def create_report_details_ui(sv: SessionVariables):
             selected_relationships, key=lambda x: int(x["id"])
         )
 
-        await display_graph_citations(
+        display_graph_citations(
             pd.DataFrame(sorted_entities), pd.DataFrame(sorted_relationships), "graph"
         )
     else:

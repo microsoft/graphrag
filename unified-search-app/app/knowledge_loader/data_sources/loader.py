@@ -1,7 +1,11 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Loader module."""
+
 import json
 import logging
 import os
-from typing import Dict, Optional
 
 from knowledge_loader.data_sources.blob_source import (
     BlobDatasource,
@@ -25,29 +29,28 @@ logger = logging.getLogger(__name__)
 
 
 def _get_base_path(
-    dataset: Optional[str], root: Optional[str], extra_path: Optional[str] = None
+    dataset: str | None, root: str | None, extra_path: str | None = None
 ) -> str:
     """Construct and return the base path for the given dataset and extra path."""
-    base_path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
+    return os.path.join( # noqa: PTH118
+        os.path.dirname(os.path.realpath(__file__)),  # noqa: PTH120
         root if root else "",
         dataset if dataset else "",
         *(extra_path.split("/") if extra_path else []),
     )
 
-    return base_path
-
 
 def create_datasource(dataset_folder: str) -> Datasource:
-    """Returns a datasource that reads from a local or blob storage parquet file."""
+    """Return a datasource that reads from a local or blob storage parquet file."""
     if blob_account_name is not None and blob_account_name != "":
         return BlobDatasource(dataset_folder)
-    else:
-        base_path = _get_base_path(dataset_folder, local_data_root)
-        return LocalDatasource(base_path)
+
+    base_path = _get_base_path(dataset_folder, local_data_root)
+    return LocalDatasource(base_path)
 
 
 def load_dataset_listing() -> list[DatasetConfig]:
+    """Load dataset listing file."""
     datasets = []
     if blob_account_name is not None and blob_account_name != "":
         try:
@@ -55,21 +58,21 @@ def load_dataset_listing() -> list[DatasetConfig]:
             datasets_str = blob.getvalue().decode("utf-8")
             if datasets_str:
                 datasets = json.loads(datasets_str)
-        except Exception as e:
-            print(f"Error loading dataset config: {e}") # noqa T201
+        except Exception as e:  # noqa: BLE001
+            print(f"Error loading dataset config: {e}")  # noqa T201
             return []
     else:
         base_path = _get_base_path(None, local_data_root, LISTING_FILE)
-        with open(base_path, "r") as file:
+        with open(base_path, "r") as file:  # noqa: UP015, PTH123
             datasets = json.load(file)
 
-    return list(map(lambda d: DatasetConfig(**d), datasets))
+    return [DatasetConfig(**d) for d in datasets]
 
 
-def load_prompts(dataset: str) -> Dict[str, str]:
-    """Returns the prompts configuration for a specific dataset."""
+def load_prompts(dataset: str) -> dict[str, str]:
+    """Return the prompts configuration for a specific dataset."""
     if blob_account_name is not None and blob_account_name != "":
         return load_blob_prompt_config(dataset)
-    else:
-        base_path = _get_base_path(dataset, local_data_root, "prompts")
-        return load_local_prompt_config(base_path)
+
+    base_path = _get_base_path(dataset, local_data_root, "prompts")
+    return load_local_prompt_config(base_path)

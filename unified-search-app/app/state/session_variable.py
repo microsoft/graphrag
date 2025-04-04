@@ -1,6 +1,7 @@
-"""
-Copyright (c) Microsoft Corporation. All rights reserved.
-"""
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Session variable module."""
 
 import traceback
 from typing import Any
@@ -9,8 +10,11 @@ import streamlit as st
 
 
 class SessionVariable:
+    """Define the session variable structure that will be used in the app."""
+
     def __init__(self, default: Any = "", prefix: str = ""):
         """Create a managed session variable with a default value and a prefix.
+
         The prefix is used to avoid collisions between variables with the same name.
 
         To modify the variable use the value property, for example: `name.value = "Bob"`
@@ -31,15 +35,19 @@ class SessionVariable:
 
     @property
     def key(self) -> str:
+        """Key property definition."""
         return self._key
 
     @property
     def value(self) -> Any:
+        """Value property definition."""
         return st.session_state[self._key]
 
     @value.setter
     def value(self, value: Any) -> None:
+        """Value setter definition."""
         st.session_state[self._key] = value
 
     def __repr__(self) -> Any:
+        """Repr method definition."""
         return str(st.session_state[self._key])

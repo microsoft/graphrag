@@ -1,6 +1,8 @@
-"""
-Copyright (c) Microsoft Corporation. All rights reserved.
-"""
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Data config module."""
+
 # This file is used to store configurations for the graph-indexed data and the LLM/embeddings models used in the app.
 
 # name of the table in the graph-indexed data where the communities are stored

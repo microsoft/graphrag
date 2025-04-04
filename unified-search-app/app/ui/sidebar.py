@@ -1,8 +1,7 @@
-"""
-Copyright (c) Microsoft Corporation. All rights reserved.
-"""
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
-# Functions to create sidebar UI for setting key parameters of the application
+"""Sidebar module."""
 
 import streamlit as st
 from app_logic import dataset_name, load_dataset
@@ -10,12 +9,14 @@ from state.session_variables import SessionVariables
 
 
 def reset_app():
+    """Reset app to its original state."""
     st.cache_data.clear()
     st.session_state.clear()
     st.rerun()
 
 
 def update_dataset(sv: SessionVariables):
+    """Update dataset from the dropdown."""
     value = st.session_state[sv.dataset.key]
     st.cache_data.clear()
     if "response_lengths" not in st.session_state:
@@ -25,26 +26,31 @@ def update_dataset(sv: SessionVariables):
 
 
 def update_basic_rag(sv: SessionVariables):
+    """Update basic rag state."""
     sv.include_basic_rag.value = st.session_state[sv.include_basic_rag.key]
 
 
 def update_drift_search(sv: SessionVariables):
+    """Update drift rag state."""
     sv.include_drift_search.value = st.session_state[sv.include_drift_search.key]
 
 
 def update_local_search(sv: SessionVariables):
+    """Update local rag state."""
     sv.include_local_search.value = st.session_state[sv.include_local_search.key]
 
 
 def update_global_search(sv: SessionVariables):
+    """Update global rag state."""
     sv.include_global_search.value = st.session_state[sv.include_global_search.key]
 
 
 def create_side_bar(sv: SessionVariables):
+    """Create a side bar panel.."""
     with st.sidebar:
         st.subheader("Options")
 
-        options = list(map(lambda d: d.key, sv.datasets.value))
+        options = [d.key for d in sv.datasets.value]
 
         def lookup_label(key: str):
             return dataset_name(key, sv)

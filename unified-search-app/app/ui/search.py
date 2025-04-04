@@ -1,6 +1,7 @@
-"""
-Copyright (c) Microsoft Corporation. All rights reserved.
-"""
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Search module."""
 
 import json
 import re
@@ -15,6 +16,7 @@ from streamlit.delta_generator import DeltaGenerator
 def init_search_ui(
     container: DeltaGenerator, search_type: SearchType, title: str, caption: str
 ):
+    """Initialize search UI component."""
     with container:
         st.markdown(title)
         st.caption(caption)
@@ -27,14 +29,17 @@ def init_search_ui(
 
 @dataclass
 class SearchStats:
+    """SearchStats class definition."""
+
     completion_time: float
     llm_calls: int
     prompt_tokens: int
 
 
-async def display_search_result(
+def display_search_result(
     container: DeltaGenerator, result: SearchResult, stats: SearchStats | None = None
 ):
+    """Display search results data into the UI."""
     response_placeholder_attr = (
         result.search_type.value.lower() + "_response_placeholder"
     )
@@ -55,9 +60,10 @@ async def display_search_result(
         )
 
 
-async def display_citations(
+def display_citations(
     container: DeltaGenerator | None = None, result: SearchResult | None = None
 ):
+    """Display citations into the UI."""
     if container is not None:
         with container:
             # display context used for generating the response
@@ -92,6 +98,7 @@ async def display_citations(
 
 
 def format_response_hyperlinks(str_response: str, search_type: str = ""):
+    """Format response to show hyperlinks inside the response UI."""
     results_with_hyperlinks = format_response_hyperlinks_by_key(
         str_response, "Entities", "Entities", search_type
     )
@@ -108,12 +115,13 @@ def format_response_hyperlinks(str_response: str, search_type: str = ""):
         results_with_hyperlinks, "Reports", "Reports", search_type
     )
 
-    return results_with_hyperlinks
+    return results_with_hyperlinks  # noqa: RET504
 
 
 def format_response_hyperlinks_by_key(
     str_response: str, key: str, anchor: str, search_type: str = ""
 ):
+    """Format response to show hyperlinks inside the response UI by key."""
     pattern = r"\(\d+(?:,\s*\d+)*(?:,\s*\+more)?\)"
 
     citations_list = re.findall(f"{key} {pattern}", str_response)
@@ -141,14 +149,14 @@ def format_response_hyperlinks_by_key(
 
 
 def format_suggested_questions(questions: str):
+    """Format suggested questions to the UI."""
     citations_pattern = r"\[.*?\]"
     substring = re.sub(citations_pattern, "", questions).strip()
-    questions_list = convert_numbered_list_to_array(substring)
-
-    return questions_list
+    return convert_numbered_list_to_array(substring)
 
 
 def convert_numbered_list_to_array(numbered_list_str):
+    """Convert numbered list result into an array of elements."""
     lines = numbered_list_str.strip().split("\n")
     items = []
 
@@ -162,6 +170,7 @@ def convert_numbered_list_to_array(numbered_list_str):
 
 
 def get_ids_per_key(str_response: str, key: str):
+    """Filter ids per key."""
     pattern = r"\(\d+(?:,\s*\d+)*(?:,\s*\+more)?\)"
     citations_list = re.findall(f"{key} {pattern}", str_response)
     numbers_list = []
@@ -181,14 +190,15 @@ LONG_WORDS = 200
 
 # Function to generate HTML table with ids
 def render_html_table(df: pd.DataFrame, search_type: str, key: str):
-    table_container = """ 
+    """Render HTML table into the UI."""
+    table_container = """
         max-width: 100%;
         overflow: hidden;
         margin: 0 auto;
     """
 
     table_style = """
-        width: 100%; 
+        width: 100%;
         border-collapse: collapse;
         table-layout: fixed;
     """
@@ -254,20 +264,21 @@ def render_html_table(df: pd.DataFrame, search_type: str, key: str):
     return table_html
 
 
-async def display_graph_citations(
-    entities: pd.DataFrame, relationships: pd.DataFrame, type: str
+def display_graph_citations(
+    entities: pd.DataFrame, relationships: pd.DataFrame, citation_type: str
 ):
+    """Display graph citations into the UI."""
     st.markdown("---")
     st.markdown("### Citations")
 
     st.markdown(f"Relevant AI-extracted entities **({len(entities)})**:")
     st.markdown(
-        render_html_table(entities, type, "entities"),
+        render_html_table(entities, citation_type, "entities"),
         unsafe_allow_html=True,
     )
 
     st.markdown(f"Relevant AI-extracted relationships **({len(relationships)})**:")
     st.markdown(
-        render_html_table(relationships, type, "relationships"),
+        render_html_table(relationships, citation_type, "relationships"),
         unsafe_allow_html=True,
     )

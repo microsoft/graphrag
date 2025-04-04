@@ -1,12 +1,12 @@
-"""
-Copyright (c) Microsoft Corporation. All rights reserved.
-"""
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Blob source module."""
 
 import io
 import logging
 import os
 from io import BytesIO
-from typing import Dict, List, Optional
 
 import pandas as pd
 import streamlit as st
@@ -27,7 +27,8 @@ logger = logging.getLogger(__name__)
 
 @st.cache_data(ttl=60 * 60 * 24)
 def _get_container(account_name: str, container_name: str) -> ContainerClient:
-    print("LOGIN---------------") # noqa T201
+    """Return container from blob storage."""
+    print("LOGIN---------------")  # noqa T201
     account_url = f"https://{account_name}.blob.core.windows.net"
     default_credential = DefaultAzureCredential()
     blob_service_client = BlobServiceClient(account_url, credential=default_credential)
@@ -36,9 +37,10 @@ def _get_container(account_name: str, container_name: str) -> ContainerClient:
 
 def load_blob_prompt_config(
     dataset: str,
-    account_name: Optional[str] = blob_account_name,
-    container_name: Optional[str] = blob_container_name,
-) -> Dict[str, str]:
+    account_name: str | None = blob_account_name,
+    container_name: str | None = blob_container_name,
+) -> dict[str, str]:
+    """Load blob prompt configuration."""
     if account_name is None or container_name is None:
         return {}
 
@@ -56,11 +58,12 @@ def load_blob_prompt_config(
 
 
 def load_blob_file(
-    dataset: Optional[str],
-    file: Optional[str],
-    account_name: Optional[str] = blob_account_name,
-    container_name: Optional[str] = blob_container_name,
+    dataset: str | None,
+    file: str | None,
+    account_name: str | None = blob_account_name,
+    container_name: str | None = blob_container_name,
 ) -> BytesIO:
+    """Load blob file from container."""
     stream = io.BytesIO()
 
     if account_name is None or container_name is None:
@@ -76,27 +79,27 @@ def load_blob_file(
 
 
 class BlobDatasource(Datasource):
-    """
-    Datasource that reads from a blob storage parquet file.
-    """
+    """Datasource that reads from a blob storage parquet file."""
 
     def __init__(self, database: str):
+        """Init method definition."""
         self._database = database
 
     def read(
         self,
         table: str,
         throw_on_missing: bool = False,
-        columns: Optional[List[str]] = None,
+        columns: list[str] | None = None,
     ) -> pd.DataFrame:
+        """Read file from container."""
         try:
             data = load_blob_file(self._database, f"{table}.parquet")
-        except Exception:
+        except Exception as err:
             if throw_on_missing:
-                raise FileNotFoundError(f"Table {table} does not exist")
-            else:
-                logger.warning(f"Table {table} does not exist")
-                return pd.DataFrame(columns=columns) if columns else pd.DataFrame()
+                error_msg = f"Table {table} does not exist"
+                raise FileNotFoundError(error_msg) from err
+            logger.warning("Table %s does not exist", table)
+            return pd.DataFrame(columns=columns) if columns else pd.DataFrame()
 
         return pd.read_parquet(data, columns=columns)
 
@@ -105,6 +108,7 @@ class BlobDatasource(Datasource):
         file: str,
         throw_on_missing: bool = False,
     ) -> GraphRagConfig | None:
+        """Read settings from container."""
         try:
             settings = load_blob_file(self._database, file)
             settings.seek(0)
@@ -112,11 +116,12 @@ class BlobDatasource(Datasource):
             config = os.path.expandvars(str_settings)
             settings_yaml = yaml.safe_load(config)
             graphrag_config = create_graphrag_config(values=settings_yaml)
-        except Exception:
+        except Exception as err:
             if throw_on_missing:
-                raise FileNotFoundError(f"File {file} does not exist")
-            else:
-                logger.warning(f"File {file} does not exist")
-                return None
+                error_msg = f"File {file} does not exist"
+                raise FileNotFoundError(error_msg) from err
+
+            logger.warning("File %s does not exist", file)
+            return None
 
         return graphrag_config

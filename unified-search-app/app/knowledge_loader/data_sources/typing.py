@@ -1,11 +1,11 @@
-"""
-Copyright (c) Microsoft Corporation. All rights reserved.
-"""
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
-from abc import ABC
+"""Data sources typing module."""
+
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 import pandas as pd
 
@@ -26,33 +26,48 @@ class Datasource(ABC):
     """An interface for a datasource, which is a function that takes a table name and returns a DataFrame or None."""
 
     def __call__(self, table: str, columns: list[str] | None) -> pd.DataFrame:
-        raise NotImplementedError()
+        """Call method definition."""
+        raise NotImplementedError
 
+    @abstractmethod
     def read(
         self,
         table: str,
         throw_on_missing: bool = False,
-        columns: Optional[list[str]] = None,
-    ) -> pd.DataFrame: ...
+        columns: list[str] | None = None,
+    ) -> pd.DataFrame:
+        """Read method definition."""
+        raise NotImplementedError
 
-    def read_settings(self, file: str) -> GraphRagConfig | None: ...
+    @abstractmethod
+    def read_settings(self, file: str) -> GraphRagConfig | None:
+        """Read settings method definition."""
+        raise NotImplementedError
 
     def write(
         self, table: str, df: pd.DataFrame, mode: WriteMode | None = None
-    ) -> None: ...
+    ) -> None:
+        """Write method definition."""
+        raise NotImplementedError
 
-    def has_table(self, table: str) -> bool: ...
+    def has_table(self, table: str) -> bool:
+        """Check if table exists method definition."""
+        raise NotImplementedError
 
 
 @dataclass
 class VectorIndexConfig:
+    """VectorIndexConfig class definition."""
+
     index_name: str
     embeddings_file: str
-    content_file: Optional[str] | None = None
+    content_file: str | None = None
 
 
 @dataclass
 class DatasetConfig:
+    """DatasetConfig class definition."""
+
     key: str
     path: str
     name: str

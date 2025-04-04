@@ -1,6 +1,7 @@
-"""
-Copyright (c) Microsoft Corporation. All rights reserved.
-"""
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Session variables module."""
 
 from data_config import (
     default_suggested_questions,
@@ -10,11 +11,10 @@ from state.session_variable import SessionVariable
 
 
 class SessionVariables:
-    """
-    This class is used to define all the session variables that will be used in the app.
-    """
+    """Define all the session variables that will be used in the app."""
 
     def __init__(self):
+        """Init method definition."""
         self.dataset = QueryVariable("dataset", "")
         self.datasets = SessionVariable([])
         self.dataset_config = SessionVariable()

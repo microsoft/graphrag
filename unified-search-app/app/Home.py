@@ -1,6 +1,7 @@
-"""
-Copyright (c) Microsoft Corporation. All rights reserved.
-"""
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Home module."""
 
 import asyncio
 
@@ -18,6 +19,7 @@ from ui.sidebar import create_side_bar
 
 
 async def main():
+    """Return main streamlit component to render the app."""
     sv = initialize()
 
     create_side_bar(sv)
@@ -56,8 +58,8 @@ async def main():
                     questions = format_suggested_questions(result_item.response)
                     sv.generated_questions.value = questions
                     sv.show_text_input.value = False
-            except Exception as e:
-                print(f"Search exception: {e}") # noqa T201
+            except Exception as e:  # noqa: BLE001
+                print(f"Search exception: {e}")  # noqa T201
                 st.write(e)
 
     if sv.show_text_input.value is True:
@@ -201,39 +203,38 @@ async def main():
                 with ss_drift_citations:
                     st.empty()
 
-        if question != "":
-            if question != sv.question_in_progress.value:
-                sv.question_in_progress.value = question
-                try:
-                    await run_all_searches(query=question, sv=sv)
+        if question != "" and question != sv.question_in_progress.value:
+            sv.question_in_progress.value = question
+            try:
+                await run_all_searches(query=question, sv=sv)
 
-                    if "response_lengths" not in st.session_state:
-                        st.session_state.response_lengths = []
+                if "response_lengths" not in st.session_state:
+                    st.session_state.response_lengths = []
 
-                    for result in st.session_state.response_lengths:
-                        if result["search"] == SearchType.Basic.value.lower():
-                            await display_citations(
-                                container=ss_basic_citations,
-                                result=result["result"],
-                            )
-                        if result["search"] == SearchType.Local.value.lower():
-                            await display_citations(
-                                container=ss_local_citations,
-                                result=result["result"],
-                            )
-                        if result["search"] == SearchType.Global.value.lower():
-                            await display_citations(
-                                container=ss_global_citations,
-                                result=result["result"],
-                            )
-                        elif result["search"] == SearchType.Drift.value.lower():
-                            await display_citations(
-                                container=ss_drift_citations,
-                                result=result["result"],
-                            )
-                except Exception as e:
-                    print(f"Search exception: {e}") # noqa T201
-                    st.write(e)
+                for result in st.session_state.response_lengths:
+                    if result["search"] == SearchType.Basic.value.lower():
+                        display_citations(
+                            container=ss_basic_citations,
+                            result=result["result"],
+                        )
+                    if result["search"] == SearchType.Local.value.lower():
+                        display_citations(
+                            container=ss_local_citations,
+                            result=result["result"],
+                        )
+                    if result["search"] == SearchType.Global.value.lower():
+                        display_citations(
+                            container=ss_global_citations,
+                            result=result["result"],
+                        )
+                    elif result["search"] == SearchType.Drift.value.lower():
+                        display_citations(
+                            container=ss_drift_citations,
+                            result=result["result"],
+                        )
+            except Exception as e:  # noqa: BLE001
+                print(f"Search exception: {e}")  # noqa T201
+                st.write(e)
 
     if tab_id == 1:
         report_list, graph, report_content = st.columns([0.20, 0.55, 0.25])
@@ -252,7 +253,7 @@ async def main():
 
         with report_content:
             st.markdown("##### Selected Report")
-            await create_report_details_ui(sv)
+            create_report_details_ui(sv)
 
 
 if __name__ == "__main__":

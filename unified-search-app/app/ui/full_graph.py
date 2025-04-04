@@ -1,3 +1,8 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Full graph module."""
+
 import altair as alt
 import pandas as pd
 import streamlit as st
@@ -5,6 +10,7 @@ from state.session_variables import SessionVariables
 
 
 def create_full_graph_ui(sv: SessionVariables):
+    """Return graph UI object."""
     entities = sv.entities.value.copy()
     communities = sv.communities.value.copy()
 
@@ -23,17 +29,22 @@ def create_full_graph_ui(sv: SessionVariables):
         communities_entities = pd.DataFrame()
 
     level = sv.graph_community_level.value
-    df = communities_entities[communities_entities["level"] == level]
+    communities_entities_filtered = communities_entities[
+        communities_entities["level"] == level
+    ]
 
     graph = (
-        alt.Chart(df)
+        alt.Chart(communities_entities_filtered)
         .mark_circle()
         .encode(
             x="x",
             y="y",
             color=alt.Color(
                 "community",
-                scale=alt.Scale(domain=df["community"].unique(), scheme="category10"),
+                scale=alt.Scale(
+                    domain=communities_entities_filtered["community"].unique(),
+                    scheme="category10",
+                ),
             ),
             size=alt.Size("degree", scale=alt.Scale(range=[50, 1000]), legend=None),
             tooltip=["id_entities", "type", "description", "community"],

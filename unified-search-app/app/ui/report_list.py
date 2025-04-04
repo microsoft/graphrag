@@ -1,8 +1,14 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Report list module."""
+
 import streamlit as st
 from state.session_variables import SessionVariables
 
 
 def create_report_list_ui(sv: SessionVariables):
+    """Return report list UI component."""
     selection = st.dataframe(
         sv.community_reports.value,
         height=1000,

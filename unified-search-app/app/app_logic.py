@@ -1,7 +1,12 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""App logic module."""
+
 import asyncio
 import logging
+from typing import TYPE_CHECKING
 
-import pandas as pd
 import streamlit as st
 from knowledge_loader.data_sources.loader import (
     create_datasource,
@@ -14,12 +19,16 @@ from ui.search import display_search_result
 
 import graphrag.api as api
 
+if TYPE_CHECKING:
+    import pandas as pd
+
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("azure").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
 def initialize() -> SessionVariables:
+    """Initialize app logic."""
     if "session_variables" not in st.session_state:
         st.set_page_config(
             layout="wide",
@@ -40,6 +49,7 @@ def initialize() -> SessionVariables:
 
 
 def load_dataset(dataset: str, sv: SessionVariables):
+    """Load dataset from the dropdown."""
     sv.dataset.value = dataset
     sv.dataset_config.value = next(
         (d for d in sv.datasets.value if d.key == dataset), None
@@ -51,13 +61,12 @@ def load_dataset(dataset: str, sv: SessionVariables):
 
 
 def dataset_name(key: str, sv: SessionVariables) -> str:
+    """Get dataset name."""
     return next((d for d in sv.datasets.value if d.key == key), None).name  # type: ignore
 
 
 async def run_all_searches(query: str, sv: SessionVariables) -> list[SearchResult]:
-    """
-    Run all search engines and return the results
-    """
+    """Run all search engines and return the results."""
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     tasks = []
@@ -91,14 +100,11 @@ async def run_all_searches(query: str, sv: SessionVariables) -> list[SearchResul
             )
         )
 
-    results = await asyncio.gather(*tasks)
-    return results
+    return await asyncio.gather(*tasks)
 
 
 async def run_generate_questions(query: str, sv: SessionVariables):
-    """
-    Run global search to generate questions for the dataset
-    """
+    """Run global search to generate questions for the dataset."""
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     tasks = []
@@ -110,15 +116,14 @@ async def run_generate_questions(query: str, sv: SessionVariables):
         )
     )
 
-    results = await asyncio.gather(*tasks)
-
-    return results
+    return await asyncio.gather(*tasks)
 
 
 async def run_global_search_question_generation(
     query: str,
     sv: SessionVariables,
 ) -> SearchResult:
+    """Run global search question generation process."""
     empty_context_data: dict[str, pd.DataFrame] = {}
 
     response, context_data = await api.global_search(
@@ -133,19 +138,19 @@ async def run_global_search_question_generation(
     )
 
     # display response and reference context to UI
-    search_result = SearchResult(
+    return SearchResult(
         search_type=SearchType.Global,
         response=str(response),
         context=context_data if isinstance(context_data, dict) else empty_context_data,
     )
-    return search_result
 
 
 async def run_local_search(
     query: str,
     sv: SessionVariables,
 ) -> SearchResult:
-    print(f"Local search query: {query}") # noqa T201
+    """Run local search."""
+    print(f"Local search query: {query}")  # noqa T201
 
     # build local search engine
     response_placeholder = st.session_state[
@@ -153,25 +158,24 @@ async def run_local_search(
     ]
     response_container = st.session_state[f"{SearchType.Local.value.lower()}_container"]
 
-    with response_placeholder:
-        with st.spinner("Generating answer using local search..."):
-            empty_context_data: dict[str, pd.DataFrame] = {}
+    with response_placeholder, st.spinner("Generating answer using local search..."):
+        empty_context_data: dict[str, pd.DataFrame] = {}
 
-            response, context_data = await api.local_search(
-                config=sv.graphrag_config.value,
-                communities=sv.communities.value,
-                entities=sv.entities.value,
-                community_reports=sv.community_reports.value,
-                text_units=sv.text_units.value,
-                relationships=sv.relationships.value,
-                covariates=sv.covariates.value,
-                community_level=sv.dataset_config.value.community_level,
-                response_type="Multiple Paragraphs",
-                query=query,
-            )
+        response, context_data = await api.local_search(
+            config=sv.graphrag_config.value,
+            communities=sv.communities.value,
+            entities=sv.entities.value,
+            community_reports=sv.community_reports.value,
+            text_units=sv.text_units.value,
+            relationships=sv.relationships.value,
+            covariates=sv.covariates.value,
+            community_level=sv.dataset_config.value.community_level,
+            response_type="Multiple Paragraphs",
+            query=query,
+        )
 
-            print(f"Local Response: {response}") # noqa T201
-            print(f"Context data: {context_data}") # noqa T201
+        print(f"Local Response: {response}")  # noqa T201
+        print(f"Context data: {context_data}")  # noqa T201
 
     # display response and reference context to UI
     search_result = SearchResult(
@@ -180,7 +184,7 @@ async def run_local_search(
         context=context_data if isinstance(context_data, dict) else empty_context_data,
     )
 
-    await display_search_result(
+    display_search_result(
         container=response_container, result=search_result, stats=None
     )
 
@@ -196,7 +200,8 @@ async def run_local_search(
 
 
 async def run_global_search(query: str, sv: SessionVariables) -> SearchResult:
-    print(f"Global search query: {query}") # noqa T201
+    """Run global search."""
+    print(f"Global search query: {query}")  # noqa T201
 
     # build global search engine
     response_placeholder = st.session_state[
@@ -207,23 +212,22 @@ async def run_global_search(query: str, sv: SessionVariables) -> SearchResult:
     ]
 
     response_placeholder.empty()
-    with response_placeholder:
-        with st.spinner("Generating answer using global search..."):
-            empty_context_data: dict[str, pd.DataFrame] = {}
+    with response_placeholder, st.spinner("Generating answer using global search..."):
+        empty_context_data: dict[str, pd.DataFrame] = {}
 
-            response, context_data = await api.global_search(
-                config=sv.graphrag_config.value,
-                entities=sv.entities.value,
-                communities=sv.communities.value,
-                community_reports=sv.community_reports.value,
-                dynamic_community_selection=False,
-                response_type="Multiple Paragraphs",
-                community_level=sv.dataset_config.value.community_level,
-                query=query,
-            )
+        response, context_data = await api.global_search(
+            config=sv.graphrag_config.value,
+            entities=sv.entities.value,
+            communities=sv.communities.value,
+            community_reports=sv.community_reports.value,
+            dynamic_community_selection=False,
+            response_type="Multiple Paragraphs",
+            community_level=sv.dataset_config.value.community_level,
+            query=query,
+        )
 
-            print(f"Context data: {context_data}") # noqa T201
-            print(f"Global Response: {response}") # noqa T201
+        print(f"Context data: {context_data}")  # noqa T201
+        print(f"Global Response: {response}")  # noqa T201
 
     # display response and reference context to UI
     search_result = SearchResult(
@@ -232,7 +236,7 @@ async def run_global_search(query: str, sv: SessionVariables) -> SearchResult:
         context=context_data if isinstance(context_data, dict) else empty_context_data,
     )
 
-    await display_search_result(
+    display_search_result(
         container=response_container, result=search_result, stats=None
     )
 
@@ -251,7 +255,8 @@ async def run_drift_search(
     query: str,
     sv: SessionVariables,
 ) -> SearchResult:
-    print(f"Drift search query: {query}") # noqa T201
+    """Run drift search."""
+    print(f"Drift search query: {query}")  # noqa T201
 
     # build drift search engine
     response_placeholder = st.session_state[
@@ -259,24 +264,23 @@ async def run_drift_search(
     ]
     response_container = st.session_state[f"{SearchType.Drift.value.lower()}_container"]
 
-    with response_placeholder:
-        with st.spinner("Generating answer using drift search..."):
-            empty_context_data: dict[str, pd.DataFrame] = {}
+    with response_placeholder, st.spinner("Generating answer using drift search..."):
+        empty_context_data: dict[str, pd.DataFrame] = {}
 
-            response, context_data = await api.drift_search(
-                config=sv.graphrag_config.value,
-                entities=sv.entities.value,
-                communities=sv.communities.value,
-                community_reports=sv.community_reports.value,
-                text_units=sv.text_units.value,
-                relationships=sv.relationships.value,
-                community_level=sv.dataset_config.value.community_level,
-                response_type="Multiple Paragraphs",
-                query=query,
-            )
+        response, context_data = await api.drift_search(
+            config=sv.graphrag_config.value,
+            entities=sv.entities.value,
+            communities=sv.communities.value,
+            community_reports=sv.community_reports.value,
+            text_units=sv.text_units.value,
+            relationships=sv.relationships.value,
+            community_level=sv.dataset_config.value.community_level,
+            response_type="Multiple Paragraphs",
+            query=query,
+        )
 
-            print(f"Drift Response: {response}") # noqa T201
-            print(f"Context data: {context_data}") # noqa T201
+        print(f"Drift Response: {response}")  # noqa T201
+        print(f"Context data: {context_data}")  # noqa T201
 
     # display response and reference context to UI
     search_result = SearchResult(
@@ -285,7 +289,7 @@ async def run_drift_search(
         context=context_data if isinstance(context_data, dict) else empty_context_data,
     )
 
-    await display_search_result(
+    display_search_result(
         container=response_container, result=search_result, stats=None
     )
 
@@ -304,7 +308,8 @@ async def run_basic_search(
     query: str,
     sv: SessionVariables,
 ) -> SearchResult:
-    print(f"Basic search query: {query}") # noqa T201
+    """Run basic search."""
+    print(f"Basic search query: {query}")  # noqa T201
 
     # build local search engine
     response_placeholder = st.session_state[
@@ -312,18 +317,17 @@ async def run_basic_search(
     ]
     response_container = st.session_state[f"{SearchType.Basic.value.lower()}_container"]
 
-    with response_placeholder:
-        with st.spinner("Generating answer using basic RAG..."):
-            empty_context_data: dict[str, pd.DataFrame] = {}
+    with response_placeholder, st.spinner("Generating answer using basic RAG..."):
+        empty_context_data: dict[str, pd.DataFrame] = {}
 
-            response, context_data = await api.basic_search(
-                config=sv.graphrag_config.value,
-                text_units=sv.text_units.value,
-                query=query,
-            )
+        response, context_data = await api.basic_search(
+            config=sv.graphrag_config.value,
+            text_units=sv.text_units.value,
+            query=query,
+        )
 
-            print(f"Basic Response: {response}") # noqa T201
-            print(f"Context data: {context_data}") # noqa T201
+        print(f"Basic Response: {response}")  # noqa T201
+        print(f"Context data: {context_data}")  # noqa T201
 
     # display response and reference context to UI
     search_result = SearchResult(
@@ -332,7 +336,7 @@ async def run_basic_search(
         context=context_data if isinstance(context_data, dict) else empty_context_data,
     )
 
-    await display_search_result(
+    display_search_result(
         container=response_container, result=search_result, stats=None
     )
 
@@ -348,7 +352,8 @@ async def run_basic_search(
 
 
 def load_knowledge_model(sv: SessionVariables):
-    print("Loading knowledge model...", sv.dataset.value, sv.dataset_config.value) # noqa T201
+    """Load knowledge model from the datasource."""
+    print("Loading knowledge model...", sv.dataset.value, sv.dataset_config.value)  # noqa T201
     model = load_model(sv.dataset.value, sv.datasource.value)
 
     sv.generated_questions.value = []
