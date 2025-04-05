@@ -14,6 +14,10 @@ from graphrag.config.models.language_model_config import LanguageModelConfig
 class SummarizeDescriptionsConfig(BaseModel):
     """Configuration section for description summarization."""
 
+    model_id: str = Field(
+        description="The model ID to use for summarization.",
+        default=graphrag_config_defaults.summarize_descriptions.model_id,
+    )
     prompt: str | None = Field(
         description="The description summarization prompt to use.",
         default=graphrag_config_defaults.summarize_descriptions.prompt,
@@ -25,10 +29,6 @@ class SummarizeDescriptionsConfig(BaseModel):
     strategy: dict | None = Field(
         description="The override strategy to use.",
         default=graphrag_config_defaults.summarize_descriptions.strategy,
-    )
-    model_id: str = Field(
-        description="The model ID to use for summarization.",
-        default=graphrag_config_defaults.summarize_descriptions.model_id,
     )
 
     def resolved_strategy(

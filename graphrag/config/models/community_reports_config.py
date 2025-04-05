@@ -14,6 +14,10 @@ from graphrag.config.models.language_model_config import LanguageModelConfig
 class CommunityReportsConfig(BaseModel):
     """Configuration section for community reports."""
 
+    model_id: str = Field(
+        description="The model ID to use for community reports.",
+        default=graphrag_config_defaults.community_reports.model_id,
+    )
     graph_prompt: str | None = Field(
         description="The community report extraction prompt to use for graph-based summarization.",
         default=graphrag_config_defaults.community_reports.graph_prompt,
@@ -33,10 +37,6 @@ class CommunityReportsConfig(BaseModel):
     strategy: dict | None = Field(
         description="The override strategy to use.",
         default=graphrag_config_defaults.community_reports.strategy,
-    )
-    model_id: str = Field(
-        description="The model ID to use for community reports.",
-        default=graphrag_config_defaults.community_reports.model_id,
     )
 
     def resolved_strategy(
