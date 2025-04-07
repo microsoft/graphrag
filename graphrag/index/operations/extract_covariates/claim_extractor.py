@@ -8,9 +8,7 @@ import traceback
 from dataclasses import dataclass
 from typing import Any
 
-import tiktoken
-
-from graphrag.config.defaults import ENCODING_MODEL, graphrag_config_defaults
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_claims import (
@@ -48,7 +46,6 @@ class ClaimExtractor:
     _completion_delimiter_key: str
     _max_gleanings: int
     _on_error: ErrorHandlerFn
-    _loop_args: dict[str, Any]
 
     def __init__(
         self,
@@ -61,7 +58,6 @@ class ClaimExtractor:
         tuple_delimiter_key: str | None = None,
         record_delimiter_key: str | None = None,
         completion_delimiter_key: str | None = None,
-        encoding_model: str | None = None,
         max_gleanings: int | None = None,
         on_error: ErrorHandlerFn | None = None,
     ):
@@ -87,12 +83,6 @@ class ClaimExtractor:
             else graphrag_config_defaults.extract_claims.max_gleanings
         )
         self._on_error = on_error or (lambda _e, _s, _d: None)
-
-        # Construct the looping arguments
-        encoding = tiktoken.get_encoding(encoding_model or ENCODING_MODEL)
-        yes = f"{encoding.encode('Y')[0]}"
-        no = f"{encoding.encode('N')[0]}"
-        self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}
 
     async def __call__(
         self, inputs: dict[str, Any], prompt_variables: dict | None = None
@@ -175,30 +165,32 @@ class ClaimExtractor:
         results = response.output.content or ""
         claims = results.strip().removesuffix(completion_delimiter)
 
-        # Repeat to ensure we maximize entity count
-        for i in range(self._max_gleanings):
-            response = await self._model.achat(
-                CONTINUE_PROMPT,
-                name=f"extract-continuation-{i}",
-                history=response.history,
-            )
-            extension = response.output.content or ""
-            claims += record_delimiter + extension.strip().removesuffix(
-                completion_delimiter
-            )
+        # if gleanings are specified, enter a loop to extract more claims
+        # there are two exit criteria: (a) we hit the configured max, (b) the model says there are no more claims
+        if self._max_gleanings > 0:
+            for i in range(self._max_gleanings):
+                response = await self._model.achat(
+                    CONTINUE_PROMPT,
+                    name=f"extract-continuation-{i}",
+                    history=response.history,
+                )
+                extension = response.output.content or ""
+                claims += record_delimiter + extension.strip().removesuffix(
+                    completion_delimiter
+                )
 
-            # If this isn't the last loop, check to see if we should continue
-            if i >= self._max_gleanings - 1:
-                break
+                # If this isn't the last loop, check to see if we should continue
+                if i >= self._max_gleanings - 1:
+                    break
 
-            response = await self._model.achat(
-                LOOP_PROMPT,
-                name=f"extract-loopcheck-{i}",
-                history=response.history,
-                model_parameters=self._loop_args,
-            )
-            if response.output.content != "Y":
-                break
+                response = await self._model.achat(
+                    LOOP_PROMPT,
+                    name=f"extract-loopcheck-{i}",
+                    history=response.history,
+                )
+
+                if response.output.content != "Y":
+                    break
 
         return self._parse_claim_tuples(results, prompt_args)
 

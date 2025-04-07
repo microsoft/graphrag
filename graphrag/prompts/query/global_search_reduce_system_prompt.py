@@ -35,6 +35,7 @@ where 1, 2, 3, 7, 34, 46, and 64 represent the id (not the index) of the relevan
 
 Do not include information where the supporting evidence for it is not provided.
 
+Limit your response length to {max_length} words.
 
 ---Target response length and format---
 
@@ -70,6 +71,7 @@ where 1, 2, 3, 7, 34, 46, and 64 represent the id (not the index) of the relevan
 
 Do not include information where the supporting evidence for it is not provided.
 
+Limit your response length to {max_length} words.
 
 ---Target response length and format---
 

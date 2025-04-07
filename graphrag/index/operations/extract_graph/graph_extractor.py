@@ -11,9 +11,8 @@ from dataclasses import dataclass
 from typing import Any
 
 import networkx as nx
-import tiktoken
 
-from graphrag.config.defaults import ENCODING_MODEL, graphrag_config_defaults
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.index.utils.string import clean_str
 from graphrag.language_model.protocol.base import ChatModel
@@ -53,7 +52,6 @@ class GraphExtractor:
     _input_descriptions_key: str
     _extraction_prompt: str
     _summarization_prompt: str
-    _loop_args: dict[str, Any]
     _max_gleanings: int
     _on_error: ErrorHandlerFn
 
@@ -67,7 +65,6 @@ class GraphExtractor:
         completion_delimiter_key: str | None = None,
         prompt: str | None = None,
         join_descriptions=True,
-        encoding_model: str | None = None,
         max_gleanings: int | None = None,
         on_error: ErrorHandlerFn | None = None,
     ):
@@ -89,12 +86,6 @@ class GraphExtractor:
             else graphrag_config_defaults.extract_graph.max_gleanings
         )
         self._on_error = on_error or (lambda _e, _s, _d: None)
-
-        # Construct the looping arguments
-        encoding = tiktoken.get_encoding(encoding_model or ENCODING_MODEL)
-        yes = f"{encoding.encode('Y')[0]}"
-        no = f"{encoding.encode('N')[0]}"
-        self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}
 
     async def __call__(
         self, texts: list[str], prompt_variables: dict[str, Any] | None = None
@@ -160,28 +151,28 @@ class GraphExtractor:
         )
         results = response.output.content or ""
 
-        # Repeat to ensure we maximize entity count
-        for i in range(self._max_gleanings):
-            response = await self._model.achat(
-                CONTINUE_PROMPT,
-                name=f"extract-continuation-{i}",
-                history=response.history,
-            )
-            results += response.output.content or ""
+        # if gleanings are specified, enter a loop to extract more entities
+        # there are two exit criteria: (a) we hit the configured max, (b) the model says there are no more entities
+        if self._max_gleanings > 0:
+            for i in range(self._max_gleanings):
+                response = await self._model.achat(
+                    CONTINUE_PROMPT,
+                    name=f"extract-continuation-{i}",
+                    history=response.history,
+                )
+                results += response.output.content or ""
 
-            # if this is the final glean, don't bother updating the continuation flag
-            if i >= self._max_gleanings - 1:
-                break
+                # if this is the final glean, don't bother updating the continuation flag
+                if i >= self._max_gleanings - 1:
+                    break
 
-            response = await self._model.achat(
-                LOOP_PROMPT,
-                name=f"extract-loopcheck-{i}",
-                history=response.history,
-                model_parameters=self._loop_args,
-            )
-
-            if response.output.content != "Y":
-                break
+                response = await self._model.achat(
+                    LOOP_PROMPT,
+                    name=f"extract-loopcheck-{i}",
+                    history=response.history,
+                )
+                if response.output.content != "Y":
+                    break
 
         return results
 

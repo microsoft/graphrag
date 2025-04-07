@@ -43,23 +43,7 @@ class LocalSearchConfig(BaseModel):
         description="The top k mapped relations.",
         default=graphrag_config_defaults.local_search.top_k_relationships,
     )
-    temperature: float = Field(
-        description="The temperature to use for token generation.",
-        default=graphrag_config_defaults.local_search.temperature,
-    )
-    top_p: float = Field(
-        description="The top-p value to use for token generation.",
-        default=graphrag_config_defaults.local_search.top_p,
-    )
-    n: int = Field(
-        description="The number of completions to generate.",
-        default=graphrag_config_defaults.local_search.n,
-    )
-    max_tokens: int = Field(
+    max_context_tokens: int = Field(
         description="The maximum tokens.",
-        default=graphrag_config_defaults.local_search.max_tokens,
-    )
-    llm_max_tokens: int = Field(
-        description="The LLM maximum tokens.",
-        default=graphrag_config_defaults.local_search.llm_max_tokens,
+        default=graphrag_config_defaults.local_search.max_context_tokens,
     )

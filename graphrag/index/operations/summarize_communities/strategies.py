@@ -66,7 +66,7 @@ async def _run_extractor(
 
     try:
         await rate_limiter.acquire()
-        results = await extractor({"input_text": input})
+        results = await extractor(input)
         report = results.structured_output
         if report is None:
             log.warning("No report found for community: %s", community)

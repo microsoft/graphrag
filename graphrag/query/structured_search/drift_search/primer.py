@@ -137,7 +137,6 @@ class DRIFTPrimer:
         prompt = DRIFT_PRIMER_PROMPT.format(
             query=query, community_reports=community_reports
         )
-
         model_response = await self.chat_model.achat(prompt, json=True)
         response = model_response.output.content
 
