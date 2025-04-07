@@ -13,30 +13,6 @@ trigger:
     
 
 stages:
-  - stage: Compliance
-    dependsOn: []
-    jobs:
-      - job: compliance
-        displayName: Compliance
-        pool:
-          vmImage: windows-latest
-        steps:
-          - task: CredScan@3
-            inputs:
-              outputFormat: sarif
-              debugMode: false
-
-          - task: ComponentGovernanceComponentDetection@0
-            inputs:
-              scanType: "Register"
-              verbosity: "Verbose"
-              alertWarningLevel: "High"
-
-          - task: PublishSecurityAnalysisLogs@3
-            inputs:
-              ArtifactName: "CodeAnalysisLogs"
-              ArtifactType: "Container"
-
   - stage: Build_deploy
     dependsOn: []
     jobs:
