@@ -382,6 +382,18 @@ class SQLServerPipelineStorage(PipelineStorage):
             )
             return ""
 
+def create_sql_server_storage(**kwargs: Any) -> PipelineStorage:
+    """Create a SQLServer storage instance."""
+    log.info("Creating SQL Server storage")
+    database_name = kwargs.get("database_name")
+    database_server_name = kwargs.get("database_server_name")
+    if not database_name or not database_server_name:
+        msg = "Both 'database_name' and 'database_server_name' must be provided."
+        raise ValueError(msg)
+    return SQLServerPipelineStorage(
+        database_name=database_name,
+        database_server_name=database_server_name,
+    )
 
 def _create_progress_status(
     num_loaded: int, num_filtered: int, num_total: int

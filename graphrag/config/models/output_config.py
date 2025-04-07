@@ -36,3 +36,11 @@ class OutputConfig(BaseModel):
         description="The cosmosdb account url to use.",
         default=graphrag_config_defaults.output.cosmosdb_account_url,
     )
+    database_name: str | None = Field(
+        description="The database name to use for SQL Server.",
+        default=graphrag_config_defaults.output.database_name,
+    )
+    database_server_name: str | None = Field(
+        description="The database server name to use for SQL Server.",
+        default=graphrag_config_defaults.output.database_server_name,
+    )

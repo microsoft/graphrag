@@ -324,6 +324,8 @@ class OutputDefaults:
     container_name: None = None
     storage_account_blob_url: None = None
     cosmosdb_account_url: None = None
+    database_name: None = None
+    database_server_name: None = None
 
 
 @dataclass

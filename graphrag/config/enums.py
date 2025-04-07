@@ -66,6 +66,8 @@ class OutputType(str, Enum):
     """The blob output type."""
     cosmosdb = "cosmosdb"
     """The cosmosdb output type"""
+    sqlserver = "sqlserver"
+    """The sqlserver output type"""
 
     def __repr__(self):
         """Get a string representation."""
