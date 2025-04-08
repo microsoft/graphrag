@@ -33,18 +33,21 @@ class SQLServerPipelineStorage(PipelineStorage):
     _database_name: str
     _database_server_name: str
     _local_connection_string: str
+    _overwrite_tables: bool
     _connection: Connection
 
     def __init__(
         self,
         database_name: str,
         database_server_name: str,
+        overwrite_tables: bool = True,
     ):
         """Initialize connection to Azure SQL Server."""
         # Currently, the SQL Server storage requires that the database and tables are created before indexing
         # This initialization establishes a connection using the pyodbc SQL driver
         self._database_name = database_name
         self._database_server_name = database_server_name
+        self._overwrite_tables = overwrite_tables
 
         # Use password-less authentication for the db server
         self._local_connection_string = f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:{database_server_name}.database.windows.net,1433;Database={database_name};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30"
@@ -232,11 +235,6 @@ class SQLServerPipelineStorage(PipelineStorage):
                 table_name = key.split(".")[0]
                 data_frame = pd.read_parquet(BytesIO(value))
 
-                # Overwrite the table if it already exists
-                cursor.execute(
-                    f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]"
-                )
-
                 # Build CREATE TABLE statement based on DataFrame columns
                 columns = []
                 for col_name, dtype in zip(
@@ -256,8 +254,17 @@ class SQLServerPipelineStorage(PipelineStorage):
 
                     columns.append(f"[{col_name}] {sql_type}")
 
-                create_table_sql = f"CREATE TABLE [{table_name}] ({', '.join(columns)})"
-                cursor.execute(create_table_sql)
+                if self._overwrite_tables:
+                    cursor.execute(
+                        f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]"
+                    )
+
+                    create_table_sql = f"CREATE TABLE [{table_name}] ({', '.join(columns)})"
+                    cursor.execute(create_table_sql)
+                else:
+                    cursor.execute(
+                        f"IF OBJECT_ID('{table_name}', 'U') IS NULL CREATE TABLE [{table_name}] ({', '.join(columns)})"
+                    )
 
                 # Insert parquet data into SQL server
                 for _, row in data_frame.iterrows():
@@ -403,12 +410,14 @@ def create_sql_server_storage(**kwargs: Any) -> PipelineStorage:
     log.info("Creating SQL Server storage")
     database_name = kwargs.get("database_name")
     database_server_name = kwargs.get("database_server_name")
+    overwrite_tables = kwargs.get("overwrite_tables", True)
     if not database_name or not database_server_name:
         msg = "Both 'database_name' and 'database_server_name' must be provided."
         raise ValueError(msg)
     return SQLServerPipelineStorage(
         database_name=database_name,
         database_server_name=database_server_name,
+        overwrite_tables=overwrite_tables,
     )
 
 def _create_progress_status(
