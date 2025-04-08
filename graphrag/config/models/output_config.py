@@ -44,3 +44,7 @@ class OutputConfig(BaseModel):
         description="The database server name to use for SQL Server.",
         default=graphrag_config_defaults.output.database_server_name,
     )
+    overwrite_tables: bool | None = Field(
+        description="Whether to overwrite existing tables in SQL Server.",
+        default=graphrag_config_defaults.output.overwrite_tables,
+    )
