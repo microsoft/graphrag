@@ -33,19 +33,18 @@ class SQLServerPipelineStorage(PipelineStorage):
     _database_name: str
     _database_server_name: str
     _local_connection_string: str
-    _overwrite_tables: bool
     _connection: Connection
 
     def __init__(
         self,
         database_name: str,
         database_server_name: str,
-        overwrite_tables: bool,
     ):
         """Initialize connection to Azure SQL Server."""
+        # Currently, the SQL Server storage requires that the database and tables are created before indexing
+        # This initialization establishes a connection using the pyodbc SQL driver
         self._database_name = database_name
         self._database_server_name = database_server_name
-        self._overwrite_tables = overwrite_tables
 
         # Use password-less authentication for the db server
         self._local_connection_string = f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:{database_server_name}.database.windows.net,1433;Database={database_name};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30"
@@ -183,21 +182,18 @@ class SQLServerPipelineStorage(PipelineStorage):
                             processed_row.append(val)
                         elif isinstance(val, bytearray):
                             processed_row.append(bytes(val))
-                        elif (
-                            isinstance(val, str)
-                            and val.startswith("[")
-                            and val.endswith("]")
-                        ):
-                            # Attempt to parse strings that appear to be serialized lists
+                        elif isinstance(val, str) and val.startswith('[') and val.endswith(']'):
+                            # Try to parse strings that appear to be serialized lists
                             import ast
-
                             try:
+                                # Using ast.literal_eval is safer than eval() for parsing
                                 parsed_val = ast.literal_eval(val)
                                 if isinstance(parsed_val, list):
                                     processed_row.append(parsed_val)
                                 else:
                                     processed_row.append(val)
                             except (SyntaxError, ValueError):
+                                # If parsing fails, keep the original string
                                 processed_row.append(val)
                         else:
                             processed_row.append(val)
@@ -236,7 +232,12 @@ class SQLServerPipelineStorage(PipelineStorage):
                 table_name = key.split(".")[0]
                 data_frame = pd.read_parquet(BytesIO(value))
 
-                # Fetch DataFrame columns for CREATE TABLE statement
+                # Overwrite the table if it already exists
+                cursor.execute(
+                    f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]"
+                )
+
+                # Build CREATE TABLE statement based on DataFrame columns
                 columns = []
                 for col_name, dtype in zip(
                     data_frame.columns, data_frame.dtypes, strict=False
@@ -255,17 +256,8 @@ class SQLServerPipelineStorage(PipelineStorage):
 
                     columns.append(f"[{col_name}] {sql_type}")
 
-                # Overwrite existing table if specified
-                if self._overwrite_tables:
-                    cursor.execute(
-                        f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]"
-                    )
-                    create_table_sql = f"CREATE TABLE [{table_name}] ({', '.join(columns)})"
-                    cursor.execute(create_table_sql)
-                else:
-                    cursor.execute(
-                        f"IF OBJECT_ID('{table_name}', 'U') IS NULL CREATE TABLE [{table_name}] ({', '.join(columns)})"
-                    )
+                create_table_sql = f"CREATE TABLE [{table_name}] ({', '.join(columns)})"
+                cursor.execute(create_table_sql)
 
                 # Insert parquet data into SQL server
                 for _, row in data_frame.iterrows():
@@ -275,7 +267,7 @@ class SQLServerPipelineStorage(PipelineStorage):
                     column_names = ", ".join([f"[{col}]" for col in data_frame.columns])
                     insert_sql = f"INSERT INTO [{table_name}] ({column_names}) VALUES ({placeholders})"  # noqa: S608
 
-                    # Handle various value types, serializing lists and numpy arrays
+                    # Handle various value types, converting complex types to strings
                     values = []
                     for val in row:
                         if isinstance(val, np.ndarray):
@@ -406,22 +398,18 @@ class SQLServerPipelineStorage(PipelineStorage):
             )
             return ""
 
-
 def create_sql_server_storage(**kwargs: Any) -> PipelineStorage:
     """Create a SQLServer storage instance."""
     log.info("Creating SQL Server storage")
     database_name = kwargs.get("database_name")
     database_server_name = kwargs.get("database_server_name")
-    overwrite_tables = kwargs.get("overwrite_tables", True)
     if not database_name or not database_server_name:
         msg = "Both 'database_name' and 'database_server_name' must be provided."
         raise ValueError(msg)
     return SQLServerPipelineStorage(
         database_name=database_name,
         database_server_name=database_server_name,
-        overwrite_tables=overwrite_tables,
     )
-
 
 def _create_progress_status(
     num_loaded: int, num_filtered: int, num_total: int
