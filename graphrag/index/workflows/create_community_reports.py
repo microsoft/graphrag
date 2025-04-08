@@ -120,7 +120,7 @@ async def create_community_reports(
         async_mode=async_mode,
         num_threads=num_threads,
     )
-    
+
     return finalize_community_reports(community_reports, communities)
 
 

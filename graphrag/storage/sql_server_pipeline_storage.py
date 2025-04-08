@@ -178,25 +178,27 @@ class SQLServerPipelineStorage(PipelineStorage):
                 # Construct a dataframe from the query results
                 data = []
                 for row in rows:
-                    # Convert row to Python native types
                     processed_row = []
                     for val in row:
                         if val is None:
                             processed_row.append(val)
                         elif isinstance(val, bytearray):
                             processed_row.append(bytes(val))
-                        elif isinstance(val, str) and val.startswith('[') and val.endswith(']'):
-                            # Try to parse strings that appear to be serialized lists
+                        elif (
+                            isinstance(val, str)
+                            and val.startswith("[")
+                            and val.endswith("]")
+                        ):
+                            # Parse strings that are fetched as serialized lists
                             import ast
+
                             try:
-                                # Using ast.literal_eval is safer than eval() for parsing
                                 parsed_val = ast.literal_eval(val)
                                 if isinstance(parsed_val, list):
                                     processed_row.append(parsed_val)
                                 else:
                                     processed_row.append(val)
                             except (SyntaxError, ValueError):
-                                # If parsing fails, keep the original string
                                 processed_row.append(val)
                         else:
                             processed_row.append(val)
@@ -259,7 +261,9 @@ class SQLServerPipelineStorage(PipelineStorage):
                         f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]"
                     )
 
-                    create_table_sql = f"CREATE TABLE [{table_name}] ({', '.join(columns)})"
+                    create_table_sql = (
+                        f"CREATE TABLE [{table_name}] ({', '.join(columns)})"
+                    )
                     cursor.execute(create_table_sql)
                 else:
                     cursor.execute(
@@ -405,6 +409,7 @@ class SQLServerPipelineStorage(PipelineStorage):
             )
             return ""
 
+
 def create_sql_server_storage(**kwargs: Any) -> PipelineStorage:
     """Create a SQLServer storage instance."""
     log.info("Creating SQL Server storage")
@@ -419,6 +424,7 @@ def create_sql_server_storage(**kwargs: Any) -> PipelineStorage:
         database_server_name=database_server_name,
         overwrite_tables=overwrite_tables,
     )
+
 
 def _create_progress_status(
     num_loaded: int, num_filtered: int, num_total: int
