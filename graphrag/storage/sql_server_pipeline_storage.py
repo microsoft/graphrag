@@ -3,6 +3,7 @@
 
 """Azure SQL Server implementation of PipelineStorage."""
 
+import json
 import logging
 import re
 import struct
@@ -181,6 +182,22 @@ class SQLServerPipelineStorage(PipelineStorage):
                             processed_row.append(val)
                         elif isinstance(val, bytearray):
                             processed_row.append(bytes(val))
+                        elif (
+                            isinstance(val, str)
+                            and val.startswith("[")
+                            and val.endswith("]")
+                        ):
+                            # Attempt to parse strings that appear to be serialized lists
+                            import ast
+
+                            try:
+                                parsed_val = ast.literal_eval(val)
+                                if isinstance(parsed_val, list):
+                                    processed_row.append(parsed_val)
+                                else:
+                                    processed_row.append(val)
+                            except (SyntaxError, ValueError):
+                                processed_row.append(val)
                         else:
                             processed_row.append(val)
                     data.append(processed_row)
@@ -253,11 +270,13 @@ class SQLServerPipelineStorage(PipelineStorage):
                     column_names = ", ".join([f"[{col}]" for col in data_frame.columns])
                     insert_sql = f"INSERT INTO [{table_name}] ({column_names}) VALUES ({placeholders})"  # noqa: S608
 
-                    # Handle various value types, converting complex types to strings
+                    # Handle various value types, serializing lists and numpy arrays
                     values = []
                     for val in row:
-                        if isinstance(val, np.ndarray | list):
-                            values.append(str(val))
+                        if isinstance(val, np.ndarray):
+                            values.append(json.dumps(val.tolist()))
+                        elif isinstance(val, list):
+                            values.append(json.dumps(val))
                         elif pd.isna(val):
                             values.append(None)
                         else:
@@ -382,6 +401,7 @@ class SQLServerPipelineStorage(PipelineStorage):
             )
             return ""
 
+
 def create_sql_server_storage(**kwargs: Any) -> PipelineStorage:
     """Create a SQLServer storage instance."""
     log.info("Creating SQL Server storage")
@@ -394,6 +414,7 @@ def create_sql_server_storage(**kwargs: Any) -> PipelineStorage:
         database_name=database_name,
         database_server_name=database_server_name,
     )
+
 
 def _create_progress_status(
     num_loaded: int, num_filtered: int, num_total: int
