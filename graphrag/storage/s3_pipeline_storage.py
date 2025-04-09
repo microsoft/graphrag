@@ -32,6 +32,7 @@ class S3PipelineStorage(PipelineStorage):
         aws_access_key_id: str | None = None,
         aws_secret_access_key: str | None = None,
         region_name: str | None = None,
+        endpoint_url: str | None = None,
     ):
         """Instantiate an instance of the `S3PipelineStorage` class.
 
@@ -42,6 +43,8 @@ class S3PipelineStorage(PipelineStorage):
             aws_access_key_id: The AWS access key ID. If not provided, boto3's credential chain will be used.
             aws_secret_access_key: The AWS secret access key. If not provided, boto3's credential chain will be used.
             region_name: The AWS region name. If not provided, boto3's default region will be used.
+            endpoint_url: The endpoint URL for the S3 API. If provided, this will be used instead of the default AWS S3 endpoint.
+                          This is useful for connecting to S3-compatible storage services like MinIO.
         """
         self._bucket_name = bucket_name
         self._prefix = prefix
@@ -55,7 +58,7 @@ class S3PipelineStorage(PipelineStorage):
         if region_name:
             kwargs["region_name"] = region_name
         
-        self._s3 = boto3.client("s3", **kwargs)
+        self._s3 = boto3.client("s3", endpoint_url=endpoint_url, **kwargs)
         # We'll use the client API instead of the resource API
         # to avoid potential type issues
         
@@ -283,10 +286,15 @@ class S3PipelineStorage(PipelineStorage):
         new_prefix = self._prefix
         new_prefix = f"{new_prefix.rstrip('/')}/{name}" if new_prefix else name
         
+        # Create a new storage instance with the same parameters but a different prefix
+        s3_client = self._s3
+        endpoint_url = s3_client._endpoint.host if hasattr(s3_client, '_endpoint') and hasattr(s3_client._endpoint, 'host') else None
+        
         return S3PipelineStorage(
             bucket_name=self._bucket_name,
             prefix=new_prefix,
             encoding=self._encoding,
+            endpoint_url=endpoint_url,
             # Use the same client, so credentials are reused
         )
 
@@ -371,6 +379,7 @@ def create_s3_storage(**kwargs: Any) -> PipelineStorage:
     aws_access_key_id = kwargs.get("aws_access_key_id")
     aws_secret_access_key = kwargs.get("aws_secret_access_key")
     region_name = kwargs.get("region_name")
+    endpoint_url = kwargs.get("endpoint_url")
     
     log.info("Creating S3 storage with bucket: %s, prefix: %s", bucket_name, prefix)
     
@@ -381,4 +390,5 @@ def create_s3_storage(**kwargs: Any) -> PipelineStorage:
         aws_access_key_id=aws_access_key_id,
         aws_secret_access_key=aws_secret_access_key,
         region_name=region_name,
+        endpoint_url=endpoint_url,
     )

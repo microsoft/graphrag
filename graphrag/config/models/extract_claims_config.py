@@ -25,6 +25,10 @@ class ClaimExtractionConfig(BaseModel):
         description="The claim extraction prompt to use.",
         default=graphrag_config_defaults.extract_claims.prompt,
     )
+    endpoint_url: str | None = Field(
+        description="The endpoint URL for the S3 API. Useful for S3-compatible storage like MinIO.",
+        default=graphrag_config_defaults.cache.endpoint_url,
+    )
     description: str = Field(
         description="The claim description to use.",
         default=graphrag_config_defaults.extract_claims.description,
@@ -49,7 +53,7 @@ class ClaimExtractionConfig(BaseModel):
         return self.strategy or {
             "llm": model_config.model_dump(),
             "num_threads": model_config.concurrent_requests,
-            "extraction_prompt": get_prompt_content(self.prompt, root_dir),
+            "extraction_prompt": get_prompt_content(self.prompt, root_dir, self.endpoint_url),
             "claim_description": self.description,
             "max_gleanings": self.max_gleanings,
             "encoding_name": model_config.encoding_model,

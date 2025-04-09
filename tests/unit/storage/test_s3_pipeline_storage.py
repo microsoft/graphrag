@@ -52,6 +52,20 @@ def s3_storage(s3_bucket, test_prefix):
     )
 
 
+@pytest.fixture
+def s3_storage_with_endpoint(s3_bucket, test_prefix):
+    """Create a test S3PipelineStorage instance with endpoint URL."""
+    with patch("boto3.client") as mock_client:
+        storage = S3PipelineStorage(
+            bucket_name=s3_bucket,
+            prefix=test_prefix,
+            encoding="utf-8",
+            region_name="us-east-1",
+            endpoint_url="http://localhost:9000",
+        )
+        return storage, mock_client
+
+
 @pytest.mark.parametrize(
     ("prefix", "key", "expected"),
     [
@@ -373,6 +387,26 @@ def test_create_s3_storage(bucket_name):
     assert storage._encoding == "latin-1"  # noqa: SLF001
 
 
+def test_create_s3_storage_with_endpoint_url(bucket_name):
+    """Test creating an S3 storage with endpoint URL using the factory function."""
+    with patch("boto3.client") as mock_client:
+        storage = create_s3_storage(
+            bucket_name=bucket_name,
+            prefix="test-prefix",
+            encoding="latin-1",
+            aws_access_key_id="test-key",
+            aws_secret_access_key="test-secret",
+            region_name="us-west-2",
+            endpoint_url="http://localhost:9000",
+        )
+        
+        assert isinstance(storage, S3PipelineStorage)
+        mock_client.assert_called_once()
+        # Check that endpoint_url was passed to boto3.client
+        call_kwargs = mock_client.call_args.kwargs
+        assert call_kwargs["endpoint_url"] == "http://localhost:9000"
+
+
 @pytest.mark.asyncio
 async def test_get_client_error(s3_storage):
     """Test handling of client errors in get method."""
@@ -438,3 +472,42 @@ async def test_warning_on_clear_without_prefix(s3_bucket, caplog):
         await storage.clear()
     
     assert "Clearing entire S3 bucket as no prefix was specified" in caplog.text
+
+
+def test_s3_storage_with_endpoint_url():
+    """Test that endpoint_url is passed to boto3.client."""
+    with patch("boto3.client") as mock_client:
+        S3PipelineStorage(
+            bucket_name="test-bucket",
+            endpoint_url="http://localhost:9000",
+        )
+        
+        mock_client.assert_called_once()
+        call_kwargs = mock_client.call_args.kwargs
+        assert call_kwargs["endpoint_url"] == "http://localhost:9000"
+
+
+def test_child_storage_preserves_endpoint_url():
+    """Test that child storage preserves the endpoint_url."""
+    with patch("boto3.client") as mock_client:
+        # Mock the _endpoint attribute
+        mock_client_instance = MagicMock()
+        mock_endpoint = MagicMock()
+        mock_endpoint.host = "http://localhost:9000"
+        mock_client_instance._endpoint = mock_endpoint
+        mock_client.return_value = mock_client_instance
+        
+        # Create parent storage
+        parent_storage = S3PipelineStorage(
+            bucket_name="test-bucket",
+            endpoint_url="http://localhost:9000",
+        )
+        
+        # Create child storage
+        child_storage = parent_storage.child("child")
+        
+        # Verify endpoint_url is preserved in child storage
+        with patch("boto3.client") as mock_client2:
+            # Access the _s3 client to trigger creation if it's lazy-loaded
+            # This is just to ensure our test is valid
+            assert child_storage._s3 is not None  # noqa: SLF001

@@ -196,6 +196,19 @@ def test_s3_prompt_getter_client_error(s3_mock: Any) -> None:
         getter.get_prompt(path)
 
 
+def test_s3_prompt_getter_with_endpoint_url() -> None:
+    """Test S3PromptGetter initialization with a custom endpoint URL."""
+    # Arrange
+    endpoint_url = "http://localhost:9000"
+    
+    # Act
+    with patch("boto3.client") as mock_boto3_client:
+        getter = S3PromptGetter(endpoint_url=endpoint_url)
+        
+        # Assert
+        mock_boto3_client.assert_called_once_with("s3", endpoint_url=endpoint_url)
+
+
 def test_create_prompt_getter_local() -> None:
     """Test creating a LocalPromptGetter."""
     # Arrange
@@ -215,6 +228,19 @@ def test_create_prompt_getter_s3() -> None:
 
     # Act
     getter = create_prompt_getter(filepath)
+
+    # Assert
+    assert isinstance(getter, S3PromptGetter)
+
+
+def test_create_prompt_getter_s3_with_endpoint_url() -> None:
+    """Test creating an S3PromptGetter with a custom endpoint URL."""
+    # Arrange
+    filepath = "s3://bucket/path/to/prompt.txt"
+    endpoint_url = "http://localhost:9000"
+
+    # Act
+    getter = create_prompt_getter(filepath, endpoint_url=endpoint_url)
 
     # Assert
     assert isinstance(getter, S3PromptGetter)
@@ -262,7 +288,7 @@ def test_get_prompt_content(
     # Assert
     assert result == expected_result
     if prompt_path:
-        mock_create.assert_called_once_with(prompt_path)
+        mock_create.assert_called_once_with(prompt_path, endpoint_url=None)
 
 
 def test_get_prompt_content_with_s3(
@@ -270,7 +296,28 @@ def test_get_prompt_content_with_s3(
 ) -> None:
     """Test get_prompt_content with an S3 path."""
     # Act
-    result = get_prompt_content(s3_prompt_path, None)
+    result = get_prompt_content(s3_prompt_path, None, endpoint_url=None)
 
     # Assert
     assert result == s3_prompt_content
+
+
+def test_get_prompt_content_with_endpoint_url() -> None:
+    """Test get_prompt_content with a custom endpoint URL."""
+    # Arrange
+    prompt_path = "s3://bucket/path/to/prompt.txt"
+    root_dir = None
+    endpoint_url = "http://localhost:9000"
+    
+    # Act
+    with patch("graphrag.config.prompt_getter.create_prompt_getter") as mock_create:
+        mock_getter = MagicMock(spec=PromptGetter)
+        mock_getter.get_prompt.return_value = "Test content"
+        mock_create.return_value = mock_getter
+        
+        result = get_prompt_content(prompt_path, root_dir, endpoint_url=endpoint_url)
+    
+    # Assert
+    mock_create.assert_called_once_with(prompt_path, endpoint_url=endpoint_url)
+    mock_getter.get_prompt.assert_called_once_with(prompt_path, root_dir)
+    assert result == "Test content"

@@ -25,6 +25,10 @@ class CommunityReportsConfig(BaseModel):
         description="The community report extraction prompt to use for text-based summarization.",
         default=graphrag_config_defaults.community_reports.text_prompt,
     )
+    endpoint_url: str | None = Field(
+        description="The endpoint URL for the S3 API. Useful for S3-compatible storage like MinIO.",
+        default=graphrag_config_defaults.cache.endpoint_url,
+    )
     max_length: int = Field(
         description="The community report maximum length in tokens.",
         default=graphrag_config_defaults.community_reports.max_length,
@@ -50,8 +54,8 @@ class CommunityReportsConfig(BaseModel):
             "type": CreateCommunityReportsStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
             "num_threads": model_config.concurrent_requests,
-            "graph_prompt": get_prompt_content(self.graph_prompt, root_dir),
-            "text_prompt": get_prompt_content(self.text_prompt, root_dir),
+            "graph_prompt": get_prompt_content(self.graph_prompt, root_dir, self.endpoint_url),
+            "text_prompt": get_prompt_content(self.text_prompt, root_dir, self.endpoint_url),
             "max_report_length": self.max_length,
             "max_input_length": self.max_input_length,
         }

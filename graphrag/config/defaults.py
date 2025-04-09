@@ -67,6 +67,7 @@ class CacheDefaults:
     aws_access_key_id: None = None
     aws_secret_access_key: None = None
     region_name: None = None
+    endpoint_url: None = None
 
 
 @dataclass
@@ -272,6 +273,7 @@ class InputDefaults:
     aws_access_key_id: None = None
     aws_secret_access_key: None = None
     region_name: None = None
+    endpoint_url: None = None
 
 
 @dataclass
@@ -339,6 +341,7 @@ class OutputDefaults:
     aws_access_key_id: None = None
     aws_secret_access_key: None = None
     region_name: None = None
+    endpoint_url: None = None
 
 
 @dataclass
@@ -368,6 +371,7 @@ class ReportingDefaults:
     aws_access_key_id: None = None
     aws_secret_access_key: None = None
     region_name: None = None
+    endpoint_url: None = None
 
 
 @dataclass
@@ -409,6 +413,7 @@ class UpdateIndexOutputDefaults:
     aws_access_key_id: None = None
     aws_secret_access_key: None = None
     region_name: None = None
+    endpoint_url: None = None
 
 
 @dataclass

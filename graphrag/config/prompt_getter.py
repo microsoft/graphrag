@@ -71,9 +71,14 @@ class LocalPromptGetter(PromptGetter):
 class S3PromptGetter(PromptGetter):
     """Class for retrieving prompts from an S3 bucket."""
 
-    def __init__(self):
-        """Instantiate an instance of the `S3PromptGetter` class."""
-        self._s3_client: BaseClient = boto3.client("s3")
+    def __init__(self, endpoint_url: str | None = None):
+        """Instantiate an instance of the `S3PromptGetter` class.
+        
+        Args:
+            endpoint_url: Optional endpoint URL for S3-compatible storage services like MinIO.
+                          If not provided, the default AWS S3 endpoint will be used.
+        """
+        self._s3_client: BaseClient = boto3.client("s3", endpoint_url=endpoint_url)
     
     def get_prompt(self,
                    path: str,
@@ -108,12 +113,14 @@ class S3PromptGetter(PromptGetter):
 
 default_prompt_getter = LocalPromptGetter()
 
-def create_prompt_getter(filepath: str | None) -> PromptGetter:
+def create_prompt_getter(filepath: str | None, endpoint_url: str | None = None) -> PromptGetter:
     """
     Create a `PromptGetter` instance based on the filepath.
 
     Args:
         filepath (str | None): The path to the prompt file. If the path starts with 's3://', it is considered an S3 path and the bucket name is extracted.
+        endpoint_url (str | None): Optional endpoint URL for S3-compatible storage services like MinIO.
+                                  If not provided, the default AWS S3 endpoint will be used.
 
     Returns
     -------
@@ -121,18 +128,20 @@ def create_prompt_getter(filepath: str | None) -> PromptGetter:
     """
     if filepath and filepath.startswith("s3://"):
         logger.info("Creating the `S3PromptGetter` for %s", filepath)
-        return S3PromptGetter()
+        return S3PromptGetter(endpoint_url=endpoint_url)
     
     logger.info("Creating the `LocalPromptGetter` for %s", filepath)
     return LocalPromptGetter()
 
-def get_prompt_content(prompt_path: str | None, root_dir: str | None) -> str | None:
+def get_prompt_content(prompt_path: str | None, root_dir: str | None, endpoint_url: str | None = None) -> str | None:
     """
     Get the prompt content from a prompt path.
     
     Args:
         prompt_path (str | None): The path to the prompt file, or None.
         root_dir (str | None): The root directory
+        endpoint_url (str | None): Optional endpoint URL for S3-compatible storage services like MinIO.
+                                  If not provided, the default AWS S3 endpoint will be used.
 
     Returns
     -------
@@ -141,5 +150,5 @@ def get_prompt_content(prompt_path: str | None, root_dir: str | None) -> str | N
     if not prompt_path:
         return None
     
-    prompt_getter = create_prompt_getter(prompt_path)
+    prompt_getter = create_prompt_getter(prompt_path, endpoint_url=endpoint_url)
     return prompt_getter.get_prompt(prompt_path, root_dir)

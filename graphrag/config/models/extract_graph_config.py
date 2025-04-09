@@ -21,6 +21,10 @@ class ExtractGraphConfig(BaseModel):
         description="The entity extraction prompt to use.",
         default=graphrag_config_defaults.extract_graph.prompt,
     )
+    endpoint_url: str | None = Field(
+        description="The endpoint URL for the S3 API. Useful for S3-compatible storage like MinIO.",
+        default=graphrag_config_defaults.cache.endpoint_url,
+    )
     entity_types: list[str] = Field(
         description="The entity extraction entity types to use.",
         default=graphrag_config_defaults.extract_graph.entity_types,
@@ -50,7 +54,7 @@ class ExtractGraphConfig(BaseModel):
             "type": ExtractEntityStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
             "num_threads": model_config.concurrent_requests,
-            "extraction_prompt": get_prompt_content(self.prompt, root_dir),
+            "extraction_prompt": get_prompt_content(self.prompt, root_dir, self.endpoint_url),
             "max_gleanings": self.max_gleanings,
             "encoding_name": model_config.encoding_model,
         }
