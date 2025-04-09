@@ -102,6 +102,7 @@ class CommunityReportDefaults:
     max_input_length: int = 8000
     strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    endpoint_url: None = None
 
 
 @dataclass
@@ -176,6 +177,7 @@ class ExtractClaimsDefaults:
     strategy: None = None
     encoding_model: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    endpoint_url: None = None
 
 
 @dataclass
@@ -190,6 +192,7 @@ class ExtractGraphDefaults:
     strategy: None = None
     encoding_model: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    endpoint_url: None = None
 
 
 @dataclass
@@ -390,6 +393,7 @@ class SummarizeDescriptionsDefaults:
     max_length: int = 500
     strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    endpoint_url: None = None
 
 
 @dataclass

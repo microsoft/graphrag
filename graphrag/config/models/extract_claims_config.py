@@ -27,7 +27,7 @@ class ClaimExtractionConfig(BaseModel):
     )
     endpoint_url: str | None = Field(
         description="The endpoint URL for the S3 API. Useful for S3-compatible storage like MinIO.",
-        default=graphrag_config_defaults.cache.endpoint_url,
+        default=graphrag_config_defaults.extract_claims.endpoint_url,
     )
     description: str = Field(
         description="The claim description to use.",

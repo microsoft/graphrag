@@ -23,7 +23,7 @@ class SummarizeDescriptionsConfig(BaseModel):
     )
     endpoint_url: str | None = Field(
         description="The endpoint URL for the S3 API. Useful for S3-compatible storage like MinIO.",
-        default=graphrag_config_defaults.cache.endpoint_url,
+        default=graphrag_config_defaults.summarize_descriptions.endpoint_url,
     )
     max_length: int = Field(
         description="The description summarization maximum length.",
