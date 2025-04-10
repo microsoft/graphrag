@@ -60,12 +60,14 @@ models:
 - `concurrent_requests` **int** The number of open requests to allow at once.
 - `async_mode` **asyncio|threaded** The async mode to use. Either `asyncio` or `threaded`.
 - `responses` **list[str]** - If this model type is mock, this is a list of response strings to return.
-- `max_tokens` **int** - The maximum number of output tokens.
-- `temperature` **float** - The temperature to use.
-- `top_p` **float** - The top-p value to use.
 - `n` **int** - The number of completions to generate.
-- `frequency_penalty` **float** - Frequency penalty for token generation.
-- `presence_penalty` **float** - Frequency penalty for token generation.
+- `max_tokens` **int** - The maximum number of output tokens. Not valid for o-series models.
+- `temperature` **float** - The temperature to use. Not valid for o-series models.
+- `top_p` **float** - The top-p value to use. Not valid for o-series models.
+- `frequency_penalty` **float** - Frequency penalty for token generation. Not valid for o-series models.
+- `presence_penalty` **float** - Frequency penalty for token generation. Not valid for o-series models.
+- `max_completion_tokens` **int** - Max number of tokens to consume for chat completion. Must be large enough to include an unknown amount for "reasoning" by the model. o-series models only.
+- `reasoning_effort` **low|medium|high** - Amount of "thought" for the model to expend reasoning about a response. o-series models only.
 
 ## Input Files and Chunking
 
@@ -212,7 +214,6 @@ Tune the language model-based graph extraction process.
 - `prompt` **str** - The prompt file to use.
 - `entity_types` **list[str]** - The entity types to identify.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
-- `encoding_model` **str** - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset). This is only used for gleanings during the logit_bias check.
 
 ### summarize_descriptions
 
@@ -221,6 +222,7 @@ Tune the language model-based graph extraction process.
 - `model_id` **str** - Name of the model definition to use for API calls.
 - `prompt` **str** - The prompt file to use.
 - `max_length` **int** - The maximum number of output tokens per summarization.
+- `max_input_length` **int** - The maximum number of tokens to collect for summarization (this will limit how many descriptions you send to be summarized for a given entity or relationship).
 
 ### extract_graph_nlp
 
@@ -274,7 +276,6 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 - `prompt` **str** - The prompt file to use.
 - `description` **str** - Describes the types of claims we want to extract.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
-- `encoding_model` **str** - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset). This is only used for gleanings during the logit_bias check.
 
 ### community_reports
 
@@ -329,11 +330,7 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 - `conversation_history_max_turns` **int** - The conversation history maximum turns.
 - `top_k_entities` **int** - The top k mapped entities.
 - `top_k_relationships` **int** - The top k mapped relations.
-- `temperature` **float | None** - The temperature to use for token generation.
-- `top_p` **float | None** - The top-p value to use for token generation.
-- `n` **int | None** - The number of completions to generate.
-- `max_tokens` **int** - The maximum tokens.
-- `llm_max_tokens` **int** - The LLM maximum tokens.
+- `max_context_tokens` **int** - The maximum tokens to use building the request context.
 
 ### global_search
 
@@ -346,20 +343,14 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 - `map_prompt` **str | None** - The global search mapper prompt to use.
 - `reduce_prompt` **str | None** - The global search reducer to use.
 - `knowledge_prompt` **str | None** - The global search general prompt to use.
-- `temperature` **float | None** - The temperature to use for token generation.
-- `top_p` **float | None** - The top-p value to use for token generation.
-- `n` **int | None** - The number of completions to generate.
-- `max_tokens` **int** - The maximum context size in tokens.
-- `data_max_tokens` **int** - The data llm maximum tokens.
-- `map_max_tokens` **int** - The map llm maximum tokens.
-- `reduce_max_tokens` **int** - The reduce llm maximum tokens.
-- `concurrency` **int** - The number of concurrent requests.
-- `dynamic_search_llm` **str** - LLM model to use for dynamic community selection.
+- `max_context_tokens` **int** - The maximum context size to create, in tokens.
+- `data_max_tokens` **int** - The maximum tokens to use constructing the final response from the reduces responses.
+- `map_max_length` **int** - The maximum length to request for map responses, in words.
+- `reduce_max_length` **int** - The maximum length to request for reduce responses, in words.
 - `dynamic_search_threshold` **int** - Rating threshold in include a community report.
 - `dynamic_search_keep_parent` **bool** - Keep parent community if any of the child communities are relevant.
 - `dynamic_search_num_repeats` **int** - Number of times to rate the same community report.
 - `dynamic_search_use_summary` **bool** - Use community summary instead of full_context.
-- `dynamic_search_concurrent_coroutines` **int** - Number of concurrent coroutines to rate community reports.
 - `dynamic_search_max_level` **int** - The maximum level of community hierarchy to consider if none of the processed communities are relevant.
 
 ### drift_search
@@ -370,11 +361,9 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 - `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
 - `prompt` **str** - The prompt file to use.
 - `reduce_prompt` **str** - The reducer prompt file to use.
-- `temperature` **float** - The temperature to use for token generation.",
-- `top_p` **float** - The top-p value to use for token generation.
-- `n` **int** - The number of completions to generate.
-- `max_tokens` **int** - The maximum context size in tokens.
 - `data_max_tokens` **int** - The data llm maximum tokens.
+- `reduce_max_tokens` **int** - The maximum tokens for the reduce phase. Only use if a non-o-series model.
+- `reduce_max_completion_tokens` **int** - The maximum tokens for the reduce phase. Only use for o-series models.
 - `concurrency` **int** - The number of concurrent requests.
 - `drift_k_followups` **int** - The number of top global results to retrieve.
 - `primer_folds` **int** - The number of folds for search priming.
@@ -388,7 +377,8 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 - `local_search_temperature` **float** - The temperature to use for token generation in local search.
 - `local_search_top_p` **float** - The top-p value to use for token generation in local search.
 - `local_search_n` **int** - The number of completions to generate in local search.
-- `local_search_llm_max_gen_tokens` **int** - The maximum number of generated tokens for the LLM in local search.
+- `local_search_llm_max_gen_tokens` **int** - The maximum number of generated tokens for the LLM in local search. Only use if a non-o-series model.
+- `local_search_llm_max_gen_completion_tokens` **int** - The maximum number of generated tokens for the LLM in local search. Only use for o-series models.
 
 ### basic_search
 
@@ -397,13 +387,4 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 - `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
 - `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
 - `prompt` **str** - The prompt file to use.
-- `text_unit_prop` **float** - The text unit proportion. 
-- `community_prop` **float** - The community proportion.
-- `conversation_history_max_turns` **int** - The conversation history maximum turns.
-- `top_k_entities` **int** - The top k mapped entities.
-- `top_k_relationships` **int** - The top k mapped relations.
-- `temperature` **float | None** - The temperature to use for token generation.
-- `top_p` **float | None** - The top-p value to use for token generation.
-- `n` **int | None** - The number of completions to generate.
-- `max_tokens` **int** - The maximum tokens.
-- `llm_max_tokens` **int** - The LLM maximum tokens.
+- `k` **int | None** - Number of text units to retrieve from the vector store for context building.
