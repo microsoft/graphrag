@@ -33,6 +33,7 @@ from graphrag.config.models.snapshots_config import SnapshotsConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
+from graphrag.config.models.merge_entities_config import MergeEntitiesConfig
 from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.config.models.umap_config import UmapConfig
 from graphrag.config.models.vector_store_config import VectorStoreConfig
@@ -281,7 +282,10 @@ class GraphRagConfig(BaseModel):
         description="The basic search configuration.", default=BasicSearchConfig()
     )
     """The basic search configuration."""
-
+    merge_entities: MergeEntitiesConfig = Field(
+        description="The merge entities workflow configuration.", default=MergeEntitiesConfig()
+    )
+    
     def _validate_vector_store_db_uri(self) -> None:
         """Validate the vector store configuration."""
         for store in self.vector_store.values():
