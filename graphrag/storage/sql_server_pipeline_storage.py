@@ -209,6 +209,10 @@ class SQLServerPipelineStorage(PipelineStorage):
                 buffer = BytesIO()
                 data_frame.to_parquet(buffer)
                 buffer.seek(0)
+
+                log.info(
+                    "Successfully fetched table contents for %s from SQL Server", key
+                )
                 return buffer.read()
             except Exception:
                 log.exception("Error reading data %s", key)
@@ -276,7 +280,9 @@ class SQLServerPipelineStorage(PipelineStorage):
                         placeholders = ", ".join([
                             "?" for _ in range(len(data_frame.columns))
                         ])
-                        column_names = ", ".join([f"[{col}]" for col in data_frame.columns])
+                        column_names = ", ".join([
+                            f"[{col}]" for col in data_frame.columns
+                        ])
                         insert_sql = f"INSERT INTO [{table_name}] ({column_names}) VALUES ({placeholders})"  # noqa: S608
 
                         # Handle various value types, converting complex types to strings
@@ -295,7 +301,7 @@ class SQLServerPipelineStorage(PipelineStorage):
                         log.exception(
                             "Error inserting row %s into table: %s",
                             row.to_dict(),
-                            table_name
+                            table_name,
                         )
                         continue
                 self._connection.commit()
@@ -333,7 +339,7 @@ class SQLServerPipelineStorage(PipelineStorage):
             log.exception("Error checking existence of %s: %s", key)
             return False
         else:
-            log.debug(
+            log.warning(
                 "Attempted to call has() on SQL Server storage with non-parquet key %s",
                 key,
             )
@@ -354,12 +360,12 @@ class SQLServerPipelineStorage(PipelineStorage):
                     f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]"
                 )
                 self._connection.commit()
-                log.debug("Successfully deleted %s from SQL Server", key)
+                log.info("Successfully deleted %s from SQL Server", key)
             except Exception:
                 self._connection.rollback()
                 log.exception("Error deleting %s: %s", key)
         else:
-            log.debug(
+            log.warning(
                 "Attempted to call delete() on SQL Server storage with non-parquet key %s. Skipping...",
                 key,
             )
@@ -404,13 +410,14 @@ class SQLServerPipelineStorage(PipelineStorage):
                 )
                 row = cursor.fetchone()
                 if row:
+                    log.info("Successfully retrieved creation date for %s", key)
                     return get_timestamp_formatted_with_local_tz(row[0])
                 return ""
         except Exception:
             log.exception("Error getting creation date for %s: %s", key)
             return ""
         else:
-            log.debug(
+            log.warning(
                 "Attempted to call get_creation_date() on SQL Server storage with non-parquet key %s",
                 key,
             )
