@@ -31,7 +31,7 @@ stages:
               containerRegistry: '$(containerRegistry)'
               repository: 'main'
               command: 'buildAndPush'
-              Dockerfile: 'Dockerfile'
+              Dockerfile: 'unified-search-app/Dockerfile'
               tags: 'latest'
           - task: AzureAppServiceManage@0
             inputs:
