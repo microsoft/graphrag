@@ -11,33 +11,30 @@ import numpy as np
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.operations.cluster_graph import cluster_graph
-from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.typing.context import PipelineRunContext, PipelineStorage
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
-from graphrag.vector_stores.lancedb import LanceDBVectorStore
-from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
 from sklearn.cluster import DBSCAN
 from graphrag.prompts.index.merge_entities import MERGE_ENTITIES_INPUT, MERGE_ENTITIES_SYSTEM
 
-from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.language_model.manager import ModelManager
-from graphrag.config.load_config import load_config, Path
+
+
+
+
+
 
 from json_repair import loads
 from json import dump
 
 log = logging.getLogger(__name__)
-# from graphrag.language_model.manager import ChatModel
 from graphrag.config.embeddings import (
     entity_title_embedding,
     #get_embedded_fields,
     get_embedding_settings,
 )
 from graphrag.index.workflows.generate_text_embeddings import generate_text_embeddings
-
 
 async def run_workflow(
     config: GraphRagConfig,
@@ -61,6 +58,7 @@ async def run_workflow(
     if "id" not in entities.columns:
         entities["id"] = entities["human_readable_id"].apply(lambda _x: str(uuid4()))
     # Embed entities.title
+   
     embeddings_df = await create_entity_title_embedding(entities, config, context)
     embeddings_df = embeddings_df["entity.title"]
 
@@ -108,8 +106,6 @@ async def create_entity_title_embedding(
     config_copy.embed_text.target = "selected"
     text_embed = get_embedding_settings(config_copy)
 
-    # LANCEDB_URI = f"{config.root_dir}/output/lancedb"
-    # embeddings_df = load_embeddings_from_default_entity_title(LANCEDB_URI)
 
     embeddings_df = await generate_text_embeddings(
         documents=None,
@@ -129,10 +125,12 @@ async def create_entity_title_embedding(
 def update_entities_relationships(entities: pd.DataFrame, relationships, response):
     import itertools
 
-    entities = entities.set_index("human_readable_id", drop=False)
     entities.index = entities.index.astype(int)
     all_ids = []
     new_entities_list = []
+
+    #entities: ['title', 'type', 'text_unit_ids', 'frequency', 'description']
+    #relashionships: ['source', 'target', 'text_unit_ids', 'weight', 'description']
     for item in response:
         """
         item is llm output
@@ -144,67 +142,43 @@ def update_entities_relationships(entities: pd.DataFrame, relationships, respons
         "final_type": "MATERIAL"
         }
         """
-        if len(item) < 1:
-            continue
+        item["ids"] = list(map(int, item["ids"]))
+        old_rows = entities.loc[item["ids"], :]
+    
+        new_title = item["final_entity"]
+        new_type = item["final_type"]
+        new_description = item["final_description"]
+
+        frequency = old_rows["frequency"].sum()
+        textunit_ids = old_rows["text_unit_ids"]
+        textunit_ids = list(itertools.chain.from_iterable(textunit_ids))
+        row = {
+
+            "title": new_title,
+            "type": new_type,
+            "description": new_description,
+            "text_unit_ids": textunit_ids,
+            "frequency": frequency,
+
+        }
+        relationships.loc[
+            relationships["source"].isin(item["entities"]), "source"
+        ] = new_title
+        relationships.loc[
+            relationships["target"].isin(item["entities"]), "target"
+        ] = new_title
         
-        try:
-            item["ids"] = list(map(int, item["ids"]))
-            old_rows = entities.loc[item["ids"], :]
-            new_id = old_rows["id"].iloc[0]  # How to generate a new id? uuid?
-            human_readable_id = old_rows.index[
-                0
-            ]  # How to generate a new human readable id? just autoincrement ?
-            new_title = item["final_entity"]
-            new_type = item["final_type"]
-            new_description = item["final_description"]
-            new_x = old_rows["x"].mean()  # How to generate a new x?
-            new_y = old_rows[ "y"].mean()  # How to generate a new y? umap will be generated in the last workflow?
-            frequency = old_rows["frequency"].sum()
-            degree = old_rows["degree"].sum()
-            textunit_ids = old_rows["text_unit_ids"]
-            textunit_ids = list(itertools.chain.from_iterable(textunit_ids))
-            row = {
-                "id": new_id,
-                "human_readable_id": human_readable_id,
-                "title": new_title,
-                "type": new_type,
-                "description": new_description,
-                "text_unit_ids": textunit_ids,
-                "frequency": frequency,
-                "degree": degree,
-                "x": new_x,
-                "y": new_y,
-            }
-            relationships.loc[
-                relationships["source"].isin(item["entities"]), "source"
-            ] = new_title
-            relationships.loc[
-                relationships["target"].isin(item["entities"]), "target"
-            ] = new_title
-            # Do we need to update relationships descriptions? I think yes but it may not be necessary
-            #because we only merge close entities
-            
-            new_entities_list.append(row)
-            all_ids.extend(item["ids"])
-        except Exception as e:
-            log.exception("update_entities_relationships: %s", e)
+        
+        new_entities_list.append(row)
+        all_ids.extend(item["ids"])
+
             
 
-    """"
-    or this version
-        updated_source = relationships['source'].where(
-        ~relationships['source'].isin(item['entities']), new_title
-    )
-
-    updated_target = relationships['target'].where(
-        ~relationships['target'].isin(item['entities']), new_title
-    )
-
-    updated_relationships = relationships.assign(source=updated_source, target=updated_target)
-        
-    """
     entities = entities.drop(all_ids)
-    entities = pd.concat([entities, pd.DataFrame(new_entities_list)])
+    entities = entities.drop(columns=["human_readable_id", "id"])
+    entities = pd.concat([entities, pd.DataFrame(new_entities_list)]).reset_index(
+        drop=True
+    )
     return entities, relationships
 
 
@@ -231,10 +205,12 @@ def get_input_for_prompt(embeddings: pd.DataFrame, entities: pd.DataFrame):
     for cluster_id, group_df in embeddings.groupby("cluster"):
         if cluster_id == -1:
             continue
-        row = entities.loc[
+        rows = entities.loc[
             group_df.index, ["human_readable_id", "title", "type", "description"]
         ]
-        text += "cluster:" + str(cluster_id) + "\n"
-        text += str(row.rename({"human_readable_id": "id"}).to_dict("records")) + "\n"
+        text += "["  + "\n"
+        for index, r in rows.iterrows():
+            text += f"{{'entity': '{r['title']}', 'type': '{r['type']}', 'description': '{r['description']}', 'id': {r['human_readable_id']} }}," + "\n"
+        text += "]" + "\n"
 
     return text
