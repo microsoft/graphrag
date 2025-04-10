@@ -7,7 +7,7 @@ trigger:
   branches:
     include:
       - main
-  path:
+  paths:
     include:
       - unified-search-app
     
