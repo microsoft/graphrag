@@ -272,27 +272,34 @@ class SQLServerPipelineStorage(PipelineStorage):
 
                 # Insert parquet data into SQL server
                 for _, row in data_frame.iterrows():
-                    placeholders = ", ".join([
-                        "?" for _ in range(len(data_frame.columns))
-                    ])
-                    column_names = ", ".join([f"[{col}]" for col in data_frame.columns])
-                    insert_sql = f"INSERT INTO [{table_name}] ({column_names}) VALUES ({placeholders})"  # noqa: S608
+                    try:
+                        placeholders = ", ".join([
+                            "?" for _ in range(len(data_frame.columns))
+                        ])
+                        column_names = ", ".join([f"[{col}]" for col in data_frame.columns])
+                        insert_sql = f"INSERT INTO [{table_name}] ({column_names}) VALUES ({placeholders})"  # noqa: S608
 
-                    # Handle various value types, converting complex types to strings
-                    values = []
-                    for val in row:
-                        if isinstance(val, np.ndarray):
-                            values.append(json.dumps(val.tolist()))
-                        elif isinstance(val, list):
-                            values.append(json.dumps(val))
-                        elif pd.isna(val):
-                            values.append(None)
-                        else:
-                            values.append(val)
-
-                    cursor.execute(insert_sql, values)
+                        # Handle various value types, converting complex types to strings
+                        values = []
+                        for val in row:
+                            if isinstance(val, np.ndarray):
+                                values.append(json.dumps(val.tolist()))
+                            elif isinstance(val, list):
+                                values.append(json.dumps(val))
+                            elif pd.isna(val):
+                                values.append(None)
+                            else:
+                                values.append(val)
+                        cursor.execute(insert_sql, values)
+                    except Exception:
+                        log.exception(
+                            "Error inserting row %s into table: %s",
+                            row.to_dict(),
+                            table_name
+                        )
+                        continue
                 self._connection.commit()
-                log.debug("Successfully stored %s in SQL Server", key)
+                log.info("Successfully stored %s in SQL Server", key)
             else:
                 log.warning(
                     "Attempted to call set() on SQL Server storage with non-parquet key %s. Skipping...",
