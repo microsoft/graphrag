@@ -50,7 +50,7 @@ environs = "^11.0.0"
 
 # Vector Stores
 azure-search-documents = "^11.5.2"
-lancedb = "^0.17.0"
+lancedb = ">=0.17,<0.22"
 
 # Async IO
 aiofiles = "^24.1.0"
