@@ -78,6 +78,17 @@ class SQLServerPipelineStorage(PipelineStorage):
             database_server_name,
         )
 
+        if not self._autogenerate_tables:
+            self.create_tables()
+
+    def create_tables(self) -> None:
+        """Create tables in SQL Server.
+
+        If autogenerate_tables is not enabled, this method will manually create tables for all parquet outputs using a predefined schema.
+        """
+        msg = "SQL Server storage does not yet support manually predefined table creation."
+        raise NotImplementedError(msg)
+
     def find(
         self,
         file_pattern: re.Pattern[str],
