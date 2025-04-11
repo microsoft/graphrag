@@ -34,7 +34,8 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
     It manages log file rotation when the number of blocks exceeds the maximum limit.
     """
 
-    _s3_client: BaseClient
+    # This will be lazily loaded
+    __s3_client: BaseClient | None = None
     _bucket_name: str
     _prefix: str
     _encoding: str
@@ -76,32 +77,40 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
         self._bucket_name = bucket_name
         self._prefix = base_dir
         self._encoding = encoding
+        
+        # Store credentials for lazy initialization
         self._aws_access_key_id = aws_access_key_id
         self._aws_secret_access_key = aws_secret_access_key
         self._region_name = region_name
         self._endpoint_url = endpoint_url
-
-        # Create kwargs only for non-None values
-        kwargs = {}
-        if aws_access_key_id and aws_secret_access_key:
-            kwargs["aws_access_key_id"] = aws_access_key_id
-            kwargs["aws_secret_access_key"] = aws_secret_access_key
-        
-        if region_name:
-            kwargs["region_name"] = region_name
-        
-        # Initialize boto3 client
-        # Don't pass empty endpoint_url to boto3.client
-        if endpoint_url and endpoint_url.strip():
-            self._s3_client = boto3.client("s3", endpoint_url=endpoint_url, **kwargs)
-        else:
-            self._s3_client = boto3.client("s3", **kwargs)
 
         if not log_file_name:
             log_file_name = _get_log_file_name()
         
         self._log_file_prefix = str(Path(self._prefix) / log_file_name)
         self._num_blocks = 0  # refresh block counter
+    
+    @property
+    def _s3_client(self) -> BaseClient:
+        """Lazy load the S3 client."""
+        if self.__s3_client is None:
+            # Create kwargs only for non-None values
+            kwargs = {}
+            if self._aws_access_key_id and self._aws_secret_access_key:
+                kwargs["aws_access_key_id"] = self._aws_access_key_id
+                kwargs["aws_secret_access_key"] = self._aws_secret_access_key
+            
+            if self._region_name:
+                kwargs["region_name"] = self._region_name
+            
+            # Initialize boto3 client
+            # Don't pass empty endpoint_url to boto3.client
+            if self._endpoint_url and self._endpoint_url.strip():
+                self.__s3_client = boto3.client("s3", endpoint_url=self._endpoint_url, **kwargs)
+            else:
+                self.__s3_client = boto3.client("s3", **kwargs)
+        
+        return self.__s3_client
 
     def _write_log(self, log_entry: dict[str, Any]) -> None:
         """

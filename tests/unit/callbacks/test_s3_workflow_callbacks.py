@@ -201,9 +201,19 @@ def test_log_methods(s3_callbacks, s3_mock, bucket_name, log_method, log_type, m
 
 def test_write_log_client_error(s3_callbacks):
     """Test handling of client errors in _write_log method."""
-    with patch.object(s3_callbacks, "_s3_client") as mock_s3_client:
+    # First, access the property to ensure the client is created
+    _ = s3_callbacks._s3_client  # noqa: SLF001
+    
+    # Now patch boto3.client to return a mock for subsequent calls
+    with patch("graphrag.callbacks.s3_workflow_callbacks.boto3") as mock_boto3:
+        mock_client = MagicMock()
         error_response = {"Error": {"Code": "InternalError", "Message": "Test error"}}
-        mock_s3_client.put_object.side_effect = ClientError(error_response, "PutObject")
+        mock_client.put_object.side_effect = ClientError(error_response, "PutObject")
+        mock_boto3.client.return_value = mock_client
+        
+        # Force recreation of the client by setting the private attribute to None
+        # We need to use name mangling to access the private attribute
+        s3_callbacks._S3WorkflowCallbacks__s3_client = None  # noqa: SLF001
         
         with patch("graphrag.callbacks.s3_workflow_callbacks.logger") as mock_logger:
             # This should not raise an exception due to no-op behavior
@@ -264,12 +274,21 @@ def test_init_with_aws_credentials():
         mock_boto3.client.return_value = mock_client
         
         # Create instance with credentials
-        S3WorkflowCallbacks(
+        callbacks = S3WorkflowCallbacks(
             bucket_name="test-bucket",
             aws_access_key_id="test-access-key",
             aws_secret_access_key="test-secret-key",
             region_name="us-west-2"
         )
+        
+        # Verify credentials are stored but client is not created yet
+        assert callbacks._aws_access_key_id == "test-access-key"  # noqa: SLF001
+        assert callbacks._aws_secret_access_key == "test-secret-key"  # noqa: SLF001
+        assert callbacks._region_name == "us-west-2"  # noqa: SLF001
+        assert mock_boto3.client.call_count == 0
+        
+        # Access the client to trigger lazy loading
+        _ = callbacks._s3_client  # noqa: SLF001
         
         # Verify boto3.client was called with the correct arguments
         mock_boto3.client.assert_called_once_with(
@@ -287,10 +306,17 @@ def test_init_with_endpoint_url():
         mock_boto3.client.return_value = mock_client
         
         # Create instance with endpoint URL
-        S3WorkflowCallbacks(
+        callbacks = S3WorkflowCallbacks(
             bucket_name="test-bucket",
             endpoint_url="https://custom-endpoint.example.com"
         )
+        
+        # Verify endpoint_url is stored but client is not created yet
+        assert callbacks._endpoint_url == "https://custom-endpoint.example.com"  # noqa: SLF001
+        assert mock_boto3.client.call_count == 0
+        
+        # Access the client to trigger lazy loading
+        _ = callbacks._s3_client  # noqa: SLF001
         
         # Verify boto3.client was called with the correct arguments
         mock_boto3.client.assert_called_once_with(
@@ -306,13 +332,23 @@ def test_init_with_aws_credentials_and_endpoint_url():
         mock_boto3.client.return_value = mock_client
         
         # Create instance with both credentials and endpoint URL
-        S3WorkflowCallbacks(
+        callbacks = S3WorkflowCallbacks(
             bucket_name="test-bucket",
             aws_access_key_id="test-access-key",
             aws_secret_access_key="test-secret-key",
             region_name="us-west-2",
             endpoint_url="https://custom-endpoint.example.com"
         )
+        
+        # Verify credentials and endpoint_url are stored but client is not created yet
+        assert callbacks._aws_access_key_id == "test-access-key"  # noqa: SLF001
+        assert callbacks._aws_secret_access_key == "test-secret-key"  # noqa: SLF001
+        assert callbacks._region_name == "us-west-2"  # noqa: SLF001
+        assert callbacks._endpoint_url == "https://custom-endpoint.example.com"  # noqa: SLF001
+        assert mock_boto3.client.call_count == 0
+        
+        # Access the client to trigger lazy loading
+        _ = callbacks._s3_client  # noqa: SLF001
         
         # Verify boto3.client was called with the correct arguments
         mock_boto3.client.assert_called_once_with(
@@ -331,11 +367,20 @@ def test_init_with_partial_aws_credentials():
         mock_boto3.client.return_value = mock_client
         
         # Create instance with only access key but no secret key
-        S3WorkflowCallbacks(
+        callbacks = S3WorkflowCallbacks(
             bucket_name="test-bucket",
             aws_access_key_id="test-access-key",
             region_name="us-west-2"
         )
+        
+        # Verify credentials are stored but client is not created yet
+        assert callbacks._aws_access_key_id == "test-access-key"  # noqa: SLF001
+        assert callbacks._aws_secret_access_key is None  # noqa: SLF001
+        assert callbacks._region_name == "us-west-2"  # noqa: SLF001
+        assert mock_boto3.client.call_count == 0
+        
+        # Access the client to trigger lazy loading
+        _ = callbacks._s3_client  # noqa: SLF001
         
         # Verify boto3.client was called without credentials
         mock_boto3.client.assert_called_once_with(
@@ -351,10 +396,17 @@ def test_init_with_empty_endpoint_url():
         mock_boto3.client.return_value = mock_client
         
         # Create instance with empty endpoint URL
-        S3WorkflowCallbacks(
+        callbacks = S3WorkflowCallbacks(
             bucket_name="test-bucket",
             endpoint_url=""
         )
+        
+        # Verify endpoint_url is stored but client is not created yet
+        assert callbacks._endpoint_url == ""  # noqa: SLF001
+        assert mock_boto3.client.call_count == 0
+        
+        # Access the client to trigger lazy loading
+        _ = callbacks._s3_client  # noqa: SLF001
         
         # Verify boto3.client was called without endpoint_url
         mock_boto3.client.assert_called_once_with("s3")
@@ -367,10 +419,43 @@ def test_init_with_whitespace_endpoint_url():
         mock_boto3.client.return_value = mock_client
         
         # Create instance with whitespace endpoint URL
-        S3WorkflowCallbacks(
+        callbacks = S3WorkflowCallbacks(
             bucket_name="test-bucket",
             endpoint_url="   "
         )
         
+        # Verify endpoint_url is stored but client is not created yet
+        assert callbacks._endpoint_url == "   "  # noqa: SLF001
+        assert mock_boto3.client.call_count == 0
+        
+        # Access the client to trigger lazy loading
+        _ = callbacks._s3_client  # noqa: SLF001
+        
         # Verify boto3.client was called without endpoint_url
         mock_boto3.client.assert_called_once_with("s3")
+
+
+def test_lazy_loading_s3_client():
+    """Test that the S3 client is lazily loaded only when accessed."""
+    with patch("graphrag.callbacks.s3_workflow_callbacks.boto3") as mock_boto3:
+        mock_client = MagicMock()
+        mock_boto3.client.return_value = mock_client
+        
+        # Create instance
+        callbacks = S3WorkflowCallbacks(bucket_name="test-bucket")
+        
+        # Verify client is not created during initialization
+        assert mock_boto3.client.call_count == 0
+        
+        # We can't directly access the private attribute due to name mangling
+        # Instead, we'll verify the client is created only when the property is accessed
+        
+        # First access to the property should create the client
+        client1 = callbacks._s3_client  # noqa: SLF001
+        assert mock_boto3.client.call_count == 1
+        assert client1 is mock_client
+        
+        # Second access should reuse the existing client
+        client2 = callbacks._s3_client  # noqa: SLF001
+        assert mock_boto3.client.call_count == 1  # Still only called once
+        assert client2 is client1  # Same instance

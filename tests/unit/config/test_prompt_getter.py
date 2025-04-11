@@ -203,7 +203,10 @@ def test_s3_prompt_getter_with_endpoint_url() -> None:
     
     # Act
     with patch("boto3.client") as mock_boto3_client:
-        _ = S3PromptGetter(endpoint_url=endpoint_url)
+        getter = S3PromptGetter(endpoint_url=endpoint_url)
+        
+        # Trigger lazy loading
+        _ = getter._s3_client  # noqa: SLF001
         
         # Assert
         mock_boto3_client.assert_called_once_with("s3", endpoint_url=endpoint_url)
@@ -331,7 +334,10 @@ def test_s3_prompt_getter_with_none_or_empty_endpoint_url(endpoint_url: str | No
     """Test that when endpoint_url is None or empty, it uses AWS services by default."""
     # Arrange & Act
     with patch("boto3.client") as mock_client:
-        S3PromptGetter(endpoint_url=endpoint_url)
+        getter = S3PromptGetter(endpoint_url=endpoint_url)
+        
+        # Trigger lazy loading
+        _ = getter._s3_client  # noqa: SLF001
         
         # Assert
         mock_client.assert_called_once()
@@ -355,6 +361,10 @@ def test_create_prompt_getter_s3_with_none_or_empty_endpoint_url(endpoint_url: s
         
         # Assert
         assert isinstance(getter, S3PromptGetter)
+        
+        # Trigger lazy loading
+        _ = getter._s3_client  # noqa: SLF001
+        
         mock_client.assert_called_once()
         call_kwargs = mock_client.call_args.kwargs
         # Both None and empty string should result in endpoint_url=None
@@ -383,3 +393,44 @@ def test_get_prompt_content_with_none_or_empty_endpoint_url(endpoint_url: str | 
     mock_create.assert_called_once_with(prompt_path, endpoint_url=endpoint_url)
     mock_getter.get_prompt.assert_called_once_with(prompt_path, root_dir)
     assert result == "Test content"
+
+
+def test_s3_prompt_getter_lazy_loading() -> None:
+    """Test that the S3 client is lazily loaded in S3PromptGetter."""
+    # Arrange & Act
+    with patch("boto3.client") as mock_client:
+        getter = S3PromptGetter()
+        
+        # Assert that the client is not created during initialization
+        assert mock_client.call_count == 0
+        
+        # Act: Access a method that requires the S3 client
+        with patch.object(getter, "get_prompt", return_value="Test content"):
+            # Just access the _s3_client property to trigger lazy loading
+            _ = getter._s3_client  # noqa: SLF001
+        
+        # Assert that the client is created when needed
+        assert mock_client.call_count == 1
+        mock_client.assert_called_once_with("s3", endpoint_url=None)
+
+
+def test_s3_prompt_getter_lazy_loading_with_endpoint_url() -> None:
+    """Test that the S3 client is lazily loaded in S3PromptGetter with a custom endpoint URL."""
+    # Arrange
+    endpoint_url = "http://localhost:9000"
+    
+    # Act
+    with patch("boto3.client") as mock_client:
+        getter = S3PromptGetter(endpoint_url=endpoint_url)
+        
+        # Assert that the client is not created during initialization
+        assert mock_client.call_count == 0
+        
+        # Act: Access a method that requires the S3 client
+        with patch.object(getter, "get_prompt", return_value="Test content"):
+            # Just access the _s3_client property to trigger lazy loading
+            _ = getter._s3_client  # noqa: SLF001
+        
+        # Assert that the client is created when needed with the correct endpoint URL
+        assert mock_client.call_count == 1
+        mock_client.assert_called_once_with("s3", endpoint_url=endpoint_url)

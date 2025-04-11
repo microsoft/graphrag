@@ -54,23 +54,29 @@ class S3PipelineStorage(PipelineStorage):
         self._region_name = region_name
         self._endpoint_url = endpoint_url
         
-        # Create kwargs only for non-None values
-        kwargs = {}
-        if aws_access_key_id and aws_secret_access_key:
-            kwargs["aws_access_key_id"] = aws_access_key_id
-            kwargs["aws_secret_access_key"] = aws_secret_access_key
-        
-        if region_name:
-            kwargs["region_name"] = region_name
-        
-        # Initialize boto3 client
-        # Don't pass empty endpoint_url to boto3.client
-        if endpoint_url and endpoint_url.strip():
-            self._s3 = boto3.client("s3", endpoint_url=endpoint_url, **kwargs)
-        else:
-            self._s3 = boto3.client("s3", **kwargs)
+        # This object will be lazily loaded
+        self.__s3 = None
         
         log.info("Initialized S3PipelineStorage with bucket: %s, prefix: %s", bucket_name, prefix)
+
+    @property
+    def _s3(self):
+        """Lazy load the S3 client."""
+        if self.__s3 is None:
+            kwargs = {}
+            if self._aws_access_key_id and self._aws_secret_access_key:
+                kwargs["aws_access_key_id"] = self._aws_access_key_id
+                kwargs["aws_secret_access_key"] = self._aws_secret_access_key
+            
+            if self._region_name:
+                kwargs["region_name"] = self._region_name
+            
+            if self._endpoint_url and self._endpoint_url.strip():
+                self.__s3 = boto3.client("s3", endpoint_url=self._endpoint_url, **kwargs)
+            else:
+                self.__s3 = boto3.client("s3", **kwargs)
+        
+        return self.__s3
 
     def _get_full_key(self, key: str) -> str:
         """Get the full key with prefix.

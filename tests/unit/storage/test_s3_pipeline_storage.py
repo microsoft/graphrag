@@ -399,6 +399,9 @@ def test_create_s3_storage_with_endpoint_url(bucket_name):
             region_name="us-west-2",
             endpoint_url="http://localhost:9000",
         )
+
+        # We need to trigger the lazy loading of the storage
+        assert storage._s3 is not None  # type: ignore # noqa: SLF001
         
         assert isinstance(storage, S3PipelineStorage)
         mock_client.assert_called_once()
@@ -477,10 +480,13 @@ async def test_warning_on_clear_without_prefix(s3_bucket, caplog):
 def test_s3_storage_with_endpoint_url():
     """Test that endpoint_url is passed to boto3.client."""
     with patch("boto3.client") as mock_client:
-        S3PipelineStorage(
+        storage = S3PipelineStorage(
             bucket_name="test-bucket",
             endpoint_url="http://localhost:9000",
         )
+
+        # We need to trigger the lazy loading of the storage
+        assert storage._s3 is not None # noqa: SLF001
         
         mock_client.assert_called_once()
         call_kwargs = mock_client.call_args.kwargs
@@ -512,10 +518,13 @@ def test_child_storage_preserves_endpoint_url():
 def test_s3_storage_with_none_or_empty_endpoint_url(endpoint_url):
     """Test that when endpoint_url is None or empty, it uses AWS services by default."""
     with patch("boto3.client") as mock_client:
-        S3PipelineStorage(
+        storage = S3PipelineStorage(
             bucket_name="test-bucket",
             endpoint_url=endpoint_url,
         )
+
+        # We need to trigger the lazy loading of the storage
+        assert storage._s3 is not None # noqa: SLF001
         
         mock_client.assert_called_once()
         call_kwargs = mock_client.call_args.kwargs
@@ -534,8 +543,25 @@ def test_create_s3_storage_with_none_or_empty_endpoint_url(bucket_name, endpoint
             prefix="test-prefix",
             endpoint_url=endpoint_url,
         )
+
+        # We need to trigger the lazy loading of the storage
+        assert storage._s3 is not None  # type: ignore # noqa: SLF001
         
         assert isinstance(storage, S3PipelineStorage)
         mock_client.assert_called_once()
         call_kwargs = mock_client.call_args.kwargs
         assert "endpoint_url" not in call_kwargs or call_kwargs["endpoint_url"] is None
+
+def test_lazy_loading():
+    with patch("boto3.client") as mock_client:
+        storage = S3PipelineStorage(
+            bucket_name="test-bucket"
+        )
+        # Ensure that the client is not created until accessed
+        assert mock_client.call_count == 0
+        
+        # Access the storage to trigger initialization
+        _ = storage.keys()
+        
+        # Verify the client was created
+        assert mock_client.call_count == 1

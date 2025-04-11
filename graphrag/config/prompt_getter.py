@@ -6,13 +6,10 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 import boto3
-
-if TYPE_CHECKING:
-    from botocore.client import BaseClient
+from botocore.client import BaseClient
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +79,16 @@ class S3PromptGetter(PromptGetter):
         if endpoint_url == "":
             endpoint_url = None
             
-        self._s3_client: BaseClient = boto3.client("s3", endpoint_url=endpoint_url)
+        self._endpoint_url = endpoint_url
+        # This client will be lazily loaded
+        self.__s3_client: BaseClient | None = None
+    
+    @property
+    def _s3_client(self) -> BaseClient:
+        """Lazy load the S3 client."""
+        if self.__s3_client is None:
+            self.__s3_client = boto3.client("s3", endpoint_url=self._endpoint_url)
+        return self.__s3_client
     
     def get_prompt(self,
                    path: str,
