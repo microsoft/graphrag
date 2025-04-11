@@ -62,6 +62,12 @@ class CacheDefaults:
     container_name: None = None
     storage_account_blob_url: None = None
     cosmosdb_account_url: None = None
+    bucket_name: None = None
+    prefix: str = ""
+    aws_access_key_id: None = None
+    aws_secret_access_key: None = None
+    region_name: None = None
+    endpoint_url: None = None
 
 
 @dataclass
@@ -96,6 +102,7 @@ class CommunityReportDefaults:
     max_input_length: int = 8000
     strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    endpoint_url: None = None
 
 
 @dataclass
@@ -170,6 +177,7 @@ class ExtractClaimsDefaults:
     strategy: None = None
     encoding_model: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    endpoint_url: None = None
 
 
 @dataclass
@@ -184,6 +192,7 @@ class ExtractGraphDefaults:
     strategy: None = None
     encoding_model: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    endpoint_url: None = None
 
 
 @dataclass
@@ -262,6 +271,12 @@ class InputDefaults:
     text_column: str = "text"
     title_column: None = None
     metadata: None = None
+    bucket_name: None = None
+    prefix: str = ""
+    aws_access_key_id: None = None
+    aws_secret_access_key: None = None
+    region_name: None = None
+    endpoint_url: None = None
 
 
 @dataclass
@@ -324,6 +339,12 @@ class OutputDefaults:
     container_name: None = None
     storage_account_blob_url: None = None
     cosmosdb_account_url: None = None
+    bucket_name: None = None
+    prefix: str = ""
+    aws_access_key_id: None = None
+    aws_secret_access_key: None = None
+    region_name: None = None
+    endpoint_url: None = None
 
 
 @dataclass
@@ -348,6 +369,12 @@ class ReportingDefaults:
     connection_string: None = None
     container_name: None = None
     storage_account_blob_url: None = None
+    bucket_name: None = None
+    prefix: str = ""
+    aws_access_key_id: None = None
+    aws_secret_access_key: None = None
+    region_name: None = None
+    endpoint_url: None = None
 
 
 @dataclass
@@ -366,6 +393,7 @@ class SummarizeDescriptionsDefaults:
     max_length: int = 500
     strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    endpoint_url: None = None
 
 
 @dataclass
@@ -384,6 +412,12 @@ class UpdateIndexOutputDefaults:
     connection_string: None = None
     container_name: None = None
     storage_account_blob_url: None = None
+    bucket_name: None = None
+    prefix: str = ""
+    aws_access_key_id: None = None
+    aws_secret_access_key: None = None
+    region_name: None = None
+    endpoint_url: None = None
 
 
 @dataclass
