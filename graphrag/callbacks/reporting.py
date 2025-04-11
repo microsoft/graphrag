@@ -46,4 +46,8 @@ def create_pipeline_reporter(
                 bucket_name=config.bucket_name,
                 base_dir=config.prefix or "",
                 log_file_name=config.base_dir,
+                aws_access_key_id=config.aws_access_key_id,
+                aws_secret_access_key=config.aws_secret_access_key,
+                region_name=config.region_name,
+                endpoint_url=config.endpoint_url,
             )

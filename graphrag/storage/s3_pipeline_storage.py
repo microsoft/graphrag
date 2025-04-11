@@ -65,7 +65,7 @@ class S3PipelineStorage(PipelineStorage):
         
         # Initialize boto3 client
         # Don't pass empty endpoint_url to boto3.client
-        if endpoint_url:
+        if endpoint_url and endpoint_url.strip():
             self._s3 = boto3.client("s3", endpoint_url=endpoint_url, **kwargs)
         else:
             self._s3 = boto3.client("s3", **kwargs)

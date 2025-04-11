@@ -46,7 +46,11 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
                  bucket_name: str | None,
                  base_dir: str = "",
                  log_file_name: str = "",
-                 encoding: str = "utf-8"):
+                 encoding: str = "utf-8",
+                 aws_access_key_id: str | None = None,
+                 aws_secret_access_key: str | None = None,
+                 region_name: str | None = None,
+                 endpoint_url: str | None = None):
         """
         Create a new instance of the S3WorkflowCallbacks class.
 
@@ -55,6 +59,11 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
             base_dir: Base directory path within the bucket; used as a prefix.
             log_file_name: Name of the log file to write to.
             encoding: Character encoding to use for the log file.
+            aws_access_key_id: The AWS access key ID. If not provided, boto3's credential chain will be used.
+            aws_secret_access_key: The AWS secret access key. If not provided, boto3's credential chain will be used.
+            region_name: The AWS region name. If not provided, boto3's default region will be used.
+            endpoint_url: The endpoint URL for the S3 API. If provided, this will be used instead of the default AWS S3 endpoint.
+                          This is useful for connecting to S3-compatible storage services like MinIO.
 
         Raises
         ------
@@ -67,8 +76,26 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
         self._bucket_name = bucket_name
         self._prefix = base_dir
         self._encoding = encoding
+        self._aws_access_key_id = aws_access_key_id
+        self._aws_secret_access_key = aws_secret_access_key
+        self._region_name = region_name
+        self._endpoint_url = endpoint_url
 
-        self._s3_client: BaseClient = boto3.client("s3")
+        # Create kwargs only for non-None values
+        kwargs = {}
+        if aws_access_key_id and aws_secret_access_key:
+            kwargs["aws_access_key_id"] = aws_access_key_id
+            kwargs["aws_secret_access_key"] = aws_secret_access_key
+        
+        if region_name:
+            kwargs["region_name"] = region_name
+        
+        # Initialize boto3 client
+        # Don't pass empty endpoint_url to boto3.client
+        if endpoint_url and endpoint_url.strip():
+            self._s3_client = boto3.client("s3", endpoint_url=endpoint_url, **kwargs)
+        else:
+            self._s3_client = boto3.client("s3", **kwargs)
 
         if not log_file_name:
             log_file_name = _get_log_file_name()

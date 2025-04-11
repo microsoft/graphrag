@@ -50,6 +50,21 @@ def s3_callbacks(s3_bucket):
     )
 
 
+@pytest.fixture
+def s3_callbacks_with_credentials(s3_bucket):
+    """Create a test S3WorkflowCallbacks instance with AWS credentials."""
+    return S3WorkflowCallbacks(
+        bucket_name=s3_bucket,
+        base_dir="test-logs",
+        log_file_name="test-log.json",
+        encoding="utf-8",
+        aws_access_key_id="test-access-key",
+        aws_secret_access_key="test-secret-key",
+        region_name="us-west-2",
+        endpoint_url="https://custom-endpoint.example.com"
+    )
+
+
 def test_init_with_no_bucket_name():
     """Test initialization with no bucket name."""
     with pytest.raises(ValueError, match="No bucket name provided for S3 storage"):
@@ -240,3 +255,122 @@ def test_multiple_logs_without_rotation(s3_callbacks, s3_mock, bucket_name):
     
     # Check that the block counter was incremented correctly
     assert s3_callbacks._num_blocks == 5  # noqa: SLF001
+
+
+def test_init_with_aws_credentials():
+    """Test initialization with AWS credentials."""
+    with patch("graphrag.callbacks.s3_workflow_callbacks.boto3") as mock_boto3:
+        mock_client = MagicMock()
+        mock_boto3.client.return_value = mock_client
+        
+        # Create instance with credentials
+        S3WorkflowCallbacks(
+            bucket_name="test-bucket",
+            aws_access_key_id="test-access-key",
+            aws_secret_access_key="test-secret-key",
+            region_name="us-west-2"
+        )
+        
+        # Verify boto3.client was called with the correct arguments
+        mock_boto3.client.assert_called_once_with(
+            "s3",
+            aws_access_key_id="test-access-key",
+            aws_secret_access_key="test-secret-key",
+            region_name="us-west-2"
+        )
+
+
+def test_init_with_endpoint_url():
+    """Test initialization with endpoint URL."""
+    with patch("graphrag.callbacks.s3_workflow_callbacks.boto3") as mock_boto3:
+        mock_client = MagicMock()
+        mock_boto3.client.return_value = mock_client
+        
+        # Create instance with endpoint URL
+        S3WorkflowCallbacks(
+            bucket_name="test-bucket",
+            endpoint_url="https://custom-endpoint.example.com"
+        )
+        
+        # Verify boto3.client was called with the correct arguments
+        mock_boto3.client.assert_called_once_with(
+            "s3",
+            endpoint_url="https://custom-endpoint.example.com"
+        )
+
+
+def test_init_with_aws_credentials_and_endpoint_url():
+    """Test initialization with both AWS credentials and endpoint URL."""
+    with patch("graphrag.callbacks.s3_workflow_callbacks.boto3") as mock_boto3:
+        mock_client = MagicMock()
+        mock_boto3.client.return_value = mock_client
+        
+        # Create instance with both credentials and endpoint URL
+        S3WorkflowCallbacks(
+            bucket_name="test-bucket",
+            aws_access_key_id="test-access-key",
+            aws_secret_access_key="test-secret-key",
+            region_name="us-west-2",
+            endpoint_url="https://custom-endpoint.example.com"
+        )
+        
+        # Verify boto3.client was called with the correct arguments
+        mock_boto3.client.assert_called_once_with(
+            "s3",
+            endpoint_url="https://custom-endpoint.example.com",
+            aws_access_key_id="test-access-key",
+            aws_secret_access_key="test-secret-key",
+            region_name="us-west-2"
+        )
+
+
+def test_init_with_partial_aws_credentials():
+    """Test initialization with partial AWS credentials (should not use them)."""
+    with patch("graphrag.callbacks.s3_workflow_callbacks.boto3") as mock_boto3:
+        mock_client = MagicMock()
+        mock_boto3.client.return_value = mock_client
+        
+        # Create instance with only access key but no secret key
+        S3WorkflowCallbacks(
+            bucket_name="test-bucket",
+            aws_access_key_id="test-access-key",
+            region_name="us-west-2"
+        )
+        
+        # Verify boto3.client was called without credentials
+        mock_boto3.client.assert_called_once_with(
+            "s3",
+            region_name="us-west-2"
+        )
+
+
+def test_init_with_empty_endpoint_url():
+    """Test initialization with empty endpoint URL (should not use it)."""
+    with patch("graphrag.callbacks.s3_workflow_callbacks.boto3") as mock_boto3:
+        mock_client = MagicMock()
+        mock_boto3.client.return_value = mock_client
+        
+        # Create instance with empty endpoint URL
+        S3WorkflowCallbacks(
+            bucket_name="test-bucket",
+            endpoint_url=""
+        )
+        
+        # Verify boto3.client was called without endpoint_url
+        mock_boto3.client.assert_called_once_with("s3")
+
+
+def test_init_with_whitespace_endpoint_url():
+    """Test initialization with whitespace endpoint URL (should not use it)."""
+    with patch("graphrag.callbacks.s3_workflow_callbacks.boto3") as mock_boto3:
+        mock_client = MagicMock()
+        mock_boto3.client.return_value = mock_client
+        
+        # Create instance with whitespace endpoint URL
+        S3WorkflowCallbacks(
+            bucket_name="test-bucket",
+            endpoint_url="   "
+        )
+        
+        # Verify boto3.client was called without endpoint_url
+        mock_boto3.client.assert_called_once_with("s3")
