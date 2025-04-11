@@ -33,14 +33,14 @@ class SQLServerPipelineStorage(PipelineStorage):
     _database_name: str
     _database_server_name: str
     _local_connection_string: str
-    _overwrite_tables: bool
+    _autogenerate_tables: bool
     _connection: Connection
 
     def __init__(
         self,
         database_name: str,
         database_server_name: str,
-        overwrite_tables: bool = True,
+        autogenerate_tables: bool = True,
         client_id: str | None = None,
     ):
         """Initialize connection to Azure SQL Server."""
@@ -48,7 +48,7 @@ class SQLServerPipelineStorage(PipelineStorage):
         # This initialization establishes a connection using the pyodbc SQL driver
         self._database_name = database_name
         self._database_server_name = database_server_name
-        self._overwrite_tables = overwrite_tables
+        self._autogenerate_tables = autogenerate_tables
 
         # Use password-less authentication for the db server
         self._local_connection_string = f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:{database_server_name}.database.windows.net,1433;Database={database_name};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30"
@@ -245,38 +245,38 @@ class SQLServerPipelineStorage(PipelineStorage):
                 table_name = key.split(".")[0]
                 data_frame = pd.read_parquet(BytesIO(value))
 
-                # Build CREATE TABLE statement based on DataFrame columns
-                columns = []
-                for col_name, dtype in zip(
-                    data_frame.columns, data_frame.dtypes, strict=False
-                ):
-                    sql_type = "NVARCHAR(MAX)"  # Default type
+                # Automatically build CREATE TABLE statement based on DataFrame columns
+                if self._autogenerate_tables:
+                    columns = []
+                    for col_name, dtype in zip(
+                        data_frame.columns, data_frame.dtypes, strict=False
+                    ):
+                        sql_type = "NVARCHAR(MAX)"  # Default type
 
-                    # Map pandas dtypes to SQL Server types
-                    if pd.api.types.is_integer_dtype(dtype):
-                        sql_type = "BIGINT"
-                    elif pd.api.types.is_float_dtype(dtype):
-                        sql_type = "FLOAT"
-                    elif pd.api.types.is_bool_dtype(dtype):
-                        sql_type = "BIT"
-                    elif pd.api.types.is_datetime64_dtype(dtype):
-                        sql_type = "DATETIME2"
+                        # Map pandas dtypes to SQL Server types
+                        if pd.api.types.is_integer_dtype(dtype):
+                            sql_type = "BIGINT"
+                        elif pd.api.types.is_float_dtype(dtype):
+                            sql_type = "FLOAT"
+                        elif pd.api.types.is_bool_dtype(dtype):
+                            sql_type = "BIT"
+                        elif pd.api.types.is_datetime64_dtype(dtype):
+                            sql_type = "DATETIME2"
 
-                    columns.append(f"[{col_name}] {sql_type}")
+                        columns.append(f"[{col_name}] {sql_type}")
 
-                if self._overwrite_tables:
                     cursor.execute(
                         f"IF OBJECT_ID('{table_name}', 'U') IS NOT NULL DROP TABLE [{table_name}]"
                     )
-
                     create_table_sql = (
                         f"CREATE TABLE [{table_name}] ({', '.join(columns)})"
                     )
-                    cursor.execute(create_table_sql)
-                else:
-                    cursor.execute(
-                        f"IF OBJECT_ID('{table_name}', 'U') IS NULL CREATE TABLE [{table_name}] ({', '.join(columns)})"
+                    log.info(
+                        "Automatically generated table: %s with columns: %s",
+                        table_name,
+                        columns,
                     )
+                    cursor.execute(create_table_sql)
 
                 # Insert parquet data into SQL server
                 for _, row in data_frame.iterrows():
@@ -433,7 +433,7 @@ def create_sql_server_storage(**kwargs: Any) -> PipelineStorage:
     log.info("Creating SQL Server storage")
     database_name = kwargs.get("database_name")
     database_server_name = kwargs.get("database_server_name")
-    overwrite_tables = kwargs.get("overwrite_tables", True)
+    autogenerate_tables = kwargs.get("autogenerate_tables", True)
     connection_string = kwargs.get("connection_string")
     client_id = kwargs.get("client_id")
     if connection_string:
@@ -445,7 +445,7 @@ def create_sql_server_storage(**kwargs: Any) -> PipelineStorage:
     return SQLServerPipelineStorage(
         database_name=database_name,
         database_server_name=database_server_name,
-        overwrite_tables=overwrite_tables,
+        autogenerate_tables=autogenerate_tables,
         client_id=client_id,
     )
 
