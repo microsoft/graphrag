@@ -203,7 +203,7 @@ def test_s3_prompt_getter_with_endpoint_url() -> None:
     
     # Act
     with patch("boto3.client") as mock_boto3_client:
-        getter = S3PromptGetter(endpoint_url=endpoint_url)
+        _ = S3PromptGetter(endpoint_url=endpoint_url)
         
         # Assert
         mock_boto3_client.assert_called_once_with("s3", endpoint_url=endpoint_url)
@@ -308,6 +308,68 @@ def test_get_prompt_content_with_endpoint_url() -> None:
     prompt_path = "s3://bucket/path/to/prompt.txt"
     root_dir = None
     endpoint_url = "http://localhost:9000"
+    
+    # Act
+    with patch("graphrag.config.prompt_getter.create_prompt_getter") as mock_create:
+        mock_getter = MagicMock(spec=PromptGetter)
+        mock_getter.get_prompt.return_value = "Test content"
+        mock_create.return_value = mock_getter
+        
+        result = get_prompt_content(prompt_path, root_dir, endpoint_url=endpoint_url)
+    
+    # Assert
+    mock_create.assert_called_once_with(prompt_path, endpoint_url=endpoint_url)
+    mock_getter.get_prompt.assert_called_once_with(prompt_path, root_dir)
+    assert result == "Test content"
+
+
+@pytest.mark.parametrize(
+    "endpoint_url",
+    [None, ""],
+)
+def test_s3_prompt_getter_with_none_or_empty_endpoint_url(endpoint_url: str | None) -> None:
+    """Test that when endpoint_url is None or empty, it uses AWS services by default."""
+    # Arrange & Act
+    with patch("boto3.client") as mock_client:
+        S3PromptGetter(endpoint_url=endpoint_url)
+        
+        # Assert
+        mock_client.assert_called_once()
+        call_kwargs = mock_client.call_args.kwargs
+        # Both None and empty string should result in endpoint_url=None
+        assert call_kwargs["endpoint_url"] is None
+
+
+@pytest.mark.parametrize(
+    "endpoint_url",
+    [None, ""],
+)
+def test_create_prompt_getter_s3_with_none_or_empty_endpoint_url(endpoint_url: str | None) -> None:
+    """Test that when endpoint_url is None or empty in create_prompt_getter, it uses AWS services by default."""
+    # Arrange
+    filepath = "s3://bucket/path/to/prompt.txt"
+    
+    # Act
+    with patch("boto3.client") as mock_client:
+        getter = create_prompt_getter(filepath, endpoint_url=endpoint_url)
+        
+        # Assert
+        assert isinstance(getter, S3PromptGetter)
+        mock_client.assert_called_once()
+        call_kwargs = mock_client.call_args.kwargs
+        # Both None and empty string should result in endpoint_url=None
+        assert call_kwargs["endpoint_url"] is None
+
+
+@pytest.mark.parametrize(
+    "endpoint_url",
+    [None, ""],
+)
+def test_get_prompt_content_with_none_or_empty_endpoint_url(endpoint_url: str | None) -> None:
+    """Test that when endpoint_url is None or empty in get_prompt_content, it uses AWS services by default."""
+    # Arrange
+    prompt_path = "s3://bucket/path/to/prompt.txt"
+    root_dir = None
     
     # Act
     with patch("graphrag.config.prompt_getter.create_prompt_getter") as mock_create:

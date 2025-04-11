@@ -76,8 +76,12 @@ class S3PromptGetter(PromptGetter):
         
         Args:
             endpoint_url: Optional endpoint URL for S3-compatible storage services like MinIO.
-                          If not provided, the default AWS S3 endpoint will be used.
+                          If not provided or empty, the default AWS S3 endpoint will be used.
         """
+        # If endpoint_url is an empty string, set it to None to use AWS services by default
+        if endpoint_url == "":
+            endpoint_url = None
+            
         self._s3_client: BaseClient = boto3.client("s3", endpoint_url=endpoint_url)
     
     def get_prompt(self,
