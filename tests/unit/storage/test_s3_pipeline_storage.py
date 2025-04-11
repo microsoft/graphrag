@@ -489,25 +489,53 @@ def test_s3_storage_with_endpoint_url():
 
 def test_child_storage_preserves_endpoint_url():
     """Test that child storage preserves the endpoint_url."""
+    # Create parent storage with endpoint_url
+    parent_storage = S3PipelineStorage(
+        bucket_name="test-bucket",
+        endpoint_url="http://localhost:9000",
+    )
+    
+    # Create child storage
+    child_storage = parent_storage.child("child")
+    
+    # Verify the child is an S3PipelineStorage instance
+    assert isinstance(child_storage, S3PipelineStorage)
+    
+    # Verify the endpoint_url was preserved in the child storage
+    assert child_storage._endpoint_url == "http://localhost:9000"  # noqa: SLF001
+
+
+@pytest.mark.parametrize(
+    "endpoint_url",
+    [None, ""],
+)
+def test_s3_storage_with_none_or_empty_endpoint_url(endpoint_url):
+    """Test that when endpoint_url is None or empty, it uses AWS services by default."""
     with patch("boto3.client") as mock_client:
-        # Mock the _endpoint attribute
-        mock_client_instance = MagicMock()
-        mock_endpoint = MagicMock()
-        mock_endpoint.host = "http://localhost:9000"
-        mock_client_instance._endpoint = mock_endpoint
-        mock_client.return_value = mock_client_instance
-        
-        # Create parent storage
-        parent_storage = S3PipelineStorage(
+        S3PipelineStorage(
             bucket_name="test-bucket",
-            endpoint_url="http://localhost:9000",
+            endpoint_url=endpoint_url,
         )
         
-        # Create child storage
-        child_storage = parent_storage.child("child")
+        mock_client.assert_called_once()
+        call_kwargs = mock_client.call_args.kwargs
+        assert "endpoint_url" not in call_kwargs or call_kwargs["endpoint_url"] is None
+
+
+@pytest.mark.parametrize(
+    "endpoint_url",
+    [None, ""],
+)
+def test_create_s3_storage_with_none_or_empty_endpoint_url(bucket_name, endpoint_url):
+    """Test that when endpoint_url is None or empty in create_s3_storage, it uses AWS services by default."""
+    with patch("boto3.client") as mock_client:
+        storage = create_s3_storage(
+            bucket_name=bucket_name,
+            prefix="test-prefix",
+            endpoint_url=endpoint_url,
+        )
         
-        # Verify endpoint_url is preserved in child storage
-        with patch("boto3.client") as mock_client2:
-            # Access the _s3 client to trigger creation if it's lazy-loaded
-            # This is just to ensure our test is valid
-            assert child_storage._s3 is not None  # noqa: SLF001
+        assert isinstance(storage, S3PipelineStorage)
+        mock_client.assert_called_once()
+        call_kwargs = mock_client.call_args.kwargs
+        assert "endpoint_url" not in call_kwargs or call_kwargs["endpoint_url"] is None

@@ -49,7 +49,12 @@ class S3PipelineStorage(PipelineStorage):
         self._bucket_name = bucket_name
         self._prefix = prefix
         self._encoding = encoding
+        self._aws_access_key_id = aws_access_key_id
+        self._aws_secret_access_key = aws_secret_access_key
+        self._region_name = region_name
+        self._endpoint_url = endpoint_url
         
+        # Create kwargs only for non-None values
         kwargs = {}
         if aws_access_key_id and aws_secret_access_key:
             kwargs["aws_access_key_id"] = aws_access_key_id
@@ -58,9 +63,12 @@ class S3PipelineStorage(PipelineStorage):
         if region_name:
             kwargs["region_name"] = region_name
         
-        self._s3 = boto3.client("s3", endpoint_url=endpoint_url, **kwargs)
-        # We'll use the client API instead of the resource API
-        # to avoid potential type issues
+        # Initialize boto3 client
+        # Don't pass empty endpoint_url to boto3.client
+        if endpoint_url:
+            self._s3 = boto3.client("s3", endpoint_url=endpoint_url, **kwargs)
+        else:
+            self._s3 = boto3.client("s3", **kwargs)
         
         log.info("Initialized S3PipelineStorage with bucket: %s, prefix: %s", bucket_name, prefix)
 
@@ -287,15 +295,15 @@ class S3PipelineStorage(PipelineStorage):
         new_prefix = f"{new_prefix.rstrip('/')}/{name}" if new_prefix else name
         
         # Create a new storage instance with the same parameters but a different prefix
-        s3_client = self._s3
-        endpoint_url = s3_client._endpoint.host if hasattr(s3_client, '_endpoint') and hasattr(s3_client._endpoint, 'host') else None
-        
+        # Get endpoint_url from the current instance to ensure it's preserved
         return S3PipelineStorage(
             bucket_name=self._bucket_name,
             prefix=new_prefix,
             encoding=self._encoding,
-            endpoint_url=endpoint_url,
-            # Use the same client, so credentials are reused
+            aws_access_key_id=self._aws_access_key_id,
+            aws_secret_access_key=self._aws_secret_access_key,
+            region_name=self._region_name,
+            endpoint_url=self._endpoint_url,
         )
 
     def keys(self) -> list[str]:
@@ -380,6 +388,10 @@ def create_s3_storage(**kwargs: Any) -> PipelineStorage:
     aws_secret_access_key = kwargs.get("aws_secret_access_key")
     region_name = kwargs.get("region_name")
     endpoint_url = kwargs.get("endpoint_url")
+    
+    # If endpoint_url is an empty string, set it to None
+    if endpoint_url == "":
+        endpoint_url = None
     
     log.info("Creating S3 storage with bucket: %s, prefix: %s", bucket_name, prefix)
     
