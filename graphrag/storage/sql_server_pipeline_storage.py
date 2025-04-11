@@ -14,7 +14,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import pyodbc
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 from pyodbc import Connection
 
 from graphrag.logger.base import ProgressLogger
@@ -41,6 +41,7 @@ class SQLServerPipelineStorage(PipelineStorage):
         database_name: str,
         database_server_name: str,
         overwrite_tables: bool = True,
+        client_id: str | None = None,
     ):
         """Initialize connection to Azure SQL Server."""
         # Currently, the SQL Server storage requires that the database and tables are created before indexing
@@ -51,7 +52,10 @@ class SQLServerPipelineStorage(PipelineStorage):
 
         # Use password-less authentication for the db server
         self._local_connection_string = f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:{database_server_name}.database.windows.net,1433;Database={database_name};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30"
-        credential = DefaultAzureCredential()
+        if client_id:
+            credential = ManagedIdentityCredential(client_id=client_id)
+        else:
+            credential = DefaultAzureCredential()
 
         # These connection options are recommended by Microsoft
         token_bytes = credential.get_token(
@@ -430,6 +434,11 @@ def create_sql_server_storage(**kwargs: Any) -> PipelineStorage:
     database_name = kwargs.get("database_name")
     database_server_name = kwargs.get("database_server_name")
     overwrite_tables = kwargs.get("overwrite_tables", True)
+    connection_string = kwargs.get("connection_string")
+    client_id = kwargs.get("client_id")
+    if connection_string:
+        msg = "SQL Server storage does not support connection string authentication. Use managed-identities instead."
+        raise ValueError(msg)
     if not database_name or not database_server_name:
         msg = "Both 'database_name' and 'database_server_name' must be provided."
         raise ValueError(msg)
@@ -437,6 +446,7 @@ def create_sql_server_storage(**kwargs: Any) -> PipelineStorage:
         database_name=database_name,
         database_server_name=database_server_name,
         overwrite_tables=overwrite_tables,
+        client_id=client_id,
     )
 
 

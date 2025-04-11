@@ -44,7 +44,11 @@ class OutputConfig(BaseModel):
         description="The database server name to use for SQL Server.",
         default=graphrag_config_defaults.output.database_server_name,
     )
-    overwrite_tables: bool | None = Field(
-        description="Whether to overwrite existing tables in SQL Server.",
-        default=graphrag_config_defaults.output.overwrite_tables,
+    autogenerate_tables: bool | None = Field(
+        description="Whether to automatically generate tables in SQL Server.",
+        default=graphrag_config_defaults.output.autogenerate_tables,
+    )
+    client_id: str | None = Field(
+        description="The client ID for a User-Assigned Managed Identity (SQL Server).",
+        default=graphrag_config_defaults.output.client_id,
     )

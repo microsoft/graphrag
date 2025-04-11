@@ -326,7 +326,8 @@ class OutputDefaults:
     cosmosdb_account_url: None = None
     database_name: None = None
     database_server_name: None = None
-    overwrite_tables: None = None
+    autogenerate_tables: None = None
+    client_id: None = None
 
 
 @dataclass
