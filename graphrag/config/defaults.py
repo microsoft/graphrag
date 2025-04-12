@@ -399,7 +399,13 @@ class VectorStoreDefaults:
     audience: None = None
     database_name: None = None
 
-
+@dataclass
+class MergeEntitiesDefaults:
+    """Default values for merging entities workflow."""
+    enabled: bool = True 
+    eps: float=0.2
+    min_samples: int=2
+    
 @dataclass
 class GraphRagConfigDefaults:
     """Default values for GraphRAG."""
@@ -439,7 +445,9 @@ class GraphRagConfigDefaults:
     vector_store: dict[str, VectorStoreDefaults] = field(
         default_factory=lambda: {DEFAULT_VECTOR_STORE_ID: VectorStoreDefaults()}
     )
+    merge_entities: MergeEntitiesDefaults = field(default_factory=MergeEntitiesDefaults)
     workflows: None = None
+    
 
 
 language_model_defaults = LanguageModelDefaults()

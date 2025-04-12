@@ -42,7 +42,9 @@ from .generate_text_embeddings import (
 from .prune_graph import (
     run_workflow as run_prune_graph,
 )
-
+from .merge_entities import (
+    run_workflow as run_merge_entities,
+)
 # register all of our built-in workflows at once
 PipelineFactory.register_all({
     "create_base_text_units": run_create_base_text_units,
@@ -57,4 +59,5 @@ PipelineFactory.register_all({
     "finalize_graph": run_finalize_graph,
     "generate_text_embeddings": run_generate_text_embeddings,
     "prune_graph": run_prune_graph,
+    "merge_entities": run_merge_entities,
 })

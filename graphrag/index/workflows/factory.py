@@ -48,6 +48,7 @@ def _get_workflows_list(
                 "create_base_text_units",
                 "create_final_documents",
                 "extract_graph",
+                *(["merge_entities"] if config.merge_entities.enabled else []),   
                 "finalize_graph",
                 *(["extract_covariates"] if config.extract_claims.enabled else []),
                 "create_communities",
