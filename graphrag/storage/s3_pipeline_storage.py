@@ -8,7 +8,6 @@ import re
 from collections.abc import Iterator
 from typing import Any
 
-import boto3
 from botocore.exceptions import ClientError
 
 from graphrag.logger.base import ProgressLogger
@@ -17,6 +16,7 @@ from graphrag.storage.pipeline_storage import (
     PipelineStorage,
     get_timestamp_formatted_with_local_tz,
 )
+from graphrag.utils.aws import create_s3_client
 
 log = logging.getLogger(__name__)
 
@@ -53,29 +53,27 @@ class S3PipelineStorage(PipelineStorage):
         self._aws_secret_access_key = aws_secret_access_key
         self._region_name = region_name
         self._endpoint_url = endpoint_url
-        
+
         # This object will be lazily loaded
         self.__s3 = None
-        
-        log.info("Initialized S3PipelineStorage with bucket: %s, prefix: %s", bucket_name, prefix)
+
+        log.info(
+            "Initialized S3PipelineStorage with bucket: %s, prefix: %s",
+            bucket_name,
+            prefix,
+        )
 
     @property
     def _s3(self):
         """Lazy load the S3 client."""
         if self.__s3 is None:
-            kwargs = {}
-            if self._aws_access_key_id and self._aws_secret_access_key:
-                kwargs["aws_access_key_id"] = self._aws_access_key_id
-                kwargs["aws_secret_access_key"] = self._aws_secret_access_key
-            
-            if self._region_name:
-                kwargs["region_name"] = self._region_name
-            
-            if self._endpoint_url and self._endpoint_url.strip():
-                self.__s3 = boto3.client("s3", endpoint_url=self._endpoint_url, **kwargs)
-            else:
-                self.__s3 = boto3.client("s3", **kwargs)
-        
+            self.__s3 = create_s3_client(
+                endpoint_url=self._endpoint_url,
+                aws_access_key_id=self._aws_access_key_id,
+                aws_secret_access_key=self._aws_secret_access_key,
+                region_name=self._region_name,
+            )
+
         return self.__s3
 
     def _get_full_key(self, key: str) -> str:
@@ -90,11 +88,11 @@ class S3PipelineStorage(PipelineStorage):
         """
         if not self._prefix:
             return key
-        
+
         # Ensure prefix doesn't have trailing slash and key doesn't have leading slash
         prefix = self._prefix.rstrip("/")
         clean_key = key.lstrip("/")
-        
+
         return f"{prefix}/{clean_key}"
 
     def _strip_prefix(self, key: str) -> str:
@@ -109,11 +107,11 @@ class S3PipelineStorage(PipelineStorage):
         """
         if not self._prefix:
             return key
-        
+
         prefix = self._prefix.rstrip("/") + "/"
         if key.startswith(prefix):
-            return key[len(prefix):]
-        
+            return key[len(prefix) :]
+
         return key
 
     def find(
@@ -137,6 +135,7 @@ class S3PipelineStorage(PipelineStorage):
         ------
             A tuple of the file key and the match groups.
         """
+
         def item_filter(item: dict[str, Any]) -> bool:
             if file_filter is None:
                 return True
@@ -147,22 +146,29 @@ class S3PipelineStorage(PipelineStorage):
         search_prefix = self._prefix
         if base_dir:
             search_prefix = f"{self._prefix.rstrip('/')}/{base_dir.lstrip('/')}"
-        
-        log.info("Searching S3 bucket %s with prefix %s for files matching %s", self._bucket_name, search_prefix, file_pattern.pattern)
-        
+
+        log.info(
+            "Searching S3 bucket %s with prefix %s for files matching %s",
+            self._bucket_name,
+            search_prefix,
+            file_pattern.pattern,
+        )
+
         # List all objects with the given prefix
         paginator = self._s3.get_paginator("list_objects_v2")
-        page_iterator = paginator.paginate(Bucket=self._bucket_name, Prefix=search_prefix)
-        
+        page_iterator = paginator.paginate(
+            Bucket=self._bucket_name, Prefix=search_prefix
+        )
+
         all_objects = []
         for page in page_iterator:
             if "Contents" in page:
                 all_objects.extend(page["Contents"])
-        
+
         num_loaded = 0
         num_total = len(all_objects)
         num_filtered = 0
-        
+
         for obj in all_objects:
             key = obj["Key"]
             match = file_pattern.search(key)
@@ -179,9 +185,11 @@ class S3PipelineStorage(PipelineStorage):
                     num_filtered += 1
             else:
                 num_filtered += 1
-                
+
             if progress is not None:
-                progress(self._create_progress_status(num_loaded, num_filtered, num_total))
+                progress(
+                    self._create_progress_status(num_loaded, num_filtered, num_total)
+                )
 
     async def get(
         self, key: str, as_bytes: bool | None = None, encoding: str | None = None
@@ -198,14 +206,14 @@ class S3PipelineStorage(PipelineStorage):
             The value for the given key.
         """
         full_key = self._get_full_key(key)
-        
+
         try:
             response = self._s3.get_object(Bucket=self._bucket_name, Key=full_key)
             content = response["Body"].read()
-            
+
             if as_bytes:
                 return content
-            
+
             return content.decode(encoding or self._encoding)
         except ClientError as e:
             if e.response["Error"]["Code"] == "NoSuchKey":
@@ -221,12 +229,14 @@ class S3PipelineStorage(PipelineStorage):
             encoding: The encoding to use for text files.
         """
         full_key = self._get_full_key(key)
-        
+
         if isinstance(value, bytes):
             self._s3.put_object(Bucket=self._bucket_name, Key=full_key, Body=value)
         else:
             encoded_value = value.encode(encoding or self._encoding)
-            self._s3.put_object(Bucket=self._bucket_name, Key=full_key, Body=encoded_value)
+            self._s3.put_object(
+                Bucket=self._bucket_name, Key=full_key, Body=encoded_value
+            )
 
     async def has(self, key: str) -> bool:
         """Return True if the given key exists in the storage.
@@ -239,7 +249,7 @@ class S3PipelineStorage(PipelineStorage):
             True if the key exists in the storage, False otherwise.
         """
         full_key = self._get_full_key(key)
-        
+
         try:
             self._s3.head_object(Bucket=self._bucket_name, Key=full_key)
         except ClientError as e:
@@ -256,30 +266,34 @@ class S3PipelineStorage(PipelineStorage):
             key: The key to delete.
         """
         full_key = self._get_full_key(key)
-        
+
         self._s3.delete_object(Bucket=self._bucket_name, Key=full_key)
 
     async def clear(self) -> None:
         """Clear the storage by deleting all objects with the configured prefix."""
         if not self._prefix:
             log.warning("Clearing entire S3 bucket as no prefix was specified")
-        
+
         # Delete all objects with the given prefix
         objects_to_delete = {"Objects": []}
-        
+
         paginator = self._s3.get_paginator("list_objects_v2")
-        page_iterator = paginator.paginate(Bucket=self._bucket_name, Prefix=self._prefix)
-        
+        page_iterator = paginator.paginate(
+            Bucket=self._bucket_name, Prefix=self._prefix
+        )
+
         for page in page_iterator:
             if "Contents" in page:
                 for obj in page["Contents"]:
                     objects_to_delete["Objects"].append({"Key": obj["Key"]})
-                
+
                 # Delete in batches of 1000 (S3 limit)
                 if len(objects_to_delete["Objects"]) >= 1000:
-                    self._s3.delete_objects(Bucket=self._bucket_name, Delete=objects_to_delete)
+                    self._s3.delete_objects(
+                        Bucket=self._bucket_name, Delete=objects_to_delete
+                    )
                     objects_to_delete = {"Objects": []}
-        
+
         # Delete any remaining objects
         if objects_to_delete["Objects"]:
             self._s3.delete_objects(Bucket=self._bucket_name, Delete=objects_to_delete)
@@ -296,10 +310,10 @@ class S3PipelineStorage(PipelineStorage):
         """
         if name is None:
             return self
-        
+
         new_prefix = self._prefix
         new_prefix = f"{new_prefix.rstrip('/')}/{name}" if new_prefix else name
-        
+
         # Create a new storage instance with the same parameters but a different prefix
         # Get endpoint_url from the current instance to ensure it's preserved
         return S3PipelineStorage(
@@ -321,15 +335,17 @@ class S3PipelineStorage(PipelineStorage):
         """
         keys = []
         paginator = self._s3.get_paginator("list_objects_v2")
-        page_iterator = paginator.paginate(Bucket=self._bucket_name, Prefix=self._prefix)
-        
+        page_iterator = paginator.paginate(
+            Bucket=self._bucket_name, Prefix=self._prefix
+        )
+
         for page in page_iterator:
             if "Contents" in page:
                 for obj in page["Contents"]:
                     # Strip the prefix to get the relative key
                     relative_key = self._strip_prefix(obj["Key"])
                     keys.append(relative_key)
-        
+
         return keys
 
     async def get_creation_date(self, key: str) -> str:
@@ -343,11 +359,11 @@ class S3PipelineStorage(PipelineStorage):
             The creation date for the given key.
         """
         full_key = self._get_full_key(key)
-        
+
         try:
             response = self._s3.head_object(Bucket=self._bucket_name, Key=full_key)
             last_modified = response["LastModified"]
-            
+
             # S3 doesn't have a creation date, only last modified
             return get_timestamp_formatted_with_local_tz(last_modified)
         except ClientError as e:
@@ -394,13 +410,13 @@ def create_s3_storage(**kwargs: Any) -> PipelineStorage:
     aws_secret_access_key = kwargs.get("aws_secret_access_key")
     region_name = kwargs.get("region_name")
     endpoint_url = kwargs.get("endpoint_url")
-    
+
     # If endpoint_url is an empty string, set it to None
     if endpoint_url == "":
         endpoint_url = None
-    
+
     log.info("Creating S3 storage with bucket: %s, prefix: %s", bucket_name, prefix)
-    
+
     return S3PipelineStorage(
         bucket_name=bucket_name,
         prefix=prefix,

@@ -10,13 +10,14 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Any
 
-import boto3
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
+from graphrag.utils.aws import create_s3_client
 
 logger = logging.getLogger(__name__)
+
 
 class LogType(Enum):
     """Enum for log entry types."""
@@ -43,15 +44,17 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
     _num_blocks: int
     _max_block_count: int = 25_000  # 25k blocks per log file
 
-    def __init__(self,
-                 bucket_name: str | None,
-                 base_dir: str = "",
-                 log_file_name: str = "",
-                 encoding: str = "utf-8",
-                 aws_access_key_id: str | None = None,
-                 aws_secret_access_key: str | None = None,
-                 region_name: str | None = None,
-                 endpoint_url: str | None = None):
+    def __init__(
+        self,
+        bucket_name: str | None,
+        base_dir: str = "",
+        log_file_name: str = "",
+        encoding: str = "utf-8",
+        aws_access_key_id: str | None = None,
+        aws_secret_access_key: str | None = None,
+        region_name: str | None = None,
+        endpoint_url: str | None = None,
+    ):
         """
         Create a new instance of the S3WorkflowCallbacks class.
 
@@ -73,11 +76,11 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
         if not bucket_name:
             msg = "No bucket name provided for S3 storage."
             raise ValueError(msg)
-        
+
         self._bucket_name = bucket_name
         self._prefix = base_dir
         self._encoding = encoding
-        
+
         # Store credentials for lazy initialization
         self._aws_access_key_id = aws_access_key_id
         self._aws_secret_access_key = aws_secret_access_key
@@ -86,30 +89,21 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
 
         if not log_file_name:
             log_file_name = _get_log_file_name()
-        
+
         self._log_file_prefix = str(Path(self._prefix) / log_file_name)
         self._num_blocks = 0  # refresh block counter
-    
+
     @property
     def _s3_client(self) -> BaseClient:
         """Lazy load the S3 client."""
         if self.__s3_client is None:
-            # Create kwargs only for non-None values
-            kwargs = {}
-            if self._aws_access_key_id and self._aws_secret_access_key:
-                kwargs["aws_access_key_id"] = self._aws_access_key_id
-                kwargs["aws_secret_access_key"] = self._aws_secret_access_key
-            
-            if self._region_name:
-                kwargs["region_name"] = self._region_name
-            
-            # Initialize boto3 client
-            # Don't pass empty endpoint_url to boto3.client
-            if self._endpoint_url and self._endpoint_url.strip():
-                self.__s3_client = boto3.client("s3", endpoint_url=self._endpoint_url, **kwargs)
-            else:
-                self.__s3_client = boto3.client("s3", **kwargs)
-        
+            self.__s3_client = create_s3_client(
+                endpoint_url=self._endpoint_url,
+                aws_access_key_id=self._aws_access_key_id,
+                aws_secret_access_key=self._aws_secret_access_key,
+                region_name=self._region_name,
+            )
+
         return self.__s3_client
 
     def _write_log(self, log_entry: dict[str, Any]) -> None:
@@ -127,35 +121,42 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
             self._num_blocks = 0
             # Update log file prefix but don't reinitialize the entire object
             self._log_file_prefix = str(Path(self._prefix) / new_log_file)
-            logger.info("Created new log file due to block count limit: %s", new_log_file)
-        
+            logger.info(
+                "Created new log file due to block count limit: %s", new_log_file
+            )
+
         try:
             log_content = json.dumps(log_entry, indent=4, ensure_ascii=False) + "\n"
             # Use append-like behavior by using a unique key for each log entry
             timestamp = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S%f")
             log_key = f"{self._log_file_prefix}_{self._num_blocks}_{timestamp}"
-            
+
             self._s3_client.put_object(
                 Bucket=self._bucket_name,
                 Key=log_key,
-                Body=log_content.encode(self._encoding)
+                Body=log_content.encode(self._encoding),
             )
             self._num_blocks += 1
-            logger.debug("Successfully wrote log entry to S3: %s", log_entry.get("type", "unknown"))
+            logger.debug(
+                "Successfully wrote log entry to S3: %s",
+                log_entry.get("type", "unknown"),
+            )
         except ClientError:
             logger.exception("Failed to write log to S3 bucket %s", self._bucket_name)
             # Don't re-raise to maintain the no-op behavior pattern
-    
-    def _log_message(self,
-                     log_type: LogType,
-                     message: str,
-                     log_level: int,
-                     details: dict | None = None,
-                     cause: BaseException | None = None,
-                     stack: str | None = None) -> None:
+
+    def _log_message(
+        self,
+        log_type: LogType,
+        message: str,
+        log_level: int,
+        details: dict | None = None,
+        cause: BaseException | None = None,
+        stack: str | None = None,
+    ) -> None:
         """
         Log messages with a consistent formatting.
-        
+
         Args:
             log_type: Type of log entry (error, warning, log)
             message: The message to log
@@ -166,10 +167,15 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
         """
         # Log to python logger
         if cause and log_type == LogType.ERROR:
-            logger.log(log_level, "%s - %s", message, str(cause) if cause else "No cause specified")
+            logger.log(
+                log_level,
+                "%s - %s",
+                message,
+                str(cause) if cause else "No cause specified",
+            )
         else:
             logger.log(log_level, message)
-        
+
         # Create a log entry
         log_entry = {
             "type": log_type.name.lower(),
@@ -182,9 +188,9 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
         if log_type == LogType.ERROR:
             log_entry["cause"] = str(cause) if cause else None
             log_entry["stack"] = stack
-        
+
         self._write_log(log_entry)
-    
+
     def error(
         self,
         message: str,
@@ -207,7 +213,7 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
             log_level=logging.ERROR,
             details=details,
             cause=cause,
-            stack=stack
+            stack=stack,
         )
 
     def warning(self, message: str, details: dict | None = None) -> None:
@@ -222,7 +228,7 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
             log_type=LogType.WARNING,
             message=message,
             log_level=logging.WARNING,
-            details=details
+            details=details,
         )
 
     def log(self, message: str, details: dict | None = None) -> None:
@@ -237,7 +243,7 @@ class S3WorkflowCallbacks(NoopWorkflowCallbacks):
             log_type=LogType.LOG,
             message=message,
             log_level=logging.INFO,
-            details=details
+            details=details,
         )
 
 
