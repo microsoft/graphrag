@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add endpoint_url parameter to S3 storage classes to support S3-compatible services like MinIO"
+}

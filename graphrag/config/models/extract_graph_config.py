@@ -3,12 +3,11 @@
 
 """Parameterization settings for the default configuration."""
 
-from pathlib import Path
-
 from pydantic import BaseModel, Field
 
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.config.prompt_getter import get_prompt_content
 
 
 class ExtractGraphConfig(BaseModel):
@@ -21,6 +20,10 @@ class ExtractGraphConfig(BaseModel):
     prompt: str | None = Field(
         description="The entity extraction prompt to use.",
         default=graphrag_config_defaults.extract_graph.prompt,
+    )
+    endpoint_url: str | None = Field(
+        description="The endpoint URL for the S3 API. Useful for S3-compatible storage like MinIO.",
+        default=graphrag_config_defaults.extract_graph.endpoint_url,
     )
     entity_types: list[str] = Field(
         description="The entity extraction entity types to use.",
@@ -51,11 +54,7 @@ class ExtractGraphConfig(BaseModel):
             "type": ExtractEntityStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
             "num_threads": model_config.concurrent_requests,
-            "extraction_prompt": (Path(root_dir) / self.prompt).read_text(
-                encoding="utf-8"
-            )
-            if self.prompt
-            else None,
+            "extraction_prompt": get_prompt_content(self.prompt, root_dir, self.endpoint_url),
             "max_gleanings": self.max_gleanings,
             "encoding_name": model_config.encoding_model,
         }
