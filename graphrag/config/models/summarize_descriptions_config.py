@@ -26,6 +26,10 @@ class SummarizeDescriptionsConfig(BaseModel):
         description="The description summarization maximum length.",
         default=graphrag_config_defaults.summarize_descriptions.max_length,
     )
+    max_input_tokens: int = Field(
+        description="Maximum tokens to submit from the input entity descriptions.",
+        default=graphrag_config_defaults.summarize_descriptions.max_input_tokens,
+    )
     strategy: dict | None = Field(
         description="The override strategy to use.",
         default=graphrag_config_defaults.summarize_descriptions.strategy,
@@ -42,11 +46,11 @@ class SummarizeDescriptionsConfig(BaseModel):
         return self.strategy or {
             "type": SummarizeStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
-            "num_threads": model_config.concurrent_requests,
             "summarize_prompt": (Path(root_dir) / self.prompt).read_text(
                 encoding="utf-8"
             )
             if self.prompt
             else None,
             "max_summary_length": self.max_length,
+            "max_input_tokens": self.max_input_tokens,
         }

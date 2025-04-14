@@ -45,6 +45,8 @@ For example:
 
 where 1, 2, 4, 5, 7, 23, 2, 34, and 46 represent the id (not the index) of the relevant data record.
 
+Limit the total report length to {max_report_length} words.
+
 # Example Input
 -----------
 SOURCES

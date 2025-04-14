@@ -34,7 +34,7 @@ def build_community_context(
     include_community_weight: bool = True,
     community_weight_name: str = "occurrence weight",
     normalize_community_weight: bool = True,
-    max_tokens: int = 8000,
+    max_context_tokens: int = 8000,
     single_batch: bool = True,
     context_name: str = "Reports",
     random_state: int = 86,
@@ -154,7 +154,7 @@ def build_community_context(
         new_context_text, new_context = _report_context_text(report, attributes)
         new_tokens = num_tokens(new_context_text, token_encoder)
 
-        if batch_tokens + new_tokens > max_tokens:
+        if batch_tokens + new_tokens > max_context_tokens:
             # add the current batch to the context data and start a new batch if we are in multi-batch mode
             _cut_batch()
             if single_batch:

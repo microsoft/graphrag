@@ -33,16 +33,6 @@ from graphrag.query.context_builder.conversation_history import (
 from graphrag.query.llm.text_utils import num_tokens, try_parse_json_object
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 
-DEFAULT_MAP_LLM_PARAMS = {
-    "max_tokens": 1000,
-    "temperature": 0.0,
-}
-
-DEFAULT_REDUCE_LLM_PARAMS = {
-    "max_tokens": 2000,
-    "temperature": 0.0,
-}
-
 log = logging.getLogger(__name__)
 
 
@@ -71,8 +61,10 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         json_mode: bool = True,
         callbacks: list[QueryCallbacks] | None = None,
         max_data_tokens: int = 8000,
-        map_llm_params: dict[str, Any] = DEFAULT_MAP_LLM_PARAMS,
-        reduce_llm_params: dict[str, Any] = DEFAULT_REDUCE_LLM_PARAMS,
+        map_llm_params: dict[str, Any] | None = None,
+        reduce_llm_params: dict[str, Any] | None = None,
+        map_max_length: int = 1000,
+        reduce_max_length: int = 2000,
         context_builder_params: dict[str, Any] | None = None,
         concurrent_coroutines: int = 32,
     ):
@@ -92,13 +84,15 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         self.callbacks = callbacks or []
         self.max_data_tokens = max_data_tokens
 
-        self.map_llm_params = map_llm_params
-        self.reduce_llm_params = reduce_llm_params
+        self.map_llm_params = map_llm_params if map_llm_params else {}
+        self.reduce_llm_params = reduce_llm_params if reduce_llm_params else {}
         if json_mode:
             self.map_llm_params["response_format"] = {"type": "json_object"}
         else:
             # remove response_format key if json_mode is False
             self.map_llm_params.pop("response_format", None)
+        self.map_max_length = map_max_length
+        self.reduce_max_length = reduce_max_length
 
         self.semaphore = asyncio.Semaphore(concurrent_coroutines)
 
@@ -118,7 +112,10 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
 
         map_responses = await asyncio.gather(*[
             self._map_response_single_batch(
-                context_data=data, query=query, **self.map_llm_params
+                context_data=data,
+                query=query,
+                max_length=self.map_max_length,
+                **self.map_llm_params,
             )
             for data in context_result.context_chunks
         ])
@@ -130,6 +127,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         async for response in self._stream_reduce_response(
             map_responses=map_responses,  # type: ignore
             query=query,
+            max_length=self.reduce_max_length,
             model_parameters=self.reduce_llm_params,
         ):
             yield response
@@ -166,7 +164,10 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
 
         map_responses = await asyncio.gather(*[
             self._map_response_single_batch(
-                context_data=data, query=query, **self.map_llm_params
+                context_data=data,
+                query=query,
+                max_length=self.map_max_length,
+                **self.map_llm_params,
             )
             for data in context_result.context_chunks
         ])
@@ -209,13 +210,16 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         self,
         context_data: str,
         query: str,
+        max_length: int,
         **llm_kwargs,
     ) -> SearchResult:
         """Generate answer for a single chunk of community reports."""
         start_time = time.time()
         search_prompt = ""
         try:
-            search_prompt = self.map_system_prompt.format(context_data=context_data)
+            search_prompt = self.map_system_prompt.format(
+                context_data=context_data, max_length=max_length
+            )
             search_messages = [
                 {"role": "system", "content": search_prompt},
             ]
@@ -411,6 +415,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         self,
         map_responses: list[SearchResult],
         query: str,
+        max_length: int,
         **llm_kwargs,
     ) -> AsyncGenerator[str, None]:
         # collect all key points into a single list to prepare for sorting
@@ -469,7 +474,9 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         text_data = "\n\n".join(data)
 
         search_prompt = self.reduce_system_prompt.format(
-            report_data=text_data, response_type=self.response_type
+            report_data=text_data,
+            response_type=self.response_type,
+            max_length=max_length,
         )
         if self.allow_general_knowledge:
             search_prompt += "\n" + self.general_knowledge_inclusion_prompt

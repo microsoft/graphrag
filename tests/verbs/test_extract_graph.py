@@ -57,6 +57,8 @@ async def test_extract_graph():
     config.summarize_descriptions.strategy = {
         "type": "graph_intelligence",
         "llm": summarize_llm_settings,
+        "max_input_tokens": 1000,
+        "max_summary_length": 100,
     }
 
     await run_workflow(config, context)

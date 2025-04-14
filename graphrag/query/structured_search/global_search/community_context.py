@@ -65,7 +65,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
         include_community_weight: bool = True,
         community_weight_name: str = "occurrence",
         normalize_community_weight: bool = True,
-        max_tokens: int = 8000,
+        max_context_tokens: int = 8000,
         context_name: str = "Reports",
         conversation_history_user_turns_only: bool = True,
         conversation_history_max_turns: int | None = 5,
@@ -84,7 +84,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
                 include_user_turns_only=conversation_history_user_turns_only,
                 max_qa_turns=conversation_history_max_turns,
                 column_delimiter=column_delimiter,
-                max_tokens=max_tokens,
+                max_context_tokens=max_context_tokens,
                 recency_bias=False,
             )
             if conversation_history_context != "":
@@ -113,7 +113,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
             include_community_weight=include_community_weight,
             community_weight_name=community_weight_name,
             normalize_community_weight=normalize_community_weight,
-            max_tokens=max_tokens,
+            max_context_tokens=max_context_tokens,
             single_batch=False,
             context_name=context_name,
             random_state=self.random_state,

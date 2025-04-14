@@ -11,10 +11,10 @@ from graphrag.index.utils.tokens import num_tokens_from_string
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
 
-# Max token size for input prompts
-DEFAULT_MAX_INPUT_TOKENS = 4_000
-# Max token count for LLM answers
-DEFAULT_MAX_SUMMARY_LENGTH = 500
+# these tokens are used in the prompt
+ENTITY_NAME_KEY = "entity_name"
+DESCRIPTION_LIST_KEY = "description_list"
+MAX_LENGTH_KEY = "max_length"
 
 
 @dataclass
@@ -29,8 +29,6 @@ class SummarizeExtractor:
     """Unipartite graph extractor class definition."""
 
     _model: ChatModel
-    _entity_name_key: str
-    _input_descriptions_key: str
     _summarization_prompt: str
     _on_error: ErrorHandlerFn
     _max_summary_length: int
@@ -39,23 +37,19 @@ class SummarizeExtractor:
     def __init__(
         self,
         model_invoker: ChatModel,
-        entity_name_key: str | None = None,
-        input_descriptions_key: str | None = None,
+        max_summary_length: int,
+        max_input_tokens: int,
         summarization_prompt: str | None = None,
         on_error: ErrorHandlerFn | None = None,
-        max_summary_length: int | None = None,
-        max_input_tokens: int | None = None,
     ):
         """Init method definition."""
         # TODO: streamline construction
         self._model = model_invoker
-        self._entity_name_key = entity_name_key or "entity_name"
-        self._input_descriptions_key = input_descriptions_key or "description_list"
 
         self._summarization_prompt = summarization_prompt or SUMMARIZE_PROMPT
         self._on_error = on_error or (lambda _e, _s, _d: None)
-        self._max_summary_length = max_summary_length or DEFAULT_MAX_SUMMARY_LENGTH
-        self._max_input_tokens = max_input_tokens or DEFAULT_MAX_INPUT_TOKENS
+        self._max_summary_length = max_summary_length
+        self._max_input_tokens = max_input_tokens
 
     async def __call__(
         self,
@@ -127,13 +121,13 @@ class SummarizeExtractor:
         """Summarize descriptions using the LLM."""
         response = await self._model.achat(
             self._summarization_prompt.format(**{
-                self._entity_name_key: json.dumps(id, ensure_ascii=False),
-                self._input_descriptions_key: json.dumps(
+                ENTITY_NAME_KEY: json.dumps(id, ensure_ascii=False),
+                DESCRIPTION_LIST_KEY: json.dumps(
                     sorted(descriptions), ensure_ascii=False
                 ),
+                MAX_LENGTH_KEY: self._max_summary_length,
             }),
             name="summarize",
-            model_parameters={"max_tokens": self._max_summary_length},
         )
         # Calculate result
         return str(response.output.content)
