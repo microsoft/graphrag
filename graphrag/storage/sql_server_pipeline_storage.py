@@ -73,7 +73,7 @@ class SQLServerPipelineStorage(PipelineStorage):
         )
         self._connection = connection
         log.info(
-            "Creating connection to SQL Server database %s on server %s",
+            "Creating connection to SQL Server database e%s on server %s",
             database_name,
             database_server_name,
         )
@@ -86,6 +86,8 @@ class SQLServerPipelineStorage(PipelineStorage):
 
         If autogenerate_tables is not enabled, this method will manually create tables for all parquet outputs using a predefined schema.
         """
+        # TODO: Currently, most parquet outputs are written to storage and updated multiple times throughout the indexing pipeline, making it difficult to start with a predefined schema.
+        # In a future PR, figure out how to use the SQL Server storage with a predefined table schema.
         msg = "SQL Server storage does not yet support manually predefined table creation."
         raise NotImplementedError(msg)
 
