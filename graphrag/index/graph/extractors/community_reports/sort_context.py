@@ -7,11 +7,14 @@ import pandas as pd
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
 from graphrag.query.llm.text_utils import num_tokens
 
+import logging
+log = logging.getLogger(__name__)
+
 
 def sort_context(
     local_context: list[dict],
     sub_community_reports: list[dict] | None = None,
-    max_tokens: int | None = None,
+    max_tokens: int | None = 8000,
     node_id_column: str = schemas.NODE_ID,
     node_name_column: str = schemas.NODE_NAME,
     node_details_column: str = schemas.NODE_DETAILS,
@@ -29,6 +32,14 @@ def sort_context(
     If max tokens is provided, we will return the context string that fits within the token limit.
     """
 
+    log.info(
+        f"Sorting local context with {len(local_context)} records and sub-community reports with {len(sub_community_reports) if sub_community_reports else 0} records"
+    )
+
+    log.info(
+        f"Sorting context {local_context} with max tokens: {max_tokens} and sub-community reports: {sub_community_reports}"
+    )
+   
     def _get_context_string(
         entities: list[dict],
         edges: list[dict],

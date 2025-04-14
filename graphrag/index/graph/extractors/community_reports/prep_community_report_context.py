@@ -48,6 +48,9 @@ def prep_community_report_context(
     valid_context_df = _within_context(level_context_df)
     invalid_context_df = _exceeding_context(level_context_df)
 
+    log.info(f"Found {len(valid_context_df)} valid context records at level {level}")
+    log.info(f"Found {len(invalid_context_df)} invalid context records at level {level}")
+
     # there is no report to substitute with, so we just trim the local context of the invalid context records
     # this case should only happen at the bottom level of the community hierarchy where there are no sub-communities
     if invalid_context_df.empty:
