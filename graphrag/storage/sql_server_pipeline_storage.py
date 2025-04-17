@@ -292,6 +292,8 @@ class SQLServerPipelineStorage(PipelineStorage):
                     cursor.execute(create_table_sql)
 
                 # Insert parquet data into SQL server
+                num_rows = len(data_frame)
+                counter = 0
                 for _, row in data_frame.iterrows():
                     try:
                         placeholders = ", ".join([
@@ -314,6 +316,9 @@ class SQLServerPipelineStorage(PipelineStorage):
                             else:
                                 values.append(val)
                         cursor.execute(insert_sql, values)
+                        counter += 1
+                        if counter % 100 == 0:
+                            log.info("Successfully inserted row number %s out of %s", counter, num_rows)
                     except Exception:
                         log.exception(
                             "Error inserting row %s into table: %s",
