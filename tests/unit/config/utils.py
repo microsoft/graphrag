@@ -149,6 +149,10 @@ def assert_update_output_configs(actual: OutputConfig, expected: OutputConfig) -
     assert expected.container_name == actual.container_name
     assert expected.storage_account_blob_url == actual.storage_account_blob_url
     assert expected.cosmosdb_account_url == actual.cosmosdb_account_url
+    assert expected.database_name == actual.database_name
+    assert expected.database_server_name == actual.database_server_name
+    assert expected.autogenerate_tables == actual.autogenerate_tables
+    assert expected.client_id == actual.client_id
 
 
 def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
