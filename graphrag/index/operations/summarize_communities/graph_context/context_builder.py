@@ -44,7 +44,6 @@ def build_local_context(
 ):
     """Prep communities for report generation."""
     levels = get_levels(nodes, schemas.COMMUNITY_LEVEL)
-
     dfs = []
 
     for level in progress_iterable(levels, callbacks.progress, len(levels)):

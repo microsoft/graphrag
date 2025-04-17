@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "SQL server storage support for indexing"
+}
