@@ -45,6 +45,7 @@ def get_local_search_engine(
     description_embedding_store: BaseVectorStore,
     system_prompt: str | None = None,
     callbacks: list[QueryCallbacks] | None = None,
+    raw_chunks: bool = True,
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
     model_settings = config.get_language_model_config(config.local_search.chat_model_id)
@@ -77,23 +78,26 @@ def get_local_search_engine(
 
     ls_config = config.local_search
 
+    # Create context builder without raw_chunks
+    context_builder = LocalSearchMixedContext(
+        community_reports=reports,
+        text_units=text_units,
+        entities=entities,
+        relationships=relationships,
+        covariates=covariates,
+        entity_text_embeddings=description_embedding_store,
+        embedding_vectorstore_key=EntityVectorStoreKey.ID,
+        text_embedder=embedding_model,
+        token_encoder=token_encoder
+    )
+
     return LocalSearch(
         model=chat_model,
         system_prompt=system_prompt,
-        context_builder=LocalSearchMixedContext(
-            community_reports=reports,
-            text_units=text_units,
-            entities=entities,
-            relationships=relationships,
-            covariates=covariates,
-            entity_text_embeddings=description_embedding_store,
-            embedding_vectorstore_key=EntityVectorStoreKey.ID,  # if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE
-            text_embedder=embedding_model,
-            token_encoder=token_encoder,
-        ),
+        context_builder=context_builder,  # Use the created context_builder
         token_encoder=token_encoder,
         model_params={
-            "max_tokens": ls_config.llm_max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
+            "max_tokens": ls_config.llm_max_tokens,
             "temperature": ls_config.temperature,
             "top_p": ls_config.top_p,
             "n": ls_config.n,
@@ -109,13 +113,13 @@ def get_local_search_engine(
             "include_relationship_weight": True,
             "include_community_rank": False,
             "return_candidate_context": False,
-            "embedding_vectorstore_key": EntityVectorStoreKey.ID,  # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
-            "max_tokens": ls_config.max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+            "embedding_vectorstore_key": EntityVectorStoreKey.ID,
+            "max_tokens": ls_config.max_tokens,
         },
         response_type=response_type,
         callbacks=callbacks,
+        raw_chunks=raw_chunks  # Only pass raw_chunks here
     )
-
 
 def get_global_search_engine(
     config: GraphRagConfig,
@@ -128,6 +132,7 @@ def get_global_search_engine(
     reduce_system_prompt: str | None = None,
     general_knowledge_inclusion_prompt: str | None = None,
     callbacks: list[QueryCallbacks] | None = None,
+    raw_chunks: bool = True,  # Added raw_chunks parameter
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
     # TODO: Global search should select model based on config??
@@ -207,6 +212,7 @@ def get_global_search_engine(
         concurrent_coroutines=gs_config.concurrency,
         response_type=response_type,
         callbacks=callbacks,
+        raw_chunks=raw_chunks  # Added raw_chunks parameter
     )
 
 
@@ -221,6 +227,7 @@ def get_drift_search_engine(
     local_system_prompt: str | None = None,
     reduce_system_prompt: str | None = None,
     callbacks: list[QueryCallbacks] | None = None,
+    raw_chunks: bool = True,  # Added raw_chunks parameter
 ) -> DRIFTSearch:
     """Create a local search engine based on data + configuration."""
     chat_model_settings = config.get_language_model_config(
@@ -272,6 +279,7 @@ def get_drift_search_engine(
         ),
         token_encoder=token_encoder,
         callbacks=callbacks,
+        raw_chunks=raw_chunks  # Added raw_chunks parameter
     )
 
 
@@ -322,7 +330,7 @@ def get_basic_search_engine(
             token_encoder=token_encoder,
         ),
         token_encoder=token_encoder,
-        model_params={
+        llm_params={
             "max_tokens": ls_config.llm_max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
             "temperature": ls_config.temperature,
             "top_p": ls_config.top_p,

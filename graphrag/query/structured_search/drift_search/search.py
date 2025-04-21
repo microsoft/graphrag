@@ -38,6 +38,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         token_encoder: tiktoken.Encoding | None = None,
         query_state: QueryState | None = None,
         callbacks: list[QueryCallbacks] | None = None,
+        raw_chunks: bool = True,  # Added raw_chunks parameter
     ):
         """
         Initialize the DRIFTSearch class.
@@ -60,6 +61,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             token_encoder=token_encoder,
         )
         self.callbacks = callbacks or []
+        self.raw_chunks = raw_chunks  # Store raw_chunks parameter
         self.local_search = self.init_local_search()
 
     def init_local_search(self) -> LocalSearch:
@@ -83,7 +85,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             "max_tokens": self.context_builder.config.local_search_max_data_tokens,
         }
 
-        model_params = {
+        llm_params = {
             "max_tokens": self.context_builder.config.local_search_llm_max_gen_tokens,
             "temperature": self.context_builder.config.local_search_temperature,
             "response_format": {"type": "json_object"},
@@ -94,10 +96,11 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             system_prompt=self.context_builder.local_system_prompt,
             context_builder=self.context_builder.local_mixed_context,
             token_encoder=self.token_encoder,
-            model_params=model_params,
+            model_params=llm_params,
             context_builder_params=local_context_params,
             response_type="multiple paragraphs",
             callbacks=self.callbacks,
+            raw_chunks=self.raw_chunks,  # Pass raw_chunks to LocalSearch
         )
 
     def _process_primer_results(
@@ -202,8 +205,17 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
 
         # Check if query state is empty
         if not self.query_state.graph:
-            # Prime the search with the primer
+            if self.raw_chunks:
+                print("\n=== STEP 1: PRIMER SEARCH ===")
+                print("Query:", query)
+
             primer_context, token_ct = await self.context_builder.build_context(query)
+            
+            if self.raw_chunks:
+                print("\nPrimer Context:")
+                print(primer_context)
+                
+                
             llm_calls["build_context"] = token_ct["llm_calls"]
             prompt_tokens["build_context"] = token_ct["prompt_tokens"]
             output_tokens["build_context"] = token_ct["prompt_tokens"]
@@ -211,6 +223,13 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             primer_response = await self.primer.search(
                 query=query, top_k_reports=primer_context
             )
+            
+            if self.raw_chunks:
+                print("\nPrimer Response:")
+                print(primer_response.response)
+                print("=== END PRIMER SEARCH ===\n")
+                
+                
             llm_calls["primer"] = primer_response.llm_calls
             prompt_tokens["primer"] = primer_response.prompt_tokens
             output_tokens["primer"] = primer_response.output_tokens
@@ -224,6 +243,10 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         epochs = 0
         llm_call_offset = 0
         while epochs < self.context_builder.config.n_depth:
+            
+            if self.raw_chunks:
+                print(f"\n=== STEP 2: ACTION SEARCH (Epoch {epochs + 1}) ===")
+                
             actions = self.query_state.rank_incomplete_actions()
             if len(actions) == 0:
                 log.info("No more actions to take. Exiting DRIFT loop.")
@@ -232,10 +255,25 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             llm_call_offset += (
                 len(actions) - self.context_builder.config.drift_k_followups
             )
+            
+            if self.raw_chunks:
+                print(f"\nProcessing {len(actions)} actions:")
+                for i, action in enumerate(actions, 1):
+                    print(f"\nAction {i}:")
+                    print(f"Query: {action.query}")
+                    print(f"Follow-ups: {action.follow_ups}")
+                    
             # Process actions
             results = await self._search_step(
                 global_query=query, search_engine=self.local_search, actions=actions
             )
+            
+            if self.raw_chunks:
+                print("\nAction Results:")
+                for i, result in enumerate(results, 1):
+                    print(f"\nResult {i}:")
+                    print(result.response if hasattr(result, 'response') else result)
+                print(f"=== END ACTION SEARCH (Epoch {epochs + 1}) ===\n")
 
             # Update query state
             for action in results:
@@ -258,6 +296,13 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
 
         reduced_response = response_state
         if reduce:
+            
+            if self.raw_chunks:
+                print("\n=== STEP 3: REDUCTION ===")
+                print("Response state to be reduced:")
+                print(response_state)
+                
+                
             # Reduce response_state to a single comprehensive response
             for callback in self.callbacks:
                 callback.on_reduce_response_start(response_state)
@@ -271,6 +316,11 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 max_tokens=self.context_builder.config.reduce_max_tokens,
                 temperature=self.context_builder.config.reduce_temperature,
             )
+            
+            if self.raw_chunks:
+                print("\nReduced Response:")
+                print(reduced_response)
+                print("=== END REDUCTION ===\n")
 
             for callback in self.callbacks:
                 callback.on_reduce_response_end(reduced_response)
