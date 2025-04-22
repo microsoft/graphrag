@@ -19,6 +19,7 @@ from graphrag.config.enums import (
     ReportingType,
     TextEmbeddingTarget,
 )
+from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import EN_STOP_WORDS
 from graphrag.vector_stores.factory import VectorStoreType
 
 DEFAULT_OUTPUT_BASE_DIR = "output"
@@ -195,7 +196,7 @@ class TextAnalyzerDefaults:
     max_word_length: int = 15
     word_delimiter: str = " "
     include_named_entities: bool = True
-    exclude_nouns: None = None
+    exclude_nouns: list[str] = field(default_factory=lambda: EN_STOP_WORDS)
     exclude_entity_tags: list[str] = field(default_factory=lambda: ["DATE"])
     exclude_pos_tags: list[str] = field(
         default_factory=lambda: ["DET", "PRON", "INTJ", "X"]
