@@ -27,3 +27,7 @@ class BasicSearchConfig(BaseModel):
         description="The number of text units to include in search context.",
         default=graphrag_config_defaults.basic_search.k,
     )
+    max_context_tokens: int = Field(
+        description="The maximum tokens.",
+        default=graphrag_config_defaults.basic_search.max_context_tokens,
+    )
