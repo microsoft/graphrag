@@ -109,6 +109,10 @@ async def extract_graph(
         callbacks.error(error_msg)
         raise ValueError(error_msg)
 
+    # copy these as is before any summarization
+    raw_entities = extracted_entities.copy()
+    raw_relationships = extracted_relationships.copy()
+
     entities, relationships = await get_summarized_entities_relationships(
         extracted_entities=extracted_entities,
         extracted_relationships=extracted_relationships,
@@ -118,7 +122,7 @@ async def extract_graph(
         summarization_num_threads=summarization_num_threads,
     )
 
-    return (entities, relationships, extracted_entities, extracted_relationships)
+    return (entities, relationships, raw_entities, raw_relationships)
 
 
 async def get_summarized_entities_relationships(
