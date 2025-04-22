@@ -2619,18 +2619,68 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Exception in _map_response_single_batch
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/graphrag/query/structured_search/global_search/search.py", line 227, in _map_response_single_batch
+    model_response = await self.model.achat(
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/graphrag/language_model/providers/fnllm/models.py", line 84, in achat
+    response = await self.model(prompt, history=history, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/openai/llm/openai_chat_llm.py", line 94, in __call__
+    return await self._text_chat_llm(prompt, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/openai/services/openai_tools_parsing.py", line 130, in __call__
+    return await self._delegate(prompt, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/base_llm.py", line 144, in __call__
+    return await self._decorated_target(prompt, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/services/json.py", line 77, in invoke
+    return await this.invoke_json(delegate, prompt, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/services/json.py", line 96, in invoke_json
+    return await self.try_receive_json(delegate, prompt, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/services/json.py", line 162, in try_receive_json
+    result = await delegate(prompt, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/services/rate_limiter.py", line 75, in invoke
+    result = await delegate(prompt, **args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/base_llm.py", line 126, in _decorator_target
+    output = await self._execute_llm(prompt, kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/openai/llm/openai_text_chat_llm.py", line 157, in _execute_llm
+    completion = await self._client.chat.completions.create(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py", line 2000, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py", line 1767, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py", line 1461, in request
+    return await self._request(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py", line 1562, in _request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zWYA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Warning: All map responses have score 0 (i.e., no relevant information found from the dataset), returning a canned 'I do not know' answer. You can try enabling `allow_general_knowledge` to encourage the LLM to incorporate relevant general knowledge, at the risk of increasing hallucinations.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>### Overview of Operation: Dulce
-
-Operation: Dulce is a significant mission undertaken by the Paranormal Military Squad, an elite group tasked with investigating alien technology and its implications for humanity. The operation's primary focus is on the Dulce base, a central element of the mission, which is associated with advanced alien technology. The exploration and uncovering of the secrets within the Dulce base are crucial to the mission's objectives and the overall success of Operation: Dulce [Data: Reports (0, 1)].
-
-### Key Personnel
-
-The mission involves key agents from the Paranormal Military Squad, including Alex Mercer, Taylor Cruz, Jordan Hayes, and Sam Rivera. Each of these agents plays a significant role in executing the operation, contributing their expertise and skills to navigate the complexities of the Dulce base [Data: Reports (1)].
-
-### Motivation and Challenges
-
-A strong sense of duty drives the individuals involved in Operation: Dulce. This motivation is essential as they undertake the mission and face the challenges of exploring the depths of the Dulce base. The complexity and importance of the operation require a dedicated and focused team to ensure its success [Data: Reports (0)].
+<pre>I am sorry but I am unable to answer this question given the provided data.
 </pre>
 </div>
 </div>
@@ -2761,7 +2811,7 @@ print(
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>LLM calls: 2. Prompt tokens: 3378. Output tokens: 513.
+<pre>LLM calls: 1. Prompt tokens: 2401. Output tokens: 0.
 </pre>
 </div>
 </div>
