@@ -3,8 +3,9 @@
 
 """Graph extraction using NLP."""
 
-import math
+from itertools import combinations
 
+import numpy as np
 import pandas as pd
 
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
@@ -98,7 +99,7 @@ def _extract_edges(
         text_units_df.groupby("text_unit_id").agg({"title": list}).reset_index()
     )
     text_units_df["edges"] = text_units_df["title"].apply(
-        lambda x: _create_relationships(x)
+        lambda x: list(combinations(x, 2))
     )
     edge_df = text_units_df.explode("edges").loc[:, ["edges", "text_unit_id"]]
 
@@ -122,7 +123,7 @@ def _extract_edges(
         strict=False,
     )
 
-    # group by source and target, count the number of text units and collect their ids
+    # group by source and target, count the number of text units
     grouped_edge_df = (
         edge_df.groupby(["source", "target"]).agg({"text_unit_id": list}).reset_index()
     )
@@ -138,18 +139,6 @@ def _extract_edges(
         grouped_edge_df = _calculate_pmi_edge_weights(nodes_df, grouped_edge_df)
 
     return grouped_edge_df
-
-
-def _create_relationships(
-    noun_phrases: list[str],
-) -> list[tuple[str, str]]:
-    """Create a (source, target) tuple pairwise for all noun phrases in a list."""
-    relationships = []
-    if len(noun_phrases) >= 2:
-        for i in range(len(noun_phrases) - 1):
-            for j in range(i + 1, len(noun_phrases)):
-                relationships.extend([(noun_phrases[i], noun_phrases[j])])
-    return relationships
 
 
 def _calculate_pmi_edge_weights(
@@ -192,9 +181,7 @@ def _calculate_pmi_edge_weights(
         .drop(columns=[node_name_col])
         .rename(columns={"prop_occurrence": "target_prop"})
     )
-    edges_df[edge_weight_col] = edges_df.apply(
-        lambda x: x["prop_weight"]
-        * math.log2(x["prop_weight"] / (x["source_prop"] * x["target_prop"])),
-        axis=1,
+    edges_df[edge_weight_col] = edges_df["prop_weight"] * np.log2(
+        edges_df["prop_weight"] / (edges_df["source_prop"] * edges_df["target_prop"])
     )
     return edges_df.drop(columns=["prop_weight", "source_prop", "target_prop"])
