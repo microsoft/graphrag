@@ -69,7 +69,7 @@ async def _extract_nodes(
     noun_node_df = text_unit_df.explode("noun_phrases")
     noun_node_df = noun_node_df.rename(
         columns={"noun_phrases": "title", "id": "text_unit_id"}
-    ).drop_duplicates()
+    )
 
     # group by title and count the number of text units
     grouped_node_df = (
