@@ -19,7 +19,9 @@ from graphrag.config.enums import (
     ReportingType,
     TextEmbeddingTarget,
 )
-from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import EN_STOP_WORDS
+from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
+    EN_STOP_WORDS,
+)
 from graphrag.vector_stores.factory import VectorStoreType
 
 DEFAULT_OUTPUT_BASE_DIR = "output"

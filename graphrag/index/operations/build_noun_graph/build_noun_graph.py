@@ -193,7 +193,8 @@ def _calculate_pmi_edge_weights(
         .rename(columns={"prop_occurrence": "target_prop"})
     )
     edges_df[edge_weight_col] = edges_df.apply(
-        lambda x: x["prop_weight"] * math.log2(x["prop_weight"] / (x["source_prop"] * x["target_prop"])),
+        lambda x: x["prop_weight"]
+        * math.log2(x["prop_weight"] / (x["source_prop"] * x["target_prop"])),
         axis=1,
     )
     return edges_df.drop(columns=["prop_weight", "source_prop", "target_prop"])
