@@ -163,7 +163,7 @@ Where to put all vectors for the system. Configured for lancedb by default. This
 
 - `type` **lancedb|azure_ai_search|cosmosdb** - Type of vector store. Default=`lancedb`
 - `db_uri` **str** (only for lancedb) - The database uri. Default=`storage.base_dir/lancedb`
-- `url` **str** (only for AI Search) - AI Search endpoint
+- `url` **str** (only for AI Search or cosmosdb) - AI Search/Cosmos DB endpoint
 - `api_key` **str** (optional - only for AI Search) - The AI Search api key to use.
 - `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
 - `container_name` **str** - The name of a vector container. This stores all indexes (tables) for a given dataset ingest. Default=`default`
