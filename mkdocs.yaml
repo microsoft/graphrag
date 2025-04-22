@@ -31,6 +31,7 @@ nav:
       - Methods: "index/methods.md"
       - Inputs: "index/inputs.md"
       - Outputs: "index/outputs.md"
+      - Custom Graphs: "index/byog.md"
   - Prompt Tuning:
       - Overview: "prompt_tuning/overview.md"
       - Auto Tuning: "prompt_tuning/auto_prompt_tuning.md"
@@ -65,7 +66,7 @@ plugins:
         - "data/operation_dulce/Operation Dulce v2 1 1.md"
       exclude_unreferenced: true
   - mkdocs-jupyter:
-      execute: true
+      execute: false
 
 repo_url: https://github.com/microsoft/graphrag
 repo_name: graphrag

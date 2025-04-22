@@ -26,6 +26,10 @@ DRIFT Search introduces a new approach to local search queries by including comm
 
 To learn more about DRIFT Search, please refer to the [DRIFT Search](drift_search.md) documentation.
 
+## Basic Search
+
+GraphRAG includes a rudimentary implementation of basic vector RAG to make it easy to compare different search results based on the type of question you are asking. You can specify the top `k` txt unit chunks to include in the summarization context.
+
 ## Question Generation
 
 This functionality takes a list of user queries and generates the next candidate questions. This is useful for generating follow-up questions in a conversation or for generating a list of questions for the investigator to dive deeper into the dataset.
