@@ -62,6 +62,7 @@ class OpenAIChatFNLLM:
             cache=model_cache,
             events=FNLLMEvents(error_handler) if error_handler else None,
         )
+        self.config = config
 
     async def achat(
         self, prompt: str, history: list | None = None, **kwargs
@@ -167,6 +168,7 @@ class OpenAIEmbeddingFNLLM:
             cache=model_cache,
             events=FNLLMEvents(error_handler) if error_handler else None,
         )
+        self.config = config
 
     async def aembed_batch(self, text_list: list[str], **kwargs) -> list[list[float]]:
         """
@@ -258,6 +260,7 @@ class AzureOpenAIChatFNLLM:
             cache=model_cache,
             events=FNLLMEvents(error_handler) if error_handler else None,
         )
+        self.config = config
 
     async def achat(
         self, prompt: str, history: list | None = None, **kwargs
@@ -365,6 +368,7 @@ class AzureOpenAIEmbeddingFNLLM:
             cache=model_cache,
             events=FNLLMEvents(error_handler) if error_handler else None,
         )
+        self.config = config
 
     async def aembed_batch(self, text_list: list[str], **kwargs) -> list[list[float]]:
         """

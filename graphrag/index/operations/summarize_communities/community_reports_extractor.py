@@ -6,7 +6,6 @@
 import logging
 import traceback
 from dataclasses import dataclass
-from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -15,6 +14,10 @@ from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.community_report import COMMUNITY_REPORT_PROMPT
 
 log = logging.getLogger(__name__)
+
+# these tokens are used in the prompt
+INPUT_TEXT_KEY = "input_text"
+MAX_LENGTH_KEY = "max_report_length"
 
 
 class FindingModel(BaseModel):
@@ -48,7 +51,6 @@ class CommunityReportsExtractor:
     """Community reports extractor class definition."""
 
     _model: ChatModel
-    _input_text_key: str
     _extraction_prompt: str
     _output_formatter_prompt: str
     _on_error: ErrorHandlerFn
@@ -57,32 +59,29 @@ class CommunityReportsExtractor:
     def __init__(
         self,
         model_invoker: ChatModel,
-        input_text_key: str | None = None,
         extraction_prompt: str | None = None,
         on_error: ErrorHandlerFn | None = None,
         max_report_length: int | None = None,
     ):
         """Init method definition."""
         self._model = model_invoker
-        self._input_text_key = input_text_key or "input_text"
         self._extraction_prompt = extraction_prompt or COMMUNITY_REPORT_PROMPT
         self._on_error = on_error or (lambda _e, _s, _d: None)
         self._max_report_length = max_report_length or 1500
 
-    async def __call__(self, inputs: dict[str, Any]):
+    async def __call__(self, input_text: str):
         """Call method definition."""
         output = None
         try:
-            input_text = inputs[self._input_text_key]
-            prompt = self._extraction_prompt.replace(
-                "{" + self._input_text_key + "}", input_text
-            )
+            prompt = self._extraction_prompt.format(**{
+                INPUT_TEXT_KEY: input_text,
+                MAX_LENGTH_KEY: str(self._max_report_length),
+            })
             response = await self._model.achat(
                 prompt,
                 json=True,  # Leaving this as True to avoid creating new cache entries
                 name="create_community_report",
                 json_model=CommunityReportResponse,  # A model is required when using json mode
-                model_parameters={"max_tokens": self._max_report_length},
             )
 
             output = response.parsed_response

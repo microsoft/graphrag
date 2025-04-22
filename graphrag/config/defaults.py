@@ -44,13 +44,7 @@ class BasicSearchDefaults:
     """Default values for basic search."""
 
     prompt: None = None
-    text_unit_prop: float = 0.5
-    conversation_history_max_turns: int = 5
-    temperature: float = 0
-    top_p: float = 1
-    n: int = 1
-    max_tokens: int = 12_000
-    llm_max_tokens: int = 2000
+    k: int = 10
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
@@ -107,13 +101,10 @@ class DriftSearchDefaults:
 
     prompt: None = None
     reduce_prompt: None = None
-    temperature: float = 0
-    top_p: float = 1
-    n: int = 1
-    max_tokens: int = 12_000
     data_max_tokens: int = 12_000
-    reduce_max_tokens: int = 2_000
+    reduce_max_tokens: None = None
     reduce_temperature: float = 0
+    reduce_max_completion_tokens: None = None
     concurrency: int = 32
     drift_k_followups: int = 20
     primer_folds: int = 5
@@ -127,7 +118,8 @@ class DriftSearchDefaults:
     local_search_temperature: float = 0
     local_search_top_p: float = 1
     local_search_n: int = 1
-    local_search_llm_max_gen_tokens: int = 4_096
+    local_search_llm_max_gen_tokens = None
+    local_search_llm_max_gen_completion_tokens = None
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
@@ -171,7 +163,6 @@ class ExtractClaimsDefaults:
     )
     max_gleanings: int = 1
     strategy: None = None
-    encoding_model: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
 
 
@@ -185,7 +176,6 @@ class ExtractGraphDefaults:
     )
     max_gleanings: int = 1
     strategy: None = None
-    encoding_model: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
 
 
@@ -231,20 +221,14 @@ class GlobalSearchDefaults:
     map_prompt: None = None
     reduce_prompt: None = None
     knowledge_prompt: None = None
-    temperature: float = 0
-    top_p: float = 1
-    n: int = 1
-    max_tokens: int = 12_000
+    max_context_tokens: int = 12_000
     data_max_tokens: int = 12_000
-    map_max_tokens: int = 1000
-    reduce_max_tokens: int = 2000
-    concurrency: int = 32
-    dynamic_search_llm: str = "gpt-4o-mini"
+    map_max_length: int = 1000
+    reduce_max_length: int = 2000
     dynamic_search_threshold: int = 1
     dynamic_search_keep_parent: bool = False
     dynamic_search_num_repeats: int = 1
     dynamic_search_use_summary: bool = False
-    dynamic_search_concurrent_coroutines: int = 16
     dynamic_search_max_level: int = 2
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
 
@@ -274,8 +258,10 @@ class LanguageModelDefaults:
     api_key: None = None
     auth_type = AuthType.APIKey
     encoding_model: str = ""
-    max_tokens: int = 4000
+    max_tokens: int | None = None
     temperature: float = 0
+    max_completion_tokens: int | None = None
+    reasoning_effort: str | None = None
     top_p: float = 1
     n: int = 1
     frequency_penalty: float = 0.0
@@ -308,11 +294,7 @@ class LocalSearchDefaults:
     conversation_history_max_turns: int = 5
     top_k_entities: int = 10
     top_k_relationships: int = 10
-    temperature: float = 0
-    top_p: float = 1
-    n: int = 1
-    max_tokens: int = 12_000
-    llm_max_tokens: int = 2000
+    max_context_tokens: int = 12_000
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
@@ -367,6 +349,7 @@ class SummarizeDescriptionsDefaults:
 
     prompt: None = None
     max_length: int = 500
+    max_input_tokens: int = 4_000
     strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
 
