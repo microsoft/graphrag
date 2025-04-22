@@ -34,10 +34,6 @@ class ExtractGraphConfig(BaseModel):
         description="Override the default entity extraction strategy",
         default=graphrag_config_defaults.extract_graph.strategy,
     )
-    encoding_model: str | None = Field(
-        default=graphrag_config_defaults.extract_graph.encoding_model,
-        description="The encoding model to use.",
-    )
 
     def resolved_strategy(
         self, root_dir: str, model_config: LanguageModelConfig
@@ -50,12 +46,10 @@ class ExtractGraphConfig(BaseModel):
         return self.strategy or {
             "type": ExtractEntityStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
-            "num_threads": model_config.concurrent_requests,
             "extraction_prompt": (Path(root_dir) / self.prompt).read_text(
                 encoding="utf-8"
             )
             if self.prompt
             else None,
             "max_gleanings": self.max_gleanings,
-            "encoding_name": model_config.encoding_model,
         }

@@ -11,7 +11,7 @@ from graphrag.index.operations.summarize_communities.graph_context.sort_context 
 from graphrag.query.llm.text_utils import num_tokens
 
 
-def build_mixed_context(context: list[dict], max_tokens: int) -> str:
+def build_mixed_context(context: list[dict], max_context_tokens: int) -> str:
     """
     Build parent context by concatenating all sub-communities' contexts.
 
@@ -47,7 +47,7 @@ def build_mixed_context(context: list[dict], max_tokens: int) -> str:
                 local_context=remaining_local_context + final_local_contexts,
                 sub_community_reports=substitute_reports,
             )
-            if num_tokens(new_context_string) <= max_tokens:
+            if num_tokens(new_context_string) <= max_context_tokens:
                 exceeded_limit = False
                 context_string = new_context_string
                 break
@@ -63,7 +63,7 @@ def build_mixed_context(context: list[dict], max_tokens: int) -> str:
             new_context_string = pd.DataFrame(substitute_reports).to_csv(
                 index=False, sep=","
             )
-            if num_tokens(new_context_string) > max_tokens:
+            if num_tokens(new_context_string) > max_context_tokens:
                 break
 
             context_string = new_context_string
