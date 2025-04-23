@@ -107,25 +107,13 @@ def _extract_edges(
 
     edge_df = text_units_df.explode("edges").loc[:, ["edges", "text_unit_id"]]
 
-    edge_df["source"] = edge_df["edges"].apply(
-        lambda x: x[0] if isinstance(x, tuple) else None
-    )
-    edge_df["target"] = edge_df["edges"].apply(
-        lambda x: x[1] if isinstance(x, tuple) else None
-    )
+    edge_df[["source", "target"]] = edge_df["edges"].to_list()
+    edge_df["min_source"] = edge_df[["source", "target"]].min(axis=1)
+    edge_df["max_target"] = edge_df[["source", "target"]].max(axis=1)
+    edge_df = edge_df.drop(columns=["source", "target"]).rename(columns={"min_source": "source", "max_target": "target"})
+
     edge_df = edge_df[(edge_df.source.notna()) & (edge_df.target.notna())]
     edge_df = edge_df.drop(columns=["edges"])
-
-    # make sure source is always smaller than target
-    edge_df["source"], edge_df["target"] = zip(
-        *edge_df.apply(
-            lambda x: (x["source"], x["target"])
-            if x["source"] < x["target"]
-            else (x["target"], x["source"]),
-            axis=1,
-        ),
-        strict=False,
-    )
 
     # group by source and target, count the number of text units
     grouped_edge_df = (
@@ -137,7 +125,6 @@ def _extract_edges(
     grouped_edge_df = grouped_edge_df.loc[
         :, ["source", "target", "weight", "text_unit_ids"]
     ]
-
     if normalize_edge_weights:
         # use PMI weight instead of raw weight
         grouped_edge_df = _calculate_pmi_edge_weights(nodes_df, grouped_edge_df)
