@@ -56,6 +56,7 @@ async def run_workflow(
         cache=context.cache,
         text_embed_config=text_embed,
         embedded_fields=embedded_fields,
+        user_id=config.user_id
     )
 
     if config.snapshots.embeddings:
@@ -79,6 +80,7 @@ async def generate_text_embeddings(
     cache: PipelineCache,
     text_embed_config: dict,
     embedded_fields: set[str],
+    user_id: str
 ) -> dict[str, pd.DataFrame]:
     """All the steps to generate all embeddings."""
     embedding_param_map = {
@@ -138,6 +140,7 @@ async def generate_text_embeddings(
             callbacks=callbacks,
             cache=cache,
             text_embed_config=text_embed_config,
+            user_id=user_id,
             **embedding_param_map[field],
         )
     return outputs
@@ -150,6 +153,7 @@ async def _run_and_snapshot_embeddings(
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     text_embed_config: dict,
+    user_id: str,
 ) -> pd.DataFrame:
     """All the steps to generate single embedding."""
     data["embedding"] = await embed_text(
@@ -159,6 +163,7 @@ async def _run_and_snapshot_embeddings(
         embed_column=embed_column,
         embedding_name=name,
         strategy=text_embed_config["strategy"],
+        user_id=user_id
     )
 
     return data.loc[:, ["id", "embedding"]]

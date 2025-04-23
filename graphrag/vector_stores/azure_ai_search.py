@@ -74,7 +74,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
             raise ValueError(not_supported_error)
 
     def load_documents(
-        self, documents: list[VectorStoreDocument], overwrite: bool = True
+            self, documents: list[VectorStoreDocument], overwrite: bool = True
     ) -> None:
         """Load documents into an Azure AI Search index."""
         if overwrite:
@@ -120,6 +120,10 @@ class AzureAISearchVectorStore(BaseVectorStore):
                         name="attributes",
                         type=SearchFieldDataType.String,
                     ),
+                    SimpleField(
+                        name="user_id",
+                        type=SearchFieldDataType.String,
+                    ),
                 ],
                 vector_search=vector_search,
             )
@@ -133,6 +137,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
                 "vector": doc.vector,
                 "text": doc.text,
                 "attributes": json.dumps(doc.attributes),
+                "user_id": doc.user_id
             }
             for doc in documents
             if doc.vector is not None
@@ -158,7 +163,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
         return self.query_filter
 
     def similarity_search_by_vector(
-        self, query_embedding: list[float], k: int = 10, **kwargs: Any
+            self, query_embedding: list[float], k: int = 10, **kwargs: Any
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
         vectorized_query = VectorizedQuery(
@@ -176,6 +181,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
                     text=doc.get("text", ""),
                     vector=doc.get("vector", []),
                     attributes=(json.loads(doc.get("attributes", "{}"))),
+                    user_id=doc.get("user_id", ""),
                 ),
                 # Cosine similarity between 0.333 and 1.000
                 # https://learn.microsoft.com/en-us/azure/search/hybrid-search-ranking#scores-in-a-hybrid-search-results
@@ -185,7 +191,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
         ]
 
     def similarity_search_by_text(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+            self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
     ) -> list[VectorStoreSearchResult]:
         """Perform a text-based similarity search."""
         query_embedding = text_embedder(text)
@@ -203,4 +209,5 @@ class AzureAISearchVectorStore(BaseVectorStore):
             text=response.get("text", ""),
             vector=response.get("vector", []),
             attributes=(json.loads(response.get("attributes", "{}"))),
+            user_id=response.get("user_id", ""),
         )

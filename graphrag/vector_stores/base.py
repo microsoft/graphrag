@@ -19,6 +19,9 @@ class VectorStoreDocument:
     id: str | int
     """unique id for the document"""
 
+    user_id: str
+    """unique user id"""
+
     text: str | None
     vector: list[float] | None
 
