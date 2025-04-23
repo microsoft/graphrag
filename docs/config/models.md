@@ -23,7 +23,7 @@ Example config with asymmetric model use:
 
 ```yaml
 models:
-  default_chat_model:
+  extraction_chat_model:
     api_key: ${GRAPHRAG_API_KEY}
     type: openai_chat
     auth_type: api_key
@@ -39,7 +39,7 @@ models:
 ...
 
 extract_graph:
-  model_id: default_chat_model
+  model_id: extraction_chat_model
   prompt: "prompts/extract_graph.txt"
   entity_types: [organization,person,geo,event]
   max_gleanings: 1
