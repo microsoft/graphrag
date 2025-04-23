@@ -51,6 +51,7 @@ where 1, 5, 7, 23, 2, 34, 46, and 64 represent the id (not the index) of the rel
 
 Do not include information where the supporting evidence for it is not provided.
 
+Limit the total report length to {max_report_length} words.
 
 # Example Input
 -----------
@@ -146,5 +147,7 @@ For example:
 where 1, 5, 7, 23, 2, 34, 46, and 64 represent the id (not the index) of the relevant data record.
 
 Do not include information where the supporting evidence for it is not provided.
+
+Limit the total report length to {max_report_length} words.
 
 Output:"""

@@ -20,8 +20,6 @@ from graphrag.query.context_builder.rate_relevancy import rate_relevancy
 
 log = logging.getLogger(__name__)
 
-DEFAULT_RATE_LLM_PARAMS = {"temperature": 0.0, "max_tokens": 2000}
-
 
 class DynamicCommunitySelection:
     """Dynamic community selection to select community reports that are relevant to the query.
@@ -42,7 +40,7 @@ class DynamicCommunitySelection:
         num_repeats: int = 1,
         max_level: int = 2,
         concurrent_coroutines: int = 8,
-        llm_kwargs: Any = DEFAULT_RATE_LLM_PARAMS,
+        model_params: dict[str, Any] | None = None,
     ):
         self.model = model
         self.token_encoder = token_encoder
@@ -53,7 +51,7 @@ class DynamicCommunitySelection:
         self.keep_parent = keep_parent
         self.max_level = max_level
         self.semaphore = asyncio.Semaphore(concurrent_coroutines)
-        self.llm_kwargs = llm_kwargs
+        self.model_params = model_params if model_params else {}
 
         self.reports = {report.community_id: report for report in community_reports}
         self.communities = {community.short_id: community for community in communities}
@@ -103,7 +101,7 @@ class DynamicCommunitySelection:
                     rate_query=self.rate_query,
                     num_repeats=self.num_repeats,
                     semaphore=self.semaphore,
-                    **self.llm_kwargs,
+                    **self.model_params,
                 )
                 for community in queue
             ])

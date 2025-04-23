@@ -28,47 +28,7 @@ async def summarize_descriptions(
     strategy: dict[str, Any] | None = None,
     num_threads: int = 4,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """
-    Summarize entity and relationship descriptions from an entity graph.
-
-    ## Usage
-
-    To turn this feature ON please set the environment variable `GRAPHRAG_SUMMARIZE_DESCRIPTIONS_ENABLED=True`.
-
-    ### yaml
-
-    ```yaml
-    args:
-        strategy: <strategy_config>, see strategies section below
-    ```
-
-    ## Strategies
-
-    The summarize descriptions verb uses a strategy to summarize descriptions for entities. The strategy is a json object which defines the strategy to use. The following strategies are available:
-
-    ### graph_intelligence
-
-    This strategy uses the [graph_intelligence] library to summarize descriptions for entities. The strategy config is as follows:
-
-    ```yml
-    strategy:
-        type: graph_intelligence
-        summarize_prompt: # Optional, the prompt to use for extraction
-
-
-        llm: # The configuration for the LLM
-            type: openai # the type of llm to use, available options are: openai, azure, openai_chat, azure_openai_chat.  The last two being chat based LLMs.
-            api_key: !ENV ${GRAPHRAG_OPENAI_API_KEY} # The api key to use for openai
-            model: !ENV ${GRAPHRAG_OPENAI_MODEL:gpt-4-turbo-preview} # The model to use for openai
-            max_tokens: !ENV ${GRAPHRAG_MAX_TOKENS:6000} # The max tokens to use for openai
-            organization: !ENV ${GRAPHRAG_OPENAI_ORGANIZATION} # The organization to use for openai
-
-            # if using azure flavor
-            api_base: !ENV ${GRAPHRAG_OPENAI_API_BASE} # The api base to use for azure
-            api_version: !ENV ${GRAPHRAG_OPENAI_API_VERSION} # The api version to use for azure
-            proxy: !ENV ${GRAPHRAG_OPENAI_PROXY} # The proxy to use for azure
-    ```
-    """
+    """Summarize entity and relationship descriptions from an entity graph, using a language model."""
     log.debug("summarize_descriptions strategy=%s", strategy)
     strategy = strategy or {}
     strategy_exec = load_strategy(
