@@ -14,6 +14,9 @@ from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
 from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.providers.fnllm.utils import (
+    get_openai_model_parameters_from_config,
+)
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.structured_search.basic_search.basic_context import (
     BasicSearchContext,
@@ -36,10 +39,10 @@ from graphrag.vector_stores.base import BaseVectorStore
 
 def get_local_search_engine(
     config: GraphRagConfig,
-    reports: list[CommunityReport],
-    text_units: list[TextUnit],
-    entities: list[Entity],
-    relationships: list[Relationship],
+    reports: dict[str, list[CommunityReport]],
+    text_units: dict[str, list[TextUnit]],
+    entities: dict[str, list[Entity]],
+    relationships: dict[str, list[Relationship]],
     covariates: dict[str, list[Covariate]],
     response_type: str,
     description_embedding_store: BaseVectorStore,
@@ -78,30 +81,24 @@ def get_local_search_engine(
 
     ls_config = config.local_search
 
-    # Create context builder without raw_chunks
-    context_builder = LocalSearchMixedContext(
-        community_reports=reports,
-        text_units=text_units,
-        entities=entities,
-        relationships=relationships,
-        covariates=covariates,
-        entity_text_embeddings=description_embedding_store,
-        embedding_vectorstore_key=EntityVectorStoreKey.ID,
-        text_embedder=embedding_model,
-        token_encoder=token_encoder
-    )
+    model_params = get_openai_model_parameters_from_config(model_settings)
 
     return LocalSearch(
         model=chat_model,
         system_prompt=system_prompt,
-        context_builder=context_builder,  # Use the created context_builder
+        context_builder=LocalSearchMixedContext(
+            community_reports=reports,
+            text_units=text_units,
+            entities=entities,
+            relationships=relationships,
+            covariates=covariates,
+            entity_text_embeddings=description_embedding_store,
+            embedding_vectorstore_key=EntityVectorStoreKey.ID,  # if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE
+            text_embedder=embedding_model,
+            token_encoder=token_encoder,
+        ),
         token_encoder=token_encoder,
-        model_params={
-            "max_tokens": ls_config.llm_max_tokens,
-            "temperature": ls_config.temperature,
-            "top_p": ls_config.top_p,
-            "n": ls_config.n,
-        },
+        model_params=model_params,
         context_builder_params={
             "text_unit_prop": ls_config.text_unit_prop,
             "community_prop": ls_config.community_prop,
@@ -113,8 +110,8 @@ def get_local_search_engine(
             "include_relationship_weight": True,
             "include_community_rank": False,
             "return_candidate_context": False,
-            "embedding_vectorstore_key": EntityVectorStoreKey.ID,
-            "max_tokens": ls_config.max_tokens,
+            "embedding_vectorstore_key": EntityVectorStoreKey.ID,  # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
+            "max_tokens": ls_config.max_tokens  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
         },
         response_type=response_type,
         callbacks=callbacks,

@@ -130,3 +130,12 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T]) -> T:
         _thr.start()
     future = asyncio.run_coroutine_threadsafe(coroutine, _loop)
     return future.result()
+
+def get_openai_model_parameters_from_config(model_settings):
+    """Get OpenAI model parameters from config."""
+    return {
+        "max_tokens": model_settings.max_tokens,
+        "temperature": model_settings.temperature,
+        "top_p": model_settings.top_p,
+        "n": model_settings.n,
+    }
