@@ -58,9 +58,9 @@ aiofiles = "^24.1.0"
 # LLM
 fnllm = {extras = ["azure", "openai"], version = "0.2.3"}
 json-repair = "^0.30.3"
-openai = "^1.57.0"
+openai = "^1.68.0"
 nltk = "3.9.1"
-tiktoken = "^0.8.0"
+tiktoken = "^0.9.0"
 
 # Data-Science
 numpy = "^1.25.2"

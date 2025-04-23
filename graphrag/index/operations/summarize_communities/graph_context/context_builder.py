@@ -40,7 +40,7 @@ def build_local_context(
     edges,
     claims,
     callbacks: WorkflowCallbacks,
-    max_tokens: int = 16_000,
+    max_context_tokens: int = 16_000,
 ):
     """Prep communities for report generation."""
     levels = get_levels(nodes, schemas.COMMUNITY_LEVEL)
@@ -49,7 +49,7 @@ def build_local_context(
 
     for level in progress_iterable(levels, callbacks.progress, len(levels)):
         communities_at_level_df = _prepare_reports_at_level(
-            nodes, edges, claims, level, max_tokens
+            nodes, edges, claims, level, max_context_tokens
         )
 
         communities_at_level_df.loc[:, schemas.COMMUNITY_LEVEL] = level
@@ -64,7 +64,7 @@ def _prepare_reports_at_level(
     edge_df: pd.DataFrame,
     claim_df: pd.DataFrame | None,
     level: int,
-    max_tokens: int = 16_000,
+    max_context_tokens: int = 16_000,
 ) -> pd.DataFrame:
     """Prepare reports at a given level."""
     # Filter and prepare node details
@@ -181,7 +181,7 @@ def _prepare_reports_at_level(
     # Generate community-level context strings using vectorized batch processing
     return parallel_sort_context_batch(
         community_df,
-        max_tokens=max_tokens,
+        max_context_tokens=max_context_tokens,
     )
 
 
@@ -190,7 +190,7 @@ def build_level_context(
     community_hierarchy_df: pd.DataFrame,
     local_context_df: pd.DataFrame,
     level: int,
-    max_tokens: int,
+    max_context_tokens: int,
 ) -> pd.DataFrame:
     """
     Prep context for each community in a given level.
@@ -219,7 +219,7 @@ def build_level_context(
 
     if report_df is None or report_df.empty:
         invalid_context_df.loc[:, schemas.CONTEXT_STRING] = _sort_and_trim_context(
-            invalid_context_df, max_tokens
+            invalid_context_df, max_context_tokens
         )
         invalid_context_df[schemas.CONTEXT_SIZE] = invalid_context_df.loc[
             :, schemas.CONTEXT_STRING
@@ -233,14 +233,18 @@ def build_level_context(
     # first get local context and report (if available) for each sub-community
     sub_context_df = _get_subcontext_df(level + 1, report_df, local_context_df)
     community_df = _get_community_df(
-        level, invalid_context_df, sub_context_df, community_hierarchy_df, max_tokens
+        level,
+        invalid_context_df,
+        sub_context_df,
+        community_hierarchy_df,
+        max_context_tokens,
     )
 
     # handle any remaining invalid records that can't be subsituted with sub-community reports
     # this should be rare, but if it happens, we will just trim the local context to fit the limit
     remaining_df = _antijoin_reports(invalid_context_df, community_df)
     remaining_df.loc[:, schemas.CONTEXT_STRING] = _sort_and_trim_context(
-        remaining_df, max_tokens
+        remaining_df, max_context_tokens
     )
 
     result = union(valid_context_df, community_df, remaining_df)
@@ -265,17 +269,19 @@ def _antijoin_reports(df: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
     return antijoin(df, reports, schemas.COMMUNITY_ID)
 
 
-def _sort_and_trim_context(df: pd.DataFrame, max_tokens: int) -> pd.Series:
-    """Sort and trim context to fit the limit."""
-    series = cast("pd.Series", df[schemas.ALL_CONTEXT])
-    return transform_series(series, lambda x: sort_context(x, max_tokens=max_tokens))
-
-
-def _build_mixed_context(df: pd.DataFrame, max_tokens: int) -> pd.Series:
+def _sort_and_trim_context(df: pd.DataFrame, max_context_tokens: int) -> pd.Series:
     """Sort and trim context to fit the limit."""
     series = cast("pd.Series", df[schemas.ALL_CONTEXT])
     return transform_series(
-        series, lambda x: build_mixed_context(x, max_tokens=max_tokens)
+        series, lambda x: sort_context(x, max_context_tokens=max_context_tokens)
+    )
+
+
+def _build_mixed_context(df: pd.DataFrame, max_context_tokens: int) -> pd.Series:
+    """Sort and trim context to fit the limit."""
+    series = cast("pd.Series", df[schemas.ALL_CONTEXT])
+    return transform_series(
+        series, lambda x: build_mixed_context(x, max_context_tokens=max_context_tokens)
     )
 
 
@@ -297,7 +303,7 @@ def _get_community_df(
     invalid_context_df: pd.DataFrame,
     sub_context_df: pd.DataFrame,
     community_hierarchy_df: pd.DataFrame,
-    max_tokens: int,
+    max_context_tokens: int,
 ) -> pd.DataFrame:
     """Get community context for each community."""
     # collect all sub communities' contexts for each community
@@ -332,7 +338,7 @@ def _get_community_df(
         .reset_index()
     )
     community_df[schemas.CONTEXT_STRING] = _build_mixed_context(
-        community_df, max_tokens
+        community_df, max_context_tokens
     )
     community_df[schemas.COMMUNITY_LEVEL] = level
     return community_df

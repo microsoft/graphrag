@@ -13,6 +13,9 @@ from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.language_model.protocol.base import ChatModel
+from graphrag.language_model.providers.fnllm.utils import (
+    get_openai_model_parameters_from_dict,
+)
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.text_utils import num_tokens
@@ -80,14 +83,18 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             "include_community_rank": False,
             "return_candidate_context": False,
             "embedding_vectorstore_key": EntityVectorStoreKey.ID,
-            "max_tokens": self.context_builder.config.local_search_max_data_tokens,
+            "max_context_tokens": self.context_builder.config.local_search_max_data_tokens,
         }
 
-        model_params = {
+        model_params = get_openai_model_parameters_from_dict({
+            "model": self.model.config.model,
             "max_tokens": self.context_builder.config.local_search_llm_max_gen_tokens,
             "temperature": self.context_builder.config.local_search_temperature,
+            "n": self.context_builder.config.local_search_n,
+            "top_p": self.context_builder.config.local_search_top_p,
+            "max_completion_tokens": self.context_builder.config.local_search_llm_max_gen_completion_tokens,
             "response_format": {"type": "json_object"},
-        }
+        })
 
         return LocalSearch(
             model=self.model,
@@ -262,14 +269,20 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             for callback in self.callbacks:
                 callback.on_reduce_response_start(response_state)
 
+            model_params = get_openai_model_parameters_from_dict({
+                "model": self.model.config.model,
+                "max_tokens": self.context_builder.config.reduce_max_tokens,
+                "temperature": self.context_builder.config.reduce_temperature,
+                "max_completion_tokens": self.context_builder.config.reduce_max_completion_tokens,
+            })
+
             reduced_response = await self._reduce_response(
                 responses=response_state,
                 query=query,
                 llm_calls=llm_calls,
                 prompt_tokens=prompt_tokens,
                 output_tokens=output_tokens,
-                max_tokens=self.context_builder.config.reduce_max_tokens,
-                temperature=self.context_builder.config.reduce_temperature,
+                model_params=model_params,
             )
 
             for callback in self.callbacks:
@@ -307,12 +320,18 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         for callback in self.callbacks:
             callback.on_reduce_response_start(result.response)
 
+        model_params = get_openai_model_parameters_from_dict({
+            "model": self.model.config.model,
+            "max_tokens": self.context_builder.config.reduce_max_tokens,
+            "temperature": self.context_builder.config.reduce_temperature,
+            "max_completion_tokens": self.context_builder.config.reduce_max_completion_tokens,
+        })
+
         full_response = ""
         async for resp in self._reduce_response_streaming(
             responses=result.response,
             query=query,
-            max_tokens=self.context_builder.config.reduce_max_tokens,
-            temperature=self.context_builder.config.reduce_temperature,
+            model_params=model_params,
         ):
             full_response += resp
             yield resp
@@ -384,7 +403,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         self,
         responses: str | dict[str, Any],
         query: str,
-        **llm_kwargs,
+        model_params: dict[str, Any],
     ) -> AsyncGenerator[str, None]:
         """Reduce the response to a single comprehensive response.
 
@@ -394,8 +413,6 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             The responses to reduce.
         query : str
             The original query.
-        llm_kwargs : dict[str, Any]
-            Additional keyword arguments to pass to the LLM.
 
         Returns
         -------
@@ -424,7 +441,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         async for response in self.model.achat_stream(
             prompt=query,
             history=search_messages,
-            model_parameters=llm_kwargs,
+            model_parameters=model_params,
         ):
             for callback in self.callbacks:
                 callback.on_llm_new_token(response)

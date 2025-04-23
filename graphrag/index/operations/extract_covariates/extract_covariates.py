@@ -109,13 +109,11 @@ async def run_extract_claims(
     tuple_delimiter = strategy_config.get("tuple_delimiter")
     record_delimiter = strategy_config.get("record_delimiter")
     completion_delimiter = strategy_config.get("completion_delimiter")
-    encoding_model = strategy_config.get("encoding_name")
 
     extractor = ClaimExtractor(
         model_invoker=llm,
         extraction_prompt=extraction_prompt,
         max_gleanings=max_gleanings,
-        encoding_model=encoding_model,
         on_error=lambda e, s, d: (
             callbacks.error("Claim Extraction Error", e, s, d) if callbacks else None
         ),

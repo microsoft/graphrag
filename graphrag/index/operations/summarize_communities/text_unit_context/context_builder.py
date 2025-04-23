@@ -27,7 +27,7 @@ def build_local_context(
     community_membership_df: pd.DataFrame,
     text_units_df: pd.DataFrame,
     node_df: pd.DataFrame,
-    max_tokens: int = 16000,
+    max_context_tokens: int = 16000,
 ) -> pd.DataFrame:
     """
     Prep context data for community report generation using text unit data.
@@ -75,7 +75,7 @@ def build_local_context(
         lambda x: num_tokens(x)
     )
     context_df[schemas.CONTEXT_EXCEED_FLAG] = context_df[schemas.CONTEXT_SIZE].apply(
-        lambda x: x > max_tokens
+        lambda x: x > max_context_tokens
     )
 
     return context_df
@@ -86,7 +86,7 @@ def build_level_context(
     community_hierarchy_df: pd.DataFrame,
     local_context_df: pd.DataFrame,
     level: int,
-    max_tokens: int = 16000,
+    max_context_tokens: int = 16000,
 ) -> pd.DataFrame:
     """
     Prep context for each community in a given level.
@@ -116,7 +116,7 @@ def build_level_context(
 
         invalid_context_df.loc[:, [schemas.CONTEXT_STRING]] = invalid_context_df[
             schemas.ALL_CONTEXT
-        ].apply(lambda x: sort_context(x, max_tokens=max_tokens))
+        ].apply(lambda x: sort_context(x, max_context_tokens=max_context_tokens))
         invalid_context_df.loc[:, [schemas.CONTEXT_SIZE]] = invalid_context_df[
             schemas.CONTEXT_STRING
         ].apply(lambda x: num_tokens(x))
@@ -199,7 +199,7 @@ def build_level_context(
         .reset_index()
     )
     community_df[schemas.CONTEXT_STRING] = community_df[schemas.ALL_CONTEXT].apply(
-        lambda x: build_mixed_context(x, max_tokens)
+        lambda x: build_mixed_context(x, max_context_tokens)
     )
     community_df[schemas.CONTEXT_SIZE] = community_df[schemas.CONTEXT_STRING].apply(
         lambda x: num_tokens(x)
@@ -220,7 +220,7 @@ def build_level_context(
     )
     remaining_df[schemas.CONTEXT_STRING] = cast(
         "pd.DataFrame", remaining_df[schemas.ALL_CONTEXT]
-    ).apply(lambda x: sort_context(x, max_tokens=max_tokens))
+    ).apply(lambda x: sort_context(x, max_context_tokens=max_context_tokens))
     remaining_df[schemas.CONTEXT_SIZE] = cast(
         "pd.DataFrame", remaining_df[schemas.CONTEXT_STRING]
     ).apply(lambda x: num_tokens(x))

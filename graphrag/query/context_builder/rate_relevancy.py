@@ -26,7 +26,7 @@ async def rate_relevancy(
     rate_query: str = RATE_QUERY,
     num_repeats: int = 1,
     semaphore: asyncio.Semaphore | None = None,
-    **llm_kwargs: Any,
+    **model_params: Any,
 ) -> dict[str, Any]:
     """
     Rate the relevancy between the query and description on a scale of 0 to 10.
@@ -38,7 +38,7 @@ async def rate_relevancy(
         llm: LLM model to use for rating
         token_encoder: token encoder
         num_repeats: number of times to repeat the rating process for the same community (default: 1)
-        llm_kwargs: additional arguments to pass to the LLM model
+        model_params: additional arguments to pass to the LLM model
         semaphore: asyncio.Semaphore to limit the number of concurrent LLM calls (default: None)
     """
     llm_calls, prompt_tokens, output_tokens, ratings = 0, 0, 0, []
@@ -51,7 +51,7 @@ async def rate_relevancy(
     for _ in range(num_repeats):
         async with semaphore if semaphore is not None else nullcontext():
             model_response = await model.achat(
-                prompt=query, history=messages, model_parameters=llm_kwargs, json=True
+                prompt=query, history=messages, model_parameters=model_params, json=True
             )
             response = model_response.output.content
         try:

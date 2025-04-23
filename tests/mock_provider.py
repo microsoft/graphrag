@@ -8,6 +8,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from graphrag.config.enums import ModelType
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.language_model.response.base import (
     BaseModelOutput,
@@ -28,6 +29,9 @@ class MockChatLLM:
     ):
         self.responses = config.responses if config and config.responses else responses
         self.response_index = 0
+        self.config = config or LanguageModelConfig(
+            type=ModelType.MockChat, model="gpt-4o", api_key="mock"
+        )
 
     async def achat(
         self,
@@ -94,7 +98,9 @@ class MockEmbeddingLLM:
     """A mock embedding LLM provider."""
 
     def __init__(self, **kwargs: Any):
-        pass
+        self.config = LanguageModelConfig(
+            type=ModelType.MockEmbedding, model="text-embedding-ada-002", api_key="mock"
+        )
 
     def embed_batch(self, text_list: list[str], **kwargs: Any) -> list[list[float]]:
         """Generate an embedding for the input text."""
