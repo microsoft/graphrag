@@ -111,7 +111,6 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
                 llm_calls_categories=llm_calls,
                 prompt_tokens_categories=prompt_tokens,
                 output_tokens_categories=output_tokens,
-                
             )
 
         except Exception:
