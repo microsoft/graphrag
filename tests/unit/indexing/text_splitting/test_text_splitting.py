@@ -136,7 +136,6 @@ def test_split_single_text_on_tokens():
         " by this t",
         "his test o",
         "est only.",
-        "nly.",
     ]
 
     result = split_single_text_on_tokens(text=text, tokenizer=tokenizer)
@@ -197,7 +196,6 @@ def test_split_single_text_on_tokens_no_overlap():
         " this test",
         " test only",
         " only.",
-        ".",
     ]
 
     result = split_single_text_on_tokens(text=text, tokenizer=tokenizer)
