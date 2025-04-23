@@ -4,6 +4,7 @@
 """Graph extraction using NLP."""
 
 from itertools import combinations
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -98,9 +99,12 @@ def _extract_edges(
     text_units_df = (
         text_units_df.groupby("text_unit_id").agg({"title": list}).reset_index()
     )
-    text_units_df["edges"] = text_units_df["title"].apply(
-        lambda x: list(combinations(x, 2))
-    )
+
+    titles = text_units_df["title"].tolist()
+    all_edges: Any = [list(combinations(t, 2)) for t in titles]
+
+    text_units_df = text_units_df.assign(edges=all_edges)
+
     edge_df = text_units_df.explode("edges").loc[:, ["edges", "text_unit_id"]]
 
     edge_df["source"] = edge_df["edges"].apply(
