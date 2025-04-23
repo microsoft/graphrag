@@ -1,0 +1,40 @@
+name: unified-search-app
+pool:
+  vmImage: ubuntu-latest
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - unified-search-app
+    
+
+stages:
+  - stage: Build_deploy
+    dependsOn: []
+    jobs:
+      - job: build
+        displayName: Build and deploy
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.11"
+            displayName: "Use Python 3.11"
+
+          - task: Docker@2
+            inputs:
+              containerRegistry: '$(containerRegistry)'
+              repository: 'main'
+              command: 'buildAndPush'
+              Dockerfile: 'unified-search-app/Dockerfile'
+              tags: 'latest'
+          - task: AzureAppServiceManage@0
+            inputs:
+              azureSubscription: '$(subscription)'
+              Action: 'Restart Azure App Service'
+              WebAppName: '$(webApp)'

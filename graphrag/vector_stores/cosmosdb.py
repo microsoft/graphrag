@@ -7,6 +7,7 @@ import json
 from typing import Any
 
 from azure.cosmos import ContainerProxy, CosmosClient, DatabaseProxy
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
 
@@ -19,7 +20,7 @@ from graphrag.vector_stores.base import (
 )
 
 
-class CosmosDBVectoreStore(BaseVectorStore):
+class CosmosDBVectorStore(BaseVectorStore):
     """Azure CosmosDB vector storage implementation."""
 
     _cosmos_client: CosmosClient
@@ -99,16 +100,32 @@ class CosmosDBVectoreStore(BaseVectorStore):
             "automatic": True,
             "includedPaths": [{"path": "/*"}],
             "excludedPaths": [{"path": "/_etag/?"}, {"path": "/vector/*"}],
-            "vectorIndexes": [{"path": "/vector", "type": "diskANN"}],
         }
 
-        # Create the container and container client
-        self._database_client.create_container_if_not_exists(
-            id=self._container_name,
-            partition_key=partition_key,
-            indexing_policy=indexing_policy,
-            vector_embedding_policy=vector_embedding_policy,
-        )
+        # Currently, the CosmosDB emulator does not support the diskANN policy.
+        try:
+            # First try with the standard diskANN policy
+            indexing_policy["vectorIndexes"] = [{"path": "/vector", "type": "diskANN"}]
+
+            # Create the container and container client
+            self._database_client.create_container_if_not_exists(
+                id=self._container_name,
+                partition_key=partition_key,
+                indexing_policy=indexing_policy,
+                vector_embedding_policy=vector_embedding_policy,
+            )
+        except CosmosHttpResponseError:
+            # If diskANN fails (likely in emulator), retry without vector indexes
+            indexing_policy.pop("vectorIndexes", None)
+
+            # Create the container with compatible indexing policy
+            self._database_client.create_container_if_not_exists(
+                id=self._container_name,
+                partition_key=partition_key,
+                indexing_policy=indexing_policy,
+                vector_embedding_policy=vector_embedding_policy,
+            )
+
         self._container_client = self._database_client.get_container_client(
             self._container_name
         )
@@ -157,13 +174,46 @@ class CosmosDBVectoreStore(BaseVectorStore):
             msg = "Container client is not initialized."
             raise ValueError(msg)
 
-        query = f"SELECT TOP {k} c.id, c.text, c.vector, c.attributes, VectorDistance(c.vector, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.vector, @embedding)"  # noqa: S608
-        query_params = [{"name": "@embedding", "value": query_embedding}]
-        items = self._container_client.query_items(
-            query=query,
-            parameters=query_params,
-            enable_cross_partition_query=True,
-        )
+        try:
+            query = f"SELECT TOP {k} c.id, c.text, c.vector, c.attributes, VectorDistance(c.vector, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.vector, @embedding)"  # noqa: S608
+            query_params = [{"name": "@embedding", "value": query_embedding}]
+            items = list(
+                self._container_client.query_items(
+                    query=query,
+                    parameters=query_params,
+                    enable_cross_partition_query=True,
+                )
+            )
+        except (CosmosHttpResponseError, ValueError):
+            # Currently, the CosmosDB emulator does not support the VectorDistance function.
+            # For emulator or test environments - fetch all items and calculate distance locally
+            query = "SELECT c.id, c.text, c.vector, c.attributes FROM c"
+            items = list(
+                self._container_client.query_items(
+                    query=query,
+                    enable_cross_partition_query=True,
+                )
+            )
+
+            # Calculate cosine similarity locally (1 - cosine distance)
+            from numpy import dot
+            from numpy.linalg import norm
+
+            def cosine_similarity(a, b):
+                if norm(a) * norm(b) == 0:
+                    return 0.0
+                return dot(a, b) / (norm(a) * norm(b))
+
+            # Calculate scores for all items
+            for item in items:
+                item_vector = item.get("vector", [])
+                similarity = cosine_similarity(query_embedding, item_vector)
+                item["SimilarityScore"] = similarity
+
+            # Sort by similarity score (higher is better) and take top k
+            items = sorted(
+                items, key=lambda x: x.get("SimilarityScore", 0.0), reverse=True
+            )[:k]
 
         return [
             VectorStoreSearchResult(
@@ -214,3 +264,8 @@ class CosmosDBVectoreStore(BaseVectorStore):
             text=item.get("text", ""),
             attributes=(json.loads(item.get("attributes", "{}"))),
         )
+
+    def clear(self) -> None:
+        """Clear the vector store."""
+        self._delete_container()
+        self._delete_database()

@@ -14,6 +14,9 @@ from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
 from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.providers.fnllm.utils import (
+    get_openai_model_parameters_from_config,
+)
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.structured_search.basic_search.basic_context import (
     BasicSearchContext,
@@ -77,6 +80,8 @@ def get_local_search_engine(
 
     ls_config = config.local_search
 
+    model_params = get_openai_model_parameters_from_config(model_settings)
+
     return LocalSearch(
         model=chat_model,
         system_prompt=system_prompt,
@@ -92,12 +97,7 @@ def get_local_search_engine(
             token_encoder=token_encoder,
         ),
         token_encoder=token_encoder,
-        model_params={
-            "max_tokens": ls_config.llm_max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
-            "temperature": ls_config.temperature,
-            "top_p": ls_config.top_p,
-            "n": ls_config.n,
-        },
+        model_params=model_params,
         context_builder_params={
             "text_unit_prop": ls_config.text_unit_prop,
             "community_prop": ls_config.community_prop,
@@ -110,7 +110,7 @@ def get_local_search_engine(
             "include_community_rank": False,
             "return_candidate_context": False,
             "embedding_vectorstore_key": EntityVectorStoreKey.ID,  # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
-            "max_tokens": ls_config.max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+            "max_context_tokens": ls_config.max_context_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
         },
         response_type=response_type,
         callbacks=callbacks,
@@ -130,7 +130,6 @@ def get_global_search_engine(
     callbacks: list[QueryCallbacks] | None = None,
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
-    # TODO: Global search should select model based on config??
     model_settings = config.get_language_model_config(
         config.global_search.chat_model_id
     )
@@ -143,6 +142,8 @@ def get_global_search_engine(
         config=model_settings,
     )
 
+    model_params = get_openai_model_parameters_from_config(model_settings)
+
     # Here we get encoding based on specified encoding name
     token_encoder = tiktoken.get_encoding(model_settings.encoding_model)
     gs_config = config.global_search
@@ -153,14 +154,14 @@ def get_global_search_engine(
 
         dynamic_community_selection_kwargs.update({
             "model": model,
-            # And here we get encoding based on model
-            "token_encoder": tiktoken.encoding_for_model(model_settings.model),
+            "token_encoder": token_encoder,
             "keep_parent": gs_config.dynamic_search_keep_parent,
             "num_repeats": gs_config.dynamic_search_num_repeats,
             "use_summary": gs_config.dynamic_search_use_summary,
-            "concurrent_coroutines": gs_config.dynamic_search_concurrent_coroutines,
+            "concurrent_coroutines": model_settings.concurrent_requests,
             "threshold": gs_config.dynamic_search_threshold,
             "max_level": gs_config.dynamic_search_max_level,
+            "model_params": {**model_params},
         })
 
     return GlobalSearch(
@@ -178,18 +179,10 @@ def get_global_search_engine(
         ),
         token_encoder=token_encoder,
         max_data_tokens=gs_config.data_max_tokens,
-        map_llm_params={
-            "max_tokens": gs_config.map_max_tokens,
-            "temperature": gs_config.temperature,
-            "top_p": gs_config.top_p,
-            "n": gs_config.n,
-        },
-        reduce_llm_params={
-            "max_tokens": gs_config.reduce_max_tokens,
-            "temperature": gs_config.temperature,
-            "top_p": gs_config.top_p,
-            "n": gs_config.n,
-        },
+        map_llm_params={**model_params},
+        reduce_llm_params={**model_params},
+        map_max_length=gs_config.map_max_length,
+        reduce_max_length=gs_config.reduce_max_length,
         allow_general_knowledge=False,
         json_mode=False,
         context_builder_params={
@@ -201,10 +194,10 @@ def get_global_search_engine(
             "include_community_weight": True,
             "community_weight_name": "occurrence weight",
             "normalize_community_weight": True,
-            "max_tokens": gs_config.max_tokens,
+            "max_context_tokens": gs_config.max_context_tokens,
             "context_name": "Reports",
         },
-        concurrent_coroutines=gs_config.concurrency,
+        concurrent_coroutines=model_settings.concurrent_requests,
         response_type=response_type,
         callbacks=callbacks,
     )
@@ -243,6 +236,7 @@ def get_drift_search_engine(
     embedding_model_settings = config.get_language_model_config(
         config.drift_search.embedding_model_id
     )
+
     if embedding_model_settings.max_retries == -1:
         embedding_model_settings.max_retries = (
             len(reports) + len(entities) + len(relationships)
@@ -253,6 +247,7 @@ def get_drift_search_engine(
         model_type=embedding_model_settings.type,
         config=embedding_model_settings,
     )
+
     token_encoder = tiktoken.get_encoding(chat_model_settings.encoding_model)
 
     return DRIFTSearch(
@@ -310,7 +305,9 @@ def get_basic_search_engine(
 
     token_encoder = tiktoken.get_encoding(chat_model_settings.encoding_model)
 
-    ls_config = config.basic_search
+    bs_config = config.basic_search
+
+    model_params = get_openai_model_parameters_from_config(chat_model_settings)
 
     return BasicSearch(
         model=chat_model,
@@ -322,19 +319,10 @@ def get_basic_search_engine(
             token_encoder=token_encoder,
         ),
         token_encoder=token_encoder,
-        model_params={
-            "max_tokens": ls_config.llm_max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
-            "temperature": ls_config.temperature,
-            "top_p": ls_config.top_p,
-            "n": ls_config.n,
-        },
+        model_params=model_params,
         context_builder_params={
-            "text_unit_prop": ls_config.text_unit_prop,
-            "conversation_history_max_turns": ls_config.conversation_history_max_turns,
-            "conversation_history_user_turns_only": True,
-            "return_candidate_context": False,
             "embedding_vectorstore_key": "id",
-            "max_tokens": ls_config.max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+            "k": bs_config.k,
         },
         callbacks=callbacks,
     )

@@ -11,7 +11,7 @@ from graphrag.query.llm.text_utils import num_tokens
 def sort_context(
     local_context: list[dict],
     sub_community_reports: list[dict] | None = None,
-    max_tokens: int | None = None,
+    max_context_tokens: int | None = None,
     node_name_column: str = schemas.TITLE,
     node_details_column: str = schemas.NODE_DETAILS,
     edge_id_column: str = schemas.SHORT_ID,
@@ -112,7 +112,7 @@ def sort_context(
         new_context_string = _get_context_string(
             sorted_nodes, sorted_edges, sorted_claims, sub_community_reports
         )
-        if max_tokens and num_tokens(new_context_string) > max_tokens:
+        if max_context_tokens and num_tokens(new_context_string) > max_context_tokens:
             break
         context_string = new_context_string
 
@@ -122,7 +122,7 @@ def sort_context(
     )
 
 
-def parallel_sort_context_batch(community_df, max_tokens, parallel=False):
+def parallel_sort_context_batch(community_df, max_context_tokens, parallel=False):
     """Calculate context using parallelization if enabled."""
     if parallel:
         # Use ThreadPoolExecutor for parallel execution
@@ -131,7 +131,7 @@ def parallel_sort_context_batch(community_df, max_tokens, parallel=False):
         with ThreadPoolExecutor(max_workers=None) as executor:
             context_strings = list(
                 executor.map(
-                    lambda x: sort_context(x, max_tokens=max_tokens),
+                    lambda x: sort_context(x, max_context_tokens=max_context_tokens),
                     community_df[schemas.ALL_CONTEXT],
                 )
             )
@@ -140,7 +140,9 @@ def parallel_sort_context_batch(community_df, max_tokens, parallel=False):
     else:
         # Assign context strings directly to the DataFrame
         community_df[schemas.CONTEXT_STRING] = community_df[schemas.ALL_CONTEXT].apply(
-            lambda context_list: sort_context(context_list, max_tokens=max_tokens)
+            lambda context_list: sort_context(
+                context_list, max_context_tokens=max_context_tokens
+            )
         )
 
     # Calculate other columns
@@ -148,7 +150,7 @@ def parallel_sort_context_batch(community_df, max_tokens, parallel=False):
         num_tokens
     )
     community_df[schemas.CONTEXT_EXCEED_FLAG] = (
-        community_df[schemas.CONTEXT_SIZE] > max_tokens
+        community_df[schemas.CONTEXT_SIZE] > max_context_tokens
     )
 
     return community_df
