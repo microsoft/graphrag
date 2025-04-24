@@ -4,7 +4,6 @@
 """Graph extraction using NLP."""
 
 from itertools import combinations
-from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -103,16 +102,16 @@ def _extract_edges(
     )
     text_units_df = text_units_df.dropna()
     titles = text_units_df["title"].tolist()
-    all_edges: Any = [list(combinations(t, 2)) for t in titles]
+    all_edges: list[list[tuple[str, str]]] = [list(combinations(t, 2)) for t in titles]
 
-    text_units_df = text_units_df.assign(edges=all_edges)
+    text_units_df = text_units_df.assign(edges=all_edges)  # type: ignore
     edge_df = text_units_df.explode("edges")[["edges", "text_unit_id"]]
 
-    edge_df[["source", "target"]] = edge_df["edges"].to_list()
+    edge_df[["source", "target"]] = edge_df.loc[:, "edges"].to_list()
     edge_df["min_source"] = edge_df[["source", "target"]].min(axis=1)
     edge_df["max_target"] = edge_df[["source", "target"]].max(axis=1)
     edge_df = edge_df.drop(columns=["source", "target"]).rename(
-        columns={"min_source": "source", "max_target": "target"}
+        columns={"min_source": "source", "max_target": "target"}  # type: ignore
     )
 
     edge_df = edge_df[(edge_df.source.notna()) & (edge_df.target.notna())]
@@ -123,7 +122,9 @@ def _extract_edges(
     )
     grouped_edge_df = grouped_edge_df.rename(columns={"text_unit_id": "text_unit_ids"})
     grouped_edge_df["weight"] = grouped_edge_df["text_unit_ids"].apply(len)
-    grouped_edge_df = grouped_edge_df[["source", "target", "weight", "text_unit_ids"]]
+    grouped_edge_df = grouped_edge_df.loc[
+        :, ["source", "target", "weight", "text_unit_ids"]
+    ]
     if normalize_edge_weights:
         # use PMI weight instead of raw weight
         grouped_edge_df = _calculate_pmi_edge_weights(nodes_df, grouped_edge_df)
