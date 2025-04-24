@@ -30,7 +30,7 @@ from graphrag.query.llm.text_utils import num_tokens
 def build_entity_context(
     selected_entities: list[Entity],
     token_encoder: tiktoken.Encoding | None = None,
-    max_tokens: int = 8000,
+    max_context_tokens: int = 8000,
     include_entity_rank: bool = True,
     rank_description: str = "number of relationships",
     column_delimiter: str = "|",
@@ -72,7 +72,7 @@ def build_entity_context(
             new_context.append(field_value)
         new_context_text = column_delimiter.join(new_context) + "\n"
         new_tokens = num_tokens(new_context_text, token_encoder)
-        if current_tokens + new_tokens > max_tokens:
+        if current_tokens + new_tokens > max_context_tokens:
             break
         current_context_text += new_context_text
         all_context_records.append(new_context)
@@ -92,7 +92,7 @@ def build_covariates_context(
     selected_entities: list[Entity],
     covariates: list[Covariate],
     token_encoder: tiktoken.Encoding | None = None,
-    max_tokens: int = 8000,
+    max_context_tokens: int = 8000,
     column_delimiter: str = "|",
     context_name: str = "Covariates",
 ) -> tuple[str, pd.DataFrame]:
@@ -136,7 +136,7 @@ def build_covariates_context(
 
         new_context_text = column_delimiter.join(new_context) + "\n"
         new_tokens = num_tokens(new_context_text, token_encoder)
-        if current_tokens + new_tokens > max_tokens:
+        if current_tokens + new_tokens > max_context_tokens:
             break
         current_context_text += new_context_text
         all_context_records.append(new_context)
@@ -157,7 +157,7 @@ def build_relationship_context(
     relationships: list[Relationship],
     token_encoder: tiktoken.Encoding | None = None,
     include_relationship_weight: bool = False,
-    max_tokens: int = 8000,
+    max_context_tokens: int = 8000,
     top_k_relationships: int = 10,
     relationship_ranking_attribute: str = "rank",
     column_delimiter: str = "|",
@@ -209,7 +209,7 @@ def build_relationship_context(
             new_context.append(field_value)
         new_context_text = column_delimiter.join(new_context) + "\n"
         new_tokens = num_tokens(new_context_text, token_encoder)
-        if current_tokens + new_tokens > max_tokens:
+        if current_tokens + new_tokens > max_context_tokens:
             break
         current_context_text += new_context_text
         all_context_records.append(new_context)

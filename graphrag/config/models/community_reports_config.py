@@ -53,7 +53,6 @@ class CommunityReportsConfig(BaseModel):
         return self.strategy or {
             "type": CreateCommunityReportsStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
-            "num_threads": model_config.concurrent_requests,
             "graph_prompt": get_prompt_content(self.graph_prompt, root_dir, self.endpoint_url),
             "text_prompt": get_prompt_content(self.text_prompt, root_dir, self.endpoint_url),
             "max_report_length": self.max_length,

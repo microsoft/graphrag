@@ -41,10 +41,6 @@ class ClaimExtractionConfig(BaseModel):
         description="The override strategy to use.",
         default=graphrag_config_defaults.extract_claims.strategy,
     )
-    encoding_model: str | None = Field(
-        default=graphrag_config_defaults.extract_claims.encoding_model,
-        description="The encoding model to use.",
-    )
 
     def resolved_strategy(
         self, root_dir: str, model_config: LanguageModelConfig
@@ -52,9 +48,7 @@ class ClaimExtractionConfig(BaseModel):
         """Get the resolved claim extraction strategy."""
         return self.strategy or {
             "llm": model_config.model_dump(),
-            "num_threads": model_config.concurrent_requests,
             "extraction_prompt": get_prompt_content(self.prompt, root_dir, self.endpoint_url),
             "claim_description": self.description,
             "max_gleanings": self.max_gleanings,
-            "encoding_name": model_config.encoding_model,
         }

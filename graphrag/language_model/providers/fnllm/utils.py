@@ -54,12 +54,7 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
         JsonStrategy.VALID if config.model_supports_json else JsonStrategy.LOOSE
     )
     chat_parameters = OpenAIChatParameters(
-        frequency_penalty=config.frequency_penalty,
-        presence_penalty=config.presence_penalty,
-        top_p=config.top_p,
-        max_tokens=config.max_tokens,
-        n=config.n,
-        temperature=config.temperature,
+        **get_openai_model_parameters_from_config(config)
     )
 
     if azure:
@@ -130,3 +125,36 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T]) -> T:
         _thr.start()
     future = asyncio.run_coroutine_threadsafe(coroutine, _loop)
     return future.result()
+
+
+def is_reasoning_model(model: str) -> bool:
+    """Return whether the model uses a known OpenAI reasoning model."""
+    return model.lower() in {"o1", "o1-mini", "o3-mini"}
+
+
+def get_openai_model_parameters_from_config(
+    config: LanguageModelConfig,
+) -> dict[str, Any]:
+    """Get the model parameters for a given config, adjusting for reasoning API differences."""
+    return get_openai_model_parameters_from_dict(config.model_dump())
+
+
+def get_openai_model_parameters_from_dict(config: dict[str, Any]) -> dict[str, Any]:
+    """Get the model parameters for a given config, adjusting for reasoning API differences."""
+    params = {
+        "n": config.get("n"),
+    }
+    if is_reasoning_model(config["model"]):
+        params["max_completion_tokens"] = config.get("max_completion_tokens")
+        params["reasoning_effort"] = config.get("reasoning_effort")
+    else:
+        params["max_tokens"] = config.get("max_tokens")
+        params["temperature"] = config.get("temperature")
+        params["frequency_penalty"] = config.get("frequency_penalty")
+        params["presence_penalty"] = config.get("presence_penalty")
+        params["top_p"] = config.get("top_p")
+
+    if config.get("response_format"):
+        params["response_format"] = config["response_format"]
+
+    return params
