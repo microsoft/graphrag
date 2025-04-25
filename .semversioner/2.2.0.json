@@ -1,0 +1,46 @@
+{
+  "changes": [
+    {
+      "description": "Support OpenAI reasoning models.",
+      "type": "minor"
+    },
+    {
+      "description": "Add option to snapshot raw extracted graph tables.",
+      "type": "patch"
+    },
+    {
+      "description": "Added batching logic to the prompt tuning autoselection embeddings workflow",
+      "type": "patch"
+    },
+    {
+      "description": "Align config classes and docs better.",
+      "type": "patch"
+    },
+    {
+      "description": "Align embeddings table loading with configured fields.",
+      "type": "patch"
+    },
+    {
+      "description": "Brings parity with our latest NLP extraction approaches.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix fnllm to 0.2.3",
+      "type": "patch"
+    },
+    {
+      "description": "Fixes to basic search.",
+      "type": "patch"
+    },
+    {
+      "description": "Update llm args for consistency.",
+      "type": "patch"
+    },
+    {
+      "description": "add vector store integration tests",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2025-04-25T23:30:57+00:00",
+  "version": "2.2.0"
+}
