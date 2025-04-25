@@ -251,7 +251,7 @@ Parameters for manual graph pruning. This can be used to optimize the modularity
 - max_node_freq_std **float | None** - The maximum standard deviation of node frequency to allow.
 - min_node_degree **int** - The minimum node degree to allow.
 - max_node_degree_std **float | None** - The maximum standard deviation of node degree to allow.
-- min_edge_weight_pct **int** - The minimum edge weight percentile to allow.
+- min_edge_weight_pct **float** - The minimum edge weight percentile to allow.
 - remove_ego_nodes **bool** - Remove ego nodes.
 - lcc_only **bool** - Only use largest connected component.
 
