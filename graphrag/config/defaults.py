@@ -19,6 +19,9 @@ from graphrag.config.enums import (
     ReportingType,
     TextEmbeddingTarget,
 )
+from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
+    EN_STOP_WORDS,
+)
 from graphrag.vector_stores.factory import VectorStoreType
 
 DEFAULT_OUTPUT_BASE_DIR = "output"
@@ -186,7 +189,7 @@ class TextAnalyzerDefaults:
     max_word_length: int = 15
     word_delimiter: str = " "
     include_named_entities: bool = True
-    exclude_nouns: None = None
+    exclude_nouns: list[str] = field(default_factory=lambda: EN_STOP_WORDS)
     exclude_entity_tags: list[str] = field(default_factory=lambda: ["DATE"])
     exclude_pos_tags: list[str] = field(
         default_factory=lambda: ["DET", "PRON", "INTJ", "X"]
@@ -317,8 +320,8 @@ class PruneGraphDefaults:
     max_node_freq_std: None = None
     min_node_degree: int = 1
     max_node_degree_std: None = None
-    min_edge_weight_pct: int = 40
-    remove_ego_nodes: bool = False
+    min_edge_weight_pct: float = 40.0
+    remove_ego_nodes: bool = True
     lcc_only: bool = False
 
 
