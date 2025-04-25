@@ -275,6 +275,7 @@ def get_basic_search_engine(
     text_unit_embeddings: BaseVectorStore,
     config: GraphRagConfig,
     system_prompt: str | None = None,
+    response_type: str = "multiple paragraphs",
     callbacks: list[QueryCallbacks] | None = None,
 ) -> BasicSearch:
     """Create a basic search engine based on data + configuration."""
@@ -312,6 +313,7 @@ def get_basic_search_engine(
     return BasicSearch(
         model=chat_model,
         system_prompt=system_prompt,
+        response_type=response_type,
         context_builder=BasicSearchContext(
             text_embedder=embedding_model,
             text_unit_embeddings=text_unit_embeddings,
@@ -323,6 +325,7 @@ def get_basic_search_engine(
         context_builder_params={
             "embedding_vectorstore_key": "id",
             "k": bs_config.k,
+            "max_context_tokens": bs_config.max_context_tokens,
         },
         callbacks=callbacks,
     )

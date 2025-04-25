@@ -42,6 +42,7 @@ class BasicSearchDefaults:
 
     prompt: None = None
     k: int = 10
+    max_context_tokens: int = 12_000
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
@@ -338,6 +339,7 @@ class SnapshotsDefaults:
 
     embeddings: bool = False
     graphml: bool = False
+    raw_graph: bool = False
 
 
 @dataclass
