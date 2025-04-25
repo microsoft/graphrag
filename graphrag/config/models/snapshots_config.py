@@ -19,3 +19,7 @@ class SnapshotsConfig(BaseModel):
         description="A flag indicating whether to take snapshots of GraphML.",
         default=graphrag_config_defaults.snapshots.graphml,
     )
+    raw_graph: bool = Field(
+        description="A flag indicating whether to take snapshots of the raw extracted graph (entities and relationships) before merging.",
+        default=graphrag_config_defaults.snapshots.raw_graph,
+    )

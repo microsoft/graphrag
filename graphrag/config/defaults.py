@@ -339,6 +339,7 @@ class SnapshotsDefaults:
 
     embeddings: bool = False
     graphml: bool = False
+    raw_graph: bool = False
 
 
 @dataclass
