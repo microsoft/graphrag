@@ -21,6 +21,14 @@ def graph_to_dataframes(
 
     edges = nx.to_pandas_edgelist(graph)
 
+    # we don't deal in directed graphs, but we do need to ensure consistent ordering for df joins
+    # nx loses the initial ordering
+    edges["min_source"] = edges[["source", "target"]].min(axis=1)
+    edges["max_target"] = edges[["source", "target"]].max(axis=1)
+    edges = edges.drop(columns=["source", "target"]).rename(
+        columns={"min_source": "source", "max_target": "target"}  # type: ignore
+    )
+
     if node_columns:
         nodes = nodes.loc[:, node_columns]
 
