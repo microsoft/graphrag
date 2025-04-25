@@ -319,8 +319,8 @@ class PruneGraphDefaults:
     max_node_freq_std: None = None
     min_node_degree: int = 1
     max_node_degree_std: None = None
-    min_edge_weight_pct: int = 40
-    remove_ego_nodes: bool = False
+    min_edge_weight_pct: float = 40.0
+    remove_ego_nodes: bool = True
     lcc_only: bool = False
 
 
