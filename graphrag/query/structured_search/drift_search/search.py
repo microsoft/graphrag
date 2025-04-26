@@ -225,7 +225,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 
             llm_calls["build_context"] = token_ct["llm_calls"]
             prompt_tokens["build_context"] = token_ct["prompt_tokens"]
-            output_tokens["build_context"] = token_ct["prompt_tokens"]
+            output_tokens["build_context"] = token_ct["output_tokens"]
 
             primer_response = await self.primer.search(
                 query=query, top_k_reports=primer_context

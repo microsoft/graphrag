@@ -43,7 +43,7 @@ async def run_workflow(
         config.root_dir, summarization_llm_settings
     )
 
-    entities, relationships = await extract_graph(
+    entities, relationships, raw_entities, raw_relationships = await extract_graph(
         text_units=text_units,
         callbacks=context.callbacks,
         cache=context.cache,
@@ -57,6 +57,12 @@ async def run_workflow(
 
     await write_table_to_storage(entities, "entities", context.storage)
     await write_table_to_storage(relationships, "relationships", context.storage)
+
+    if config.snapshots.raw_graph:
+        await write_table_to_storage(raw_entities, "raw_entities", context.storage)
+        await write_table_to_storage(
+            raw_relationships, "raw_relationships", context.storage
+        )
 
     return WorkflowFunctionOutput(
         result={
@@ -76,7 +82,7 @@ async def extract_graph(
     entity_types: list[str] | None = None,
     summarization_strategy: dict[str, Any] | None = None,
     summarization_num_threads: int = 4,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
     extracted_entities, extracted_relationships = await extractor(
@@ -103,6 +109,10 @@ async def extract_graph(
         callbacks.error(error_msg)
         raise ValueError(error_msg)
 
+    # copy these as is before any summarization
+    raw_entities = extracted_entities.copy()
+    raw_relationships = extracted_relationships.copy()
+
     entities, relationships = await get_summarized_entities_relationships(
         extracted_entities=extracted_entities,
         extracted_relationships=extracted_relationships,
@@ -112,7 +122,7 @@ async def extract_graph(
         summarization_num_threads=summarization_num_threads,
     )
 
-    return (entities, relationships)
+    return (entities, relationships, raw_entities, raw_relationships)
 
 
 async def get_summarized_entities_relationships(
