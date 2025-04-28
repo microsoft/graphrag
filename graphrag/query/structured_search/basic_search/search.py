@@ -108,6 +108,9 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
                 output_tokens=sum(output_tokens.values()),
+                llm_calls_categories=llm_calls,
+                prompt_tokens_categories=prompt_tokens,
+                output_tokens_categories=output_tokens,
             )
 
         except Exception:
@@ -120,6 +123,9 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
                 output_tokens=0,
+                llm_calls_categories=llm_calls,
+                prompt_tokens_categories=prompt_tokens,
+                output_tokens_categories=output_tokens,
             )
 
     async def stream_search(
