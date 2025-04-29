@@ -564,11 +564,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../index/architecture/" class="md-nav__link">
+      <a href="../../index/default_dataflow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Architecture
+    Dataflow
     
   </span>
   
@@ -586,11 +586,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../index/default_dataflow/" class="md-nav__link">
+      <a href="../../index/methods/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Dataflow
+    Methods
     
   </span>
   
@@ -635,6 +635,28 @@
   
   <span class="md-ellipsis">
     Outputs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index/byog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Graphs
     
   </span>
   
@@ -884,6 +906,15 @@
   <a href="#drift-search" class="md-nav__link">
     <span class="md-ellipsis">
       DRIFT Search
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Search
     </span>
   </a>
   
@@ -1231,7 +1262,7 @@
         
   
   <span class="md-ellipsis">
-    Using YAML
+    Detailed Configuration
     
   </span>
   
@@ -1249,11 +1280,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../config/env_vars/" class="md-nav__link">
+      <a href="../../config/models/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Using Env Vars
+    Language Model Selection
     
   </span>
   
@@ -1527,6 +1558,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#basic-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Search
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#question-generation" class="md-nav__link">
     <span class="md-ellipsis">
       Question Generation
@@ -1572,6 +1612,8 @@ It is responsible for the following tasks:</p>
 <h2 id="drift-search">DRIFT Search</h2>
 <p>DRIFT Search introduces a new approach to local search queries by including community information in the search process. This greatly expands the breadth of the query’s starting point and leads to retrieval and usage of a far higher variety of facts in the final answer. This addition expands the GraphRAG query engine by providing a more comprehensive option for local search, which uses community insights to refine a query into detailed follow-up questions.</p>
 <p>To learn more about DRIFT Search, please refer to the <a href="../drift_search/">DRIFT Search</a> documentation.</p>
+<h2 id="basic-search">Basic Search</h2>
+<p>GraphRAG includes a rudimentary implementation of basic vector RAG to make it easy to compare different search results based on the type of question you are asking. You can specify the top <code>k</code> txt unit chunks to include in the summarization context.</p>
 <h2 id="question-generation">Question Generation</h2>
 <p>This functionality takes a list of user queries and generates the next candidate questions. This is useful for generating follow-up questions in a conversation or for generating a list of questions for the investigator to dive deeper into the dataset.</p>
 <p>Information about how question generation works can be found at the <a href="../question_generation/">Question Generation</a> documentation page.</p>

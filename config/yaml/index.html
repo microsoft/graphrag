@@ -12,7 +12,7 @@
         <link rel="prev" href="../init/">
       
       
-        <link rel="next" href="../env_vars/">
+        <link rel="next" href="../models/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -20,7 +20,7 @@
     
     
       
-        <title>Using YAML - GraphRAG</title>
+        <title>Detailed Configuration - GraphRAG</title>
       
     
     
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Using YAML
+              Detailed Configuration
             
           </span>
         </div>
@@ -564,11 +564,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../index/architecture/" class="md-nav__link">
+      <a href="../../index/default_dataflow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Architecture
+    Dataflow
     
   </span>
   
@@ -586,11 +586,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../index/default_dataflow/" class="md-nav__link">
+      <a href="../../index/methods/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Dataflow
+    Methods
     
   </span>
   
@@ -635,6 +635,28 @@
   
   <span class="md-ellipsis">
     Outputs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index/byog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Graphs
     
   </span>
   
@@ -1163,7 +1185,7 @@
         
   
   <span class="md-ellipsis">
-    Using YAML
+    Detailed Configuration
     
   </span>
   
@@ -1182,11 +1204,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../env_vars/" class="md-nav__link">
+      <a href="../models/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Using Env Vars
+    Language Model Selection
     
   </span>
   
@@ -1493,12 +1515,14 @@
 <li><code>concurrent_requests</code> <strong>int</strong> The number of open requests to allow at once.</li>
 <li><code>async_mode</code> <strong>asyncio|threaded</strong> The async mode to use. Either <code>asyncio</code> or <code>threaded</code>.</li>
 <li><code>responses</code> <strong>list[str]</strong> - If this model type is mock, this is a list of response strings to return.</li>
-<li><code>max_tokens</code> <strong>int</strong> - The maximum number of output tokens.</li>
-<li><code>temperature</code> <strong>float</strong> - The temperature to use.</li>
-<li><code>top_p</code> <strong>float</strong> - The top-p value to use.</li>
 <li><code>n</code> <strong>int</strong> - The number of completions to generate.</li>
-<li><code>frequency_penalty</code> <strong>float</strong> - Frequency penalty for token generation.</li>
-<li><code>presence_penalty</code> <strong>float</strong> - Frequency penalty for token generation.</li>
+<li><code>max_tokens</code> <strong>int</strong> - The maximum number of output tokens. Not valid for o-series models.</li>
+<li><code>temperature</code> <strong>float</strong> - The temperature to use. Not valid for o-series models.</li>
+<li><code>top_p</code> <strong>float</strong> - The top-p value to use. Not valid for o-series models.</li>
+<li><code>frequency_penalty</code> <strong>float</strong> - Frequency penalty for token generation. Not valid for o-series models.</li>
+<li><code>presence_penalty</code> <strong>float</strong> - Frequency penalty for token generation. Not valid for o-series models.</li>
+<li><code>max_completion_tokens</code> <strong>int</strong> - Max number of tokens to consume for chat completion. Must be large enough to include an unknown amount for "reasoning" by the model. o-series models only.</li>
+<li><code>reasoning_effort</code> <strong>low|medium|high</strong> - Amount of "thought" for the model to expend reasoning about a response. o-series models only.</li>
 </ul>
 <h2 id="input-files-and-chunking">Input Files and Chunking</h2>
 <h3 id="input">input</h3>
@@ -1621,7 +1645,6 @@
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
 <li><code>entity_types</code> <strong>list[str]</strong> - The entity types to identify.</li>
 <li><code>max_gleanings</code> <strong>int</strong> - The maximum number of gleaning cycles to use.</li>
-<li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset). This is only used for gleanings during the logit_bias check.</li>
 </ul>
 <h3 id="summarize_descriptions">summarize_descriptions</h3>
 <h4 id="fields_10">Fields</h4>
@@ -1629,6 +1652,7 @@
 <li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for API calls.</li>
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
 <li><code>max_length</code> <strong>int</strong> - The maximum number of output tokens per summarization.</li>
+<li><code>max_input_length</code> <strong>int</strong> - The maximum number of tokens to collect for summarization (this will limit how many descriptions you send to be summarized for a given entity or relationship).</li>
 </ul>
 <h3 id="extract_graph_nlp">extract_graph_nlp</h3>
 <p>Defines settings for NLP-based graph extraction methods.</p>
@@ -1675,7 +1699,6 @@
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
 <li><code>description</code> <strong>str</strong> - Describes the types of claims we want to extract.</li>
 <li><code>max_gleanings</code> <strong>int</strong> - The maximum number of gleaning cycles to use.</li>
-<li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset). This is only used for gleanings during the logit_bias check.</li>
 </ul>
 <h3 id="community_reports">community_reports</h3>
 <h4 id="fields_15">Fields</h4>
@@ -1722,11 +1745,7 @@
 <li><code>conversation_history_max_turns</code> <strong>int</strong> - The conversation history maximum turns.</li>
 <li><code>top_k_entities</code> <strong>int</strong> - The top k mapped entities.</li>
 <li><code>top_k_relationships</code> <strong>int</strong> - The top k mapped relations.</li>
-<li><code>temperature</code> <strong>float | None</strong> - The temperature to use for token generation.</li>
-<li><code>top_p</code> <strong>float | None</strong> - The top-p value to use for token generation.</li>
-<li><code>n</code> <strong>int | None</strong> - The number of completions to generate.</li>
-<li><code>max_tokens</code> <strong>int</strong> - The maximum tokens.</li>
-<li><code>llm_max_tokens</code> <strong>int</strong> - The LLM maximum tokens.</li>
+<li><code>max_context_tokens</code> <strong>int</strong> - The maximum tokens to use building the request context.</li>
 </ul>
 <h3 id="global_search">global_search</h3>
 <h4 id="fields_20">Fields</h4>
@@ -1738,20 +1757,14 @@
 <li><code>map_prompt</code> <strong>str | None</strong> - The global search mapper prompt to use.</li>
 <li><code>reduce_prompt</code> <strong>str | None</strong> - The global search reducer to use.</li>
 <li><code>knowledge_prompt</code> <strong>str | None</strong> - The global search general prompt to use.</li>
-<li><code>temperature</code> <strong>float | None</strong> - The temperature to use for token generation.</li>
-<li><code>top_p</code> <strong>float | None</strong> - The top-p value to use for token generation.</li>
-<li><code>n</code> <strong>int | None</strong> - The number of completions to generate.</li>
-<li><code>max_tokens</code> <strong>int</strong> - The maximum context size in tokens.</li>
-<li><code>data_max_tokens</code> <strong>int</strong> - The data llm maximum tokens.</li>
-<li><code>map_max_tokens</code> <strong>int</strong> - The map llm maximum tokens.</li>
-<li><code>reduce_max_tokens</code> <strong>int</strong> - The reduce llm maximum tokens.</li>
-<li><code>concurrency</code> <strong>int</strong> - The number of concurrent requests.</li>
-<li><code>dynamic_search_llm</code> <strong>str</strong> - LLM model to use for dynamic community selection.</li>
+<li><code>max_context_tokens</code> <strong>int</strong> - The maximum context size to create, in tokens.</li>
+<li><code>data_max_tokens</code> <strong>int</strong> - The maximum tokens to use constructing the final response from the reduces responses.</li>
+<li><code>map_max_length</code> <strong>int</strong> - The maximum length to request for map responses, in words.</li>
+<li><code>reduce_max_length</code> <strong>int</strong> - The maximum length to request for reduce responses, in words.</li>
 <li><code>dynamic_search_threshold</code> <strong>int</strong> - Rating threshold in include a community report.</li>
 <li><code>dynamic_search_keep_parent</code> <strong>bool</strong> - Keep parent community if any of the child communities are relevant.</li>
 <li><code>dynamic_search_num_repeats</code> <strong>int</strong> - Number of times to rate the same community report.</li>
 <li><code>dynamic_search_use_summary</code> <strong>bool</strong> - Use community summary instead of full_context.</li>
-<li><code>dynamic_search_concurrent_coroutines</code> <strong>int</strong> - Number of concurrent coroutines to rate community reports.</li>
 <li><code>dynamic_search_max_level</code> <strong>int</strong> - The maximum level of community hierarchy to consider if none of the processed communities are relevant.</li>
 </ul>
 <h3 id="drift_search">drift_search</h3>
@@ -1761,11 +1774,9 @@
 <li><code>embedding_model_id</code> <strong>str</strong> - Name of the model definition to use for Embedding calls.</li>
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
 <li><code>reduce_prompt</code> <strong>str</strong> - The reducer prompt file to use.</li>
-<li><code>temperature</code> <strong>float</strong> - The temperature to use for token generation.",</li>
-<li><code>top_p</code> <strong>float</strong> - The top-p value to use for token generation.</li>
-<li><code>n</code> <strong>int</strong> - The number of completions to generate.</li>
-<li><code>max_tokens</code> <strong>int</strong> - The maximum context size in tokens.</li>
 <li><code>data_max_tokens</code> <strong>int</strong> - The data llm maximum tokens.</li>
+<li><code>reduce_max_tokens</code> <strong>int</strong> - The maximum tokens for the reduce phase. Only use if a non-o-series model.</li>
+<li><code>reduce_max_completion_tokens</code> <strong>int</strong> - The maximum tokens for the reduce phase. Only use for o-series models.</li>
 <li><code>concurrency</code> <strong>int</strong> - The number of concurrent requests.</li>
 <li><code>drift_k_followups</code> <strong>int</strong> - The number of top global results to retrieve.</li>
 <li><code>primer_folds</code> <strong>int</strong> - The number of folds for search priming.</li>
@@ -1779,7 +1790,8 @@
 <li><code>local_search_temperature</code> <strong>float</strong> - The temperature to use for token generation in local search.</li>
 <li><code>local_search_top_p</code> <strong>float</strong> - The top-p value to use for token generation in local search.</li>
 <li><code>local_search_n</code> <strong>int</strong> - The number of completions to generate in local search.</li>
-<li><code>local_search_llm_max_gen_tokens</code> <strong>int</strong> - The maximum number of generated tokens for the LLM in local search.</li>
+<li><code>local_search_llm_max_gen_tokens</code> <strong>int</strong> - The maximum number of generated tokens for the LLM in local search. Only use if a non-o-series model.</li>
+<li><code>local_search_llm_max_gen_completion_tokens</code> <strong>int</strong> - The maximum number of generated tokens for the LLM in local search. Only use for o-series models.</li>
 </ul>
 <h3 id="basic_search">basic_search</h3>
 <h4 id="fields_22">Fields</h4>
@@ -1787,16 +1799,7 @@
 <li><code>chat_model_id</code> <strong>str</strong> - Name of the model definition to use for Chat Completion calls.</li>
 <li><code>embedding_model_id</code> <strong>str</strong> - Name of the model definition to use for Embedding calls.</li>
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
-<li><code>text_unit_prop</code> <strong>float</strong> - The text unit proportion. </li>
-<li><code>community_prop</code> <strong>float</strong> - The community proportion.</li>
-<li><code>conversation_history_max_turns</code> <strong>int</strong> - The conversation history maximum turns.</li>
-<li><code>top_k_entities</code> <strong>int</strong> - The top k mapped entities.</li>
-<li><code>top_k_relationships</code> <strong>int</strong> - The top k mapped relations.</li>
-<li><code>temperature</code> <strong>float | None</strong> - The temperature to use for token generation.</li>
-<li><code>top_p</code> <strong>float | None</strong> - The top-p value to use for token generation.</li>
-<li><code>n</code> <strong>int | None</strong> - The number of completions to generate.</li>
-<li><code>max_tokens</code> <strong>int</strong> - The maximum tokens.</li>
-<li><code>llm_max_tokens</code> <strong>int</strong> - The LLM maximum tokens.</li>
+<li><code>k</code> <strong>int | None</strong> - Number of text units to retrieve from the vector store for context building.</li>
 </ul>
 
 
@@ -1844,13 +1847,13 @@
         
         
           
-          <a href="../env_vars/" class="md-footer__link md-footer__link--next" aria-label="Next: Using Env Vars">
+          <a href="../models/" class="md-footer__link md-footer__link--next" aria-label="Next: Language Model Selection">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Using Env Vars
+                Language Model Selection
               </div>
             </div>
             <div class="md-footer__button md-icon">

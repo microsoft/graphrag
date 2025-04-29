@@ -564,11 +564,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../index/architecture/" class="md-nav__link">
+      <a href="../index/default_dataflow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Architecture
+    Dataflow
     
   </span>
   
@@ -586,11 +586,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../index/default_dataflow/" class="md-nav__link">
+      <a href="../index/methods/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Dataflow
+    Methods
     
   </span>
   
@@ -635,6 +635,28 @@
   
   <span class="md-ellipsis">
     Outputs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index/byog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Graphs
     
   </span>
   
@@ -1149,7 +1171,7 @@
         
   
   <span class="md-ellipsis">
-    Using YAML
+    Detailed Configuration
     
   </span>
   
@@ -1167,11 +1189,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../config/env_vars/" class="md-nav__link">
+      <a href="../config/models/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Using Env Vars
+    Language Model Selection
     
   </span>
   
@@ -1673,19 +1695,19 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">embed_graph</span><span class="p">:</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span><span class="c1"># will generate node2vec embeddings for nodes</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nt">umap</span><span class="p">:</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span><span class="c1"># will generate UMAP embeddings for nodes</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span><span class="c1"># will generate UMAP embeddings for nodes, giving the entities table an x/y position to plot</span>
 </code></pre></div>
 After running the indexing pipeline over your data, there will be an output folder (defined by the <code>storage.base_dir</code> setting).</p>
 <ul>
 <li><strong>Output Folder</strong>: Contains artifacts from the LLM’s indexing pass.</li>
 </ul>
 <h2 id="2-locate-the-knowledge-graph">2. Locate the Knowledge Graph</h2>
-<p>In the output folder, look for a file named <code>merged_graph.graphml</code>. graphml is a standard <a href="http://graphml.graphdrawing.org">file format</a> supported by many visualization tools. We recommend trying <a href="https://gephi.org">Gephi</a>.</p>
+<p>In the output folder, look for a file named <code>graph.graphml</code>. graphml is a standard <a href="http://graphml.graphdrawing.org">file format</a> supported by many visualization tools. We recommend trying <a href="https://gephi.org">Gephi</a>.</p>
 <h2 id="3-open-the-graph-in-gephi">3. Open the Graph in Gephi</h2>
 <ol>
 <li>Install and open Gephi</li>
 <li>Navigate to the <code>output</code> folder containing the various parquet files.</li>
-<li>Import the <code>merged_graph.graphml</code> file into Gephi. This will result in a fairly plain view of the undirected graph nodes and edges.</li>
+<li>Import the <code>graph.graphml</code> file into Gephi. This will result in a fairly plain view of the undirected graph nodes and edges.</li>
 </ol>
 <p align="center">
    <img src="../img/viz_guide/gephi-initial-graph-example.png" alt="A basic graph visualization by Gephi" width="300"/>
