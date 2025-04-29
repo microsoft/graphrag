@@ -27,10 +27,11 @@ nav:
       - Development Guide: developing.md
   - Indexing:
       - Overview: "index/overview.md"
-      - Architecture: "index/architecture.md"
       - Dataflow: "index/default_dataflow.md"
+      - Methods: "index/methods.md"
       - Inputs: "index/inputs.md"
       - Outputs: "index/outputs.md"
+      - Custom Graphs: "index/byog.md"
   - Prompt Tuning:
       - Overview: "prompt_tuning/overview.md"
       - Auto Tuning: "prompt_tuning/auto_prompt_tuning.md"
@@ -49,8 +50,8 @@ nav:
   - Configuration:
       - Overview: "config/overview.md"
       - Init Command: "config/init.md"
-      - Using YAML: "config/yaml.md"
-      - Using Env Vars: "config/env_vars.md"
+      - Detailed Configuration: "config/yaml.md"
+      - Language Model Selection: "config/models.md"
   - CLI: "cli.md"
   - Extras:
       - Microsoft Research Blog: "blog_posts.md"
