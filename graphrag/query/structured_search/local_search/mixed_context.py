@@ -5,6 +5,7 @@
 import logging
 from copy import deepcopy
 from typing import Any
+import datetime
 
 import pandas as pd
 import tiktoken
@@ -61,6 +62,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
         covariates: dict[str, list[Covariate]] | None = None,
         token_encoder: tiktoken.Encoding | None = None,
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
+        temporal_filtering_enabled: bool = True,
+        relationship_timestamp_attribute: str = "timestamp",
     ):
         if community_reports is None:
             community_reports = []
@@ -83,6 +86,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
         self.text_embedder = text_embedder
         self.token_encoder = token_encoder
         self.embedding_vectorstore_key = embedding_vectorstore_key
+        self.temporal_filtering_enabled = temporal_filtering_enabled
+        self.relationship_timestamp_attribute = relationship_timestamp_attribute
 
     def filter_by_entity_keys(self, entity_keys: list[int] | list[str]):
         """Filter entity text embeddings by entity keys."""
@@ -94,6 +99,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
         conversation_history: ConversationHistory | None = None,
         include_entity_names: list[str] | None = None,
         exclude_entity_names: list[str] | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
         conversation_history_max_turns: int | None = 5,
         conversation_history_user_turns_only: bool = True,
         max_tokens: int = 8000,
@@ -193,6 +200,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
         local_context, local_context_data = self._build_local_context(
             selected_entities=selected_entities,
             max_tokens=local_tokens,
+            start_date=start_date,
+            end_date=end_date,
             include_entity_rank=include_entity_rank,
             rank_description=rank_description,
             include_relationship_weight=include_relationship_weight,
@@ -378,6 +387,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
         self,
         selected_entities: list[Entity],
         max_tokens: int = 8000,
+        start_date: str | None = None,
+        end_date: str | None = None,
         include_entity_rank: bool = False,
         rank_description: str = "relationship count",
         include_relationship_weight: bool = False,
@@ -387,6 +398,67 @@ class LocalSearchMixedContext(LocalContextBuilder):
         column_delimiter: str = "|",
     ) -> tuple[str, dict[str, pd.DataFrame]]:
         """Build data context for local search prompt combining entity/relationship/covariate tables."""
+        
+        # --- Temporal Filtering Logic Start ---
+        filtered_relationships = list(self.relationships.values())
+        if self.temporal_filtering_enabled and (start_date or end_date):
+            log.info(f"Applying temporal filter: start={start_date}, end={end_date}")
+            parsed_start_date = None
+            parsed_end_date = None
+            try:
+                if start_date:
+                    # Attempt parsing various ISO formats (Date and DateTime with/without Z)
+                    try: parsed_start_date = datetime.datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+                    except ValueError: parsed_start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+                if end_date:
+                    try: parsed_end_date = datetime.datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+                    except ValueError: parsed_end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+            except ValueError as e:
+                log.warning(f"Invalid start/end date format: {e}. Skipping temporal filter.")
+                start_date = None # Disable filtering if query dates are bad
+                end_date = None
+
+            if start_date or end_date: # Check again in case parsing failed
+                temporally_filtered = []
+                for rel in self.relationships.values():
+                    ts_str = getattr(rel, self.relationship_timestamp_attribute, None)
+                    if ts_str:
+                        try:
+                            # Attempt parsing relationship timestamp (Date and DateTime with/without Z)
+                            rel_ts = None
+                            try: rel_ts = datetime.datetime.fromisoformat(ts_str.replace('Z', '+00:00'))
+                            except ValueError: rel_ts = datetime.datetime.strptime(ts_str, '%Y-%m-%d').date()
+                            
+                            # Perform comparison (handle date vs datetime)
+                            start_ok = True
+                            if parsed_start_date:
+                                if isinstance(rel_ts, datetime.datetime) and isinstance(parsed_start_date, datetime.date) and not isinstance(parsed_start_date, datetime.datetime):
+                                     start_ok = rel_ts.date() >= parsed_start_date
+                                elif isinstance(rel_ts, datetime.date) and not isinstance(rel_ts, datetime.datetime) and isinstance(parsed_start_date, datetime.datetime):
+                                     start_ok = rel_ts >= parsed_start_date.date()
+                                else:
+                                     start_ok = rel_ts >= parsed_start_date
+                                     
+                            end_ok = True
+                            if parsed_end_date:
+                                 if isinstance(rel_ts, datetime.datetime) and isinstance(parsed_end_date, datetime.date) and not isinstance(parsed_end_date, datetime.datetime):
+                                     end_ok = rel_ts.date() <= parsed_end_date
+                                 elif isinstance(rel_ts, datetime.date) and not isinstance(rel_ts, datetime.datetime) and isinstance(parsed_end_date, datetime.datetime):
+                                     end_ok = rel_ts <= parsed_end_date.date()
+                                 else:
+                                     end_ok = rel_ts <= parsed_end_date
+
+                            if start_ok and end_ok:
+                                temporally_filtered.append(rel)
+                                
+                        except ValueError:
+                            log.debug(f"Could not parse relationship timestamp: {ts_str} for rel ID {rel.id} using attribute '{self.relationship_timestamp_attribute}'")
+                            # Exclude relationship if timestamp is unparseable during filtering
+                            pass 
+                filtered_relationships = temporally_filtered
+                log.info(f"Found {len(filtered_relationships)} relationships after temporal filter.")
+        # --- Temporal Filtering Logic End ---
+        
         # build entity context
         entity_context, entity_context_data = build_entity_context(
             selected_entities=selected_entities,
@@ -416,7 +488,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 relationship_context_data,
             ) = build_relationship_context(
                 selected_entities=added_entities,
-                relationships=list(self.relationships.values()),
+                relationships=filtered_relationships,
                 token_encoder=self.token_encoder,
                 max_tokens=max_tokens,
                 column_delimiter=column_delimiter,
@@ -462,7 +534,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             candidate_context_data = get_candidate_context(
                 selected_entities=selected_entities,
                 entities=list(self.entities.values()),
-                relationships=list(self.relationships.values()),
+                relationships=filtered_relationships,
                 covariates=self.covariates,
                 include_entity_rank=include_entity_rank,
                 entity_rank_description=rank_description,

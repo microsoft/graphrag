@@ -312,6 +312,8 @@ class LocalSearchDefaults:
     llm_max_tokens: int = 2000
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
+    temporal_filtering_enabled: bool = True
+    relationship_timestamp_attribute: str = "timestamp"
 
 
 @dataclass

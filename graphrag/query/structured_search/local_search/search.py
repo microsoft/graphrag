@@ -65,10 +65,17 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         start_time = time.time()
         search_prompt = ""
         llm_calls, prompt_tokens, output_tokens = {}, {}, {}
+        
+        # Extract temporal parameters from kwargs
+        start_date = kwargs.pop("start_date", None)
+        end_date = kwargs.pop("end_date", None)
+        
         context_result = self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
-            **kwargs,
+            start_date=start_date, # Pass temporal parameters
+            end_date=end_date,     # Pass temporal parameters
+            **kwargs, # Pass remaining kwargs
             **self.context_builder_params,
         )
         llm_calls["build_context"] = context_result.llm_calls
@@ -140,13 +147,21 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
+        **kwargs, # Add kwargs here
     ) -> AsyncGenerator:
         """Build local search context that fits a single context window and generate answer for the user query."""
         start_time = time.time()
+        
+        # Extract temporal parameters from kwargs
+        start_date = kwargs.pop("start_date", None)
+        end_date = kwargs.pop("end_date", None)
 
         context_result = self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
+            start_date=start_date, # Pass temporal parameters
+            end_date=end_date,     # Pass temporal parameters
+            **kwargs, # Pass remaining kwargs
             **self.context_builder_params,
         )
         log.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)

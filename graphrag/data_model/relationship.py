@@ -34,6 +34,9 @@ class Relationship(Identified):
     rank: int | None = 1
     """Rank of the relationship, used for sorting (optional). Higher rank indicates more important relationship. This can be based on centrality or other metrics."""
 
+    timestamp: str | None = None
+    """Timestamp associated with the relationship (e.g., in ISO 8601 format). Optional."""
+
     attributes: dict[str, Any] | None = None
     """Additional attributes associated with the relationship (optional). To be included in the search prompt"""
 
@@ -49,6 +52,7 @@ class Relationship(Identified):
         rank_key: str = "rank",
         weight_key: str = "weight",
         text_unit_ids_key: str = "text_unit_ids",
+        timestamp_key: str = "timestamp",
         attributes_key: str = "attributes",
     ) -> "Relationship":
         """Create a new relationship from the dict data."""
@@ -61,5 +65,6 @@ class Relationship(Identified):
             description=d.get(description_key),
             weight=d.get(weight_key, 1.0),
             text_unit_ids=d.get(text_unit_ids_key),
+            timestamp=d.get(timestamp_key),
             attributes=d.get(attributes_key),
         )

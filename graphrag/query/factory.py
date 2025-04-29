@@ -90,6 +90,8 @@ def get_local_search_engine(
             embedding_vectorstore_key=EntityVectorStoreKey.ID,  # if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE
             text_embedder=embedding_model,
             token_encoder=token_encoder,
+            temporal_filtering_enabled=ls_config.temporal_filtering_enabled,
+            relationship_timestamp_attribute=ls_config.relationship_timestamp_attribute,
         ),
         token_encoder=token_encoder,
         model_params={
