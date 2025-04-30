@@ -65,7 +65,7 @@ async def build_index(
     if memory_profile:
         log.warning("New pipeline does not yet support memory profiling.")
 
-    pipeline = PipelineFactory.create_pipeline(config, method)
+    pipeline = PipelineFactory.create_pipeline(config, method, is_update_run)
 
     workflow_callbacks.pipeline_start(pipeline.names())
 
