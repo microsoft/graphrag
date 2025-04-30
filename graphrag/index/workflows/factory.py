@@ -56,7 +56,7 @@ def _get_workflows_list(
         "update_clean_state",
     ]
     if config.workflows:
-        return config.workflows + (update_workflows if is_update_run else [])
+        return config.workflows
 
     match method:
         case IndexingMethod.Standard:
