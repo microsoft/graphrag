@@ -12,14 +12,18 @@ from graphrag.index.typing.workflow import WorkflowFunctionOutput
 logger = logging.getLogger(__name__)
 
 
-async def run_workflow(
-    config: GraphRagConfig,
+async def run_workflow(  # noqa: RUF029
+    _config: GraphRagConfig,
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """Clean the state after the update."""
     logger.info("Cleaning State")
-    keys_to_delete = [key_name for key_name in context.state if key_name.startswith("incremental_update_")]
-    
+    keys_to_delete = [
+        key_name
+        for key_name in context.state
+        if key_name.startswith("incremental_update_")
+    ]
+
     for key_name in keys_to_delete:
         del context.state[key_name]
 
