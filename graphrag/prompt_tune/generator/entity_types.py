@@ -47,7 +47,10 @@ async def generate_entity_types(
 
     if json_mode:
         response = await model.achat(
-            entity_types_prompt, history=history, json_model=EntityTypesResponse
+            entity_types_prompt,
+            history=history,
+            json=json_mode,
+            json_model=EntityTypesResponse,
         )
         parsed_model = response.parsed_response
         return parsed_model.entity_types if parsed_model else []
