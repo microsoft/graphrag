@@ -20,7 +20,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
-    """Update the documents from a incremental index run."""
+    """Update the communities from a incremental index run."""
     logger.info("Updating Communities")
     output_storage, previous_storage, delta_storage = get_update_storages(
         config, context.state["update_timestamp"]
