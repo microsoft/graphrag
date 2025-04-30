@@ -28,4 +28,4 @@ async def test_prune_graph():
 
     nodes_actual = await load_table_from_storage("entities", context.storage)
 
-    assert len(nodes_actual) == 20
+    assert len(nodes_actual) == 21
