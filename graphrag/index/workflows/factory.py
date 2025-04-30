@@ -29,19 +29,35 @@ class PipelineFactory:
 
     @classmethod
     def create_pipeline(
-        cls, config: GraphRagConfig, method: IndexingMethod = IndexingMethod.Standard
+        cls,
+        config: GraphRagConfig,
+        method: IndexingMethod = IndexingMethod.Standard,
+        is_update_run: bool = False,
     ) -> Pipeline:
         """Create a pipeline generator."""
-        workflows = _get_workflows_list(config, method)
+        workflows = _get_workflows_list(config, method, is_update_run)
         return Pipeline([(name, cls.workflows[name]) for name in workflows])
 
 
 def _get_workflows_list(
-    config: GraphRagConfig, method: IndexingMethod = IndexingMethod.Standard
+    config: GraphRagConfig,
+    method: IndexingMethod = IndexingMethod.Standard,
+    is_update_run: bool = False,
 ) -> list[str]:
     """Return a list of workflows for the indexing pipeline."""
+    update_workflows = [
+        "update_final_documents",
+        "update_entities_relationships",
+        "update_text_units",
+        "update_covariates",
+        "update_communities",
+        "update_community_reports",
+        "update_text_embeddings",
+        "update_clean_state",
+    ]
     if config.workflows:
         return config.workflows
+
     match method:
         case IndexingMethod.Standard:
             return [
@@ -54,6 +70,7 @@ def _get_workflows_list(
                 "create_final_text_units",
                 "create_community_reports",
                 "generate_text_embeddings",
+                *(update_workflows if is_update_run else []),
             ]
         case IndexingMethod.Fast:
             return [
@@ -66,4 +83,5 @@ def _get_workflows_list(
                 "create_final_text_units",
                 "create_community_reports_text",
                 "generate_text_embeddings",
+                *(update_workflows if is_update_run else []),
             ]
