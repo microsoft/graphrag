@@ -80,7 +80,6 @@ async def run_pipeline(
                 pipeline=pipeline,
                 config=config,
                 dataset=delta_dataset.new_inputs,
-                callbacks=callbacks,
                 logger=logger,
                 context=context,
             ):
@@ -99,7 +98,6 @@ async def run_pipeline(
             pipeline=pipeline,
             config=config,
             dataset=dataset,
-            callbacks=callbacks,
             logger=logger,
             context=context,
         ):
@@ -110,7 +108,6 @@ async def _run_pipeline(
     pipeline: Pipeline,
     config: GraphRagConfig,
     dataset: pd.DataFrame,
-    callbacks: WorkflowCallbacks,
     logger: ProgressLogger,
     context: PipelineRunContext,
 ) -> AsyncIterable[PipelineRunResult]:
@@ -127,11 +124,11 @@ async def _run_pipeline(
         for name, workflow_function in pipeline.run():
             last_workflow = name
             progress = logger.child(name, transient=False)
-            callbacks.workflow_start(name, None)
+            context.callbacks.workflow_start(name, None)
             work_time = time.time()
             result = await workflow_function(config, context)
             progress(Progress(percent=1))
-            callbacks.workflow_end(name, result)
+            context.callbacks.workflow_end(name, result)
             yield PipelineRunResult(
                 workflow=name, result=result.result, state=context.state, errors=None
             )
@@ -143,7 +140,7 @@ async def _run_pipeline(
 
     except Exception as e:
         log.exception("error running workflow %s", last_workflow)
-        callbacks.error("Error running pipeline!", e, traceback.format_exc())
+        context.callbacks.error("Error running pipeline!", e, traceback.format_exc())
         yield PipelineRunResult(
             workflow=last_workflow, result=None, state=context.state, errors=[e]
         )
