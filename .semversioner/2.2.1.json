@@ -1,0 +1,18 @@
+{
+  "changes": [
+    {
+      "description": "Fix Community Report prompt tuning response",
+      "type": "patch"
+    },
+    {
+      "description": "Fix graph creation missing edge weights.",
+      "type": "patch"
+    },
+    {
+      "description": "Update as workflows",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2025-04-30T23:50:31+00:00",
+  "version": "2.2.1"
+}
