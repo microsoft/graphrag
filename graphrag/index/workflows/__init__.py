@@ -42,6 +42,9 @@ from .generate_text_embeddings import (
 from .prune_graph import (
     run_workflow as run_prune_graph,
 )
+from .update_clean_state import (
+    run_workflow as run_update_clean_state,
+)
 from .update_communities import (
     run_workflow as run_update_communities,
 )
@@ -85,4 +88,5 @@ PipelineFactory.register_all({
     "update_communities": run_update_communities,
     "update_covariates": run_update_covariates,
     "update_text_units": run_update_text_units,
+    "update_clean_state": run_update_clean_state,
 })
