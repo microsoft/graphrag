@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix graph creation missing edge weights."
-}
