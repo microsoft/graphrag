@@ -51,7 +51,7 @@ class SQLServerPipelineStorage(PipelineStorage):
         self._autogenerate_tables = autogenerate_tables
 
         # Use password-less authentication for the db server
-        self._local_connection_string = f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:{database_server_name}.database.windows.net,1433;Database={database_name};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30"
+        self._local_connection_string = f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:{database_server_name}.database.windows.net,1433;Database={database_name};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;LongAsMax=yes"
         if client_id:
             credential = ManagedIdentityCredential(client_id=client_id)
         else:
@@ -240,6 +240,24 @@ class SQLServerPipelineStorage(PipelineStorage):
                 key,
             )
             return None
+        
+    def _get_embeddings_dimension(self, df: pd.DataFrame) -> int:
+        """Get the dimension of the embeddings column in the DataFrame.
+
+        Args:
+            df: The DataFrame containing the embeddings column
+
+        Returns
+        -------
+            The dimension of the embeddings column
+        """
+        if "embedding" in df.columns:
+            embedding_column = df["embedding"].iloc[0]
+            if isinstance(embedding_column, list):
+                return len(embedding_column)
+            if isinstance(embedding_column, np.ndarray):
+                return embedding_column.shape[0]
+        return 0
 
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Set data in SQL Server.
@@ -267,7 +285,11 @@ class SQLServerPipelineStorage(PipelineStorage):
                         sql_type = "NVARCHAR(MAX)"  # Default type
 
                         # Map pandas dtypes to SQL Server types
-                        if pd.api.types.is_integer_dtype(dtype):
+                        if col_name == "embedding":
+                            # If we are writing the vector embeddings dataframe, set the embedding column to VECTOR
+                            dim = self._get_embeddings_dimension(data_frame)
+                            sql_type = f"VECTOR({dim})" if dim != 0 else "VECTOR(1536)"  # GraphRAG default embedding dimension
+                        elif pd.api.types.is_integer_dtype(dtype):
                             sql_type = "BIGINT"
                         elif pd.api.types.is_float_dtype(dtype):
                             sql_type = "FLOAT"
