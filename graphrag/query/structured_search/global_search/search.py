@@ -67,6 +67,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         reduce_max_length: int = 2000,
         context_builder_params: dict[str, Any] | None = None,
         concurrent_coroutines: int = 32,
+        raw_chunks: bool = True,  # Added raw_chunks parameter
     ):
         super().__init__(
             model=model,
@@ -83,6 +84,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         )
         self.callbacks = callbacks or []
         self.max_data_tokens = max_data_tokens
+        self.raw_chunks = raw_chunks  # Store raw_chunks parameter
 
         self.map_llm_params = map_llm_params if map_llm_params else {}
         self.reduce_llm_params = reduce_llm_params if reduce_llm_params else {}
@@ -155,6 +157,20 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
+        
+        # Print raw chunks if enabled
+        if self.raw_chunks:
+            print("\n=== CONTEXT SENT TO LLM (GLOBAL SEARCH) ===")
+            print("\nInitial Context Chunks:")
+            print(context_result.context_chunks)
+            print("\nCommunity Reports:")
+            if hasattr(context_result, 'community_reports'):
+                for i, report in enumerate(context_result.community_reports, 1):
+                    print(f"\nReport {i}:")
+                    print(report)
+            print("=== END INITIAL CONTEXT ===\n")
+            
+            
         llm_calls["build_context"] = context_result.llm_calls
         prompt_tokens["build_context"] = context_result.prompt_tokens
         output_tokens["build_context"] = context_result.output_tokens
@@ -171,6 +187,14 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             )
             for data in context_result.context_chunks
         ])
+        
+         # Print map responses if raw_chunks is enabled
+        if self.raw_chunks:
+            print("\n=== MAP RESPONSES ===")
+            for i, response in enumerate(map_responses, 1):
+                print(f"\nBatch {i} Response:")
+                print(response.response)
+            print("=== END MAP RESPONSES ===\n")
 
         for callback in self.callbacks:
             callback.on_map_response_end(map_responses)
@@ -186,6 +210,15 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             query=query,
             **self.reduce_llm_params,
         )
+        
+        # Print reduce context if raw_chunks is enabled
+        if self.raw_chunks:
+            print("\n=== REDUCE CONTEXT ===")
+            print("\nReduce Input:")
+            print(reduce_response.context_text)
+            print("=== END REDUCE CONTEXT ===\n")
+            
+            
         llm_calls["reduce"] = reduce_response.llm_calls
         prompt_tokens["reduce"] = reduce_response.prompt_tokens
         output_tokens["reduce"] = reduce_response.output_tokens

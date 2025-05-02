@@ -38,6 +38,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         callbacks: list[QueryCallbacks] | None = None,
         model_params: dict[str, Any] | None = None,
         context_builder_params: dict | None = None,
+        raw_chunks: bool = True,
     ):
         super().__init__(
             model=model,
@@ -49,6 +50,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         self.system_prompt = system_prompt or LOCAL_SEARCH_SYSTEM_PROMPT
         self.callbacks = callbacks or []
         self.response_type = response_type
+        self.raw_chunks = raw_chunks
 
     async def search(
         self,
@@ -66,6 +68,13 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             **kwargs,
             **self.context_builder_params,
         )
+
+        if self.raw_chunks:
+            print("\n=== CONTEXT SENT TO LLM ===")
+            print(f"Context chunks used for LLM prompt:")
+            print(context_result.context_chunks)
+            print("=== END CONTEXT ===\n")
+
         llm_calls["build_context"] = context_result.llm_calls
         prompt_tokens["build_context"] = context_result.prompt_tokens
         output_tokens["build_context"] = context_result.output_tokens
@@ -89,6 +98,10 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             ]
 
             full_response = ""
+
+            # Call callbacks with context before formatting prompt
+            for callback in self.callbacks:
+                callback.on_context(context_result)
 
             async for response in self.model.achat_stream(
                 prompt=query,
@@ -145,9 +158,14 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             **self.context_builder_params,
         )
         log.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
+         
+        
         search_prompt = self.system_prompt.format(
-            context_data=context_result.context_chunks, response_type=self.response_type
+            context_data=context_result.context_chunks, 
+            response_type=self.response_type
         )
+        
+        
         history_messages = [
             {"role": "system", "content": search_prompt},
         ]

@@ -39,15 +39,16 @@ from graphrag.vector_stores.base import BaseVectorStore
 
 def get_local_search_engine(
     config: GraphRagConfig,
-    reports: list[CommunityReport],
-    text_units: list[TextUnit],
-    entities: list[Entity],
-    relationships: list[Relationship],
+    reports: dict[str, list[CommunityReport]],
+    text_units: dict[str, list[TextUnit]],
+    entities: dict[str, list[Entity]],
+    relationships: dict[str, list[Relationship]],
     covariates: dict[str, list[Covariate]],
     response_type: str,
     description_embedding_store: BaseVectorStore,
     system_prompt: str | None = None,
     callbacks: list[QueryCallbacks] | None = None,
+    raw_chunks: bool = True,
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
     model_settings = config.get_language_model_config(config.local_search.chat_model_id)
@@ -110,12 +111,13 @@ def get_local_search_engine(
             "include_community_rank": False,
             "return_candidate_context": False,
             "embedding_vectorstore_key": EntityVectorStoreKey.ID,  # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
-            "max_context_tokens": ls_config.max_context_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+            "max_tokens": ls_config.max_tokens  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+
         },
         response_type=response_type,
         callbacks=callbacks,
+        raw_chunks=raw_chunks  # Only pass raw_chunks here
     )
-
 
 def get_global_search_engine(
     config: GraphRagConfig,
@@ -128,6 +130,7 @@ def get_global_search_engine(
     reduce_system_prompt: str | None = None,
     general_knowledge_inclusion_prompt: str | None = None,
     callbacks: list[QueryCallbacks] | None = None,
+    raw_chunks: bool = True,  # Added raw_chunks parameter
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
     model_settings = config.get_language_model_config(
@@ -200,6 +203,7 @@ def get_global_search_engine(
         concurrent_coroutines=model_settings.concurrent_requests,
         response_type=response_type,
         callbacks=callbacks,
+        raw_chunks=raw_chunks  # Added raw_chunks parameter
     )
 
 
@@ -214,6 +218,7 @@ def get_drift_search_engine(
     local_system_prompt: str | None = None,
     reduce_system_prompt: str | None = None,
     callbacks: list[QueryCallbacks] | None = None,
+    raw_chunks: bool = True,  # Added raw_chunks parameter
 ) -> DRIFTSearch:
     """Create a local search engine based on data + configuration."""
     chat_model_settings = config.get_language_model_config(
@@ -267,6 +272,7 @@ def get_drift_search_engine(
         ),
         token_encoder=token_encoder,
         callbacks=callbacks,
+        raw_chunks=raw_chunks  # Added raw_chunks parameter
     )
 
 

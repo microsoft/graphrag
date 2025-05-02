@@ -126,7 +126,6 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T]) -> T:
     future = asyncio.run_coroutine_threadsafe(coroutine, _loop)
     return future.result()
 
-
 def is_reasoning_model(model: str) -> bool:
     """Return whether the model uses a known OpenAI reasoning model."""
     return model.lower() in {"o1", "o1-mini", "o3-mini"}

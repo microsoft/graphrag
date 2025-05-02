@@ -375,6 +375,14 @@ def _prompt_tune_cli(
 def _query_cli(
     method: Annotated[SearchMethod, typer.Option(help="The query algorithm to use.")],
     query: Annotated[str, typer.Option(help="The query to execute.")],
+    raw_chunks: Annotated[
+        bool,
+        typer.Option(
+            "--raw-chunks",
+            help="Show raw chunks retrieved from vector store before final response.",
+            is_flag=True
+        ),
+    ] = False,
     config: Annotated[
         Path | None,
         typer.Option(
@@ -451,6 +459,7 @@ def _query_cli(
                 response_type=response_type,
                 streaming=streaming,
                 query=query,
+                raw_chunks=raw_chunks,   # Added for local search
             )
         case SearchMethod.GLOBAL:
             run_global_search(
@@ -462,6 +471,7 @@ def _query_cli(
                 response_type=response_type,
                 streaming=streaming,
                 query=query,
+                raw_chunks=raw_chunks,  # Added for global search
             )
         case SearchMethod.DRIFT:
             run_drift_search(
@@ -472,6 +482,7 @@ def _query_cli(
                 streaming=streaming,
                 response_type=response_type,
                 query=query,
+                raw_chunks=raw_chunks,  # Added for drift search
             )
         case SearchMethod.BASIC:
             run_basic_search(
