@@ -1,6 +1,12 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 2.2.1
+
+- patch: Fix Community Report prompt tuning response
+- patch: Fix graph creation missing edge weights.
+- patch: Update as workflows
+
 ## 2.2.0
 
 - minor: Support OpenAI reasoning models.
