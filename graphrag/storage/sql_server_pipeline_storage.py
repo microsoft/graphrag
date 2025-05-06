@@ -219,7 +219,7 @@ class SQLServerPipelineStorage(PipelineStorage):
                     data.append(processed_row)
 
                 # Create DataFrame from processed data
-                data_frame = pd.DataFrame(data, columns=columns)
+                data_frame = pd.DataFrame(data, columns=np.array(columns))
                 buffer = BytesIO()
                 data_frame.to_parquet(buffer)
                 buffer.seek(0)
