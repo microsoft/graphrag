@@ -21,7 +21,7 @@ def prune_graph(
     max_node_freq_std: float | None = None,
     min_node_degree: int = 1,
     max_node_degree_std: float | None = None,
-    min_edge_weight_pct: float = 0,
+    min_edge_weight_pct: float = 40,
     remove_ego_nodes: bool = False,
     lcc_only: bool = False,
 ) -> nx.Graph:

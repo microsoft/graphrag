@@ -152,6 +152,8 @@ def split_single_text_on_tokens(text: str, tokenizer: Tokenizer) -> list[str]:
     while start_idx < len(input_ids):
         chunk_text = tokenizer.decode(list(chunk_ids))
         result.append(chunk_text)  # Append chunked text as string
+        if cur_idx == len(input_ids):
+            break
         start_idx += tokenizer.tokens_per_chunk - tokenizer.chunk_overlap
         cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
         chunk_ids = input_ids[start_idx:cur_idx]
@@ -186,6 +188,8 @@ def split_multiple_texts_on_tokens(
         chunk_text = tokenizer.decode([id for _, id in chunk_ids])
         doc_indices = list({doc_idx for doc_idx, _ in chunk_ids})
         result.append(TextChunk(chunk_text, doc_indices, len(chunk_ids)))
+        if cur_idx == len(input_ids):
+            break
         start_idx += tokenizer.tokens_per_chunk - tokenizer.chunk_overlap
         cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
         chunk_ids = input_ids[start_idx:cur_idx]

@@ -10,13 +10,8 @@ To get started with the GraphRAG system, you have a few options:
 👉 [Install from pypi](https://pypi.org/project/graphrag/). <br/>
 👉 [Use it from source](developing.md)<br/>
 
-## Quickstart
+The following is a simple end-to-end example for using the GraphRAG system, using the install from pypi option.
 
-To get started with the GraphRAG system we recommend trying the [Solution Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) package. This provides a user-friendly end-to-end experience with Azure resources.
-
-# Overview
-
-The following is a simple end-to-end example for using the GraphRAG system.
 It shows how to use the system to index some text, and then use the indexed data to answer questions about the documents.
 
 # Install GraphRAG
@@ -24,8 +19,6 @@ It shows how to use the system to index some text, and then use the indexed data
 ```bash
 pip install graphrag
 ```
-
-The graphrag library includes a CLI for a no-code approach to getting started. Please review the full [CLI documentation](cli.md) for further detail.
 
 # Running the Indexer
 
@@ -53,17 +46,17 @@ graphrag init --root ./ragtest
 This will create two files: `.env` and `settings.yaml` in the `./ragtest` directory.
 
 - `.env` contains the environment variables required to run the GraphRAG pipeline. If you inspect the file, you'll see a single environment variable defined,
-  `GRAPHRAG_API_KEY=<API_KEY>`. This is the API key for the OpenAI API or Azure OpenAI endpoint. You can replace this with your own API key. If you are using another form of authentication (i.e. managed identity), please delete this file.
+  `GRAPHRAG_API_KEY=<API_KEY>`. Replace `<API_KEY>` with your own OpenAI or Azure API key.
 - `settings.yaml` contains the settings for the pipeline. You can modify this file to change the settings for the pipeline.
   <br/>
 
-#### <ins>OpenAI and Azure OpenAI</ins>
+### Using OpenAI
 
-If running in OpenAI mode, update the value of `GRAPHRAG_API_KEY` in the `.env` file with your OpenAI API key.
+If running in OpenAI mode, you only need to update the value of `GRAPHRAG_API_KEY` in the `.env` file with your OpenAI API key.
 
-#### <ins>Azure OpenAI</ins>
+### Using Azure OpenAI
 
-In addition, Azure OpenAI users should set the following variables in the settings.yaml file. To find the appropriate sections, just search for the `llm:` configuration, you should see two sections, one for the chat endpoint and one for the embeddings endpoint. Here is an example of how to configure the chat endpoint:
+In addition to setting your API key, Azure OpenAI users should set the variables below in the settings.yaml file. To find the appropriate sections, just search for the `models:` root configuration; you should see two sections, one for the default chat endpoint and one for the default embeddings endpoint. Here is an example of what to add to the chat model config:
 
 ```yaml
 type: azure_openai_chat # Or azure_openai_embedding for embeddings
@@ -72,9 +65,15 @@ api_version: 2024-02-15-preview # You can customize this for other versions
 deployment_name: <azure_model_deployment_name>
 ```
 
-- For more details about configuring GraphRAG, see the [configuration documentation](config/overview.md).
-- To learn more about Initialization, refer to the [Initialization documentation](config/init.md).
-- For more details about using the CLI, refer to the [CLI documentation](cli.md).
+#### Using Managed Auth on Azure
+To use managed auth, add an additional value to your model config and comment out or remove the api_key line:
+
+```yaml
+auth_type: azure_managed_identity # Default auth_type is is api_key
+# api_key: ${GRAPHRAG_API_KEY}
+```
+
+You will also need to login with [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli) and select the subscription with your endpoint.
 
 ## Running the Indexing pipeline
 
@@ -86,12 +85,10 @@ graphrag index --root ./ragtest
 
 ![pipeline executing from the CLI](img/pipeline-running.png)
 
-This process will take some time to run. This depends on the size of your input data, what model you're using, and the text chunk size being used (these can be configured in your `settings.yml` file).
+This process will take some time to run. This depends on the size of your input data, what model you're using, and the text chunk size being used (these can be configured in your `settings.yaml` file).
 Once the pipeline is complete, you should see a new folder called `./ragtest/output` with a series of parquet files.
 
 # Using the Query Engine
-
-## Running the Query Engine
 
 Now let's ask some questions using this dataset.
 
@@ -115,5 +112,9 @@ graphrag query \
 
 Please refer to [Query Engine](query/overview.md) docs for detailed information about how to leverage our Local and Global search mechanisms for extracting meaningful insights from data after the Indexer has wrapped up execution.
 
-# Visualizing the Graph
-Check out our [visualization guide](visualization_guide.md) for a more interactive experience in debugging and exploring the knowledge graph.
+# Going Deeper
+
+- For more details about configuring GraphRAG, see the [configuration documentation](config/overview.md).
+- To learn more about Initialization, refer to the [Initialization documentation](config/init.md).
+- For more details about using the CLI, refer to the [CLI documentation](cli.md).
+- Check out our [visualization guide](visualization_guide.md) for a more interactive experience in debugging and exploring the knowledge graph.
