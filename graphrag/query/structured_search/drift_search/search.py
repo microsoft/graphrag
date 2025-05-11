@@ -346,7 +346,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         llm_calls: dict[str, int],
         prompt_tokens: dict[str, int],
         output_tokens: dict[str, int],
-        **llm_kwargs,
+        model_params: dict[str, Any],
     ) -> str:
         """Reduce the response to a single comprehensive response.
 
@@ -356,7 +356,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             The responses to reduce.
         query : str
             The original query.
-        llm_kwargs : dict[str, Any]
+        model_params : dict[str, Any]
             Additional keyword arguments to pass to the LLM.
 
         Returns
@@ -386,7 +386,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         model_response = await self.model.achat(
             prompt=query,
             history=search_messages,
-            model_parameters=llm_kwargs,
+            model_parameters=model_params,
         )
 
         reduced_response = model_response.output.content
@@ -413,6 +413,8 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             The responses to reduce.
         query : str
             The original query.
+        model_params : dict[str, Any]
+            Additional keyword arguments to pass to the LLM.
 
         Returns
         -------
