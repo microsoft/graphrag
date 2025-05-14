@@ -13,6 +13,8 @@ from graphrag.language_model.providers.fnllm.models import (
     AzureOpenAIEmbeddingFNLLM,
     OpenAIChatFNLLM,
     OpenAIEmbeddingFNLLM,
+    GeminiChatFNLLM,  # Import Gemini Chat model
+    GeminiEmbeddingFNLLM,  # Import Gemini Embedding model
 )
 
 
@@ -48,7 +50,7 @@ class ModelFactory:
             A ChatModel instance.
         """
         if model_type not in cls._chat_registry:
-            msg = f"ChatMOdel implementation '{model_type}' is not registered."
+            msg = f"ChatModel implementation '{model_type}' is not registered."
             raise ValueError(msg)
         return cls._chat_registry[model_type](**kwargs)
 
@@ -105,10 +107,16 @@ ModelFactory.register_chat(
 ModelFactory.register_chat(
     ModelType.OpenAIChat, lambda **kwargs: OpenAIChatFNLLM(**kwargs)
 )
+ModelFactory.register_chat(
+    ModelType.GeminiChat, lambda **kwargs: GeminiChatFNLLM(**kwargs)  # Register Gemini Chat
+)
 
 ModelFactory.register_embedding(
     ModelType.AzureOpenAIEmbedding, lambda **kwargs: AzureOpenAIEmbeddingFNLLM(**kwargs)
 )
 ModelFactory.register_embedding(
     ModelType.OpenAIEmbedding, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
+)
+ModelFactory.register_embedding(
+    ModelType.GeminiEmbedding, lambda **kwargs: GeminiEmbeddingFNLLM(**kwargs)  # Register Gemini Embedding
 )
