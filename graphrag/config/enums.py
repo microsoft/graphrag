@@ -106,10 +106,12 @@ class ModelType(str, Enum):
     # Embeddings
     OpenAIEmbedding = "openai_embedding"
     AzureOpenAIEmbedding = "azure_openai_embedding"
+    GeminiEmbedding = "gemini_embedding"  # New entry for Gemini Embedding
 
     # Chat Completion
     OpenAIChat = "openai_chat"
     AzureOpenAIChat = "azure_openai_chat"
+    GeminiChat = "gemini_chat"  # New entry for Gemini Chat Completion
 
     # Debug
     MockChat = "mock_chat"
@@ -118,7 +120,6 @@ class ModelType(str, Enum):
     def __repr__(self):
         """Get a string representation."""
         return f'"{self.value}"'
-
 
 class AuthType(str, Enum):
     """AuthType enum class definition."""
