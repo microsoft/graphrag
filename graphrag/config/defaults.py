@@ -80,7 +80,7 @@ class ClusterGraphDefaults:
     """Default values for cluster graph."""
 
     max_cluster_size: int = 10
-    use_lcc: bool = True
+    use_lcc: bool = False
     seed: int = 0xDEADBEEF
 
 
