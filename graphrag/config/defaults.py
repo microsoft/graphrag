@@ -5,6 +5,7 @@
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
 
 from graphrag.config.enums import (
     AsyncType,
@@ -275,8 +276,8 @@ class LanguageModelDefaults:
     proxy: None = None
     audience: None = None
     model_supports_json: None = None
-    tokens_per_minute: int = 50_000
-    requests_per_minute: int = 1_000
+    tokens_per_minute: Literal["auto"] = "auto"
+    requests_per_minute: Literal["auto"] = "auto"
     retry_strategy: str = "native"
     max_retries: int = 10
     max_retry_wait: float = 10.0

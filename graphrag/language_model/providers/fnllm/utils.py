@@ -81,7 +81,6 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
             encoding=encoding_model,
             deployment=config.deployment_name,
             chat_parameters=chat_parameters,
-            sleep_on_rate_limit_recommendation=True,
         )
     return PublicOpenAIConfig(
         api_key=config.api_key,
@@ -98,7 +97,6 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
         model=config.model,
         encoding=encoding_model,
         chat_parameters=chat_parameters,
-        sleep_on_rate_limit_recommendation=True,
     )
 
 
