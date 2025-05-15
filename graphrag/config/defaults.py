@@ -6,6 +6,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from graphrag.config.embeddings import default_embeddings
 from graphrag.config.enums import (
     AsyncType,
     AuthType,
@@ -17,7 +18,6 @@ from graphrag.config.enums import (
     NounPhraseExtractorType,
     OutputType,
     ReportingType,
-    TextEmbeddingTarget,
 )
 from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
     EN_STOP_WORDS,
@@ -80,7 +80,7 @@ class ClusterGraphDefaults:
     """Default values for cluster graph."""
 
     max_cluster_size: int = 10
-    use_lcc: bool = False
+    use_lcc: bool = True
     seed: int = 0xDEADBEEF
 
 
@@ -146,9 +146,8 @@ class EmbedTextDefaults:
     model: str = "text-embedding-3-small"
     batch_size: int = 16
     batch_max_tokens: int = 8191
-    target = TextEmbeddingTarget.required
     model_id: str = DEFAULT_EMBEDDING_MODEL_ID
-    names: list[str] = field(default_factory=list)
+    names: list[str] = field(default_factory=lambda: default_embeddings)
     strategy: None = None
     vector_store_id: str = DEFAULT_VECTOR_STORE_ID
 

@@ -87,19 +87,6 @@ class ReportingType(str, Enum):
         return f'"{self.value}"'
 
 
-class TextEmbeddingTarget(str, Enum):
-    """The target to use for text embeddings."""
-
-    all = "all"
-    required = "required"
-    selected = "selected"
-    none = "none"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
 class ModelType(str, Enum):
     """LLMType enum class definition."""
 
