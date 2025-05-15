@@ -140,7 +140,7 @@ class TestIndexer:
             "--logger",
             "print",
             "--method",
-            "standard"
+            "standard",
         ]
         command = [arg for arg in command if arg]
         log.info("running command ", " ".join(command))
