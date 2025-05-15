@@ -154,6 +154,7 @@ def read_communities(
     level_col: str = "level",
     entities_col: str | None = "entity_ids",
     relationships_col: str | None = "relationship_ids",
+    text_units_col: str | None = "text_unit_ids",
     covariates_col: str | None = "covariate_ids",
     parent_col: str | None = "parent",
     children_col: str | None = "children",
@@ -171,6 +172,7 @@ def read_communities(
             level=to_str(row, level_col),
             entity_ids=to_optional_list(row, entities_col, item_type=str),
             relationship_ids=to_optional_list(row, relationships_col, item_type=str),
+            text_unit_ids=to_optional_list(row, text_units_col, item_type=str),
             covariate_ids=to_optional_dict(
                 row, covariates_col, key_type=str, value_type=str
             ),
