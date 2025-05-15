@@ -176,3 +176,15 @@ class NounPhraseExtractorType(str, Enum):
     """Noun phrase extractor based on dependency parsing and NER using SpaCy."""
     CFG = "cfg"
     """Noun phrase extractor combining CFG-based noun-chunk extraction and NER."""
+
+
+class ModularityMetric(str, Enum):
+    """Enum for the modularity metric to use."""
+
+    Graph = "graph"
+    """Graph modularity metric."""
+
+    LCC = "lcc"
+
+    WeightedComponents = "weighted_components"
+    """Weighted components modularity metric."""

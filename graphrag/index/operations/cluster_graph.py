@@ -6,6 +6,7 @@
 import logging
 
 import networkx as nx
+from graspologic.partition import hierarchical_leiden
 
 from graphrag.index.utils.stable_lcc import stable_largest_connected_component
 
@@ -60,9 +61,6 @@ def _compute_leiden_communities(
     seed: int | None = None,
 ) -> tuple[dict[int, dict[str, int]], dict[int, int]]:
     """Return Leiden root communities and their hierarchy mapping."""
-    # NOTE: This import is done here to reduce the initial import time of the graphrag package
-    from graspologic.partition import hierarchical_leiden
-
     if use_lcc:
         graph = stable_largest_connected_component(graph)
 
