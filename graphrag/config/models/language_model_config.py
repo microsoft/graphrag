@@ -3,6 +3,8 @@
 
 """Language model configuration."""
 
+from typing import Literal
+
 import tiktoken
 from pydantic import BaseModel, Field, model_validator
 
@@ -192,11 +194,11 @@ class LanguageModelConfig(BaseModel):
         description="The request timeout to use.",
         default=language_model_defaults.request_timeout,
     )
-    tokens_per_minute: int = Field(
+    tokens_per_minute: int | Literal["auto"] | None = Field(
         description="The number of tokens per minute to use for the LLM service.",
         default=language_model_defaults.tokens_per_minute,
     )
-    requests_per_minute: int = Field(
+    requests_per_minute: int | Literal["auto"] | None = Field(
         description="The number of requests per minute to use for the LLM service.",
         default=language_model_defaults.requests_per_minute,
     )
