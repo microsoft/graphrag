@@ -139,6 +139,8 @@ class TestIndexer:
             root.resolve().as_posix(),
             "--logger",
             "print",
+            "--method",
+            "standard",
         ]
         command = [arg for arg in command if arg]
         log.info("running command ", " ".join(command))
