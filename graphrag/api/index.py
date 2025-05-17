@@ -66,7 +66,7 @@ async def build_index(
         log.warning("New pipeline does not yet support memory profiling.")
 
     # todo: this could propagate out to the cli for better clarity, but will be a breaking api change
-    method = "${method}-update}" if is_update_run else method
+    method = _get_method(method, is_update_run)
     pipeline = PipelineFactory.create_pipeline(config, method)
 
     workflow_callbacks.pipeline_start(pipeline.names())
@@ -92,3 +92,7 @@ async def build_index(
 def register_workflow_function(name: str, workflow: WorkflowFunction):
     """Register a custom workflow function. You can then include the name in the settings.yaml workflows list."""
     PipelineFactory.register(name, workflow)
+
+def _get_method(method: IndexingMethod | str, is_update_run: bool) -> str:
+    m = method.value if isinstance(method, IndexingMethod) else method
+    return f"{m}-update" if is_update_run else m
