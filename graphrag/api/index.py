@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 
 async def build_index(
     config: GraphRagConfig,
-    method: IndexingMethod = IndexingMethod.Standard,
+    method: IndexingMethod | str = IndexingMethod.Standard,
     is_update_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
@@ -65,7 +65,9 @@ async def build_index(
     if memory_profile:
         log.warning("New pipeline does not yet support memory profiling.")
 
-    pipeline = PipelineFactory.create_pipeline(config, method, is_update_run)
+    # todo: this could propagate out to the cli for better clarity, but will be a breaking api change
+    method = "${method}-update}" if is_update_run else method
+    pipeline = PipelineFactory.create_pipeline(config, method)
 
     workflow_callbacks.pipeline_start(pipeline.names())
 

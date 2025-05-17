@@ -152,6 +152,10 @@ class IndexingMethod(str, Enum):
     """Traditional GraphRAG indexing, with all graph construction and summarization performed by a language model."""
     Fast = "fast"
     """Fast indexing, using NLP for graph construction and language model for summarization."""
+    StandardUpdate = "standard-update"
+    """Incremental update with standard indexing."""
+    FastUpdate = "fast-update"
+    """Incremental update with fast indexing."""
 
 
 class NounPhraseExtractorType(str, Enum):
