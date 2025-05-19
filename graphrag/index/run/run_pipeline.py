@@ -72,7 +72,10 @@ async def run_pipeline(
             state["update_timestamp"] = update_timestamp
 
             context = create_run_context(
-                storage=delta_storage, cache=cache, callbacks=callbacks, state=state
+                output_storage=delta_storage,
+                cache=cache,
+                callbacks=callbacks,
+                state=state,
             )
 
             # Run the pipeline on the new documents
@@ -91,7 +94,7 @@ async def run_pipeline(
         logger.info("Running standard indexing.")
 
         context = create_run_context(
-            storage=storage, cache=cache, callbacks=callbacks, state=state
+            output_storage=storage, cache=cache, callbacks=callbacks, state=state
         )
 
         async for table in _run_pipeline(
@@ -119,7 +122,7 @@ async def _run_pipeline(
 
     try:
         await _dump_json(context)
-        await write_table_to_storage(dataset, "documents", context.storage)
+        await write_table_to_storage(dataset, "documents", context.output_storage)
 
         for name, workflow_function in pipeline.run():
             last_workflow = name
@@ -148,10 +151,10 @@ async def _run_pipeline(
 
 async def _dump_json(context: PipelineRunContext) -> None:
     """Dump the stats and context state to the storage."""
-    await context.storage.set(
+    await context.output_storage.set(
         "stats.json", json.dumps(asdict(context.stats), indent=4, ensure_ascii=False)
     )
-    await context.storage.set(
+    await context.output_storage.set(
         "context.json", json.dumps(context.state, indent=4, ensure_ascii=False)
     )
 

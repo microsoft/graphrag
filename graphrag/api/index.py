@@ -93,6 +93,7 @@ def register_workflow_function(name: str, workflow: WorkflowFunction):
     """Register a custom workflow function. You can then include the name in the settings.yaml workflows list."""
     PipelineFactory.register(name, workflow)
 
+
 def _get_method(method: IndexingMethod | str, is_update_run: bool) -> str:
     m = method.value if isinstance(method, IndexingMethod) else method
     return f"{m}-update" if is_update_run else m

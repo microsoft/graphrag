@@ -20,7 +20,7 @@ from graphrag.utils.api import create_storage_from_config
 
 
 def create_run_context(
-    storage: PipelineStorage | None = None,
+    output_storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
     stats: PipelineRunStats | None = None,
@@ -30,7 +30,7 @@ def create_run_context(
     return PipelineRunContext(
         stats=stats or PipelineRunStats(),
         cache=cache or InMemoryCache(),
-        storage=storage or MemoryPipelineStorage(),
+        output_storage=output_storage or MemoryPipelineStorage(),
         callbacks=callbacks or NoopWorkflowCallbacks(),
         state=state or {},
     )

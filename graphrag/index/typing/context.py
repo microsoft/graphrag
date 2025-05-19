@@ -18,7 +18,7 @@ class PipelineRunContext:
     """Provides the context for the current pipeline run."""
 
     stats: PipelineRunStats
-    storage: PipelineStorage
+    output_storage: PipelineStorage
     "Long-term storage for pipeline verbs to use. Items written here will be written to the storage provider."
     cache: PipelineCache
     "Cache instance for reading previous LLM responses."

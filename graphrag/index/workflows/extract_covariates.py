@@ -28,7 +28,7 @@ async def run_workflow(
     """All the steps to extract and format covariates."""
     output = None
     if config.extract_claims.enabled:
-        text_units = await load_table_from_storage("text_units", context.storage)
+        text_units = await load_table_from_storage("text_units", context.output_storage)
 
         extract_claims_llm_settings = config.get_language_model_config(
             config.extract_claims.model_id
@@ -51,7 +51,7 @@ async def run_workflow(
             num_threads=num_threads,
         )
 
-        await write_table_to_storage(output, "covariates", context.storage)
+        await write_table_to_storage(output, "covariates", context.output_storage)
 
     return WorkflowFunctionOutput(result=output)
 

@@ -20,8 +20,10 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
-    entities = await load_table_from_storage("entities", context.storage)
-    relationships = await load_table_from_storage("relationships", context.storage)
+    entities = await load_table_from_storage("entities", context.output_storage)
+    relationships = await load_table_from_storage(
+        "relationships", context.output_storage
+    )
 
     pruned_entities, pruned_relationships = prune_graph(
         entities,
@@ -29,8 +31,10 @@ async def run_workflow(
         pruning_config=config.prune_graph,
     )
 
-    await write_table_to_storage(pruned_entities, "entities", context.storage)
-    await write_table_to_storage(pruned_relationships, "relationships", context.storage)
+    await write_table_to_storage(pruned_entities, "entities", context.output_storage)
+    await write_table_to_storage(
+        pruned_relationships, "relationships", context.output_storage
+    )
 
     return WorkflowFunctionOutput(
         result={
