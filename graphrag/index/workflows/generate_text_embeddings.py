@@ -16,11 +16,10 @@ from graphrag.config.embeddings import (
     document_text_embedding,
     entity_description_embedding,
     entity_title_embedding,
-    get_embedded_fields,
-    get_embedding_settings,
     relationship_description_embedding,
     text_unit_text_embedding,
 )
+from graphrag.config.get_embedding_settings import get_embedding_settings
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.embed_text import embed_text
 from graphrag.index.typing.context import PipelineRunContext
@@ -57,7 +56,7 @@ async def run_workflow(
             "community_reports", context.storage
         )
 
-    embedded_fields = get_embedded_fields(config)
+    embedded_fields = config.embed_text.names
     text_embed = get_embedding_settings(config)
 
     output = await generate_text_embeddings(
@@ -92,7 +91,7 @@ async def generate_text_embeddings(
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     text_embed_config: dict,
-    embedded_fields: set[str],
+    embedded_fields: list[str],
 ) -> dict[str, pd.DataFrame]:
     """All the steps to generate all embeddings."""
     embedding_param_map = {
@@ -148,20 +147,20 @@ async def generate_text_embeddings(
     outputs = {}
     for field in embedded_fields:
         if embedding_param_map[field]["data"] is None:
-            msg = f"Embedding {field} is specified but data table is not in storage."
-            raise ValueError(msg)
-
-        outputs[field] = await _run_and_snapshot_embeddings(
-            name=field,
-            callbacks=callbacks,
-            cache=cache,
-            text_embed_config=text_embed_config,
-            **embedding_param_map[field],
-        )
+            msg = f"Embedding {field} is specified but data table is not in storage. This may or may not be intentional - if you expect it to me here, please check for errors earlier in the logs."
+            log.warning(msg)
+        else:
+            outputs[field] = await _run_embeddings(
+                name=field,
+                callbacks=callbacks,
+                cache=cache,
+                text_embed_config=text_embed_config,
+                **embedding_param_map[field],
+            )
     return outputs
 
 
-async def _run_and_snapshot_embeddings(
+async def _run_embeddings(
     name: str,
     data: pd.DataFrame,
     embed_column: str,
