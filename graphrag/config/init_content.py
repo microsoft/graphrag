@@ -58,9 +58,11 @@ models:
 ### Input settings ###
 
 input:
-  type: {graphrag_config_defaults.input.type.value} # or blob
+  storage:
+    type: {graphrag_config_defaults.input.storage.type.value} # or blob
+    base_dir: "{graphrag_config_defaults.input.storage.base_dir}"
   file_type: {graphrag_config_defaults.input.file_type.value} # [csv, text, json]
-  base_dir: "{graphrag_config_defaults.input.base_dir}"
+  
 
 chunks:
   size: {graphrag_config_defaults.chunks.size}

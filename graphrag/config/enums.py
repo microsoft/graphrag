@@ -42,19 +42,6 @@ class InputFileType(str, Enum):
         return f'"{self.value}"'
 
 
-class InputType(str, Enum):
-    """The input type for the pipeline."""
-
-    file = "file"
-    """The file storage type."""
-    blob = "blob"
-    """The blob storage type."""
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
 class StorageType(str, Enum):
     """The output type for the pipeline."""
 

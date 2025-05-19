@@ -164,12 +164,15 @@ def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
 
 
 def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
-    assert actual.type == expected.type
+    assert actual.storage.type == expected.storage.type
     assert actual.file_type == expected.file_type
-    assert actual.base_dir == expected.base_dir
-    assert actual.connection_string == expected.connection_string
-    assert actual.storage_account_blob_url == expected.storage_account_blob_url
-    assert actual.container_name == expected.container_name
+    assert actual.storage.base_dir == expected.storage.base_dir
+    assert actual.storage.connection_string == expected.storage.connection_string
+    assert (
+        actual.storage.storage_account_blob_url
+        == expected.storage.storage_account_blob_url
+    )
+    assert actual.storage.container_name == expected.storage.container_name
     assert actual.encoding == expected.encoding
     assert actual.file_pattern == expected.file_pattern
     assert actual.file_filter == expected.file_filter

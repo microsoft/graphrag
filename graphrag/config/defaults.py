@@ -14,7 +14,6 @@ from graphrag.config.enums import (
     CacheType,
     ChunkStrategyType,
     InputFileType,
-    InputType,
     ModelType,
     NounPhraseExtractorType,
     ReportingType,
@@ -235,15 +234,30 @@ class GlobalSearchDefaults:
 
 
 @dataclass
+class StorageDefaults:
+    """Default values for storage."""
+
+    type = StorageType.file
+    base_dir: str = DEFAULT_OUTPUT_BASE_DIR
+    connection_string: None = None
+    container_name: None = None
+    storage_account_blob_url: None = None
+    cosmosdb_account_url: None = None
+
+
+@dataclass
+class InputStorageDefaults(StorageDefaults):
+    """Default values for input storage."""
+
+    base_dir: str = "input"
+
+
+@dataclass
 class InputDefaults:
     """Default values for input."""
 
-    type = InputType.file
+    storage: InputStorageDefaults = field(default_factory=InputStorageDefaults)
     file_type = InputFileType.text
-    base_dir: str = "input"
-    connection_string: None = None
-    storage_account_blob_url: None = None
-    container_name: None = None
     encoding: str = "utf-8"
     file_pattern: str = ""
     file_filter: None = None
@@ -301,22 +315,9 @@ class LocalSearchDefaults:
 
 
 @dataclass
-class StorageDefaults:
-    """Default values for storage."""
-
-    type = StorageType.file
-    base_dir: str = DEFAULT_OUTPUT_BASE_DIR
-    connection_string: None = None
-    container_name: None = None
-    storage_account_blob_url: None = None
-    cosmosdb_account_url: None = None
-
-
-@dataclass
-class OutputDefaults:
+class OutputDefaults(StorageDefaults):
     """Default values for output."""
 
-    type = StorageType.file
     base_dir: str = DEFAULT_OUTPUT_BASE_DIR
 
 
@@ -372,7 +373,7 @@ class UmapDefaults:
 
 
 @dataclass
-class UpdateIndexOutputDefaults:
+class UpdateIndexOutputDefaults(StorageDefaults):
     """Default values for update index output."""
 
     base_dir: str = "update_output"

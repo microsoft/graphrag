@@ -1,17 +1,19 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.enums import InputFileType, InputType
+from graphrag.config.enums import InputFileType
 from graphrag.config.models.input_config import InputConfig
+from graphrag.config.models.storage_config import StorageConfig
 from graphrag.index.input.factory import create_input
 
 
 async def test_csv_loader_one_file():
     config = InputConfig(
-        type=InputType.file,
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-csv",
+        ),
         file_type=InputFileType.csv,
         file_pattern=".*\\.csv$",
-        base_dir="tests/unit/indexing/input/data/one-csv",
     )
     documents = await create_input(config=config)
     assert documents.shape == (2, 4)
@@ -20,10 +22,11 @@ async def test_csv_loader_one_file():
 
 async def test_csv_loader_one_file_with_title():
     config = InputConfig(
-        type=InputType.file,
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-csv",
+        ),
         file_type=InputFileType.csv,
         file_pattern=".*\\.csv$",
-        base_dir="tests/unit/indexing/input/data/one-csv",
         title_column="title",
     )
     documents = await create_input(config=config)
@@ -33,10 +36,11 @@ async def test_csv_loader_one_file_with_title():
 
 async def test_csv_loader_one_file_with_metadata():
     config = InputConfig(
-        type=InputType.file,
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-csv",
+        ),
         file_type=InputFileType.csv,
         file_pattern=".*\\.csv$",
-        base_dir="tests/unit/indexing/input/data/one-csv",
         title_column="title",
         metadata=["title"],
     )
@@ -47,10 +51,11 @@ async def test_csv_loader_one_file_with_metadata():
 
 async def test_csv_loader_multiple_files():
     config = InputConfig(
-        type=InputType.file,
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/multiple-csvs",
+        ),
         file_type=InputFileType.csv,
         file_pattern=".*\\.csv$",
-        base_dir="tests/unit/indexing/input/data/multiple-csvs",
     )
     documents = await create_input(config=config)
     assert documents.shape == (4, 4)

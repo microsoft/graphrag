@@ -10,7 +10,7 @@ from typing import cast
 
 import pandas as pd
 
-from graphrag.config.enums import InputFileType, InputType
+from graphrag.config.enums import InputFileType, StorageType
 from graphrag.config.models.input_config import InputConfig
 from graphrag.index.input.csv import load_csv
 from graphrag.index.input.json import load_json
@@ -35,36 +35,36 @@ async def create_input(
 ) -> pd.DataFrame:
     """Instantiate input data for a pipeline."""
     root_dir = root_dir or ""
-    log.info("loading input from root_dir=%s", config.base_dir)
+    log.info("loading input from root_dir=%s", config.storage.base_dir)
     progress_reporter = progress_reporter or NullProgressLogger()
 
-    match config.type:
-        case InputType.blob:
+    match config.storage.type:
+        case StorageType.blob:
             log.info("using blob storage input")
-            if config.container_name is None:
+            if config.storage.container_name is None:
                 msg = "Container name required for blob storage"
                 raise ValueError(msg)
             if (
-                config.connection_string is None
-                and config.storage_account_blob_url is None
+                config.storage.connection_string is None
+                and config.storage.storage_account_blob_url is None
             ):
                 msg = "Connection string or storage account blob url required for blob storage"
                 raise ValueError(msg)
             storage = BlobPipelineStorage(
-                connection_string=config.connection_string,
-                storage_account_blob_url=config.storage_account_blob_url,
-                container_name=config.container_name,
-                path_prefix=config.base_dir,
+                connection_string=config.storage.connection_string,
+                storage_account_blob_url=config.storage.storage_account_blob_url,
+                container_name=config.storage.container_name,
+                path_prefix=config.storage.base_dir,
             )
-        case InputType.file:
+        case StorageType.file:
             log.info("using file storage for input")
             storage = FilePipelineStorage(
-                root_dir=str(Path(root_dir) / (config.base_dir or ""))
+                root_dir=str(Path(root_dir) / (config.storage.base_dir or ""))
             )
         case _:
             log.info("using file storage for input")
             storage = FilePipelineStorage(
-                root_dir=str(Path(root_dir) / (config.base_dir or ""))
+                root_dir=str(Path(root_dir) / (config.storage.base_dir or ""))
             )
 
     if config.file_type in loaders:
