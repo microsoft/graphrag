@@ -142,6 +142,21 @@ def _index_cli(
             help="Run the indexing pipeline without executing any steps to inspect and validate the configuration."
         ),
     ] = False,
+    estimate_cost: Annotated[
+        bool,
+        typer.Option(
+            help="Estimate the LLM cost of the indexing pipeline before execution."
+        ),
+    ] = False,
+    average_output_tokens_per_chunk: Annotated[
+        int,
+        typer.Option(help="""
+                     Assumed number of output tokens per chunk for cost estimation.
+                     Short summarization/classification: 100-300
+                     Detailed summarization/QA: 400-600
+                     Long-form generation (e.g., full response per doc): 800-1200
+                     """),
+    ] = 500,
     cache: Annotated[bool, typer.Option(help="Use LLM cache.")] = True,
     skip_validation: Annotated[
         bool,
@@ -173,6 +188,8 @@ def _index_cli(
         skip_validation=skip_validation,
         output_dir=output,
         method=method,
+        estimate_cost=estimate_cost,
+        average_output_tokens_per_chunk=average_output_tokens_per_chunk
     )
 
 
