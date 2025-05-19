@@ -40,19 +40,20 @@ async def run_pipeline(
     """Run all workflows using a simplified pipeline."""
     root_dir = config.root_dir
 
-    storage = create_storage_from_config(config.output)
+    input_storage = create_storage_from_config(config.input.storage)
+    output_storage = create_storage_from_config(config.output)
     cache = create_cache_from_config(config.cache, root_dir)
 
-    dataset = await create_input(config.input, logger, root_dir)
+    dataset = await create_input(config.input, input_storage, logger)
 
     # load existing state in case any workflows are stateful
-    state_json = await storage.get("context.json")
+    state_json = await output_storage.get("context.json")
     state = json.loads(state_json) if state_json else {}
 
     if is_update_run:
         logger.info("Running incremental indexing.")
 
-        delta_dataset = await get_delta_docs(dataset, storage)
+        delta_dataset = await get_delta_docs(dataset, output_storage)
 
         # warn on empty delta dataset
         if delta_dataset.new_inputs.empty:
@@ -67,7 +68,7 @@ async def run_pipeline(
             # copy the previous output to a backup folder, so we can replace it with the update
             # we'll read from this later when we merge the old and new indexes
             previous_storage = timestamped_storage.child("previous")
-            await _copy_previous_output(storage, previous_storage)
+            await _copy_previous_output(output_storage, previous_storage)
 
             state["update_timestamp"] = update_timestamp
 
@@ -94,7 +95,7 @@ async def run_pipeline(
         logger.info("Running standard indexing.")
 
         context = create_run_context(
-            output_storage=storage, cache=cache, callbacks=callbacks, state=state
+            output_storage=output_storage, cache=cache, callbacks=callbacks, state=state
         )
 
         async for table in _run_pipeline(
