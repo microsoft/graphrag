@@ -17,8 +17,8 @@ from graphrag.config.enums import (
     InputType,
     ModelType,
     NounPhraseExtractorType,
-    OutputType,
     ReportingType,
+    StorageType,
 )
 from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
     EN_STOP_WORDS,
@@ -301,15 +301,23 @@ class LocalSearchDefaults:
 
 
 @dataclass
-class OutputDefaults:
-    """Default values for output."""
+class StorageDefaults:
+    """Default values for storage."""
 
-    type = OutputType.file
+    type = StorageType.file
     base_dir: str = DEFAULT_OUTPUT_BASE_DIR
     connection_string: None = None
     container_name: None = None
     storage_account_blob_url: None = None
     cosmosdb_account_url: None = None
+
+
+@dataclass
+class OutputDefaults:
+    """Default values for output."""
+
+    type = StorageType.file
+    base_dir: str = DEFAULT_OUTPUT_BASE_DIR
 
 
 @dataclass
@@ -367,11 +375,7 @@ class UmapDefaults:
 class UpdateIndexOutputDefaults:
     """Default values for update index output."""
 
-    type = OutputType.file
     base_dir: str = "update_output"
-    connection_string: None = None
-    container_name: None = None
-    storage_account_blob_url: None = None
 
 
 @dataclass
@@ -395,6 +399,7 @@ class GraphRagConfigDefaults:
     root_dir: str = ""
     models: dict = field(default_factory=dict)
     reporting: ReportingDefaults = field(default_factory=ReportingDefaults)
+    storage: StorageDefaults = field(default_factory=StorageDefaults)
     output: OutputDefaults = field(default_factory=OutputDefaults)
     outputs: None = None
     update_index_output: UpdateIndexOutputDefaults = field(

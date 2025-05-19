@@ -24,10 +24,10 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
-from graphrag.config.models.output_config import OutputConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
+from graphrag.config.models.storage_config import StorageConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
@@ -134,7 +134,7 @@ def assert_reporting_configs(
     assert actual.storage_account_blob_url == expected.storage_account_blob_url
 
 
-def assert_output_configs(actual: OutputConfig, expected: OutputConfig) -> None:
+def assert_output_configs(actual: StorageConfig, expected: StorageConfig) -> None:
     assert expected.type == actual.type
     assert expected.base_dir == actual.base_dir
     assert expected.connection_string == actual.connection_string
@@ -143,7 +143,9 @@ def assert_output_configs(actual: OutputConfig, expected: OutputConfig) -> None:
     assert expected.cosmosdb_account_url == actual.cosmosdb_account_url
 
 
-def assert_update_output_configs(actual: OutputConfig, expected: OutputConfig) -> None:
+def assert_update_output_configs(
+    actual: StorageConfig, expected: StorageConfig
+) -> None:
     assert expected.type == actual.type
     assert expected.base_dir == actual.base_dir
     assert expected.connection_string == actual.connection_string

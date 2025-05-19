@@ -55,7 +55,7 @@ class InputType(str, Enum):
         return f'"{self.value}"'
 
 
-class OutputType(str, Enum):
+class StorageType(str, Enum):
     """The output type for the pipeline."""
 
     file = "file"
