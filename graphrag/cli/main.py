@@ -82,7 +82,8 @@ def path_autocomplete(
 def _initialize_cli(
     root: Path = typer.Option(
         Path(),
-        "--root", "-r",
+        "--root",
+        "-r",
         help="The project root directory.",
         dir_okay=True,
         writable=True,
@@ -93,7 +94,8 @@ def _initialize_cli(
     ),
     force: bool = typer.Option(
         False,
-        "--force", "-f",
+        "--force",
+        "-f",
         help="Force initialization even if the project already exists.",
     ),
 ) -> None:
@@ -201,7 +203,8 @@ def _index_cli(
 def _update_cli(
     config: Path | None = typer.Option(
         None,
-        "--config", "-c",
+        "--config",
+        "-c",
         help="The configuration to use.",
         exists=True,
         file_okay=True,
@@ -209,7 +212,8 @@ def _update_cli(
     ),
     root: Path = typer.Option(
         Path(),
-        "--root", "-r",
+        "--root",
+        "-r",
         help="The project root directory.",
         exists=True,
         dir_okay=True,
@@ -218,12 +222,14 @@ def _update_cli(
     ),
     method: IndexingMethod = typer.Option(
         IndexingMethod.Standard.value,
-        "--method", "-m",
+        "--method",
+        "-m",
         help="The indexing method to use.",
     ),
     verbose: bool = typer.Option(
         False,
-        "--verbose", "-v",
+        "--verbose",
+        "-v",
         help="Run the indexing pipeline with verbose logging.",
     ),
     memprofile: bool = typer.Option(
@@ -248,7 +254,8 @@ def _update_cli(
     ),
     output: Path | None = typer.Option(
         None,
-        "--output", "-o",
+        "--output",
+        "-o",
         help=(
             "Indexing pipeline output directory. "
             "Overrides output.base_dir in the configuration file."
@@ -282,7 +289,8 @@ def _update_cli(
 def _prompt_tune_cli(
     root: Path = typer.Option(
         Path(),
-        "--root", "-r",
+        "--root",
+        "-r",
         help="The project root directory.",
         exists=True,
         dir_okay=True,
@@ -294,7 +302,8 @@ def _prompt_tune_cli(
     ),
     config: Path | None = typer.Option(
         None,
-        "--config", "-c",
+        "--config",
+        "-c",
         help="The configuration to use.",
         exists=True,
         file_okay=True,
@@ -305,7 +314,8 @@ def _prompt_tune_cli(
     ),
     verbose: bool = typer.Option(
         False,
-        "--verbose", "-v",
+        "--verbose",
+        "-v",
         help="Run the prompt tuning pipeline with verbose logging.",
     ),
     logger: LoggerType = typer.Option(
@@ -374,7 +384,8 @@ def _prompt_tune_cli(
     ),
     output: Path = typer.Option(
         Path("prompts"),
-        "--output", "-o",
+        "--output",
+        "-o",
         help="The directory to save prompts to, relative to the project root directory.",
         dir_okay=True,
         writable=True,
@@ -413,17 +424,20 @@ def _prompt_tune_cli(
 def _query_cli(
     method: SearchMethod = typer.Option(
         ...,
-        "--method", "-m",
+        "--method",
+        "-m",
         help="The query algorithm to use.",
     ),
     query: str = typer.Option(
         ...,
-        "--query", "-q",
+        "--query",
+        "-q",
         help="The query to execute.",
     ),
     config: Path | None = typer.Option(
         None,
-        "--config", "-c",
+        "--config",
+        "-c",
         help="The configuration to use.",
         exists=True,
         file_okay=True,
@@ -434,7 +448,8 @@ def _query_cli(
     ),
     data: Path | None = typer.Option(
         None,
-        "--data", "-d",
+        "--data",
+        "-d",
         help="Index output directory (contains the parquet files).",
         exists=True,
         dir_okay=True,
@@ -446,7 +461,8 @@ def _query_cli(
     ),
     root: Path = typer.Option(
         Path.cwd(),
-        "--root", "-r",
+        "--root",
+        "-r",
         help="The project root directory.",
         exists=True,
         dir_okay=True,
