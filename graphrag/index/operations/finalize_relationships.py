@@ -19,7 +19,7 @@ def finalize_relationships(
     relationships: pd.DataFrame,
 ) -> pd.DataFrame:
     """All the steps to transform final relationships."""
-    graph = create_graph(relationships)
+    graph = create_graph(relationships, edge_attr=["weight"])
     degrees = compute_degree(graph)
 
     final_relationships = relationships.drop_duplicates(subset=["source", "target"])

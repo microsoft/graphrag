@@ -79,6 +79,8 @@ mkdocs
 fnllm
 typer
 spacy
+kwargs
+ollama
 
 # Library Methods
 iterrows
@@ -190,6 +192,7 @@ Arxiv
 kwds
 jsons
 txts
+byog
 
 # Dulce
 astrotechnician

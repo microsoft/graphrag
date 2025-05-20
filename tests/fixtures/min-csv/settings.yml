@@ -20,8 +20,8 @@ models:
     api_version: ${GRAPHRAG_API_VERSION}
     deployment_name: ${GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME}
     model: ${GRAPHRAG_EMBEDDING_MODEL}
-    tokens_per_minute: ${GRAPHRAG_EMBEDDING_TPM}
-    requests_per_minute: ${GRAPHRAG_EMBEDDING_RPM}
+    tokens_per_minute: null
+    requests_per_minute: null
     concurrent_requests: 50
     async_mode: threaded
 

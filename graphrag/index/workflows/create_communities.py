@@ -52,7 +52,7 @@ def create_communities(
     seed: int | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final communities."""
-    graph = create_graph(relationships)
+    graph = create_graph(relationships, edge_attr=["weight"])
 
     clusters = cluster_graph(
         graph,

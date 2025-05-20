@@ -24,7 +24,7 @@ def finalize_entities(
     layout_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform final entities."""
-    graph = create_graph(relationships)
+    graph = create_graph(relationships, edge_attr=["weight"])
     graph_embeddings = None
     if embed_config is not None and embed_config.enabled:
         graph_embeddings = embed_graph(

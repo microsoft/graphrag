@@ -5,7 +5,7 @@ from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.embeddings import (
     all_embeddings,
 )
-from graphrag.config.enums import ModelType, TextEmbeddingTarget
+from graphrag.config.enums import ModelType
 from graphrag.index.operations.embed_text.embed_text import TextEmbedStrategyType
 from graphrag.index.workflows.generate_text_embeddings import (
     run_workflow,
@@ -39,7 +39,7 @@ async def test_generate_text_embeddings():
         "type": TextEmbedStrategyType.openai,
         "llm": llm_settings,
     }
-    config.embed_text.target = TextEmbeddingTarget.all
+    config.embed_text.names = list(all_embeddings)
     config.snapshots.embeddings = True
 
     await run_workflow(config, context)

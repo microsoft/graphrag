@@ -84,6 +84,6 @@ END OF EXAMPLE 3
 REAL DATA: The following section is the real data. You should use only this real data to prepare your answer. Generate Entity Types only.
 Task: {task}
 Text: {input_text}
-JSON response:
+JSON response format:
 {{"entity_types": [<entity_types>] }}
 """

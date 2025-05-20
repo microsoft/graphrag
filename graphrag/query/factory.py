@@ -52,11 +52,6 @@ def get_local_search_engine(
     """Create a local search engine based on data + configuration."""
     model_settings = config.get_language_model_config(config.local_search.chat_model_id)
 
-    if model_settings.max_retries == -1:
-        model_settings.max_retries = (
-            len(reports) + len(entities) + len(relationships) + len(covariates)
-        )
-
     chat_model = ModelManager().get_or_create_chat_model(
         name="local_search_chat",
         model_type=model_settings.type,
@@ -66,10 +61,7 @@ def get_local_search_engine(
     embedding_settings = config.get_language_model_config(
         config.local_search.embedding_model_id
     )
-    if embedding_settings.max_retries == -1:
-        embedding_settings.max_retries = (
-            len(reports) + len(entities) + len(relationships)
-        )
+
     embedding_model = ModelManager().get_or_create_embedding_model(
         name="local_search_embedding",
         model_type=embedding_settings.type,
@@ -134,8 +126,6 @@ def get_global_search_engine(
         config.global_search.chat_model_id
     )
 
-    if model_settings.max_retries == -1:
-        model_settings.max_retries = len(reports) + len(entities)
     model = ModelManager().get_or_create_chat_model(
         name="global_search",
         model_type=model_settings.type,
@@ -220,13 +210,6 @@ def get_drift_search_engine(
         config.drift_search.chat_model_id
     )
 
-    if chat_model_settings.max_retries == -1:
-        chat_model_settings.max_retries = (
-            config.drift_search.drift_k_followups
-            * config.drift_search.primer_folds
-            * config.drift_search.n_depth
-        )
-
     chat_model = ModelManager().get_or_create_chat_model(
         name="drift_search_chat",
         model_type=chat_model_settings.type,
@@ -236,11 +219,6 @@ def get_drift_search_engine(
     embedding_model_settings = config.get_language_model_config(
         config.drift_search.embedding_model_id
     )
-
-    if embedding_model_settings.max_retries == -1:
-        embedding_model_settings.max_retries = (
-            len(reports) + len(entities) + len(relationships)
-        )
 
     embedding_model = ModelManager().get_or_create_embedding_model(
         name="drift_search_embedding",
@@ -275,15 +253,13 @@ def get_basic_search_engine(
     text_unit_embeddings: BaseVectorStore,
     config: GraphRagConfig,
     system_prompt: str | None = None,
+    response_type: str = "multiple paragraphs",
     callbacks: list[QueryCallbacks] | None = None,
 ) -> BasicSearch:
     """Create a basic search engine based on data + configuration."""
     chat_model_settings = config.get_language_model_config(
         config.basic_search.chat_model_id
     )
-
-    if chat_model_settings.max_retries == -1:
-        chat_model_settings.max_retries = len(text_units)
 
     chat_model = ModelManager().get_or_create_chat_model(
         name="basic_search_chat",
@@ -294,8 +270,6 @@ def get_basic_search_engine(
     embedding_model_settings = config.get_language_model_config(
         config.basic_search.embedding_model_id
     )
-    if embedding_model_settings.max_retries == -1:
-        embedding_model_settings.max_retries = len(text_units)
 
     embedding_model = ModelManager().get_or_create_embedding_model(
         name="basic_search_embedding",
@@ -312,6 +286,7 @@ def get_basic_search_engine(
     return BasicSearch(
         model=chat_model,
         system_prompt=system_prompt,
+        response_type=response_type,
         context_builder=BasicSearchContext(
             text_embedder=embedding_model,
             text_unit_embeddings=text_unit_embeddings,
@@ -323,6 +298,7 @@ def get_basic_search_engine(
         context_builder_params={
             "embedding_vectorstore_key": "id",
             "k": bs_config.k,
+            "max_context_tokens": bs_config.max_context_tokens,
         },
         callbacks=callbacks,
     )

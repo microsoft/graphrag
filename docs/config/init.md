@@ -29,4 +29,4 @@ The `init` command will create the following files in the specified directory:
 
 ## Next Steps
 
-After initializing your workspace, you can either run the [Prompt Tuning](../prompt_tuning/auto_prompt_tuning.md) command to adapt the prompts to your data or even start running the [Indexing Pipeline](../index/overview.md) to index your data. For more information on configuring GraphRAG, see the [Configuration](overview.md) documentation.
+After initializing your workspace, you can either run the [Prompt Tuning](../prompt_tuning/auto_prompt_tuning.md) command to adapt the prompts to your data or even start running the [Indexing Pipeline](../index/overview.md) to index your data. For more information on configuration options available, see the [YAML details page](yaml.md).

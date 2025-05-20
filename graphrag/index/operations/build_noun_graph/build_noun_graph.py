@@ -3,8 +3,9 @@
 
 """Graph extraction using NLP."""
 
-import math
+from itertools import combinations
 
+import numpy as np
 import pandas as pd
 
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
@@ -14,6 +15,7 @@ from graphrag.index.operations.build_noun_graph.np_extractors.base import (
     BaseNounPhraseExtractor,
 )
 from graphrag.index.utils.derive_from_rows import derive_from_rows
+from graphrag.index.utils.graphs import calculate_pmi_edge_weights
 from graphrag.index.utils.hashing import gen_sha512_hash
 
 
@@ -30,7 +32,6 @@ async def build_noun_graph(
         text_units, text_analyzer, num_threads=num_threads, cache=cache
     )
     edges_df = _extract_edges(nodes_df, normalize_edge_weights=normalize_edge_weights)
-
     return (nodes_df, edges_df)
 
 
@@ -69,7 +70,7 @@ async def _extract_nodes(
     noun_node_df = text_unit_df.explode("noun_phrases")
     noun_node_df = noun_node_df.rename(
         columns={"noun_phrases": "title", "id": "text_unit_id"}
-    ).drop_duplicates()
+    )
 
     # group by title and count the number of text units
     grouped_node_df = (
@@ -94,106 +95,39 @@ def _extract_edges(
     """
     text_units_df = nodes_df.explode("text_unit_ids")
     text_units_df = text_units_df.rename(columns={"text_unit_ids": "text_unit_id"})
-    text_units_df = (
-        text_units_df.groupby("text_unit_id").agg({"title": list}).reset_index()
-    )
-    text_units_df["edges"] = text_units_df["title"].apply(
-        lambda x: _create_relationships(x)
-    )
-    edge_df = text_units_df.explode("edges").loc[:, ["edges", "text_unit_id"]]
 
-    edge_df["source"] = edge_df["edges"].apply(
-        lambda x: x[0] if isinstance(x, tuple) else None
+    text_units_df = (
+        text_units_df.groupby("text_unit_id")
+        .agg({"title": lambda x: list(x) if len(x) > 1 else np.nan})
+        .reset_index()
     )
-    edge_df["target"] = edge_df["edges"].apply(
-        lambda x: x[1] if isinstance(x, tuple) else None
+    text_units_df = text_units_df.dropna()
+    titles = text_units_df["title"].tolist()
+    all_edges: list[list[tuple[str, str]]] = [list(combinations(t, 2)) for t in titles]
+
+    text_units_df = text_units_df.assign(edges=all_edges)  # type: ignore
+    edge_df = text_units_df.explode("edges")[["edges", "text_unit_id"]]
+
+    edge_df[["source", "target"]] = edge_df.loc[:, "edges"].to_list()
+    edge_df["min_source"] = edge_df[["source", "target"]].min(axis=1)
+    edge_df["max_target"] = edge_df[["source", "target"]].max(axis=1)
+    edge_df = edge_df.drop(columns=["source", "target"]).rename(
+        columns={"min_source": "source", "max_target": "target"}  # type: ignore
     )
+
     edge_df = edge_df[(edge_df.source.notna()) & (edge_df.target.notna())]
     edge_df = edge_df.drop(columns=["edges"])
-
-    # make sure source is always smaller than target
-    edge_df["source"], edge_df["target"] = zip(
-        *edge_df.apply(
-            lambda x: (x["source"], x["target"])
-            if x["source"] < x["target"]
-            else (x["target"], x["source"]),
-            axis=1,
-        ),
-        strict=False,
-    )
-
-    # group by source and target, count the number of text units and collect their ids
+    # group by source and target, count the number of text units
     grouped_edge_df = (
         edge_df.groupby(["source", "target"]).agg({"text_unit_id": list}).reset_index()
     )
     grouped_edge_df = grouped_edge_df.rename(columns={"text_unit_id": "text_unit_ids"})
     grouped_edge_df["weight"] = grouped_edge_df["text_unit_ids"].apply(len)
-
     grouped_edge_df = grouped_edge_df.loc[
         :, ["source", "target", "weight", "text_unit_ids"]
     ]
-
     if normalize_edge_weights:
         # use PMI weight instead of raw weight
-        grouped_edge_df = _calculate_pmi_edge_weights(nodes_df, grouped_edge_df)
+        grouped_edge_df = calculate_pmi_edge_weights(nodes_df, grouped_edge_df)
 
     return grouped_edge_df
-
-
-def _create_relationships(
-    noun_phrases: list[str],
-) -> list[tuple[str, str]]:
-    """Create a (source, target) tuple pairwise for all noun phrases in a list."""
-    relationships = []
-    if len(noun_phrases) >= 2:
-        for i in range(len(noun_phrases) - 1):
-            for j in range(i + 1, len(noun_phrases)):
-                relationships.extend([(noun_phrases[i], noun_phrases[j])])
-    return relationships
-
-
-def _calculate_pmi_edge_weights(
-    nodes_df: pd.DataFrame,
-    edges_df: pd.DataFrame,
-    node_name_col="title",
-    node_freq_col="frequency",
-    edge_weight_col="weight",
-    edge_source_col="source",
-    edge_target_col="target",
-) -> pd.DataFrame:
-    """
-    Calculate pointwise mutual information (PMI) edge weights.
-
-    pmi(x,y) = log2(p(x,y) / (p(x)p(y)))
-    p(x,y) = edge_weight(x,y) / total_edge_weights
-    p(x) = freq_occurrence(x) / total_freq_occurrences
-    """
-    copied_nodes_df = nodes_df[[node_name_col, node_freq_col]]
-
-    total_edge_weights = edges_df[edge_weight_col].sum()
-    total_freq_occurrences = nodes_df[node_freq_col].sum()
-    copied_nodes_df["prop_occurrence"] = (
-        copied_nodes_df[node_freq_col] / total_freq_occurrences
-    )
-    copied_nodes_df = copied_nodes_df.loc[:, [node_name_col, "prop_occurrence"]]
-
-    edges_df["prop_weight"] = edges_df[edge_weight_col] / total_edge_weights
-    edges_df = (
-        edges_df.merge(
-            copied_nodes_df, left_on=edge_source_col, right_on=node_name_col, how="left"
-        )
-        .drop(columns=[node_name_col])
-        .rename(columns={"prop_occurrence": "source_prop"})
-    )
-    edges_df = (
-        edges_df.merge(
-            copied_nodes_df, left_on=edge_target_col, right_on=node_name_col, how="left"
-        )
-        .drop(columns=[node_name_col])
-        .rename(columns={"prop_occurrence": "target_prop"})
-    )
-    edges_df[edge_weight_col] = edges_df.apply(
-        lambda x: math.log2(x["prop_weight"] / (x["source_prop"] * x["target_prop"])),
-        axis=1,
-    )
-    return edges_df.drop(columns=["prop_weight", "source_prop", "target_prop"])

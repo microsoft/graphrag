@@ -87,19 +87,6 @@ class ReportingType(str, Enum):
         return f'"{self.value}"'
 
 
-class TextEmbeddingTarget(str, Enum):
-    """The target to use for text embeddings."""
-
-    all = "all"
-    required = "required"
-    selected = "selected"
-    none = "none"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
 class ModelType(str, Enum):
     """LLMType enum class definition."""
 
@@ -176,3 +163,15 @@ class NounPhraseExtractorType(str, Enum):
     """Noun phrase extractor based on dependency parsing and NER using SpaCy."""
     CFG = "cfg"
     """Noun phrase extractor combining CFG-based noun-chunk extraction and NER."""
+
+
+class ModularityMetric(str, Enum):
+    """Enum for the modularity metric to use."""
+
+    Graph = "graph"
+    """Graph modularity metric."""
+
+    LCC = "lcc"
+
+    WeightedComponents = "weighted_components"
+    """Weighted components modularity metric."""

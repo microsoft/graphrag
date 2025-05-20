@@ -5,7 +5,9 @@
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
 
+from graphrag.config.embeddings import default_embeddings
 from graphrag.config.enums import (
     AsyncType,
     AuthType,
@@ -17,7 +19,9 @@ from graphrag.config.enums import (
     NounPhraseExtractorType,
     OutputType,
     ReportingType,
-    TextEmbeddingTarget,
+)
+from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
+    EN_STOP_WORDS,
 )
 from graphrag.vector_stores.factory import VectorStoreType
 
@@ -42,6 +46,7 @@ class BasicSearchDefaults:
 
     prompt: None = None
     k: int = 10
+    max_context_tokens: int = 12_000
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
@@ -142,9 +147,8 @@ class EmbedTextDefaults:
     model: str = "text-embedding-3-small"
     batch_size: int = 16
     batch_max_tokens: int = 8191
-    target = TextEmbeddingTarget.required
     model_id: str = DEFAULT_EMBEDDING_MODEL_ID
-    names: list[str] = field(default_factory=list)
+    names: list[str] = field(default_factory=lambda: default_embeddings)
     strategy: None = None
     vector_store_id: str = DEFAULT_VECTOR_STORE_ID
 
@@ -185,7 +189,7 @@ class TextAnalyzerDefaults:
     max_word_length: int = 15
     word_delimiter: str = " "
     include_named_entities: bool = True
-    exclude_nouns: None = None
+    exclude_nouns: list[str] = field(default_factory=lambda: EN_STOP_WORDS)
     exclude_entity_tags: list[str] = field(default_factory=lambda: ["DATE"])
     exclude_pos_tags: list[str] = field(
         default_factory=lambda: ["DET", "PRON", "INTJ", "X"]
@@ -271,8 +275,8 @@ class LanguageModelDefaults:
     proxy: None = None
     audience: None = None
     model_supports_json: None = None
-    tokens_per_minute: int = 50_000
-    requests_per_minute: int = 1_000
+    tokens_per_minute: Literal["auto"] = "auto"
+    requests_per_minute: Literal["auto"] = "auto"
     retry_strategy: str = "native"
     max_retries: int = 10
     max_retry_wait: float = 10.0
@@ -316,8 +320,8 @@ class PruneGraphDefaults:
     max_node_freq_std: None = None
     min_node_degree: int = 1
     max_node_degree_std: None = None
-    min_edge_weight_pct: int = 40
-    remove_ego_nodes: bool = False
+    min_edge_weight_pct: float = 40.0
+    remove_ego_nodes: bool = True
     lcc_only: bool = False
 
 
@@ -338,6 +342,7 @@ class SnapshotsDefaults:
 
     embeddings: bool = False
     graphml: bool = False
+    raw_graph: bool = False
 
 
 @dataclass

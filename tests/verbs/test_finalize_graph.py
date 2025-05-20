@@ -28,8 +28,8 @@ async def test_finalize_graph():
     nodes_actual = await load_table_from_storage("entities", context.storage)
     edges_actual = await load_table_from_storage("relationships", context.storage)
 
-    assert len(nodes_actual) == 251
-    assert len(edges_actual) == 372
+    assert len(nodes_actual) == 291
+    assert len(edges_actual) == 452
 
     # x and y will be zero with the default configuration, because we do not embed/umap
     assert nodes_actual["x"].sum() == 0
@@ -54,8 +54,8 @@ async def test_finalize_graph_umap():
     nodes_actual = await load_table_from_storage("entities", context.storage)
     edges_actual = await load_table_from_storage("relationships", context.storage)
 
-    assert len(nodes_actual) == 251
-    assert len(edges_actual) == 372
+    assert len(nodes_actual) == 291
+    assert len(edges_actual) == 452
 
     # x and y should have some value other than zero due to umap
     assert nodes_actual["x"].sum() != 0
