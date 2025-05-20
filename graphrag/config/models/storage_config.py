@@ -6,33 +6,33 @@
 from pydantic import BaseModel, Field
 
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import OutputType
+from graphrag.config.enums import StorageType
 
 
-class OutputConfig(BaseModel):
-    """The default configuration section for Output."""
+class StorageConfig(BaseModel):
+    """The default configuration section for storage."""
 
-    type: OutputType = Field(
-        description="The output type to use.",
-        default=graphrag_config_defaults.output.type,
+    type: StorageType = Field(
+        description="The storage type to use.",
+        default=graphrag_config_defaults.storage.type,
     )
     base_dir: str = Field(
         description="The base directory for the output.",
-        default=graphrag_config_defaults.output.base_dir,
+        default=graphrag_config_defaults.storage.base_dir,
     )
     connection_string: str | None = Field(
         description="The storage connection string to use.",
-        default=graphrag_config_defaults.output.connection_string,
+        default=graphrag_config_defaults.storage.connection_string,
     )
     container_name: str | None = Field(
         description="The storage container name to use.",
-        default=graphrag_config_defaults.output.container_name,
+        default=graphrag_config_defaults.storage.container_name,
     )
     storage_account_blob_url: str | None = Field(
         description="The storage account blob url to use.",
-        default=graphrag_config_defaults.output.storage_account_blob_url,
+        default=graphrag_config_defaults.storage.storage_account_blob_url,
     )
     cosmosdb_account_url: str | None = Field(
         description="The cosmosdb account url to use.",
-        default=graphrag_config_defaults.output.cosmosdb_account_url,
+        default=graphrag_config_defaults.storage.cosmosdb_account_url,
     )

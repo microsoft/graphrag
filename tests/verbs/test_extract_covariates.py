@@ -37,6 +37,7 @@ async def test_extract_covariates():
     ).model_dump()
     llm_settings["type"] = ModelType.MockChat
     llm_settings["responses"] = MOCK_LLM_RESPONSES
+    config.extract_claims.enabled = True
     config.extract_claims.strategy = {
         "type": "graph_intelligence",
         "llm": llm_settings,
@@ -45,7 +46,7 @@ async def test_extract_covariates():
 
     await run_workflow(config, context)
 
-    actual = await load_table_from_storage("covariates", context.storage)
+    actual = await load_table_from_storage("covariates", context.output_storage)
 
     for column in COVARIATES_FINAL_COLUMNS:
         assert column in actual.columns

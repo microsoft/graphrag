@@ -14,24 +14,31 @@ from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.state import PipelineState
 from graphrag.index.typing.stats import PipelineRunStats
 from graphrag.logger.base import ProgressLogger
+from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.api import create_storage_from_config
 
 
 def create_run_context(
-    storage: PipelineStorage | None = None,
+    input_storage: PipelineStorage | None = None,
+    output_storage: PipelineStorage | None = None,
+    previous_storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
+    progress_logger: ProgressLogger | None = None,
     stats: PipelineRunStats | None = None,
     state: PipelineState | None = None,
 ) -> PipelineRunContext:
     """Create the run context for the pipeline."""
     return PipelineRunContext(
-        stats=stats or PipelineRunStats(),
+        input_storage=input_storage or MemoryPipelineStorage(),
+        output_storage=output_storage or MemoryPipelineStorage(),
+        previous_storage=previous_storage or MemoryPipelineStorage(),
         cache=cache or InMemoryCache(),
-        storage=storage or MemoryPipelineStorage(),
         callbacks=callbacks or NoopWorkflowCallbacks(),
+        progress_logger=progress_logger or NullProgressLogger(),
+        stats=stats or PipelineRunStats(),
         state=state or {},
     )
 

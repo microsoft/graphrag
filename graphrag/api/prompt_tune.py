@@ -52,7 +52,6 @@ from graphrag.prompt_tune.types import DocSelectionType
 async def generate_indexing_prompts(
     config: GraphRagConfig,
     logger: ProgressLogger,
-    root: str,
     chunk_size: PositiveInt = graphrag_config_defaults.chunks.size,
     overlap: Annotated[
         int, annotated_types.Gt(-1)
@@ -93,7 +92,6 @@ async def generate_indexing_prompts(
     # Retrieve documents
     logger.info("Chunking documents...")
     doc_list = await load_docs_in_chunks(
-        root=root,
         config=config,
         limit=limit,
         select_method=selection_method,
