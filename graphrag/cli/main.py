@@ -91,6 +91,7 @@ ROOT_AUTOCOMPLETE = path_autocomplete(
     match_wildcard="*",
 )
 
+
 @app.command("init")
 def _initialize_cli(
     root: Path = typer.Option(

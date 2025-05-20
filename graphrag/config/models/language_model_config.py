@@ -209,7 +209,7 @@ class LanguageModelConfig(BaseModel):
         """
         # If the value is a number, check if it is less than 1
         if isinstance(self.tokens_per_minute, int) and self.tokens_per_minute < 1:
-            msg = f"Tokens per minute must be a non zero positve number, 'auto' or null. Suggested value: {language_model_defaults.tokens_per_minute}."
+            msg = f"Tokens per minute must be a non zero positive number, 'auto' or null. Suggested value: {language_model_defaults.tokens_per_minute}."
             raise ValueError(msg)
 
     requests_per_minute: int | Literal["auto"] | None = Field(
@@ -227,7 +227,7 @@ class LanguageModelConfig(BaseModel):
         """
         # If the value is a number, check if it is less than 1
         if isinstance(self.requests_per_minute, int) and self.requests_per_minute < 1:
-            msg = f"Requests per minute must be a non zero positve number, 'auto' or null. Suggested value: {language_model_defaults.requests_per_minute}."
+            msg = f"Requests per minute must be a non zero positive number, 'auto' or null. Suggested value: {language_model_defaults.requests_per_minute}."
             raise ValueError(msg)
 
     retry_strategy: str = Field(
