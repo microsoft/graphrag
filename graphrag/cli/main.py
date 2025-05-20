@@ -7,7 +7,6 @@ import os
 import re
 from collections.abc import Callable
 from pathlib import Path
-from typing import Annotated
 
 import typer
 
@@ -78,6 +77,20 @@ def path_autocomplete(
     return completer
 
 
+CONFIG_AUTOCOMPLETE = path_autocomplete(
+    file_okay=True,
+    dir_okay=False,
+    match_wildcard="*.yaml",
+    readable=True,
+)
+
+ROOT_AUTOCOMPLETE = path_autocomplete(
+    file_okay=False,
+    dir_okay=True,
+    writable=True,
+    match_wildcard="*",
+)
+
 @app.command("init")
 def _initialize_cli(
     root: Path = typer.Option(
@@ -88,9 +101,7 @@ def _initialize_cli(
         dir_okay=True,
         writable=True,
         resolve_path=True,
-        autocompletion=path_autocomplete(
-            file_okay=False, dir_okay=True, writable=True, match_wildcard="*"
-        ),
+        autocompletion=ROOT_AUTOCOMPLETE,
     ),
     force: bool = typer.Option(
         False,
@@ -115,6 +126,7 @@ def _index_cli(
         exists=True,
         file_okay=True,
         readable=True,
+        autocompletion=CONFIG_AUTOCOMPLETE,
     ),
     root: Path = typer.Option(
         Path(),
@@ -125,9 +137,7 @@ def _index_cli(
         dir_okay=True,
         writable=True,
         resolve_path=True,
-        autocompletion=path_autocomplete(
-            file_okay=False, dir_okay=True, writable=True, match_wildcard="*"
-        ),
+        autocompletion=ROOT_AUTOCOMPLETE,
     ),
     method: IndexingMethod = typer.Option(
         IndexingMethod.Standard.value,
@@ -209,6 +219,7 @@ def _update_cli(
         exists=True,
         file_okay=True,
         readable=True,
+        autocompletion=CONFIG_AUTOCOMPLETE,
     ),
     root: Path = typer.Option(
         Path(),
@@ -219,6 +230,7 @@ def _update_cli(
         dir_okay=True,
         writable=True,
         resolve_path=True,
+        autocompletion=ROOT_AUTOCOMPLETE,
     ),
     method: IndexingMethod = typer.Option(
         IndexingMethod.Standard.value,
@@ -296,9 +308,7 @@ def _prompt_tune_cli(
         dir_okay=True,
         writable=True,
         resolve_path=True,
-        autocompletion=path_autocomplete(
-            file_okay=False, dir_okay=True, writable=True, match_wildcard="*"
-        ),
+        autocompletion=ROOT_AUTOCOMPLETE,
     ),
     config: Path | None = typer.Option(
         None,
@@ -308,9 +318,7 @@ def _prompt_tune_cli(
         exists=True,
         file_okay=True,
         readable=True,
-        autocompletion=path_autocomplete(
-            file_okay=True, dir_okay=False, match_wildcard="*"
-        ),
+        autocompletion=CONFIG_AUTOCOMPLETE,
     ),
     verbose: bool = typer.Option(
         False,
@@ -442,9 +450,7 @@ def _query_cli(
         exists=True,
         file_okay=True,
         readable=True,
-        autocompletion=path_autocomplete(
-            file_okay=True, dir_okay=False, match_wildcard="*"
-        ),
+        autocompletion=CONFIG_AUTOCOMPLETE,
     ),
     data: Path | None = typer.Option(
         None,
@@ -455,12 +461,10 @@ def _query_cli(
         dir_okay=True,
         readable=True,
         resolve_path=True,
-        autocompletion=path_autocomplete(
-            file_okay=False, dir_okay=True, match_wildcard="*"
-        ),
+        autocompletion=ROOT_AUTOCOMPLETE,
     ),
     root: Path = typer.Option(
-        Path.cwd(),
+        Path(),
         "--root",
         "-r",
         help="The project root directory.",
@@ -468,9 +472,7 @@ def _query_cli(
         dir_okay=True,
         writable=True,
         resolve_path=True,
-        autocompletion=path_autocomplete(
-            file_okay=False, dir_okay=True, match_wildcard="*"
-        ),
+        autocompletion=ROOT_AUTOCOMPLETE,
     ),
     community_level: int = typer.Option(
         2,

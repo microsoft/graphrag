@@ -7,7 +7,6 @@ import asyncio
 import sys
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
-from graphrag.config.defaults import language_model_defaults
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.language_model.manager import ModelManager
 from graphrag.logger.print_progress import ProgressLogger

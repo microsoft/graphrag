@@ -17,7 +17,7 @@ import annotated_types
 from pydantic import PositiveInt, validate_call
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
-from graphrag.config.defaults import graphrag_config_defaults, language_model_defaults
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.language_model.manager import ModelManager
 from graphrag.logger.base import ProgressLogger
