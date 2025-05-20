@@ -109,10 +109,6 @@ async def _text_embed_with_vector_store(
     strategy_exec = load_strategy(strategy_type)
     strategy_config = {**strategy}
 
-    # if max_retries is not set, inject a dynamically assigned value based on the total number of expected LLM calls to be made
-    if strategy_config.get("llm") and strategy_config["llm"]["max_retries"] == -1:
-        strategy_config["llm"]["max_retries"] = len(input)
-
     # Get vector-storage configuration
     insert_batch_size: int = (
         vector_store_config.get("batch_size") or DEFAULT_EMBEDDING_BATCH_SIZE
