@@ -3,12 +3,11 @@
 
 """Parameterization settings for the default configuration."""
 
-from pathlib import Path
-
 from pydantic import BaseModel, Field
 
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.config.prompt_getter import get_prompt_content
 
 
 class CommunityReportsConfig(BaseModel):
@@ -25,6 +24,10 @@ class CommunityReportsConfig(BaseModel):
     text_prompt: str | None = Field(
         description="The community report extraction prompt to use for text-based summarization.",
         default=graphrag_config_defaults.community_reports.text_prompt,
+    )
+    endpoint_url: str | None = Field(
+        description="The endpoint URL for the S3 API. Useful for S3-compatible storage like MinIO.",
+        default=graphrag_config_defaults.community_reports.endpoint_url,
     )
     max_length: int = Field(
         description="The community report maximum length in tokens.",
@@ -50,16 +53,8 @@ class CommunityReportsConfig(BaseModel):
         return self.strategy or {
             "type": CreateCommunityReportsStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
-            "graph_prompt": (Path(root_dir) / self.graph_prompt).read_text(
-                encoding="utf-8"
-            )
-            if self.graph_prompt
-            else None,
-            "text_prompt": (Path(root_dir) / self.text_prompt).read_text(
-                encoding="utf-8"
-            )
-            if self.text_prompt
-            else None,
+            "graph_prompt": get_prompt_content(self.graph_prompt, root_dir, self.endpoint_url),
+            "text_prompt": get_prompt_content(self.text_prompt, root_dir, self.endpoint_url),
             "max_report_length": self.max_length,
             "max_input_length": self.max_input_length,
         }

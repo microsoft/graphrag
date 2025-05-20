@@ -1,0 +1,4 @@
+{
+  "description": "Fixed S3 configuration validation to use the correct enum types for each storage configuration.",
+  "type": "patch"
+}
