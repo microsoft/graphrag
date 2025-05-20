@@ -184,6 +184,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         reduce_response = await self._reduce_response(
             map_responses=map_responses,
             query=query,
+            max_length=self.reduce_max_length,
             **self.reduce_llm_params,
         )
         llm_calls["reduce"] = reduce_response.llm_calls
@@ -297,6 +298,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         self,
         map_responses: list[SearchResult],
         query: str,
+        max_length: int,
         **llm_kwargs,
     ) -> SearchResult:
         """Combine all intermediate responses from single batches into a final answer to the user query."""
@@ -371,7 +373,9 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             text_data = "\n\n".join(data)
 
             search_prompt = self.reduce_system_prompt.format(
-                report_data=text_data, response_type=self.response_type
+                report_data=text_data, 
+                response_type=self.response_type, 
+                max_length=max_length,
             )
             if self.allow_general_knowledge:
                 search_prompt += "\n" + self.general_knowledge_inclusion_prompt

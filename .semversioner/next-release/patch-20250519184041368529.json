@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "[Bugfix]: max_length is not passed in the prompt template reduce_system_prompt in Global search.py"
+}
