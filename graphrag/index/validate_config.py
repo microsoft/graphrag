@@ -18,9 +18,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     # Validate Chat LLM configs
     # TODO: Replace default_chat_model with a way to select the model
     default_llm_settings = parameters.get_language_model_config("default_chat_model")
-    # if max_retries is not set, set it to the default value
-    if default_llm_settings.max_retries == -1:
-        default_llm_settings.max_retries = language_model_defaults.max_retries
+
     llm = ModelManager().register_chat(
         name="test-llm",
         model_type=default_llm_settings.type,
@@ -40,8 +38,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     embedding_llm_settings = parameters.get_language_model_config(
         parameters.embed_text.model_id
     )
-    if embedding_llm_settings.max_retries == -1:
-        embedding_llm_settings.max_retries = language_model_defaults.max_retries
+
     embed_llm = ModelManager().register_embedding(
         name="test-embed-llm",
         model_type=embedding_llm_settings.type,

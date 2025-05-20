@@ -36,10 +36,6 @@ async def summarize_descriptions(
     )
     strategy_config = {**strategy}
 
-    # if max_retries is not set, inject a dynamically assigned value based on the maximum number of expected LLM calls to be made
-    if strategy_config.get("llm") and strategy_config["llm"]["max_retries"] == -1:
-        strategy_config["llm"]["max_retries"] = len(entities_df) + len(relationships_df)
-
     async def get_summarized(
         nodes: pd.DataFrame, edges: pd.DataFrame, semaphore: asyncio.Semaphore
     ):
