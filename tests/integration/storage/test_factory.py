@@ -15,6 +15,7 @@ from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
 from graphrag.storage.factory import StorageFactory
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_BLOB_STORAGE_KEY = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;"
@@ -62,15 +63,25 @@ def test_create_memory_storage():
 
 
 def test_register_and_create_custom_storage():
-    class CustomStorage:
-        def __init__(self, **kwargs):
-            self.initialized = True
+    """Test registering and creating a custom storage type."""
+    from unittest.mock import MagicMock
 
-    StorageFactory.register("custom", lambda **kwargs: CustomStorage(**kwargs))
+    # Create a mock that satisfies the PipelineStorage interface
+    custom_storage_class = MagicMock(spec=PipelineStorage)
+    # Make the mock return a mock instance when instantiated
+    instance = MagicMock()
+    # We can set attributes on the mock instance, even if they don't exist on PipelineStorage
+    instance.initialized = True
+    custom_storage_class.return_value = instance
+
+    StorageFactory.register("custom", lambda **kwargs: custom_storage_class(**kwargs))
     storage = StorageFactory.create_storage("custom", {})
-    assert isinstance(storage, CustomStorage)
-    assert storage.initialized
-    
+
+    assert custom_storage_class.called
+    assert storage is instance
+    # Access the attribute we set on our mock
+    assert storage.initialized is True  # type: ignore # Attribute only exists on our mock
+
     # Check if it's in the list of registered storage types
     assert "custom" in StorageFactory.get_storage_types()
     assert StorageFactory.is_supported_storage_type("custom")
