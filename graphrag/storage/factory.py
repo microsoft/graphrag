@@ -5,7 +5,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from graphrag.config.enums import OutputType
 from graphrag.storage.blob_pipeline_storage import create_blob_storage
@@ -26,29 +27,66 @@ class StorageFactory:
     for individual enforcement of required/optional arguments.
     """
 
-    storage_types: ClassVar[dict[str, type]] = {}
+    _storage_registry: ClassVar[dict[str, Callable[..., PipelineStorage]]] = {}
+    storage_types: ClassVar[dict[str, type]] = {}  # For backward compatibility
 
     @classmethod
-    def register(cls, storage_type: str, storage: type):
-        """Register a custom storage implementation."""
-        cls.storage_types[storage_type] = storage
+    def register(cls, storage_type: str, creator: Callable[..., PipelineStorage]) -> None:
+        """Register a custom storage implementation.
+        
+        Args:
+            storage_type: The type identifier for the storage.
+            creator: A callable that creates an instance of the storage.
+        """
+        cls._storage_registry[storage_type] = creator
+        
+        # For backward compatibility with code that may access storage_types directly
+        if callable(creator) and hasattr(creator, "__annotations__") and "return" in creator.__annotations__:
+            try:
+                cls.storage_types[storage_type] = creator.__annotations__["return"]
+            except (TypeError, KeyError):
+                # Just ignore if we can't maintain backward compatibility in this case
+                pass
 
     @classmethod
     def create_storage(
         cls, storage_type: OutputType | str, kwargs: dict
     ) -> PipelineStorage:
-        """Create or get a storage object from the provided type."""
-        match storage_type:
-            case OutputType.blob:
-                return create_blob_storage(**kwargs)
-            case OutputType.cosmosdb:
-                return create_cosmosdb_storage(**kwargs)
-            case OutputType.file:
-                return create_file_storage(**kwargs)
-            case OutputType.memory:
-                return MemoryPipelineStorage()
-            case _:
-                if storage_type in cls.storage_types:
-                    return cls.storage_types[storage_type](**kwargs)
-                msg = f"Unknown storage type: {storage_type}"
-                raise ValueError(msg)
+        """Create a storage object from the provided type.
+        
+        Args:
+            storage_type: The type of storage to create.
+            kwargs: Additional keyword arguments for the storage constructor.
+            
+        Returns
+        -------
+            A PipelineStorage instance.
+        
+        Raises
+        ------
+            ValueError: If the storage type is not registered.
+        """
+        storage_type_str = storage_type.value if isinstance(storage_type, OutputType) else storage_type
+        
+        if storage_type_str not in cls._storage_registry:
+            msg = f"Unknown storage type: {storage_type}"
+            raise ValueError(msg)
+            
+        return cls._storage_registry[storage_type_str](**kwargs)
+
+    @classmethod
+    def get_storage_types(cls) -> list[str]:
+        """Get the registered storage implementations."""
+        return list(cls._storage_registry.keys())
+
+    @classmethod
+    def is_supported_storage_type(cls, storage_type: str) -> bool:
+        """Check if the given storage type is supported."""
+        return storage_type in cls._storage_registry
+
+
+# --- Register default implementations ---
+StorageFactory.register(OutputType.blob.value, create_blob_storage)
+StorageFactory.register(OutputType.cosmosdb.value, create_cosmosdb_storage)
+StorageFactory.register(OutputType.file.value, create_file_storage)
+StorageFactory.register(OutputType.memory.value, lambda **kwargs: MemoryPipelineStorage())
