@@ -18,6 +18,11 @@ class ModelOutput(Protocol):
         """Return the textual content of the output."""
         ...
 
+    @property
+    def full_response(self) -> dict[str, Any] | None:
+        """Return the complete JSON response returned by the model."""
+        ...
+
 
 class ModelResponse(Protocol, Generic[T]):
     """Protocol for LLM response."""
@@ -37,12 +42,21 @@ class ModelResponse(Protocol, Generic[T]):
         """Return the history of the response."""
         ...
 
+    @property
+    def raw_model_response(self) -> Any:
+        """Return the raw model response."""
+        ...
+
 
 class BaseModelOutput(BaseModel):
     """Base class for LLM output."""
 
     content: str = Field(..., description="The textual content of the output.")
     """The textual content of the output."""
+    full_response: dict[str, Any] | None = Field(
+        None, description="The complete JSON response returned by the LLM provider."
+    )
+    """The complete JSON response returned by the LLM provider."""
 
 
 class BaseModelResponse(BaseModel, Generic[T]):
@@ -52,6 +66,8 @@ class BaseModelResponse(BaseModel, Generic[T]):
     """"""
     parsed_response: T | None = None
     """Parsed response."""
+    raw_model_response: Any = None
+    """Raw model response."""
     history: list[Any] = Field(default_factory=list)
     """History of the response."""
     tool_calls: list = Field(default_factory=list)
