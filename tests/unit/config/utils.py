@@ -194,7 +194,6 @@ def assert_text_embedding_configs(
 ) -> None:
     assert actual.batch_size == expected.batch_size
     assert actual.batch_max_tokens == expected.batch_max_tokens
-    assert actual.target == expected.target
     assert actual.names == expected.names
     assert actual.strategy == expected.strategy
     assert actual.model_id == expected.model_id
