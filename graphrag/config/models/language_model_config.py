@@ -61,23 +61,24 @@ class LanguageModelConfig(BaseModel):
     )
 
     def _validate_auth_type(self) -> None:
-        """Validate the authentication type.
+    """Validate the authentication type.
 
-        auth_type must be api_key when using OpenAI and
-        can be either api_key or azure_managed_identity when using AOI.
+    auth_type must be api_key when using OpenAI and Gemini,
+    and can be either api_key or azure_managed_identity when using AOI.
 
-        Raises
-        ------
-        ConflictingSettingsError
-            If the Azure authentication type conflicts with the model being used.
-        """
-        if self.auth_type == AuthType.AzureManagedIdentity and (
-            self.type == ModelType.OpenAIChat or self.type == ModelType.OpenAIEmbedding
-        ):
-            msg = f"auth_type of azure_managed_identity is not supported for model type {self.type}. Please rerun `graphrag init` and set the auth_type to api_key."
-            raise ConflictingSettingsError(msg)
-
-    type: ModelType | str = Field(description="The type of LLM model to use.")
+    Raises
+    ------
+    ConflictingSettingsError
+        If the authentication type conflicts with the model being used.
+    """
+    if self.auth_type == AuthType.AzureManagedIdentity and (
+        self.type in [ModelType.OpenAIChat, ModelType.OpenAIEmbedding, ModelType.GeminiChat, ModelType.GeminiEmbedding]
+    ):
+        msg = (
+            f"auth_type of azure_managed_identity is not supported for model type {self.type}. "
+            "Please rerun `graphrag init` and set the auth_type to api_key."
+        )
+        raise ConflictingSettingsError(msg)
 
     def _validate_type(self) -> None:
         """Validate the model type.
@@ -115,46 +116,44 @@ class LanguageModelConfig(BaseModel):
     )
 
     def _validate_api_base(self) -> None:
-        """Validate the API base.
+    """Validate the API base.
 
-        Required when using AOI.
+    Required when using AOI or Gemini.
 
-        Raises
-        ------
-        AzureApiBaseMissingError
-            If the API base is missing and is required.
-        """
-        if (
-            self.type == ModelType.AzureOpenAIChat
-            or self.type == ModelType.AzureOpenAIEmbedding
-        ) and (self.api_base is None or self.api_base.strip() == ""):
-            raise AzureApiBaseMissingError(self.type)
-
-    api_version: str | None = Field(
-        description="The version of the LLM API to use.",
-        default=language_model_defaults.api_version,
-    )
+    Raises
+    ------
+    AzureApiBaseMissingError
+        If the API base is missing and is required.
+    """
+    if (
+        self.type in [
+            ModelType.AzureOpenAIChat,
+            ModelType.AzureOpenAIEmbedding,
+            ModelType.GeminiChat,
+            ModelType.GeminiEmbedding,  # Added Gemini models
+        ]
+    ) and (self.api_base is None or self.api_base.strip() == ""):
+        raise AzureApiBaseMissingError(self.type)
 
     def _validate_api_version(self) -> None:
-        """Validate the API version.
+    """Validate the API version.
 
-        Required when using AOI.
+    Required when using AOI or Gemini.
 
-        Raises
-        ------
-        AzureApiBaseMissingError
-            If the API base is missing and is required.
-        """
-        if (
-            self.type == ModelType.AzureOpenAIChat
-            or self.type == ModelType.AzureOpenAIEmbedding
-        ) and (self.api_version is None or self.api_version.strip() == ""):
-            raise AzureApiVersionMissingError(self.type)
-
-    deployment_name: str | None = Field(
-        description="The deployment name to use for the LLM service.",
-        default=language_model_defaults.deployment_name,
-    )
+    Raises
+    ------
+    AzureApiVersionMissingError
+        If the API version is missing and is required.
+    """
+    if (
+        self.type in [
+            ModelType.AzureOpenAIChat,
+            ModelType.AzureOpenAIEmbedding,
+            ModelType.GeminiChat,  # Added GeminiChat
+            ModelType.GeminiEmbedding,  # Added GeminiEmbedding
+        ]
+    ) and (self.api_version is None or self.api_version.strip() == ""):
+        raise AzureApiVersionMissingError(self.type)
 
     def _validate_deployment_name(self) -> None:
         """Validate the deployment name.
@@ -167,10 +166,14 @@ class LanguageModelConfig(BaseModel):
             If the deployment name is missing and is required.
         """
         if (
-            self.type == ModelType.AzureOpenAIChat
-            or self.type == ModelType.AzureOpenAIEmbedding
-        ) and (self.deployment_name is None or self.deployment_name.strip() == ""):
-            raise AzureDeploymentNameMissingError(self.type)
+        self.type in [
+            ModelType.AzureOpenAIChat,
+            ModelType.AzureOpenAIEmbedding,
+            ModelType.GeminiChat,  # Added support for GeminiChat
+            ModelType.GeminiEmbedding,  # Added support for GeminiEmbedding
+        ]
+    ) and (self.deployment_name is None or self.deployment_name.strip() == ""):
+        raise AzureDeploymentNameMissingError(self.type)
 
     organization: str | None = Field(
         description="The organization to use for the LLM service.",
