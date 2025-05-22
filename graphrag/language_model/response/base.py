@@ -42,11 +42,6 @@ class ModelResponse(Protocol, Generic[T]):
         """Return the history of the response."""
         ...
 
-    @property
-    def raw_model_response(self) -> Any:
-        """Return the raw model response."""
-        ...
-
 
 class BaseModelOutput(BaseModel):
     """Base class for LLM output."""
@@ -66,8 +61,6 @@ class BaseModelResponse(BaseModel, Generic[T]):
     """"""
     parsed_response: T | None = None
     """Parsed response."""
-    raw_model_response: Any = None
-    """Raw model response."""
     history: list[Any] = Field(default_factory=list)
     """History of the response."""
     tool_calls: list = Field(default_factory=list)
