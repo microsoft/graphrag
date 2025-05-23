@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix Drift Reduce Response for non streaming calls"
-}
