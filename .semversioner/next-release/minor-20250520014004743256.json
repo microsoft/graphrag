@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Remove Dynamic Max Retries support. Refactor typer typing in cli interface"
-}

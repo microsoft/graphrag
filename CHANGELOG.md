@@ -1,6 +1,16 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 2.3.0
+
+- minor: Remove Dynamic Max Retries support. Refactor typer typing in cli interface
+- minor: Update fnllm to latest. Update default graphrag configuration
+- patch: A few fixes and enhancements for better reuse and flow.
+- patch: Add full llm response to LLM PRovider output
+- patch: Fix Drift Reduce Response for non streaming calls
+- patch: Fix global search prompt to include missing formatting key
+- patch: Upgrade pyarrow dependency to >=17.0.0 to fix CVE-2024-52338
+
 ## 2.2.1
 
 - patch: Fix Community Report prompt tuning response
