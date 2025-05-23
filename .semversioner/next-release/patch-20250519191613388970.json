@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Upgrade pyarrow dependency to >=17.0.0 to fix CVE-2024-52338"
-}
