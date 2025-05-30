@@ -166,6 +166,7 @@ def update_context_data(
     -------
     str | list[pd.DataFrame] | dict[str, pd.DataFrame]: The updated context data.
     """
+    context_data = reformat_context_data(context_data)
     updated_context_data = {}
     for key in context_data:
         updated_entry = []
