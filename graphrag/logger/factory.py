@@ -28,7 +28,12 @@ class LoggerFactory:
         if kwargs is None:
             kwargs = {}
 
-        # All logger types now use the standard progress logger
+        # Check if a custom logger type was registered
+        if isinstance(logger_type, str) and logger_type in cls.logger_types:
+            logger_class = cls.logger_types[logger_type]
+            return logger_class(**kwargs)
+
+        # All standard logger types now use the standard progress logger
         # The visual differences (rich, print) are handled by the logging configuration
         prefix = kwargs.get("prefix", "GraphRAG Indexer ")
         return StandardProgressLogger(prefix)

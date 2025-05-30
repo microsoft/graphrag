@@ -109,9 +109,6 @@ def get_logger(name: str) -> logging.Logger:
     """
     # Ensure the name has 'graphrag' prefix for proper hierarchy
     if not name.startswith("graphrag.") and name != "graphrag":
-        if name == "__main__":
-            name = "graphrag.main"
-        else:
-            name = f"graphrag.{name}"
+        name = "graphrag.main" if name == "__main__" else f"graphrag.{name}"
 
     return logging.getLogger(name)

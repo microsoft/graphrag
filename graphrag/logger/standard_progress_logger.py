@@ -26,7 +26,7 @@ class StandardProgressLogger(ProgressLogger):
         self._prefix = prefix
         self._logger = get_logger("graphrag.progress")
         if prefix:
-            self._logger.info(f"{self._prefix}")
+            self._logger.info("%s", self._prefix)
 
     def __call__(self, update: Progress) -> None:
         """Update progress.
@@ -58,20 +58,20 @@ class StandardProgressLogger(ProgressLogger):
     def stop(self) -> None:
         """Stop the progress logger."""
         if self._prefix:
-            self._logger.info(f"{self._prefix}completed")
+            self._logger.info("%scompleted", self._prefix)
 
     def error(self, message: str) -> None:
         """Log an error."""
-        self._logger.error(f"{self._prefix}{message}")
+        self._logger.error("%s%s", self._prefix, message)
 
     def warning(self, message: str) -> None:
         """Log a warning."""
-        self._logger.warning(f"{self._prefix}{message}")
+        self._logger.warning("%s%s", self._prefix, message)
 
     def info(self, message: str) -> None:
         """Log information."""
-        self._logger.info(f"{self._prefix}{message}")
+        self._logger.info("%s%s", self._prefix, message)
 
     def success(self, message: str) -> None:
         """Log success."""
-        self._logger.info(f"{self._prefix}SUCCESS: {message}")
+        self._logger.info("%sSUCCESS: %s", self._prefix, message)
