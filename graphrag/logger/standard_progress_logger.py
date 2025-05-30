@@ -46,7 +46,6 @@ class StandardProgressLogger(ProgressLogger):
 
     def dispose(self) -> None:
         """Dispose of the progress logger."""
-        pass
 
     def child(self, prefix: str, transient: bool = True) -> ProgressLogger:
         """Create a child progress logger."""
@@ -55,7 +54,6 @@ class StandardProgressLogger(ProgressLogger):
 
     def force_refresh(self) -> None:
         """Force a refresh."""
-        pass
 
     def stop(self) -> None:
         """Stop the progress logger."""

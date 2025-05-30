@@ -31,8 +31,8 @@ from graphrag.config.embeddings import (
     text_unit_text_embedding,
 )
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.logger.standard_progress_logger import StandardProgressLogger
 from graphrag.logger.standard_logging import get_logger
+from graphrag.logger.standard_progress_logger import StandardProgressLogger
 from graphrag.query.factory import (
     get_basic_search_engine,
     get_drift_search_engine,

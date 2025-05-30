@@ -4,7 +4,6 @@
 """CLI implementation of the query subcommand."""
 
 import asyncio
-import logging
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -13,8 +12,8 @@ import graphrag.api as api
 from graphrag.callbacks.noop_query_callbacks import NoopQueryCallbacks
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.logger.standard_progress_logger import StandardProgressLogger
 from graphrag.logger.standard_logging import get_logger
+from graphrag.logger.standard_progress_logger import StandardProgressLogger
 from graphrag.utils.api import create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, storage_has_table
 

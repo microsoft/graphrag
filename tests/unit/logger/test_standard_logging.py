@@ -4,9 +4,8 @@
 """Tests for standard logging functionality."""
 
 import logging
-import os
-from pathlib import Path
 import tempfile
+from pathlib import Path
 
 from graphrag.logger.standard_logging import configure_logging, get_logger
 
@@ -33,7 +32,7 @@ def test_file_logging():
 
         # Check that the log file exists and contains our message
         assert log_file.exists()
-        with open(log_file, "r") as f:
+        with open(log_file) as f:
             content = f.read()
             assert test_message in content
 

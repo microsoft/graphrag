@@ -22,7 +22,8 @@ Usage:
     logger.error("Error message")
     logger.critical("Critical error message")
 
-Notes:
+Notes
+-----
     The logging system is hierarchical. Loggers are organized in a tree structure,
     with the root logger named 'graphrag'. All loggers created by get_logger() will
     be children of this root logger. This allows for consistent configuration of all
@@ -34,12 +35,11 @@ Notes:
 import logging
 import sys
 from pathlib import Path
-from typing import Optional, Union
 
 
 def configure_logging(
-    log_level: Union[int, str] = logging.INFO,
-    log_file: Optional[Union[str, Path]] = None,
+    log_level: int | str = logging.INFO,
+    log_file: str | Path | None = None,
     log_format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     date_format: str = "%Y-%m-%d %H:%M:%S",
 ) -> None:
