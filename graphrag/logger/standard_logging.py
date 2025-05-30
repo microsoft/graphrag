@@ -5,6 +5,32 @@
 
 This module provides a standardized way to configure Python's built-in
 logging system for use within the graphrag package.
+
+Usage:
+    # Configuration should be done once at the start of your application:
+    from graphrag.logger.standard_logging import configure_logging
+    configure_logging(log_level="INFO", log_file="/path/to/app.log")
+
+    # Then throughout your code:
+    from graphrag.logger.standard_logging import get_logger
+    logger = get_logger(__name__)  # Typically pass __name__ to get module-specific logger
+    
+    # Use standard logging methods:
+    logger.debug("Debug message")
+    logger.info("Info message")
+    logger.warning("Warning message")
+    logger.error("Error message")
+    logger.critical("Critical error message")
+
+Notes:
+    The logging system is hierarchical. Loggers are organized in a tree structure,
+    with the root logger named 'graphrag'. All loggers created by get_logger() will
+    be children of this root logger. This allows for consistent configuration of all
+    graphrag-related logs throughout the application.
+
+    Progress loggers (PrintProgressLogger, RichProgressLogger) have been integrated with
+    this standard logging system, so their messages will also be captured when using this
+    configuration.
 """
 
 import logging
