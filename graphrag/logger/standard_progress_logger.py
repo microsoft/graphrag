@@ -58,7 +58,7 @@ class StandardProgressLogger(ProgressLogger):
     def stop(self) -> None:
         """Stop the progress logger."""
         if self._prefix:
-            self._logger.info("%scompleted", self._prefix)
+            self._logger.info("%s completed", self._prefix)
 
     def error(self, message: str) -> None:
         """Log an error."""
