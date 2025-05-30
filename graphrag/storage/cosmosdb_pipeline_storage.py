@@ -184,8 +184,14 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 else:
                     num_filtered += 1
                 if progress is not None:
-                    progress(
-                        _create_progress_status(num_loaded, num_filtered, num_total)
+                    progress_status = _create_progress_status(
+                        num_loaded, num_filtered, num_total
+                    )
+                    progress.info(
+                        "Progress: %s (%d/%d completed)",
+                        progress_status.description,
+                        progress_status.completed_items,
+                        progress_status.total_items,
                     )
         except Exception:
             log.exception(
