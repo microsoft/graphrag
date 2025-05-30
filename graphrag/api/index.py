@@ -20,7 +20,7 @@ from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.index.typing.workflow import WorkflowFunction
 from graphrag.index.workflows.factory import PipelineFactory
 from graphrag.logger.base import ProgressLogger
-from graphrag.logger.null_progress import NullProgressLogger
+from graphrag.logger.standard_progress_logger import StandardProgressLogger
 
 log = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    logger = progress_logger or NullProgressLogger()
+    logger = progress_logger or StandardProgressLogger("")
     # create a pipeline reporter and add to any additional callbacks
     callbacks = callbacks or []
     callbacks.append(create_pipeline_reporter(config.reporting, None))

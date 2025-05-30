@@ -28,9 +28,7 @@ Notes:
     be children of this root logger. This allows for consistent configuration of all
     graphrag-related logs throughout the application.
 
-    Progress loggers (PrintProgressLogger, RichProgressLogger) have been integrated with
-    this standard logging system, so their messages will also be captured when using this
-    configuration.
+    All progress logging now uses this standard logging system for consistency.
 """
 
 import logging

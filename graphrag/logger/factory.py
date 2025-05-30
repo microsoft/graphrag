@@ -6,9 +6,7 @@
 from typing import ClassVar
 
 from graphrag.logger.base import ProgressLogger
-from graphrag.logger.null_progress import NullProgressLogger
-from graphrag.logger.print_progress import PrintProgressLogger
-from graphrag.logger.rich_progress import RichProgressLogger
+from graphrag.logger.standard_progress_logger import StandardProgressLogger
 from graphrag.logger.types import LoggerType
 
 
@@ -29,15 +27,8 @@ class LoggerFactory:
         """Create a logger based on the provided type."""
         if kwargs is None:
             kwargs = {}
-        match logger_type:
-            case LoggerType.RICH:
-                return RichProgressLogger("GraphRAG Indexer ")
-            case LoggerType.PRINT:
-                return PrintProgressLogger("GraphRAG Indexer ")
-            case LoggerType.NONE:
-                return NullProgressLogger()
-            case _:
-                if logger_type in cls.logger_types:
-                    return cls.logger_types[logger_type](**kwargs)
-                # default to null logger if no other logger is found
-                return NullProgressLogger()
+
+        # All logger types now use the standard progress logger
+        # The visual differences (rich, print) are handled by the logging configuration
+        prefix = kwargs.get("prefix", "GraphRAG Indexer ")
+        return StandardProgressLogger(prefix)
