@@ -386,7 +386,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         model_response = await self.model.achat(
             prompt=query,
             history=search_messages,
-            model_parameters=llm_kwargs,
+            model_parameters=llm_kwargs.get("model_params", {}),
         )
 
         reduced_response = model_response.output.content

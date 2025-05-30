@@ -201,8 +201,7 @@ Supported embeddings names are:
 - `vector_store_id` **str** - Name of vector store definition to write to.
 - `batch_size` **int** - The maximum batch size to use.
 - `batch_max_tokens` **int** - The maximum batch # of tokens.
-- `target` **required|all|selected|none** - Determines which set of embeddings to export.
-- `names` **list[str]** - If target=selected, this should be an explicit list of the embeddings names we support.
+- `names` **list[str]** - List of the embeddings names to run (must be in supported list).
 
 ### extract_graph
 

@@ -18,6 +18,11 @@ class ModelOutput(Protocol):
         """Return the textual content of the output."""
         ...
 
+    @property
+    def full_response(self) -> dict[str, Any] | None:
+        """Return the complete JSON response returned by the model."""
+        ...
+
 
 class ModelResponse(Protocol, Generic[T]):
     """Protocol for LLM response."""
@@ -43,6 +48,10 @@ class BaseModelOutput(BaseModel):
 
     content: str = Field(..., description="The textual content of the output.")
     """The textual content of the output."""
+    full_response: dict[str, Any] | None = Field(
+        None, description="The complete JSON response returned by the LLM provider."
+    )
+    """The complete JSON response returned by the LLM provider."""
 
 
 class BaseModelResponse(BaseModel, Generic[T]):
