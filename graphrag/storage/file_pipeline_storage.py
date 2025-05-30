@@ -16,7 +16,6 @@ import aiofiles
 from aiofiles.os import remove
 from aiofiles.ospath import exists
 
-from graphrag.logger.base import ProgressLogger
 from graphrag.logger.progress import Progress
 from graphrag.storage.pipeline_storage import (
     PipelineStorage,
@@ -42,7 +41,7 @@ class FilePipelineStorage(PipelineStorage):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        progress: ProgressLogger | None = None,
+        progress: logging.Logger | None = None,
         file_filter: dict[str, Any] | None = None,
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:
@@ -78,7 +77,9 @@ class FilePipelineStorage(PipelineStorage):
             else:
                 num_filtered += 1
             if progress is not None:
-                progress(_create_progress_status(num_loaded, num_filtered, num_total))
+                progress.debug(
+                    f"Files loaded: {num_loaded}, filtered: {num_filtered}, total: {num_total}"
+                )
 
     async def get(
         self, key: str, as_bytes: bool | None = False, encoding: str | None = None

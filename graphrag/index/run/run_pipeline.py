@@ -21,8 +21,6 @@ from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.pipeline import Pipeline
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.index.update.incremental_index import get_delta_docs
-from graphrag.logger.base import ProgressLogger
-from graphrag.logger.progress import Progress
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.api import create_cache_from_config, create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
@@ -34,7 +32,7 @@ async def run_pipeline(
     pipeline: Pipeline,
     config: GraphRagConfig,
     callbacks: WorkflowCallbacks,
-    logger: ProgressLogger,
+    logger: logging.Logger,
     is_update_run: bool = False,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
@@ -85,7 +83,7 @@ async def run_pipeline(
             ):
                 yield table
 
-            logger.success("Finished running workflows on new documents.")
+            logger.info("Finished running workflows on new documents.")
 
     else:
         logger.info("Running standard indexing.")
@@ -108,7 +106,7 @@ async def _run_pipeline(
     pipeline: Pipeline,
     config: GraphRagConfig,
     dataset: pd.DataFrame,
-    logger: ProgressLogger,
+    logger: logging.Logger,
     context: PipelineRunContext,
 ) -> AsyncIterable[PipelineRunResult]:
     start_time = time.time()
@@ -123,11 +121,11 @@ async def _run_pipeline(
 
         for name, workflow_function in pipeline.run():
             last_workflow = name
-            progress = logger.child(name, transient=False)
+            logger.info("Starting workflow: %s", name)
             context.callbacks.workflow_start(name, None)
             work_time = time.time()
             result = await workflow_function(config, context)
-            progress(Progress(percent=1))
+            logger.info("Completed workflow: %s", name)
             context.callbacks.workflow_end(name, result)
             yield PipelineRunResult(
                 workflow=name, result=result.result, state=context.state, errors=None

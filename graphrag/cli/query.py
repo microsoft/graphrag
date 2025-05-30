@@ -13,16 +13,15 @@ from graphrag.callbacks.noop_query_callbacks import NoopQueryCallbacks
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.logger.standard_logging import get_logger
-from graphrag.logger.standard_progress_logger import StandardProgressLogger
 from graphrag.utils.api import create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, storage_has_table
 
 if TYPE_CHECKING:
     import pandas as pd
 
-# Initialize both a standard logger and a progress logger
+# Initialize standard logger
 log = get_logger(__name__)
-logger = StandardProgressLogger("")
+logger = get_logger("graphrag.cli.query")
 
 
 def run_global_search(
@@ -62,8 +61,8 @@ def run_global_search(
         final_community_reports_list = dataframe_dict["community_reports"]
         index_names = dataframe_dict["index_names"]
 
-        logger.success(
-            f"Running Multi-index Global Search: {dataframe_dict['index_names']}"
+        logger.info(
+            "Running Multi-index Global Search: %s", dataframe_dict["index_names"]
         )
 
         response, context_data = asyncio.run(
@@ -80,7 +79,7 @@ def run_global_search(
                 query=query,
             )
         )
-        logger.success(f"Global Search Response:\n{response}")
+        logger.info("Global Search Response:\n%s", response)
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data
@@ -134,7 +133,7 @@ def run_global_search(
             query=query,
         )
     )
-    logger.success(f"Global Search Response:\n{response}")
+    logger.info("Global Search Response:\n%s", response)
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -181,8 +180,8 @@ def run_local_search(
         final_relationships_list = dataframe_dict["relationships"]
         index_names = dataframe_dict["index_names"]
 
-        logger.success(
-            f"Running Multi-index Local Search: {dataframe_dict['index_names']}"
+        logger.info(
+            "Running Multi-index Local Search: %s", dataframe_dict["index_names"]
         )
 
         # If any covariates tables are missing from any index, set the covariates list to None
@@ -207,7 +206,7 @@ def run_local_search(
                 query=query,
             )
         )
-        logger.success(f"Local Search Response:\n{response}")
+        logger.info("Local Search Response:\n%s", response)
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data
@@ -268,7 +267,7 @@ def run_local_search(
             query=query,
         )
     )
-    logger.success(f"Local Search Response:\n{response}")
+    logger.info("Local Search Response:\n%s", response)
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -313,8 +312,8 @@ def run_drift_search(
         final_relationships_list = dataframe_dict["relationships"]
         index_names = dataframe_dict["index_names"]
 
-        logger.success(
-            f"Running Multi-index Drift Search: {dataframe_dict['index_names']}"
+        logger.info(
+            "Running Multi-index Drift Search: %s", dataframe_dict["index_names"]
         )
 
         response, context_data = asyncio.run(
@@ -332,7 +331,7 @@ def run_drift_search(
                 query=query,
             )
         )
-        logger.success(f"DRIFT Search Response:\n{response}")
+        logger.info("DRIFT Search Response:\n%s", response)
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data
@@ -391,7 +390,7 @@ def run_drift_search(
             query=query,
         )
     )
-    logger.success(f"DRIFT Search Response:\n{response}")
+    logger.info("DRIFT Search Response:\n%s", response)
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -426,8 +425,8 @@ def run_basic_search(
         final_text_units_list = dataframe_dict["text_units"]
         index_names = dataframe_dict["index_names"]
 
-        logger.success(
-            f"Running Multi-index Basic Search: {dataframe_dict['index_names']}"
+        logger.info(
+            "Running Multi-index Basic Search: %s", dataframe_dict["index_names"]
         )
 
         response, context_data = asyncio.run(
@@ -439,7 +438,7 @@ def run_basic_search(
                 query=query,
             )
         )
-        logger.success(f"Basic Search Response:\n{response}")
+        logger.info("Basic Search Response:\n%s", response)
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data
@@ -480,7 +479,7 @@ def run_basic_search(
             query=query,
         )
     )
-    logger.success(f"Basic Search Response:\n{response}")
+    logger.info("Basic Search Response:\n%s", response)
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data

@@ -15,8 +15,7 @@ from graphrag.config.models.input_config import InputConfig
 from graphrag.index.input.csv import load_csv
 from graphrag.index.input.json import load_json
 from graphrag.index.input.text import load_text
-from graphrag.logger.base import ProgressLogger
-from graphrag.logger.standard_progress_logger import StandardProgressLogger
+from graphrag.logger.standard_logging import get_logger
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
@@ -30,13 +29,13 @@ loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
 
 async def create_input(
     config: InputConfig,
-    progress_reporter: ProgressLogger | None = None,
+    progress_reporter: logging.Logger | None = None,
     root_dir: str | None = None,
 ) -> pd.DataFrame:
     """Instantiate input data for a pipeline."""
     root_dir = root_dir or ""
     log.info("loading input from root_dir=%s", config.base_dir)
-    progress_reporter = progress_reporter or StandardProgressLogger("")
+    progress_reporter = progress_reporter or get_logger("graphrag.input")
 
     match config.type:
         case InputType.blob:
@@ -68,11 +67,9 @@ async def create_input(
             )
 
     if config.file_type in loaders:
-        progress = progress_reporter.child(
-            f"Loading Input ({config.file_type})", transient=False
-        )
+        progress_reporter.info(f"Loading Input ({config.file_type})")
         loader = loaders[config.file_type]
-        result = await loader(config, progress, storage)
+        result = await loader(config, progress_reporter, storage)
         # Convert metadata columns to strings and collapse them into a JSON object
         if config.metadata:
             if all(col in result.columns for col in config.metadata):

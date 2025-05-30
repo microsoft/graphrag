@@ -10,7 +10,6 @@ import pandas as pd
 
 from graphrag.config.models.input_config import InputConfig
 from graphrag.index.input.util import load_files, process_data_columns
-from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
@@ -18,7 +17,7 @@ log = logging.getLogger(__name__)
 
 async def load_csv(
     config: InputConfig,
-    progress: ProgressLogger | None,
+    progress: logging.Logger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load csv inputs from a directory."""

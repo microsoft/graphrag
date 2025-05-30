@@ -3,10 +3,10 @@
 
 """Factory functions for creating loggers."""
 
+import logging
 from typing import ClassVar
 
-from graphrag.logger.base import ProgressLogger
-from graphrag.logger.standard_progress_logger import StandardProgressLogger
+from graphrag.logger.standard_logging import get_logger
 from graphrag.logger.types import LoggerType
 
 
@@ -23,7 +23,7 @@ class LoggerFactory:
     @classmethod
     def create_logger(
         cls, logger_type: LoggerType | str, kwargs: dict | None = None
-    ) -> ProgressLogger:
+    ) -> logging.Logger:
         """Create a logger based on the provided type."""
         if kwargs is None:
             kwargs = {}
@@ -33,7 +33,7 @@ class LoggerFactory:
             logger_class = cls.logger_types[logger_type]
             return logger_class(**kwargs)
 
-        # All standard logger types now use the standard progress logger
+        # Return a standard Python logger
         # The visual differences (rich, print) are handled by the logging configuration
-        prefix = kwargs.get("prefix", "GraphRAG Indexer ")
-        return StandardProgressLogger(prefix)
+        logger_name = kwargs.get("name", "graphrag.progress")
+        return get_logger(logger_name)

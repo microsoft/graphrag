@@ -11,7 +11,6 @@ import pandas as pd
 
 from graphrag.config.models.input_config import InputConfig
 from graphrag.index.utils.hashing import gen_sha512_hash
-from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
@@ -21,7 +20,7 @@ async def load_files(
     loader: Any,
     config: InputConfig,
     storage: PipelineStorage,
-    progress: ProgressLogger | None,
+    progress: logging.Logger | None,
 ) -> pd.DataFrame:
     """Load files from storage and apply a loader function."""
     files = list(

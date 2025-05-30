@@ -19,10 +19,10 @@ from graphrag.index.run.utils import create_callback_chain
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.index.typing.workflow import WorkflowFunction
 from graphrag.index.workflows.factory import PipelineFactory
-from graphrag.logger.base import ProgressLogger
-from graphrag.logger.standard_progress_logger import StandardProgressLogger
+from graphrag.logger.standard_logging import get_logger
 
 log = logging.getLogger(__name__)
+logger = get_logger("graphrag.indexing")
 
 
 async def build_index(
@@ -31,7 +31,7 @@ async def build_index(
     is_update_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
-    progress_logger: ProgressLogger | None = None,
+    progress_logger: logging.Logger | None = None,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -45,7 +45,7 @@ async def build_index(
         Whether to enable memory profiling.
     callbacks : list[WorkflowCallbacks] | None default=None
         A list of callbacks to register.
-    progress_logger : ProgressLogger | None default=None
+    progress_logger : logging.Logger | None default=None
         The progress logger.
 
     Returns
@@ -53,12 +53,12 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    logger = progress_logger or StandardProgressLogger("")
+    used_logger = progress_logger or logger
     # create a pipeline reporter and add to any additional callbacks
     callbacks = callbacks or []
     callbacks.append(create_pipeline_reporter(config.reporting, None))
 
-    workflow_callbacks = create_callback_chain(callbacks, logger)
+    workflow_callbacks = create_callback_chain(callbacks)
 
     outputs: list[PipelineRunResult] = []
 
@@ -73,15 +73,15 @@ async def build_index(
         pipeline,
         config,
         callbacks=workflow_callbacks,
-        logger=logger,
+        logger=used_logger,
         is_update_run=is_update_run,
     ):
         outputs.append(output)
         if output.errors and len(output.errors) > 0:
-            logger.error(output.workflow)
+            used_logger.error("Workflow %s completed with errors", output.workflow)
         else:
-            logger.success(output.workflow)
-        logger.info(str(output.result))
+            used_logger.info("Workflow %s completed successfully", output.workflow)
+        used_logger.info(str(output.result))
 
     workflow_callbacks.pipeline_end(outputs)
     return outputs

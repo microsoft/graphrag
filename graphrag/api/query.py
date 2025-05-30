@@ -32,7 +32,6 @@ from graphrag.config.embeddings import (
 )
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.logger.standard_logging import get_logger
-from graphrag.logger.standard_progress_logger import StandardProgressLogger
 from graphrag.query.factory import (
     get_basic_search_engine,
     get_drift_search_engine,
@@ -55,9 +54,9 @@ from graphrag.utils.api import (
 )
 from graphrag.utils.cli import redact
 
-# Initialize both a standard logger and a progress logger
+# Initialize standard logger
 log = get_logger(__name__)
-logger = StandardProgressLogger("")
+logger = get_logger("graphrag.query")
 
 
 @validate_call(config={"arbitrary_types_allowed": True})

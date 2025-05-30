@@ -11,7 +11,6 @@ import pandas as pd
 from graphrag.config.models.input_config import InputConfig
 from graphrag.index.input.util import load_files
 from graphrag.index.utils.hashing import gen_sha512_hash
-from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
@@ -19,7 +18,7 @@ log = logging.getLogger(__name__)
 
 async def load_text(
     config: InputConfig,
-    progress: ProgressLogger | None,
+    progress: logging.Logger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load text inputs from a directory."""
