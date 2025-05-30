@@ -83,7 +83,10 @@ class OpenAIChatFNLLM:
         else:
             response = await self.model(prompt, history=history, **kwargs)
         return BaseModelResponse(
-            output=BaseModelOutput(content=response.output.content),
+            output=BaseModelOutput(
+                content=response.output.content,
+                full_response=response.output.raw_model.to_dict(),
+            ),
             parsed_response=response.parsed_json,
             history=response.history,
             cache_hit=response.cache_hit,
@@ -282,7 +285,10 @@ class AzureOpenAIChatFNLLM:
         else:
             response = await self.model(prompt, history=history, **kwargs)
         return BaseModelResponse(
-            output=BaseModelOutput(content=response.output.content),
+            output=BaseModelOutput(
+                content=response.output.content,
+                full_response=response.output.raw_model.to_dict(),
+            ),
             parsed_response=response.parsed_json,
             history=response.history,
             cache_hit=response.cache_hit,

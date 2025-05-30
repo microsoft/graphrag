@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
-version = "2.2.1"
+version = "2.3.0"
 description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
 authors = [
     "Alonso Guevara Fernández <alonsog@microsoft.com>",
@@ -67,7 +67,7 @@ numpy = "^1.25.2"
 graspologic = "^3.4.1"
 networkx = "^3.4.2"
 pandas = "^2.2.3"
-pyarrow = "^15.0.0"
+pyarrow = ">=17.0.0"
 umap-learn = "^0.5.6"
 
 # Configuration
@@ -245,6 +245,7 @@ ignore = [
     # TODO RE-Enable when we get bandwidth
     "PERF203", # Needs restructuring of errors, we should bail-out on first error
     "C901",    # needs refactoring to remove cyclomatic complexity
+    "B008", # Needs to restructure our cli params with Typer into constants
 ]
 
 [tool.ruff.lint.per-file-ignores]
