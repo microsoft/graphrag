@@ -3,6 +3,8 @@
 
 """Input loading module."""
 
+import logging
+
 import numpy as np
 import pandas as pd
 
@@ -14,7 +16,6 @@ from graphrag.index.operations.embed_text.strategies.openai import (
     run as run_embed_text,
 )
 from graphrag.index.workflows.create_base_text_units import create_base_text_units
-from graphrag.logger.base import ProgressLogger
 from graphrag.prompt_tune.defaults import (
     LIMIT,
     N_SUBSET_MAX,
@@ -41,7 +42,7 @@ async def load_docs_in_chunks(
     config: GraphRagConfig,
     select_method: DocSelectionType,
     limit: int,
-    logger: ProgressLogger,
+    logger: logging.Logger,
     chunk_size: int,
     overlap: int,
     n_subset_max: int = N_SUBSET_MAX,

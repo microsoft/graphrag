@@ -11,6 +11,7 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
+import logging
 from typing import Annotated
 
 import annotated_types
@@ -20,7 +21,6 @@ from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.language_model.manager import ModelManager
-from graphrag.logger.base import ProgressLogger
 from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT, PROMPT_TUNING_MODEL_ID
 from graphrag.prompt_tune.generator.community_report_rating import (
     generate_community_report_rating,
@@ -51,7 +51,7 @@ from graphrag.prompt_tune.types import DocSelectionType
 @validate_call(config={"arbitrary_types_allowed": True})
 async def generate_indexing_prompts(
     config: GraphRagConfig,
-    logger: ProgressLogger,
+    logger: logging.Logger,
     root: str,
     chunk_size: PositiveInt = graphrag_config_defaults.chunks.size,
     overlap: Annotated[

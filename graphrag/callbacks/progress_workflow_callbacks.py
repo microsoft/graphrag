@@ -3,40 +3,51 @@
 
 """A workflow callback manager that emits updates."""
 
+import logging
+
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
-from graphrag.logger.base import ProgressLogger
 from graphrag.logger.progress import Progress
 
 
 class ProgressWorkflowCallbacks(NoopWorkflowCallbacks):
-    """A callbackmanager that delegates to a ProgressLogger."""
+    """A callback manager that delegates to a standard Logger."""
 
-    _root_progress: ProgressLogger
-    _progress_stack: list[ProgressLogger]
+    _logger: logging.Logger
+    _workflow_stack: list[str]
 
-    def __init__(self, progress: ProgressLogger) -> None:
+    def __init__(self, logger: logging.Logger) -> None:
         """Create a new ProgressWorkflowCallbacks."""
-        self._progress = progress
-        self._progress_stack = [progress]
+        self._logger = logger
+        self._workflow_stack = []
 
-    def _pop(self) -> None:
-        self._progress_stack.pop()
-
-    def _push(self, name: str) -> None:
-        self._progress_stack.append(self._latest.child(name))
-
-    @property
-    def _latest(self) -> ProgressLogger:
-        return self._progress_stack[-1]
+    def _get_context(self) -> str:
+        """Get the current workflow context."""
+        return ".".join(self._workflow_stack) if self._workflow_stack else ""
 
     def workflow_start(self, name: str, instance: object) -> None:
         """Execute this callback when a workflow starts."""
-        self._push(name)
+        self._workflow_stack.append(name)
+        context = self._get_context()
+        self._logger.info("Starting workflow: %s", context)
 
     def workflow_end(self, name: str, instance: object) -> None:
         """Execute this callback when a workflow ends."""
-        self._pop()
+        context = self._get_context()
+        self._logger.info("Completed workflow: %s", context)
+        if self._workflow_stack:
+            self._workflow_stack.pop()
 
     def progress(self, progress: Progress) -> None:
         """Handle when progress occurs."""
-        self._latest(progress)
+        context = self._get_context()
+        if progress.description:
+            msg = f"[{context}] {progress.description}"
+        else:
+            msg = f"[{context}] Progress update"
+
+        if progress.percent is not None:
+            msg += f" ({progress.percent:.1%})"
+        elif progress.completed_items is not None and progress.total_items is not None:
+            msg += f" ({progress.completed_items}/{progress.total_items})"
+
+        self._logger.info(msg)

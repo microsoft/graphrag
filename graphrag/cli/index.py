@@ -14,8 +14,8 @@ from graphrag.config.enums import CacheType, IndexingMethod
 from graphrag.config.load_config import load_config
 from graphrag.config.logging import enable_logging_with_config
 from graphrag.index.validate_config import validate_config_names
-from graphrag.logger.base import ProgressLogger
-from graphrag.logger.factory import LoggerFactory, LoggerType
+from graphrag.logger.standard_logging import get_logger
+from graphrag.logger.types import LoggerType
 from graphrag.utils.cli import redact
 
 # Ignore warnings from numba
@@ -24,7 +24,7 @@ warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 log = logging.getLogger(__name__)
 
 
-def _logger(logger: ProgressLogger):
+def _logger_helper(logger: logging.Logger):
     def info(msg: str, verbose: bool = False):
         log.info(msg)
         if verbose:
@@ -38,18 +38,17 @@ def _logger(logger: ProgressLogger):
     def success(msg: str, verbose: bool = False):
         log.info(msg)
         if verbose:
-            logger.success(msg)
+            logger.info(msg)
 
     return info, error, success
 
 
-def _register_signal_handlers(logger: ProgressLogger):
+def _register_signal_handlers(logger: logging.Logger):
     import signal
 
     def handle_signal(signum, _):
         # Handle the signal here
         logger.info(f"Received signal {signum}, exiting...")  # noqa: G004
-        logger.dispose()
         for task in asyncio.all_tasks():
             task.cancel()
         logger.info("All tasks cancelled. Exiting...")
@@ -138,8 +137,10 @@ def _run_index(
     dry_run,
     skip_validation,
 ):
-    progress_logger = LoggerFactory().create_logger(logger)
-    info, error, success = _logger(progress_logger)
+    # logger parameter is kept for CLI compatibility but unused now (uses standard logging)
+    _ = logger  # Suppress unused variable warning
+    progress_logger = get_logger("graphrag.cli.progress")
+    info, error, success = _logger_helper(progress_logger)
 
     if not cache:
         config.cache.type = CacheType.none
@@ -181,7 +182,6 @@ def _run_index(
         output.errors and len(output.errors) > 0 for output in outputs
     )
 
-    progress_logger.stop()
     if encountered_errors:
         error(
             "Errors occurred during the pipeline run, see logs for more details.", True
