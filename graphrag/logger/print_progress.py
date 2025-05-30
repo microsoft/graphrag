@@ -3,25 +3,33 @@
 
 """Print Progress Logger."""
 
+import logging
+
 from graphrag.logger.base import Progress, ProgressLogger
+from graphrag.logger.standard_logging import get_logger
 
 
 class PrintProgressLogger(ProgressLogger):
     """A progress logger that prints progress to stdout."""
 
     prefix: str
+    _logger: logging.Logger
 
     def __init__(self, prefix: str):
         """Create a new progress logger."""
         self.prefix = prefix
-        print(f"\n{self.prefix}", end="")  # noqa T201
-
+        self._logger = get_logger("graphrag.progress")
+        self._logger.info(f"{self.prefix}")
+        
     def __call__(self, update: Progress) -> None:
         """Update progress."""
+        self._logger.debug(".", extra={"progress": True})
+        # Keep the legacy behavior of printing dots for progress
         print(".", end="")  # noqa T201
 
     def dispose(self) -> None:
         """Dispose of the progress logger."""
+        pass
 
     def child(self, prefix: str, transient: bool = True) -> ProgressLogger:
         """Create a child progress bar."""
@@ -29,22 +37,24 @@ class PrintProgressLogger(ProgressLogger):
 
     def stop(self) -> None:
         """Stop the progress logger."""
+        pass
 
     def force_refresh(self) -> None:
         """Force a refresh."""
+        pass
 
     def error(self, message: str) -> None:
         """Log an error."""
-        print(f"\n{self.prefix}ERROR: {message}")  # noqa T201
+        self._logger.error(f"{self.prefix}{message}")
 
     def warning(self, message: str) -> None:
         """Log a warning."""
-        print(f"\n{self.prefix}WARNING: {message}")  # noqa T201
+        self._logger.warning(f"{self.prefix}{message}")
 
     def info(self, message: str) -> None:
         """Log information."""
-        print(f"\n{self.prefix}INFO: {message}")  # noqa T201
+        self._logger.info(f"{self.prefix}{message}")
 
     def success(self, message: str) -> None:
         """Log success."""
-        print(f"\n{self.prefix}SUCCESS: {message}")  # noqa T201
+        self._logger.info(f"{self.prefix}SUCCESS: {message}")

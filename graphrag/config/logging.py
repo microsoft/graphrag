@@ -8,6 +8,7 @@ from pathlib import Path
 
 from graphrag.config.enums import ReportingType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.logger.standard_logging import configure_logging
 
 
 def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:
@@ -20,16 +21,12 @@ def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:
     verbose : bool, default=False
         Whether to log debug messages.
     """
-    log_filepath = Path(log_filepath)
-    log_filepath.parent.mkdir(parents=True, exist_ok=True)
-    log_filepath.touch(exist_ok=True)
-
-    logging.basicConfig(
-        filename=log_filepath,
-        filemode="a",
-        format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
-        datefmt="%H:%M:%S",
-        level=logging.DEBUG if verbose else logging.INFO,
+    log_level = logging.DEBUG if verbose else logging.INFO
+    configure_logging(
+        log_level=log_level,
+        log_file=log_filepath,
+        log_format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
+        date_format="%H:%M:%S",
     )
 
 
@@ -42,10 +39,10 @@ def enable_logging_with_config(
     ----------
     config : GraphRagConfig
         The configuration.
-    timestamp_value : str
-        The timestamp value representing the directory to place the log files.
     verbose : bool, default=False
         Whether to log debug messages.
+    filename : str, default="indexing-engine.log"
+        The name of the log file.
 
     Returns
     -------

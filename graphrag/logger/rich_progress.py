@@ -5,6 +5,7 @@
 
 # Print iterations progress
 import asyncio
+import logging
 
 from rich.console import Console, Group
 from rich.live import Live
@@ -14,6 +15,7 @@ from rich.tree import Tree
 
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.progress import Progress as GRProgress
+from graphrag.logger.standard_logging import get_logger
 
 
 # https://stackoverflow.com/a/34325723
@@ -30,6 +32,7 @@ class RichProgressLogger(ProgressLogger):
     _disposing: bool = False
     _progressbar: Progress
     _last_refresh: float = 0
+    _logger: logging.Logger
 
     def dispose(self) -> None:
         """Dispose of the progress logger."""
@@ -64,6 +67,7 @@ class RichProgressLogger(ProgressLogger):
     ) -> None:
         """Create a new rich-based progress logger."""
         self._prefix = prefix
+        self._logger = get_logger("graphrag.progress.rich")
 
         if parent is None:
             console = Console()
@@ -100,6 +104,7 @@ class RichProgressLogger(ProgressLogger):
             self._live = parent.live
             self._transient = transient
 
+        self._logger.info(f"{self._prefix} initialized")
         self.refresh()
 
     def refresh(self) -> None:
@@ -117,25 +122,31 @@ class RichProgressLogger(ProgressLogger):
     def stop(self) -> None:
         """Stop the progress logger."""
         self._live.stop()
+        self._logger.info(f"{self._prefix} stopped")
 
     def child(self, prefix: str, transient: bool = True) -> ProgressLogger:
         """Create a child progress bar."""
+        self._logger.debug(f"Creating child progress logger: {prefix}")
         return RichProgressLogger(parent=self, prefix=prefix, transient=transient)
 
     def error(self, message: str) -> None:
         """Log an error."""
+        self._logger.error(f"{self._prefix} {message}")
         self._console.print(f"❌ [red]{message}[/red]")
 
     def warning(self, message: str) -> None:
         """Log a warning."""
+        self._logger.warning(f"{self._prefix} {message}")
         self._console.print(f"⚠️ [yellow]{message}[/yellow]")
 
     def success(self, message: str) -> None:
         """Log success."""
+        self._logger.info(f"{self._prefix} SUCCESS: {message}")
         self._console.print(f"🚀 [green]{message}[/green]")
 
     def info(self, message: str) -> None:
         """Log information."""
+        self._logger.info(f"{self._prefix} {message}")
         self._console.print(message)
 
     def __call__(self, progress_update: GRProgress) -> None:
@@ -159,6 +170,12 @@ class RichProgressLogger(ProgressLogger):
             total=total,
             description=f"{self._prefix}{progress_description}",
         )
+        
+        self._logger.debug(
+            f"{self._prefix}{progress_description} - {completed}/{total}",
+            extra={"progress": True, "completed": completed, "total": total}
+        )
+        
         if completed == total and self._transient:
             progressbar.update(self._task, visible=False)
 

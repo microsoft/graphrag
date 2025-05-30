@@ -4,6 +4,7 @@
 """CLI implementation of the query subcommand."""
 
 import asyncio
+import logging
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -13,12 +14,15 @@ from graphrag.callbacks.noop_query_callbacks import NoopQueryCallbacks
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.logger.print_progress import PrintProgressLogger
+from graphrag.logger.standard_logging import get_logger
 from graphrag.utils.api import create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, storage_has_table
 
 if TYPE_CHECKING:
     import pandas as pd
 
+# Initialize both a standard logger and a progress logger
+log = get_logger(__name__)
 logger = PrintProgressLogger("")
 
 
