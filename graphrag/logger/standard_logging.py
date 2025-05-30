@@ -14,7 +14,7 @@ Usage:
     # Then throughout your code:
     from graphrag.logger.standard_logging import get_logger
     logger = get_logger(__name__)  # Typically pass __name__ to get module-specific logger
-    
+
     # Use standard logging methods:
     logger.debug("Debug message")
     logger.info("Info message")
@@ -68,7 +68,7 @@ def configure_logging(
     # Get the root logger for graphrag
     logger = logging.getLogger("graphrag")
     logger.setLevel(log_level)
-    
+
     # Clear any existing handlers to avoid duplicate logs
     if logger.hasHandlers():
         logger.handlers.clear()
@@ -85,7 +85,7 @@ def configure_logging(
     if log_file:
         log_path = Path(log_file)
         log_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         file_handler = logging.FileHandler(log_path)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
@@ -96,14 +96,14 @@ def configure_logging(
 
 def get_logger(name: str) -> logging.Logger:
     """Get a logger with the given name.
-    
+
     This function returns a logger that is a child of the 'graphrag' logger.
-    
+
     Parameters
     ----------
     name : str
         The name of the logger, usually __name__
-        
+
     Returns
     -------
     logging.Logger
@@ -115,5 +115,5 @@ def get_logger(name: str) -> logging.Logger:
             name = "graphrag.main"
         else:
             name = f"graphrag.{name}"
-            
+
     return logging.getLogger(name)

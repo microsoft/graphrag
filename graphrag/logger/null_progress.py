@@ -11,13 +11,13 @@ from graphrag.logger.standard_logging import get_logger
 
 class NullProgressLogger(ProgressLogger):
     """A progress logger that does nothing."""
-    
+
     _logger: logging.Logger
 
     def __init__(self):
         """Initialize the null progress logger."""
         self._logger = get_logger("graphrag.progress.null")
-    
+
     def __call__(self, update: Progress) -> None:
         """Update progress."""
         # We don't log anything for progress updates in the null logger

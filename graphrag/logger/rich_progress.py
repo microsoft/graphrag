@@ -170,12 +170,12 @@ class RichProgressLogger(ProgressLogger):
             total=total,
             description=f"{self._prefix}{progress_description}",
         )
-        
+
         self._logger.debug(
             f"{self._prefix}{progress_description} - {completed}/{total}",
-            extra={"progress": True, "completed": completed, "total": total}
+            extra={"progress": True, "completed": completed, "total": total},
         )
-        
+
         if completed == total and self._transient:
             progressbar.update(self._task, visible=False)
 

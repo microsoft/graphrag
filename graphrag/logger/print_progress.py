@@ -20,7 +20,7 @@ class PrintProgressLogger(ProgressLogger):
         self.prefix = prefix
         self._logger = get_logger("graphrag.progress")
         self._logger.info(f"{self.prefix}")
-        
+
     def __call__(self, update: Progress) -> None:
         """Update progress."""
         self._logger.debug(".", extra={"progress": True})
