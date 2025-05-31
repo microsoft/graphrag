@@ -251,7 +251,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     orient="records", lines=False, force_ascii=False
                 )
                 if value_json is None:
-                    log.exception("Error converting output %s to json", key)
+                    log.error("Error converting output %s to json", key)
                 else:
                     cosmosdb_item_list = json.loads(value_json)
                     for index, cosmosdb_item in enumerate(cosmosdb_item_list):

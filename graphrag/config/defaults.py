@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Literal
+from typing import ClassVar, Literal
 
 from graphrag.config.embeddings import default_embeddings
 from graphrag.config.enums import (
@@ -55,7 +55,7 @@ class BasicSearchDefaults:
 class CacheDefaults:
     """Default values for cache."""
 
-    type = CacheType.file
+    type: ClassVar[CacheType] = CacheType.file
     base_dir: str = "cache"
     connection_string: None = None
     container_name: None = None
@@ -70,7 +70,7 @@ class ChunksDefaults:
     size: int = 1200
     overlap: int = 100
     group_by_columns: list[str] = field(default_factory=lambda: ["id"])
-    strategy = ChunkStrategyType.tokens
+    strategy: ClassVar[ChunkStrategyType] = ChunkStrategyType.tokens
     encoding_model: str = "cl100k_base"
     prepend_metadata: bool = False
     chunk_size_includes_metadata: bool = False
@@ -120,8 +120,8 @@ class DriftSearchDefaults:
     local_search_temperature: float = 0
     local_search_top_p: float = 1
     local_search_n: int = 1
-    local_search_llm_max_gen_tokens = None
-    local_search_llm_max_gen_completion_tokens = None
+    local_search_llm_max_gen_tokens: ClassVar[None] = None
+    local_search_llm_max_gen_completion_tokens: ClassVar[None] = None
     chat_model_id: str = DEFAULT_CHAT_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
@@ -184,7 +184,9 @@ class ExtractGraphDefaults:
 class TextAnalyzerDefaults:
     """Default values for text analyzer."""
 
-    extractor_type = NounPhraseExtractorType.RegexEnglish
+    extractor_type: ClassVar[NounPhraseExtractorType] = (
+        NounPhraseExtractorType.RegexEnglish
+    )
     model_name: str = "en_core_web_md"
     max_word_length: int = 15
     word_delimiter: str = " "
@@ -238,8 +240,8 @@ class GlobalSearchDefaults:
 class InputDefaults:
     """Default values for input."""
 
-    type = InputType.file
-    file_type = InputFileType.text
+    type: ClassVar[InputType] = InputType.file
+    file_type: ClassVar[InputFileType] = InputFileType.text
     base_dir: str = "input"
     connection_string: None = None
     storage_account_blob_url: None = None
@@ -257,7 +259,7 @@ class LanguageModelDefaults:
     """Default values for language model."""
 
     api_key: None = None
-    auth_type = AuthType.APIKey
+    auth_type: ClassVar[AuthType] = AuthType.APIKey
     encoding_model: str = ""
     max_tokens: int | None = None
     temperature: float = 0
@@ -304,7 +306,7 @@ class LocalSearchDefaults:
 class OutputDefaults:
     """Default values for output."""
 
-    type = OutputType.file
+    type: ClassVar[OutputType] = OutputType.file
     base_dir: str = DEFAULT_OUTPUT_BASE_DIR
     connection_string: None = None
     container_name: None = None
@@ -329,7 +331,7 @@ class PruneGraphDefaults:
 class ReportingDefaults:
     """Default values for reporting."""
 
-    type = ReportingType.file
+    type: ClassVar[ReportingType] = ReportingType.file
     base_dir: str = "logs"
     connection_string: None = None
     container_name: None = None
@@ -367,7 +369,7 @@ class UmapDefaults:
 class UpdateIndexOutputDefaults:
     """Default values for update index output."""
 
-    type = OutputType.file
+    type: ClassVar[OutputType] = OutputType.file
     base_dir: str = "update_output"
     connection_string: None = None
     container_name: None = None
@@ -378,7 +380,7 @@ class UpdateIndexOutputDefaults:
 class VectorStoreDefaults:
     """Default values for vector stores."""
 
-    type = VectorStoreType.LanceDB.value
+    type: ClassVar[str] = VectorStoreType.LanceDB.value
     db_uri: str = str(Path(DEFAULT_OUTPUT_BASE_DIR) / "lancedb")
     container_name: str = "default"
     overwrite: bool = True
