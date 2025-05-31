@@ -17,6 +17,7 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
+import logging
 from collections.abc import AsyncGenerator
 from typing import Any
 
@@ -31,7 +32,6 @@ from graphrag.config.embeddings import (
     text_unit_text_embedding,
 )
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.logger.standard_logging import get_logger
 from graphrag.query.factory import (
     get_basic_search_engine,
     get_drift_search_engine,
@@ -55,8 +55,8 @@ from graphrag.utils.api import (
 from graphrag.utils.cli import redact
 
 # Initialize standard logger
-log = get_logger(__name__)
-logger = get_logger("graphrag.query")
+log = logging.getLogger(__name__)
+logger = logging.getLogger("graphrag.query")
 
 
 @validate_call(config={"arbitrary_types_allowed": True})

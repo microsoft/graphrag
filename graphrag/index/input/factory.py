@@ -15,7 +15,6 @@ from graphrag.config.models.input_config import InputConfig
 from graphrag.index.input.csv import load_csv
 from graphrag.index.input.json import load_json
 from graphrag.index.input.text import load_text
-from graphrag.logger.standard_logging import get_logger
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
@@ -35,7 +34,7 @@ async def create_input(
     """Instantiate input data for a pipeline."""
     root_dir = root_dir or ""
     log.info("loading input from root_dir=%s", config.base_dir)
-    progress_reporter = progress_reporter or get_logger("graphrag.input")
+    progress_reporter = progress_reporter or logging.getLogger("graphrag.input")
 
     match config.type:
         case InputType.blob:

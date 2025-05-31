@@ -3,10 +3,10 @@
 
 """CLI implementation of the initialization subcommand."""
 
+import logging
 from pathlib import Path
 
 from graphrag.config.init_content import INIT_DOTENV, INIT_YAML
-from graphrag.logger.standard_logging import get_logger
 from graphrag.prompts.index.community_report import (
     COMMUNITY_REPORT_PROMPT,
 )
@@ -48,7 +48,7 @@ def initialize_project_at(path: Path, force: bool) -> None:
     ValueError
         If the project already exists and force is False.
     """
-    progress_logger = get_logger("graphrag.cli.initialize")
+    progress_logger = logging.getLogger("graphrag.cli.initialize")
     progress_logger.info(f"Initializing project at {path}")  # noqa: G004
     root = Path(path)
     if not root.exists():

@@ -14,7 +14,6 @@ from graphrag.config.enums import CacheType, IndexingMethod
 from graphrag.config.load_config import load_config
 from graphrag.config.logging import enable_logging_with_config
 from graphrag.index.validate_config import validate_config_names
-from graphrag.logger.standard_logging import get_logger
 from graphrag.logger.types import LoggerType
 from graphrag.utils.cli import redact
 
@@ -139,7 +138,7 @@ def _run_index(
 ):
     # logger parameter is kept for CLI compatibility but unused now (uses standard logging)
     _ = logger  # Suppress unused variable warning
-    progress_logger = get_logger("graphrag.cli.progress")
+    progress_logger = logging.getLogger("graphrag.cli.progress")
     info, error, success = _logger_helper(progress_logger)
 
     if not cache:

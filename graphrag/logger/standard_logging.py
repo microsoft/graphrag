@@ -12,8 +12,8 @@ Usage:
     configure_logging(log_level="INFO", log_file="/path/to/app.log")
 
     # Then throughout your code:
-    from graphrag.logger.standard_logging import get_logger
-    logger = get_logger(__name__)  # Typically pass __name__ to get module-specific logger
+    import logging
+    logger = logging.getLogger(__name__)  # Use standard logging
 
     # Use standard logging methods:
     logger.debug("Debug message")
@@ -25,9 +25,9 @@ Usage:
 Notes
 -----
     The logging system is hierarchical. Loggers are organized in a tree structure,
-    with the root logger named 'graphrag'. All loggers created by get_logger() will
-    be children of this root logger. This allows for consistent configuration of all
-    graphrag-related logs throughout the application.
+    with the root logger named 'graphrag'. All loggers created with names starting
+    with 'graphrag.' will be children of this root logger. This allows for consistent
+    configuration of all graphrag-related logs throughout the application.
 
     All progress logging now uses this standard logging system for consistency.
 """
@@ -90,25 +90,3 @@ def configure_logging(
 
     # Prevent propagation to root logger to avoid duplicate logging
     logger.propagate = False
-
-
-def get_logger(name: str) -> logging.Logger:
-    """Get a logger with the given name.
-
-    This function returns a logger that is a child of the 'graphrag' logger.
-
-    Parameters
-    ----------
-    name : str
-        The name of the logger, usually __name__
-
-    Returns
-    -------
-    logging.Logger
-        A logger instance
-    """
-    # Ensure the name has 'graphrag' prefix for proper hierarchy
-    if not name.startswith("graphrag.") and name != "graphrag":
-        name = "graphrag.main" if name == "__main__" else f"graphrag.{name}"
-
-    return logging.getLogger(name)

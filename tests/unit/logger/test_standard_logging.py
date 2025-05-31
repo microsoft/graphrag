@@ -7,14 +7,13 @@ import logging
 import tempfile
 from pathlib import Path
 
-from graphrag.logger.standard_logging import configure_logging, get_logger
+from graphrag.logger.standard_logging import configure_logging
 
 
-def test_logger_name_formatting():
-    """Test the logger name gets formatted correctly."""
-    assert get_logger("test").name == "graphrag.test"
-    assert get_logger("graphrag.test").name == "graphrag.test"
-    assert get_logger("__main__").name == "graphrag.main"
+def test_standard_logging():
+    """Test that standard logging works."""
+    logger = logging.getLogger("graphrag.test")
+    assert logger.name == "graphrag.test"
 
 
 def test_file_logging():
@@ -26,7 +25,7 @@ def test_file_logging():
         configure_logging(log_file=log_file)
 
         # Get a logger and log some messages
-        logger = get_logger("test")
+        logger = logging.getLogger("graphrag.test")
         test_message = "Test file logging message"
         logger.info(test_message)
 
@@ -42,8 +41,8 @@ def test_logger_hierarchy():
     # Reset logging to default state
     configure_logging()
 
-    root_logger = get_logger("graphrag")
-    child_logger = get_logger("graphrag.child")
+    root_logger = logging.getLogger("graphrag")
+    child_logger = logging.getLogger("graphrag.child")
 
     # Setting level on root should affect children
     root_logger.setLevel(logging.ERROR)

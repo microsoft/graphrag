@@ -19,10 +19,9 @@ from graphrag.index.run.utils import create_callback_chain
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.index.typing.workflow import WorkflowFunction
 from graphrag.index.workflows.factory import PipelineFactory
-from graphrag.logger.standard_logging import get_logger
 
 log = logging.getLogger(__name__)
-logger = get_logger("graphrag.indexing")
+logger = logging.getLogger("graphrag.indexing")
 
 
 async def build_index(
