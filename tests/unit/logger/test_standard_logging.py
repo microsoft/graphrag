@@ -35,6 +35,13 @@ def test_file_logging():
             content = f.read()
             assert test_message in content
 
+        # Close all file handlers to ensure proper cleanup on Windows
+        graphrag_logger = logging.getLogger("graphrag")
+        for handler in graphrag_logger.handlers[:]:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
+                graphrag_logger.removeHandler(handler)
+
 
 def test_logger_hierarchy():
     """Test that logger hierarchy works correctly."""
@@ -47,3 +54,6 @@ def test_logger_hierarchy():
     # Setting level on root should affect children
     root_logger.setLevel(logging.ERROR)
     assert child_logger.getEffectiveLevel() == logging.ERROR
+
+    # Clean up after test
+    root_logger.handlers.clear()

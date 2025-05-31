@@ -69,6 +69,10 @@ def configure_logging(
 
     # Clear any existing handlers to avoid duplicate logs
     if logger.hasHandlers():
+        # Close file handlers properly before removing them
+        for handler in logger.handlers:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
         logger.handlers.clear()
 
     # Create formatter
