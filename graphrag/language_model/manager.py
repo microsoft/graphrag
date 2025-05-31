@@ -28,7 +28,7 @@ class ModelManager:
         """Create a new instance of LLMManager if it does not exist."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-        return cls._instance
+        return cls._instance  # type: ignore[return-value]
 
     def __init__(self) -> None:
         # Avoid reinitialization in the singleton.
