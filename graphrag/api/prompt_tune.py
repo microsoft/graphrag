@@ -47,11 +47,12 @@ from graphrag.prompt_tune.generator.persona import generate_persona
 from graphrag.prompt_tune.loader.input import load_docs_in_chunks
 from graphrag.prompt_tune.types import DocSelectionType
 
+logger = logging.getLogger(__name__)
+
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def generate_indexing_prompts(
     config: GraphRagConfig,
-    logger: logging.Logger,
     root: str,
     chunk_size: PositiveInt = graphrag_config_defaults.chunks.size,
     overlap: Annotated[
@@ -72,7 +73,6 @@ async def generate_indexing_prompts(
     Parameters
     ----------
     - config: The GraphRag configuration.
-    - logger: The logger to use for progress updates.
     - root: The root directory.
     - output_path: The path to store the prompts.
     - chunk_size: The chunk token size to use for input text units.

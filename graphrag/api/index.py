@@ -29,7 +29,6 @@ async def build_index(
     is_update_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
-    progress_logger: logging.Logger | None = None,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -43,15 +42,12 @@ async def build_index(
         Whether to enable memory profiling.
     callbacks : list[WorkflowCallbacks] | None default=None
         A list of callbacks to register.
-    progress_logger : logging.Logger | None default=None
-        The progress logger.
 
     Returns
     -------
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    used_logger = progress_logger or logger
     # create a pipeline reporter and add to any additional callbacks
     callbacks = callbacks or []
     callbacks.append(create_pipeline_reporter(config.reporting, None))
@@ -71,15 +67,15 @@ async def build_index(
         pipeline,
         config,
         callbacks=workflow_callbacks,
-        logger=used_logger,
+        logger=logger,
         is_update_run=is_update_run,
     ):
         outputs.append(output)
         if output.errors and len(output.errors) > 0:
-            used_logger.error("Workflow %s completed with errors", output.workflow)
+            logger.error("Workflow %s completed with errors", output.workflow)
         else:
-            used_logger.info("Workflow %s completed successfully", output.workflow)
-        used_logger.info(str(output.result))
+            logger.info("Workflow %s completed successfully", output.workflow)
+        logger.info(str(output.result))
 
     workflow_callbacks.pipeline_end(outputs)
     return outputs

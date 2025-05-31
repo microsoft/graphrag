@@ -174,7 +174,6 @@ def _run_index(
             method=method,
             is_update_run=is_update_run,
             memory_profile=memprofile,
-            progress_logger=progress_logger,
         )
     )
     encountered_errors = any(
