@@ -14,7 +14,6 @@ from graphrag.config.enums import CacheType, IndexingMethod
 from graphrag.config.load_config import load_config
 from graphrag.config.logging import enable_logging_with_config
 from graphrag.index.validate_config import validate_config_names
-from graphrag.logger.types import LoggerType
 from graphrag.utils.cli import redact
 
 # Ignore warnings from numba
@@ -65,7 +64,7 @@ def index_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    logger: LoggerType,
+    log_level: str,
     config_filepath: Path | None,
     dry_run: bool,
     skip_validation: bool,
@@ -86,7 +85,7 @@ def index_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        logger=logger,
+        log_level=log_level,
         dry_run=dry_run,
         skip_validation=skip_validation,
     )
@@ -98,7 +97,7 @@ def update_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    logger: LoggerType,
+    log_level: str,
     config_filepath: Path | None,
     skip_validation: bool,
     output_dir: Path | None,
@@ -119,7 +118,7 @@ def update_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        logger=logger,
+        log_level=log_level,
         dry_run=False,
         skip_validation=skip_validation,
     )
@@ -132,12 +131,15 @@ def _run_index(
     verbose,
     memprofile,
     cache,
-    logger,
+    log_level,
     dry_run,
     skip_validation,
 ):
-    # logger parameter is kept for CLI compatibility but unused now (uses standard logging)
-    _ = logger  # Suppress unused variable warning
+    # Configure the root logger with the specified log level
+    from graphrag.logger.standard_logging import configure_logging
+
+    configure_logging(log_level=log_level)
+
     progress_logger = logging.getLogger(__name__).getChild("progress")
     info, error, success = _logger_helper(progress_logger)
 

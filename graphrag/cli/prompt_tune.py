@@ -10,7 +10,6 @@ import graphrag.api as api
 from graphrag.cli.index import _logger_helper
 from graphrag.config.load_config import load_config
 from graphrag.config.logging import enable_logging_with_config
-from graphrag.logger.types import LoggerType
 from graphrag.prompt_tune.generator.community_report_summarization import (
     COMMUNITY_SUMMARIZATION_FILENAME,
 )
@@ -28,7 +27,7 @@ async def prompt_tune(
     config: Path | None,
     domain: str | None,
     verbose: bool,
-    logger: LoggerType,
+    log_level: str,
     selection_method: api.DocSelectionType,
     limit: int,
     max_tokens: int,
@@ -49,7 +48,7 @@ async def prompt_tune(
     - root: The root directory.
     - domain: The domain to map the input documents to.
     - verbose: Whether to enable verbose logging.
-    - logger: The logger to use.
+    - log_level: The log level to use for the root logger.
     - selection_method: The chunk selection method.
     - limit: The limit of chunks to load.
     - max_tokens: The maximum number of tokens to use on entity extraction prompts.
@@ -71,8 +70,11 @@ async def prompt_tune(
     if overlap != graph_config.chunks.overlap:
         graph_config.chunks.overlap = overlap
 
-    # logger parameter is kept for CLI compatibility but unused now (uses standard logging)
-    _ = logger  # Suppress unused variable warning
+    # Configure the root logger with the specified log level
+    from graphrag.logger.standard_logging import configure_logging
+
+    configure_logging(log_level=log_level)
+
     progress_logger = logging.getLogger("graphrag.cli.prompt_tune")
     info, error, success = _logger_helper(progress_logger)
 
