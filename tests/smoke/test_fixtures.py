@@ -137,8 +137,6 @@ class TestIndexer:
             "--verbose" if debug else None,
             "--root",
             root.resolve().as_posix(),
-            "--logger",
-            "print",
             "--method",
             "standard",
         ]
