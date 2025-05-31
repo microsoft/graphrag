@@ -55,8 +55,7 @@ from graphrag.utils.api import (
 from graphrag.utils.cli import redact
 
 # Initialize standard logger
-log = logging.getLogger(__name__)
-logger = logging.getLogger("graphrag.query")
+logger = logging.getLogger(__name__)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})

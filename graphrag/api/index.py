@@ -20,8 +20,7 @@ from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.index.typing.workflow import WorkflowFunction
 from graphrag.index.workflows.factory import PipelineFactory
 
-log = logging.getLogger(__name__)
-logger = logging.getLogger("graphrag.indexing")
+logger = logging.getLogger(__name__)
 
 
 async def build_index(
@@ -62,7 +61,7 @@ async def build_index(
     outputs: list[PipelineRunResult] = []
 
     if memory_profile:
-        log.warning("New pipeline does not yet support memory profiling.")
+        logger.warning("New pipeline does not yet support memory profiling.")
 
     pipeline = PipelineFactory.create_pipeline(config, method, is_update_run)
 

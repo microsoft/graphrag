@@ -20,37 +20,37 @@ from graphrag.utils.cli import redact
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
-def _logger_helper(logger: logging.Logger):
+def _logger_helper(progress_logger: logging.Logger):
     def info(msg: str, verbose: bool = False):
-        log.info(msg)
+        logger.info(msg)
         if verbose:
-            logger.info(msg)
+            progress_logger.info(msg)
 
     def error(msg: str, verbose: bool = False):
-        log.error(msg)
+        logger.error(msg)
         if verbose:
-            logger.error(msg)
+            progress_logger.error(msg)
 
     def success(msg: str, verbose: bool = False):
-        log.info(msg)
+        logger.info(msg)
         if verbose:
-            logger.info(msg)
+            progress_logger.info(msg)
 
     return info, error, success
 
 
-def _register_signal_handlers(logger: logging.Logger):
+def _register_signal_handlers(progress_logger: logging.Logger):
     import signal
 
     def handle_signal(signum, _):
         # Handle the signal here
-        logger.info(f"Received signal {signum}, exiting...")  # noqa: G004
+        progress_logger.info(f"Received signal {signum}, exiting...")  # noqa: G004
         for task in asyncio.all_tasks():
             task.cancel()
-        logger.info("All tasks cancelled. Exiting...")
+        progress_logger.info("All tasks cancelled. Exiting...")
 
     # Register signal handlers for SIGINT and SIGHUP
     signal.signal(signal.SIGINT, handle_signal)
@@ -138,7 +138,7 @@ def _run_index(
 ):
     # logger parameter is kept for CLI compatibility but unused now (uses standard logging)
     _ = logger  # Suppress unused variable warning
-    progress_logger = logging.getLogger("graphrag.cli.progress")
+    progress_logger = logging.getLogger(__name__).getChild("progress")
     info, error, success = _logger_helper(progress_logger)
 
     if not cache:

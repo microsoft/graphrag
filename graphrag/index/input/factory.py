@@ -18,7 +18,7 @@ from graphrag.index.input.text import load_text
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
     InputFileType.text: load_text,
     InputFileType.csv: load_csv,
@@ -33,12 +33,12 @@ async def create_input(
 ) -> pd.DataFrame:
     """Instantiate input data for a pipeline."""
     root_dir = root_dir or ""
-    log.info("loading input from root_dir=%s", config.base_dir)
-    progress_reporter = progress_reporter or logging.getLogger("graphrag.input")
+    logger.info("loading input from root_dir=%s", config.base_dir)
+    progress_reporter = progress_reporter or logger
 
     match config.type:
         case InputType.blob:
-            log.info("using blob storage input")
+            logger.info("using blob storage input")
             if config.container_name is None:
                 msg = "Container name required for blob storage"
                 raise ValueError(msg)
@@ -55,12 +55,12 @@ async def create_input(
                 path_prefix=config.base_dir,
             )
         case InputType.file:
-            log.info("using file storage for input")
+            logger.info("using file storage for input")
             storage = FilePipelineStorage(
                 root_dir=str(Path(root_dir) / (config.base_dir or ""))
             )
         case _:
-            log.info("using file storage for input")
+            logger.info("using file storage for input")
             storage = FilePipelineStorage(
                 root_dir=str(Path(root_dir) / (config.base_dir or ""))
             )

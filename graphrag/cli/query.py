@@ -20,8 +20,7 @@ if TYPE_CHECKING:
     import pandas as pd
 
 # Initialize standard logger
-log = logging.getLogger(__name__)
-logger = logging.getLogger("graphrag.cli.query")
+logger = logging.getLogger(__name__)
 
 
 def run_global_search(
