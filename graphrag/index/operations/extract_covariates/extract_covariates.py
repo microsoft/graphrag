@@ -23,7 +23,7 @@ from graphrag.index.operations.extract_covariates.typing import (
 from graphrag.index.utils.derive_from_rows import derive_from_rows
 from graphrag.language_model.manager import ModelManager
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
@@ -41,7 +41,7 @@ async def extract_covariates(
     num_threads: int = 4,
 ):
     """Extract claims from a piece of text."""
-    log.debug("extract_covariates strategy=%s", strategy)
+    logger.debug("extract_covariates strategy=%s", strategy)
     if entity_types is None:
         entity_types = DEFAULT_ENTITY_TYPES
 

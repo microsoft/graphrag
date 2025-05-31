@@ -17,7 +17,7 @@ from graphrag.index.operations.summarize_descriptions.typing import (
 )
 from graphrag.logger.progress import ProgressTicker, progress_ticker
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def summarize_descriptions(
@@ -29,7 +29,7 @@ async def summarize_descriptions(
     num_threads: int = 4,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Summarize entity and relationship descriptions from an entity graph, using a language model."""
-    log.debug("summarize_descriptions strategy=%s", strategy)
+    logger.debug("summarize_descriptions strategy=%s", strategy)
     strategy = strategy or {}
     strategy_exec = load_strategy(
         strategy.get("type", SummarizeStrategyType.graph_intelligence)

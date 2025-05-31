@@ -22,7 +22,7 @@ from graphrag.storage.pipeline_storage import (
     get_timestamp_formatted_with_local_tz,
 )
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class FilePipelineStorage(PipelineStorage):
@@ -55,7 +55,9 @@ class FilePipelineStorage(PipelineStorage):
             )
 
         search_path = Path(self._root_dir) / (base_dir or "")
-        log.info("search %s for files matching %s", search_path, file_pattern.pattern)
+        logger.info(
+            "search %s for files matching %s", search_path, file_pattern.pattern
+        )
         all_files = list(search_path.rglob("**/*"))
         num_loaded = 0
         num_total = len(all_files)
@@ -170,7 +172,7 @@ def join_path(file_path: str, file_name: str) -> Path:
 def create_file_storage(**kwargs: Any) -> PipelineStorage:
     """Create a file based storage."""
     base_dir = kwargs["base_dir"]
-    log.info("Creating file storage at %s", base_dir)
+    logger.info("Creating file storage at %s", base_dir)
     return FilePipelineStorage(root_dir=base_dir)
 
 

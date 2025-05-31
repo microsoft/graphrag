@@ -67,7 +67,6 @@ async def build_index(
         pipeline,
         config,
         callbacks=workflow_callbacks,
-        logger=logger,
         is_update_run=is_update_run,
     ):
         outputs.append(output)

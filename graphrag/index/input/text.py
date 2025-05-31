@@ -13,7 +13,7 @@ from graphrag.index.input.util import load_files
 from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.storage.pipeline_storage import PipelineStorage
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def load_text(

@@ -27,7 +27,7 @@ DEFAULT_RECORD_DELIMITER = "##"
 DEFAULT_COMPLETION_DELIMITER = "<|COMPLETE|>"
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -119,7 +119,7 @@ class GraphExtractor:
                 source_doc_map[doc_index] = text
                 all_records[doc_index] = result
             except Exception as e:
-                log.exception("error extracting graph")
+                logger.exception("error extracting graph")
                 self._on_error(
                     e,
                     traceback.format_exc(),

@@ -18,7 +18,7 @@ from graphrag.storage.pipeline_storage import (
     get_timestamp_formatted_with_local_tz,
 )
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class BlobPipelineStorage(PipelineStorage):
@@ -62,7 +62,7 @@ class BlobPipelineStorage(PipelineStorage):
             if storage_account_blob_url
             else None
         )
-        log.info(
+        logger.info(
             "creating blob storage at container=%s, path=%s",
             self._container_name,
             self._path_prefix,
@@ -115,7 +115,7 @@ class BlobPipelineStorage(PipelineStorage):
         """
         base_dir = base_dir or ""
 
-        log.info(
+        logger.info(
             "search container %s for files matching %s",
             self._container_name,
             file_pattern.pattern,
@@ -163,7 +163,7 @@ class BlobPipelineStorage(PipelineStorage):
                         f"Blobs loaded: {num_loaded}, filtered: {num_filtered}, total: {num_total}"
                     )
         except Exception:
-            log.exception(
+            logger.exception(
                 "Error finding blobs: base_dir=%s, file_pattern=%s, file_filter=%s",
                 base_dir,
                 file_pattern,
@@ -186,7 +186,7 @@ class BlobPipelineStorage(PipelineStorage):
                 coding = encoding or self._encoding
                 blob_data = blob_data.decode(coding)
         except Exception:
-            log.exception("Error getting key %s", key)
+            logger.exception("Error getting key %s", key)
             return None
         else:
             return blob_data
@@ -205,7 +205,7 @@ class BlobPipelineStorage(PipelineStorage):
                 coding = encoding or self._encoding
                 blob_client.upload_blob(value.encode(coding), overwrite=True)
         except Exception:
-            log.exception("Error setting key %s: %s", key)
+            logger.exception("Error setting key %s: %s", key)
 
     def _set_df_json(self, key: str, dataframe: Any) -> None:
         """Set a json dataframe."""
@@ -304,7 +304,7 @@ class BlobPipelineStorage(PipelineStorage):
             timestamp = blob_client.download_blob().properties.creation_time
             return get_timestamp_formatted_with_local_tz(timestamp)
         except Exception:
-            log.exception("Error getting key %s", key)
+            logger.exception("Error getting key %s", key)
             return ""
 
 
@@ -314,7 +314,7 @@ def create_blob_storage(**kwargs: Any) -> PipelineStorage:
     storage_account_blob_url = kwargs.get("storage_account_blob_url")
     base_dir = kwargs.get("base_dir")
     container_name = kwargs["container_name"]
-    log.info("Creating blob storage at %s", container_name)
+    logger.info("Creating blob storage at %s", container_name)
     if container_name is None:
         msg = "No container name provided for blob storage."
         raise ValueError(msg)

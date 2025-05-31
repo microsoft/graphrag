@@ -18,7 +18,7 @@ from graphrag.index.operations.extract_graph.typing import (
 )
 from graphrag.index.utils.derive_from_rows import derive_from_rows
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
@@ -36,7 +36,7 @@ async def extract_graph(
     num_threads: int = 4,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Extract a graph from a piece of text using a language model."""
-    log.debug("entity_extract strategy=%s", strategy)
+    logger.debug("entity_extract strategy=%s", strategy)
     if entity_types is None:
         entity_types = DEFAULT_ENTITY_TYPES
     strategy = strategy or {}

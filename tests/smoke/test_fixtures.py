@@ -20,7 +20,7 @@ from graphrag.query.context_builder.community_context import (
 )
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 debug = os.environ.get("DEBUG") is not None
 gh_pages = os.environ.get("GH_PAGES") is not None
@@ -143,7 +143,7 @@ class TestIndexer:
             "standard",
         ]
         command = [arg for arg in command if arg]
-        log.info("running command ", " ".join(command))
+        logger.info("running command ", " ".join(command))
         completion = subprocess.run(
             command, env={**os.environ, "GRAPHRAG_INPUT_FILE_TYPE": input_file_type}
         )
@@ -218,7 +218,7 @@ class TestIndexer:
             query_config["query"],
         ]
 
-        log.info("running command ", " ".join(command))
+        logger.info("running command ", " ".join(command))
         return subprocess.run(command, capture_output=True, text=True)
 
     @cleanup(skip=debug)

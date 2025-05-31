@@ -17,7 +17,7 @@ from graphrag.index.operations.embed_text.strategies.typing import TextEmbedding
 from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument
 from graphrag.vector_stores.factory import VectorStoreFactory
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 # Per Azure OpenAI Limits
 # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference
@@ -195,7 +195,7 @@ def _get_collection_name(vector_store_config: dict, embedding_name: str) -> str:
     collection_name = create_collection_name(container_name, embedding_name)
 
     msg = f"using vector store {vector_store_config.get('type')} with container_name {container_name} for embedding {embedding_name}: {collection_name}"
-    log.info(msg)
+    logger.info(msg)
     return collection_name
 
 

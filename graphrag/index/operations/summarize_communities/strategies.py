@@ -21,7 +21,7 @@ from graphrag.index.utils.rate_limiter import RateLimiter
 from graphrag.language_model.manager import ModelManager
 from graphrag.language_model.protocol.base import ChatModel
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def run_graph_intelligence(
@@ -69,7 +69,7 @@ async def _run_extractor(
         results = await extractor(input)
         report = results.structured_output
         if report is None:
-            log.warning("No report found for community: %s", community)
+            logger.warning("No report found for community: %s", community)
             return None
 
         return CommunityReport(
@@ -87,6 +87,6 @@ async def _run_extractor(
             full_content_json=report.model_dump_json(indent=4),
         )
     except Exception as e:
-        log.exception("Error processing community: %s", community)
+        logger.exception("Error processing community: %s", community)
         callbacks.error("Community Report Extraction Error", e, traceback.format_exc())
         return None

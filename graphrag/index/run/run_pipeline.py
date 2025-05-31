@@ -25,14 +25,13 @@ from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.api import create_cache_from_config, create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def run_pipeline(
     pipeline: Pipeline,
     config: GraphRagConfig,
     callbacks: WorkflowCallbacks,
-    logger: logging.Logger,
     is_update_run: bool = False,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
@@ -41,7 +40,7 @@ async def run_pipeline(
     storage = create_storage_from_config(config.output)
     cache = create_cache_from_config(config.cache, root_dir)
 
-    dataset = await create_input(config.input, logger, root_dir)
+    dataset = await create_input(config.input, None, root_dir)
 
     # load existing state in case any workflows are stateful
     state_json = await storage.get("context.json")
@@ -78,7 +77,6 @@ async def run_pipeline(
                 pipeline=pipeline,
                 config=config,
                 dataset=delta_dataset.new_inputs,
-                logger=logger,
                 context=context,
             ):
                 yield table
@@ -96,7 +94,6 @@ async def run_pipeline(
             pipeline=pipeline,
             config=config,
             dataset=dataset,
-            logger=logger,
             context=context,
         ):
             yield table
@@ -106,12 +103,11 @@ async def _run_pipeline(
     pipeline: Pipeline,
     config: GraphRagConfig,
     dataset: pd.DataFrame,
-    logger: logging.Logger,
     context: PipelineRunContext,
 ) -> AsyncIterable[PipelineRunResult]:
     start_time = time.time()
 
-    log.info("Final # of rows loaded: %s", len(dataset))
+    logger.info("Final # of rows loaded: %s", len(dataset))
     context.stats.num_documents = len(dataset)
     last_workflow = "starting documents"
 
@@ -137,7 +133,7 @@ async def _run_pipeline(
         await _dump_json(context)
 
     except Exception as e:
-        log.exception("error running workflow %s", last_workflow)
+        logger.exception("error running workflow %s", last_workflow)
         context.callbacks.error("Error running pipeline!", e, traceback.format_exc())
         yield PipelineRunResult(
             workflow=last_workflow, result=None, state=context.state, errors=[e]

@@ -10,7 +10,7 @@ from pathlib import Path
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class FileWorkflowCallbacks(NoopWorkflowCallbacks):
@@ -48,7 +48,7 @@ class FileWorkflowCallbacks(NoopWorkflowCallbacks):
             + "\n"
         )
         message = f"{message} details={details}"
-        log.info(message)
+        logger.info(message)
 
     def warning(self, message: str, details: dict | None = None):
         """Handle when a warning occurs."""
@@ -71,8 +71,8 @@ class FileWorkflowCallbacks(NoopWorkflowCallbacks):
         )
 
         message = f"{message} details={details}"
-        log.info(message)
+        logger.info(message)
 
 
 def _print_warning(skk):
-    log.warning(skk)
+    logger.warning(skk)

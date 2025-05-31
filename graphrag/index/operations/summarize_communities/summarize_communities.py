@@ -24,7 +24,7 @@ from graphrag.index.operations.summarize_communities.utils import (
 from graphrag.index.utils.derive_from_rows import derive_from_rows
 from graphrag.logger.progress import progress_ticker
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def summarize_communities(
