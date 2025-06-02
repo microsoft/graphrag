@@ -18,7 +18,7 @@ from graphrag.index.run.utils import create_callback_chain
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.index.typing.workflow import WorkflowFunction
 from graphrag.index.workflows.factory import PipelineFactory
-from graphrag.logger.reporting import create_pipeline_logger
+from graphrag.logger.pipeline_logger import create_pipeline_logger
 
 logger = logging.getLogger(__name__)
 
