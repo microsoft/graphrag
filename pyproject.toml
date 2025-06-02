@@ -87,7 +87,6 @@ azure-storage-blob = "^12.24.0"
 future = "^1.0.0" # Needed until graspologic fixes their dependency
 typer = "^0.15.1"
 tqdm = "^4.67.1"
-colorlog = "^6.9.0"
 
 textblob = "^0.18.0.post0"
 spacy = "^3.8.4"
