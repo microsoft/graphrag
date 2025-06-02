@@ -10,8 +10,12 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from azure.identity import DefaultAzureCredential
-    from azure.storage.blob import BlobServiceClient
+    from azure.identity import (
+        DefaultAzureCredential,  # type: ignore[reportAssignmentType]
+    )
+    from azure.storage.blob import (
+        BlobServiceClient,  # type: ignore[reportAssignmentType]
+    )
 
     _AZURE_AVAILABLE = True
 except ImportError:
@@ -20,6 +24,9 @@ except ImportError:
     # Create dummy classes for type hints when azure is not available
     class DefaultAzureCredential:  # type: ignore
         """Dummy class when Azure is not available."""
+
+        def __init__(self):  # type: ignore
+            """Initialize dummy credential."""
 
     class BlobServiceClient:  # type: ignore
         """Dummy class when Azure is not available."""
@@ -31,7 +38,7 @@ from graphrag.callbacks.workflow_handler_base import WorkflowHandlerBase
 class BlobWorkflowCallbacks(WorkflowHandlerBase):
     """A workflow callback handler that writes to a blob storage account."""
 
-    _blob_service_client: BlobServiceClient
+    _blob_service_client: "BlobServiceClient"
     _container_name: str
     _max_block_count: int = 25000  # 25k blocks per blob
 
@@ -62,7 +69,7 @@ class BlobWorkflowCallbacks(WorkflowHandlerBase):
         self._storage_account_blob_url = storage_account_blob_url
 
         if self._connection_string:
-            self._blob_service_client = BlobServiceClient.from_connection_string(
+            self._blob_service_client = BlobServiceClient.from_connection_string(  # type: ignore[reportAttributeAccessIssue,reportAssignmentType]
                 self._connection_string
             )
         else:
@@ -70,9 +77,9 @@ class BlobWorkflowCallbacks(WorkflowHandlerBase):
                 msg = "Either connection_string or storage_account_blob_url must be provided."
                 raise ValueError(msg)
 
-            self._blob_service_client = BlobServiceClient(
-                storage_account_blob_url,
-                credential=DefaultAzureCredential(),
+            self._blob_service_client = BlobServiceClient(  # type: ignore[reportCallIssue,reportAssignmentType]
+                storage_account_blob_url,  # type: ignore[reportCallIssue]
+                credential=DefaultAzureCredential(),  # type: ignore[reportCallIssue,reportAssignmentType]
             )
 
         if blob_name == "":
@@ -80,11 +87,11 @@ class BlobWorkflowCallbacks(WorkflowHandlerBase):
 
         self._blob_name = str(Path(base_dir or "") / blob_name)
         self._container_name = container_name
-        self._blob_client = self._blob_service_client.get_blob_client(
+        self._blob_client = self._blob_service_client.get_blob_client(  # type: ignore[reportAttributeAccessIssue]
             self._container_name, self._blob_name
         )
-        if not self._blob_client.exists():
-            self._blob_client.create_append_blob()
+        if not self._blob_client.exists():  # type: ignore[reportAttributeAccessIssue]
+            self._blob_client.create_append_blob()  # type: ignore[reportAttributeAccessIssue]
 
         self._num_blocks = 0  # refresh block counter
 
@@ -98,12 +105,12 @@ class BlobWorkflowCallbacks(WorkflowHandlerBase):
             }
 
             # Add additional fields if they exist
-            if hasattr(record, "details") and record.details:
-                log_data["details"] = record.details
+            if hasattr(record, "details") and record.details:  # type: ignore[reportAttributeAccessIssue]
+                log_data["details"] = record.details  # type: ignore[reportAttributeAccessIssue]
             if record.exc_info and record.exc_info[1]:
                 log_data["cause"] = str(record.exc_info[1])
-            if hasattr(record, "stack") and record.stack:
-                log_data["stack"] = record.stack
+            if hasattr(record, "stack") and record.stack:  # type: ignore[reportAttributeAccessIssue]
+                log_data["stack"] = record.stack  # type: ignore[reportAttributeAccessIssue]
 
             self._write_log(log_data)
         except (OSError, ValueError):
@@ -129,10 +136,10 @@ class BlobWorkflowCallbacks(WorkflowHandlerBase):
                 storage_account_blob_url=self._storage_account_blob_url,
             )
 
-        blob_client = self._blob_service_client.get_blob_client(
+        blob_client = self._blob_service_client.get_blob_client(  # type: ignore[reportAttributeAccessIssue]
             self._container_name, self._blob_name
         )
-        blob_client.append_block(json.dumps(log, indent=4, ensure_ascii=False) + "\n")
+        blob_client.append_block(json.dumps(log, indent=4, ensure_ascii=False) + "\n")  # type: ignore[reportAttributeAccessIssue]
 
         # update the blob's block count
         self._num_blocks += 1

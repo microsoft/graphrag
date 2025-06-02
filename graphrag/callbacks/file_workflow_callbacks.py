@@ -23,12 +23,12 @@ class WorkflowJSONFileHandler(logging.FileHandler):
             }
 
             # Add additional fields if they exist
-            if hasattr(record, "details") and record.details:
-                log_data["details"] = record.details
+            if hasattr(record, "details") and record.details:  # type: ignore[reportAttributeAccessIssue]
+                log_data["details"] = record.details  # type: ignore[reportAttributeAccessIssue]
             if record.exc_info and record.exc_info[1]:
                 log_data["source"] = str(record.exc_info[1])
-            if hasattr(record, "stack") and record.stack:
-                log_data["stack"] = record.stack
+            if hasattr(record, "stack") and record.stack:  # type: ignore[reportAttributeAccessIssue]
+                log_data["stack"] = record.stack  # type: ignore[reportAttributeAccessIssue]
 
             # Write JSON to file
             json_str = json.dumps(log_data, indent=4, ensure_ascii=False) + "\n"
