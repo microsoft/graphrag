@@ -12,14 +12,18 @@ from typing import Any
 try:
     from azure.identity import DefaultAzureCredential
     from azure.storage.blob import BlobServiceClient
+
     _AZURE_AVAILABLE = True
 except ImportError:
     _AZURE_AVAILABLE = False
+
     # Create dummy classes for type hints when azure is not available
     class DefaultAzureCredential:  # type: ignore
-        pass
+        """Dummy class when Azure is not available."""
+
     class BlobServiceClient:  # type: ignore
-        pass
+        """Dummy class when Azure is not available."""
+
 
 from graphrag.callbacks.workflow_handler_base import WorkflowHandlerBase
 
@@ -42,21 +46,21 @@ class BlobWorkflowCallbacks(WorkflowHandlerBase):
     ):
         """Create a new instance of the BlobWorkflowCallbacks class."""
         super().__init__(level)
-        
+
         if not _AZURE_AVAILABLE:
             msg = "Azure dependencies are not installed. Install graphrag with azure extras."
             raise ImportError(msg)
-        
+
         if container_name is None:
             msg = "No container name provided for blob storage."
             raise ValueError(msg)
         if connection_string is None and storage_account_blob_url is None:
             msg = "No storage account blob url provided for blob storage."
             raise ValueError(msg)
-            
+
         self._connection_string = connection_string
         self._storage_account_blob_url = storage_account_blob_url
-        
+
         if self._connection_string:
             self._blob_service_client = BlobServiceClient.from_connection_string(
                 self._connection_string
@@ -92,27 +96,26 @@ class BlobWorkflowCallbacks(WorkflowHandlerBase):
                 "type": self._get_log_type(record.levelno),
                 "data": record.getMessage(),
             }
-            
+
             # Add additional fields if they exist
-            if hasattr(record, 'details') and record.details:
+            if hasattr(record, "details") and record.details:
                 log_data["details"] = record.details
             if record.exc_info and record.exc_info[1]:
                 log_data["cause"] = str(record.exc_info[1])
-            if hasattr(record, 'stack') and record.stack:
+            if hasattr(record, "stack") and record.stack:
                 log_data["stack"] = record.stack
-                
+
             self._write_log(log_data)
-        except Exception:
+        except (OSError, ValueError):
             self.handleError(record)
 
     def _get_log_type(self, level: int) -> str:
         """Get log type string based on log level."""
         if level >= logging.ERROR:
             return "error"
-        elif level >= logging.WARNING:
+        if level >= logging.WARNING:
             return "warning"
-        else:
-            return "log"
+        return "log"
 
     def _write_log(self, log: dict[str, Any]):
         """Write log data to blob storage."""

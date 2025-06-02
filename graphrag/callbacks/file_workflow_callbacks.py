@@ -12,7 +12,7 @@ from graphrag.callbacks.workflow_handler_base import WorkflowHandlerBase
 
 class WorkflowJSONFileHandler(logging.FileHandler):
     """A FileHandler that formats log records as JSON for workflow callbacks."""
-    
+
     def emit(self, record):
         """Emit a log record as JSON."""
         try:
@@ -21,33 +21,32 @@ class WorkflowJSONFileHandler(logging.FileHandler):
                 "type": self._get_log_type(record.levelno),
                 "data": record.getMessage(),
             }
-            
+
             # Add additional fields if they exist
-            if hasattr(record, 'details') and record.details:
+            if hasattr(record, "details") and record.details:
                 log_data["details"] = record.details
             if record.exc_info and record.exc_info[1]:
                 log_data["source"] = str(record.exc_info[1])
-            if hasattr(record, 'stack') and record.stack:
+            if hasattr(record, "stack") and record.stack:
                 log_data["stack"] = record.stack
-                
+
             # Write JSON to file
             json_str = json.dumps(log_data, indent=4, ensure_ascii=False) + "\n"
-            
+
             if self.stream is None:
                 self.stream = self._open()
             self.stream.write(json_str)
             self.flush()
-        except Exception:
+        except (OSError, ValueError):
             self.handleError(record)
-    
+
     def _get_log_type(self, level: int) -> str:
         """Get log type string based on log level."""
         if level >= logging.ERROR:
             return "error"
-        elif level >= logging.WARNING:
+        if level >= logging.WARNING:
             return "warning"
-        else:
-            return "log"
+        return "log"
 
 
 class FileWorkflowCallbacks(WorkflowHandlerBase):
@@ -56,14 +55,14 @@ class FileWorkflowCallbacks(WorkflowHandlerBase):
     def __init__(self, directory: str, level: int = logging.NOTSET):
         """Create a new file-based workflow handler."""
         super().__init__(level)
-        
+
         # Ensure directory exists
         Path(directory).mkdir(parents=True, exist_ok=True)
-        
+
         # Create the JSON file handler
         log_file_path = Path(directory) / "logs.json"
-        self._file_handler = WorkflowJSONFileHandler(str(log_file_path), mode='a')
-        
+        self._file_handler = WorkflowJSONFileHandler(str(log_file_path), mode="a")
+
         # Also create a regular logger for backwards compatibility
         self._logger = logging.getLogger(__name__)
 
@@ -71,8 +70,8 @@ class FileWorkflowCallbacks(WorkflowHandlerBase):
         """Emit a log record using the underlying FileHandler."""
         # Emit to the JSON file
         self._file_handler.emit(record)
-        
-        # Also emit to regular logger for backwards compatibility  
+
+        # Also emit to regular logger for backwards compatibility
         if record.levelno >= logging.WARNING:
             self._logger.log(record.levelno, record.getMessage())
 

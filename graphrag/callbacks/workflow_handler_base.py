@@ -4,7 +4,6 @@
 """Base class for workflow callbacks that inherit from logging.Handler."""
 
 import logging
-from typing import Any
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
@@ -17,7 +16,7 @@ class WorkflowHandlerBase(logging.Handler, WorkflowCallbacks):
     def __init__(self, level: int = logging.NOTSET):
         """Initialize the handler."""
         super().__init__(level)
-        
+
     def pipeline_start(self, names: list[str]) -> None:
         """Execute this callback to signal when the entire pipeline starts."""
         record = logging.LogRecord(
@@ -95,7 +94,7 @@ class WorkflowHandlerBase(logging.Handler, WorkflowCallbacks):
         full_message = message
         if details:
             full_message = f"{message} details={details}"
-        
+
         record = logging.LogRecord(
             name="graphrag.error",
             level=logging.ERROR,
@@ -105,13 +104,13 @@ class WorkflowHandlerBase(logging.Handler, WorkflowCallbacks):
             args=(),
             exc_info=(type(cause), cause, None) if cause else None,
         )
-        
+
         # Add custom attributes for stack and details
         if stack:
             record.stack = stack  # type: ignore
         if details:
             record.details = details  # type: ignore
-            
+
         self.emit(record)
 
     def warning(self, message: str, details: dict | None = None) -> None:
@@ -119,7 +118,7 @@ class WorkflowHandlerBase(logging.Handler, WorkflowCallbacks):
         full_message = message
         if details:
             full_message = f"{message} details={details}"
-            
+
         record = logging.LogRecord(
             name="graphrag.warning",
             level=logging.WARNING,
@@ -129,10 +128,10 @@ class WorkflowHandlerBase(logging.Handler, WorkflowCallbacks):
             args=(),
             exc_info=None,
         )
-        
+
         if details:
             record.details = details  # type: ignore
-            
+
         self.emit(record)
 
     def log(self, message: str, details: dict | None = None) -> None:
@@ -140,7 +139,7 @@ class WorkflowHandlerBase(logging.Handler, WorkflowCallbacks):
         full_message = message
         if details:
             full_message = f"{message} details={details}"
-            
+
         record = logging.LogRecord(
             name="graphrag.log",
             level=logging.INFO,
@@ -150,8 +149,8 @@ class WorkflowHandlerBase(logging.Handler, WorkflowCallbacks):
             args=(),
             exc_info=None,
         )
-        
+
         if details:
             record.details = details  # type: ignore
-            
+
         self.emit(record)
