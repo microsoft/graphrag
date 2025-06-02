@@ -54,7 +54,6 @@ async def extract_graph(
         result = await strategy_exec(
             [Document(text=text, id=id)],
             entity_types,
-            callbacks,
             cache,
             strategy_config,
         )

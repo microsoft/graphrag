@@ -3,6 +3,7 @@
 
 """A module containing run_workflow method definition."""
 
+import logging
 from typing import Any
 
 import pandas as pd
@@ -20,6 +21,8 @@ from graphrag.index.operations.summarize_descriptions import (
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+
+logger = logging.getLogger(__name__)
 
 
 async def run_workflow(
@@ -99,14 +102,14 @@ async def extract_graph(
 
     if not _validate_data(extracted_entities):
         error_msg = "Entity Extraction failed. No entities detected during extraction."
-        callbacks.error(error_msg)
+        logger.error(error_msg)
         raise ValueError(error_msg)
 
     if not _validate_data(extracted_relationships):
         error_msg = (
             "Entity Extraction failed. No relationships detected during extraction."
         )
-        callbacks.error(error_msg)
+        logger.error(error_msg)
         raise ValueError(error_msg)
 
     # copy these as is before any summarization

@@ -153,7 +153,9 @@ async def _derive_from_rows_base(
     tick.done()
 
     for error, stack in errors:
-        callbacks.error("parallel transformation error", error, stack)
+        logger.error(
+            "parallel transformation error", exc_info=error, extra={"stack": stack}
+        )
 
     if len(errors) > 0:
         raise ParallelizationError(len(errors), errors[0][1])

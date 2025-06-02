@@ -95,9 +95,7 @@ async def summarize_descriptions(
         semaphore: asyncio.Semaphore,
     ):
         async with semaphore:
-            results = await strategy_exec(
-                id, descriptions, callbacks, cache, strategy_config
-            )
+            results = await strategy_exec(id, descriptions, cache, strategy_config)
             ticker(1)
         return results
 

@@ -7,7 +7,6 @@ import json
 import logging
 import re
 import time
-import traceback
 from collections.abc import AsyncIterable
 from dataclasses import asdict
 
@@ -134,7 +133,6 @@ async def _run_pipeline(
 
     except Exception as e:
         logger.exception("error running workflow %s", last_workflow)
-        context.callbacks.error("Error running pipeline!", e, traceback.format_exc())
         yield PipelineRunResult(
             workflow=last_workflow, result=None, state=context.state, errors=[e]
         )

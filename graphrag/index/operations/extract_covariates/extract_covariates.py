@@ -110,8 +110,8 @@ async def run_extract_claims(
         model_invoker=llm,
         extraction_prompt=extraction_prompt,
         max_gleanings=max_gleanings,
-        on_error=lambda e, s, d: (
-            callbacks.error("Claim Extraction Error", e, s, d) if callbacks else None
+        on_error=lambda e, s, d: logger.error(
+            "Claim Extraction Error", exc_info=e, extra={"stack": s, "details": d}
         ),
     )
 
