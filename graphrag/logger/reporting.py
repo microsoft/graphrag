@@ -8,11 +8,11 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from graphrag.callbacks.blob_workflow_callbacks import BlobWorkflowCallbacks
-from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
-from graphrag.callbacks.file_workflow_callbacks import FileWorkflowCallbacks
 from graphrag.config.enums import ReportingType
 from graphrag.config.models.reporting_config import ReportingConfig
+from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
+from graphrag.logger.console_workflow_logger import ConsoleWorkflowLogger
+from graphrag.logger.file_workflow_logger import FileWorkflowLogger
 
 
 def create_pipeline_logger(
@@ -34,13 +34,13 @@ def create_pipeline_logger(
     handler: logging.Handler
     match config.type:
         case ReportingType.file:
-            handler = FileWorkflowCallbacks(
+            handler = FileWorkflowLogger(
                 str(Path(root_dir or "") / (config.base_dir or ""))
             )
         case ReportingType.console:
-            handler = ConsoleWorkflowCallbacks()
+            handler = ConsoleWorkflowLogger()
         case ReportingType.blob:
-            handler = BlobWorkflowCallbacks(
+            handler = BlobWorkflowLogger(
                 config.connection_string,
                 config.container_name,
                 base_dir=config.base_dir,

@@ -47,7 +47,7 @@ class WorkflowJSONFileHandler(logging.FileHandler):
         return "log"
 
 
-class FileWorkflowCallbacks(WorkflowJSONFileHandler):
+class FileWorkflowLogger(WorkflowJSONFileHandler):
     """A logging handler that writes to a local file."""
 
     def __init__(self, directory: str, level: int = logging.NOTSET):

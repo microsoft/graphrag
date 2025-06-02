@@ -11,7 +11,6 @@ Backwards compatibility is not guaranteed at this time.
 import logging
 
 from graphrag.callbacks.logging_workflow_callbacks import LoggingWorkflowCallbacks
-from graphrag.callbacks.reporting import create_pipeline_logger
 from graphrag.config.enums import IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.run_pipeline import run_pipeline
@@ -19,6 +18,7 @@ from graphrag.index.run.utils import create_callback_chain
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.index.typing.workflow import WorkflowFunction
 from graphrag.index.workflows.factory import PipelineFactory
+from graphrag.logger.reporting import create_pipeline_logger
 
 logger = logging.getLogger(__name__)
 

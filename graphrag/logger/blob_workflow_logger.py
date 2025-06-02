@@ -32,7 +32,7 @@ except ImportError:
         """Dummy class when Azure is not available."""
 
 
-class BlobWorkflowCallbacks(logging.Handler):
+class BlobWorkflowLogger(logging.Handler):
     """A logging handler that writes to a blob storage account."""
 
     _blob_service_client: "BlobServiceClient"
@@ -48,7 +48,7 @@ class BlobWorkflowCallbacks(logging.Handler):
         storage_account_blob_url: str | None = None,
         level: int = logging.NOTSET,
     ):
-        """Create a new instance of the BlobWorkflowCallbacks class."""
+        """Create a new instance of the BlobWorkflowLogger class."""
         super().__init__(level)
 
         if not _AZURE_AVAILABLE:

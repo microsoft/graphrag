@@ -7,7 +7,7 @@ import logging
 import sys
 
 
-class ConsoleWorkflowCallbacks(logging.StreamHandler):
+class ConsoleWorkflowLogger(logging.StreamHandler):
     """A logging handler that writes to console."""
 
     def __init__(self, level: int = logging.NOTSET):
