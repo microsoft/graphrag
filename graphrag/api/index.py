@@ -74,7 +74,7 @@ async def build_index(
             logger.error("Workflow %s completed with errors", output.workflow)
         else:
             logger.info("Workflow %s completed successfully", output.workflow)
-        logger.info(str(output.result))
+        logger.debug(str(output.result))
 
     workflow_callbacks.pipeline_end(outputs)
     return outputs
