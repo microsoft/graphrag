@@ -40,7 +40,7 @@ from pathlib import Path
 def configure_logging(
     log_level: int | str = logging.INFO,
     log_file: str | Path | None = None,
-    log_format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    log_format: str = "%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     date_format: str = "%Y-%m-%d %H:%M:%S",
 ) -> None:
     """Configure the Python logging module for graphrag.

@@ -14,6 +14,8 @@ from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
 from graphrag.logger.console_workflow_logger import ConsoleWorkflowLogger
 from graphrag.logger.file_workflow_logger import FileWorkflowLogger
 
+logger = logging.getLogger(__name__)
+
 
 def create_pipeline_logger(
     config: ReportingConfig | None, root_dir: str | None
