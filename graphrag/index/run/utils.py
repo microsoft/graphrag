@@ -41,7 +41,6 @@ def create_callback_chain(
     manager = WorkflowCallbacksManager()
     for callback in callbacks or []:
         manager.register(callback)
-    # Progress workflow callbacks removed - using standard logging instead
     return manager
 
 

@@ -17,7 +17,7 @@ class ConsoleWorkflowLogger(logging.StreamHandler):
 
         # Set up a formatter for console output
         formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
         )
         self.setFormatter(formatter)
 
