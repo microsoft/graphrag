@@ -32,11 +32,8 @@ except ImportError:
         """Dummy class when Azure is not available."""
 
 
-from graphrag.callbacks.workflow_handler_base import WorkflowHandlerBase
-
-
-class BlobWorkflowCallbacks(WorkflowHandlerBase):
-    """A workflow callback handler that writes to a blob storage account."""
+class BlobWorkflowCallbacks(logging.Handler):
+    """A logging handler that writes to a blob storage account."""
 
     _blob_service_client: "BlobServiceClient"
     _container_name: str

@@ -7,8 +7,6 @@ import json
 import logging
 from pathlib import Path
 
-from graphrag.callbacks.workflow_handler_base import WorkflowHandlerBase
-
 
 class WorkflowJSONFileHandler(logging.FileHandler):
     """A FileHandler that formats log records as JSON for workflow callbacks."""
@@ -49,33 +47,15 @@ class WorkflowJSONFileHandler(logging.FileHandler):
         return "log"
 
 
-class FileWorkflowCallbacks(WorkflowHandlerBase):
-    """A workflow callback handler that writes to a local file using FileHandler."""
+class FileWorkflowCallbacks(WorkflowJSONFileHandler):
+    """A logging handler that writes to a local file."""
 
     def __init__(self, directory: str, level: int = logging.NOTSET):
         """Create a new file-based workflow handler."""
-        super().__init__(level)
-
         # Ensure directory exists
         Path(directory).mkdir(parents=True, exist_ok=True)
 
         # Create the JSON file handler
         log_file_path = Path(directory) / "logs.json"
-        self._file_handler = WorkflowJSONFileHandler(str(log_file_path), mode="a")
-
-        # Also create a regular logger for backwards compatibility
-        self._logger = logging.getLogger(__name__)
-
-    def emit(self, record):
-        """Emit a log record using the underlying FileHandler."""
-        # Emit to the JSON file
-        self._file_handler.emit(record)
-
-        # Also emit to regular logger for backwards compatibility
-        if record.levelno >= logging.WARNING:
-            self._logger.log(record.levelno, record.getMessage())
-
-    def close(self):
-        """Close the file handler."""
-        super().close()
-        self._file_handler.close()
+        super().__init__(str(log_file_path), mode="a")
+        self.setLevel(level)

@@ -10,8 +10,8 @@ Backwards compatibility is not guaranteed at this time.
 
 import logging
 
-from graphrag.callbacks.reporting import create_pipeline_reporter
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.callbacks.logging_workflow_callbacks import LoggingWorkflowCallbacks
+from graphrag.callbacks.reporting import create_pipeline_logger
 from graphrag.config.enums import IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.run_pipeline import run_pipeline
@@ -28,7 +28,7 @@ async def build_index(
     method: IndexingMethod = IndexingMethod.Standard,
     is_update_run: bool = False,
     memory_profile: bool = False,
-    callbacks: list[WorkflowCallbacks] | None = None,
+    callbacks: list | None = None,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -40,7 +40,7 @@ async def build_index(
         Styling of indexing to perform (full LLM, NLP + LLM, etc.).
     memory_profile : bool
         Whether to enable memory profiling.
-    callbacks : list[WorkflowCallbacks] | None default=None
+    callbacks : list | None default=None
         A list of callbacks to register.
 
     Returns
@@ -48,11 +48,17 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    # create a pipeline reporter and add to any additional callbacks
-    callbacks = callbacks or []
-    callbacks.append(create_pipeline_reporter(config.reporting, None))
+    # Register pipeline logger with the graphrag logger
+    create_pipeline_logger(config.reporting, None)
 
-    workflow_callbacks = create_callback_chain(callbacks)
+    # Create a logging-based workflow callbacks for pipeline lifecycle events
+    workflow_callbacks = LoggingWorkflowCallbacks()
+
+    # Add any additional callbacks to the chain
+    if callbacks:
+        callback_manager = create_callback_chain(callbacks)
+        # We could create a composite here, but for simplicity just use the manager
+        workflow_callbacks = callback_manager
 
     outputs: list[PipelineRunResult] = []
 
