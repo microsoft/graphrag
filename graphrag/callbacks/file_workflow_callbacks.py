@@ -5,74 +5,78 @@
 
 import json
 import logging
-from io import TextIOWrapper
 from pathlib import Path
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
-
-logger = logging.getLogger(__name__)
+from graphrag.callbacks.workflow_handler_base import WorkflowHandlerBase
 
 
-class FileWorkflowCallbacks(NoopWorkflowCallbacks):
-    """A logger that writes to a local file."""
+class WorkflowJSONFileHandler(logging.FileHandler):
+    """A FileHandler that formats log records as JSON for workflow callbacks."""
+    
+    def emit(self, record):
+        """Emit a log record as JSON."""
+        try:
+            # Create JSON structure based on record type
+            log_data = {
+                "type": self._get_log_type(record.levelno),
+                "data": record.getMessage(),
+            }
+            
+            # Add additional fields if they exist
+            if hasattr(record, 'details') and record.details:
+                log_data["details"] = record.details
+            if record.exc_info and record.exc_info[1]:
+                log_data["source"] = str(record.exc_info[1])
+            if hasattr(record, 'stack') and record.stack:
+                log_data["stack"] = record.stack
+                
+            # Write JSON to file
+            json_str = json.dumps(log_data, indent=4, ensure_ascii=False) + "\n"
+            
+            if self.stream is None:
+                self.stream = self._open()
+            self.stream.write(json_str)
+            self.flush()
+        except Exception:
+            self.handleError(record)
+    
+    def _get_log_type(self, level: int) -> str:
+        """Get log type string based on log level."""
+        if level >= logging.ERROR:
+            return "error"
+        elif level >= logging.WARNING:
+            return "warning"
+        else:
+            return "log"
 
-    _out_stream: TextIOWrapper
 
-    def __init__(self, directory: str):
-        """Create a new file-based workflow logger."""
+class FileWorkflowCallbacks(WorkflowHandlerBase):
+    """A workflow callback handler that writes to a local file using FileHandler."""
+
+    def __init__(self, directory: str, level: int = logging.NOTSET):
+        """Create a new file-based workflow handler."""
+        super().__init__(level)
+        
+        # Ensure directory exists
         Path(directory).mkdir(parents=True, exist_ok=True)
-        self._out_stream = open(  # noqa: PTH123, SIM115
-            Path(directory) / "logs.json", "a", encoding="utf-8", errors="strict"
-        )
+        
+        # Create the JSON file handler
+        log_file_path = Path(directory) / "logs.json"
+        self._file_handler = WorkflowJSONFileHandler(str(log_file_path), mode='a')
+        
+        # Also create a regular logger for backwards compatibility
+        self._logger = logging.getLogger(__name__)
 
-    def error(
-        self,
-        message: str,
-        cause: BaseException | None = None,
-        stack: str | None = None,
-        details: dict | None = None,
-    ):
-        """Handle when an error occurs."""
-        self._out_stream.write(
-            json.dumps(
-                {
-                    "type": "error",
-                    "data": message,
-                    "stack": stack,
-                    "source": str(cause),
-                    "details": details,
-                },
-                indent=4,
-                ensure_ascii=False,
-            )
-            + "\n"
-        )
-        message = f"{message} details={details}"
-        logger.info(message)
+    def emit(self, record):
+        """Emit a log record using the underlying FileHandler."""
+        # Emit to the JSON file
+        self._file_handler.emit(record)
+        
+        # Also emit to regular logger for backwards compatibility  
+        if record.levelno >= logging.WARNING:
+            self._logger.log(record.levelno, record.getMessage())
 
-    def warning(self, message: str, details: dict | None = None):
-        """Handle when a warning occurs."""
-        self._out_stream.write(
-            json.dumps(
-                {"type": "warning", "data": message, "details": details},
-                ensure_ascii=False,
-            )
-            + "\n"
-        )
-        _print_warning(message)
-
-    def log(self, message: str, details: dict | None = None):
-        """Handle when a log message is produced."""
-        self._out_stream.write(
-            json.dumps(
-                {"type": "log", "data": message, "details": details}, ensure_ascii=False
-            )
-            + "\n"
-        )
-
-        message = f"{message} details={details}"
-        logger.info(message)
-
-
-def _print_warning(skk):
-    logger.warning(skk)
+    def close(self):
+        """Close the file handler."""
+        super().close()
+        self._file_handler.close()
