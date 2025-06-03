@@ -75,7 +75,7 @@ async def prompt_tune(
 
     # Initialize loggers with console output enabled (CLI usage) and reporting config
     init_loggers(
-        config=graph_config.reporting,
+        config=graph_config,
         root_dir=str(root_path),
         log_level=log_level,
         enable_console=True,

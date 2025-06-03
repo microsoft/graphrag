@@ -50,7 +50,7 @@ async def build_index(
     # Register pipeline logger with the graphrag logger
     from graphrag.logger.standard_logging import init_loggers
 
-    init_loggers(config=config.reporting, root_dir=None, enable_console=False)
+    init_loggers(config=config, root_dir=None, enable_console=False)
 
     # Create a logging-based workflow callbacks for pipeline lifecycle events
     workflow_callbacks = LoggingWorkflowCallbacks()

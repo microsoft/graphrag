@@ -42,7 +42,7 @@ from graphrag.config.models.reporting_config import ReportingConfig
 
 
 def init_loggers(
-    config: ReportingConfig | None = None,
+    config: GraphRagConfig | None = None,
     root_dir: str | None = None,
     log_level: int | str = logging.INFO,
     enable_console: bool = False,
@@ -57,8 +57,8 @@ def init_loggers(
 
     Parameters
     ----------
-    config : ReportingConfig | None, default=None
-        The reporting configuration. If None, defaults to file-based reporting.
+    config : GraphRagConfig | None, default=None
+        The GraphRAG configuration. If None, defaults to file-based reporting.
     root_dir : str | None, default=None
         The root directory for file-based logging.
     log_level : Union[int, str], default=logging.INFO
@@ -75,16 +75,21 @@ def init_loggers(
     # Import BlobWorkflowLogger here to avoid circular imports
     from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
 
-    # If log_file is provided directly, override config to use file-based logging
+    # Extract reporting config from GraphRagConfig if provided
+    reporting_config: ReportingConfig
     if log_file:
+        # If log_file is provided directly, override config to use file-based logging
         log_path = Path(log_file)
-        config = ReportingConfig(
+        reporting_config = ReportingConfig(
             type=ReportingType.file,
             base_dir=str(log_path.parent),
         )
-    elif config is None:
+    elif config is not None:
+        # Use the reporting configuration from GraphRagConfig
+        reporting_config = config.reporting
+    else:
         # Default to file-based logging if no config provided (maintains backward compatibility)
-        config = ReportingConfig(base_dir="logs", type=ReportingType.file)
+        reporting_config = ReportingConfig(base_dir="logs", type=ReportingType.file)
 
     # Convert string log level to numeric value if needed
     if isinstance(log_level, str):
@@ -113,7 +118,7 @@ def init_loggers(
 
     # Add handlers based on configuration
     handler: logging.Handler
-    match config.type:
+    match reporting_config.type:
         case ReportingType.file:
             if log_file:
                 # Use the specific log file provided
@@ -122,7 +127,7 @@ def init_loggers(
                 handler = logging.FileHandler(str(log_file_path), mode="a")
             else:
                 # Use the config-based file path
-                log_dir = Path(root_dir or "") / (config.base_dir or "")
+                log_dir = Path(root_dir or "") / (reporting_config.base_dir or "")
                 log_dir.mkdir(parents=True, exist_ok=True)
                 log_file_path = log_dir / "logs.txt"
                 handler = logging.FileHandler(str(log_file_path), mode="a")
@@ -136,10 +141,10 @@ def init_loggers(
                 logger.addHandler(handler)
         case ReportingType.blob:
             handler = BlobWorkflowLogger(
-                config.connection_string,
-                config.container_name,
-                base_dir=config.base_dir,
-                storage_account_blob_url=config.storage_account_blob_url,
+                reporting_config.connection_string,
+                reporting_config.container_name,
+                base_dir=reporting_config.base_dir,
+                storage_account_blob_url=reporting_config.storage_account_blob_url,
             )
             logger.addHandler(handler)
 

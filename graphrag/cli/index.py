@@ -139,7 +139,7 @@ def _run_index(
 
     # Initialize loggers with console output enabled (CLI usage) and reporting config
     init_loggers(
-        config=config.reporting,
+        config=config,
         root_dir=str(config.root_dir) if config.root_dir else None,
         log_level=log_level,
         enable_console=True,
