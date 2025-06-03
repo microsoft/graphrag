@@ -8,7 +8,6 @@ import tempfile
 from pathlib import Path
 
 from graphrag.config.enums import ReportingType
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.logger.standard_logging import init_loggers
 from tests.unit.config.utils import get_default_graphrag_config
