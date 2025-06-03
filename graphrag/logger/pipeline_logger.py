@@ -33,7 +33,9 @@ def create_pipeline_logger(
     graphrag_logger.propagate = False
 
     # Create standard formatter for all handlers
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+    )
 
     # Create the appropriate handler based on configuration
     handler: logging.Handler
