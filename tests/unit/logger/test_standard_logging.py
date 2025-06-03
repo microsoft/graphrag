@@ -9,7 +9,7 @@ from pathlib import Path
 
 from graphrag.config.enums import ReportingType
 from graphrag.config.models.reporting_config import ReportingConfig
-from graphrag.logger.standard_logging import configure_logging, init_loggers
+from graphrag.logger.standard_logging import init_loggers
 
 
 def test_standard_logging():
@@ -23,8 +23,8 @@ def test_file_logging():
     with tempfile.TemporaryDirectory() as temp_dir:
         log_file = Path(temp_dir) / "test.log"
 
-        # Configure logging to file
-        configure_logging(log_file=log_file)
+        # Configure logging to file using init_loggers
+        init_loggers(log_file=log_file)
 
         # Get a logger and log some messages
         logger = logging.getLogger("graphrag.test")
@@ -47,8 +47,8 @@ def test_file_logging():
 
 def test_logger_hierarchy():
     """Test that logger hierarchy works correctly."""
-    # Reset logging to default state
-    configure_logging()
+    # Reset logging to default state using init_loggers
+    init_loggers()
 
     root_logger = logging.getLogger("graphrag")
     child_logger = logging.getLogger("graphrag.child")

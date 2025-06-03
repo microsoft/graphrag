@@ -8,8 +8,8 @@ logging system for use within the graphrag package.
 
 Usage:
     # Configuration should be done once at the start of your application:
-    from graphrag.logger.standard_logging import configure_logging
-    configure_logging(log_level="INFO", log_file="/path/to/app.log")
+    from graphrag.logger.standard_logging import init_loggers
+    init_loggers(log_level="INFO", log_file="/path/to/app.log")
 
     # Then throughout your code:
     import logging
@@ -40,63 +40,20 @@ from graphrag.config.enums import ReportingType
 from graphrag.config.models.reporting_config import ReportingConfig
 
 
-def configure_logging(
-    log_level: int | str = logging.INFO,
-    log_file: str | Path | None = None,
-    log_format: str = "%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-    date_format: str = "%Y-%m-%d %H:%M:%S",
-) -> None:
-    """Configure the Python logging module for graphrag.
-
-    This function sets up a root logger for the 'graphrag' package
-    with handlers for console output and optionally file output.
-
+def get_logger(name: str) -> logging.Logger:
+    """Get a logger with the given name under the graphrag hierarchy.
+    
     Parameters
     ----------
-    log_level : Union[int, str], default=logging.INFO
-        The logging level to use. Can be a string or integer.
-    log_file : Optional[Union[str, Path]], default=None
-        Path to a log file. If None, logs will only go to console.
-    log_format : str, default="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        The format for log messages.
-    date_format : str, default="%Y-%m-%d %H:%M:%S"
-        The format for dates in the log messages.
+    name : str
+        The name of the logger. Typically pass __name__ to get module-specific logger.
+        
+    Returns
+    -------
+    logging.Logger
+        A logger configured for the graphrag package.
     """
-    # Convert string log level to numeric value if needed
-    if isinstance(log_level, str):
-        log_level = getattr(logging, log_level.upper(), logging.INFO)
-
-    # Get the root logger for graphrag
-    logger = logging.getLogger("graphrag")
-    logger.setLevel(log_level)
-
-    # Clear any existing handlers to avoid duplicate logs
-    if logger.hasHandlers():
-        # Close file handlers properly before removing them
-        for handler in logger.handlers:
-            if isinstance(handler, logging.FileHandler):
-                handler.close()
-        logger.handlers.clear()
-
-    # Create formatter
-    formatter = logging.Formatter(fmt=log_format, datefmt=date_format)
-
-    # Console handler
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
-
-    # File handler (optional)
-    if log_file:
-        log_path = Path(log_file)
-        log_path.parent.mkdir(parents=True, exist_ok=True)
-
-        file_handler = logging.FileHandler(log_path)
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
-
-    # Prevent propagation to root logger to avoid duplicate logging
-    logger.propagate = False
+    return logging.getLogger(f"graphrag.{name}" if not name.startswith("graphrag") else name)
 
 
 def init_loggers(
@@ -104,6 +61,9 @@ def init_loggers(
     root_dir: str | None = None,
     log_level: int | str = logging.INFO,
     enable_console: bool = False,
+    log_file: str | Path | None = None,
+    log_format: str = "%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    date_format: str = "%Y-%m-%d %H:%M:%S",
 ) -> None:
     """Initialize logging handlers for graphrag based on configuration.
     
@@ -120,12 +80,25 @@ def init_loggers(
         The logging level to use. Can be a string or integer.
     enable_console : bool, default=False
         Whether to add a console handler. Should be True only when called from CLI.
+    log_file : Optional[Union[str, Path]], default=None
+        Path to a specific log file. If provided, takes precedence over config.
+    log_format : str, default="%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+        The format for log messages.
+    date_format : str, default="%Y-%m-%d %H:%M:%S"
+        The format for dates in the log messages.
     """
     # Import BlobWorkflowLogger here to avoid circular imports
     from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
     
-    # Default to file-based logging if no config provided (maintains backward compatibility)
-    if config is None:
+    # If log_file is provided directly, override config to use file-based logging
+    if log_file:
+        log_path = Path(log_file)
+        config = ReportingConfig(
+            type=ReportingType.file,
+            base_dir=str(log_path.parent),
+        )
+    elif config is None:
+        # Default to file-based logging if no config provided (maintains backward compatibility)
         config = ReportingConfig(base_dir="logs", type=ReportingType.file)
     
     # Convert string log level to numeric value if needed
@@ -144,11 +117,8 @@ def init_loggers(
                 handler.close()
         logger.handlers.clear()
 
-    # Create standard formatter for all handlers
-    formatter = logging.Formatter(
-        fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
-    )
+    # Create formatter with custom format
+    formatter = logging.Formatter(fmt=log_format, datefmt=date_format)
 
     # Add console handler if requested (typically for CLI usage)
     if enable_console:
@@ -160,13 +130,17 @@ def init_loggers(
     handler: logging.Handler
     match config.type:
         case ReportingType.file:
-            # Ensure directory exists
-            log_dir = Path(root_dir or "") / (config.base_dir or "")
-            log_dir.mkdir(parents=True, exist_ok=True)
-
-            # Create file handler with standard formatter
-            log_file_path = log_dir / "logs.txt"
-            handler = logging.FileHandler(str(log_file_path), mode="a")
+            if log_file:
+                # Use the specific log file provided
+                log_file_path = Path(log_file)
+                log_file_path.parent.mkdir(parents=True, exist_ok=True)
+                handler = logging.FileHandler(str(log_file_path), mode="a")
+            else:
+                # Use the config-based file path
+                log_dir = Path(root_dir or "") / (config.base_dir or "")
+                log_dir.mkdir(parents=True, exist_ok=True)
+                log_file_path = log_dir / "logs.txt"
+                handler = logging.FileHandler(str(log_file_path), mode="a")
             handler.setFormatter(formatter)
             logger.addHandler(handler)
         case ReportingType.console:

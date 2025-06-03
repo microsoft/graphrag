@@ -8,7 +8,7 @@ from pathlib import Path
 
 from graphrag.config.enums import ReportingType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.logger.standard_logging import configure_logging
+from graphrag.logger.standard_logging import init_loggers
 
 
 def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:
@@ -22,11 +22,14 @@ def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:
         Whether to log debug messages.
     """
     log_level = logging.DEBUG if verbose else logging.INFO
-    configure_logging(
+    
+    # Use init_loggers with the specific log file and custom formatting
+    init_loggers(
         log_level=log_level,
         log_file=log_filepath,
         log_format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
         date_format="%H:%M:%S",
+        enable_console=False
     )
 
 
