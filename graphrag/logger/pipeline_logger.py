@@ -12,7 +12,6 @@ from pathlib import Path
 from graphrag.config.enums import ReportingType
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
-from graphrag.logger.file_workflow_logger import FileWorkflowLogger
 
 logger = logging.getLogger(__name__)
 
@@ -41,9 +40,14 @@ def create_pipeline_logger(
     handler: logging.Handler
     match config.type:
         case ReportingType.file:
-            handler = FileWorkflowLogger(
-                str(Path(root_dir or "") / (config.base_dir or ""))
-            )
+            # Ensure directory exists
+            log_dir = Path(root_dir or "") / (config.base_dir or "")
+            log_dir.mkdir(parents=True, exist_ok=True)
+
+            # Create file handler with standard formatter
+            log_file_path = log_dir / "logs.txt"
+            handler = logging.FileHandler(str(log_file_path), mode="a")
+            handler.setFormatter(formatter)
         case ReportingType.console:
             handler = logging.StreamHandler(sys.stdout)
             handler.setFormatter(formatter)
