@@ -14,13 +14,6 @@ from tests.unit.indexing.verbs.helpers.mock_llm import create_mock_llm
 class TestRunChain(unittest.IsolatedAsyncioTestCase):
     async def test_run_extract_graph_single_document_correct_entities_returned(self):
         results = await run_extract_graph(
-            docs=[Document("test_text", "1")],
-            entity_types=["person"],
-            callbacks=None,
-            args={
-                "max_gleanings": 0,
-                "summarize_descriptions": False,
-            },
             model=create_mock_llm(
                 responses=[
                     """
@@ -37,6 +30,12 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 ],
                 name="test_run_extract_graph_single_document_correct_entities_returned",
             ),
+            docs=[Document("test_text", "1")],
+            entity_types=["person"],
+            args={
+                "max_gleanings": 0,
+                "summarize_descriptions": False,
+            },
         )
 
         # self.assertItemsEqual isn't available yet, or I am just silly
@@ -49,13 +48,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         self,
     ):
         results = await run_extract_graph(
-            docs=[Document("text_1", "1"), Document("text_2", "2")],
-            entity_types=["person"],
-            callbacks=None,
-            args={
-                "max_gleanings": 0,
-                "summarize_descriptions": False,
-            },
             model=create_mock_llm(
                 responses=[
                     """
@@ -76,6 +68,12 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 ],
                 name="test_run_extract_graph_multiple_documents_correct_entities_returned",
             ),
+            docs=[Document("text_1", "1"), Document("text_2", "2")],
+            entity_types=["person"],
+            args={
+                "max_gleanings": 0,
+                "summarize_descriptions": False,
+            },
         )
 
         # self.assertItemsEqual isn't available yet, or I am just silly
@@ -86,13 +84,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
 
     async def test_run_extract_graph_multiple_documents_correct_edges_returned(self):
         results = await run_extract_graph(
-            docs=[Document("text_1", "1"), Document("text_2", "2")],
-            entity_types=["person"],
-            callbacks=None,
-            args={
-                "max_gleanings": 0,
-                "summarize_descriptions": False,
-            },
             model=create_mock_llm(
                 responses=[
                     """
@@ -113,6 +104,12 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 ],
                 name="test_run_extract_graph_multiple_documents_correct_edges_returned",
             ),
+            docs=[Document("text_1", "1"), Document("text_2", "2")],
+            entity_types=["person"],
+            args={
+                "max_gleanings": 0,
+                "summarize_descriptions": False,
+            },
         )
 
         # self.assertItemsEqual isn't available yet, or I am just silly
@@ -131,13 +128,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         self,
     ):
         results = await run_extract_graph(
-            docs=[Document("text_1", "1"), Document("text_2", "2")],
-            entity_types=["person"],
-            callbacks=None,
-            args={
-                "max_gleanings": 0,
-                "summarize_descriptions": False,
-            },
             model=create_mock_llm(
                 responses=[
                     """
@@ -158,6 +148,12 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 ],
                 name="test_run_extract_graph_multiple_documents_correct_entity_source_ids_mapped",
             ),
+            docs=[Document("text_1", "1"), Document("text_2", "2")],
+            entity_types=["person"],
+            args={
+                "max_gleanings": 0,
+                "summarize_descriptions": False,
+            },
         )
 
         graph = results.graph
@@ -181,13 +177,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         self,
     ):
         results = await run_extract_graph(
-            docs=[Document("text_1", "1"), Document("text_2", "2")],
-            entity_types=["person"],
-            callbacks=None,
-            args={
-                "max_gleanings": 0,
-                "summarize_descriptions": False,
-            },
             model=create_mock_llm(
                 responses=[
                     """
@@ -208,6 +197,12 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 ],
                 name="test_run_extract_graph_multiple_documents_correct_edge_source_ids_mapped",
             ),
+            docs=[Document("text_1", "1"), Document("text_2", "2")],
+            entity_types=["person"],
+            args={
+                "max_gleanings": 0,
+                "summarize_descriptions": False,
+            },
         )
 
         graph = results.graph
