@@ -37,25 +37,8 @@ import sys
 from pathlib import Path
 
 from graphrag.config.enums import ReportingType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.reporting_config import ReportingConfig
-
-
-def get_logger(name: str) -> logging.Logger:
-    """Get a logger with the given name under the graphrag hierarchy.
-
-    Parameters
-    ----------
-    name : str
-        The name of the logger. Typically pass __name__ to get module-specific logger.
-
-    Returns
-    -------
-    logging.Logger
-        A logger configured for the graphrag package.
-    """
-    return logging.getLogger(
-        f"graphrag.{name}" if not name.startswith("graphrag") else name
-    )
 
 
 def init_loggers(
@@ -64,7 +47,7 @@ def init_loggers(
     log_level: int | str = logging.INFO,
     enable_console: bool = False,
     log_file: str | Path | None = None,
-    log_format: str = "%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    log_format: str = "%(asctime)s.%(msecs)04d - %(levelname)s - %(name)s - %(message)s",
     date_format: str = "%Y-%m-%d %H:%M:%S",
 ) -> None:
     """Initialize logging handlers for graphrag based on configuration.

@@ -9,8 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from azure.identity import DefaultAzureCredential  # type: ignore[reportMissingImports]
-from azure.storage.blob import BlobServiceClient  # type: ignore[reportMissingImports]
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient
 
 
 class BlobWorkflowLogger(logging.Handler):
