@@ -122,7 +122,7 @@ def test_init_loggers_file_config():
     with tempfile.TemporaryDirectory() as temp_dir:
         config = GraphRagConfig(
             root_dir=temp_dir,
-            reporting=ReportingConfig(type=ReportingType.file, base_dir="logs")
+            reporting=ReportingConfig(type=ReportingType.file, base_dir="logs"),
         )
 
         # Call init_loggers with file config
@@ -157,9 +157,7 @@ def test_init_loggers_file_config():
 
 def test_init_loggers_console_config():
     """Test that init_loggers works with console configuration."""
-    config = GraphRagConfig(
-        reporting=ReportingConfig(type=ReportingType.console)
-    )
+    config = GraphRagConfig(reporting=ReportingConfig(type=ReportingType.console))
 
     # Call init_loggers with console config but no enable_console
     init_loggers(config=config, log_level="INFO", enable_console=False)
@@ -178,9 +176,7 @@ def test_init_loggers_console_config():
 
 def test_init_loggers_both_console():
     """Test that init_loggers doesn't duplicate console handlers."""
-    config = GraphRagConfig(
-        reporting=ReportingConfig(type=ReportingType.console)
-    )
+    config = GraphRagConfig(reporting=ReportingConfig(type=ReportingType.console))
 
     # Call init_loggers with both console config and enable_console=True
     init_loggers(config=config, log_level="INFO", enable_console=True)
