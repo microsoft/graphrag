@@ -73,10 +73,11 @@ class CommunityReportsExtractor:
         """Call method definition."""
         output = None
         try:
-            prompt = self._extraction_prompt.format(**{
-                INPUT_TEXT_KEY: input_text,
-                MAX_LENGTH_KEY: str(self._max_report_length),
-            })
+            prompt = self._extraction_prompt.replace(
+                "{" + INPUT_TEXT_KEY + "}", input_text
+            ).replace(
+                "{" + MAX_LENGTH_KEY + "}", str(self._max_report_length)
+            )
             response = await self._model.achat(
                 prompt,
                 json=True,  # Leaving this as True to avoid creating new cache entries
