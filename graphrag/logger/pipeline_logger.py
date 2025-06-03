@@ -6,12 +6,12 @@
 from __future__ import annotations
 
 import logging
+import sys
 from pathlib import Path
 
 from graphrag.config.enums import ReportingType
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
-from graphrag.logger.console_workflow_logger import ConsoleWorkflowLogger
 from graphrag.logger.file_workflow_logger import FileWorkflowLogger
 
 logger = logging.getLogger(__name__)
@@ -32,6 +32,9 @@ def create_pipeline_logger(
     # Prevent propagation to avoid duplicate logs
     graphrag_logger.propagate = False
 
+    # Create standard formatter for all handlers
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+
     # Create the appropriate handler based on configuration
     handler: logging.Handler
     match config.type:
@@ -40,7 +43,8 @@ def create_pipeline_logger(
                 str(Path(root_dir or "") / (config.base_dir or ""))
             )
         case ReportingType.console:
-            handler = ConsoleWorkflowLogger()
+            handler = logging.StreamHandler(sys.stdout)
+            handler.setFormatter(formatter)
         case ReportingType.blob:
             handler = BlobWorkflowLogger(
                 config.connection_string,
