@@ -9,33 +9,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-try:
-    from azure.identity import (
-        DefaultAzureCredential,  # type: ignore[reportAssignmentType]
-    )
-    from azure.storage.blob import (
-        BlobServiceClient,  # type: ignore[reportAssignmentType]
-    )
-
-    _AZURE_AVAILABLE = True
-except ImportError:
-    _AZURE_AVAILABLE = False
-
-    # Create dummy classes for type hints when azure is not available
-    class DefaultAzureCredential:  # type: ignore
-        """Dummy class when Azure is not available."""
-
-        def __init__(self):  # type: ignore
-            """Initialize dummy credential."""
-
-    class BlobServiceClient:  # type: ignore
-        """Dummy class when Azure is not available."""
+from azure.identity import DefaultAzureCredential  # type: ignore[reportMissingImports]
+from azure.storage.blob import BlobServiceClient  # type: ignore[reportMissingImports]
 
 
 class BlobWorkflowLogger(logging.Handler):
     """A logging handler that writes to a blob storage account."""
 
-    _blob_service_client: "BlobServiceClient"
+    _blob_service_client: BlobServiceClient
     _container_name: str
     _max_block_count: int = 25000  # 25k blocks per blob
 
@@ -51,10 +32,6 @@ class BlobWorkflowLogger(logging.Handler):
         """Create a new instance of the BlobWorkflowLogger class."""
         super().__init__(level)
 
-        if not _AZURE_AVAILABLE:
-            msg = "Azure dependencies are not installed. Install graphrag with azure extras."
-            raise ImportError(msg)
-
         if container_name is None:
             msg = "No container name provided for blob storage."
             raise ValueError(msg)
@@ -66,7 +43,7 @@ class BlobWorkflowLogger(logging.Handler):
         self._storage_account_blob_url = storage_account_blob_url
 
         if self._connection_string:
-            self._blob_service_client = BlobServiceClient.from_connection_string(  # type: ignore[reportAttributeAccessIssue,reportAssignmentType]
+            self._blob_service_client = BlobServiceClient.from_connection_string(
                 self._connection_string
             )
         else:
@@ -74,9 +51,9 @@ class BlobWorkflowLogger(logging.Handler):
                 msg = "Either connection_string or storage_account_blob_url must be provided."
                 raise ValueError(msg)
 
-            self._blob_service_client = BlobServiceClient(  # type: ignore[reportCallIssue,reportAssignmentType]
-                storage_account_blob_url,  # type: ignore[reportCallIssue]
-                credential=DefaultAzureCredential(),  # type: ignore[reportCallIssue,reportAssignmentType]
+            self._blob_service_client = BlobServiceClient(
+                storage_account_blob_url,
+                credential=DefaultAzureCredential(),
             )
 
         if blob_name == "":
@@ -84,11 +61,11 @@ class BlobWorkflowLogger(logging.Handler):
 
         self._blob_name = str(Path(base_dir or "") / blob_name)
         self._container_name = container_name
-        self._blob_client = self._blob_service_client.get_blob_client(  # type: ignore[reportAttributeAccessIssue]
+        self._blob_client = self._blob_service_client.get_blob_client(
             self._container_name, self._blob_name
         )
-        if not self._blob_client.exists():  # type: ignore[reportAttributeAccessIssue]
-            self._blob_client.create_append_blob()  # type: ignore[reportAttributeAccessIssue]
+        if not self._blob_client.exists():
+            self._blob_client.create_append_blob()
 
         self._num_blocks = 0  # refresh block counter
 
@@ -133,10 +110,10 @@ class BlobWorkflowLogger(logging.Handler):
                 storage_account_blob_url=self._storage_account_blob_url,
             )
 
-        blob_client = self._blob_service_client.get_blob_client(  # type: ignore[reportAttributeAccessIssue]
+        blob_client = self._blob_service_client.get_blob_client(
             self._container_name, self._blob_name
         )
-        blob_client.append_block(json.dumps(log, indent=4, ensure_ascii=False) + "\n")  # type: ignore[reportAttributeAccessIssue]
+        blob_client.append_block(json.dumps(log, indent=4, ensure_ascii=False) + "\n")
 
         # update the blob's block count
         self._num_blocks += 1
