@@ -10,7 +10,7 @@ Backwards compatibility is not guaranteed at this time.
 
 import logging
 
-from graphrag.callbacks.logging_workflow_callbacks import LoggingWorkflowCallbacks
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.enums import IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.run_pipeline import run_pipeline
@@ -52,8 +52,8 @@ async def build_index(
 
     init_loggers(config=config, root_dir=None, enable_console=False)
 
-    # Create a logging-based workflow callbacks for pipeline lifecycle events
-    workflow_callbacks = LoggingWorkflowCallbacks()
+    # Create a no-op workflow callbacks for pipeline lifecycle events
+    workflow_callbacks = NoopWorkflowCallbacks()
 
     # Add any additional callbacks to the chain
     if callbacks:
