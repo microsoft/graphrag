@@ -8,8 +8,8 @@ from pathlib import Path
 
 import graphrag.api as api
 from graphrag.cli.index import _logger_helper
+from graphrag.config.enums import ReportingType
 from graphrag.config.load_config import load_config
-from graphrag.config.logging import enable_logging_with_config
 from graphrag.prompt_tune.generator.community_report_summarization import (
     COMMUNITY_SUMMARIZATION_FILENAME,
 )
@@ -71,17 +71,23 @@ async def prompt_tune(
         graph_config.chunks.overlap = overlap
 
     # Configure the root logger with the specified log level
-    from graphrag.logger.standard_logging import configure_logging
+    from graphrag.logger.standard_logging import init_loggers
 
-    configure_logging(log_level=log_level)
+    # Initialize loggers with console output enabled (CLI usage) and reporting config
+    init_loggers(
+        config=graph_config.reporting,
+        root_dir=str(root_path),
+        log_level=log_level,
+        enable_console=True,
+    )
 
     progress_logger = logging.getLogger("graphrag.cli.prompt_tune")
     info, error, success = _logger_helper(progress_logger)
 
-    enabled_logging, log_path = enable_logging_with_config(
-        graph_config, verbose, filename="prompt-tune.log"
-    )
-    if enabled_logging:
+    # Log the configuration details
+    if graph_config.reporting.type == ReportingType.file:
+        log_dir = Path(root_path) / (graph_config.reporting.base_dir or "")
+        log_path = log_dir / "logs.txt"
         info(f"Logging enabled at {log_path}", verbose)
     else:
         info(

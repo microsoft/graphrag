@@ -10,9 +10,8 @@ import warnings
 from pathlib import Path
 
 import graphrag.api as api
-from graphrag.config.enums import CacheType, IndexingMethod
+from graphrag.config.enums import CacheType, IndexingMethod, ReportingType
 from graphrag.config.load_config import load_config
-from graphrag.config.logging import enable_logging_with_config
 from graphrag.index.validate_config import validate_config_names
 from graphrag.utils.cli import redact
 
@@ -136,9 +135,15 @@ def _run_index(
     skip_validation,
 ):
     # Configure the root logger with the specified log level
-    from graphrag.logger.standard_logging import configure_logging
+    from graphrag.logger.standard_logging import init_loggers
 
-    configure_logging(log_level=log_level)
+    # Initialize loggers with console output enabled (CLI usage) and reporting config
+    init_loggers(
+        config=config.reporting,
+        root_dir=str(config.root_dir) if config.root_dir else None,
+        log_level=log_level,
+        enable_console=True,
+    )
 
     progress_logger = logging.getLogger(__name__).getChild("progress")
     info, error, success = _logger_helper(progress_logger)
@@ -146,8 +151,10 @@ def _run_index(
     if not cache:
         config.cache.type = CacheType.none
 
-    enabled_logging, log_path = enable_logging_with_config(config, verbose)
-    if enabled_logging:
+    # Log the configuration details
+    if config.reporting.type == ReportingType.file:
+        log_dir = Path(config.root_dir or "") / (config.reporting.base_dir or "")
+        log_path = log_dir / "logs.txt"
         info(f"Logging enabled at {log_path}", True)
     else:
         info(

@@ -18,7 +18,6 @@ from graphrag.index.run.utils import create_callback_chain
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.index.typing.workflow import WorkflowFunction
 from graphrag.index.workflows.factory import PipelineFactory
-from graphrag.logger.pipeline_logger import create_pipeline_logger
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +48,8 @@ async def build_index(
         The list of pipeline run results
     """
     # Register pipeline logger with the graphrag logger
-    create_pipeline_logger(config.reporting, None)
+    from graphrag.logger.standard_logging import init_loggers
+    init_loggers(config=config.reporting, root_dir=None, enable_console=False)
 
     # Create a logging-based workflow callbacks for pipeline lifecycle events
     workflow_callbacks = LoggingWorkflowCallbacks()

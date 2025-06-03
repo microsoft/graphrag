@@ -36,6 +36,9 @@ import logging
 import sys
 from pathlib import Path
 
+from graphrag.config.enums import ReportingType
+from graphrag.config.models.reporting_config import ReportingConfig
+
 
 def configure_logging(
     log_level: int | str = logging.INFO,
@@ -91,6 +94,95 @@ def configure_logging(
         file_handler = logging.FileHandler(log_path)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
+
+    # Prevent propagation to root logger to avoid duplicate logging
+    logger.propagate = False
+
+
+def init_loggers(
+    config: ReportingConfig | None = None,
+    root_dir: str | None = None,
+    log_level: int | str = logging.INFO,
+    enable_console: bool = False,
+) -> None:
+    """Initialize logging handlers for graphrag based on configuration.
+    
+    This function merges the functionality of configure_logging and create_pipeline_logger
+    to provide a unified way to set up logging for the graphrag package.
+    
+    Parameters
+    ----------
+    config : ReportingConfig | None, default=None
+        The reporting configuration. If None, defaults to file-based reporting.
+    root_dir : str | None, default=None
+        The root directory for file-based logging.
+    log_level : Union[int, str], default=logging.INFO
+        The logging level to use. Can be a string or integer.
+    enable_console : bool, default=False
+        Whether to add a console handler. Should be True only when called from CLI.
+    """
+    # Import BlobWorkflowLogger here to avoid circular imports
+    from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
+    
+    # Default to file-based logging if no config provided (maintains backward compatibility)
+    if config is None:
+        config = ReportingConfig(base_dir="logs", type=ReportingType.file)
+    
+    # Convert string log level to numeric value if needed
+    if isinstance(log_level, str):
+        log_level = getattr(logging, log_level.upper(), logging.INFO)
+
+    # Get the root logger for graphrag
+    logger = logging.getLogger("graphrag")
+    logger.setLevel(log_level)
+
+    # Clear any existing handlers to avoid duplicate logs
+    if logger.hasHandlers():
+        # Close file handlers properly before removing them
+        for handler in logger.handlers:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
+        logger.handlers.clear()
+
+    # Create standard formatter for all handlers
+    formatter = logging.Formatter(
+        fmt="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
+
+    # Add console handler if requested (typically for CLI usage)
+    if enable_console:
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+
+    # Add handlers based on configuration
+    handler: logging.Handler
+    match config.type:
+        case ReportingType.file:
+            # Ensure directory exists
+            log_dir = Path(root_dir or "") / (config.base_dir or "")
+            log_dir.mkdir(parents=True, exist_ok=True)
+
+            # Create file handler with standard formatter
+            log_file_path = log_dir / "logs.txt"
+            handler = logging.FileHandler(str(log_file_path), mode="a")
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
+        case ReportingType.console:
+            # Only add console handler if not already added
+            if not enable_console:
+                handler = logging.StreamHandler(sys.stdout)
+                handler.setFormatter(formatter)
+                logger.addHandler(handler)
+        case ReportingType.blob:
+            handler = BlobWorkflowLogger(
+                config.connection_string,
+                config.container_name,
+                base_dir=config.base_dir,
+                storage_account_blob_url=config.storage_account_blob_url,
+            )
+            logger.addHandler(handler)
 
     # Prevent propagation to root logger to avoid duplicate logging
     logger.propagate = False
