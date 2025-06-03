@@ -42,18 +42,20 @@ from graphrag.config.models.reporting_config import ReportingConfig
 
 def get_logger(name: str) -> logging.Logger:
     """Get a logger with the given name under the graphrag hierarchy.
-    
+
     Parameters
     ----------
     name : str
         The name of the logger. Typically pass __name__ to get module-specific logger.
-        
+
     Returns
     -------
     logging.Logger
         A logger configured for the graphrag package.
     """
-    return logging.getLogger(f"graphrag.{name}" if not name.startswith("graphrag") else name)
+    return logging.getLogger(
+        f"graphrag.{name}" if not name.startswith("graphrag") else name
+    )
 
 
 def init_loggers(
@@ -66,10 +68,10 @@ def init_loggers(
     date_format: str = "%Y-%m-%d %H:%M:%S",
 ) -> None:
     """Initialize logging handlers for graphrag based on configuration.
-    
+
     This function merges the functionality of configure_logging and create_pipeline_logger
     to provide a unified way to set up logging for the graphrag package.
-    
+
     Parameters
     ----------
     config : ReportingConfig | None, default=None
@@ -89,7 +91,7 @@ def init_loggers(
     """
     # Import BlobWorkflowLogger here to avoid circular imports
     from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
-    
+
     # If log_file is provided directly, override config to use file-based logging
     if log_file:
         log_path = Path(log_file)
@@ -100,7 +102,7 @@ def init_loggers(
     elif config is None:
         # Default to file-based logging if no config provided (maintains backward compatibility)
         config = ReportingConfig(base_dir="logs", type=ReportingType.file)
-    
+
     # Convert string log level to numeric value if needed
     if isinstance(log_level, str):
         log_level = getattr(logging, log_level.upper(), logging.INFO)

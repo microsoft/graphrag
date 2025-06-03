@@ -22,14 +22,14 @@ def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:
         Whether to log debug messages.
     """
     log_level = logging.DEBUG if verbose else logging.INFO
-    
+
     # Use init_loggers with the specific log file and custom formatting
     init_loggers(
         log_level=log_level,
         log_file=log_filepath,
         log_format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
         date_format="%H:%M:%S",
-        enable_console=False
+        enable_console=False,
     )
 
 
