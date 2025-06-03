@@ -2,6 +2,7 @@
 # Licensed under the MIT License
 
 from dataclasses import asdict
+from typing import cast
 
 from pydantic import BaseModel
 
@@ -99,7 +100,10 @@ def assert_language_model_configs(
         for e, a in zip(actual.responses, expected.responses, strict=True):
             assert isinstance(e, BaseModel)
             assert isinstance(a, BaseModel)
-            assert e.model_dump() == a.model_dump()
+            # Type assertions to help pyright understand the types after isinstance checks
+            e_model = cast("BaseModel", e)
+            a_model = cast("BaseModel", a)
+            assert e_model.model_dump() == a_model.model_dump()
     else:
         assert expected.responses is None
 
