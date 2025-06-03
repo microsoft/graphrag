@@ -11,6 +11,7 @@ from graphrag.config.enums import ReportingType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.logger.standard_logging import init_loggers
+from tests.unit.config.utils import get_default_graphrag_config
 
 
 def test_standard_logging():
@@ -120,10 +121,8 @@ def test_init_loggers_default_config():
 def test_init_loggers_file_config():
     """Test that init_loggers works with file configuration."""
     with tempfile.TemporaryDirectory() as temp_dir:
-        config = GraphRagConfig(
-            root_dir=temp_dir,
-            reporting=ReportingConfig(type=ReportingType.file, base_dir="logs"),
-        )
+        config = get_default_graphrag_config(root_dir=temp_dir)
+        config.reporting = ReportingConfig(type=ReportingType.file, base_dir="logs")
 
         # Call init_loggers with file config
         init_loggers(config=config, root_dir=temp_dir, log_level="INFO")
@@ -157,7 +156,8 @@ def test_init_loggers_file_config():
 
 def test_init_loggers_console_config():
     """Test that init_loggers works with console configuration."""
-    config = GraphRagConfig(reporting=ReportingConfig(type=ReportingType.console))
+    config = get_default_graphrag_config()
+    config.reporting = ReportingConfig(type=ReportingType.console)
 
     # Call init_loggers with console config but no enable_console
     init_loggers(config=config, log_level="INFO", enable_console=False)
@@ -176,7 +176,8 @@ def test_init_loggers_console_config():
 
 def test_init_loggers_both_console():
     """Test that init_loggers doesn't duplicate console handlers."""
-    config = GraphRagConfig(reporting=ReportingConfig(type=ReportingType.console))
+    config = get_default_graphrag_config()
+    config.reporting = ReportingConfig(type=ReportingType.console)
 
     # Call init_loggers with both console config and enable_console=True
     init_loggers(config=config, log_level="INFO", enable_console=True)
