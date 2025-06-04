@@ -119,6 +119,7 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
 
     return lambda: input_storage._delete_container()  # noqa: SLF001
 
+
 async def prepare_azurite_data2(input_path: str, azure: dict) -> Callable[[], None]:
     """Prepare the data for the Azurite tests."""
     input_container = azure["input_container"]
@@ -311,7 +312,6 @@ class TestIndexer:
                     assert len(nan_df) == 0, (
                         f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
                     )
-
 
     def __run_query(self, root: Path, query_config: dict[str, str]):
         command = [
