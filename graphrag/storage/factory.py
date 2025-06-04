@@ -37,18 +37,16 @@ class StorageFactory:
     def create_storage(
         cls, storage_type: OutputType | str, kwargs: dict
     ) -> PipelineStorage:
-        """Create or get a storage object from the provided type."""
-        match storage_type:
-            case OutputType.blob:
-                return create_blob_storage(**kwargs)
-            case OutputType.cosmosdb:
-                return create_cosmosdb_storage(**kwargs)
-            case OutputType.file:
-                return create_file_storage(**kwargs)
-            case OutputType.memory:
-                return MemoryPipelineStorage()
-            case _:
-                if storage_type in cls.storage_types:
-                    return cls.storage_types[storage_type](**kwargs)
-                msg = f"Unknown storage type: {storage_type}"
-                raise ValueError(msg)
+        """Get a storage object from the provided type."""
+        if storage_type not in cls.storage_types:
+            msg = f"Storage implementation '{storage_type}' is not registered."
+            raise ValueError(msg)
+        return cls.storage_types[storage_type](**kwargs)
+
+
+StorageFactory.register(OutputType.blob, OutputType.blob, create_blob_storage)
+StorageFactory.register(
+    OutputType.cosmosdb, OutputType.cosmosdb, create_cosmosdb_storage
+)
+StorageFactory.register(OutputType.file, OutputType.file, create_file_storage)
+StorageFactory.register(OutputType.memory, OutputType.memory, MemoryPipelineStorage)
