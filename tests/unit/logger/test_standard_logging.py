@@ -64,8 +64,7 @@ def test_logger_hierarchy():
 
 def test_init_loggers_console_enabled():
     """Test that init_loggers works with console enabled."""
-    # Call init_loggers with console enabled (CLI mode)
-    init_loggers(enable_console=True)
+    init_loggers()
 
     logger = logging.getLogger("graphrag")
 
@@ -158,8 +157,8 @@ def test_init_loggers_console_config():
     config = get_default_graphrag_config()
     config.reporting = ReportingConfig(type=ReportingType.console)
 
-    # Call init_loggers with console config but no enable_console
-    init_loggers(config=config, enable_console=False)
+    # Call init_loggers with config
+    init_loggers(config=config)
 
     logger = logging.getLogger("graphrag")
 
@@ -178,8 +177,8 @@ def test_init_loggers_both_console():
     config = get_default_graphrag_config()
     config.reporting = ReportingConfig(type=ReportingType.console)
 
-    # Call init_loggers with both console config and enable_console=True
-    init_loggers(config=config, enable_console=True)
+    # Call init_loggers with config
+    init_loggers(config=config)
 
     logger = logging.getLogger("graphrag")
 

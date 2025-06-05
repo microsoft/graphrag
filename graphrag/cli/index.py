@@ -113,7 +113,7 @@ def _run_index(
     # Configure the root logger with the specified log level
     from graphrag.logger.standard_logging import init_loggers
 
-    # Initialize loggers with console output enabled (CLI usage) and reporting config
+    # Initialize loggers and reporting config
     init_loggers(
         config=config,
         root_dir=str(config.root_dir) if config.root_dir else None,
