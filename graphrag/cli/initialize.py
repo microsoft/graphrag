@@ -31,6 +31,8 @@ from graphrag.prompts.query.global_search_reduce_system_prompt import (
 from graphrag.prompts.query.local_search_system_prompt import LOCAL_SEARCH_SYSTEM_PROMPT
 from graphrag.prompts.query.question_gen_system_prompt import QUESTION_SYSTEM_PROMPT
 
+logger = logging.getLogger(__name__)
+
 
 def initialize_project_at(path: Path, force: bool) -> None:
     """
@@ -48,8 +50,7 @@ def initialize_project_at(path: Path, force: bool) -> None:
     ValueError
         If the project already exists and force is False.
     """
-    progress_logger = logging.getLogger("graphrag.cli.initialize")
-    progress_logger.info(f"Initializing project at {path}")  # noqa: G004
+    logger.info("Initializing project at %s", path)
     root = Path(path)
     if not root.exists():
         root.mkdir(parents=True, exist_ok=True)
