@@ -20,13 +20,11 @@ async def load_files(
     loader: Any,
     config: InputConfig,
     storage: PipelineStorage,
-    progress: logging.Logger | None,
 ) -> pd.DataFrame:
     """Load files from storage and apply a loader function."""
     files = list(
         storage.find(
             re.compile(config.file_pattern),
-            progress=progress,
             file_filter=config.file_filter,
         )
     )

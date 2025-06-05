@@ -52,7 +52,7 @@ async def load_docs_in_chunks(
     embeddings_llm_settings = config.get_language_model_config(
         config.embed_text.model_id
     )
-    dataset = await create_input(config.input, logger, root)
+    dataset = await create_input(config.input, root)
     chunk_config = config.chunks
     chunks_df = create_base_text_units(
         documents=dataset,

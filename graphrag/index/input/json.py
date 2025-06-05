@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 
 async def load_json(
     config: InputConfig,
-    progress: logging.Logger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load json inputs from a directory."""
@@ -45,4 +44,4 @@ async def load_json(
 
         return data
 
-    return await load_files(load_file, config, storage, progress)
+    return await load_files(load_file, config, storage)

@@ -116,7 +116,6 @@ class CosmosDBPipelineStorage(PipelineStorage):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        progress: logging.Logger | None = None,
         file_filter: dict[str, Any] | None = None,
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:
@@ -183,16 +182,16 @@ class CosmosDBPipelineStorage(PipelineStorage):
                         num_filtered += 1
                 else:
                     num_filtered += 1
-                if progress is not None:
-                    progress_status = _create_progress_status(
-                        num_loaded, num_filtered, num_total
-                    )
-                    progress.info(
-                        "Progress: %s (%d/%d completed)",
-                        progress_status.description,
-                        progress_status.completed_items,
-                        progress_status.total_items,
-                    )
+
+                progress_status = _create_progress_status(
+                    num_loaded, num_filtered, num_total
+                )
+                logger.debug(
+                    "Progress: %s (%d/%d completed)",
+                    progress_status.description,
+                    progress_status.completed_items,
+                    progress_status.total_items,
+                )
         except Exception:
             logger.exception(
                 "An error occurred while searching for documents in Cosmos DB."

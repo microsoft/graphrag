@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)
 
 async def load_text(
     config: InputConfig,
-    progress: logging.Logger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load text inputs from a directory."""
@@ -33,4 +32,4 @@ async def load_text(
         new_item["creation_date"] = await storage.get_creation_date(path)
         return pd.DataFrame([new_item])
 
-    return await load_files(load_file, config, storage, progress)
+    return await load_files(load_file, config, storage)

@@ -39,7 +39,7 @@ async def run_pipeline(
     storage = create_storage_from_config(config.output)
     cache = create_cache_from_config(config.cache, root_dir)
 
-    dataset = await create_input(config.input, None, root_dir)
+    dataset = await create_input(config.input, root_dir)
 
     # load existing state in case any workflows are stateful
     state_json = await storage.get("context.json")

@@ -28,13 +28,11 @@ loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
 
 async def create_input(
     config: InputConfig,
-    progress_reporter: logging.Logger | None = None,
     root_dir: str | None = None,
 ) -> pd.DataFrame:
     """Instantiate input data for a pipeline."""
     root_dir = root_dir or ""
     logger.info("loading input from root_dir=%s", config.base_dir)
-    progress_reporter = progress_reporter or logger
 
     match config.type:
         case InputType.blob:
@@ -66,9 +64,9 @@ async def create_input(
             )
 
     if config.file_type in loaders:
-        progress_reporter.info(f"Loading Input ({config.file_type})")
+        logger.info("Loading Input %s", config.file_type)
         loader = loaders[config.file_type]
-        result = await loader(config, progress_reporter, storage)
+        result = await loader(config, storage)
         # Convert metadata columns to strings and collapse them into a JSON object
         if config.metadata:
             if all(col in result.columns for col in config.metadata):

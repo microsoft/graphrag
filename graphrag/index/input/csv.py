@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 
 async def load_csv(
     config: InputConfig,
-    progress: logging.Logger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load csv inputs from a directory."""
@@ -41,4 +40,4 @@ async def load_csv(
 
         return data
 
-    return await load_files(load_file, config, storage, progress)
+    return await load_files(load_file, config, storage)

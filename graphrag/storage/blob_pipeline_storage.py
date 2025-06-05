@@ -12,7 +12,6 @@ from typing import Any
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 
-from graphrag.logger.progress import Progress
 from graphrag.storage.pipeline_storage import (
     PipelineStorage,
     get_timestamp_formatted_with_local_tz,
@@ -97,7 +96,6 @@ class BlobPipelineStorage(PipelineStorage):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        progress: logging.Logger | None = None,
         file_filter: dict[str, Any] | None = None,
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:
@@ -158,10 +156,12 @@ class BlobPipelineStorage(PipelineStorage):
                         num_filtered += 1
                 else:
                     num_filtered += 1
-                if progress is not None:
-                    progress.debug(
-                        f"Blobs loaded: {num_loaded}, filtered: {num_filtered}, total: {num_total}"
-                    )
+                logger.debug(
+                    "Blobs loaded: %d, filtered: %d, total: %d",
+                    num_loaded,
+                    num_filtered,
+                    num_total,
+                )
         except Exception:
             logger.exception(
                 "Error finding blobs: base_dir=%s, file_pattern=%s, file_filter=%s",
@@ -380,13 +380,3 @@ def validate_blob_container_name(container_name: str):
         )
 
     return True
-
-
-def _create_progress_status(
-    num_loaded: int, num_filtered: int, num_total: int
-) -> Progress:
-    return Progress(
-        total_items=num_total,
-        completed_items=num_loaded + num_filtered,
-        description=f"{num_loaded} files loaded ({num_filtered} filtered)",
-    )
