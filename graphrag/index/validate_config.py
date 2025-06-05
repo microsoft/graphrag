@@ -11,8 +11,10 @@ from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.language_model.manager import ModelManager
 
+logger = logging.getLogger(__name__)
 
-def validate_config_names(logger: logging.Logger, parameters: GraphRagConfig) -> None:
+
+def validate_config_names(parameters: GraphRagConfig) -> None:
     """Validate config file for LLM deployment name typos."""
     # Validate Chat LLM configs
     # TODO: Replace default_chat_model with a way to select the model

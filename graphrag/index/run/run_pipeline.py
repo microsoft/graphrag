@@ -114,21 +114,19 @@ async def _run_pipeline(
         await _dump_json(context)
         await write_table_to_storage(dataset, "documents", context.storage)
 
+        logger.info("Executing pipeline...")
         for name, workflow_function in pipeline.run():
             last_workflow = name
-            logger.info("Workflow started: %s", name)
             context.callbacks.workflow_start(name, None)
             work_time = time.time()
             result = await workflow_function(config, context)
-            logger.info("Workflow completed: %s", name)
             context.callbacks.workflow_end(name, result)
             yield PipelineRunResult(
                 workflow=name, result=result.result, state=context.state, errors=None
             )
-
             context.stats.workflows[name] = {"overall": time.time() - work_time}
-
         context.stats.total_runtime = time.time() - start_time
+        logger.info("Indexing pipeline complete.")
         await _dump_json(context)
 
     except Exception as e:

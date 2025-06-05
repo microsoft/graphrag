@@ -37,6 +37,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
+    logger.info("Workflow started: create_community_reports_text")
     entities = await load_table_from_storage("entities", context.storage)
     communities = await load_table_from_storage("communities", context.storage)
 
@@ -64,6 +65,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "community_reports", context.storage)
 
+    logger.info("Workflow completed: create_community_reports_text")
     return WorkflowFunctionOutput(result=output)
 
 

@@ -23,7 +23,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """Update the text units from a incremental index run."""
-    logger.info("Updating Text Units")
+    logger.info("Workflow started: update_text_units")
     output_storage, previous_storage, delta_storage = get_update_storages(
         config, context.state["update_timestamp"]
     )
@@ -35,6 +35,7 @@ async def run_workflow(
 
     context.state["incremental_update_merged_text_units"] = merged_text_units
 
+    logger.info("Workflow completed: update_text_units")
     return WorkflowFunctionOutput(result=None)
 
 

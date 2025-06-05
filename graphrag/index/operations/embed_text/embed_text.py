@@ -141,7 +141,14 @@ async def _text_embed_with_vector_store(
 
     all_results = []
 
+    num_total_batches = (input.shape[0] + insert_batch_size - 1) // insert_batch_size
     while insert_batch_size * i < input.shape[0]:
+        logger.info(
+            "uploading text embeddings batch %d/%d of size %d to vector store",
+            i + 1,
+            num_total_batches,
+            insert_batch_size,
+        )
         batch = input.iloc[insert_batch_size * i : insert_batch_size * (i + 1)]
         texts: list[str] = batch[embed_column].to_numpy().tolist()
         titles: list[str] = batch[title].to_numpy().tolist()

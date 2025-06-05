@@ -9,7 +9,7 @@ logging system for use within the graphrag package.
 Usage:
     # Configuration should be done once at the start of your application:
     from graphrag.logger.standard_logging import init_loggers
-    init_loggers(log_level="INFO", log_file="/path/to/app.log")
+    init_loggers(log_file="/path/to/app.log")
 
     # Then throughout your code:
     import logging
@@ -33,7 +33,6 @@ Notes
 """
 
 import logging
-import sys
 from pathlib import Path
 
 from graphrag.config.enums import ReportingType
@@ -44,8 +43,7 @@ from graphrag.config.models.reporting_config import ReportingConfig
 def init_loggers(
     config: GraphRagConfig | None = None,
     root_dir: str | None = None,
-    log_level: int | str = logging.INFO,
-    enable_console: bool = False,
+    verbose: bool = False,
     log_file: str | Path | None = None,
     log_format: str = "%(asctime)s.%(msecs)04d - %(levelname)s - %(name)s - %(message)s",
     date_format: str = "%Y-%m-%d %H:%M:%S",
@@ -61,10 +59,8 @@ def init_loggers(
         The GraphRAG configuration. If None, defaults to file-based reporting.
     root_dir : str | None, default=None
         The root directory for file-based logging.
-    log_level : Union[int, str], default=logging.INFO
-        The logging level to use. Can be a string or integer.
-    enable_console : bool, default=False
-        Whether to add a console handler. Should be True only when called from CLI.
+    verbose : bool, default=False
+        Whether to enable verbose (DEBUG) logging.
     log_file : Optional[Union[str, Path]], default=None
         Path to a specific log file. If provided, takes precedence over config.
     log_format : str, default="%(asctime)s - %(levelname)s - %(name)s - %(message)s"
@@ -91,9 +87,7 @@ def init_loggers(
         # Default to file-based logging if no config provided (maintains backward compatibility)
         reporting_config = ReportingConfig(base_dir="logs", type=ReportingType.file)
 
-    # Convert string log level to numeric value if needed
-    if isinstance(log_level, str):
-        log_level = getattr(logging, log_level.upper(), logging.INFO)
+    log_level = logging.DEBUG if verbose else logging.INFO
 
     # Get the root logger for graphrag
     logger = logging.getLogger("graphrag")
@@ -110,13 +104,12 @@ def init_loggers(
     # Create formatter with custom format
     formatter = logging.Formatter(fmt=log_format, datefmt=date_format)
 
-    # Add console handler if requested (typically for CLI usage)
-    if enable_console:
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)
+    # Always add console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
 
-    # Add handlers based on configuration
+    # Add more handlers based on configuration
     handler: logging.Handler
     match reporting_config.type:
         case ReportingType.file:
@@ -133,12 +126,6 @@ def init_loggers(
                 handler = logging.FileHandler(str(log_file_path), mode="a")
             handler.setFormatter(formatter)
             logger.addHandler(handler)
-        case ReportingType.console:
-            # Only add console handler if not already added
-            if not enable_console:
-                handler = logging.StreamHandler()
-                handler.setFormatter(formatter)
-                logger.addHandler(handler)
         case ReportingType.blob:
             handler = BlobWorkflowLogger(
                 reporting_config.connection_string,

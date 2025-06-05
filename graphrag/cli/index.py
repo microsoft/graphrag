@@ -21,34 +21,15 @@ warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 logger = logging.getLogger(__name__)
 
 
-def _logger_helper(progress_logger: logging.Logger):
-    def info(msg: str, verbose: bool = False):
-        logger.info(msg)
-        if verbose:
-            progress_logger.info(msg)
-
-    def error(msg: str, verbose: bool = False):
-        logger.error(msg)
-        if verbose:
-            progress_logger.error(msg)
-
-    def success(msg: str, verbose: bool = False):
-        logger.info(msg)
-        if verbose:
-            progress_logger.info(msg)
-
-    return info, error, success
-
-
-def _register_signal_handlers(progress_logger: logging.Logger):
+def _register_signal_handlers():
     import signal
 
     def handle_signal(signum, _):
         # Handle the signal here
-        progress_logger.info(f"Received signal {signum}, exiting...")  # noqa: G004
+        logger.debug(f"Received signal {signum}, exiting...")  # noqa: G004
         for task in asyncio.all_tasks():
             task.cancel()
-        progress_logger.info("All tasks cancelled. Exiting...")
+        logger.debug("All tasks cancelled. Exiting...")
 
     # Register signal handlers for SIGINT and SIGHUP
     signal.signal(signal.SIGINT, handle_signal)
@@ -63,7 +44,6 @@ def index_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    log_level: str,
     config_filepath: Path | None,
     dry_run: bool,
     skip_validation: bool,
@@ -84,7 +64,6 @@ def index_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        log_level=log_level,
         dry_run=dry_run,
         skip_validation=skip_validation,
     )
@@ -96,7 +75,6 @@ def update_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    log_level: str,
     config_filepath: Path | None,
     skip_validation: bool,
     output_dir: Path | None,
@@ -117,7 +95,6 @@ def update_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        log_level=log_level,
         dry_run=False,
         skip_validation=skip_validation,
     )
@@ -130,7 +107,6 @@ def _run_index(
     verbose,
     memprofile,
     cache,
-    log_level,
     dry_run,
     skip_validation,
 ):
@@ -141,12 +117,8 @@ def _run_index(
     init_loggers(
         config=config,
         root_dir=str(config.root_dir) if config.root_dir else None,
-        log_level=log_level,
-        enable_console=True,
+        verbose=verbose,
     )
-
-    progress_logger = logging.getLogger(__name__).getChild("progress")
-    info, error, success = _logger_helper(progress_logger)
 
     if not cache:
         config.cache.type = CacheType.none
@@ -155,27 +127,27 @@ def _run_index(
     if config.reporting.type == ReportingType.file:
         log_dir = Path(config.root_dir or "") / (config.reporting.base_dir or "")
         log_path = log_dir / "logs.txt"
-        info(f"Logging enabled at {log_path}", True)
+        logger.info("Logging enabled at %s", log_path)
     else:
-        info(
-            f"Logging not enabled for config {redact(config.model_dump())}",
-            True,
+        logger.info(
+            "Logging not enabled for config %s",
+            redact(config.model_dump()),
         )
 
     if not skip_validation:
-        validate_config_names(progress_logger, config)
+        validate_config_names(config)
 
-    info(f"Starting pipeline run. {dry_run=}", verbose)
-    info(
-        f"Using default configuration: {redact(config.model_dump())}",
-        verbose,
+    logger.info("Starting pipeline run. %s", dry_run)
+    logger.info(
+        "Using default configuration: %s",
+        redact(config.model_dump()),
     )
 
     if dry_run:
-        info("Dry run complete, exiting...", True)
+        logger.info("Dry run complete, exiting...", True)
         sys.exit(0)
 
-    _register_signal_handlers(progress_logger)
+    _register_signal_handlers()
 
     outputs = asyncio.run(
         api.build_index(
@@ -190,10 +162,10 @@ def _run_index(
     )
 
     if encountered_errors:
-        error(
-            "Errors occurred during the pipeline run, see logs for more details.", True
+        logger.error(
+            "Errors occurred during the pipeline run, see logs for more details."
         )
     else:
-        success("All workflows completed successfully.", True)
+        logger.info("All workflows completed successfully.")
 
     sys.exit(1 if encountered_errors else 0)

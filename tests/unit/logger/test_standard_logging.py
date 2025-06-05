@@ -65,7 +65,7 @@ def test_logger_hierarchy():
 def test_init_loggers_console_enabled():
     """Test that init_loggers works with console enabled."""
     # Call init_loggers with console enabled (CLI mode)
-    init_loggers(enable_console=True, log_level="INFO")
+    init_loggers(enable_console=True)
 
     logger = logging.getLogger("graphrag")
 
@@ -88,7 +88,7 @@ def test_init_loggers_default_config():
     """Test that init_loggers uses default file config when none provided."""
     with tempfile.TemporaryDirectory() as temp_dir:
         # Call init_loggers with no config (should default to file logging)
-        init_loggers(root_dir=temp_dir, log_level="INFO")
+        init_loggers(root_dir=temp_dir)
 
         logger = logging.getLogger("graphrag")
 
@@ -124,7 +124,7 @@ def test_init_loggers_file_config():
         config.reporting = ReportingConfig(type=ReportingType.file, base_dir="logs")
 
         # Call init_loggers with file config
-        init_loggers(config=config, root_dir=temp_dir, log_level="INFO")
+        init_loggers(config=config, root_dir=temp_dir)
 
         logger = logging.getLogger("graphrag")
 
@@ -159,7 +159,7 @@ def test_init_loggers_console_config():
     config.reporting = ReportingConfig(type=ReportingType.console)
 
     # Call init_loggers with console config but no enable_console
-    init_loggers(config=config, log_level="INFO", enable_console=False)
+    init_loggers(config=config, enable_console=False)
 
     logger = logging.getLogger("graphrag")
 
@@ -179,7 +179,7 @@ def test_init_loggers_both_console():
     config.reporting = ReportingConfig(type=ReportingType.console)
 
     # Call init_loggers with both console config and enable_console=True
-    init_loggers(config=config, log_level="INFO", enable_console=True)
+    init_loggers(config=config, enable_console=True)
 
     logger = logging.getLogger("graphrag")
 

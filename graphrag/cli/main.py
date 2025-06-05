@@ -156,11 +156,6 @@ def _index_cli(
         "--memprofile",
         help="Run the indexing pipeline with memory profiling",
     ),
-    log_level: str = typer.Option(
-        "INFO",
-        "--log-level",
-        help="The logging level to use for the root logger.",
-    ),
     dry_run: bool = typer.Option(
         False,
         "--dry-run",
@@ -200,7 +195,6 @@ def _index_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        log_level=log_level,
         config_filepath=config,
         dry_run=dry_run,
         skip_validation=skip_validation,
@@ -249,11 +243,6 @@ def _update_cli(
         "--memprofile",
         help="Run the indexing pipeline with memory profiling.",
     ),
-    log_level: str = typer.Option(
-        "INFO",
-        "--log-level",
-        help="The logging level to use for the root logger.",
-    ),
     cache: bool = typer.Option(
         True,
         "--cache/--no-cache",
@@ -289,7 +278,6 @@ def _update_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        log_level=log_level,
         config_filepath=config,
         skip_validation=skip_validation,
         output_dir=output,
@@ -325,11 +313,6 @@ def _prompt_tune_cli(
         "--verbose",
         "-v",
         help="Run the prompt tuning pipeline with verbose logging.",
-    ),
-    log_level: str = typer.Option(
-        "INFO",
-        "--log-level",
-        help="The logging level to use for the root logger.",
     ),
     domain: str | None = typer.Option(
         None,
@@ -412,7 +395,6 @@ def _prompt_tune_cli(
             config=config,
             domain=domain,
             verbose=verbose,
-            log_level=log_level,
             selection_method=selection_method,
             limit=limit,
             max_tokens=max_tokens,

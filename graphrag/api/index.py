@@ -50,7 +50,7 @@ async def build_index(
     # Register pipeline logger with the graphrag logger
     from graphrag.logger.standard_logging import init_loggers
 
-    init_loggers(config=config, root_dir=None, enable_console=False)
+    init_loggers(config=config, root_dir=None)
 
     # Create a no-op workflow callbacks for pipeline lifecycle events
     workflow_callbacks = NoopWorkflowCallbacks()
@@ -66,9 +66,9 @@ async def build_index(
     if memory_profile:
         logger.warning("New pipeline does not yet support memory profiling.")
 
+    logger.info("Initializing indexing pipeline...")
     pipeline = PipelineFactory.create_pipeline(config, method, is_update_run)
 
-    logger.info("Pipeline started: %s", pipeline.names())
     workflow_callbacks.pipeline_start(pipeline.names())
 
     async for output in run_pipeline(
@@ -84,7 +84,6 @@ async def build_index(
             logger.info("Workflow %s completed successfully", output.workflow)
         logger.debug(str(output.result))
 
-    logger.info("Pipeline completed with %d workflows", len(outputs))
     workflow_callbacks.pipeline_end(outputs)
     return outputs
 

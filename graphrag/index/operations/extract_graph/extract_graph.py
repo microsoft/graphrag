@@ -66,6 +66,7 @@ async def extract_graph(
         callbacks,
         async_type=async_mode,
         num_threads=num_threads,
+        progress_msg="extract graph progress: ",
     )
 
     entity_dfs = []

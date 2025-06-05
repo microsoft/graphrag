@@ -28,6 +28,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform base text_units."""
+    logger.info("Workflow started: create_base_text_units")
     documents = await load_table_from_storage("documents", context.storage)
 
     chunks = config.chunks
@@ -46,6 +47,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "text_units", context.storage)
 
+    logger.info("Workflow completed: create_base_text_units")
     return WorkflowFunctionOutput(result=output)
 
 
@@ -84,7 +86,7 @@ def create_base_text_units(
     )
     aggregated.rename(columns={"text_with_ids": "texts"}, inplace=True)
 
-    def chunker(row: dict[str, Any]) -> Any:
+    def chunker(row: pd.Series) -> Any:
         line_delimiter = ".\n"
         metadata_str = ""
         metadata_tokens = 0
@@ -130,16 +132,17 @@ def create_base_text_units(
 
     # Track progress of row-wise apply operation
     total_rows = len(aggregated)
-    logger.info("Starting chunking process for %d rows", total_rows)
-    
-    def chunker_with_logging(row: pd.Series) -> Any:
+    logger.info("Starting chunking process for %d documents", total_rows)
+
+    def chunker_with_logging(row: pd.Series, row_index: int) -> Any:
         """Add logging to chunker execution."""
-        row_index = row.name  # pandas Series.name contains the index
-        result = chunker(row.to_dict())
-        logger.info("Completed chunking for row %d/%d", row_index + 1, total_rows)
+        result = chunker(row)
+        logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
         return result
-    
-    aggregated = aggregated.apply(chunker_with_logging, axis=1)
+
+    aggregated = aggregated.apply(
+        lambda row: chunker_with_logging(row, row.name), axis=1
+    )
 
     aggregated = cast("pd.DataFrame", aggregated[[*group_by_columns, "chunks"]])
     aggregated = aggregated.explode("chunks")

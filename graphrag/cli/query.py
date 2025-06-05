@@ -64,6 +64,10 @@ def run_global_search(
             "Running Multi-index Global Search: %s", dataframe_dict["index_names"]
         )
 
+        logger.debug(
+            "Executing query: %s",
+            query if len(query) < 400 else f"{query[:400]}...[truncated]",
+        )
         response, context_data = asyncio.run(
             api.multi_index_global_search(
                 config=config,
@@ -78,7 +82,10 @@ def run_global_search(
                 query=query,
             )
         )
-        logger.info("Global Search Response:\n%s", response)
+        logger.debug(
+            "Response:\n%s",
+            response if len(response) < 400 else f"{str(response)[:400]}...[truncated]",
+        )
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data

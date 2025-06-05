@@ -41,7 +41,11 @@ async def summarize_descriptions(
     ):
         ticker_length = len(nodes) + len(edges)
 
-        ticker = progress_ticker(callbacks.progress, ticker_length)
+        ticker = progress_ticker(
+            callbacks.progress,
+            ticker_length,
+            description="Summarize entity/relationship description progress: ",
+        )
 
         node_futures = [
             do_summarize_descriptions(

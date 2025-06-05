@@ -38,6 +38,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
+    logger.info("Workflow started: generate_text_embeddings")
     documents = None
     relationships = None
     text_units = None
@@ -79,6 +80,7 @@ async def run_workflow(
                 context.storage,
             )
 
+    logger.info("Workflow completed: generate_text_embeddings")
     return WorkflowFunctionOutput(result=output)
 
 

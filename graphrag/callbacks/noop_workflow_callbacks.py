@@ -31,4 +31,3 @@ class NoopWorkflowCallbacks(WorkflowCallbacks):
 
     def progress(self, progress: Progress) -> None:
         """Handle when progress occurs."""
-        self.logger.debug("Progress: %s", str(progress))

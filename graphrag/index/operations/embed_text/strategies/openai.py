@@ -62,7 +62,11 @@ async def run(
         batch_size,
         batch_max_tokens,
     )
-    ticker = progress_ticker(callbacks.progress, len(text_batches))
+    ticker = progress_ticker(
+        callbacks.progress,
+        len(text_batches),
+        description="generate embeddings progress: ",
+    )
 
     # Embed each chunk of snippets
     embeddings = await _execute(model, text_batches, ticker, semaphore)

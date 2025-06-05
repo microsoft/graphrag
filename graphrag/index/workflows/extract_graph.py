@@ -30,6 +30,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
+    logger.info("Workflow started: extract_graph")
     text_units = await load_table_from_storage("text_units", context.storage)
 
     extract_graph_llm_settings = config.get_language_model_config(
@@ -67,6 +68,7 @@ async def run_workflow(
             raw_relationships, "raw_relationships", context.storage
         )
 
+    logger.info("Workflow completed: extract_graph")
     return WorkflowFunctionOutput(
         result={
             "entities": entities,

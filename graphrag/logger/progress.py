@@ -37,11 +37,15 @@ class ProgressTicker:
     """A class that emits progress reports incrementally."""
 
     _callback: ProgressHandler | None
+    _description: str
     _num_total: int
     _num_complete: int
 
-    def __init__(self, callback: ProgressHandler | None, num_total: int):
+    def __init__(
+        self, callback: ProgressHandler | None, num_total: int, description: str = ""
+    ):
         self._callback = callback
+        self._description = description
         self._num_total = num_total
         self._num_complete = 0
 
@@ -50,34 +54,46 @@ class ProgressTicker:
         self._num_complete += num_ticks
         if self._callback is not None:
             p = Progress(
-                total_items=self._num_total, completed_items=self._num_complete
+                total_items=self._num_total,
+                completed_items=self._num_complete,
+                description=self._description,
             )
-            logger.info("Progress: %s/%s", str(p.completed_items), str(p.total_items))
+            if p.description:
+                logger.info(
+                    "%s%s/%s", p.description, str(p.completed_items), str(p.total_items)
+                )
             self._callback(p)
 
     def done(self) -> None:
         """Mark the progress as done."""
         if self._callback is not None:
             self._callback(
-                Progress(total_items=self._num_total, completed_items=self._num_total)
+                Progress(
+                    total_items=self._num_total,
+                    completed_items=self._num_total,
+                    description=self._description,
+                )
             )
 
 
-def progress_ticker(callback: ProgressHandler | None, num_total: int) -> ProgressTicker:
+def progress_ticker(
+    callback: ProgressHandler | None, num_total: int, description: str = ""
+) -> ProgressTicker:
     """Create a progress ticker."""
-    return ProgressTicker(callback, num_total)
+    return ProgressTicker(callback, num_total, description=description)
 
 
 def progress_iterable(
     iterable: Iterable[T],
     progress: ProgressHandler | None,
     num_total: int | None = None,
+    description: str = "",
 ) -> Iterable[T]:
     """Wrap an iterable with a progress handler. Every time an item is yielded, the progress handler will be called with the current progress."""
     if num_total is None:
         num_total = len(list(iterable))
 
-    tick = ProgressTicker(progress, num_total)
+    tick = ProgressTicker(progress, num_total, description=description)
 
     for item in iterable:
         tick(1)

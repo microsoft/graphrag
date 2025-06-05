@@ -27,6 +27,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """Update the covariates from a incremental index run."""
+    logger.info("Workflow started: update_covariates")
     output_storage, previous_storage, delta_storage = get_update_storages(
         config, context.state["update_timestamp"]
     )
@@ -37,6 +38,7 @@ async def run_workflow(
         logger.info("Updating Covariates")
         await _update_covariates(previous_storage, delta_storage, output_storage)
 
+    logger.info("Workflow completed: update_covariates")
     return WorkflowFunctionOutput(result=None)
 
 
