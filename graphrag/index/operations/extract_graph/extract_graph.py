@@ -45,10 +45,6 @@ async def extract_graph(
     )
     strategy_config = {**strategy}
 
-    # if max_retries is not set, inject a dynamically assigned value based on the total number of expected LLM calls to be made
-    if strategy_config.get("llm") and strategy_config["llm"]["max_retries"] == -1:
-        strategy_config["llm"]["max_retries"] = len(text_units)
-
     num_started = 0
 
     async def run_strategy(row):
