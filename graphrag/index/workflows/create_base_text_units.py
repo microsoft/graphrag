@@ -4,6 +4,7 @@
 """A module containing run_workflow method definition."""
 
 import json
+import logging
 from typing import Any, cast
 
 import pandas as pd
@@ -18,6 +19,8 @@ from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logger.progress import Progress
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+
+logger = logging.getLogger(__name__)
 
 
 async def run_workflow(

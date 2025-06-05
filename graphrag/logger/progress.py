@@ -3,11 +3,13 @@
 
 """Progress reporting types."""
 
+import logging
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from typing import TypeVar
 
 T = TypeVar("T")
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -24,7 +26,7 @@ class Progress:
     """Total number of items"""
 
     completed_items: int | None = None
-    """Number of items completed""" ""
+    """Number of items completed"""
 
 
 ProgressHandler = Callable[[Progress], None]
@@ -47,11 +49,11 @@ class ProgressTicker:
         """Emit progress."""
         self._num_complete += num_ticks
         if self._callback is not None:
-            self._callback(
-                Progress(
-                    total_items=self._num_total, completed_items=self._num_complete
-                )
+            p = Progress(
+                total_items=self._num_total, completed_items=self._num_complete
             )
+            logger.info("Progress: %s/%s", str(p.completed_items), str(p.total_items))
+            self._callback(p)
 
     def done(self) -> None:
         """Mark the progress as done."""

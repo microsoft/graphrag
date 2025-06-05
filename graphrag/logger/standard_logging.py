@@ -136,7 +136,7 @@ def init_loggers(
         case ReportingType.console:
             # Only add console handler if not already added
             if not enable_console:
-                handler = logging.StreamHandler(sys.stdout)
+                handler = logging.StreamHandler()
                 handler.setFormatter(formatter)
                 logger.addHandler(handler)
         case ReportingType.blob:

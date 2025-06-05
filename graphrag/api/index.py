@@ -68,6 +68,7 @@ async def build_index(
 
     pipeline = PipelineFactory.create_pipeline(config, method, is_update_run)
 
+    logger.info("Pipeline started: %s", pipeline.names())
     workflow_callbacks.pipeline_start(pipeline.names())
 
     async for output in run_pipeline(
@@ -83,6 +84,7 @@ async def build_index(
             logger.info("Workflow %s completed successfully", output.workflow)
         logger.debug(str(output.result))
 
+    logger.info("Pipeline completed with %d workflows", len(outputs))
     workflow_callbacks.pipeline_end(outputs)
     return outputs
 
