@@ -192,6 +192,25 @@ def _index_cli(
         writable=True,
         resolve_path=True,
     ),
+    estimate_cost: bool = typer.Option(
+        False,
+        "--estimate-cost",
+        "-est",
+        help=(
+            "Estimate the LLM cost of the indexing pipeline before execution."
+        ),
+    ),
+    average_output_tokens_per_chunk: int = typer.Option(
+        500,
+        "--average-output-tokens-per-chunk",
+        "-avg",
+        help=(
+            "Assumed number of output tokens per chunk for cost estimation. "
+            "Short summarization/classification: 100-300 "
+            "Detailed summarization/QA: 400-600 "
+            "Long-form generation (e.g., full response per doc): 800-1200"
+        ),
+    ),
 ) -> None:
     """Build a knowledge graph index."""
     from graphrag.cli.index import index_cli
@@ -207,6 +226,8 @@ def _index_cli(
         skip_validation=skip_validation,
         output_dir=output,
         method=method,
+        estimate_cost=estimate_cost,
+        average_output_tokens_per_chunk=average_output_tokens_per_chunk
     )
 
 
