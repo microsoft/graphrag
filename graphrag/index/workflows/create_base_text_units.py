@@ -128,7 +128,18 @@ def create_base_text_units(
         row["chunks"] = chunked
         return row
 
-    aggregated = aggregated.apply(lambda row: chunker(row), axis=1)
+    # Track progress of row-wise apply operation
+    total_rows = len(aggregated)
+    logger.info("Starting chunking process for %d rows", total_rows)
+    
+    def chunker_with_logging(row: pd.Series) -> Any:
+        """Add logging to chunker execution."""
+        row_index = row.name  # pandas Series.name contains the index
+        result = chunker(row.to_dict())
+        logger.info("Completed chunking for row %d/%d", row_index + 1, total_rows)
+        return result
+    
+    aggregated = aggregated.apply(chunker_with_logging, axis=1)
 
     aggregated = cast("pd.DataFrame", aggregated[[*group_by_columns, "chunks"]])
     aggregated = aggregated.explode("chunks")
