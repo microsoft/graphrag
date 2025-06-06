@@ -14,7 +14,7 @@ from graphrag.data_model.community_report import CommunityReport
 from graphrag.data_model.entity import Entity
 from graphrag.query.llm.text_utils import num_tokens
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 NO_COMMUNITY_RECORDS_WARNING: str = (
     "Warning: No community records added when building community context."
@@ -88,7 +88,7 @@ def build_community_context(
         )
     )
     if compute_community_weights:
-        log.info("Computing community weights...")
+        logger.debug("Computing community weights...")
         community_reports = _compute_community_weights(
             community_reports=community_reports,
             entities=entities,
@@ -177,7 +177,7 @@ def build_community_context(
         _cut_batch()
 
     if len(all_context_records) == 0:
-        log.warning(NO_COMMUNITY_RECORDS_WARNING)
+        logger.warning(NO_COMMUNITY_RECORDS_WARNING)
         return ([], {})
 
     return all_context_text, {

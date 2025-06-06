@@ -3,6 +3,7 @@
 
 """A module containing run_workflow method definition."""
 
+import logging
 from typing import Any
 from uuid import uuid4
 
@@ -20,12 +21,15 @@ from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
+logger = logging.getLogger(__name__)
+
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to extract and format covariates."""
+    logger.info("Workflow started: extract_covariates")
     text_units = await load_table_from_storage("text_units", context.storage)
 
     extract_claims_llm_settings = config.get_language_model_config(
@@ -51,6 +55,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "covariates", context.storage)
 
+    logger.info("Workflow completed: extract_covariates")
     return WorkflowFunctionOutput(result=output)
 
 

@@ -22,7 +22,7 @@ from graphrag.query.context_builder.conversation_history import (
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.question_gen.base import BaseQuestionGen, QuestionResult
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class LocalQuestionGen(BaseQuestionGen):
@@ -88,7 +88,9 @@ class LocalQuestionGen(BaseQuestionGen):
             context_records = result.context_records
         else:
             context_records = {"context_data": context_data}
-        log.info("GENERATE QUESTION: %s. LAST QUESTION: %s", start_time, question_text)
+        logger.debug(
+            "GENERATE QUESTION: %s. LAST QUESTION: %s", start_time, question_text
+        )
         system_prompt = ""
         try:
             system_prompt = self.system_prompt.format(
@@ -120,7 +122,7 @@ class LocalQuestionGen(BaseQuestionGen):
             )
 
         except Exception:
-            log.exception("Exception in generating question")
+            logger.exception("Exception in generating question")
             return QuestionResult(
                 response=[],
                 context_data=context_records,
@@ -168,7 +170,7 @@ class LocalQuestionGen(BaseQuestionGen):
             context_records = result.context_records
         else:
             context_records = {"context_data": context_data}
-        log.info(
+        logger.debug(
             "GENERATE QUESTION: %s. QUESTION HISTORY: %s", start_time, question_text
         )
         system_prompt = ""
@@ -203,7 +205,7 @@ class LocalQuestionGen(BaseQuestionGen):
             )
 
         except Exception:
-            log.exception("Exception in generating questions")
+            logger.exception("Exception in generating questions")
             return QuestionResult(
                 response=[],
                 context_data=context_records,

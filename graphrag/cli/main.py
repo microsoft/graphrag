@@ -12,7 +12,6 @@ import typer
 
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import IndexingMethod, SearchMethod
-from graphrag.logger.types import LoggerType
 from graphrag.prompt_tune.defaults import LIMIT, MAX_TOKEN_COUNT, N_SUBSET_MAX, K
 from graphrag.prompt_tune.types import DocSelectionType
 
@@ -157,11 +156,6 @@ def _index_cli(
         "--memprofile",
         help="Run the indexing pipeline with memory profiling",
     ),
-    logger: LoggerType = typer.Option(
-        LoggerType.RICH.value,
-        "--logger",
-        help="The progress logger to use.",
-    ),
     dry_run: bool = typer.Option(
         False,
         "--dry-run",
@@ -201,7 +195,6 @@ def _index_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        logger=LoggerType(logger),
         config_filepath=config,
         dry_run=dry_run,
         skip_validation=skip_validation,
@@ -250,11 +243,6 @@ def _update_cli(
         "--memprofile",
         help="Run the indexing pipeline with memory profiling.",
     ),
-    logger: LoggerType = typer.Option(
-        LoggerType.RICH.value,
-        "--logger",
-        help="The progress logger to use.",
-    ),
     cache: bool = typer.Option(
         True,
         "--cache/--no-cache",
@@ -290,7 +278,6 @@ def _update_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        logger=LoggerType(logger),
         config_filepath=config,
         skip_validation=skip_validation,
         output_dir=output,
@@ -326,11 +313,6 @@ def _prompt_tune_cli(
         "--verbose",
         "-v",
         help="Run the prompt tuning pipeline with verbose logging.",
-    ),
-    logger: LoggerType = typer.Option(
-        LoggerType.RICH.value,
-        "--logger",
-        help="The progress logger to use.",
     ),
     domain: str | None = typer.Option(
         None,
@@ -413,7 +395,6 @@ def _prompt_tune_cli(
             config=config,
             domain=domain,
             verbose=verbose,
-            logger=logger,
             selection_method=selection_method,
             limit=limit,
             max_tokens=max_tokens,
@@ -452,6 +433,12 @@ def _query_cli(
         file_okay=True,
         readable=True,
         autocompletion=CONFIG_AUTOCOMPLETE,
+    ),
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Run the query with verbose logging.",
     ),
     data: Path | None = typer.Option(
         None,
@@ -520,6 +507,7 @@ def _query_cli(
                 response_type=response_type,
                 streaming=streaming,
                 query=query,
+                verbose=verbose,
             )
         case SearchMethod.GLOBAL:
             run_global_search(
@@ -531,6 +519,7 @@ def _query_cli(
                 response_type=response_type,
                 streaming=streaming,
                 query=query,
+                verbose=verbose,
             )
         case SearchMethod.DRIFT:
             run_drift_search(
@@ -541,6 +530,7 @@ def _query_cli(
                 streaming=streaming,
                 response_type=response_type,
                 query=query,
+                verbose=verbose,
             )
         case SearchMethod.BASIC:
             run_basic_search(
@@ -549,6 +539,7 @@ def _query_cli(
                 root_dir=root,
                 streaming=streaming,
                 query=query,
+                verbose=verbose,
             )
         case _:
             raise ValueError(INVALID_METHOD_ERROR)

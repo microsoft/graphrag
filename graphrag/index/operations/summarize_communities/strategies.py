@@ -4,7 +4,6 @@
 """A module containing run, _run_extractor and _load_nodes_edges_for_claim_chain methods definition."""
 
 import logging
-import traceback
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -21,7 +20,7 @@ from graphrag.index.utils.rate_limiter import RateLimiter
 from graphrag.language_model.manager import ModelManager
 from graphrag.language_model.protocol.base import ChatModel
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def run_graph_intelligence(
@@ -42,7 +41,7 @@ async def run_graph_intelligence(
         cache=cache,
     )
 
-    return await _run_extractor(llm, community, input, level, args, callbacks)
+    return await _run_extractor(llm, community, input, level, args)
 
 
 async def _run_extractor(
@@ -51,7 +50,6 @@ async def _run_extractor(
     input: str,
     level: int,
     args: StrategyConfig,
-    callbacks: WorkflowCallbacks,
 ) -> CommunityReport | None:
     # RateLimiter
     rate_limiter = RateLimiter(rate=1, per=60)
@@ -59,8 +57,8 @@ async def _run_extractor(
         model,
         extraction_prompt=args.get("extraction_prompt", None),
         max_report_length=args.get("max_report_length", None),
-        on_error=lambda e, stack, _data: callbacks.error(
-            "Community Report Extraction Error", e, stack
+        on_error=lambda e, stack, _data: logger.error(
+            "Community Report Extraction Error", exc_info=e, extra={"stack": stack}
         ),
     )
 
@@ -69,7 +67,7 @@ async def _run_extractor(
         results = await extractor(input)
         report = results.structured_output
         if report is None:
-            log.warning("No report found for community: %s", community)
+            logger.warning("No report found for community: %s", community)
             return None
 
         return CommunityReport(
@@ -86,7 +84,6 @@ async def _run_extractor(
             ],
             full_content_json=report.model_dump_json(indent=4),
         )
-    except Exception as e:
-        log.exception("Error processing community: %s", community)
-        callbacks.error("Community Report Extraction Error", e, traceback.format_exc())
+    except Exception:
+        logger.exception("Error processing community: %s", community)
         return None

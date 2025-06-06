@@ -27,7 +27,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """Update the entities and relationships from a incremental index run."""
-    logger.info("Updating Entities and Relationships")
+    logger.info("Workflow started: update_entities_relationships")
     output_storage, previous_storage, delta_storage = get_update_storages(
         config, context.state["update_timestamp"]
     )
@@ -49,6 +49,7 @@ async def run_workflow(
     context.state["incremental_update_merged_relationships"] = merged_relationships_df
     context.state["incremental_update_entity_id_mapping"] = entity_id_mapping
 
+    logger.info("Workflow completed: update_entities_relationships")
     return WorkflowFunctionOutput(result=None)
 
 

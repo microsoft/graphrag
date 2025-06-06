@@ -3,17 +3,19 @@
 
 """A module containing layout_graph, _run_layout and _apply_layout_to_graph methods definition."""
 
+import logging
+
 import networkx as nx
 import pandas as pd
 
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.operations.embed_graph.typing import NodeEmbeddings
 from graphrag.index.operations.layout_graph.typing import GraphLayout
+
+logger = logging.getLogger(__name__)
 
 
 def layout_graph(
     graph: nx.Graph,
-    callbacks: WorkflowCallbacks,
     enabled: bool,
     embeddings: NodeEmbeddings | None,
 ):
@@ -44,7 +46,6 @@ def layout_graph(
         graph,
         enabled,
         embeddings if embeddings is not None else {},
-        callbacks,
     )
 
     layout_df = pd.DataFrame(layout)
@@ -58,7 +59,6 @@ def _run_layout(
     graph: nx.Graph,
     enabled: bool,
     embeddings: NodeEmbeddings,
-    callbacks: WorkflowCallbacks,
 ) -> GraphLayout:
     if enabled:
         from graphrag.index.operations.layout_graph.umap import (
@@ -68,7 +68,9 @@ def _run_layout(
         return run_umap(
             graph,
             embeddings,
-            lambda e, stack, d: callbacks.error("Error in Umap", e, stack, d),
+            lambda e, stack, d: logger.error(
+                "Error in Umap", exc_info=e, extra={"stack": stack, "details": d}
+            ),
         )
     from graphrag.index.operations.layout_graph.zero import (
         run as run_zero,
@@ -76,5 +78,7 @@ def _run_layout(
 
     return run_zero(
         graph,
-        lambda e, stack, d: callbacks.error("Error in Zero", e, stack, d),
+        lambda e, stack, d: logger.error(
+            "Error in Zero", exc_info=e, extra={"stack": stack, "details": d}
+        ),
     )

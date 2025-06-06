@@ -4,15 +4,17 @@
 """A module containing validate_config_names definition."""
 
 import asyncio
+import logging
 import sys
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.language_model.manager import ModelManager
-from graphrag.logger.print_progress import ProgressLogger
+
+logger = logging.getLogger(__name__)
 
 
-def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) -> None:
+def validate_config_names(parameters: GraphRagConfig) -> None:
     """Validate config file for LLM deployment name typos."""
     # Validate Chat LLM configs
     # TODO: Replace default_chat_model with a way to select the model
@@ -28,7 +30,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
 
     try:
         asyncio.run(llm.achat("This is an LLM connectivity test. Say Hello World"))
-        logger.success("LLM Config Params Validated")
+        logger.info("LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
         logger.error(f"LLM configuration error detected. Exiting...\n{e}")  # noqa
         sys.exit(1)
@@ -48,7 +50,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
 
     try:
         asyncio.run(embed_llm.aembed_batch(["This is an LLM Embedding Test String"]))
-        logger.success("Embedding LLM Config Params Validated")
+        logger.info("Embedding LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
         logger.error(f"Embedding LLM configuration error detected. Exiting...\n{e}")  # noqa
         sys.exit(1)

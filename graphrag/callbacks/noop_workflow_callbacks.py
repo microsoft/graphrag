@@ -9,13 +9,13 @@ from graphrag.logger.progress import Progress
 
 
 class NoopWorkflowCallbacks(WorkflowCallbacks):
-    """A no-op implementation of WorkflowCallbacks."""
+    """A no-op implementation of WorkflowCallbacks that logs all events to standard logging."""
 
     def pipeline_start(self, names: list[str]) -> None:
-        """Execute this callback when a the entire pipeline starts."""
+        """Execute this callback to signal when the entire pipeline starts."""
 
     def pipeline_end(self, results: list[PipelineRunResult]) -> None:
-        """Execute this callback when the entire pipeline ends."""
+        """Execute this callback to signal when the entire pipeline ends."""
 
     def workflow_start(self, name: str, instance: object) -> None:
         """Execute this callback when a workflow starts."""
@@ -25,18 +25,3 @@ class NoopWorkflowCallbacks(WorkflowCallbacks):
 
     def progress(self, progress: Progress) -> None:
         """Handle when progress occurs."""
-
-    def error(
-        self,
-        message: str,
-        cause: BaseException | None = None,
-        stack: str | None = None,
-        details: dict | None = None,
-    ) -> None:
-        """Handle when an error occurs."""
-
-    def warning(self, message: str, details: dict | None = None) -> None:
-        """Handle when a warning occurs."""
-
-    def log(self, message: str, details: dict | None = None) -> None:
-        """Handle when a log message occurs."""
