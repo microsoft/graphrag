@@ -434,6 +434,12 @@ def _query_cli(
         readable=True,
         autocompletion=CONFIG_AUTOCOMPLETE,
     ),
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Run the query with verbose logging.",
+    ),
     data: Path | None = typer.Option(
         None,
         "--data",
@@ -501,6 +507,7 @@ def _query_cli(
                 response_type=response_type,
                 streaming=streaming,
                 query=query,
+                verbose=verbose,
             )
         case SearchMethod.GLOBAL:
             run_global_search(
@@ -512,6 +519,7 @@ def _query_cli(
                 response_type=response_type,
                 streaming=streaming,
                 query=query,
+                verbose=verbose,
             )
         case SearchMethod.DRIFT:
             run_drift_search(
@@ -522,6 +530,7 @@ def _query_cli(
                 streaming=streaming,
                 response_type=response_type,
                 query=query,
+                verbose=verbose,
             )
         case SearchMethod.BASIC:
             run_basic_search(
@@ -530,6 +539,7 @@ def _query_cli(
                 root_dir=root,
                 streaming=streaming,
                 query=query,
+                verbose=verbose,
             )
         case _:
             raise ValueError(INVALID_METHOD_ERROR)

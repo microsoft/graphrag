@@ -192,9 +192,9 @@ async def generate_indexing_prompts(
         language=language,
     )
 
-    logger.info(f"\nGenerated domain: {domain}")  # noqa: G004
-    logger.info(f"\nDetected language: {language}")  # noqa: G004
-    logger.info(f"\nGenerated persona: {persona}")  # noqa: G004
+    logger.debug("Generated domain: %s", domain)
+    logger.debug("Detected language: %s", language)
+    logger.debug("Generated persona: %s", persona)
 
     return (
         extract_graph_prompt,

@@ -70,6 +70,7 @@ async def global_search(
     response_type: str,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -91,7 +92,7 @@ async def global_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config)
+    init_loggers(config=config, verbose=verbose)
 
     callbacks = callbacks or []
     full_response = ""
@@ -133,6 +134,7 @@ def global_search_streaming(
     response_type: str,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> AsyncGenerator:
     """Perform a global search and return the context data and response via a generator.
 
@@ -153,7 +155,7 @@ def global_search_streaming(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config)
+    init_loggers(config=config, verbose=verbose)
 
     communities_ = read_indexer_communities(communities, community_reports)
     reports = read_indexer_reports(
@@ -202,6 +204,7 @@ async def multi_index_global_search(
     streaming: bool,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -225,7 +228,7 @@ async def multi_index_global_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config)
+    init_loggers(config=config, verbose=verbose)
 
     # Streaming not supported yet
     if streaming:
@@ -343,6 +346,7 @@ async def local_search(
     response_type: str,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -364,7 +368,7 @@ async def local_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config)
+    init_loggers(config=config, verbose=verbose)
 
     callbacks = callbacks or []
     full_response = ""
@@ -410,6 +414,7 @@ def local_search_streaming(
     response_type: str,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> AsyncGenerator:
     """Perform a local search and return the context data and response via a generator.
 
@@ -429,7 +434,7 @@ def local_search_streaming(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config)
+    init_loggers(config=config, verbose=verbose)
 
     vector_store_args = {}
     for index, store in config.vector_store.items():
@@ -477,6 +482,7 @@ async def multi_index_local_search(
     streaming: bool,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -501,7 +507,7 @@ async def multi_index_local_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config)
+    init_loggers(config=config, verbose=verbose)
 
     # Streaming not supported yet
     if streaming:
@@ -702,6 +708,7 @@ async def drift_search(
     response_type: str,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -722,7 +729,7 @@ async def drift_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config)
+    init_loggers(config=config, verbose=verbose)
 
     callbacks = callbacks or []
     full_response = ""
@@ -766,6 +773,7 @@ def drift_search_streaming(
     response_type: str,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> AsyncGenerator:
     """Perform a DRIFT search and return the context data and response.
 
@@ -783,7 +791,7 @@ def drift_search_streaming(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers()
+    init_loggers(config=config, verbose=verbose)
 
     vector_store_args = {}
     for index, store in config.vector_store.items():
@@ -839,6 +847,7 @@ async def multi_index_drift_search(
     streaming: bool,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -862,7 +871,7 @@ async def multi_index_drift_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers()
+    init_loggers(config=config, verbose=verbose)
 
     # Streaming not supported yet
     if streaming:
@@ -1037,6 +1046,7 @@ async def basic_search(
     text_units: pd.DataFrame,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -1053,7 +1063,7 @@ async def basic_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers()
+    init_loggers(config=config, verbose=verbose)
 
     callbacks = callbacks or []
     full_response = ""
@@ -1085,6 +1095,7 @@ def basic_search_streaming(
     text_units: pd.DataFrame,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> AsyncGenerator:
     """Perform a local search and return the context data and response via a generator.
 
@@ -1098,7 +1109,7 @@ def basic_search_streaming(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers()
+    init_loggers(config=config, verbose=verbose)
 
     vector_store_args = {}
     for index, store in config.vector_store.items():
@@ -1132,6 +1143,7 @@ async def multi_index_basic_search(
     streaming: bool,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
+    verbose: bool = False,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -1150,7 +1162,7 @@ async def multi_index_basic_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers()
+    init_loggers(config=config, verbose=verbose)
 
     # Streaming not supported yet
     if streaming:

@@ -32,6 +32,7 @@ def run_global_search(
     response_type: str,
     streaming: bool,
     query: str,
+    verbose: bool,
 ):
     """Perform a global search with a given query.
 
@@ -61,7 +62,8 @@ def run_global_search(
         index_names = dataframe_dict["index_names"]
 
         logger.info(
-            "Running Multi-index Global Search: %s", dataframe_dict["index_names"]
+            "Running multi-index global search on indexes: %s",
+            dataframe_dict["index_names"],
         )
 
         logger.debug(
@@ -80,6 +82,7 @@ def run_global_search(
                 response_type=response_type,
                 streaming=streaming,
                 query=query,
+                verbose=verbose,
             )
         )
         logger.debug(
@@ -118,6 +121,7 @@ def run_global_search(
                 response_type=response_type,
                 query=query,
                 callbacks=[callbacks],
+                verbose=verbose,
             ):
                 full_response += stream_chunk
                 print(stream_chunk, end="")  # noqa: T201
@@ -137,6 +141,7 @@ def run_global_search(
             dynamic_community_selection=dynamic_community_selection,
             response_type=response_type,
             query=query,
+            verbose=verbose,
         )
     )
     logger.info("Global Search Response:\n%s", response)
@@ -153,6 +158,7 @@ def run_local_search(
     response_type: str,
     streaming: bool,
     query: str,
+    verbose: bool,
 ):
     """Perform a local search with a given query.
 
@@ -187,7 +193,8 @@ def run_local_search(
         index_names = dataframe_dict["index_names"]
 
         logger.info(
-            "Running Multi-index Local Search: %s", dataframe_dict["index_names"]
+            "Running multi-index local search on indexes: %s",
+            dataframe_dict["index_names"],
         )
 
         # If any covariates tables are missing from any index, set the covariates list to None
@@ -210,6 +217,7 @@ def run_local_search(
                 response_type=response_type,
                 streaming=streaming,
                 query=query,
+                verbose=verbose,
             )
         )
         logger.info("Local Search Response:\n%s", response)
@@ -250,6 +258,7 @@ def run_local_search(
                 response_type=response_type,
                 query=query,
                 callbacks=[callbacks],
+                verbose=verbose,
             ):
                 full_response += stream_chunk
                 print(stream_chunk, end="")  # noqa: T201
@@ -271,6 +280,7 @@ def run_local_search(
             community_level=community_level,
             response_type=response_type,
             query=query,
+            verbose=verbose,
         )
     )
     logger.info("Local Search Response:\n%s", response)
@@ -287,6 +297,7 @@ def run_drift_search(
     response_type: str,
     streaming: bool,
     query: str,
+    verbose: bool,
 ):
     """Perform a local search with a given query.
 
@@ -319,7 +330,8 @@ def run_drift_search(
         index_names = dataframe_dict["index_names"]
 
         logger.info(
-            "Running Multi-index Drift Search: %s", dataframe_dict["index_names"]
+            "Running multi-index drift search on indexes: %s",
+            dataframe_dict["index_names"],
         )
 
         response, context_data = asyncio.run(
@@ -335,6 +347,7 @@ def run_drift_search(
                 response_type=response_type,
                 streaming=streaming,
                 query=query,
+                verbose=verbose,
             )
         )
         logger.info("DRIFT Search Response:\n%s", response)
@@ -373,6 +386,7 @@ def run_drift_search(
                 response_type=response_type,
                 query=query,
                 callbacks=[callbacks],
+                verbose=verbose,
             ):
                 full_response += stream_chunk
                 print(stream_chunk, end="")  # noqa: T201
@@ -394,6 +408,7 @@ def run_drift_search(
             community_level=community_level,
             response_type=response_type,
             query=query,
+            verbose=verbose,
         )
     )
     logger.info("DRIFT Search Response:\n%s", response)
@@ -408,6 +423,7 @@ def run_basic_search(
     root_dir: Path,
     streaming: bool,
     query: str,
+    verbose: bool,
 ):
     """Perform a basics search with a given query.
 
@@ -432,7 +448,8 @@ def run_basic_search(
         index_names = dataframe_dict["index_names"]
 
         logger.info(
-            "Running Multi-index Basic Search: %s", dataframe_dict["index_names"]
+            "Running multi-index basic search on indexes: %s",
+            dataframe_dict["index_names"],
         )
 
         response, context_data = asyncio.run(
@@ -442,6 +459,7 @@ def run_basic_search(
                 index_names=index_names,
                 streaming=streaming,
                 query=query,
+                verbose=verbose,
             )
         )
         logger.info("Basic Search Response:\n%s", response)
@@ -469,6 +487,8 @@ def run_basic_search(
                 config=config,
                 text_units=final_text_units,
                 query=query,
+                callbacks=[callbacks],
+                verbose=verbose,
             ):
                 full_response += stream_chunk
                 print(stream_chunk, end="")  # noqa: T201
@@ -483,6 +503,7 @@ def run_basic_search(
             config=config,
             text_units=final_text_units,
             query=query,
+            verbose=verbose,
         )
     )
     logger.info("Basic Search Response:\n%s", response)
