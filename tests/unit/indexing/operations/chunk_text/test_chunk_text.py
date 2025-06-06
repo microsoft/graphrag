@@ -169,6 +169,7 @@ def test_chunk_text(mock_progress_ticker, mock_run_strategy, mock_load_strategy)
     encoding_model = "model"
     strategy = ChunkStrategyType.sentence
     callbacks = Mock()
+    callbacks.progress = Mock()  # Add mock progress method
 
     mock_load_strategy.return_value = Mock()
     mock_progress_ticker.return_value = Mock()
