@@ -142,7 +142,7 @@ class DynamicCommunitySelection:
                 and (str(level) in self.levels)
                 and (level <= self.max_level)
             ):
-                logger.info(
+                logger.debug(
                     "dynamic community selection: no relevant community "
                     "reports, adding all reports at level %s to rate.",
                     level,
@@ -155,7 +155,7 @@ class DynamicCommunitySelection:
         ]
         end = time()
 
-        logger.info(
+        logger.debug(
             "dynamic community selection (took: %ss)\n"
             "\trating distribution %s\n"
             "\t%s out of %s community reports are relevant\n"

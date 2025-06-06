@@ -32,6 +32,7 @@ from graphrag.config.embeddings import (
     text_unit_text_embedding,
 )
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.logger.standard_logging import init_loggers
 from graphrag.query.factory import (
     get_basic_search_engine,
     get_drift_search_engine,
@@ -89,11 +90,9 @@ async def global_search(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers(config=config)
+
     callbacks = callbacks or []
     full_response = ""
     context_data = {}
@@ -106,6 +105,7 @@ async def global_search(
     local_callbacks.on_context = on_context
     callbacks.append(local_callbacks)
 
+    logger.debug("Executing global search query: %s", query)
     async for chunk in global_search_streaming(
         config=config,
         entities=entities,
@@ -118,6 +118,7 @@ async def global_search(
         callbacks=callbacks,
     ):
         full_response += chunk
+    logger.debug("Query response: %s", full_response)
     return full_response, context_data
 
 
@@ -151,11 +152,9 @@ def global_search_streaming(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers(config=config)
+
     communities_ = read_indexer_communities(communities, community_reports)
     reports = read_indexer_reports(
         community_reports,
@@ -174,6 +173,7 @@ def global_search_streaming(
         config.root_dir, config.global_search.knowledge_prompt
     )
 
+    logger.debug("Executing streaming global search query: %s", query)
     search_engine = get_global_search_engine(
         config,
         reports=reports,
@@ -224,11 +224,9 @@ async def multi_index_global_search(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers(config=config)
+
     # Streaming not supported yet
     if streaming:
         message = "Streaming not yet implemented for multi_global_search"
@@ -312,6 +310,7 @@ async def multi_index_global_search(
         communities_dfs, axis=0, ignore_index=True, sort=False
     )
 
+    logger.debug("Executing multi-index global search query: %s", query)
     result = await global_search(
         config,
         entities=entities_combined,
@@ -327,6 +326,7 @@ async def multi_index_global_search(
     # Update the context data by linking index names and community ids
     context = update_context_data(result[1], links)
 
+    logger.debug("Query response: %s", result[0])
     return (result[0], context)
 
 
@@ -363,11 +363,9 @@ async def local_search(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers(config=config)
+
     callbacks = callbacks or []
     full_response = ""
     context_data = {}
@@ -380,6 +378,7 @@ async def local_search(
     local_callbacks.on_context = on_context
     callbacks.append(local_callbacks)
 
+    logger.debug("Executing local search query: %s", query)
     async for chunk in local_search_streaming(
         config=config,
         entities=entities,
@@ -394,6 +393,7 @@ async def local_search(
         callbacks=callbacks,
     ):
         full_response += chunk
+    logger.debug("Query response: %s", full_response)
     return full_response, context_data
 
 
@@ -428,16 +428,14 @@ def local_search_streaming(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers(config=config)
+
     vector_store_args = {}
     for index, store in config.vector_store.items():
         vector_store_args[index] = store.model_dump()
     msg = f"Vector Store Args: {redact(vector_store_args)}"
-    logger.info(msg)
+    logger.debug(msg)
 
     description_embedding_store = get_embedding_store(
         config_args=vector_store_args,
@@ -448,6 +446,7 @@ def local_search_streaming(
     covariates_ = read_indexer_covariates(covariates) if covariates is not None else []
     prompt = load_search_prompt(config.root_dir, config.local_search.prompt)
 
+    logger.debug("Executing streaming local search query: %s", query)
     search_engine = get_local_search_engine(
         config=config,
         reports=read_indexer_reports(community_reports, communities, community_level),
@@ -501,11 +500,9 @@ async def multi_index_local_search(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers(config=config)
+
     # Streaming not supported yet
     if streaming:
         message = "Streaming not yet implemented for multi_index_local_search"
@@ -671,6 +668,7 @@ async def multi_index_local_search(
         covariates_combined = pd.concat(
             covariates_dfs, axis=0, ignore_index=True, sort=False
         )
+    logger.debug("Executing multi-index local search query: %s", query)
     result = await local_search(
         config,
         entities=entities_combined,
@@ -688,6 +686,7 @@ async def multi_index_local_search(
     # Update the context data by linking index names and community ids
     context = update_context_data(result[1], links)
 
+    logger.debug("Query response: %s", result[0])
     return (result[0], context)
 
 
@@ -722,11 +721,9 @@ async def drift_search(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers(config=config)
+
     callbacks = callbacks or []
     full_response = ""
     context_data = {}
@@ -739,6 +736,7 @@ async def drift_search(
     local_callbacks.on_context = on_context
     callbacks.append(local_callbacks)
 
+    logger.debug("Executing drift search query: %s", query)
     async for chunk in drift_search_streaming(
         config=config,
         entities=entities,
@@ -752,6 +750,7 @@ async def drift_search(
         callbacks=callbacks,
     ):
         full_response += chunk
+    logger.debug("Query response: %s", full_response)
     return full_response, context_data
 
 
@@ -783,16 +782,14 @@ def drift_search_streaming(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers()
+
     vector_store_args = {}
     for index, store in config.vector_store.items():
         vector_store_args[index] = store.model_dump()
     msg = f"Vector Store Args: {redact(vector_store_args)}"
-    logger.info(msg)
+    logger.debug(msg)
 
     description_embedding_store = get_embedding_store(
         config_args=vector_store_args,
@@ -812,6 +809,7 @@ def drift_search_streaming(
         config.root_dir, config.drift_search.reduce_prompt
     )
 
+    logger.debug("Executing streaming drift search query: %s", query)
     search_engine = get_drift_search_engine(
         config=config,
         reports=reports,
@@ -863,11 +861,9 @@ async def multi_index_drift_search(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers()
+
     # Streaming not supported yet
     if streaming:
         message = "Streaming not yet implemented for multi_drift_search"
@@ -1010,6 +1006,7 @@ async def multi_index_drift_search(
         text_units_dfs, axis=0, ignore_index=True, sort=False
     )
 
+    logger.debug("Executing multi-index drift search query: %s", query)
     result = await drift_search(
         config,
         entities=entities_combined,
@@ -1030,6 +1027,7 @@ async def multi_index_drift_search(
             context[key] = update_context_data(result[1][key], links)
     else:
         context = result[1]
+    logger.debug("Query response: %s", result[0])
     return (result[0], context)
 
 
@@ -1054,11 +1052,9 @@ async def basic_search(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers()
+
     callbacks = callbacks or []
     full_response = ""
     context_data = {}
@@ -1071,6 +1067,7 @@ async def basic_search(
     local_callbacks.on_context = on_context
     callbacks.append(local_callbacks)
 
+    logger.debug("Executing basic search query: %s", query)
     async for chunk in basic_search_streaming(
         config=config,
         text_units=text_units,
@@ -1078,6 +1075,7 @@ async def basic_search(
         callbacks=callbacks,
     ):
         full_response += chunk
+    logger.debug("Query response: %s", full_response)
     return full_response, context_data
 
 
@@ -1099,16 +1097,14 @@ def basic_search_streaming(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers()
+
     vector_store_args = {}
     for index, store in config.vector_store.items():
         vector_store_args[index] = store.model_dump()
     msg = f"Vector Store Args: {redact(vector_store_args)}"
-    logger.info(msg)
+    logger.debug(msg)
 
     description_embedding_store = get_embedding_store(
         config_args=vector_store_args,
@@ -1117,6 +1113,7 @@ def basic_search_streaming(
 
     prompt = load_search_prompt(config.root_dir, config.basic_search.prompt)
 
+    logger.debug("Executing streaming basic search query: %s", query)
     search_engine = get_basic_search_engine(
         config=config,
         text_units=read_indexer_text_units(text_units),
@@ -1152,11 +1149,9 @@ async def multi_index_basic_search(
     Returns
     -------
     TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
     """
+    init_loggers()
+
     # Streaming not supported yet
     if streaming:
         message = "Streaming not yet implemented for multi_basic_search"
@@ -1193,6 +1188,7 @@ async def multi_index_basic_search(
         text_units_dfs, axis=0, ignore_index=True, sort=False
     )
 
+    logger.debug("Executing multi-index basic search query: %s", query)
     return await basic_search(
         config,
         text_units=text_units_combined,

@@ -70,7 +70,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         prompt_tokens["build_context"] = context_result.prompt_tokens
         output_tokens["build_context"] = context_result.output_tokens
 
-        logger.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
+        logger.debug("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         try:
             if "drift_query" in kwargs:
                 drift_query = kwargs["drift_query"]
@@ -144,7 +144,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
-        logger.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
+        logger.debug("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         search_prompt = self.system_prompt.format(
             context_data=context_result.context_chunks, response_type=self.response_type
         )

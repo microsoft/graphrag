@@ -88,7 +88,7 @@ def build_community_context(
         )
     )
     if compute_community_weights:
-        logger.info("Computing community weights...")
+        logger.debug("Computing community weights...")
         community_reports = _compute_community_weights(
             community_reports=community_reports,
             entities=entities,

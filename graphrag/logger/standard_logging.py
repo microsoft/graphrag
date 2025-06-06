@@ -33,11 +33,15 @@ Notes
 """
 
 import logging
+import sys
 from pathlib import Path
 
 from graphrag.config.enums import ReportingType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.reporting_config import ReportingConfig
+
+LOG_FORMAT = "%(asctime)s.%(msecs)04d - %(levelname)s - %(name)s - %(message)s"
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def init_loggers(
@@ -45,8 +49,6 @@ def init_loggers(
     root_dir: str | None = None,
     verbose: bool = False,
     log_file: str | Path | None = None,
-    log_format: str = "%(asctime)s.%(msecs)04d - %(levelname)s - %(name)s - %(message)s",
-    date_format: str = "%Y-%m-%d %H:%M:%S",
 ) -> None:
     """Initialize logging handlers for graphrag based on configuration.
 
@@ -68,32 +70,30 @@ def init_loggers(
     date_format : str, default="%Y-%m-%d %H:%M:%S"
         The format for dates in the log messages.
     """
-    # Import BlobWorkflowLogger here to avoid circular imports
+    # import BlobWorkflowLogger here to avoid circular imports
     from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
 
-    # Extract reporting config from GraphRagConfig if provided
+    # extract reporting config from GraphRagConfig if provided
     reporting_config: ReportingConfig
     if log_file:
-        # If log_file is provided directly, override config to use file-based logging
+        # if log_file is provided directly, override config to use file-based logging
         log_path = Path(log_file)
         reporting_config = ReportingConfig(
             type=ReportingType.file,
             base_dir=str(log_path.parent),
         )
     elif config is not None:
-        # Use the reporting configuration from GraphRagConfig
+        # use the reporting configuration from GraphRagConfig
         reporting_config = config.reporting
     else:
-        # Default to file-based logging if no config provided (maintains backward compatibility)
+        # default to file-based logging if no config provided
         reporting_config = ReportingConfig(base_dir="logs", type=ReportingType.file)
 
-    log_level = logging.DEBUG if verbose else logging.INFO
-
-    # Get the root logger for graphrag
     logger = logging.getLogger("graphrag")
+    log_level = logging.DEBUG if verbose else logging.INFO
     logger.setLevel(log_level)
 
-    # Clear any existing handlers to avoid duplicate logs
+    # clear any existing handlers to avoid duplicate logs
     if logger.hasHandlers():
         # Close file handlers properly before removing them
         for handler in logger.handlers:
@@ -101,25 +101,22 @@ def init_loggers(
                 handler.close()
         logger.handlers.clear()
 
-    # Create formatter with custom format
-    formatter = logging.Formatter(fmt=log_format, datefmt=date_format)
+    # create formatter with custom format
+    formatter = logging.Formatter(fmt=LOG_FORMAT, datefmt=DATE_FORMAT)
 
-    # Always add console handler
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
+    init_console_logger(verbose)
 
-    # Add more handlers based on configuration
+    # add more handlers based on configuration
     handler: logging.Handler
     match reporting_config.type:
         case ReportingType.file:
             if log_file:
-                # Use the specific log file provided
+                # use the specific log file provided
                 log_file_path = Path(log_file)
                 log_file_path.parent.mkdir(parents=True, exist_ok=True)
                 handler = logging.FileHandler(str(log_file_path), mode="a")
             else:
-                # Use the config-based file path
+                # use the config-based file path
                 log_dir = Path(root_dir or "") / (reporting_config.base_dir or "")
                 log_dir.mkdir(parents=True, exist_ok=True)
                 log_file_path = log_dir / "logs.txt"
@@ -134,6 +131,30 @@ def init_loggers(
                 storage_account_blob_url=reporting_config.storage_account_blob_url,
             )
             logger.addHandler(handler)
+        case _:
+            logger.error("Unknown reporting type '%s'.", reporting_config.type)
 
-    # Prevent propagation to root logger to avoid duplicate logging
+    # prevent propagation to root logger to avoid duplicate logging
     logger.propagate = False
+
+
+def init_console_logger(verbose: bool = False) -> None:
+    """Initialize a console logger if not already present.
+
+    This function sets up a logger that outputs log messages to STDOUT.
+
+    Parameters
+    ----------
+    verbose : bool, default=False
+        Whether to enable verbose (DEBUG) logging.
+    """
+    logger = logging.getLogger("graphrag")
+    logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+    has_console_handler = any(
+        isinstance(h, logging.StreamHandler) for h in logger.handlers
+    )
+    if not has_console_handler:
+        console_handler = logging.StreamHandler(sys.stdout)
+        formatter = logging.Formatter(fmt=LOG_FORMAT, datefmt=DATE_FORMAT)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)

@@ -21,6 +21,7 @@ from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.language_model.manager import ModelManager
+from graphrag.logger.standard_logging import init_loggers
 from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT, PROMPT_TUNING_MODEL_ID
 from graphrag.prompt_tune.generator.community_report_rating import (
     generate_community_report_rating,
@@ -90,6 +91,8 @@ async def generate_indexing_prompts(
     -------
     tuple[str, str, str]: entity extraction prompt, entity summarization prompt, community summarization prompt
     """
+    init_loggers(config=config)
+
     # Retrieve documents
     logger.info("Chunking documents...")
     doc_list = await load_docs_in_chunks(

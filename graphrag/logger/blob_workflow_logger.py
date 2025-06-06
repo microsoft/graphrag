@@ -69,7 +69,7 @@ class BlobWorkflowLogger(logging.Handler):
 
         self._num_blocks = 0  # refresh block counter
 
-    def emit(self, record):
+    def emit(self, record) -> None:
         """Emit a log record to blob storage."""
         try:
             # Create JSON structure based on record

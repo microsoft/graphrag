@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Progress reporting types."""
+"""Progress Logging Utilities."""
 
 import logging
 from collections.abc import Callable, Iterable

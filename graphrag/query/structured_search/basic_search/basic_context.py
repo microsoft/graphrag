@@ -84,7 +84,7 @@ class BasicSearchContext(BasicContextBuilder):
             tokens = num_tokens(text, self.token_encoder)
             if current_tokens + tokens > max_context_tokens:
                 msg = f"Reached token limit: {current_tokens + tokens}. Reverting to previous context state"
-                logger.info(msg)
+                logger.warning(msg)
                 break
 
             current_tokens += tokens

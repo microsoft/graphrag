@@ -231,7 +231,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                     json=True,
                 )
                 search_response = model_response.output.content
-                logger.info("Map response: %s", search_response)
+                logger.debug("Map response: %s", search_response)
             try:
                 # parse search response json
                 processed_response = self._parse_search_response(search_response)

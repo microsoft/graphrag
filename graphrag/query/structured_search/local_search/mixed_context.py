@@ -446,7 +446,9 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 current_context_data[covariate.lower()] = covariate_context_data
 
             if total_tokens > max_context_tokens:
-                logger.info("Reached token limit - reverting to previous context state")
+                logger.warning(
+                    "Reached token limit - reverting to previous context state"
+                )
                 break
 
             final_context = current_context

@@ -60,7 +60,7 @@ async def rate_relevancy(
         except KeyError:
             # in case of json parsing error, default to rating 1 so the report is kept.
             # json parsing error should rarely happen.
-            logger.info("Error parsing json response, defaulting to rating 1")
+            logger.warning("Error parsing json response, defaulting to rating 1")
             ratings.append(1)
         llm_calls += 1
         prompt_tokens += num_tokens(messages[0]["content"], token_encoder)

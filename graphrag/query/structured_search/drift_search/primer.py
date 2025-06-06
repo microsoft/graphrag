@@ -94,7 +94,7 @@ class PrimerQueryProcessor:
         tuple[list[float], int]: List of embeddings for the expanded query and the token count.
         """
         hyde_query, token_ct = await self.expand_query(query)
-        logger.info("Expanded query: %s", hyde_query)
+        logger.debug("Expanded query: %s", hyde_query)
         return self.text_embedder.embed(hyde_query), token_ct
 
 

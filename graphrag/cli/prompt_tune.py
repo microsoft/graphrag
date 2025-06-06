@@ -69,17 +69,17 @@ async def prompt_tune(
     if overlap != graph_config.chunks.overlap:
         graph_config.chunks.overlap = overlap
 
-    # Configure the root logger with the specified log level
+    # configure the root logger with the specified log level
     from graphrag.logger.standard_logging import init_loggers
 
-    # Initialize loggers with console output enabled (CLI usage) and reporting config
+    # initialize loggers with config
     init_loggers(
         config=graph_config,
         root_dir=str(root_path),
         verbose=verbose,
     )
 
-    # Log the configuration details
+    # log the configuration details
     if graph_config.reporting.type == ReportingType.file:
         log_dir = Path(root_path) / (graph_config.reporting.base_dir or "")
         log_path = log_dir / "logs.txt"
@@ -115,7 +115,7 @@ async def prompt_tune(
         community_summarization_prompt_path = (
             output_path / COMMUNITY_SUMMARIZATION_FILENAME
         )
-        # Write files to output path
+        # write files to output path
         with extract_graph_prompt_path.open("wb") as file:
             file.write(prompts[0].encode(encoding="utf-8", errors="strict"))
         with entity_summarization_prompt_path.open("wb") as file:

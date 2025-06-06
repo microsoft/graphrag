@@ -88,7 +88,7 @@ class LocalQuestionGen(BaseQuestionGen):
             context_records = result.context_records
         else:
             context_records = {"context_data": context_data}
-        logger.info(
+        logger.debug(
             "GENERATE QUESTION: %s. LAST QUESTION: %s", start_time, question_text
         )
         system_prompt = ""
@@ -170,7 +170,7 @@ class LocalQuestionGen(BaseQuestionGen):
             context_records = result.context_records
         else:
             context_records = {"context_data": context_data}
-        logger.info(
+        logger.debug(
             "GENERATE QUESTION: %s. QUESTION HISTORY: %s", start_time, question_text
         )
         system_prompt = ""

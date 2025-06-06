@@ -24,21 +24,21 @@ def test_file_logging():
     with tempfile.TemporaryDirectory() as temp_dir:
         log_file = Path(temp_dir) / "test.log"
 
-        # Configure logging to file using init_loggers
+        # configure logging to file using init_loggers
         init_loggers(log_file=log_file)
 
-        # Get a logger and log some messages
+        # get a logger and log some messages
         logger = logging.getLogger("graphrag.test")
         test_message = "Test file logging message"
         logger.info(test_message)
 
-        # Check that the log file exists and contains our message
+        # check that the log file exists and contains our message
         assert log_file.exists()
         with open(log_file) as f:
             content = f.read()
             assert test_message in content
 
-        # Close all file handlers to ensure proper cleanup on Windows
+        # close all file handlers to ensure proper cleanup on Windows
         graphrag_logger = logging.getLogger("graphrag")
         for handler in graphrag_logger.handlers[:]:
             if isinstance(handler, logging.FileHandler):
@@ -48,27 +48,27 @@ def test_file_logging():
 
 def test_logger_hierarchy():
     """Test that logger hierarchy works correctly."""
-    # Reset logging to default state using init_loggers
+    # reset logging to default state using init_loggers
     init_loggers()
 
     root_logger = logging.getLogger("graphrag")
     child_logger = logging.getLogger("graphrag.child")
 
-    # Setting level on root should affect children
+    # setting level on root should affect children
     root_logger.setLevel(logging.ERROR)
     assert child_logger.getEffectiveLevel() == logging.ERROR
 
-    # Clean up after test
+    # clean up after test
     root_logger.handlers.clear()
 
 
 def test_init_loggers_console_enabled():
-    """Test that init_loggers works with console enabled."""
+    """Test that init_loggers works with console handler."""
     init_loggers()
 
     logger = logging.getLogger("graphrag")
 
-    # Should have both a console handler and a file handler (default config)
+    # should have both a console handler and a file handler (default config)
     console_handlers = [
         h for h in logger.handlers if isinstance(h, logging.StreamHandler)
     ]
@@ -76,7 +76,7 @@ def test_init_loggers_console_enabled():
     assert len(console_handlers) > 0
     assert len(file_handlers) > 0  # Due to default file config
 
-    # Clean up
+    # clean up
     for handler in logger.handlers[:]:
         if isinstance(handler, logging.FileHandler):
             handler.close()
@@ -86,7 +86,7 @@ def test_init_loggers_console_enabled():
 def test_init_loggers_default_config():
     """Test that init_loggers uses default file config when none provided."""
     with tempfile.TemporaryDirectory() as temp_dir:
-        # Call init_loggers with no config (should default to file logging)
+        # call init_loggers with no config (should default to file logging)
         init_loggers(root_dir=temp_dir)
 
         logger = logging.getLogger("graphrag")
@@ -97,11 +97,11 @@ def test_init_loggers_default_config():
         ]
         assert len(file_handlers) > 0
 
-        # Test logging works
+        # test that logging works
         test_message = "Test default config message"
         logger.info(test_message)
 
-        # Check that the log file was created with default structure
+        # check that the log file was created with default structure
         log_file = Path(temp_dir) / "logs" / "logs.txt"
         assert log_file.exists()
 
@@ -109,7 +109,7 @@ def test_init_loggers_default_config():
             content = f.read()
             assert test_message in content
 
-        # Clean up
+        # clean up
         for handler in logger.handlers[:]:
             if isinstance(handler, logging.FileHandler):
                 handler.close()
@@ -122,22 +122,22 @@ def test_init_loggers_file_config():
         config = get_default_graphrag_config(root_dir=temp_dir)
         config.reporting = ReportingConfig(type=ReportingType.file, base_dir="logs")
 
-        # Call init_loggers with file config
+        # call init_loggers with file config
         init_loggers(config=config, root_dir=temp_dir)
 
         logger = logging.getLogger("graphrag")
 
-        # Should have a file handler
+        # should have a file handler
         file_handlers = [
             h for h in logger.handlers if isinstance(h, logging.FileHandler)
         ]
         assert len(file_handlers) > 0
 
-        # Test logging works
+        # test that logging works
         test_message = "Test init_loggers file message"
         logger.info(test_message)
 
-        # Check that the log file was created
+        # check that the log file was created
         log_file = Path(temp_dir) / "logs" / "logs.txt"
         assert log_file.exists()
 
@@ -145,7 +145,7 @@ def test_init_loggers_file_config():
             content = f.read()
             assert test_message in content
 
-        # Clean up
+        # clean up
         for handler in logger.handlers[:]:
             if isinstance(handler, logging.FileHandler):
                 handler.close()
@@ -155,38 +155,36 @@ def test_init_loggers_file_config():
 def test_init_loggers_console_config():
     """Test that init_loggers works with console configuration."""
     config = get_default_graphrag_config()
-    config.reporting = ReportingConfig(type=ReportingType.console)
 
-    # Call init_loggers with config
+    # call init_loggers with config
     init_loggers(config=config)
 
     logger = logging.getLogger("graphrag")
 
-    # Should have a console handler from the config
+    # should have a console handler from the config
     console_handlers = [
         h for h in logger.handlers if isinstance(h, logging.StreamHandler)
     ]
     assert len(console_handlers) > 0
 
-    # Clean up
+    # clean up
     logger.handlers.clear()
 
 
 def test_init_loggers_both_console():
     """Test that init_loggers doesn't duplicate console handlers."""
     config = get_default_graphrag_config()
-    config.reporting = ReportingConfig(type=ReportingType.console)
 
-    # Call init_loggers with config
+    # call init_loggers with config
     init_loggers(config=config)
 
     logger = logging.getLogger("graphrag")
 
-    # Should have only one console handler (no duplicates)
+    # should have only one console handler (no duplicates)
     console_handlers = [
         h for h in logger.handlers if isinstance(h, logging.StreamHandler)
     ]
     assert len(console_handlers) == 1
 
-    # Clean up
+    # clean up
     logger.handlers.clear()
