@@ -85,7 +85,7 @@ azure-identity = "^1.19.0"
 azure-storage-blob = "^12.24.0"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
-typer = "^0.15.1"
+typer = "^0.16.0"
 tqdm = "^4.67.1"
 
 textblob = "^0.18.0.post0"
