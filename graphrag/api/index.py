@@ -40,7 +40,7 @@ async def build_index(
         Styling of indexing to perform (full LLM, NLP + LLM, etc.).
     memory_profile : bool
         Whether to enable memory profiling.
-    callbacks : list | None default=None
+    callbacks : list[WorkflowCallbacks] | None default=None
         A list of callbacks to register.
 
     Returns
