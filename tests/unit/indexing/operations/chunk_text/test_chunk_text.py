@@ -160,7 +160,7 @@ def test_run_strategy_arr_tuple_same_doc():
 
 @mock.patch("graphrag.index.operations.chunk_text.chunk_text.load_strategy")
 @mock.patch("graphrag.index.operations.chunk_text.chunk_text.run_strategy")
-@mock.patch("graphrag.logger.progress.ProgressTicker")
+@mock.patch("graphrag.index.operations.chunk_text.chunk_text.progress_ticker")
 def test_chunk_text(mock_progress_ticker, mock_run_strategy, mock_load_strategy):
     input_data = pd.DataFrame({"name": ["The Shining"]})
     column = "name"
@@ -177,5 +177,5 @@ def test_chunk_text(mock_progress_ticker, mock_run_strategy, mock_load_strategy)
     chunk_text(input_data, column, size, overlap, encoding_model, strategy, callbacks)
 
     mock_run_strategy.assert_called_with(
-        mock_load_strategy(), "The Shining", ANY, mock_progress_ticker()
+        mock_load_strategy(), "The Shining", ANY, mock_progress_ticker.return_value
     )
