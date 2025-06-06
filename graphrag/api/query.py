@@ -51,6 +51,7 @@ from graphrag.query.indexer_adapters import (
 from graphrag.utils.api import (
     get_embedding_store,
     load_search_prompt,
+    truncate,
     update_context_data,
 )
 from graphrag.utils.cli import redact
@@ -119,7 +120,7 @@ async def global_search(
         callbacks=callbacks,
     ):
         full_response += chunk
-    logger.debug("Query response: %s", full_response)
+    logger.debug("Query response: %s", truncate(full_response, 400))
     return full_response, context_data
 
 
@@ -329,7 +330,7 @@ async def multi_index_global_search(
     # Update the context data by linking index names and community ids
     context = update_context_data(result[1], links)
 
-    logger.debug("Query response: %s", result[0])
+    logger.debug("Query response: %s", truncate(result[0], 400))  # type: ignore
     return (result[0], context)
 
 
@@ -397,7 +398,7 @@ async def local_search(
         callbacks=callbacks,
     ):
         full_response += chunk
-    logger.debug("Query response: %s", full_response)
+    logger.debug("Query response: %s", truncate(full_response, 400))
     return full_response, context_data
 
 
@@ -692,7 +693,7 @@ async def multi_index_local_search(
     # Update the context data by linking index names and community ids
     context = update_context_data(result[1], links)
 
-    logger.debug("Query response: %s", result[0])
+    logger.debug("Query response: %s", truncate(result[0], 400))  # type: ignore
     return (result[0], context)
 
 
@@ -757,7 +758,7 @@ async def drift_search(
         callbacks=callbacks,
     ):
         full_response += chunk
-    logger.debug("Query response: %s", full_response)
+    logger.debug("Query response: %s", truncate(full_response, 400))
     return full_response, context_data
 
 
@@ -1036,7 +1037,8 @@ async def multi_index_drift_search(
             context[key] = update_context_data(result[1][key], links)
     else:
         context = result[1]
-    logger.debug("Query response: %s", result[0])
+
+    logger.debug("Query response: %s", truncate(result[0], 400))  # type: ignore
     return (result[0], context)
 
 
@@ -1085,7 +1087,7 @@ async def basic_search(
         callbacks=callbacks,
     ):
         full_response += chunk
-    logger.debug("Query response: %s", full_response)
+    logger.debug("Query response: %s", truncate(full_response, 400))
     return full_response, context_data
 
 

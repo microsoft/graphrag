@@ -255,3 +255,10 @@ def create_cache_from_config(cache: CacheConfig, root_dir: str) -> PipelineCache
         root_dir=root_dir,
         kwargs=cache_config,
     )
+
+
+def truncate(text: str, max_length: int) -> str:
+    """Truncate a string to a maximum length."""
+    if len(text) <= max_length:
+        return text
+    return text[:max_length] + "...[truncated]"

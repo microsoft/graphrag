@@ -65,11 +65,6 @@ def run_global_search(
             "Running multi-index global search on indexes: %s",
             dataframe_dict["index_names"],
         )
-
-        logger.debug(
-            "Executing query: %s",
-            query if len(query) < 400 else f"{query[:400]}...[truncated]",
-        )
         response, context_data = asyncio.run(
             api.multi_index_global_search(
                 config=config,
@@ -85,10 +80,9 @@ def run_global_search(
                 verbose=verbose,
             )
         )
-        logger.debug(
-            "Response:\n%s",
-            response if len(response) < 400 else f"{str(response)[:400]}...[truncated]",
-        )
+        # log the full response at INFO level for user visibility but at DEBUG level in the API layer
+        logger.info("Query Response:\n%s", response)
+
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data
@@ -144,7 +138,9 @@ def run_global_search(
             verbose=verbose,
         )
     )
+    # log the full response at INFO level for user visibility but at DEBUG level in the API layer
     logger.info("Global Search Response:\n%s", response)
+
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -220,7 +216,9 @@ def run_local_search(
                 verbose=verbose,
             )
         )
+        # log the full response at INFO level for user visibility but at DEBUG level in the API layer
         logger.info("Local Search Response:\n%s", response)
+
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data
@@ -283,7 +281,9 @@ def run_local_search(
             verbose=verbose,
         )
     )
+    # log the full response at INFO level for user visibility but at DEBUG level in the API layer
     logger.info("Local Search Response:\n%s", response)
+
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -350,7 +350,9 @@ def run_drift_search(
                 verbose=verbose,
             )
         )
+        # log the full response at INFO level for user visibility but at DEBUG level in the API layer
         logger.info("DRIFT Search Response:\n%s", response)
+
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data
@@ -411,7 +413,9 @@ def run_drift_search(
             verbose=verbose,
         )
     )
+    # log the full response at INFO level for user visibility but at DEBUG level in the API layer
     logger.info("DRIFT Search Response:\n%s", response)
+
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -462,7 +466,9 @@ def run_basic_search(
                 verbose=verbose,
             )
         )
+        # log the full response at INFO level for user visibility but at DEBUG level in the API layer
         logger.info("Basic Search Response:\n%s", response)
+
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data
@@ -506,7 +512,9 @@ def run_basic_search(
             verbose=verbose,
         )
     )
+    # log the full response at INFO level for user visibility but at DEBUG level in the API layer
     logger.info("Basic Search Response:\n%s", response)
+
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
