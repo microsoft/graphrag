@@ -70,8 +70,10 @@ def test_init_loggers_console_enabled():
 
     # should have both a console handler and a file handler (default config)
     console_handlers = [
-        h for h in logger.handlers 
-        if isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)
+        h
+        for h in logger.handlers
+        if isinstance(h, logging.StreamHandler)
+        and not isinstance(h, logging.FileHandler)
     ]
     file_handlers = [h for h in logger.handlers if isinstance(h, logging.FileHandler)]
     assert len(console_handlers) > 0
@@ -164,8 +166,10 @@ def test_init_loggers_console_config():
 
     # should have a console handler from the config
     console_handlers = [
-        h for h in logger.handlers 
-        if isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)
+        h
+        for h in logger.handlers
+        if isinstance(h, logging.StreamHandler)
+        and not isinstance(h, logging.FileHandler)
     ]
     assert len(console_handlers) > 0
 
@@ -184,8 +188,10 @@ def test_init_loggers_both_console():
 
     # should have only one console handler (no duplicates)
     console_handlers = [
-        h for h in logger.handlers 
-        if isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)
+        h
+        for h in logger.handlers
+        if isinstance(h, logging.StreamHandler)
+        and not isinstance(h, logging.FileHandler)
     ]
     assert len(console_handlers) == 1
 
