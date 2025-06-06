@@ -3,8 +3,6 @@
 
 """A no-op implementation of WorkflowCallbacks."""
 
-import logging
-
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.logger.progress import Progress
@@ -12,10 +10,6 @@ from graphrag.logger.progress import Progress
 
 class NoopWorkflowCallbacks(WorkflowCallbacks):
     """A no-op implementation of WorkflowCallbacks that logs all events to standard logging."""
-
-    def __init__(self, logger_name: str = "graphrag"):
-        """Initialize a logger."""
-        self.logger = logging.getLogger(logger_name)
 
     def pipeline_start(self, names: list[str]) -> None:
         """Execute this callback to signal when the entire pipeline starts."""
