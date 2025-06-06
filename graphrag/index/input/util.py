@@ -33,7 +33,7 @@ async def load_files(
     )
 
     if len(files) == 0:
-        msg = f"No {config.file_type} files found in {config.base_dir}"
+        msg = f"No {config.file_type} files found in {config.storage.base_dir}"
         raise ValueError(msg)
 
     files_loaded = []

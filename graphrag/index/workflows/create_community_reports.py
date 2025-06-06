@@ -38,14 +38,14 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
-    edges = await load_table_from_storage("relationships", context.storage)
-    entities = await load_table_from_storage("entities", context.storage)
-    communities = await load_table_from_storage("communities", context.storage)
+    edges = await load_table_from_storage("relationships", context.output_storage)
+    entities = await load_table_from_storage("entities", context.output_storage)
+    communities = await load_table_from_storage("communities", context.output_storage)
     claims = None
     if config.extract_claims.enabled and await storage_has_table(
-        "covariates", context.storage
+        "covariates", context.output_storage
     ):
-        claims = await load_table_from_storage("covariates", context.storage)
+        claims = await load_table_from_storage("covariates", context.output_storage)
 
     community_reports_llm_settings = config.get_language_model_config(
         config.community_reports.model_id
@@ -68,7 +68,7 @@ async def run_workflow(
         num_threads=num_threads,
     )
 
-    await write_table_to_storage(output, "community_reports", context.storage)
+    await write_table_to_storage(output, "community_reports", context.output_storage)
 
     return WorkflowFunctionOutput(result=output)
 

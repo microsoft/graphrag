@@ -25,7 +25,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform base text_units."""
-    documents = await load_table_from_storage("documents", context.storage)
+    documents = await load_table_from_storage("documents", context.output_storage)
 
     chunks = config.chunks
 
@@ -41,7 +41,7 @@ async def run_workflow(
         chunk_size_includes_metadata=chunks.chunk_size_includes_metadata,
     )
 
-    await write_table_to_storage(output, "text_units", context.storage)
+    await write_table_to_storage(output, "text_units", context.output_storage)
 
     return WorkflowFunctionOutput(result=output)
 

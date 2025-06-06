@@ -66,7 +66,7 @@ async def test_create_community_reports():
 
     await run_workflow(config, context)
 
-    actual = await load_table_from_storage("community_reports", context.storage)
+    actual = await load_table_from_storage("community_reports", context.output_storage)
 
     assert len(actual.columns) == len(expected.columns)
 

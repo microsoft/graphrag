@@ -23,7 +23,7 @@ async def test_create_base_text_units():
 
     await run_workflow(config, context)
 
-    actual = await load_table_from_storage("text_units", context.storage)
+    actual = await load_table_from_storage("text_units", context.output_storage)
 
     compare_outputs(actual, expected, columns=["text", "document_ids", "n_tokens"])
 
@@ -43,7 +43,7 @@ async def test_create_base_text_units_metadata():
 
     await run_workflow(config, context)
 
-    actual = await load_table_from_storage("text_units", context.storage)
+    actual = await load_table_from_storage("text_units", context.output_storage)
     compare_outputs(actual, expected)
 
 
@@ -63,6 +63,6 @@ async def test_create_base_text_units_metadata_included_in_chunk():
 
     await run_workflow(config, context)
 
-    actual = await load_table_from_storage("text_units", context.storage)
+    actual = await load_table_from_storage("text_units", context.output_storage)
     # only check the columns from the base workflow - our expected table is the final and will have more
     compare_outputs(actual, expected, columns=["text", "document_ids", "n_tokens"])

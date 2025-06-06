@@ -9,11 +9,13 @@ vector_store:
     container_name: "azure_ci"
 
 input:
-  type: blob
+  storage:
+    type: blob
+    connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
+    container_name: azurefixture
+    base_dir: input
   file_type: text
-  connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
-  container_name: azurefixture
-  base_dir: input
+  
 
 cache:
   type: blob
@@ -21,7 +23,7 @@ cache:
   container_name: cicache
   base_dir: cache_azure_ai
 
-storage:
+output:
   type: blob
   connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
   container_name: azurefixture

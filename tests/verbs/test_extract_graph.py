@@ -63,8 +63,10 @@ async def test_extract_graph():
 
     await run_workflow(config, context)
 
-    nodes_actual = await load_table_from_storage("entities", context.storage)
-    edges_actual = await load_table_from_storage("relationships", context.storage)
+    nodes_actual = await load_table_from_storage("entities", context.output_storage)
+    edges_actual = await load_table_from_storage(
+        "relationships", context.output_storage
+    )
 
     assert len(nodes_actual.columns) == 5
     assert len(edges_actual.columns) == 5

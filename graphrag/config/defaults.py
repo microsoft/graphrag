@@ -14,11 +14,10 @@ from graphrag.config.enums import (
     CacheType,
     ChunkStrategyType,
     InputFileType,
-    InputType,
     ModelType,
     NounPhraseExtractorType,
-    OutputType,
     ReportingType,
+    StorageType,
 )
 from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
     EN_STOP_WORDS,
@@ -235,15 +234,30 @@ class GlobalSearchDefaults:
 
 
 @dataclass
+class StorageDefaults:
+    """Default values for storage."""
+
+    type = StorageType.file
+    base_dir: str = DEFAULT_OUTPUT_BASE_DIR
+    connection_string: None = None
+    container_name: None = None
+    storage_account_blob_url: None = None
+    cosmosdb_account_url: None = None
+
+
+@dataclass
+class InputStorageDefaults(StorageDefaults):
+    """Default values for input storage."""
+
+    base_dir: str = "input"
+
+
+@dataclass
 class InputDefaults:
     """Default values for input."""
 
-    type = InputType.file
+    storage: InputStorageDefaults = field(default_factory=InputStorageDefaults)
     file_type = InputFileType.text
-    base_dir: str = "input"
-    connection_string: None = None
-    storage_account_blob_url: None = None
-    container_name: None = None
     encoding: str = "utf-8"
     file_pattern: str = ""
     file_filter: None = None
@@ -301,15 +315,10 @@ class LocalSearchDefaults:
 
 
 @dataclass
-class OutputDefaults:
+class OutputDefaults(StorageDefaults):
     """Default values for output."""
 
-    type = OutputType.file
     base_dir: str = DEFAULT_OUTPUT_BASE_DIR
-    connection_string: None = None
-    container_name: None = None
-    storage_account_blob_url: None = None
-    cosmosdb_account_url: None = None
 
 
 @dataclass
@@ -364,14 +373,10 @@ class UmapDefaults:
 
 
 @dataclass
-class UpdateIndexOutputDefaults:
+class UpdateIndexOutputDefaults(StorageDefaults):
     """Default values for update index output."""
 
-    type = OutputType.file
     base_dir: str = "update_output"
-    connection_string: None = None
-    container_name: None = None
-    storage_account_blob_url: None = None
 
 
 @dataclass
@@ -395,6 +400,7 @@ class GraphRagConfigDefaults:
     root_dir: str = ""
     models: dict = field(default_factory=dict)
     reporting: ReportingDefaults = field(default_factory=ReportingDefaults)
+    storage: StorageDefaults = field(default_factory=StorageDefaults)
     output: OutputDefaults = field(default_factory=OutputDefaults)
     outputs: None = None
     update_index_output: UpdateIndexOutputDefaults = field(

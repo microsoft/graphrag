@@ -33,7 +33,7 @@ async def test_create_communities():
         context,
     )
 
-    actual = await load_table_from_storage("communities", context.storage)
+    actual = await load_table_from_storage("communities", context.output_storage)
 
     columns = list(expected.columns.values)
     # don't compare period since it is created with the current date each time

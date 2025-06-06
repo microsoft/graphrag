@@ -44,14 +44,14 @@ async def test_generate_text_embeddings():
 
     await run_workflow(config, context)
 
-    parquet_files = context.storage.keys()
+    parquet_files = context.output_storage.keys()
 
     for field in all_embeddings:
         assert f"embeddings.{field}.parquet" in parquet_files
 
     # entity description should always be here, let's assert its format
     entity_description_embeddings = await load_table_from_storage(
-        "embeddings.entity.description", context.storage
+        "embeddings.entity.description", context.output_storage
     )
 
     assert len(entity_description_embeddings.columns) == 2
@@ -60,7 +60,7 @@ async def test_generate_text_embeddings():
 
     # every other embedding is optional but we've turned them all on, so check a random one
     document_text_embeddings = await load_table_from_storage(
-        "embeddings.document.text", context.storage
+        "embeddings.document.text", context.output_storage
     )
 
     assert len(document_text_embeddings.columns) == 2

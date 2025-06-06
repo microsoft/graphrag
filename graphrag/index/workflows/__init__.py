@@ -39,6 +39,12 @@ from .finalize_graph import (
 from .generate_text_embeddings import (
     run_workflow as run_generate_text_embeddings,
 )
+from .load_input_documents import (
+    run_workflow as run_load_input_documents,
+)
+from .load_update_documents import (
+    run_workflow as run_load_update_documents,
+)
 from .prune_graph import (
     run_workflow as run_prune_graph,
 )
@@ -69,6 +75,8 @@ from .update_text_units import (
 
 # register all of our built-in workflows at once
 PipelineFactory.register_all({
+    "load_input_documents": run_load_input_documents,
+    "load_update_documents": run_load_update_documents,
     "create_base_text_units": run_create_base_text_units,
     "create_communities": run_create_communities,
     "create_community_reports_text": run_create_community_reports_text,

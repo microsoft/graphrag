@@ -33,7 +33,7 @@ async def test_create_final_text_units():
 
     await run_workflow(config, context)
 
-    actual = await load_table_from_storage("text_units", context.storage)
+    actual = await load_table_from_storage("text_units", context.output_storage)
 
     for column in TEXT_UNITS_FINAL_COLUMNS:
         assert column in actual.columns
