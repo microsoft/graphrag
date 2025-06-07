@@ -1,0 +1,38 @@
+name: Claude Assistant
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+
+jobs:
+  claude-code-action:
+    if: >
+      github.event.issue.user.login == 'asopitech' &&
+      contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    environment: CLAUDE_CODE_ACTION
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+
+      # For AWS Bedrock with OIDC
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: us-west-2
+          role-duration-seconds: 7200
+          role-session-name: GitHubActions${{ github.run_id }}
+          mask-aws-account-id: true
+
+      - name: Claude Code Review
+        uses: anthropic/claude-code-base-action@beta
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          model: ${{ env.ANTHROPIC_MODEL }}
+          small-fast-model: ${{ env.ANTHROPIC_SMALL_FAST_MODEL }}
+          disable-prompt-caching: ${{ env.DISABLE_PROMPT_CACHING }}
