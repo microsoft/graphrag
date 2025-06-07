@@ -93,10 +93,14 @@ class ModelType(str, Enum):
     # Embeddings
     OpenAIEmbedding = "openai_embedding"
     AzureOpenAIEmbedding = "azure_openai_embedding"
+    BedrockTextEmbeddingV2 = "bedrock_text_embedding_v2"
 
     # Chat Completion
     OpenAIChat = "openai_chat"
     AzureOpenAIChat = "azure_openai_chat"
+    BedrockChat = "bedrock_chat"
+    BedrockAnthropicChat = "bedrock_anthropic_chat"
+    BedrockNovaChat = "bedrock_nova_chat"
 
     # Debug
     MockChat = "mock_chat"
