@@ -134,9 +134,6 @@ def init_loggers(
         case _:
             logger.error("Unknown reporting type '%s'.", reporting_config.type)
 
-    # prevent propagation to root logger to avoid duplicate logging
-    logger.propagate = False
-
 
 def init_console_logger(verbose: bool = False) -> None:
     """Initialize a console logger if not already present.
