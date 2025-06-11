@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Improve internal logging functionality by using Python's standard logging module"
-}
