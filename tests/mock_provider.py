@@ -53,10 +53,13 @@ class MockChatLLM:
             return
 
         for response in self.responses:
-            if isinstance(response, BaseModel):
-                yield response.model_dump_json()  # type: ignore[attr-defined]
-            else:
-                yield response
+            response = (
+                response.model_dump_json()
+                if isinstance(response, BaseModel)
+                else response
+            )
+
+            yield response
 
     def chat(
         self,
@@ -72,9 +75,9 @@ class MockChatLLM:
         self.response_index += 1
 
         parsed_json = response if isinstance(response, BaseModel) else None
-        if isinstance(response, BaseModel):
-            response = response.model_dump_json()  # type: ignore[attr-defined]
-        # else response stays as string
+        response = (
+            response.model_dump_json() if isinstance(response, BaseModel) else response
+        )
 
         return BaseModelResponse(
             output=BaseModelOutput(content=response),
