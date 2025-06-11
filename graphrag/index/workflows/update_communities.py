@@ -21,7 +21,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """Update the communities from a incremental index run."""
-    logger.info("Updating Communities")
+    logger.info("Workflow started: update_communities")
     output_storage, previous_storage, delta_storage = get_update_storages(
         config, context.state["update_timestamp"]
     )
@@ -32,6 +32,7 @@ async def run_workflow(
 
     context.state["incremental_update_community_id_mapping"] = community_id_mapping
 
+    logger.info("Workflow completed: update_communities")
     return WorkflowFunctionOutput(result=None)
 
 

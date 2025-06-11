@@ -4,6 +4,7 @@
 """A logger that emits updates from the indexing engine to a blob in Azure Storage."""
 
 import json
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -11,11 +12,9 @@ from typing import Any
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 
-
-class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
-    """A logger that writes to a blob storage account."""
+class BlobWorkflowLogger(logging.Handler):
+    """A logging handler that writes to a blob storage account."""
 
     _blob_service_client: BlobServiceClient
     _container_name: str
@@ -28,16 +27,21 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         blob_name: str = "",
         base_dir: str | None = None,
         storage_account_blob_url: str | None = None,
+        level: int = logging.NOTSET,
     ):
-        """Create a new instance of the BlobStorageReporter class."""
+        """Create a new instance of the BlobWorkflowLogger class."""
+        super().__init__(level)
+
         if container_name is None:
             msg = "No container name provided for blob storage."
             raise ValueError(msg)
         if connection_string is None and storage_account_blob_url is None:
             msg = "No storage account blob url provided for blob storage."
             raise ValueError(msg)
+
         self._connection_string = connection_string
         self._storage_account_blob_url = storage_account_blob_url
+
         if self._connection_string:
             self._blob_service_client = BlobServiceClient.from_connection_string(
                 self._connection_string
@@ -65,7 +69,37 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
 
         self._num_blocks = 0  # refresh block counter
 
+    def emit(self, record) -> None:
+        """Emit a log record to blob storage."""
+        try:
+            # Create JSON structure based on record
+            log_data = {
+                "type": self._get_log_type(record.levelno),
+                "data": record.getMessage(),
+            }
+
+            # Add additional fields if they exist
+            if hasattr(record, "details") and record.details:  # type: ignore[reportAttributeAccessIssue]
+                log_data["details"] = record.details  # type: ignore[reportAttributeAccessIssue]
+            if record.exc_info and record.exc_info[1]:
+                log_data["cause"] = str(record.exc_info[1])
+            if hasattr(record, "stack") and record.stack:  # type: ignore[reportAttributeAccessIssue]
+                log_data["stack"] = record.stack  # type: ignore[reportAttributeAccessIssue]
+
+            self._write_log(log_data)
+        except (OSError, ValueError):
+            self.handleError(record)
+
+    def _get_log_type(self, level: int) -> str:
+        """Get log type string based on log level."""
+        if level >= logging.ERROR:
+            return "error"
+        if level >= logging.WARNING:
+            return "warning"
+        return "log"
+
     def _write_log(self, log: dict[str, Any]):
+        """Write log data to blob storage."""
         # create a new file when block count hits close 25k
         if (
             self._num_blocks >= self._max_block_count
@@ -83,27 +117,3 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
 
         # update the blob's block count
         self._num_blocks += 1
-
-    def error(
-        self,
-        message: str,
-        cause: BaseException | None = None,
-        stack: str | None = None,
-        details: dict | None = None,
-    ):
-        """Report an error."""
-        self._write_log({
-            "type": "error",
-            "data": message,
-            "cause": str(cause),
-            "stack": stack,
-            "details": details,
-        })
-
-    def warning(self, message: str, details: dict | None = None):
-        """Report a warning."""
-        self._write_log({"type": "warning", "data": message, "details": details})
-
-    def log(self, message: str, details: dict | None = None):
-        """Report a generic log message."""
-        self._write_log({"type": "log", "data": message, "details": details})

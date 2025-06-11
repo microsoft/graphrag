@@ -30,7 +30,7 @@ from graphrag.query.input.loaders.dfs import (
 )
 from graphrag.vector_stores.base import BaseVectorStore
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def read_indexer_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
@@ -195,7 +195,7 @@ def read_indexer_communities(
         ~communities_df.community.isin(reports_df.community.unique())
     ].community.to_list()
     if len(missing_reports):
-        log.warning("Missing reports for communities: %s", missing_reports)
+        logger.warning("Missing reports for communities: %s", missing_reports)
         communities_df = communities_df.loc[
             communities_df.community.isin(reports_df.community.unique())
         ]

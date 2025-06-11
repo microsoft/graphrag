@@ -44,7 +44,7 @@ from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import LocalContextBuilder
 from graphrag.vector_stores.base import BaseVectorStore
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class LocalSearchMixedContext(LocalContextBuilder):
@@ -446,7 +446,9 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 current_context_data[covariate.lower()] = covariate_context_data
 
             if total_tokens > max_context_tokens:
-                log.info("Reached token limit - reverting to previous context state")
+                logger.warning(
+                    "Reached token limit - reverting to previous context state"
+                )
                 break
 
             final_context = current_context

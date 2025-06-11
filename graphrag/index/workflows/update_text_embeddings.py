@@ -21,7 +21,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """Update the text embeddings from a incremental index run."""
-    logger.info("Updating Text Embeddings")
+    logger.info("Workflow started: update_text_embeddings")
     output_storage, _, _ = get_update_storages(
         config, context.state["update_timestamp"]
     )
@@ -55,4 +55,5 @@ async def run_workflow(
                 output_storage,
             )
 
+    logger.info("Workflow completed: update_text_embeddings")
     return WorkflowFunctionOutput(result=None)

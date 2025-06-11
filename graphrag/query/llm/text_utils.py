@@ -14,7 +14,7 @@ from json_repair import repair_json
 
 import graphrag.config.defaults as defs
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def num_tokens(text: str, token_encoder: tiktoken.Encoding | None = None) -> int:
@@ -60,7 +60,7 @@ def try_parse_json_object(input: str, verbose: bool = True) -> tuple[str, dict]:
         result = json.loads(input)
     except json.JSONDecodeError:
         if verbose:
-            log.info("Warning: Error decoding faulty json, attempting repair")
+            logger.warning("Error decoding faulty json, attempting repair")
 
     if result:
         return input, result
@@ -99,12 +99,12 @@ def try_parse_json_object(input: str, verbose: bool = True) -> tuple[str, dict]:
             result = json.loads(input)
         except json.JSONDecodeError:
             if verbose:
-                log.exception("error loading json, json=%s", input)
+                logger.exception("error loading json, json=%s", input)
             return input, {}
         else:
             if not isinstance(result, dict):
                 if verbose:
-                    log.exception("not expected dict type. type=%s:", type(result))
+                    logger.exception("not expected dict type. type=%s:", type(result))
                 return input, {}
             return input, result
     else:
