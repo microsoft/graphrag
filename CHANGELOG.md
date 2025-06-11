@@ -3,7 +3,6 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 
 ## 2.3.0
 
-- minor: Improve internal logging functionality by standardizing on Python's built-in logging module
 - minor: Remove Dynamic Max Retries support. Refactor typer typing in cli interface
 - minor: Update fnllm to latest. Update default graphrag configuration
 - patch: A few fixes and enhancements for better reuse and flow.
