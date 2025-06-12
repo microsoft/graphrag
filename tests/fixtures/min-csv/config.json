@@ -2,8 +2,14 @@
     "input_path": "./tests/fixtures/min-csv",
     "input_file_type": "text",
     "workflow_config": {
+        "load_input_documents": {
+            "max_runtime": 30
+        },
         "create_base_text_units": {
             "max_runtime": 30
+        },
+        "extract_covariates": {
+            "max_runtime": 10
         },
         "extract_graph": {
             "max_runtime": 500
