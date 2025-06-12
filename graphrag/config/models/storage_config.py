@@ -3,7 +3,9 @@
 
 """Parameterization settings for the default configuration."""
 
-from pydantic import BaseModel, Field
+from pathlib import Path
+
+from pydantic import BaseModel, Field, field_validator
 
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import StorageType
@@ -20,6 +22,18 @@ class StorageConfig(BaseModel):
         description="The base directory for the output.",
         default=graphrag_config_defaults.storage.base_dir,
     )
+
+    # Validate the base dir for multiple OS (use Path)
+    # if not using a cloud storage type.
+    @field_validator("base_dir", mode="before")
+    @classmethod
+    def validate_base_dir(cls, value, info):
+        """Ensure that base_dir is a valid filesystem path when using local storage."""
+        # info.data contains other field values, including 'type'
+        if info.data.get("type") != StorageType.file:
+            return value
+        return str(Path(value))
+
     connection_string: str | None = Field(
         description="The storage connection string to use.",
         default=graphrag_config_defaults.storage.connection_string,
