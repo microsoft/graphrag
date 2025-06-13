@@ -1,0 +1,145 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+GraphRAG is a graph-based retrieval-augmented generation (RAG) system that extracts meaningful, structured data from unstructured text using LLMs. This fork includes AWS Bedrock support with specialized model classes for Anthropic Claude and Amazon Nova models.
+
+## Development Commands
+
+### Setup and Dependencies
+```bash
+# Install dependencies
+poetry install
+
+# Start Azurite (for Azure storage emulation in tests)
+./scripts/start-azurite.sh
+```
+
+### Core CLI Operations
+```bash
+# Initialize new GraphRAG project
+poetry run poe init --root /path/to/project
+
+# Build knowledge graph index from source documents
+poetry run poe index --root /path/to/project --config settings.yaml
+
+# Update existing index incrementally
+poetry run poe update --root /path/to/project
+
+# Query the knowledge graph
+poetry run poe query --method global --query "Your question here"
+poetry run poe query --method local --query "Your question here"
+poetry run poe query --method drift --query "Your question here"
+
+# Tune prompts for your domain
+poetry run poe prompt_tune --root /path/to/project --domain "your domain"
+```
+
+### Testing and Quality
+```bash
+# Run all tests with coverage
+poetry run poe test
+
+# Run specific test suites
+poetry run poe test_unit          # Unit tests
+poetry run poe test_integration   # Integration tests  
+poetry run poe test_smoke        # End-to-end pipeline tests
+poetry run poe test_verbs        # Workflow operation tests
+poetry run poe test_notebook     # Example notebook validation
+
+# Run single test by pattern
+poetry run poe test_only "test_pattern_here"
+
+# Code quality checks and fixes
+poetry run poe check             # Format, lint, type-check
+poetry run poe format            # Format code
+poetry run poe fix               # Auto-fix issues
+poetry run poe fix_unsafe        # Include potentially unsafe fixes
+
+# Coverage reporting
+poetry run poe coverage_report
+```
+
+### Documentation
+```bash
+# Serve docs locally
+poetry run poe serve_docs
+
+# Build documentation
+poetry run poe build_docs
+```
+
+## Architecture Overview
+
+### Core Pipeline Flow
+1. **Input Processing** → **Entity Extraction** → **Graph Construction** → **Community Detection** → **Summarization** → **Embedding Generation** → **Output Storage**
+
+### Key Modules
+- **`graphrag/api/`** - High-level API interfaces for indexing and querying
+- **`graphrag/cli/`** - Command-line interface built with Typer
+- **`graphrag/config/`** - Pydantic-based configuration system with YAML support
+- **`graphrag/data_model/`** - Core entities: Entity, Relationship, Community, TextUnit, Covariate
+- **`graphrag/index/`** - Indexing pipeline with workflow-based operations
+- **`graphrag/query/`** - Query engine supporting Local, Global, Drift, and Basic search
+- **`graphrag/language_model/`** - LLM provider abstractions with factory pattern
+- **`graphrag/vector_stores/`** - Vector store implementations (LanceDB, Azure AI Search, CosmosDB)
+- **`graphrag/storage/`** - Storage backends (file, blob, memory, CosmosDB)
+
+### AWS Bedrock Integration
+This fork includes specialized Bedrock model classes in `graphrag/language_model/providers/bedrock_models.py`:
+- **`BedrockAnthropicChatLLM`** - For Anthropic Claude models
+- **`BedrockNovaChatLLM`** - For Amazon Nova models  
+- **`BedrockEmbeddingLLM`** - For embedding models
+- **`BedrockChatLLM`** - Generic fallback (throws exceptions for unsupported models)
+
+### Search Methods
+- **Local Search** - Entity-focused queries using local graph context
+- **Global Search** - Community-focused queries using community reports  
+- **Drift Search** - Advanced iterative search with dynamic context
+- **Basic Search** - Simple text-based search
+
+### Configuration System
+- YAML-based configuration with environment variable support
+- Pydantic models for type-safe configuration validation
+- Factory pattern for pluggable components (LLMs, storage, vector stores)
+- Supports multiple LLM providers: OpenAI, Azure OpenAI, AWS Bedrock
+
+### Data Flow Architecture
+The system uses a workflow-based pipeline where each operation transforms data through standardized interfaces. Key data structures flow through the pipeline:
+- **Documents** → **TextUnits** (chunks) → **Entities/Relationships** → **Communities** → **Reports**
+- Vector embeddings are generated for entities, text units, and community reports
+- Final outputs include Parquet files, GraphML, and vector store indices
+
+## Working with This Codebase
+
+### Common Development Patterns
+- Use the factory pattern for component registration (`factory.py` files)
+- Follow Pydantic models for configuration (`graphrag/config/models/`)
+- Leverage async/await patterns throughout LLM operations
+- Use workflow callbacks for progress reporting and error handling
+
+### Key Configuration Files
+- **`settings.yaml`** - Main configuration file (generated by `init` command)
+- **`pyproject.toml`** - Poetry dependencies and poe task definitions
+- **`.env`** - Environment variables for API keys and settings
+
+### Testing Strategy
+- Unit tests focus on individual components and utilities
+- Integration tests verify cross-component functionality  
+- Smoke tests validate end-to-end pipeline execution
+- Verb tests ensure workflow operations work correctly
+- Notebook tests validate example usage patterns
+
+### Version Management
+Uses semversioner for semantic versioning. When making changes:
+```bash
+poetry run semversioner add-change -t patch -d "Description of changes"
+```
+
+### Important Notes
+- Always run `poetry run poe check` before committing
+- The indexing process can be expensive - start with small datasets
+- Configuration format may change between versions - use `init --force` after updates
+- Prompt tuning is recommended for optimal results with your specific domain
