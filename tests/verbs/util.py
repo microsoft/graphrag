@@ -38,12 +38,12 @@ async def create_test_context(storage: list[str] | None = None) -> PipelineRunCo
     # always set the input docs, but since our stored table is final, drop what wouldn't be in the original source input
     input = load_test_table("documents")
     input.drop(columns=["text_unit_ids"], inplace=True)
-    await write_table_to_storage(input, "documents", context.storage)
+    await write_table_to_storage(input, "documents", context.output_storage)
 
     if storage:
         for name in storage:
             table = load_test_table(name)
-            await write_table_to_storage(table, name, context.storage)
+            await write_table_to_storage(table, name, context.output_storage)
 
     return context
 
@@ -86,8 +86,8 @@ def compare_outputs(
 
 async def update_document_metadata(metadata: list[str], context: PipelineRunContext):
     """Takes the default documents and adds the configured metadata columns for later parsing by the text units and final documents workflows."""
-    documents = await load_table_from_storage("documents", context.storage)
+    documents = await load_table_from_storage("documents", context.output_storage)
     documents["metadata"] = documents[metadata].apply(lambda row: row.to_dict(), axis=1)
     await write_table_to_storage(
-        documents, "documents", context.storage
+        documents, "documents", context.output_storage
     )  # write to the runtime context storage only

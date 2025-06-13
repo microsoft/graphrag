@@ -27,7 +27,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
-    text_units = await load_table_from_storage("text_units", context.storage)
+    text_units = await load_table_from_storage("text_units", context.output_storage)
 
     extract_graph_llm_settings = config.get_language_model_config(
         config.extract_graph.model_id
@@ -55,13 +55,15 @@ async def run_workflow(
         summarization_num_threads=summarization_llm_settings.concurrent_requests,
     )
 
-    await write_table_to_storage(entities, "entities", context.storage)
-    await write_table_to_storage(relationships, "relationships", context.storage)
+    await write_table_to_storage(entities, "entities", context.output_storage)
+    await write_table_to_storage(relationships, "relationships", context.output_storage)
 
     if config.snapshots.raw_graph:
-        await write_table_to_storage(raw_entities, "raw_entities", context.storage)
         await write_table_to_storage(
-            raw_relationships, "raw_relationships", context.storage
+            raw_entities, "raw_entities", context.output_storage
+        )
+        await write_table_to_storage(
+            raw_relationships, "raw_relationships", context.output_storage
         )
 
     return WorkflowFunctionOutput(

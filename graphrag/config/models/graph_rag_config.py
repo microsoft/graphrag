@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import CacheType, InputType, OutputType, ReportingType
+from graphrag.config.enums import CacheType, ReportingType, StorageType
 from graphrag.config.errors import LanguageModelConfigMissingError
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
@@ -27,10 +27,10 @@ from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
-from graphrag.config.models.output_config import OutputConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
+from graphrag.config.models.storage_config import StorageConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
@@ -103,21 +103,31 @@ class GraphRagConfig(BaseModel):
             else:
                 self.input.file_pattern = f".*\\.{self.input.file_type.value}$"
 
+    def _validate_input_base_dir(self) -> None:
+        """Validate the input base directory."""
+        if self.input.storage.type == defs.StorageType.file:
+            if self.input.storage.base_dir.strip() == "":
+                msg = "input storage base directory is required for file input storage. Please rerun `graphrag init` and set the input storage configuration."
+                raise ValueError(msg)
+            self.input.storage.base_dir = str(
+                (Path(self.root_dir) / self.input.storage.base_dir).resolve()
+            )
+
     chunks: ChunkingConfig = Field(
         description="The chunking configuration to use.",
         default=ChunkingConfig(),
     )
     """The chunking configuration to use."""
 
-    output: OutputConfig = Field(
+    output: StorageConfig = Field(
         description="The output configuration.",
-        default=OutputConfig(),
+        default=StorageConfig(),
     )
     """The output configuration."""
 
     def _validate_output_base_dir(self) -> None:
         """Validate the output base directory."""
-        if self.output.type == defs.OutputType.file:
+        if self.output.type == defs.StorageType.file:
             if self.output.base_dir.strip() == "":
                 msg = "output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
                 raise ValueError(msg)
@@ -125,7 +135,7 @@ class GraphRagConfig(BaseModel):
                 (Path(self.root_dir) / self.output.base_dir).resolve()
             )
 
-    outputs: dict[str, OutputConfig] | None = Field(
+    outputs: dict[str, StorageConfig] | None = Field(
         description="A list of output configurations used for multi-index query.",
         default=graphrag_config_defaults.outputs,
     )
@@ -134,7 +144,7 @@ class GraphRagConfig(BaseModel):
         """Validate the outputs dict base directories."""
         if self.outputs:
             for output in self.outputs.values():
-                if output.type == defs.OutputType.file:
+                if output.type == defs.StorageType.file:
                     if output.base_dir.strip() == "":
                         msg = "Output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
                         raise ValueError(msg)
@@ -142,10 +152,9 @@ class GraphRagConfig(BaseModel):
                         (Path(self.root_dir) / output.base_dir).resolve()
                     )
 
-    update_index_output: OutputConfig = Field(
+    update_index_output: StorageConfig = Field(
         description="The output configuration for the updated index.",
-        default=OutputConfig(
-            type=graphrag_config_defaults.update_index_output.type,
+        default=StorageConfig(
             base_dir=graphrag_config_defaults.update_index_output.base_dir,
         ),
     )
@@ -153,7 +162,7 @@ class GraphRagConfig(BaseModel):
 
     def _validate_update_index_output_base_dir(self) -> None:
         """Validate the update index output base directory."""
-        if self.update_index_output.type == defs.OutputType.file:
+        if self.update_index_output.type == defs.StorageType.file:
             if self.update_index_output.base_dir.strip() == "":
                 msg = "update_index_output base directory is required for file output. Please rerun `graphrag init` and set the update_index_output configuration."
                 raise ValueError(msg)
@@ -290,7 +299,7 @@ class GraphRagConfig(BaseModel):
                 if not store.db_uri or store.db_uri.strip == "":
                     msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
                     raise ValueError(msg)
-                
+
                 # Check if the URI is a remote URI (starts with schemes like 's3://', 'hdfs://', etc.)
                 # Common URI schemes that LanceDB supports
                 remote_uri_prefixes = [
@@ -299,45 +308,34 @@ class GraphRagConfig(BaseModel):
                     "az://",
                     "gs://",
                     "http://",
-                    "https://"
+                    "https://",
                 ]
 
                 # Only prepend the root path if it's a local path
-                if not any(store.db_uri.startswith(prefix) for prefix in remote_uri_prefixes):
+                if not any(
+                    store.db_uri.startswith(prefix) for prefix in remote_uri_prefixes
+                ):
                     store.db_uri = str((Path(self.root_dir) / store.db_uri).resolve())
-    
+
     def _validate_s3_configurations(self) -> None:
-        """Validate S3 storage configurations for input, output, and reporting.
-        
+        """Validate S3 storage configurations for input, cache, and reporting.
+
         Ensures that when S3 is selected as a storage type, the required bucket_name is provided.
         """
-        # Check each configuration with its appropriate enum type
-        if self.input.type == InputType.s3 and not self.input.bucket_name:
+        # Check input configuration - InputConfig has S3-specific fields
+        if self.input.storage.type == StorageType.s3 and not self.input.bucket_name:
             msg = "S3 bucket name is required for S3 input. Please rerun `graphrag init` and set the input configuration."
             raise ValueError(msg)
-            
-        if self.output.type == OutputType.s3 and not self.output.bucket_name:
-            msg = "S3 bucket name is required for S3 output. Please rerun `graphrag init` and set the output configuration."
-            raise ValueError(msg)
-            
-        if self.update_index_output.type == OutputType.s3 and not self.update_index_output.bucket_name:
-            msg = "S3 bucket name is required for S3 update index output. Please rerun `graphrag init` and set the update_index_output configuration."
-            raise ValueError(msg)
-            
+
+        # Check reporting configuration - ReportingConfig has S3-specific fields
         if self.reporting.type == ReportingType.s3 and not self.reporting.bucket_name:
             msg = "S3 bucket name is required for S3 reporting. Please rerun `graphrag init` and set the reporting configuration."
             raise ValueError(msg)
-            
+
+        # Check cache configuration - CacheConfig has S3-specific fields
         if self.cache.type == CacheType.s3 and not self.cache.bucket_name:
             msg = "S3 bucket name is required for S3 cache. Please rerun `graphrag init` and set the cache configuration."
             raise ValueError(msg)
-        
-        # Check outputs dictionary if it exists
-        if self.outputs:
-            for output_id, output in self.outputs.items():
-                if output.type == OutputType.s3 and not output.bucket_name:
-                    msg = f"S3 bucket name is required for S3 output '{output_id}'. Please rerun `graphrag init` and set the output configuration."
-                    raise ValueError(msg)
 
     def get_language_model_config(self, model_id: str) -> LanguageModelConfig:
         """Get a model configuration by ID.
@@ -393,6 +391,7 @@ class GraphRagConfig(BaseModel):
         self._validate_root_dir()
         self._validate_models()
         self._validate_input_pattern()
+        self._validate_input_base_dir()
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
         self._validate_multi_output_base_dirs()

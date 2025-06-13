@@ -7,35 +7,22 @@ from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import InputFileType, InputType
+from graphrag.config.enums import InputFileType
+from graphrag.config.models.storage_config import StorageConfig
 
 
 class InputConfig(BaseModel):
     """The default configuration section for Input."""
 
-    type: InputType = Field(
-        description="The input type to use.",
-        default=graphrag_config_defaults.input.type,
+    storage: StorageConfig = Field(
+        description="The storage configuration to use for reading input documents.",
+        default=StorageConfig(
+            base_dir=graphrag_config_defaults.input.storage.base_dir,
+        ),
     )
     file_type: InputFileType = Field(
         description="The input file type to use.",
         default=graphrag_config_defaults.input.file_type,
-    )
-    base_dir: str = Field(
-        description="The input base directory to use.",
-        default=graphrag_config_defaults.input.base_dir,
-    )
-    connection_string: str | None = Field(
-        description="The azure blob storage connection string to use.",
-        default=graphrag_config_defaults.input.connection_string,
-    )
-    storage_account_blob_url: str | None = Field(
-        description="The storage account blob url to use.",
-        default=graphrag_config_defaults.input.storage_account_blob_url,
-    )
-    container_name: str | None = Field(
-        description="The azure blob storage container name to use.",
-        default=graphrag_config_defaults.input.container_name,
     )
     encoding: str = Field(
         description="The input file encoding to use.",

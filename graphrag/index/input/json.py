@@ -22,7 +22,7 @@ async def load_json(
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load json inputs from a directory."""
-    log.info("Loading json files from %s", config.base_dir)
+    log.info("Loading json files from %s", config.storage.base_dir)
 
     async def load_file(path: str, group: dict | None) -> pd.DataFrame:
         if group is None:

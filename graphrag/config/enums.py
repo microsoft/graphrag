@@ -44,34 +44,19 @@ class InputFileType(str, Enum):
         return f'"{self.value}"'
 
 
-class InputType(str, Enum):
-    """The input type for the pipeline."""
+class StorageType(str, Enum):
+    """The storage type for the pipeline."""
 
     file = "file"
     """The file storage type."""
+    memory = "memory"
+    """The memory storage type."""
     blob = "blob"
     """The blob storage type."""
+    cosmosdb = "cosmosdb"
+    """The cosmosdb storage type"""
     s3 = "s3"
     """The S3 storage type."""
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
-class OutputType(str, Enum):
-    """The output type for the pipeline."""
-
-    file = "file"
-    """The file output type."""
-    memory = "memory"
-    """The memory output type."""
-    blob = "blob"
-    """The blob output type."""
-    cosmosdb = "cosmosdb"
-    """The cosmosdb output type"""
-    s3 = "s3"
-    """The S3 output type."""
 
     def __repr__(self):
         """Get a string representation."""
@@ -160,6 +145,10 @@ class IndexingMethod(str, Enum):
     """Traditional GraphRAG indexing, with all graph construction and summarization performed by a language model."""
     Fast = "fast"
     """Fast indexing, using NLP for graph construction and language model for summarization."""
+    StandardUpdate = "standard-update"
+    """Incremental update with standard indexing."""
+    FastUpdate = "fast-update"
+    """Incremental update with fast indexing."""
 
 
 class NounPhraseExtractorType(str, Enum):
