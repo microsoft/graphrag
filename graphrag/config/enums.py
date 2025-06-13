@@ -21,6 +21,8 @@ class CacheType(str, Enum):
     """The blob cache configuration type."""
     cosmosdb = "cosmosdb"
     """The cosmosdb cache configuration type"""
+    s3 = "s3"
+    """The S3 cache configuration type."""
 
     def __repr__(self):
         """Get a string representation."""
@@ -43,16 +45,18 @@ class InputFileType(str, Enum):
 
 
 class StorageType(str, Enum):
-    """The output type for the pipeline."""
+    """The storage type for the pipeline."""
 
     file = "file"
-    """The file output type."""
+    """The file storage type."""
     memory = "memory"
-    """The memory output type."""
+    """The memory storage type."""
     blob = "blob"
-    """The blob output type."""
+    """The blob storage type."""
     cosmosdb = "cosmosdb"
-    """The cosmosdb output type"""
+    """The cosmosdb storage type"""
+    s3 = "s3"
+    """The S3 storage type."""
 
     def __repr__(self):
         """Get a string representation."""
@@ -68,6 +72,8 @@ class ReportingType(str, Enum):
     """The console reporting configuration type."""
     blob = "blob"
     """The blob reporting configuration type."""
+    s3 = "s3"
+    """The S3 reporting configuration type."""
 
     def __repr__(self):
         """Get a string representation."""

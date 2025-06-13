@@ -77,7 +77,7 @@ Our pipeline can ingest .csv, .txt, or .json data from an input folder. See the 
 
 #### Fields
 
-- `type` **file|blob** - The input type to use. Default=`file`
+- `type` **file|blob|s3** - The input type to use. Default=`file`
 - `file_type` **text|csv|json** - The type of input data to load. Default is `text`
 - `base_dir` **str** - The base directory to read input from, relative to the root.
 - `connection_string` **str** - (blob only) The Azure Storage connection string.
@@ -112,7 +112,7 @@ This section controls the storage mechanism used by the pipeline used for export
 
 #### Fields
 
-- `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+- `type` **file|memory|blob|cosmosdb|s3** - The storage type to use. Default=`file`
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
@@ -125,7 +125,7 @@ The section defines a secondary storage location for running incremental indexin
 
 #### Fields
 
-- `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+- `type` **file|memory|blob|cosmosdb|s3** - The storage type to use. Default=`file`
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
@@ -138,7 +138,7 @@ This section controls the cache mechanism used by the pipeline. This is used to 
 
 #### Fields
 
-- `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+- `type` **file|memory|blob|cosmosdb|s3** - The storage type to use. Default=`file`
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
@@ -151,7 +151,7 @@ This section controls the reporting mechanism used by the pipeline, for common e
 
 #### Fields
 
-- `type` **file|console|blob** - The reporting type to use. Default=`file`
+- `type` **file|console|blob|s3** - The reporting type to use. Default=`file`
 - `base_dir` **str** - The base directory to write reports to, relative to the root.
 - `connection_string` **str** - (blob only) The Azure Storage connection string.
 - `container_name` **str** - (blob only) The Azure Storage container name.

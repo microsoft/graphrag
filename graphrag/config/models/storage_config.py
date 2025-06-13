@@ -50,3 +50,27 @@ class StorageConfig(BaseModel):
         description="The cosmosdb account url to use.",
         default=graphrag_config_defaults.storage.cosmosdb_account_url,
     )
+    bucket_name: str | None = Field(
+        description="The S3 bucket name to use.",
+        default=graphrag_config_defaults.storage.bucket_name,
+    )
+    prefix: str = Field(
+        description="The S3 prefix to use.",
+        default=graphrag_config_defaults.storage.prefix,
+    )
+    aws_access_key_id: str | None = Field(
+        description="The AWS access key ID to use.",
+        default=graphrag_config_defaults.storage.aws_access_key_id,
+    )
+    aws_secret_access_key: str | None = Field(
+        description="The AWS secret access key to use.",
+        default=graphrag_config_defaults.storage.aws_secret_access_key,
+    )
+    region_name: str | None = Field(
+        description="The AWS region name to use.",
+        default=graphrag_config_defaults.storage.region_name,
+    )
+    endpoint_url: str | None = Field(
+        description="The endpoint URL for the S3 API. Useful for S3-compatible storage like MinIO.",
+        default=graphrag_config_defaults.storage.endpoint_url,
+    )
