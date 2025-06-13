@@ -322,8 +322,11 @@ class GraphRagConfig(BaseModel):
 
         Ensures that when S3 is selected as a storage type, the required bucket_name is provided.
         """
-        # Check input configuration - InputConfig has S3-specific fields
-        if self.input.storage.type == StorageType.s3 and not self.input.bucket_name:
+        # Check input configuration - S3-specific fields are now in storage config
+        if (
+            self.input.storage.type == StorageType.s3
+            and not self.input.storage.bucket_name
+        ):
             msg = "S3 bucket name is required for S3 input. Please rerun `graphrag init` and set the input configuration."
             raise ValueError(msg)
 

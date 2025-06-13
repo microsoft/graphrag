@@ -252,6 +252,12 @@ class StorageDefaults:
     container_name: None = None
     storage_account_blob_url: None = None
     cosmosdb_account_url: None = None
+    bucket_name: None = None
+    prefix: str = ""
+    aws_access_key_id: None = None
+    aws_secret_access_key: None = None
+    region_name: None = None
+    endpoint_url: None = None
 
 
 @dataclass
@@ -273,12 +279,6 @@ class InputDefaults:
     text_column: str = "text"
     title_column: None = None
     metadata: None = None
-    bucket_name: None = None
-    prefix: str = ""
-    aws_access_key_id: None = None
-    aws_secret_access_key: None = None
-    region_name: None = None
-    endpoint_url: None = None
 
 
 @dataclass
