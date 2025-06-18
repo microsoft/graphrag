@@ -28,8 +28,10 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final communities."""
     logger.info("Workflow started: create_communities")
-    entities = await load_table_from_storage("entities", context.storage)
-    relationships = await load_table_from_storage("relationships", context.storage)
+    entities = await load_table_from_storage("entities", context.output_storage)
+    relationships = await load_table_from_storage(
+        "relationships", context.output_storage
+    )
 
     max_cluster_size = config.cluster_graph.max_cluster_size
     use_lcc = config.cluster_graph.use_lcc
@@ -43,7 +45,7 @@ async def run_workflow(
         seed=seed,
     )
 
-    await write_table_to_storage(output, "communities", context.storage)
+    await write_table_to_storage(output, "communities", context.output_storage)
 
     logger.info("Workflow completed: create_communities")
     return WorkflowFunctionOutput(result=output)

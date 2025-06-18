@@ -26,6 +26,6 @@ async def test_prune_graph():
 
     await run_workflow(config, context)
 
-    nodes_actual = await load_table_from_storage("entities", context.storage)
+    nodes_actual = await load_table_from_storage("entities", context.output_storage)
 
     assert len(nodes_actual) == 21

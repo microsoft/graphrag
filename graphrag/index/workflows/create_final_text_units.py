@@ -26,16 +26,18 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform the text units."""
     logger.info("Workflow started: create_final_text_units")
-    text_units = await load_table_from_storage("text_units", context.storage)
-    final_entities = await load_table_from_storage("entities", context.storage)
+    text_units = await load_table_from_storage("text_units", context.output_storage)
+    final_entities = await load_table_from_storage("entities", context.output_storage)
     final_relationships = await load_table_from_storage(
-        "relationships", context.storage
+        "relationships", context.output_storage
     )
     final_covariates = None
     if config.extract_claims.enabled and await storage_has_table(
-        "covariates", context.storage
+        "covariates", context.output_storage
     ):
-        final_covariates = await load_table_from_storage("covariates", context.storage)
+        final_covariates = await load_table_from_storage(
+            "covariates", context.output_storage
+        )
 
     output = create_final_text_units(
         text_units,
@@ -44,7 +46,7 @@ async def run_workflow(
         final_covariates,
     )
 
-    await write_table_to_storage(output, "text_units", context.storage)
+    await write_table_to_storage(output, "text_units", context.output_storage)
 
     logger.info("Workflow completed: create_final_text_units")
     return WorkflowFunctionOutput(result=output)

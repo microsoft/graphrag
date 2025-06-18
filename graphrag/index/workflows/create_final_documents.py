@@ -22,12 +22,12 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final documents."""
     logger.info("Workflow started: create_final_documents")
-    documents = await load_table_from_storage("documents", context.storage)
-    text_units = await load_table_from_storage("text_units", context.storage)
+    documents = await load_table_from_storage("documents", context.output_storage)
+    text_units = await load_table_from_storage("text_units", context.output_storage)
 
     output = create_final_documents(documents, text_units)
 
-    await write_table_to_storage(output, "documents", context.storage)
+    await write_table_to_storage(output, "documents", context.output_storage)
 
     logger.info("Workflow completed: create_final_documents")
     return WorkflowFunctionOutput(result=output)

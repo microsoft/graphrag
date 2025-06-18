@@ -26,8 +26,10 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     logger.info("Workflow started: finalize_graph")
-    entities = await load_table_from_storage("entities", context.storage)
-    relationships = await load_table_from_storage("relationships", context.storage)
+    entities = await load_table_from_storage("entities", context.output_storage)
+    relationships = await load_table_from_storage(
+        "relationships", context.output_storage
+    )
 
     final_entities, final_relationships = finalize_graph(
         entities,
@@ -36,8 +38,10 @@ async def run_workflow(
         layout_enabled=config.umap.enabled,
     )
 
-    await write_table_to_storage(final_entities, "entities", context.storage)
-    await write_table_to_storage(final_relationships, "relationships", context.storage)
+    await write_table_to_storage(final_entities, "entities", context.output_storage)
+    await write_table_to_storage(
+        final_relationships, "relationships", context.output_storage
+    )
 
     if config.snapshots.graphml:
         # todo: extract graphs at each level, and add in meta like descriptions
@@ -46,7 +50,7 @@ async def run_workflow(
         await snapshot_graphml(
             graph,
             name="graph",
-            storage=context.storage,
+            storage=context.output_storage,
         )
 
     logger.info("Workflow completed: finalize_graph")
