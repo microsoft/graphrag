@@ -29,8 +29,7 @@ async def create_input(
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Instantiate input data for a pipeline."""
-    root_dir = root_dir or ""
-    logger.info("loading input from root_dir=%s", config.base_dir)
+    logger.info("loading input from root_dir=%s", config.storage.base_dir)
 
     if config.file_type in loaders:
         logger.info("Loading Input %s", config.file_type)

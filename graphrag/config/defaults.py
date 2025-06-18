@@ -378,7 +378,6 @@ class UmapDefaults:
 class UpdateIndexOutputDefaults(StorageDefaults):
     """Default values for update index output."""
 
-    type: ClassVar[OutputType] = OutputType.file
     base_dir: str = "update_output"
 
 

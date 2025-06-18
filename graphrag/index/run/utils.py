@@ -23,7 +23,6 @@ def create_run_context(
     previous_storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
-    progress_logger: ProgressLogger | None = None,
     stats: PipelineRunStats | None = None,
     state: PipelineState | None = None,
 ) -> PipelineRunContext:
@@ -34,7 +33,6 @@ def create_run_context(
         previous_storage=previous_storage or MemoryPipelineStorage(),
         cache=cache or InMemoryCache(),
         callbacks=callbacks or NoopWorkflowCallbacks(),
-        progress_logger=progress_logger or NullProgressLogger(),
         stats=stats or PipelineRunStats(),
         state=state or {},
     )

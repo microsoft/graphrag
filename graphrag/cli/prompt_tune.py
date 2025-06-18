@@ -92,7 +92,6 @@ async def prompt_tune(
 
     prompts = await api.generate_indexing_prompts(
         config=graph_config,
-        root=str(root_path),
         chunk_size=chunk_size,
         overlap=overlap,
         limit=limit,

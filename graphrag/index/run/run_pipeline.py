@@ -16,7 +16,6 @@ from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.pipeline import Pipeline
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
-from graphrag.index.update.incremental_index import get_delta_docs
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.api import create_cache_from_config, create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
@@ -63,7 +62,6 @@ async def run_pipeline(
             cache=cache,
             callbacks=callbacks,
             state=state,
-            progress_logger=logger,
         )
 
     else:
@@ -75,7 +73,6 @@ async def run_pipeline(
             cache=cache,
             callbacks=callbacks,
             state=state,
-            progress_logger=logger,
         )
 
     async for table in _run_pipeline(
@@ -89,13 +86,10 @@ async def run_pipeline(
 async def _run_pipeline(
     pipeline: Pipeline,
     config: GraphRagConfig,
-    dataset: pd.DataFrame,
     context: PipelineRunContext,
 ) -> AsyncIterable[PipelineRunResult]:
     start_time = time.time()
 
-    logger.info("Final # of rows loaded: %s", len(dataset))
-    context.stats.num_documents = len(dataset)
     last_workflow = "<startup>"
 
     try:

@@ -54,7 +54,6 @@ logger = logging.getLogger(__name__)
 @validate_call(config={"arbitrary_types_allowed": True})
 async def generate_indexing_prompts(
     config: GraphRagConfig,
-    root: str,
     chunk_size: PositiveInt = graphrag_config_defaults.chunks.size,
     overlap: Annotated[
         int, annotated_types.Gt(-1)
@@ -74,7 +73,6 @@ async def generate_indexing_prompts(
     Parameters
     ----------
     - config: The GraphRag configuration.
-    - root: The root directory.
     - output_path: The path to store the prompts.
     - chunk_size: The chunk token size to use for input text units.
     - limit: The limit of chunks to load.
