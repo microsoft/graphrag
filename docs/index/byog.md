@@ -52,7 +52,7 @@ workflows: [create_communities, create_community_reports, generate_text_embeddin
 
 ### FastGraphRAG
 
-[FastGraphRAG](./methods.md#fastgraphrag) uses text_units for the community reports instead of the entity and relationship descriptions. If your graph is sourced in such a way that it does not have descriptions, this might be a useful alternative. In this case, you would update your workflows list to include the text variant:
+[FastGraphRAG](./methods.md#fastgraphrag) uses text_units for the community reports instead of the entity and relationship descriptions. If your graph is sourced in such a way that it does not have descriptions, this might be a useful alternative. In this case, you would update your workflows list to include the text variant of the community reports workflow:
 
 ```yaml
 workflows: [create_communities, create_community_reports_text, generate_text_embeddings]
@@ -65,7 +65,6 @@ This method requires that your entities and relationships tables have valid link
 
 Putting it all together:
 
-- `input`: GraphRAG does require an input document set, even if you don't need us to process it. You can create an input folder and drop a dummy.txt document in there to work around this.
 - `output`: Create an output folder and put your entities and relationships (and optionally text_units) parquet files in it.
 - Update your config as noted above to only run the workflows subset you need.
 - Run `graphrag index --root <your project root>`
