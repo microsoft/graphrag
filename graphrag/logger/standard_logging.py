@@ -52,7 +52,7 @@ def init_loggers(
 ) -> None:
     """Initialize logging handlers for graphrag based on configuration.
 
-    This function merges the functionality of configure_logging and create_pipeline_logger
+    This function merges the functionality of configure_logging() and create_pipeline_logger()
     to provide a unified way to set up logging for the graphrag package.
 
     Parameters
@@ -65,10 +65,6 @@ def init_loggers(
         Whether to enable verbose (DEBUG) logging.
     log_file : Optional[Union[str, Path]], default=None
         Path to a specific log file. If provided, takes precedence over config.
-    log_format : str, default="%(asctime)s - %(levelname)s - %(name)s - %(message)s"
-        The format for log messages.
-    date_format : str, default="%Y-%m-%d %H:%M:%S"
-        The format for dates in the log messages.
     """
     # import BlobWorkflowLogger here to avoid circular imports
     from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
