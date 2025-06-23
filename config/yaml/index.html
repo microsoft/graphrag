@@ -1558,7 +1558,7 @@
 <h4 id="fields">Fields</h4>
 <ul>
 <li><code>api_key</code> <strong>str</strong> - The OpenAI API key to use.</li>
-<li><code>auth_type</code> <strong>api_key|managed_identity</strong> - Indicate how you want to authenticate requests.</li>
+<li><code>auth_type</code> <strong>api_key|azure_managed_identity</strong> - Indicate how you want to authenticate requests.</li>
 <li><code>type</code> <strong>openai_chat|azure_openai_chat|openai_embedding|azure_openai_embedding|mock_chat|mock_embeddings</strong> - The type of LLM to use.</li>
 <li><code>model</code> <strong>str</strong> - The model name.</li>
 <li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset).</li>
@@ -1589,15 +1589,17 @@
 </ul>
 <h2 id="input-files-and-chunking">Input Files and Chunking</h2>
 <h3 id="input">input</h3>
-<p>Our pipeline can ingest .csv, .txt, or .json data from an input folder. See the <a href="../../index/inputs/">inputs page</a> for more details and examples.</p>
+<p>Our pipeline can ingest .csv, .txt, or .json data from an input location. See the <a href="../../index/inputs/">inputs page</a> for more details and examples.</p>
 <h4 id="fields_1">Fields</h4>
 <ul>
-<li><code>type</code> <strong>file|blob</strong> - The input type to use. Default=<code>file</code></li>
+<li><code>storage</code> <strong>StorageConfig</strong></li>
+<li><code>type</code> <strong>file|blob|cosmosdb</strong> - The storage type to use. Default=<code>file</code></li>
+<li><code>base_dir</code> <strong>str</strong> - The base directory to write output artifacts to, relative to the root.</li>
+<li><code>connection_string</code> <strong>str</strong> - (blob/cosmosdb only) The Azure Storage connection string.</li>
+<li><code>container_name</code> <strong>str</strong> - (blob/cosmosdb only) The Azure Storage container name.</li>
+<li><code>storage_account_blob_url</code> <strong>str</strong> - (blob only) The storage account blob URL to use.</li>
+<li><code>cosmosdb_account_blob_url</code> <strong>str</strong> - (cosmosdb only) The CosmosDB account blob URL to use.</li>
 <li><code>file_type</code> <strong>text|csv|json</strong> - The type of input data to load. Default is <code>text</code></li>
-<li><code>base_dir</code> <strong>str</strong> - The base directory to read input from, relative to the root.</li>
-<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
-<li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
-<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
 <li><code>encoding</code> <strong>str</strong> - The encoding of the input file. Default is <code>utf-8</code></li>
 <li><code>file_pattern</code> <strong>str</strong> - A regex to match input files. Default is <code>.*\.csv$</code>, <code>.*\.txt$</code>, or <code>.*\.json$</code> depending on the specified <code>file_type</code>, but you can customize it if needed.</li>
 <li><code>file_filter</code> <strong>dict</strong> - Key/value pairs to filter. Default is None.</li>
