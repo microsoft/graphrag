@@ -1,7 +1,6 @@
 # Welcome to GraphRAG
 
 👉 [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/) <br/>
-👉 [GraphRAG Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) <br/>
 👉 [GraphRAG Arxiv](https://arxiv.org/pdf/2404.16130)
 
 <p align="center">
@@ -15,10 +14,6 @@ GraphRAG is a structured, hierarchical approach to Retrieval Augmented Generatio
 approaches using plain text snippets. The GraphRAG process involves extracting a knowledge graph out of raw text, building a community hierarchy, generating summaries for these communities, and then leveraging these structures when perform RAG-based tasks.
 
 To learn more about GraphRAG and how it can be used to enhance your language model's ability to reason about your private data, please visit the [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/).
-
-## Solution Accelerator 🚀
-
-To quickstart the GraphRAG system we recommend trying the [Solution Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) package. This provides a user-friendly end-to-end experience with Azure resources.
 
 ## Get Started with GraphRAG 🚀
 

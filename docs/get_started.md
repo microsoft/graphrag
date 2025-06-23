@@ -6,7 +6,6 @@
 
 To get started with the GraphRAG system, you have a few options:
 
-👉 [Use the GraphRAG Accelerator solution](https://github.com/Azure-Samples/graphrag-accelerator) <br/>
 👉 [Install from pypi](https://pypi.org/project/graphrag/). <br/>
 👉 [Use it from source](developing.md)<br/>
 
