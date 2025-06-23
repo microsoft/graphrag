@@ -9,7 +9,7 @@ from typing import Any
 
 from graphrag.query.llm.text_utils import try_parse_json_object
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DriftAction:
@@ -67,7 +67,7 @@ class DriftAction:
             Updated action with search results.
         """
         if self.is_complete:
-            log.warning("Action already complete. Skipping search.")
+            logger.warning("Action already complete. Skipping search.")
             return self
 
         search_result = await search_engine.search(
@@ -83,7 +83,7 @@ class DriftAction:
         self.metadata.update({"context_data": search_result.context_data})
 
         if self.answer is None:
-            log.warning("No answer found for query: %s", self.query)
+            logger.warning("No answer found for query: %s", self.query)
 
         self.metadata["llm_calls"] += 1
         self.metadata["prompt_tokens"] += search_result.prompt_tokens
@@ -91,7 +91,7 @@ class DriftAction:
 
         self.follow_ups = response.pop("follow_up_queries", [])
         if not self.follow_ups:
-            log.warning("No follow-up actions found for response: %s", response)
+            logger.warning("No follow-up actions found for response: %s", response)
 
         if scorer:
             self.compute_score(scorer)

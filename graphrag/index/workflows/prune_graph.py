@@ -3,6 +3,8 @@
 
 """A module containing run_workflow method definition."""
 
+import logging
+
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -14,12 +16,15 @@ from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
+logger = logging.getLogger(__name__)
+
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
+    logger.info("Workflow started: prune_graph")
     entities = await load_table_from_storage("entities", context.output_storage)
     relationships = await load_table_from_storage(
         "relationships", context.output_storage
@@ -36,6 +41,7 @@ async def run_workflow(
         pruned_relationships, "relationships", context.output_storage
     )
 
+    logger.info("Workflow completed: prune_graph")
     return WorkflowFunctionOutput(
         result={
             "entities": pruned_entities,

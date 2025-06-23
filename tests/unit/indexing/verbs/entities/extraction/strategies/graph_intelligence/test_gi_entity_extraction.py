@@ -16,7 +16,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_graph(
             docs=[Document("test_text", "1")],
             entity_types=["person"],
-            callbacks=None,
             args={
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
@@ -51,7 +50,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_graph(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            callbacks=None,
             args={
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
@@ -88,7 +86,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_graph(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            callbacks=None,
             args={
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
@@ -133,7 +130,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_graph(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            callbacks=None,
             args={
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
@@ -183,7 +179,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_graph(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            callbacks=None,
             args={
                 "max_gleanings": 0,
                 "summarize_descriptions": False,

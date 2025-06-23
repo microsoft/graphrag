@@ -33,7 +33,7 @@ from graphrag.query.context_builder.conversation_history import (
 from graphrag.query.llm.text_utils import num_tokens, try_parse_json_object
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @dataclass(kw_only=True)
@@ -231,12 +231,12 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                     json=True,
                 )
                 search_response = model_response.output.content
-                log.info("Map response: %s", search_response)
+                logger.debug("Map response: %s", search_response)
             try:
                 # parse search response json
                 processed_response = self._parse_search_response(search_response)
             except ValueError:
-                log.warning(
+                logger.warning(
                     "Warning: Error parsing search response json - skipping this batch"
                 )
                 processed_response = []
@@ -252,7 +252,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             )
 
         except Exception:
-            log.exception("Exception in _map_response_single_batch")
+            logger.exception("Exception in _map_response_single_batch")
             return SearchResult(
                 response=[{"answer": "", "score": 0}],
                 context_data=context_data,
@@ -329,7 +329,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
 
             if len(filtered_key_points) == 0 and not self.allow_general_knowledge:
                 # return no data answer if no key points are found
-                log.warning(
+                logger.warning(
                     "Warning: All map responses have score 0 (i.e., no relevant information found from the dataset), returning a canned 'I do not know' answer. You can try enabling `allow_general_knowledge` to encourage the LLM to incorporate relevant general knowledge, at the risk of increasing hallucinations."
                 )
                 return SearchResult(
@@ -402,7 +402,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 output_tokens=num_tokens(search_response, self.token_encoder),
             )
         except Exception:
-            log.exception("Exception in reduce_response")
+            logger.exception("Exception in reduce_response")
             return SearchResult(
                 response="",
                 context_data=text_data,
@@ -445,7 +445,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
 
         if len(filtered_key_points) == 0 and not self.allow_general_knowledge:
             # return no data answer if no key points are found
-            log.warning(
+            logger.warning(
                 "Warning: All map responses have score 0 (i.e., no relevant information found from the dataset), returning a canned 'I do not know' answer. You can try enabling `allow_general_knowledge` to encourage the LLM to incorporate relevant general knowledge, at the risk of increasing hallucinations."
             )
             yield NO_DATA_ANSWER

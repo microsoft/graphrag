@@ -7,7 +7,6 @@ from uuid import uuid4
 
 import pandas as pd
 
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.data_model.schemas import ENTITIES_FINAL_COLUMNS
 from graphrag.index.operations.compute_degree import compute_degree
@@ -19,7 +18,6 @@ from graphrag.index.operations.layout_graph.layout_graph import layout_graph
 def finalize_entities(
     entities: pd.DataFrame,
     relationships: pd.DataFrame,
-    callbacks: WorkflowCallbacks,
     embed_config: EmbedGraphConfig | None = None,
     layout_enabled: bool = False,
 ) -> pd.DataFrame:
@@ -33,7 +31,6 @@ def finalize_entities(
         )
     layout = layout_graph(
         graph,
-        callbacks,
         layout_enabled,
         embeddings=graph_embeddings,
     )

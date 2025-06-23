@@ -12,7 +12,7 @@ import networkx as nx
 
 from graphrag.query.structured_search.drift_search.action import DriftAction
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class QueryState:
@@ -39,13 +39,13 @@ class QueryState:
     ):
         """Add all follow-up actions and links them to the given action."""
         if len(follow_ups) == 0:
-            log.warning("No follow-up actions for action: %s", action.query)
+            logger.warning("No follow-up actions for action: %s", action.query)
 
         for follow_up in follow_ups:
             if isinstance(follow_up, str):
                 follow_up = DriftAction(query=follow_up)
             elif not isinstance(follow_up, DriftAction):
-                log.warning(
+                logger.warning(
                     "Follow-up action is not a string, found type: %s", type(follow_up)
                 )
 

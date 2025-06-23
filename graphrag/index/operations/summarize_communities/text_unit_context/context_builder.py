@@ -20,7 +20,7 @@ from graphrag.index.operations.summarize_communities.text_unit_context.sort_cont
 )
 from graphrag.query.llm.text_utils import num_tokens
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def build_local_context(

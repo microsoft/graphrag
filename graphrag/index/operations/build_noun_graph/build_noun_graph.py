@@ -65,6 +65,7 @@ async def _extract_nodes(
         extract,
         num_threads=num_threads,
         async_type=AsyncType.Threaded,
+        progress_msg="extract noun phrases progress: ",
     )
 
     noun_node_df = text_unit_df.explode("noun_phrases")

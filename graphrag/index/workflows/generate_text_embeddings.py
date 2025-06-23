@@ -30,7 +30,7 @@ from graphrag.utils.storage import (
     write_table_to_storage,
 )
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def run_workflow(
@@ -38,6 +38,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
+    logger.info("Workflow started: generate_text_embeddings")
     documents = None
     relationships = None
     text_units = None
@@ -81,6 +82,7 @@ async def run_workflow(
                 context.output_storage,
             )
 
+    logger.info("Workflow completed: generate_text_embeddings")
     return WorkflowFunctionOutput(result=output)
 
 
@@ -145,12 +147,12 @@ async def generate_text_embeddings(
         },
     }
 
-    log.info("Creating embeddings")
+    logger.info("Creating embeddings")
     outputs = {}
     for field in embedded_fields:
         if embedding_param_map[field]["data"] is None:
             msg = f"Embedding {field} is specified but data table is not in storage. This may or may not be intentional - if you expect it to me here, please check for errors earlier in the logs."
-            log.warning(msg)
+            logger.warning(msg)
         else:
             outputs[field] = await _run_embeddings(
                 name=field,

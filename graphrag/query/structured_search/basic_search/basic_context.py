@@ -19,7 +19,7 @@ from graphrag.query.context_builder.conversation_history import ConversationHist
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.vector_stores.base import BaseVectorStore
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class BasicSearchContext(BasicContextBuilder):
@@ -84,7 +84,7 @@ class BasicSearchContext(BasicContextBuilder):
             tokens = num_tokens(text, self.token_encoder)
             if current_tokens + tokens > max_context_tokens:
                 msg = f"Reached token limit: {current_tokens + tokens}. Reverting to previous context state"
-                log.info(msg)
+                logger.warning(msg)
                 break
 
             current_tokens += tokens

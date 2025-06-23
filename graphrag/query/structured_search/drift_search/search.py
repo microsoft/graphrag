@@ -28,7 +28,7 @@ from graphrag.query.structured_search.drift_search.primer import DRIFTPrimer
 from graphrag.query.structured_search.drift_search.state import QueryState
 from graphrag.query.structured_search.local_search.search import LocalSearch
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
@@ -233,7 +233,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         while epochs < self.context_builder.config.n_depth:
             actions = self.query_state.rank_incomplete_actions()
             if len(actions) == 0:
-                log.info("No more actions to take. Exiting DRIFT loop.")
+                logger.debug("No more actions to take. Exiting DRIFT loop.")
                 break
             actions = actions[: self.context_builder.config.drift_k_followups]
             llm_call_offset += (

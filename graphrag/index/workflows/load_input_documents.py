@@ -12,11 +12,10 @@ from graphrag.config.models.input_config import InputConfig
 from graphrag.index.input.factory import create_input
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import write_table_to_storage
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def run_workflow(
@@ -27,10 +26,9 @@ async def run_workflow(
     output = await load_input_documents(
         config.input,
         context.input_storage,
-        context.progress_logger,
     )
 
-    log.info("Final # of rows loaded: %s", len(output))
+    logger.info("Final # of rows loaded: %s", len(output))
     context.stats.num_documents = len(output)
 
     await write_table_to_storage(output, "documents", context.output_storage)
@@ -39,7 +37,7 @@ async def run_workflow(
 
 
 async def load_input_documents(
-    config: InputConfig, storage: PipelineStorage, progress_logger: ProgressLogger
+    config: InputConfig, storage: PipelineStorage
 ) -> pd.DataFrame:
     """Load and parse input documents into a standard format."""
-    return await create_input(config, storage, progress_logger)
+    return await create_input(config, storage)

@@ -11,6 +11,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, ClassVar
 
+from typing_extensions import Self
+
 from graphrag.language_model.factory import ModelFactory
 
 if TYPE_CHECKING:
@@ -22,11 +24,11 @@ class ModelManager:
 
     _instance: ClassVar[ModelManager | None] = None
 
-    def __new__(cls) -> ModelManager:  # noqa: PYI034: False positive
+    def __new__(cls) -> Self:
         """Create a new instance of LLMManager if it does not exist."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-        return cls._instance
+        return cls._instance  # type: ignore[return-value]
 
     def __init__(self) -> None:
         # Avoid reinitialization in the singleton.

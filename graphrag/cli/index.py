@@ -10,49 +10,26 @@ import warnings
 from pathlib import Path
 
 import graphrag.api as api
-from graphrag.config.enums import CacheType, IndexingMethod
+from graphrag.config.enums import CacheType, IndexingMethod, ReportingType
 from graphrag.config.load_config import load_config
-from graphrag.config.logging import enable_logging_with_config
 from graphrag.index.validate_config import validate_config_names
-from graphrag.logger.base import ProgressLogger
-from graphrag.logger.factory import LoggerFactory, LoggerType
 from graphrag.utils.cli import redact
 
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
-def _logger(logger: ProgressLogger):
-    def info(msg: str, verbose: bool = False):
-        log.info(msg)
-        if verbose:
-            logger.info(msg)
-
-    def error(msg: str, verbose: bool = False):
-        log.error(msg)
-        if verbose:
-            logger.error(msg)
-
-    def success(msg: str, verbose: bool = False):
-        log.info(msg)
-        if verbose:
-            logger.success(msg)
-
-    return info, error, success
-
-
-def _register_signal_handlers(logger: ProgressLogger):
+def _register_signal_handlers():
     import signal
 
     def handle_signal(signum, _):
         # Handle the signal here
-        logger.info(f"Received signal {signum}, exiting...")  # noqa: G004
-        logger.dispose()
+        logger.debug(f"Received signal {signum}, exiting...")  # noqa: G004
         for task in asyncio.all_tasks():
             task.cancel()
-        logger.info("All tasks cancelled. Exiting...")
+        logger.debug("All tasks cancelled. Exiting...")
 
     # Register signal handlers for SIGINT and SIGHUP
     signal.signal(signal.SIGINT, handle_signal)
@@ -67,7 +44,6 @@ def index_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    logger: LoggerType,
     config_filepath: Path | None,
     dry_run: bool,
     skip_validation: bool,
@@ -87,7 +63,6 @@ def index_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        logger=logger,
         dry_run=dry_run,
         skip_validation=skip_validation,
     )
@@ -99,7 +74,6 @@ def update_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    logger: LoggerType,
     config_filepath: Path | None,
     skip_validation: bool,
     output_dir: Path | None,
@@ -120,7 +94,6 @@ def update_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        logger=logger,
         dry_run=False,
         skip_validation=skip_validation,
     )
@@ -133,39 +106,47 @@ def _run_index(
     verbose,
     memprofile,
     cache,
-    logger,
     dry_run,
     skip_validation,
 ):
-    progress_logger = LoggerFactory().create_logger(logger)
-    info, error, success = _logger(progress_logger)
+    # Configure the root logger with the specified log level
+    from graphrag.logger.standard_logging import init_loggers
+
+    # Initialize loggers and reporting config
+    init_loggers(
+        config=config,
+        root_dir=str(config.root_dir) if config.root_dir else None,
+        verbose=verbose,
+    )
 
     if not cache:
         config.cache.type = CacheType.none
 
-    enabled_logging, log_path = enable_logging_with_config(config, verbose)
-    if enabled_logging:
-        info(f"Logging enabled at {log_path}", True)
+    # Log the configuration details
+    if config.reporting.type == ReportingType.file:
+        log_dir = Path(config.root_dir or "") / (config.reporting.base_dir or "")
+        log_path = log_dir / "logs.txt"
+        logger.info("Logging enabled at %s", log_path)
     else:
-        info(
-            f"Logging not enabled for config {redact(config.model_dump())}",
-            True,
+        logger.info(
+            "Logging not enabled for config %s",
+            redact(config.model_dump()),
         )
 
     if not skip_validation:
-        validate_config_names(progress_logger, config)
+        validate_config_names(config)
 
-    info(f"Starting pipeline run. {dry_run=}", verbose)
-    info(
-        f"Using default configuration: {redact(config.model_dump())}",
-        verbose,
+    logger.info("Starting pipeline run. %s", dry_run)
+    logger.info(
+        "Using default configuration: %s",
+        redact(config.model_dump()),
     )
 
     if dry_run:
-        info("Dry run complete, exiting...", True)
+        logger.info("Dry run complete, exiting...", True)
         sys.exit(0)
 
-    _register_signal_handlers(progress_logger)
+    _register_signal_handlers()
 
     outputs = asyncio.run(
         api.build_index(
@@ -173,19 +154,17 @@ def _run_index(
             method=method,
             is_update_run=is_update_run,
             memory_profile=memprofile,
-            progress_logger=progress_logger,
         )
     )
     encountered_errors = any(
         output.errors and len(output.errors) > 0 for output in outputs
     )
 
-    progress_logger.stop()
     if encountered_errors:
-        error(
-            "Errors occurred during the pipeline run, see logs for more details.", True
+        logger.error(
+            "Errors occurred during the pipeline run, see logs for more details."
         )
     else:
-        success("All workflows completed successfully.", True)
+        logger.info("All workflows completed successfully.")
 
     sys.exit(1 if encountered_errors else 0)

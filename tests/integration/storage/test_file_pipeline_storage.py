@@ -20,7 +20,6 @@ async def test_find():
         storage.find(
             base_dir="tests/fixtures/text/input",
             file_pattern=re.compile(r".*\.txt$"),
-            progress=None,
             file_filter=None,
         )
     )

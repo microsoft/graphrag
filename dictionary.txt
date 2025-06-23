@@ -102,6 +102,7 @@ itertuples
 isin
 nocache
 nbconvert
+levelno
 
 # HTML
 nbsp
@@ -186,6 +187,7 @@ Verdantis's
 # English
 skippable
 upvote
+unconfigured
 
 # Misc
 Arxiv

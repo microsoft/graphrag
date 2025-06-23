@@ -11,6 +11,7 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
+import logging
 from typing import Annotated
 
 import annotated_types
@@ -20,7 +21,7 @@ from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.language_model.manager import ModelManager
-from graphrag.logger.base import ProgressLogger
+from graphrag.logger.standard_logging import init_loggers
 from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT, PROMPT_TUNING_MODEL_ID
 from graphrag.prompt_tune.generator.community_report_rating import (
     generate_community_report_rating,
@@ -47,11 +48,12 @@ from graphrag.prompt_tune.generator.persona import generate_persona
 from graphrag.prompt_tune.loader.input import load_docs_in_chunks
 from graphrag.prompt_tune.types import DocSelectionType
 
+logger = logging.getLogger(__name__)
+
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def generate_indexing_prompts(
     config: GraphRagConfig,
-    logger: ProgressLogger,
     chunk_size: PositiveInt = graphrag_config_defaults.chunks.size,
     overlap: Annotated[
         int, annotated_types.Gt(-1)
@@ -71,8 +73,6 @@ async def generate_indexing_prompts(
     Parameters
     ----------
     - config: The GraphRag configuration.
-    - logger: The logger to use for progress updates.
-    - root: The root directory.
     - output_path: The path to store the prompts.
     - chunk_size: The chunk token size to use for input text units.
     - limit: The limit of chunks to load.
@@ -89,6 +89,8 @@ async def generate_indexing_prompts(
     -------
     tuple[str, str, str]: entity extraction prompt, entity summarization prompt, community summarization prompt
     """
+    init_loggers(config=config)
+
     # Retrieve documents
     logger.info("Chunking documents...")
     doc_list = await load_docs_in_chunks(
@@ -187,9 +189,9 @@ async def generate_indexing_prompts(
         language=language,
     )
 
-    logger.info(f"\nGenerated domain: {domain}")  # noqa: G004
-    logger.info(f"\nDetected language: {language}")  # noqa: G004
-    logger.info(f"\nGenerated persona: {persona}")  # noqa: G004
+    logger.debug("Generated domain: %s", domain)
+    logger.debug("Detected language: %s", language)
+    logger.debug("Generated persona: %s", persona)
 
     return (
         extract_graph_prompt,

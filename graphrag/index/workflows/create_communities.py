@@ -3,6 +3,7 @@
 
 """A module containing run_workflow method definition."""
 
+import logging
 from datetime import datetime, timezone
 from typing import cast
 from uuid import uuid4
@@ -18,12 +19,15 @@ from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
+logger = logging.getLogger(__name__)
+
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final communities."""
+    logger.info("Workflow started: create_communities")
     entities = await load_table_from_storage("entities", context.output_storage)
     relationships = await load_table_from_storage(
         "relationships", context.output_storage
@@ -43,6 +47,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "communities", context.output_storage)
 
+    logger.info("Workflow completed: create_communities")
     return WorkflowFunctionOutput(result=output)
 
 

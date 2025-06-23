@@ -22,7 +22,7 @@ from graphrag.query.context_builder.conversation_history import (
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class LocalSearch(BaseSearch[LocalContextBuilder]):
@@ -70,7 +70,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         prompt_tokens["build_context"] = context_result.prompt_tokens
         output_tokens["build_context"] = context_result.output_tokens
 
-        log.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
+        logger.debug("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         try:
             if "drift_query" in kwargs:
                 drift_query = kwargs["drift_query"]
@@ -120,7 +120,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             )
 
         except Exception:
-            log.exception("Exception in _asearch")
+            logger.exception("Exception in _asearch")
             return SearchResult(
                 response="",
                 context_data=context_result.context_records,
@@ -144,7 +144,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
-        log.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
+        logger.debug("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         search_prompt = self.system_prompt.format(
             context_data=context_result.context_chunks, response_type=self.response_type
         )
