@@ -10,7 +10,7 @@ Each of these prompts may be overridden by writing a custom prompt file in plain
 
 ### Entity/Relationship Extraction
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/index/entity_extraction.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/index/extract_graph.py)
 
 #### Tokens
 
@@ -31,7 +31,7 @@ Each of these prompts may be overridden by writing a custom prompt file in plain
 
 ### Claim Extraction
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/index/claim_extraction.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/index/extract_claims.py)
 
 #### Tokens
 
