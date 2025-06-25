@@ -108,15 +108,21 @@ def _extract_edges(
     text_units_df = text_units_df.assign(edges=all_edges)  # type: ignore
     edge_df = text_units_df.explode("edges")[["edges", "text_unit_id"]]
 
-    edge_df[["source", "target"]] = edge_df.loc[:, "edges"].to_list()
+    # convert tuples/lists into a two-column DataFrame, padding with NaNs as needed
+    edges_list = edge_df["edges"].apply(
+        lambda tup: list(tup) if isinstance(tup, (list, tuple)) else [np.nan, np.nan]
+    )
+    edges_expanded = pd.DataFrame(edges_list.tolist(), index=edge_df.index, columns=["source", "target"]).iloc[:, :2]
+    edge_df = pd.concat([edge_df.drop(columns=["edges"]), edges_expanded], axis=1)
+    edge_df = edge_df.dropna(subset=["source", "target"]) # drop any rows with invalid source & target
+
     edge_df["min_source"] = edge_df[["source", "target"]].min(axis=1)
     edge_df["max_target"] = edge_df[["source", "target"]].max(axis=1)
     edge_df = edge_df.drop(columns=["source", "target"]).rename(
         columns={"min_source": "source", "max_target": "target"}  # type: ignore
     )
-
-    edge_df = edge_df[(edge_df.source.notna()) & (edge_df.target.notna())]
-    edge_df = edge_df.drop(columns=["edges"])
+    # edge_df = edge_df[(edge_df.source.notna()) & (edge_df.target.notna())]
+    # edge_df = edge_df.drop(columns=["edges"])
     # group by source and target, count the number of text units
     grouped_edge_df = (
         edge_df.groupby(["source", "target"]).agg({"text_unit_id": list}).reset_index()

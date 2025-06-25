@@ -1,9 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation.
-# Licensed under the MIT License
 
-"""System prompts for global search."""
-
-MAP_SYSTEM_PROMPT = """
 ---Role---
 
 You are a helpful assistant responding to questions about data in the tables provided.
@@ -82,4 +77,3 @@ The response should be JSON formatted as follows:
         {{"description": "Description of point 2 [Data: Reports (report ids)]", "score": score_value}}
     ]
 }}
-"""

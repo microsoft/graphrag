@@ -1,9 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation.
-# Licensed under the MIT License
 
-"""Global Search system prompts."""
-
-REDUCE_SYSTEM_PROMPT = """
 ---Role---
 
 You are a helpful assistant responding to questions about a dataset by synthesizing perspectives from multiple analysts.
@@ -78,8 +73,3 @@ Limit your response length to {max_length} words.
 {response_type}
 
 Add sections and commentary to the response as appropriate for the length and format. Style the response in markdown.
-"""
-
-NO_DATA_ANSWER = (
-    "I am sorry but I am unable to answer this question given the provided data."
-)
