@@ -1,9 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation.
-# Licensed under the MIT License
 
-"""A file containing prompts definition."""
-
-GRAPH_EXTRACTION_PROMPT = """
 -Goal-
 Given a text document that is potentially relevant to this activity and a list of entity types, identify all entities of those types from the text and all relationships among the identified entities.
  
@@ -123,7 +118,4 @@ Output:
 Entity_types: {entity_types}
 Text: {input_text}
 ######################
-Output:"""
-
-CONTINUE_PROMPT = "MANY entities and relationships were missed in the last extraction. Remember to ONLY emit entities that match any of the previously extracted types. Add them below using the same format:\n"
-LOOP_PROMPT = "It appears some entities and relationships may have still been missed. Answer Y if there are still entities or relationships that need to be added, or N if there are none. Please answer with a single letter Y or N.\n"
+Output:
