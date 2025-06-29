@@ -14,6 +14,7 @@ from graphrag.config.enums import CacheType, IndexingMethod
 from graphrag.config.load_config import load_config
 from graphrag.config.logging import enable_logging_with_config
 from graphrag.index.validate_config import validate_config_names
+from graphrag.index.utils.estimate_cost import ask_continue_indexing, estimate_cost_flow
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.factory import LoggerFactory, LoggerType
 from graphrag.utils.cli import redact
@@ -72,6 +73,8 @@ def index_cli(
     dry_run: bool,
     skip_validation: bool,
     output_dir: Path | None,
+    estimate_cost: bool,
+    average_output_tokens_per_chunk: int
 ):
     """Run the pipeline with the given config."""
     cli_overrides = {}
@@ -80,6 +83,11 @@ def index_cli(
         cli_overrides["reporting.base_dir"] = str(output_dir)
         cli_overrides["update_index_output.base_dir"] = str(output_dir)
     config = load_config(root_dir, config_filepath, cli_overrides)
+    
+    """Run LLM cost estimator."""
+    if estimate_cost:
+        estimate_cost_flow(config, logger, average_output_tokens_per_chunk)
+    
     _run_index(
         config=config,
         method=method,
@@ -112,7 +120,7 @@ def update_cli(
         cli_overrides["update_index_output.base_dir"] = str(output_dir)
 
     config = load_config(root_dir, config_filepath, cli_overrides)
-
+    
     _run_index(
         config=config,
         method=method,
