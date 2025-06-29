@@ -12,6 +12,12 @@ There are five surface areas that may be impacted on any given release. They are
 
 > TL;DR: Always run `graphrag init --path [path] --force` between minor version bumps to ensure you have the latest config format. Run the provided migration notebook between major version bumps if you want to avoid re-indexing prior datasets. Note that this will overwrite your configuration and prompts, so backup if necessary.
 
+# v2
+
+Run the [migration notebook](./docs/examples_notebooks/index_migration_to_v2.ipynb) to convert older tables to the v2 format.
+
+The v2 release renamed all of our index tables to simply name the items each table contains. The previous naming was a leftover requirement of our use of DataShaper, which is no longer necessary.
+
 # v1
 
 Run the [migration notebook](./docs/examples_notebooks/index_migration_to_v1.ipynb) to convert older tables to the v1 format.
@@ -27,7 +33,7 @@ All of the breaking changes listed below are accounted for in the four steps abo
     - Alignment of fields from `create_final_entities` (such as name -> title) with `create_final_nodes`, and removal of redundant content across these tables
     - Rename of `document.raw_content` to `document.text`
     - Rename of `entity.name` to `entity.title`
-    - Rename `rank` to `combined_degree` in `create_final_relationships` and removal of `source_degree` and `target_degree`fields
+    - Rename `rank` to `combined_degree` in `create_final_relationships` and removal of `source_degree` and `target_degree` fields
     - Fixed community tables to use a proper UUID for the `id` field, and retain `community` and `human_readable_id` for the short IDs
     - Removal of all embeddings columns from parquet files in favor of direct vector store writes
 

@@ -28,7 +28,7 @@ async def test_create_final_documents():
 
     await run_workflow(config, context)
 
-    actual = await load_table_from_storage("documents", context.storage)
+    actual = await load_table_from_storage("documents", context.output_storage)
 
     compare_outputs(actual, expected)
 
@@ -47,11 +47,11 @@ async def test_create_final_documents_with_metadata_column():
     # simulate the metadata construction during initial input loading
     await update_document_metadata(config.input.metadata, context)
 
-    expected = await load_table_from_storage("documents", context.storage)
+    expected = await load_table_from_storage("documents", context.output_storage)
 
     await run_workflow(config, context)
 
-    actual = await load_table_from_storage("documents", context.storage)
+    actual = await load_table_from_storage("documents", context.output_storage)
 
     compare_outputs(actual, expected)
 

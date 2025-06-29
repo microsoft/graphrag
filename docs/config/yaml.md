@@ -40,7 +40,7 @@ models:
 #### Fields
 
 - `api_key` **str** - The OpenAI API key to use.
-- `auth_type` **api_key|managed_identity** - Indicate how you want to authenticate requests.
+- `auth_type` **api_key|azure_managed_identity** - Indicate how you want to authenticate requests.
 - `type` **openai_chat|azure_openai_chat|openai_embedding|azure_openai_embedding|mock_chat|mock_embeddings** - The type of LLM to use.
 - `model` **str** - The model name.
 - `encoding_model` **str** - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset).
@@ -73,16 +73,18 @@ models:
 
 ### input
 
-Our pipeline can ingest .csv, .txt, or .json data from an input folder. See the [inputs page](../index/inputs.md) for more details and examples.
+Our pipeline can ingest .csv, .txt, or .json data from an input location. See the [inputs page](../index/inputs.md) for more details and examples.
 
 #### Fields
 
-- `type` **file|blob** - The input type to use. Default=`file`
+- `storage` **StorageConfig**
+  - `type` **file|blob|cosmosdb** - The storage type to use. Default=`file`
+  - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
+  - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
+  - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
+  - `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
+  - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
 - `file_type` **text|csv|json** - The type of input data to load. Default is `text`
-- `base_dir` **str** - The base directory to read input from, relative to the root.
-- `connection_string` **str** - (blob only) The Azure Storage connection string.
-- `storage_account_blob_url` **str** - The storage account blob URL to use.
-- `container_name` **str** - (blob only) The Azure Storage container name.
 - `encoding` **str** - The encoding of the input file. Default is `utf-8`
 - `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$`, `.*\.txt$`, or `.*\.json$` depending on the specified `file_type`, but you can customize it if needed.
 - `file_filter` **dict** - Key/value pairs to filter. Default is None.

@@ -9,7 +9,7 @@ import sys
 
 import pytest
 
-from graphrag.config.enums import OutputType
+from graphrag.config.enums import StorageType
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
 from graphrag.storage.factory import StorageFactory
@@ -29,7 +29,7 @@ def test_create_blob_storage():
         "base_dir": "testbasedir",
         "container_name": "testcontainer",
     }
-    storage = StorageFactory.create_storage(OutputType.blob, kwargs)
+    storage = StorageFactory.create_storage(StorageType.blob, kwargs)
     assert isinstance(storage, BlobPipelineStorage)
 
 
@@ -44,19 +44,19 @@ def test_create_cosmosdb_storage():
         "base_dir": "testdatabase",
         "container_name": "testcontainer",
     }
-    storage = StorageFactory.create_storage(OutputType.cosmosdb, kwargs)
+    storage = StorageFactory.create_storage(StorageType.cosmosdb, kwargs)
     assert isinstance(storage, CosmosDBPipelineStorage)
 
 
 def test_create_file_storage():
     kwargs = {"type": "file", "base_dir": "/tmp/teststorage"}
-    storage = StorageFactory.create_storage(OutputType.file, kwargs)
+    storage = StorageFactory.create_storage(StorageType.file, kwargs)
     assert isinstance(storage, FilePipelineStorage)
 
 
 def test_create_memory_storage():
     kwargs = {"type": "memory"}
-    storage = StorageFactory.create_storage(OutputType.memory, kwargs)
+    storage = StorageFactory.create_storage(StorageType.memory, kwargs)
     assert isinstance(storage, MemoryPipelineStorage)
 
 

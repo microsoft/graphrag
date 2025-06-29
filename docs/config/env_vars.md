@@ -4,7 +4,7 @@ As of version 1.3, GraphRAG no longer supports a full complement of pre-built en
 
 The only standard environment variable we expect, and include in the default settings.yml, is `GRAPHRAG_API_KEY`. If you are already using a number of the previous GRAPHRAG_* environment variables, you can insert them with template syntax into settings.yml and they will be adopted.
 
-> **The environment variables below are documented as an aid for migration, but they WILL NOT be read unless you use template syntax in your settings.yml.**
+> **The environment variables below are documented as an aid for migration, but they WILL NOT be read unless you use template syntax in your settings.yml. We also WILL NOT be updating this page as the main config object changes.**
 
 ---
 

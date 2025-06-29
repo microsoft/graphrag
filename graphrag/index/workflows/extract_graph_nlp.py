@@ -22,7 +22,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
-    text_units = await load_table_from_storage("text_units", context.storage)
+    text_units = await load_table_from_storage("text_units", context.output_storage)
 
     entities, relationships = await extract_graph_nlp(
         text_units,
@@ -30,8 +30,8 @@ async def run_workflow(
         extraction_config=config.extract_graph_nlp,
     )
 
-    await write_table_to_storage(entities, "entities", context.storage)
-    await write_table_to_storage(relationships, "relationships", context.storage)
+    await write_table_to_storage(entities, "entities", context.output_storage)
+    await write_table_to_storage(relationships, "relationships", context.output_storage)
 
     return WorkflowFunctionOutput(
         result={
