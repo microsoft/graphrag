@@ -22,7 +22,7 @@ async def load_csv(
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load csv inputs from a directory."""
-    log.info("Loading csv files from %s", config.base_dir)
+    log.info("Loading csv files from %s", config.storage.base_dir)
 
     async def load_file(path: str, group: dict | None) -> pd.DataFrame:
         if group is None:

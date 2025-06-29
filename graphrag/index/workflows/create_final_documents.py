@@ -17,12 +17,12 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final documents."""
-    documents = await load_table_from_storage("documents", context.storage)
-    text_units = await load_table_from_storage("text_units", context.storage)
+    documents = await load_table_from_storage("documents", context.output_storage)
+    text_units = await load_table_from_storage("text_units", context.output_storage)
 
     output = create_final_documents(documents, text_units)
 
-    await write_table_to_storage(output, "documents", context.storage)
+    await write_table_to_storage(output, "documents", context.output_storage)
 
     return WorkflowFunctionOutput(result=output)
 

@@ -21,6 +21,7 @@ from graphrag.prompt_tune.defaults import (
     K,
 )
 from graphrag.prompt_tune.types import DocSelectionType
+from graphrag.utils.api import create_storage_from_config
 
 
 def _sample_chunks_from_embeddings(
@@ -37,7 +38,6 @@ def _sample_chunks_from_embeddings(
 
 
 async def load_docs_in_chunks(
-    root: str,
     config: GraphRagConfig,
     select_method: DocSelectionType,
     limit: int,
@@ -51,7 +51,8 @@ async def load_docs_in_chunks(
     embeddings_llm_settings = config.get_language_model_config(
         config.embed_text.model_id
     )
-    dataset = await create_input(config.input, logger, root)
+    input_storage = create_storage_from_config(config.input.storage)
+    dataset = await create_input(config.input, input_storage, logger)
     chunk_config = config.chunks
     chunks_df = create_base_text_units(
         documents=dataset,
