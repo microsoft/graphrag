@@ -52,7 +52,9 @@ async def build_index(
     init_loggers(config=config)
 
     # Create callbacks for pipeline lifecycle events if provided
-    workflow_callbacks = create_callback_chain(callbacks) if callbacks else NoopWorkflowCallbacks()
+    workflow_callbacks = (
+        create_callback_chain(callbacks) if callbacks else NoopWorkflowCallbacks()
+    )
 
     outputs: list[PipelineRunResult] = []
 
