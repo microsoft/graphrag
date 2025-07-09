@@ -11,6 +11,7 @@ Backwards compatibility is not guaranteed at this time.
 import logging
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.run_pipeline import run_pipeline
@@ -28,7 +29,7 @@ async def build_index(
     method: IndexingMethod | str = IndexingMethod.Standard,
     is_update_run: bool = False,
     memory_profile: bool = False,
-    callbacks: list | None = None,
+    callbacks: list[WorkflowCallbacks] | None = None,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -50,14 +51,8 @@ async def build_index(
     """
     init_loggers(config=config)
 
-    # Create a no-op workflow callbacks for pipeline lifecycle events
-    workflow_callbacks = NoopWorkflowCallbacks()
-
-    # Add any additional callbacks to the chain
-    if callbacks:
-        callback_manager = create_callback_chain(callbacks)
-        # We could create a composite here, but for simplicity just use the manager
-        workflow_callbacks = callback_manager
+    # Create callbacks for pipeline lifecycle events if provided
+    workflow_callbacks = create_callback_chain(callbacks) if callbacks else NoopWorkflowCallbacks()
 
     outputs: list[PipelineRunResult] = []
 
