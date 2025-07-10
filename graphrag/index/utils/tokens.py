@@ -11,7 +11,7 @@ import graphrag.config.defaults as defs
 
 DEFAULT_ENCODING_NAME = defs.ENCODING_MODEL
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def num_tokens_from_string(
@@ -23,7 +23,7 @@ def num_tokens_from_string(
             encoding = tiktoken.encoding_for_model(model)
         except KeyError:
             msg = f"Failed to get encoding for {model} when getting num_tokens_from_string. Fall back to default encoding {DEFAULT_ENCODING_NAME}"
-            log.warning(msg)
+            logger.warning(msg)
             encoding = tiktoken.get_encoding(DEFAULT_ENCODING_NAME)
     else:
         encoding = tiktoken.get_encoding(encoding_name or DEFAULT_ENCODING_NAME)

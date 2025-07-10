@@ -30,7 +30,7 @@ from graphrag.utils.storage import (
     write_table_to_storage,
 )
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def run_workflow(
@@ -38,22 +38,25 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
+    logger.info("Workflow started: generate_text_embeddings")
     documents = None
     relationships = None
     text_units = None
     entities = None
     community_reports = None
-    if await storage_has_table("documents", context.storage):
-        documents = await load_table_from_storage("documents", context.storage)
-    if await storage_has_table("relationships", context.storage):
-        relationships = await load_table_from_storage("relationships", context.storage)
-    if await storage_has_table("text_units", context.storage):
-        text_units = await load_table_from_storage("text_units", context.storage)
-    if await storage_has_table("entities", context.storage):
-        entities = await load_table_from_storage("entities", context.storage)
-    if await storage_has_table("community_reports", context.storage):
+    if await storage_has_table("documents", context.output_storage):
+        documents = await load_table_from_storage("documents", context.output_storage)
+    if await storage_has_table("relationships", context.output_storage):
+        relationships = await load_table_from_storage(
+            "relationships", context.output_storage
+        )
+    if await storage_has_table("text_units", context.output_storage):
+        text_units = await load_table_from_storage("text_units", context.output_storage)
+    if await storage_has_table("entities", context.output_storage):
+        entities = await load_table_from_storage("entities", context.output_storage)
+    if await storage_has_table("community_reports", context.output_storage):
         community_reports = await load_table_from_storage(
-            "community_reports", context.storage
+            "community_reports", context.output_storage
         )
 
     embedded_fields = config.embed_text.names
@@ -76,9 +79,10 @@ async def run_workflow(
             await write_table_to_storage(
                 table,
                 f"embeddings.{name}",
-                context.storage,
+                context.output_storage,
             )
 
+    logger.info("Workflow completed: generate_text_embeddings")
     return WorkflowFunctionOutput(result=output)
 
 
@@ -143,12 +147,12 @@ async def generate_text_embeddings(
         },
     }
 
-    log.info("Creating embeddings")
+    logger.info("Creating embeddings")
     outputs = {}
     for field in embedded_fields:
         if embedding_param_map[field]["data"] is None:
             msg = f"Embedding {field} is specified but data table is not in storage. This may or may not be intentional - if you expect it to me here, please check for errors earlier in the logs."
-            log.warning(msg)
+            logger.warning(msg)
         else:
             outputs[field] = await _run_embeddings(
                 name=field,

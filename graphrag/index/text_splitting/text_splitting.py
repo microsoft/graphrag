@@ -21,7 +21,7 @@ DecodeFn = Callable[[EncodedText], str]
 EncodeFn = Callable[[str], EncodedText]
 LengthFn = Callable[[str], int]
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -100,7 +100,9 @@ class TokenTextSplitter(TextSplitter):
             try:
                 enc = tiktoken.encoding_for_model(model_name)
             except KeyError:
-                log.exception("Model %s not found, using %s", model_name, encoding_name)
+                logger.exception(
+                    "Model %s not found, using %s", model_name, encoding_name
+                )
                 enc = tiktoken.get_encoding(encoding_name)
         else:
             enc = tiktoken.get_encoding(encoding_name)

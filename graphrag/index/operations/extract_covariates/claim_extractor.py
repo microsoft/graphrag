@@ -20,7 +20,7 @@ from graphrag.prompts.index.extract_claims import (
 DEFAULT_TUPLE_DELIMITER = "<|>"
 DEFAULT_RECORD_DELIMITER = "##"
 DEFAULT_COMPLETION_DELIMITER = "<|COMPLETE|>"
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -119,7 +119,7 @@ class ClaimExtractor:
                 ]
                 source_doc_map[document_id] = text
             except Exception as e:
-                log.exception("error extracting claim")
+                logger.exception("error extracting claim")
                 self._on_error(
                     e,
                     traceback.format_exc(),

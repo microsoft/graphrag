@@ -2,6 +2,9 @@
     "input_path": "./tests/fixtures/text",
     "input_file_type": "text",
     "workflow_config": {
+        "load_input_documents": {
+            "max_runtime": 30
+        },
         "create_base_text_units": {
             "max_runtime": 30
         },

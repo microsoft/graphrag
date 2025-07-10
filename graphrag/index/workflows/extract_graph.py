@@ -3,6 +3,7 @@
 
 """A module containing run_workflow method definition."""
 
+import logging
 from typing import Any
 
 import pandas as pd
@@ -21,13 +22,16 @@ from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
+logger = logging.getLogger(__name__)
+
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
-    text_units = await load_table_from_storage("text_units", context.storage)
+    logger.info("Workflow started: extract_graph")
+    text_units = await load_table_from_storage("text_units", context.output_storage)
 
     extract_graph_llm_settings = config.get_language_model_config(
         config.extract_graph.model_id
@@ -55,15 +59,18 @@ async def run_workflow(
         summarization_num_threads=summarization_llm_settings.concurrent_requests,
     )
 
-    await write_table_to_storage(entities, "entities", context.storage)
-    await write_table_to_storage(relationships, "relationships", context.storage)
+    await write_table_to_storage(entities, "entities", context.output_storage)
+    await write_table_to_storage(relationships, "relationships", context.output_storage)
 
     if config.snapshots.raw_graph:
-        await write_table_to_storage(raw_entities, "raw_entities", context.storage)
         await write_table_to_storage(
-            raw_relationships, "raw_relationships", context.storage
+            raw_entities, "raw_entities", context.output_storage
+        )
+        await write_table_to_storage(
+            raw_relationships, "raw_relationships", context.output_storage
         )
 
+    logger.info("Workflow completed: extract_graph")
     return WorkflowFunctionOutput(
         result={
             "entities": entities,
@@ -99,14 +106,14 @@ async def extract_graph(
 
     if not _validate_data(extracted_entities):
         error_msg = "Entity Extraction failed. No entities detected during extraction."
-        callbacks.error(error_msg)
+        logger.error(error_msg)
         raise ValueError(error_msg)
 
     if not _validate_data(extracted_relationships):
         error_msg = (
             "Entity Extraction failed. No relationships detected during extraction."
         )
-        callbacks.error(error_msg)
+        logger.error(error_msg)
         raise ValueError(error_msg)
 
     # copy these as is before any summarization

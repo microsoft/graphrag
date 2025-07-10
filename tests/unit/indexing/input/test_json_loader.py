@@ -1,31 +1,37 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.enums import InputFileType, InputType
+from graphrag.config.enums import InputFileType
 from graphrag.config.models.input_config import InputConfig
+from graphrag.config.models.storage_config import StorageConfig
 from graphrag.index.input.factory import create_input
+from graphrag.utils.api import create_storage_from_config
 
 
 async def test_json_loader_one_file_one_object():
     config = InputConfig(
-        type=InputType.file,
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-json-one-object",
+        ),
         file_type=InputFileType.json,
         file_pattern=".*\\.json$",
-        base_dir="tests/unit/indexing/input/data/one-json-one-object",
     )
-    documents = await create_input(config=config)
+    storage = create_storage_from_config(config.storage)
+    documents = await create_input(config=config, storage=storage)
     assert documents.shape == (1, 4)
     assert documents["title"].iloc[0] == "input.json"
 
 
 async def test_json_loader_one_file_multiple_objects():
     config = InputConfig(
-        type=InputType.file,
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-json-multiple-objects",
+        ),
         file_type=InputFileType.json,
         file_pattern=".*\\.json$",
-        base_dir="tests/unit/indexing/input/data/one-json-multiple-objects",
     )
-    documents = await create_input(config=config)
+    storage = create_storage_from_config(config.storage)
+    documents = await create_input(config=config, storage=storage)
     print(documents)
     assert documents.shape == (3, 4)
     assert documents["title"].iloc[0] == "input.json"
@@ -33,37 +39,43 @@ async def test_json_loader_one_file_multiple_objects():
 
 async def test_json_loader_one_file_with_title():
     config = InputConfig(
-        type=InputType.file,
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-json-one-object",
+        ),
         file_type=InputFileType.json,
         file_pattern=".*\\.json$",
-        base_dir="tests/unit/indexing/input/data/one-json-one-object",
         title_column="title",
     )
-    documents = await create_input(config=config)
+    storage = create_storage_from_config(config.storage)
+    documents = await create_input(config=config, storage=storage)
     assert documents.shape == (1, 4)
     assert documents["title"].iloc[0] == "Hello"
 
 
 async def test_json_loader_one_file_with_metadata():
     config = InputConfig(
-        type=InputType.file,
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-json-one-object",
+        ),
         file_type=InputFileType.json,
         file_pattern=".*\\.json$",
-        base_dir="tests/unit/indexing/input/data/one-json-one-object",
         title_column="title",
         metadata=["title"],
     )
-    documents = await create_input(config=config)
+    storage = create_storage_from_config(config.storage)
+    documents = await create_input(config=config, storage=storage)
     assert documents.shape == (1, 5)
     assert documents["metadata"][0] == {"title": "Hello"}
 
 
 async def test_json_loader_multiple_files():
     config = InputConfig(
-        type=InputType.file,
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/multiple-jsons",
+        ),
         file_type=InputFileType.json,
         file_pattern=".*\\.json$",
-        base_dir="tests/unit/indexing/input/data/multiple-jsons",
     )
-    documents = await create_input(config=config)
+    storage = create_storage_from_config(config.storage)
+    documents = await create_input(config=config, storage=storage)
     assert documents.shape == (4, 4)

@@ -8,7 +8,7 @@ from __future__ import annotations
 from contextlib import suppress
 from typing import TYPE_CHECKING, ClassVar
 
-from graphrag.config.enums import OutputType
+from graphrag.config.enums import StorageType
 from graphrag.storage.blob_pipeline_storage import create_blob_storage
 from graphrag.storage.cosmosdb_pipeline_storage import create_cosmosdb_storage
 from graphrag.storage.file_pipeline_storage import create_file_storage
@@ -55,7 +55,7 @@ class StorageFactory:
 
     @classmethod
     def create_storage(
-        cls, storage_type: OutputType | str, kwargs: dict
+        cls, storage_type: StorageType | str, kwargs: dict
     ) -> PipelineStorage:
         """Create a storage object from the provided type.
 
@@ -72,7 +72,7 @@ class StorageFactory:
             ValueError: If the storage type is not registered.
         """
         storage_type_str = (
-            storage_type.value if isinstance(storage_type, OutputType) else storage_type
+            storage_type.value if isinstance(storage_type, StorageType) else storage_type
         )
 
         if storage_type_str not in cls._storage_registry:
@@ -93,7 +93,7 @@ class StorageFactory:
 
 
 # --- Register default implementations ---
-StorageFactory.register(OutputType.blob.value, create_blob_storage)
-StorageFactory.register(OutputType.cosmosdb.value, create_cosmosdb_storage)
-StorageFactory.register(OutputType.file.value, create_file_storage)
-StorageFactory.register(OutputType.memory.value, lambda **_: MemoryPipelineStorage())
+StorageFactory.register(StorageType.blob.value, create_blob_storage)
+StorageFactory.register(StorageType.cosmosdb.value, create_cosmosdb_storage)
+StorageFactory.register(StorageType.file.value, create_file_storage)
+StorageFactory.register(StorageType.memory.value, lambda **_: MemoryPipelineStorage())

@@ -9,8 +9,6 @@ from collections.abc import Iterator
 from datetime import datetime
 from typing import Any
 
-from graphrag.logger.base import ProgressLogger
-
 
 class PipelineStorage(metaclass=ABCMeta):
     """Provide a storage interface for the pipeline. This is where the pipeline will store its output data."""
@@ -20,7 +18,6 @@ class PipelineStorage(metaclass=ABCMeta):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        progress: ProgressLogger | None = None,
         file_filter: dict[str, Any] | None = None,
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:

@@ -22,7 +22,7 @@ from graphrag.prompts.query.drift_search_system_prompt import (
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import SearchResult
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class PrimerQueryProcessor:
@@ -78,7 +78,7 @@ class PrimerQueryProcessor:
             "output_tokens": output_tokens,
         }
         if text == "":
-            log.warning("Failed to generate expansion for query: %s", query)
+            logger.warning("Failed to generate expansion for query: %s", query)
             return query, token_ct
         return text, token_ct
 
@@ -94,7 +94,7 @@ class PrimerQueryProcessor:
         tuple[list[float], int]: List of embeddings for the expanded query and the token count.
         """
         hyde_query, token_ct = await self.expand_query(query)
-        log.info("Expanded query: %s", hyde_query)
+        logger.debug("Expanded query: %s", hyde_query)
         return self.text_embedder.embed(hyde_query), token_ct
 
 

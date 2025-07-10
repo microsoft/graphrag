@@ -4,7 +4,7 @@ As of version 1.3, GraphRAG no longer supports a full complement of pre-built en
 
 The only standard environment variable we expect, and include in the default settings.yml, is `GRAPHRAG_API_KEY`. If you are already using a number of the previous GRAPHRAG_* environment variables, you can insert them with template syntax into settings.yml and they will be adopted.
 
-> **The environment variables below are documented as an aid for migration, but they WILL NOT be read unless you use template syntax in your settings.yml.**
+> **The environment variables below are documented as an aid for migration, but they WILL NOT be read unless you use template syntax in your settings.yml. We also WILL NOT be updating this page as the main config object changes.**
 
 ---
 
@@ -178,11 +178,11 @@ This section controls the cache mechanism used by the pipeline. This is used to 
 
 ### Reporting
 
-This section controls the reporting mechanism used by the pipeline, for common events and error messages. The default is to write reports to a file in the output directory. However, you can also choose to write reports to the console or to an Azure Blob Storage container.
+This section controls the reporting mechanism used by the pipeline, for common events and error messages. The default is to write reports to a file in the output directory. However, you can also choose to write reports to an Azure Blob Storage container.
 
 | Parameter                                     | Description                                                                                                                                                        | Type  | Required or Optional | Default |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- | -------------------- | ------- |
-| `GRAPHRAG_REPORTING_TYPE`                     | The type of reporter to use. Options are `file`, `console`, or `blob`                                                                                              | `str` | optional             | `file`  |
+| `GRAPHRAG_REPORTING_TYPE`                     | The type of reporter to use. Options are `file` or `blob`                                                                                              | `str` | optional             | `file`  |
 | `GRAPHRAG_REPORTING_STORAGE_ACCOUNT_BLOB_URL` | The Azure Storage blob endpoint to use when in `blob` mode and using managed identity. Will have the format `https://<storage_account_name>.blob.core.windows.net` | `str` | optional             | None    |
 | `GRAPHRAG_REPORTING_CONNECTION_STRING`        | The Azure Storage connection string to use when in `blob` mode.                                                                                                    | `str` | optional             | None    |
 | `GRAPHRAG_REPORTING_CONTAINER_NAME`           | The Azure Storage container name to use when in `blob` mode.                                                                                                       | `str` | optional             | None    |

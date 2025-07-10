@@ -30,7 +30,7 @@ from graphrag.query.structured_search.local_search.mixed_context import (
 )
 from graphrag.vector_stores.base import BaseVectorStore
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DRIFTSearchContextBuilder(DRIFTContextBuilder):

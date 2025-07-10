@@ -18,8 +18,12 @@ class PipelineRunContext:
     """Provides the context for the current pipeline run."""
 
     stats: PipelineRunStats
-    storage: PipelineStorage
+    input_storage: PipelineStorage
+    "Storage for input documents."
+    output_storage: PipelineStorage
     "Long-term storage for pipeline verbs to use. Items written here will be written to the storage provider."
+    previous_storage: PipelineStorage
+    "Storage for previous pipeline run when running in update mode."
     cache: PipelineCache
     "Cache instance for reading previous LLM responses."
     callbacks: WorkflowCallbacks

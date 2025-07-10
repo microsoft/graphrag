@@ -8,7 +8,7 @@ from abc import ABCMeta, abstractmethod
 
 import spacy
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class BaseNounPhraseExtractor(metaclass=ABCMeta):
@@ -54,7 +54,7 @@ class BaseNounPhraseExtractor(metaclass=ABCMeta):
             return spacy.load(model_name, exclude=exclude)
         except OSError:
             msg = f"Model `{model_name}` not found. Attempting to download..."
-            log.info(msg)
+            logger.info(msg)
             from spacy.cli.download import download
 
             download(model_name)

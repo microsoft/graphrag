@@ -9,7 +9,7 @@ import pandas as pd
 
 import graphrag.data_model.schemas as schemas
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def prep_text_units(

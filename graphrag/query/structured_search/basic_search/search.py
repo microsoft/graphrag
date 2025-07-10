@@ -20,7 +20,7 @@ from graphrag.query.context_builder.conversation_history import ConversationHist
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 """
 Implementation of a generic RAG algorithm (vector search on raw text chunks)
 """
@@ -73,7 +73,7 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
         prompt_tokens["build_context"] = context_result.prompt_tokens
         output_tokens["build_context"] = context_result.output_tokens
 
-        log.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
+        logger.debug("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         try:
             search_prompt = self.system_prompt.format(
                 context_data=context_result.context_chunks,
@@ -114,7 +114,7 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
             )
 
         except Exception:
-            log.exception("Exception in _asearch")
+            logger.exception("Exception in _asearch")
             return SearchResult(
                 response="",
                 context_data=context_result.context_records,
@@ -141,7 +141,7 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
-        log.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
+        logger.debug("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         search_prompt = self.system_prompt.format(
             context_data=context_result.context_chunks, response_type=self.response_type
         )
