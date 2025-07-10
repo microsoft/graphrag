@@ -72,7 +72,9 @@ class StorageFactory:
             ValueError: If the storage type is not registered.
         """
         storage_type_str = (
-            storage_type.value if isinstance(storage_type, StorageType) else storage_type
+            storage_type.value
+            if isinstance(storage_type, StorageType)
+            else storage_type
         )
 
         if storage_type_str not in cls._storage_registry:
