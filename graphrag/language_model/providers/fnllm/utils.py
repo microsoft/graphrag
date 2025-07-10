@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import threading
 from typing import TYPE_CHECKING, Any, TypeVar
 
@@ -26,6 +27,8 @@ if TYPE_CHECKING:
     )
     from graphrag.index.typing.error_handler import ErrorHandlerFn
 
+logger = logging.getLogger(__name__)
+
 
 def _create_cache(cache: PipelineCache | None, name: str) -> FNLLMCacheProvider | None:
     """Create an FNLLM cache from a pipeline cache."""
@@ -34,7 +37,7 @@ def _create_cache(cache: PipelineCache | None, name: str) -> FNLLMCacheProvider 
     return FNLLMCacheProvider(cache).child(name)
 
 
-def _create_error_handler(callbacks: WorkflowCallbacks) -> ErrorHandlerFn:
+def _create_error_handler(callbacks: WorkflowCallbacks) -> ErrorHandlerFn:  # noqa: ARG001
     """Create an error handler from a WorkflowCallbacks."""
 
     def on_error(
@@ -42,7 +45,11 @@ def _create_error_handler(callbacks: WorkflowCallbacks) -> ErrorHandlerFn:
         stack: str | None = None,
         details: dict | None = None,
     ) -> None:
-        callbacks.error("Error Invoking LLM", error, stack, details)
+        logger.error(
+            "Error Invoking LLM",
+            exc_info=error,
+            extra={"stack": stack, "details": details},
+        )
 
     return on_error
 

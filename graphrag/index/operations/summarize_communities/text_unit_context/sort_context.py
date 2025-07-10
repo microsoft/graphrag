@@ -10,7 +10,7 @@ import pandas as pd
 import graphrag.data_model.schemas as schemas
 from graphrag.query.llm.text_utils import num_tokens
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def get_context_string(

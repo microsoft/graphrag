@@ -75,7 +75,6 @@ pyyaml = "^6.0.2"
 python-dotenv = "^1.0.1"
 
 pydantic = "^2.10.3"
-rich = "^13.9.4"
 devtools = "^0.12.2"
 typing-extensions = "^4.12.2"
 

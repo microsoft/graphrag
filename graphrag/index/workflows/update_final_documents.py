@@ -19,7 +19,7 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """Update the documents from a incremental index run."""
-    logger.info("Updating Documents")
+    logger.info("Workflow started: update_final_documents")
     output_storage, previous_storage, delta_storage = get_update_storages(
         config, context.state["update_timestamp"]
     )
@@ -30,4 +30,5 @@ async def run_workflow(
 
     context.state["incremental_update_final_documents"] = final_documents
 
+    logger.info("Workflow completed: update_final_documents")
     return WorkflowFunctionOutput(result=None)

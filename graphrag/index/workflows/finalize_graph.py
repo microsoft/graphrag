@@ -3,9 +3,10 @@
 
 """A module containing run_workflow method definition."""
 
+import logging
+
 import pandas as pd
 
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.create_graph import create_graph
@@ -16,12 +17,15 @@ from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
+logger = logging.getLogger(__name__)
+
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
+    logger.info("Workflow started: finalize_graph")
     entities = await load_table_from_storage("entities", context.output_storage)
     relationships = await load_table_from_storage(
         "relationships", context.output_storage
@@ -30,7 +34,6 @@ async def run_workflow(
     final_entities, final_relationships = finalize_graph(
         entities,
         relationships,
-        callbacks=context.callbacks,
         embed_config=config.embed_graph,
         layout_enabled=config.umap.enabled,
     )
@@ -50,6 +53,7 @@ async def run_workflow(
             storage=context.output_storage,
         )
 
+    logger.info("Workflow completed: finalize_graph")
     return WorkflowFunctionOutput(
         result={
             "entities": entities,
@@ -61,13 +65,12 @@ async def run_workflow(
 def finalize_graph(
     entities: pd.DataFrame,
     relationships: pd.DataFrame,
-    callbacks: WorkflowCallbacks,
     embed_config: EmbedGraphConfig | None = None,
     layout_enabled: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to finalize the entity and relationship formats."""
     final_entities = finalize_entities(
-        entities, relationships, callbacks, embed_config, layout_enabled
+        entities, relationships, embed_config, layout_enabled
     )
     final_relationships = finalize_relationships(relationships)
     return (final_entities, final_relationships)

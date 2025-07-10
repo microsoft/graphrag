@@ -10,19 +10,17 @@ import pandas as pd
 
 from graphrag.config.models.input_config import InputConfig
 from graphrag.index.input.util import load_files, process_data_columns
-from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def load_json(
     config: InputConfig,
-    progress: ProgressLogger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load json inputs from a directory."""
-    log.info("Loading json files from %s", config.storage.base_dir)
+    logger.info("Loading json files from %s", config.storage.base_dir)
 
     async def load_file(path: str, group: dict | None) -> pd.DataFrame:
         if group is None:
@@ -46,4 +44,4 @@ async def load_json(
 
         return data
 
-    return await load_files(load_file, config, storage, progress)
+    return await load_files(load_file, config, storage)

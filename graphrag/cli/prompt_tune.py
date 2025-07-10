@@ -3,13 +3,12 @@
 
 """CLI implementation of the prompt-tune subcommand."""
 
+import logging
 from pathlib import Path
 
 import graphrag.api as api
-from graphrag.cli.index import _logger
+from graphrag.config.enums import ReportingType
 from graphrag.config.load_config import load_config
-from graphrag.config.logging import enable_logging_with_config
-from graphrag.logger.factory import LoggerFactory, LoggerType
 from graphrag.prompt_tune.generator.community_report_summarization import (
     COMMUNITY_SUMMARIZATION_FILENAME,
 )
@@ -21,13 +20,14 @@ from graphrag.prompt_tune.generator.extract_graph_prompt import (
 )
 from graphrag.utils.cli import redact
 
+logger = logging.getLogger(__name__)
+
 
 async def prompt_tune(
     root: Path,
     config: Path | None,
     domain: str | None,
     verbose: bool,
-    logger: LoggerType,
     selection_method: api.DocSelectionType,
     limit: int,
     max_tokens: int,
@@ -47,8 +47,7 @@ async def prompt_tune(
     - config: The configuration file.
     - root: The root directory.
     - domain: The domain to map the input documents to.
-    - verbose: Whether to enable verbose logging.
-    - logger: The logger to use.
+    - verbose: Enable verbose logging.
     - selection_method: The chunk selection method.
     - limit: The limit of chunks to load.
     - max_tokens: The maximum number of tokens to use on entity extraction prompts.
@@ -70,23 +69,29 @@ async def prompt_tune(
     if overlap != graph_config.chunks.overlap:
         graph_config.chunks.overlap = overlap
 
-    progress_logger = LoggerFactory().create_logger(logger)
-    info, error, success = _logger(progress_logger)
+    # configure the root logger with the specified log level
+    from graphrag.logger.standard_logging import init_loggers
 
-    enabled_logging, log_path = enable_logging_with_config(
-        graph_config, verbose, filename="prompt-tune.log"
+    # initialize loggers with config
+    init_loggers(
+        config=graph_config,
+        root_dir=str(root_path),
+        verbose=verbose,
     )
-    if enabled_logging:
-        info(f"Logging enabled at {log_path}", verbose)
+
+    # log the configuration details
+    if graph_config.reporting.type == ReportingType.file:
+        log_dir = Path(root_path) / (graph_config.reporting.base_dir or "")
+        log_path = log_dir / "logs.txt"
+        logger.info("Logging enabled at %s", log_path)
     else:
-        info(
-            f"Logging not enabled for config {redact(graph_config.model_dump())}",
-            verbose,
+        logger.info(
+            "Logging not enabled for config %s",
+            redact(graph_config.model_dump()),
         )
 
     prompts = await api.generate_indexing_prompts(
         config=graph_config,
-        logger=progress_logger,
         chunk_size=chunk_size,
         overlap=overlap,
         limit=limit,
@@ -102,20 +107,20 @@ async def prompt_tune(
 
     output_path = output.resolve()
     if output_path:
-        info(f"Writing prompts to {output_path}")
+        logger.info("Writing prompts to %s", output_path)
         output_path.mkdir(parents=True, exist_ok=True)
         extract_graph_prompt_path = output_path / EXTRACT_GRAPH_FILENAME
         entity_summarization_prompt_path = output_path / ENTITY_SUMMARIZATION_FILENAME
         community_summarization_prompt_path = (
             output_path / COMMUNITY_SUMMARIZATION_FILENAME
         )
-        # Write files to output path
+        # write files to output path
         with extract_graph_prompt_path.open("wb") as file:
             file.write(prompts[0].encode(encoding="utf-8", errors="strict"))
         with entity_summarization_prompt_path.open("wb") as file:
             file.write(prompts[1].encode(encoding="utf-8", errors="strict"))
         with community_summarization_prompt_path.open("wb") as file:
             file.write(prompts[2].encode(encoding="utf-8", errors="strict"))
-        success(f"Prompts written to {output_path}")
+        logger.info("Prompts written to %s", output_path)
     else:
-        error("No output path provided. Skipping writing prompts.")
+        logger.error("No output path provided. Skipping writing prompts.")

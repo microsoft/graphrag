@@ -37,17 +37,18 @@ async def derive_from_rows(
     callbacks: WorkflowCallbacks | None = None,
     num_threads: int = 4,
     async_type: AsyncType = AsyncType.AsyncIO,
+    progress_msg: str = "",
 ) -> list[ItemType | None]:
     """Apply a generic transform function to each row. Any errors will be reported and thrown."""
     callbacks = callbacks or NoopWorkflowCallbacks()
     match async_type:
         case AsyncType.AsyncIO:
             return await derive_from_rows_asyncio(
-                input, transform, callbacks, num_threads
+                input, transform, callbacks, num_threads, progress_msg
             )
         case AsyncType.Threaded:
             return await derive_from_rows_asyncio_threads(
-                input, transform, callbacks, num_threads
+                input, transform, callbacks, num_threads, progress_msg
             )
         case _:
             msg = f"Unsupported scheduling type {async_type}"
@@ -62,6 +63,7 @@ async def derive_from_rows_asyncio_threads(
     transform: Callable[[pd.Series], Awaitable[ItemType]],
     callbacks: WorkflowCallbacks,
     num_threads: int | None = 4,
+    progress_msg: str = "",
 ) -> list[ItemType | None]:
     """
     Derive from rows asynchronously.
@@ -81,7 +83,9 @@ async def derive_from_rows_asyncio_threads(
 
         return await asyncio.gather(*[execute_task(task) for task in tasks])
 
-    return await _derive_from_rows_base(input, transform, callbacks, gather)
+    return await _derive_from_rows_base(
+        input, transform, callbacks, gather, progress_msg
+    )
 
 
 """A module containing the derive_from_rows_async method."""
@@ -92,6 +96,7 @@ async def derive_from_rows_asyncio(
     transform: Callable[[pd.Series], Awaitable[ItemType]],
     callbacks: WorkflowCallbacks,
     num_threads: int = 4,
+    progress_msg: str = "",
 ) -> list[ItemType | None]:
     """
     Derive from rows asynchronously.
@@ -112,7 +117,9 @@ async def derive_from_rows_asyncio(
         ]
         return await asyncio.gather(*tasks)
 
-    return await _derive_from_rows_base(input, transform, callbacks, gather)
+    return await _derive_from_rows_base(
+        input, transform, callbacks, gather, progress_msg
+    )
 
 
 ItemType = TypeVar("ItemType")
@@ -126,13 +133,16 @@ async def _derive_from_rows_base(
     transform: Callable[[pd.Series], Awaitable[ItemType]],
     callbacks: WorkflowCallbacks,
     gather: GatherFn[ItemType],
+    progress_msg: str = "",
 ) -> list[ItemType | None]:
     """
     Derive from rows asynchronously.
 
     This is useful for IO bound operations.
     """
-    tick = progress_ticker(callbacks.progress, num_total=len(input))
+    tick = progress_ticker(
+        callbacks.progress, num_total=len(input), description=progress_msg
+    )
     errors: list[tuple[BaseException, str]] = []
 
     async def execute(row: tuple[Any, pd.Series]) -> ItemType | None:
@@ -153,7 +163,9 @@ async def _derive_from_rows_base(
     tick.done()
 
     for error, stack in errors:
-        callbacks.error("parallel transformation error", error, stack)
+        logger.error(
+            "parallel transformation error", exc_info=error, extra={"stack": stack}
+        )
 
     if len(errors) > 0:
         raise ParallelizationError(len(errors), errors[0][1])

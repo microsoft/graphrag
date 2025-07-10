@@ -149,11 +149,11 @@ This section controls the cache mechanism used by the pipeline. This is used to 
 
 ### reporting
 
-This section controls the reporting mechanism used by the pipeline, for common events and error messages. The default is to write reports to a file in the output directory. However, you can also choose to write reports to the console or to an Azure Blob Storage container.
+This section controls the reporting mechanism used by the pipeline, for common events and error messages. The default is to write reports to a file in the output directory. However, you can also choose to write reports to an Azure Blob Storage container.
 
 #### Fields
 
-- `type` **file|console|blob** - The reporting type to use. Default=`file`
+- `type` **file|blob** - The reporting type to use. Default=`file`
 - `base_dir` **str** - The base directory to write reports to, relative to the root.
 - `connection_string` **str** - (blob only) The Azure Storage connection string.
 - `container_name` **str** - (blob only) The Azure Storage container name.
