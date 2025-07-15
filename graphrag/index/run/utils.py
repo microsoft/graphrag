@@ -6,15 +6,12 @@
 from graphrag.cache.memory_pipeline_cache import InMemoryCache
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
-from graphrag.callbacks.progress_workflow_callbacks import ProgressWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks_manager import WorkflowCallbacksManager
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.state import PipelineState
 from graphrag.index.typing.stats import PipelineRunStats
-from graphrag.logger.base import ProgressLogger
-from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.api import create_storage_from_config
@@ -26,7 +23,6 @@ def create_run_context(
     previous_storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
-    progress_logger: ProgressLogger | None = None,
     stats: PipelineRunStats | None = None,
     state: PipelineState | None = None,
 ) -> PipelineRunContext:
@@ -37,21 +33,18 @@ def create_run_context(
         previous_storage=previous_storage or MemoryPipelineStorage(),
         cache=cache or InMemoryCache(),
         callbacks=callbacks or NoopWorkflowCallbacks(),
-        progress_logger=progress_logger or NullProgressLogger(),
         stats=stats or PipelineRunStats(),
         state=state or {},
     )
 
 
 def create_callback_chain(
-    callbacks: list[WorkflowCallbacks] | None, progress: ProgressLogger | None
+    callbacks: list[WorkflowCallbacks] | None,
 ) -> WorkflowCallbacks:
     """Create a callback manager that encompasses multiple callbacks."""
     manager = WorkflowCallbacksManager()
     for callback in callbacks or []:
         manager.register(callback)
-    if progress is not None:
-        manager.register(ProgressWorkflowCallbacks(progress))
     return manager
 
 

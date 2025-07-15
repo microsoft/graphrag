@@ -3,12 +3,15 @@
 
 """Encapsulates pipeline construction and selection."""
 
+import logging
 from typing import ClassVar
 
 from graphrag.config.enums import IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.pipeline import Pipeline
 from graphrag.index.typing.workflow import WorkflowFunction
+
+logger = logging.getLogger(__name__)
 
 
 class PipelineFactory:
@@ -41,6 +44,7 @@ class PipelineFactory:
     ) -> Pipeline:
         """Create a pipeline generator."""
         workflows = config.workflows or cls.pipelines.get(method, [])
+        logger.info("Creating pipeline with workflows: %s", workflows)
         return Pipeline([(name, cls.workflows[name]) for name in workflows])
 
 

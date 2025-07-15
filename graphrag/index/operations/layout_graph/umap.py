@@ -20,7 +20,7 @@ from graphrag.index.typing.error_handler import ErrorHandlerFn
 # for "size" or "cluster"
 # We could also have a boolean to indicate to use node sizes or clusters
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def run(
@@ -56,7 +56,7 @@ def run(
             **additional_args,
         )
     except Exception as e:
-        log.exception("Error running UMAP")
+        logger.exception("Error running UMAP")
         on_error(e, traceback.format_exc(), None)
         # Umap may fail due to input sparseness or memory pressure.
         # For now, in these cases, we'll just return a layout with all nodes at (0, 0)

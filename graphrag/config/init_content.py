@@ -52,8 +52,8 @@ models:
     async_mode: {language_model_defaults.async_mode.value} # or asyncio
     retry_strategy: native
     max_retries: {language_model_defaults.max_retries}
-    tokens_per_minute: {language_model_defaults.tokens_per_minute}              # set to null to disable rate limiting
-    requests_per_minute: {language_model_defaults.requests_per_minute}            # set to null to disable rate limiting
+    tokens_per_minute: null              # set to null to disable rate limiting or auto for dynamic
+    requests_per_minute: null            # set to null to disable rate limiting or auto for dynamic
 
 ### Input settings ###
 

@@ -11,23 +11,20 @@ import pandas as pd
 
 from graphrag.config.models.input_config import InputConfig
 from graphrag.index.utils.hashing import gen_sha512_hash
-from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def load_files(
     loader: Any,
     config: InputConfig,
     storage: PipelineStorage,
-    progress: ProgressLogger | None,
 ) -> pd.DataFrame:
     """Load files from storage and apply a loader function."""
     files = list(
         storage.find(
             re.compile(config.file_pattern),
-            progress=progress,
             file_filter=config.file_filter,
         )
     )
@@ -42,17 +39,17 @@ async def load_files(
         try:
             files_loaded.append(await loader(file, group))
         except Exception as e:  # noqa: BLE001 (catching Exception is fine here)
-            log.warning("Warning! Error loading file %s. Skipping...", file)
-            log.warning("Error: %s", e)
+            logger.warning("Warning! Error loading file %s. Skipping...", file)
+            logger.warning("Error: %s", e)
 
-    log.info(
+    logger.info(
         "Found %d %s files, loading %d", len(files), config.file_type, len(files_loaded)
     )
     result = pd.concat(files_loaded)
     total_files_log = (
         f"Total number of unfiltered {config.file_type} rows: {len(result)}"
     )
-    log.info(total_files_log)
+    logger.info(total_files_log)
     return result
 
 
@@ -66,7 +63,7 @@ def process_data_columns(
         )
     if config.text_column is not None and "text" not in documents.columns:
         if config.text_column not in documents.columns:
-            log.warning(
+            logger.warning(
                 "text_column %s not found in csv file %s",
                 config.text_column,
                 path,
@@ -75,7 +72,7 @@ def process_data_columns(
             documents["text"] = documents.apply(lambda x: x[config.text_column], axis=1)
     if config.title_column is not None:
         if config.title_column not in documents.columns:
-            log.warning(
+            logger.warning(
                 "title_column %s not found in csv file %s",
                 config.title_column,
                 path,

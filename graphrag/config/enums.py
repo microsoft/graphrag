@@ -64,8 +64,6 @@ class ReportingType(str, Enum):
 
     file = "file"
     """The file reporting configuration type."""
-    console = "console"
-    """The console reporting configuration type."""
     blob = "blob"
     """The blob reporting configuration type."""
 

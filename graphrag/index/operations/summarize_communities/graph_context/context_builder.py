@@ -32,7 +32,7 @@ from graphrag.index.utils.dataframes import (
 from graphrag.logger.progress import progress_iterable
 from graphrag.query.llm.text_utils import num_tokens
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def build_local_context(
@@ -69,7 +69,7 @@ def _prepare_reports_at_level(
     """Prepare reports at a given level."""
     # Filter and prepare node details
     level_node_df = node_df[node_df[schemas.COMMUNITY_LEVEL] == level]
-    log.info("Number of nodes at level=%s => %s", level, len(level_node_df))
+    logger.info("Number of nodes at level=%s => %s", level, len(level_node_df))
     nodes_set = set(level_node_df[schemas.TITLE])
 
     # Filter and prepare edge details

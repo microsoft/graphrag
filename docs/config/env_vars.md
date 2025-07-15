@@ -178,11 +178,11 @@ This section controls the cache mechanism used by the pipeline. This is used to 
 
 ### Reporting
 
-This section controls the reporting mechanism used by the pipeline, for common events and error messages. The default is to write reports to a file in the output directory. However, you can also choose to write reports to the console or to an Azure Blob Storage container.
+This section controls the reporting mechanism used by the pipeline, for common events and error messages. The default is to write reports to a file in the output directory. However, you can also choose to write reports to an Azure Blob Storage container.
 
 | Parameter                                     | Description                                                                                                                                                        | Type  | Required or Optional | Default |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- | -------------------- | ------- |
-| `GRAPHRAG_REPORTING_TYPE`                     | The type of reporter to use. Options are `file`, `console`, or `blob`                                                                                              | `str` | optional             | `file`  |
+| `GRAPHRAG_REPORTING_TYPE`                     | The type of reporter to use. Options are `file` or `blob`                                                                                              | `str` | optional             | `file`  |
 | `GRAPHRAG_REPORTING_STORAGE_ACCOUNT_BLOB_URL` | The Azure Storage blob endpoint to use when in `blob` mode and using managed identity. Will have the format `https://<storage_account_name>.blob.core.windows.net` | `str` | optional             | None    |
 | `GRAPHRAG_REPORTING_CONNECTION_STRING`        | The Azure Storage connection string to use when in `blob` mode.                                                                                                    | `str` | optional             | None    |
 | `GRAPHRAG_REPORTING_CONTAINER_NAME`           | The Azure Storage container name to use when in `blob` mode.                                                                                                       | `str` | optional             | None    |

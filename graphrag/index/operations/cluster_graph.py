@@ -13,7 +13,7 @@ from graphrag.index.utils.stable_lcc import stable_largest_connected_component
 Communities = list[tuple[int, int, int, list[str]]]
 
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def cluster_graph(
@@ -24,7 +24,7 @@ def cluster_graph(
 ) -> Communities:
     """Apply a hierarchical clustering algorithm to a graph."""
     if len(graph.nodes) == 0:
-        log.warning("Graph has no nodes")
+        logger.warning("Graph has no nodes")
         return []
 
     node_id_to_community_map, parent_mapping = _compute_leiden_communities(

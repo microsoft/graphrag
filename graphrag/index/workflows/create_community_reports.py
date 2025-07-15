@@ -3,6 +3,8 @@
 
 """A module containing run_workflow method definition."""
 
+import logging
+
 import pandas as pd
 
 import graphrag.data_model.schemas as schemas
@@ -32,12 +34,15 @@ from graphrag.utils.storage import (
     write_table_to_storage,
 )
 
+logger = logging.getLogger(__name__)
+
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
+    logger.info("Workflow started: create_community_reports")
     edges = await load_table_from_storage("relationships", context.output_storage)
     entities = await load_table_from_storage("entities", context.output_storage)
     communities = await load_table_from_storage("communities", context.output_storage)
@@ -70,6 +75,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "community_reports", context.output_storage)
 
+    logger.info("Workflow completed: create_community_reports")
     return WorkflowFunctionOutput(result=output)
 
 

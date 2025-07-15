@@ -13,7 +13,7 @@ from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.community_report import COMMUNITY_REPORT_PROMPT
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 # these tokens are used in the prompt
 INPUT_TEXT_KEY = "input_text"
@@ -86,7 +86,7 @@ class CommunityReportsExtractor:
 
             output = response.parsed_response
         except Exception as e:
-            log.exception("error generating community report")
+            logger.exception("error generating community report")
             self._on_error(e, traceback.format_exc(), None)
 
         text_output = self._get_text_output(output) if output else ""

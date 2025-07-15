@@ -13,11 +13,10 @@ from graphrag.index.input.factory import create_input
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.update.incremental_index import get_delta_docs
-from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import write_table_to_storage
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def run_workflow(
@@ -29,15 +28,13 @@ async def run_workflow(
         config.input,
         context.input_storage,
         context.previous_storage,
-        context.progress_logger,
     )
 
-    log.info("Final # of update rows loaded: %s", len(output))
+    logger.info("Final # of update rows loaded: %s", len(output))
     context.stats.update_documents = len(output)
 
     if len(output) == 0:
-        log.warning("No new update documents found.")
-        context.progress_logger.warning("No new update documents found.")
+        logger.warning("No new update documents found.")
         return WorkflowFunctionOutput(result=None, stop=True)
 
     await write_table_to_storage(output, "documents", context.output_storage)
@@ -49,10 +46,9 @@ async def load_update_documents(
     config: InputConfig,
     input_storage: PipelineStorage,
     previous_storage: PipelineStorage,
-    progress_logger: ProgressLogger,
 ) -> pd.DataFrame:
     """Load and parse update-only input documents into a standard format."""
-    input_documents = await create_input(config, input_storage, progress_logger)
+    input_documents = await create_input(config, input_storage)
     # previous storage is the output of the previous run
     # we'll use this to diff the input from the prior
     delta_documents = await get_delta_docs(input_documents, previous_storage)
