@@ -1,9 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation.
-# Licensed under the MIT License
 
-"""A file containing prompts definition."""
-
-EXTRACT_CLAIMS_PROMPT = """
 -Target activity-
 You are an intelligent assistant that helps a human analyst to analyze claims against certain entities presented in a text document.
 
@@ -54,8 +49,4 @@ Use the following input for your answer.
 Entity specification: {entity_specs}
 Claim description: {claim_description}
 Text: {input_text}
-Output:"""
-
-
-CONTINUE_PROMPT = "MANY entities were missed in the last extraction.  Add them below using the same format:\n"
-LOOP_PROMPT = "It appears some entities may have still been missed. Answer Y if there are still entities that need to be added, or N if there are none. Please answer with a single letter Y or N.\n"
+Output:

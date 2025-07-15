@@ -1,9 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation.
-# Licensed under the MIT License
 
-"""Question Generation system prompts."""
-
-QUESTION_SYSTEM_PROMPT = """
 ---Role---
 
 You are a helpful assistant generating a bulleted list of {question_count} questions about data in the tables provided.
@@ -25,4 +20,3 @@ The candidate questions should be answerable using the data tables provided, but
 If the user's questions reference several named entities, then each candidate question should reference all named entities.
 
 ---Example questions---
-"""
