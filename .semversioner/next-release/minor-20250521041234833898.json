@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Refactored StorageFactory to use a registration-based approach"
-}

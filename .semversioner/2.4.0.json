@@ -1,0 +1,26 @@
+{
+  "changes": [
+    {
+      "description": "Allow injection of custom pipelines.",
+      "type": "minor"
+    },
+    {
+      "description": "Refactored StorageFactory to use a registration-based approach",
+      "type": "minor"
+    },
+    {
+      "description": "Fix default values for tpm and rpm limiters on embeddings",
+      "type": "patch"
+    },
+    {
+      "description": "Update typer.",
+      "type": "patch"
+    },
+    {
+      "description": "cleaned up logging to follow python standards.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2025-07-15T00:04:15+00:00",
+  "version": "2.4.0"
+}

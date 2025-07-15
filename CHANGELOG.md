@@ -1,6 +1,14 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 2.4.0
+
+- minor: Allow injection of custom pipelines.
+- minor: Refactored StorageFactory to use a registration-based approach
+- patch: Fix default values for tpm and rpm limiters on embeddings
+- patch: Update typer.
+- patch: cleaned up logging to follow python standards.
+
 ## 2.3.0
 
 - minor: Remove Dynamic Max Retries support. Refactor typer typing in cli interface

@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix default values for tpm and rpm limiters on embeddings"
-}
