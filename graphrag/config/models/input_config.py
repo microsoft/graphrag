@@ -9,10 +9,12 @@ import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import InputFileType
 from graphrag.config.models.storage_config import StorageConfig
-
+import pandas as pd
 
 class InputConfig(BaseModel):
     """The default configuration section for Input."""
+
+    model_config = {"arbitrary_types_allowed": True}
 
     storage: StorageConfig = Field(
         description="The storage configuration to use for reading input documents.",
@@ -27,6 +29,10 @@ class InputConfig(BaseModel):
     encoding: str = Field(
         description="The input file encoding to use.",
         default=defs.graphrag_config_defaults.input.encoding,
+    )
+    dataframe: pd.DataFrame | None = Field(
+        description="The input dataframe to use.",
+        default=None,
     )
     file_pattern: str = Field(
         description="The input file pattern to use.",
