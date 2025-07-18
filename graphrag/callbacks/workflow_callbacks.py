@@ -35,21 +35,3 @@ class WorkflowCallbacks(Protocol):
     def progress(self, progress: Progress) -> None:
         """Handle when progress occurs."""
         ...
-
-    def error(
-        self,
-        message: str,
-        cause: BaseException | None = None,
-        stack: str | None = None,
-        details: dict | None = None,
-    ) -> None:
-        """Handle when an error occurs."""
-        ...
-
-    def warning(self, message: str, details: dict | None = None) -> None:
-        """Handle when a warning occurs."""
-        ...
-
-    def log(self, message: str, details: dict | None = None) -> None:
-        """Handle when a log message occurs."""
-        ...

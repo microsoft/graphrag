@@ -50,27 +50,3 @@ class WorkflowCallbacksManager(WorkflowCallbacks):
         for callback in self._callbacks:
             if hasattr(callback, "progress"):
                 callback.progress(progress)
-
-    def error(
-        self,
-        message: str,
-        cause: BaseException | None = None,
-        stack: str | None = None,
-        details: dict | None = None,
-    ) -> None:
-        """Handle when an error occurs."""
-        for callback in self._callbacks:
-            if hasattr(callback, "error"):
-                callback.error(message, cause, stack, details)
-
-    def warning(self, message: str, details: dict | None = None) -> None:
-        """Handle when a warning occurs."""
-        for callback in self._callbacks:
-            if hasattr(callback, "warning"):
-                callback.warning(message, details)
-
-    def log(self, message: str, details: dict | None = None) -> None:
-        """Handle when a log message occurs."""
-        for callback in self._callbacks:
-            if hasattr(callback, "log"):
-                callback.log(message, details)

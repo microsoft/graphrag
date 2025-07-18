@@ -25,8 +25,10 @@ async def test_finalize_graph():
 
     await run_workflow(config, context)
 
-    nodes_actual = await load_table_from_storage("entities", context.storage)
-    edges_actual = await load_table_from_storage("relationships", context.storage)
+    nodes_actual = await load_table_from_storage("entities", context.output_storage)
+    edges_actual = await load_table_from_storage(
+        "relationships", context.output_storage
+    )
 
     assert len(nodes_actual) == 291
     assert len(edges_actual) == 452
@@ -51,8 +53,10 @@ async def test_finalize_graph_umap():
 
     await run_workflow(config, context)
 
-    nodes_actual = await load_table_from_storage("entities", context.storage)
-    edges_actual = await load_table_from_storage("relationships", context.storage)
+    nodes_actual = await load_table_from_storage("entities", context.output_storage)
+    edges_actual = await load_table_from_storage(
+        "relationships", context.output_storage
+    )
 
     assert len(nodes_actual) == 291
     assert len(edges_actual) == 452
@@ -75,8 +79,8 @@ async def _prep_tables():
     # edit the tables to eliminate final fields that wouldn't be on the inputs
     entities = load_test_table("entities")
     entities.drop(columns=["x", "y", "degree"], inplace=True)
-    await write_table_to_storage(entities, "entities", context.storage)
+    await write_table_to_storage(entities, "entities", context.output_storage)
     relationships = load_test_table("relationships")
     relationships.drop(columns=["combined_degree"], inplace=True)
-    await write_table_to_storage(relationships, "relationships", context.storage)
+    await write_table_to_storage(relationships, "relationships", context.output_storage)
     return context

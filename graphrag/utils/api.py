@@ -10,7 +10,7 @@ from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.config.embeddings import create_collection_name
 from graphrag.config.models.cache_config import CacheConfig
-from graphrag.config.models.output_config import OutputConfig
+from graphrag.config.models.storage_config import StorageConfig
 from graphrag.data_model.types import TextEmbedder
 from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -239,7 +239,7 @@ def load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
     return None
 
 
-def create_storage_from_config(output: OutputConfig) -> PipelineStorage:
+def create_storage_from_config(output: StorageConfig) -> PipelineStorage:
     """Create a storage object from the config."""
     storage_config = output.model_dump()
     return StorageFactory().create_storage(
@@ -256,3 +256,10 @@ def create_cache_from_config(cache: CacheConfig, root_dir: str) -> PipelineCache
         root_dir=root_dir,
         kwargs=cache_config,
     )
+
+
+def truncate(text: str, max_length: int) -> str:
+    """Truncate a string to a maximum length."""
+    if len(text) <= max_length:
+        return text
+    return text[:max_length] + "...[truncated]"

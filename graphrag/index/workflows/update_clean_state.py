@@ -17,7 +17,7 @@ async def run_workflow(  # noqa: RUF029
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """Clean the state after the update."""
-    logger.info("Cleaning State")
+    logger.info("Workflow started: update_clean_state")
     keys_to_delete = [
         key_name
         for key_name in context.state
@@ -27,4 +27,5 @@ async def run_workflow(  # noqa: RUF029
     for key_name in keys_to_delete:
         del context.state[key_name]
 
+    logger.info("Workflow completed: update_clean_state")
     return WorkflowFunctionOutput(result=None)

@@ -15,7 +15,7 @@ from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
 from graphrag.query.llm.text_utils import num_tokens, try_parse_json_object
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 async def rate_relevancy(
@@ -60,7 +60,7 @@ async def rate_relevancy(
         except KeyError:
             # in case of json parsing error, default to rating 1 so the report is kept.
             # json parsing error should rarely happen.
-            log.info("Error parsing json response, defaulting to rating 1")
+            logger.warning("Error parsing json response, defaulting to rating 1")
             ratings.append(1)
         llm_calls += 1
         prompt_tokens += num_tokens(messages[0]["content"], token_encoder)

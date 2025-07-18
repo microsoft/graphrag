@@ -18,7 +18,7 @@ from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
 from graphrag.query.context_builder.rate_relevancy import rate_relevancy
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DynamicCommunitySelection:
@@ -109,7 +109,7 @@ class DynamicCommunitySelection:
             communities_to_rate = []
             for community, result in zip(queue, gather_results, strict=True):
                 rating = result["rating"]
-                log.debug(
+                logger.debug(
                     "dynamic community selection: community %s rating %s",
                     community,
                     rating,
@@ -127,7 +127,7 @@ class DynamicCommunitySelection:
                             if child in self.reports:
                                 communities_to_rate.append(child)
                             else:
-                                log.debug(
+                                logger.debug(
                                     "dynamic community selection: cannot find community %s in reports",
                                     child,
                                 )
@@ -142,7 +142,7 @@ class DynamicCommunitySelection:
                 and (str(level) in self.levels)
                 and (level <= self.max_level)
             ):
-                log.info(
+                logger.debug(
                     "dynamic community selection: no relevant community "
                     "reports, adding all reports at level %s to rate.",
                     level,
@@ -155,7 +155,7 @@ class DynamicCommunitySelection:
         ]
         end = time()
 
-        log.info(
+        logger.debug(
             "dynamic community selection (took: %ss)\n"
             "\trating distribution %s\n"
             "\t%s out of %s community reports are relevant\n"

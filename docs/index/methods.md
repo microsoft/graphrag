@@ -10,7 +10,7 @@ This is the method described in the original [blog post](https://www.microsoft.c
 - relationship extraction: LLM is prompted to describe the relationship between each pair of entities in each text unit.
 - entity summarization: LLM is prompted to combine the descriptions for every instance of an entity found across the text units into a single summary.
 - relationship summarization: LLM is prompted to combine the descriptions for every instance of a relationship found across the text units into a single summary.
-- claim extraction (optiona): LLM is prompted to extract and describe claims from each text unit.
+- claim extraction (optional): LLM is prompted to extract and describe claims from each text unit.
 - community report generation: entity and relationship descriptions (and optionally claims) for each community are collected and used to prompt the LLM to generate a summary report.
 
 `graphrag index --method standard`. This is the default method, so the method param can actual be omitted.
@@ -23,7 +23,7 @@ FastGraphRAG is a method that substitutes some of the language model reasoning f
 - relationship extraction: relationships are defined as text unit co-occurrence between entity pairs. There is no description.
 - entity summarization: not necessary.
 - relationship summarization: not necessary.
-- claim extraction (optiona): unused.
+- claim extraction (optional): unused.
 - community report generation: The direct text unit content containing each entity noun phrase is collected and used to prompt the LLM to generate a summary report.
 
 `graphrag index --method fast`
@@ -41,4 +41,4 @@ You can install it manually by running `python -m spacy download <model_name>`, 
 
 ## Choosing a Method
 
-Standard GraphRAG provides a rich description of real-world entities and relationships, but is more expensive that FastGraphRAG. We estimate graph extraction to constitute roughly 75% of indexing cost. FastGraphRAG is therefore much cheaper, but the tradeoff is that the extracted graph is less directly relevant for use outside of GraphRAG, and the graph tends to be quite a bit noisier. If high fidelity entities and graph exploration are important to your use case, we recommend staying with traditional GraphRAG. If your use case is primarily aimed at summary questions using global search, FastGraphRAG is a reasonable and cheaper alternative.
+Standard GraphRAG provides a rich description of real-world entities and relationships, but is more expensive that FastGraphRAG. We estimate graph extraction to constitute roughly 75% of indexing cost. FastGraphRAG is therefore much cheaper, but the tradeoff is that the extracted graph is less directly relevant for use outside of GraphRAG, and the graph tends to be quite a bit noisier. If high fidelity entities and graph exploration are important to your use case, we recommend staying with traditional GraphRAG. If your use case is primarily aimed at summary questions using global search, FastGraphRAG provides high quality summarization at much less LLM cost.
