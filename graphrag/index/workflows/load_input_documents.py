@@ -21,13 +21,11 @@ logger = logging.getLogger(__name__)
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    dataframe: pd.DataFrame | None = None,
 ) -> WorkflowFunctionOutput:
     """Load and parse input documents into a standard format."""
     output = await load_input_documents(
         config.input,
-        context.input_storage,
-        dataframe,
+        context.input_storage
     )
 
     logger.info("Final # of rows loaded: %s", len(output))
@@ -41,7 +39,6 @@ async def run_workflow(
 async def load_input_documents(
      config: InputConfig, 
     storage: PipelineStorage, 
-    dataframe: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Load and parse input documents into a standard format."""
-    return await create_input(config, storage, dataframe=dataframe)
+    return await create_input(config, storage)
