@@ -12,7 +12,7 @@ import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.embeddings import create_collection_name
+from graphrag.utils.api import get_collection_name
 from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingStrategy
 from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument
 from graphrag.vector_stores.factory import VectorStoreFactory
@@ -49,7 +49,7 @@ async def embed_text(
     vector_store_config = strategy.get("vector_store")
 
     if vector_store_config:
-        collection_name = _get_collection_name(vector_store_config, embedding_name)
+        collection_name = get_collection_name(vector_store_config, embedding_name)
         vector_store: BaseVectorStore = _create_vector_store(
             vector_store_config, collection_name
         )
@@ -195,15 +195,6 @@ def _create_vector_store(
 
     vector_store.connect(**vector_store_config)
     return vector_store
-
-
-def _get_collection_name(vector_store_config: dict, embedding_name: str) -> str:
-    container_name = vector_store_config.get("container_name", "default")
-    collection_name = create_collection_name(container_name, embedding_name)
-
-    msg = f"using vector store {vector_store_config.get('type')} with container_name {container_name} for embedding {embedding_name}: {collection_name}"
-    logger.info(msg)
-    return collection_name
 
 
 def load_strategy(strategy: TextEmbedStrategyType) -> TextEmbeddingStrategy:

@@ -20,6 +20,8 @@ from graphrag.vector_stores.base import (
     VectorStoreSearchResult,
 )
 from graphrag.vector_stores.factory import VectorStoreFactory
+import logging
+logger = logging.getLogger(__name__)
 
 
 class MultiVectorStore(BaseVectorStore):
@@ -103,9 +105,7 @@ def get_embedding_store(
     index_names = []
     for index, store in config_args.items():
         vector_store_type = store["type"]
-        collection_name = create_collection_name(
-            store.get("container_name", "default"), embedding_name
-        )
+        collection_name = get_collection_name(store, embedding_name)
         embedding_store = VectorStoreFactory().create_vector_store(
             vector_store_type=vector_store_type,
             kwargs={**store, "collection_name": collection_name},
@@ -117,6 +117,21 @@ def get_embedding_store(
         embedding_stores.append(embedding_store)
         index_names.append(index)
     return MultiVectorStore(embedding_stores, index_names)
+
+
+def get_collection_name(vector_store_config: dict, embedding_name: str) -> str:
+    collection_name = vector_store_config.get("collection_name")
+    if collection_name:
+        msg = f"using vector store {vector_store_config.get('type')} with user provided collection_name {collection_name} for embedding {embedding_name}"
+        logger.info(msg)
+        return collection_name
+
+    container_name = vector_store_config.get("container_name", "default")
+    collection_name = create_collection_name(container_name, embedding_name)
+
+    msg = f"using vector store {vector_store_config.get('type')} with container_name {container_name} for embedding {embedding_name}: {collection_name}"
+    logger.info(msg)
+    return collection_name
 
 
 def reformat_context_data(context_data: dict) -> dict:
