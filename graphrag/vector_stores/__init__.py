@@ -2,3 +2,7 @@
 # Licensed under the MIT License
 
 """A package containing vector store implementations."""
+
+from .elasticsearch import ElasticSearchVectorStore
+
+__all__ = ["ElasticSearchVectorStore"]

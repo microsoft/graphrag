@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Add ElasticSearch vector store support with full compatibility with existing vector store interface"
+}
