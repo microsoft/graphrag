@@ -52,7 +52,7 @@ class OpenAIChatFNLLM:
         callbacks: WorkflowCallbacks | None = None,
         cache: PipelineCache | None = None,
     ) -> None:
-        model_config = _create_openai_config(config, azure=False)
+        model_config = _create_openai_config(config)
         error_handler = _create_error_handler(callbacks) if callbacks else None
         model_cache = _create_cache(cache, name)
         client = create_openai_client(model_config)
@@ -161,7 +161,7 @@ class OpenAIEmbeddingFNLLM:
         callbacks: WorkflowCallbacks | None = None,
         cache: PipelineCache | None = None,
     ) -> None:
-        model_config = _create_openai_config(config, azure=False)
+        model_config = _create_openai_config(config)
         error_handler = _create_error_handler(callbacks) if callbacks else None
         model_cache = _create_cache(cache, name)
         client = create_openai_client(model_config)
@@ -253,7 +253,7 @@ class AzureOpenAIChatFNLLM:
         callbacks: WorkflowCallbacks | None = None,
         cache: PipelineCache | None = None,
     ) -> None:
-        model_config = _create_openai_config(config, azure=True)
+        model_config = _create_openai_config(config)
         error_handler = _create_error_handler(callbacks) if callbacks else None
         model_cache = _create_cache(cache, name)
         client = create_openai_client(model_config)
@@ -364,7 +364,7 @@ class AzureOpenAIEmbeddingFNLLM:
         callbacks: WorkflowCallbacks | None = None,
         cache: PipelineCache | None = None,
     ) -> None:
-        model_config = _create_openai_config(config, azure=True)
+        model_config = _create_openai_config(config)
         error_handler = _create_error_handler(callbacks) if callbacks else None
         model_cache = _create_cache(cache, name)
         client = create_openai_client(model_config)
