@@ -73,7 +73,7 @@ jobs:
         shell: bash
         run: |
           uv sync --extra dev
-          uv run python -m pip install gensim
+          uv pip install gensim
 
       - name: Check
         run: |
