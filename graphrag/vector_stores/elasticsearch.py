@@ -31,7 +31,7 @@ def _create_index_settings(vector_dim: int) -> dict:
                 "text": {"type": "text"},
                 "vector": {
                     "type": "dense_vector",
-                    "dims": vector_dim,  # Dynamic dimension like LanceDB
+                    "dims": vector_dim,
                     "index": True,
                     "similarity": "cosine",
                 },
@@ -55,7 +55,7 @@ class ElasticSearchVectorStore(BaseVectorStore):
         if self.collection_name and self.db_connection.indices.exists(
             index=self.collection_name
         ):
-            pass  # Index exists, ready to use
+            pass
 
     def load_documents(
         self, documents: list[VectorStoreDocument], overwrite: bool = True
@@ -84,7 +84,6 @@ class ElasticSearchVectorStore(BaseVectorStore):
                 self.db_connection.indices.delete(index=self.collection_name)
 
             if data:
-                # Detect vector dimension from first document (like LanceDB flexibility)
                 vector_dim = len(data[0]["vector"])
                 index_settings = _create_index_settings(vector_dim)
 
@@ -103,7 +102,6 @@ class ElasticSearchVectorStore(BaseVectorStore):
                 bulk(self.db_connection, actions)
                 self.db_connection.indices.refresh(index=self.collection_name)
             else:
-                # Create with default dimension if no data provided
                 default_settings = _create_index_settings(1536)
                 self.db_connection.indices.create(
                     index=self.collection_name,
@@ -112,11 +110,9 @@ class ElasticSearchVectorStore(BaseVectorStore):
         else:
             if not self.db_connection.indices.exists(index=self.collection_name):
                 if data:
-                    # Detect vector dimension from first document
                     vector_dim = len(data[0]["vector"])
                     index_settings = _create_index_settings(vector_dim)
                 else:
-                    # Use default dimension
                     index_settings = _create_index_settings(1536)
 
                 self.db_connection.indices.create(
