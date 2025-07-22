@@ -15,6 +15,7 @@ from fnllm.openai import AzureOpenAIConfig, OpenAIConfig, PublicOpenAIConfig
 from fnllm.openai.types.chat.parameters import OpenAIChatParameters
 
 import graphrag.config.defaults as defs
+from graphrag.config.enums import ModelType
 from graphrag.language_model.providers.fnllm.cache import FNLLMCacheProvider
 
 if TYPE_CHECKING:
@@ -54,7 +55,7 @@ def _create_error_handler(callbacks: WorkflowCallbacks) -> ErrorHandlerFn:  # no
     return on_error
 
 
-def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAIConfig:
+def _create_openai_config(config: LanguageModelConfig) -> OpenAIConfig:
     """Create an OpenAIConfig from a LanguageModelConfig."""
     encoding_model = config.encoding_model
     json_strategy = (
@@ -64,7 +65,10 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
         **get_openai_model_parameters_from_config(config)
     )
 
-    if azure:
+    is_azure = config.type in [ModelType.AzureOpenAIChat, ModelType.AzureOpenAIEmbedding]
+    is_google = config.type in [ModelType.GoogleChat, ModelType.GoogleEmbedding]
+
+    if is_azure:
         if config.api_base is None:
             msg = "Azure OpenAI Chat LLM requires an API base"
             raise ValueError(msg)
@@ -89,9 +93,16 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
             deployment=config.deployment_name,
             chat_parameters=chat_parameters,
         )
+
+    # For both public OpenAI and Google, we use PublicOpenAIConfig
+    # The main difference is the base_url for Google
+    base_url = config.api_base
+    if is_google:
+        base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
+
     return PublicOpenAIConfig(
         api_key=config.api_key,
-        base_url=config.api_base,
+        base_url=base_url,
         json_strategy=json_strategy,
         organization=config.organization,
         retry_strategy=RetryStrategy(config.retry_strategy),
