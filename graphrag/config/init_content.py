@@ -54,6 +54,15 @@ models:
     max_retries: {language_model_defaults.max_retries}
     tokens_per_minute: null              # set to null to disable rate limiting or auto for dynamic
     requests_per_minute: null            # set to null to disable rate limiting or auto for dynamic
+#  google_chat_model:
+#    type: google_chat
+#    api_key: ${{GOOGLE_API_KEY}}
+#    model: "gemini-1.5-flash-latest"
+#    model_supports_json: true
+#  google_embedding_model:
+#    type: google_embedding
+#    api_key: ${{GOOGLE_API_KEY}}
+#    model: "text-embedding-004"
 
 ### Input settings ###
 
@@ -168,5 +177,6 @@ basic_search:
 """
 
 INIT_DOTENV = """\
-GRAPHRAG_API_KEY=<API_KEY>
+GRAPHRAG_API_KEY=<YOUR_OPENAI_API_KEY>
+GOOGLE_API_KEY=<YOUR_GOOGLE_API_KEY>
 """
