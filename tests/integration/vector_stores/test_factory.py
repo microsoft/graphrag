@@ -156,4 +156,4 @@ def test_enum_and_string_compatibility():
     assert isinstance(vector_store_str, LanceDBVectorStore)
     
     # Both should create the same type
-    assert type(vector_store_enum) == type(vector_store_str)
+    assert type(vector_store_enum) is type(vector_store_str)

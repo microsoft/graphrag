@@ -9,13 +9,10 @@ from contextlib import suppress
 from enum import Enum
 from typing import TYPE_CHECKING, ClassVar
 
-from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
-from graphrag.vector_stores.base import BaseVectorStore
-from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
-from graphrag.vector_stores.lancedb import LanceDBVectorStore
-
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+    from graphrag.vector_stores.base import BaseVectorStore
 
 
 class VectorStoreType(str, Enum):
@@ -50,7 +47,7 @@ class VectorStoreFactory:
                     or a class type for backward compatibility.
         """
         # Handle backward compatibility for direct class types
-        if isinstance(creator, type) or (hasattr(creator, '__name__') and hasattr(creator, '__call__') and not hasattr(creator, '__annotations__')):
+        if isinstance(creator, type) or (hasattr(creator, "__name__") and callable(creator) and not hasattr(creator, "__annotations__")):
             # Create a wrapper function for the class
             def class_creator(**kwargs) -> BaseVectorStore:
                 return creator(**kwargs)
@@ -113,16 +110,19 @@ class VectorStoreFactory:
 
 def create_lancedb_vector_store(**kwargs) -> BaseVectorStore:
     """Create a LanceDB vector store."""
+    from graphrag.vector_stores.lancedb import LanceDBVectorStore
     return LanceDBVectorStore(**kwargs)
 
 
 def create_azure_ai_search_vector_store(**kwargs) -> BaseVectorStore:
     """Create an Azure AI Search vector store."""
+    from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
     return AzureAISearchVectorStore(**kwargs)
 
 
 def create_cosmosdb_vector_store(**kwargs) -> BaseVectorStore:
     """Create a CosmosDB vector store."""
+    from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
     return CosmosDBVectorStore(**kwargs)
 
 
