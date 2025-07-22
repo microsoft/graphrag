@@ -22,8 +22,8 @@ def _create_index_settings(vector_dim: int) -> dict:
     """Create ElasticSearch index settings with dynamic vector dimensions."""
     return {
         "settings": {
-            "number_of_shards": 1,
-            "number_of_replicas": 0,
+            "number_of_shards": 1,        # Single shard for development/local setup
+            "number_of_replicas": 0,      # No replicas for development/local setup
         },
         "mappings": {
             "properties": {
@@ -73,7 +73,7 @@ class ElasticSearchVectorStore(BaseVectorStore):
                 "attributes": json.dumps(document.attributes),
             }
             for document in documents
-            if document.vector is not None
+            if document.vector is not None  # Skip documents without embeddings
         ]
 
         if len(data) == 0:
@@ -100,8 +100,10 @@ class ElasticSearchVectorStore(BaseVectorStore):
                     for doc in data
                 ]
                 bulk(self.db_connection, actions)
+                # Force index refresh for immediate searchability (ElasticSearch is near real-time by default)
                 self.db_connection.indices.refresh(index=self.collection_name)
             else:
+                # Default to OpenAI text-embedding-3-small dimensions
                 default_settings = _create_index_settings(1536)
                 self.db_connection.indices.create(
                     index=self.collection_name,
@@ -113,6 +115,7 @@ class ElasticSearchVectorStore(BaseVectorStore):
                     vector_dim = len(data[0]["vector"])
                     index_settings = _create_index_settings(vector_dim)
                 else:
+                    # Default to OpenAI text-embedding-3-small dimensions
                     index_settings = _create_index_settings(1536)
 
                 self.db_connection.indices.create(
@@ -129,6 +132,7 @@ class ElasticSearchVectorStore(BaseVectorStore):
                     for doc in data
                 ]
                 bulk(self.db_connection, actions)
+                # Force index refresh for immediate searchability (ElasticSearch is near real-time by default)
                 self.db_connection.indices.refresh(index=self.collection_name)
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
@@ -154,6 +158,8 @@ class ElasticSearchVectorStore(BaseVectorStore):
                 "field": "vector",
                 "query_vector": query_embedding,
                 "k": k,
+                # Search more candidates for better recall in approximate KNN
+                # 10x multiplier balances accuracy vs performance, capped at 10k for memory limits
                 "num_candidates": min(k * 10, 10000),
             },
             "_source": ["id", "text", "vector", "attributes"],
@@ -187,6 +193,8 @@ class ElasticSearchVectorStore(BaseVectorStore):
         query_embedding = text_embedder(text)
         if query_embedding is not None:
             if isinstance(query_embedding, np.ndarray):
+                # Convert NumPy array to list for ElasticSearch JSON API compatibility
+                # Unlike LanceDB which supports NumPy natively, ElasticSearch requires JSON serialization
                 query_embedding = query_embedding.tolist()
             return self.similarity_search_by_vector(query_embedding, k)
         return []
@@ -210,4 +218,4 @@ class ElasticSearchVectorStore(BaseVectorStore):
                 attributes=json.loads(source["attributes"]),
             )
         except NotFoundError:
-            return VectorStoreDocument(id=id, text=None, vector=None)
+            return VectorStoreDocument(id=id, text=None, vector=None)  # Return null object for consistency
