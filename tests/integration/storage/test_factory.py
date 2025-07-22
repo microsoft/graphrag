@@ -96,9 +96,6 @@ def test_get_storage_types():
     assert StorageType.cosmosdb.value in storage_types
 
 
-
-
-
 def test_create_unknown_storage():
     with pytest.raises(ValueError, match="Unknown storage type: unknown"):
         StorageFactory.create_storage("unknown", {})
@@ -143,5 +140,7 @@ def test_register_class_directly_raises_error():
             pass
 
     # Attempting to register a class directly should raise TypeError
-    with pytest.raises(TypeError, match="Registering classes directly is no longer supported"):
+    with pytest.raises(
+        TypeError, match="Registering classes directly is no longer supported"
+    ):
         StorageFactory.register("custom_class", CustomStorage)

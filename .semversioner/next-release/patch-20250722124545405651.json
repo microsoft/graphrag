@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Refactor VectorStoreFactory to use registration functionality like StorageFactory"
+}
