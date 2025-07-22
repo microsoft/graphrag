@@ -103,41 +103,50 @@ def test_create_unknown_storage():
 
 def test_register_class_directly_raises_error():
     """Test that registering a class directly raises a TypeError."""
+    import re
+    from collections.abc import Iterator
+    from typing import Any
+
     from graphrag.storage.pipeline_storage import PipelineStorage
 
     class CustomStorage(PipelineStorage):
         def __init__(self, **kwargs):
             pass
 
-        def child_exists(self, name: str) -> bool:
-            return False
+        def find(
+            self,
+            file_pattern: re.Pattern[str],
+            base_dir: str | None = None,
+            file_filter: dict[str, Any] | None = None,
+            max_count=-1,
+        ) -> Iterator[tuple[str, dict[str, Any]]]:
+            return iter([])
 
-        def create_child(self, name: str) -> PipelineStorage:
-            return self
-
-        def delete_child(self, name: str) -> None:
-            pass
-
-        def list_children(self) -> list[str]:
-            return []
-
-        def get(self, key: str) -> bytes | None:
+        async def get(
+            self, key: str, as_bytes: bool | None = None, encoding: str | None = None
+        ) -> Any:
             return None
 
-        def set(self, key: str, value: bytes) -> None:
+        async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
             pass
 
-        def delete(self, key: str) -> None:
+        async def delete(self, key: str) -> None:
             pass
 
-        def has(self, key: str) -> bool:
+        async def has(self, key: str) -> bool:
             return False
 
-        def list(self) -> list[str]:
+        async def clear(self) -> None:
+            pass
+
+        def child(self, name: str | None) -> "PipelineStorage":
+            return self
+
+        def keys(self) -> list[str]:
             return []
 
-        def clear(self) -> None:
-            pass
+        async def get_creation_date(self, key: str) -> str:
+            return "2024-01-01 00:00:00 +0000"
 
     # Attempting to register a class directly should raise TypeError
     with pytest.raises(
