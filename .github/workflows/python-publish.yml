@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 env:
-  POETRY_VERSION: "1.8.3"
+  UV_VERSION: "0.8.1"
   PYTHON_VERSION: "3.10"
 
 jobs:
@@ -31,21 +31,21 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v3.0.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          poetry-version: ${{ env.POETRY_VERSION }}
+          version: ${{ env.UV_VERSION }}
 
       - name: Install dependencies
         shell: bash
-        run: poetry install
+        run: uv sync
 
       - name: Export Publication Version
-        run: echo "version=`poetry version --short`" >> $GITHUB_OUTPUT
+        run: echo "version=$(uv run python -c "import graphrag; print(graphrag.__version__)")" >> $GITHUB_OUTPUT
 
       - name: Build Distributable
         shell: bash
-        run: poetry build
+        run: uv build
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

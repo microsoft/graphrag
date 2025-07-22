@@ -27,7 +27,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  POETRY_VERSION: 1.8.3
+  UV_VERSION: 0.8.1
 
 jobs:
   python-ci:
@@ -51,7 +51,7 @@ jobs:
           filters: |
             python:
               - 'graphrag/**/*'
-              - 'poetry.lock'
+              - 'uv.lock'
               - 'pyproject.toml'
               - '**/*.py'
               - '**/*.toml'
@@ -64,30 +64,29 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v3.0.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          poetry-version: $POETRY_VERSION
+          version: ${{ env.UV_VERSION }}
 
       - name: Install dependencies
         shell: bash
         run: |
-          poetry self add setuptools wheel
-          poetry run python -m pip install gensim
-          poetry install
+          uv sync --extra dev
+          uv run python -m pip install gensim
 
       - name: Check
         run: |
-          poetry run poe check
+          uv run poe check
 
       - name: Build
         run: |
-          poetry build
+          uv build
 
       - name: Unit Test
         run: |
-          poetry run poe test_unit
+          uv run poe test_unit
 
       - name: Verb Test
         run: |
-          poetry run poe test_verbs
+          uv run poe test_verbs
