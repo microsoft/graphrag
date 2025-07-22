@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-from contextlib import suppress
 from enum import Enum
 from typing import TYPE_CHECKING, ClassVar
 
@@ -33,36 +32,25 @@ class VectorStoreFactory:
     """
 
     _vector_store_registry: ClassVar[dict[str, Callable[..., BaseVectorStore]]] = {}
-    vector_store_types: ClassVar[dict[str, type]] = {}  # For backward compatibility
 
     @classmethod
     def register(
-        cls, vector_store_type: str, creator: Callable[..., BaseVectorStore] | type
+        cls, vector_store_type: str, creator: Callable[..., BaseVectorStore]
     ) -> None:
         """Register a custom vector store implementation.
 
         Args:
             vector_store_type: The type identifier for the vector store.
-            creator: A callable that creates an instance of the vector store,
-                    or a class type for backward compatibility.
+            creator: A callable that creates an instance of the vector store.
+
+        Raises
+        ------
+            TypeError: If creator is a class type instead of a factory function.
         """
-        # Handle backward compatibility for direct class types
-        if isinstance(creator, type) or (hasattr(creator, "__name__") and callable(creator) and not hasattr(creator, "__annotations__")):
-            # Create a wrapper function for the class
-            def class_creator(**kwargs) -> BaseVectorStore:
-                return creator(**kwargs)
-            cls._vector_store_registry[vector_store_type] = class_creator
-            cls.vector_store_types[vector_store_type] = creator
-        else:
-            cls._vector_store_registry[vector_store_type] = creator
-            # For backward compatibility with code that may access vector_store_types directly
-            if (
-                callable(creator)
-                and hasattr(creator, "__annotations__")
-                and "return" in creator.__annotations__
-            ):
-                with suppress(TypeError, KeyError):
-                    cls.vector_store_types[vector_store_type] = creator.__annotations__["return"]
+        if isinstance(creator, type):
+            msg = "Registering classes directly is no longer supported. Please provide a factory function instead."
+            raise TypeError(msg)
+        cls._vector_store_registry[vector_store_type] = creator
 
     @classmethod
     def create_vector_store(
@@ -111,22 +99,29 @@ class VectorStoreFactory:
 def create_lancedb_vector_store(**kwargs) -> BaseVectorStore:
     """Create a LanceDB vector store."""
     from graphrag.vector_stores.lancedb import LanceDBVectorStore
+
     return LanceDBVectorStore(**kwargs)
 
 
 def create_azure_ai_search_vector_store(**kwargs) -> BaseVectorStore:
     """Create an Azure AI Search vector store."""
     from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
+
     return AzureAISearchVectorStore(**kwargs)
 
 
 def create_cosmosdb_vector_store(**kwargs) -> BaseVectorStore:
     """Create a CosmosDB vector store."""
     from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
+
     return CosmosDBVectorStore(**kwargs)
 
 
 # --- Register default implementations ---
 VectorStoreFactory.register(VectorStoreType.LanceDB.value, create_lancedb_vector_store)
-VectorStoreFactory.register(VectorStoreType.AzureAISearch.value, create_azure_ai_search_vector_store)
-VectorStoreFactory.register(VectorStoreType.CosmosDB.value, create_cosmosdb_vector_store)
+VectorStoreFactory.register(
+    VectorStoreType.AzureAISearch.value, create_azure_ai_search_vector_store
+)
+VectorStoreFactory.register(
+    VectorStoreType.CosmosDB.value, create_cosmosdb_vector_store
+)

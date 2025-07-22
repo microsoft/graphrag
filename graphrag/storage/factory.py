@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-from contextlib import suppress
 from typing import TYPE_CHECKING, ClassVar
 
 from graphrag.config.enums import StorageType
@@ -30,7 +29,6 @@ class StorageFactory:
     """
 
     _storage_registry: ClassVar[dict[str, Callable[..., PipelineStorage]]] = {}
-    storage_types: ClassVar[dict[str, type]] = {}  # For backward compatibility
 
     @classmethod
     def register(
@@ -41,17 +39,15 @@ class StorageFactory:
         Args:
             storage_type: The type identifier for the storage.
             creator: A callable that creates an instance of the storage.
-        """
-        cls._storage_registry[storage_type] = creator
 
-        # For backward compatibility with code that may access storage_types directly
-        if (
-            callable(creator)
-            and hasattr(creator, "__annotations__")
-            and "return" in creator.__annotations__
-        ):
-            with suppress(TypeError, KeyError):
-                cls.storage_types[storage_type] = creator.__annotations__["return"]
+        Raises
+        ------
+            TypeError: If creator is a class type instead of a factory function.
+        """
+        if isinstance(creator, type):
+            msg = "Registering classes directly is no longer supported. Please provide a factory function instead."
+            raise TypeError(msg)
+        cls._storage_registry[storage_type] = creator
 
     @classmethod
     def create_storage(

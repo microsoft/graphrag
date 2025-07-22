@@ -96,13 +96,52 @@ def test_get_storage_types():
     assert StorageType.cosmosdb.value in storage_types
 
 
-def test_backward_compatibility():
-    """Test that the storage_types attribute is still accessible for backward compatibility."""
-    assert hasattr(StorageFactory, "storage_types")
-    # The storage_types attribute should be a dict
-    assert isinstance(StorageFactory.storage_types, dict)
+
 
 
 def test_create_unknown_storage():
     with pytest.raises(ValueError, match="Unknown storage type: unknown"):
         StorageFactory.create_storage("unknown", {})
+
+
+def test_register_class_directly_raises_error():
+    """Test that registering a class directly raises a TypeError."""
+    from graphrag.storage.pipeline_storage import PipelineStorage
+
+    class CustomStorage(PipelineStorage):
+        def __init__(self, **kwargs):
+            pass
+
+        def child_exists(self, name: str) -> bool:
+            return False
+
+        def create_child(self, name: str) -> PipelineStorage:
+            return self
+
+        def delete_child(self, name: str) -> None:
+            pass
+
+        def list_children(self) -> list[str]:
+            return []
+
+        def get(self, key: str) -> bytes | None:
+            return None
+
+        def set(self, key: str, value: bytes) -> None:
+            pass
+
+        def delete(self, key: str) -> None:
+            pass
+
+        def has(self, key: str) -> bool:
+            return False
+
+        def list(self) -> list[str]:
+            return []
+
+        def clear(self) -> None:
+            pass
+
+    # Attempting to register a class directly should raise TypeError
+    with pytest.raises(TypeError, match="Registering classes directly is no longer supported"):
+        StorageFactory.register("custom_class", CustomStorage)
