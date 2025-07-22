@@ -6,7 +6,7 @@ permissions:
   contents: write
 
 env:
-  POETRY_VERSION: '1.8.3'
+  UV_VERSION: 0.8.1
   PYTHON_VERSION: '3.11'
 
 jobs:
@@ -29,18 +29,18 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Poetry ${{ env.POETRY_VERSION }}
-        uses: abatilo/actions-poetry@v3.0.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          poetry-version: ${{ env.POETRY_VERSION }}
+          version: ${{ env.UV_VERSION }}
 
-      - name: poetry intsall
+      - name: Install dependencies
         shell: bash
-        run: poetry install
+        run: uv sync --extra dev
   
       - name: mkdocs build
         shell: bash
-        run: poetry run poe build_docs
+        run: uv run poe build_docs
 
       - name: List Docsite Contents
         run: find site
