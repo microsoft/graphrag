@@ -4,8 +4,9 @@
 """Encapsulates pipeline construction and selection."""
 
 import logging
-from typing import ClassVar
+import pandas as pd
 
+from typing import ClassVar
 from graphrag.config.enums import IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.pipeline import Pipeline
@@ -40,12 +41,13 @@ class PipelineFactory:
     def create_pipeline(
         cls,
         config: GraphRagConfig,
+        input_files: list[pd.DataFrame],
         method: IndexingMethod | str = IndexingMethod.Standard,
     ) -> Pipeline:
         """Create a pipeline generator."""
         workflows = config.workflows or cls.pipelines.get(method, [])
         logger.info("Creating pipeline with workflows: %s", workflows)
-        return Pipeline([(name, cls.workflows[name]) for name in workflows])
+        return Pipeline([(name, cls.workflows[name]) for name in workflows], input_files)
 
 
 # --- Register default implementations ---

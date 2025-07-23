@@ -9,6 +9,7 @@ Backwards compatibility is not guaranteed at this time.
 """
 
 import logging
+import pandas as pd
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -30,6 +31,7 @@ async def build_index(
     is_update_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
+    input_files: list[pd.DataFrame] = [],
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -64,7 +66,7 @@ async def build_index(
     logger.info("Initializing indexing pipeline...")
     # todo: this could propagate out to the cli for better clarity, but will be a breaking api change
     method = _get_method(method, is_update_run)
-    pipeline = PipelineFactory.create_pipeline(config, method)
+    pipeline = PipelineFactory.create_pipeline(config, input_files, method)
 
     workflow_callbacks.pipeline_start(pipeline.names())
 
@@ -83,7 +85,6 @@ async def build_index(
 
     workflow_callbacks.pipeline_end(outputs)
     return outputs
-
 
 def register_workflow_function(name: str, workflow: WorkflowFunction):
     """Register a custom workflow function. You can then include the name in the settings.yaml workflows list."""

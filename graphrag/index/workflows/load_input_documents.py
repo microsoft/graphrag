@@ -26,6 +26,7 @@ async def run_workflow(
     output = await load_input_documents(
         config.input,
         context.input_storage,
+        input_files=context.input_files,
     )
 
     logger.info("Final # of rows loaded: %s", len(output))
@@ -37,7 +38,7 @@ async def run_workflow(
 
 
 async def load_input_documents(
-    config: InputConfig, storage: PipelineStorage
+    config: InputConfig, storage: PipelineStorage, input_files: list[pd.DataFrame] = list()
 ) -> pd.DataFrame:
     """Load and parse input documents into a standard format."""
-    return await create_input(config, storage)
+    return await create_input(config, storage, input_files=input_files)

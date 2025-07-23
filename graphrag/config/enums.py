@@ -36,6 +36,8 @@ class InputFileType(str, Enum):
     """The text input type."""
     json = "json"
     """The JSON input type."""
+    memory_csv = "memory_csv"
+    """The in memory csv file"""
 
     def __repr__(self):
         """Get a string representation."""

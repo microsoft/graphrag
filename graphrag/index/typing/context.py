@@ -3,9 +3,9 @@
 
 # isort: skip_file
 """A module containing the 'PipelineRunContext' models."""
+import pandas as pd
 
 from dataclasses import dataclass
-
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.typing.state import PipelineState
@@ -30,3 +30,4 @@ class PipelineRunContext:
     "Callbacks to be called during the pipeline run."
     state: PipelineState
     "Arbitrary property bag for runtime state, persistent pre-computes, or experimental features."
+    input_files: list[pd.DataFrame]

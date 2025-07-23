@@ -3,6 +3,8 @@
 
 """Utility functions for the GraphRAG run module."""
 
+import pandas as pd
+
 from graphrag.cache.memory_pipeline_cache import InMemoryCache
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
@@ -25,6 +27,7 @@ def create_run_context(
     callbacks: WorkflowCallbacks | None = None,
     stats: PipelineRunStats | None = None,
     state: PipelineState | None = None,
+    input_files = list[pd.DataFrame](),
 ) -> PipelineRunContext:
     """Create the run context for the pipeline."""
     return PipelineRunContext(
@@ -35,6 +38,7 @@ def create_run_context(
         callbacks=callbacks or NoopWorkflowCallbacks(),
         stats=stats or PipelineRunStats(),
         state=state or {},
+        input_files=input_files,
     )
 
 

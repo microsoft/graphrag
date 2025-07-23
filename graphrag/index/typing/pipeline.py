@@ -3,6 +3,8 @@
 
 """A module containing the Pipeline class."""
 
+import pandas as pd
+
 from collections.abc import Generator
 
 from graphrag.index.typing.workflow import Workflow
@@ -11,8 +13,9 @@ from graphrag.index.typing.workflow import Workflow
 class Pipeline:
     """Encapsulates running workflows."""
 
-    def __init__(self, workflows: list[Workflow]):
+    def __init__(self, workflows: list[Workflow], input_files: list[pd.DataFrame]):
         self.workflows = workflows
+        self.input_files = input_files
 
     def run(self) -> Generator[Workflow]:
         """Return a Generator over the pipeline workflows."""
