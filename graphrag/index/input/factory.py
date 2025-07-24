@@ -13,18 +13,18 @@ from graphrag.config.enums import InputFileType
 from graphrag.config.models.input_config import InputConfig
 from graphrag.index.input.csv import load_csv
 from graphrag.index.input.json import load_json
-from graphrag.index.input.text import load_text
 from graphrag.index.input.memory_csv import load_memory_csv
+from graphrag.index.input.text import load_text
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 logger = logging.getLogger(__name__)
 loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
     InputFileType.text: load_text,
     InputFileType.csv: load_csv,
-    InputFileType.json: load_json
+    InputFileType.json: load_json,
 }
 
-in_memory_loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
+in_memory_loaders: dict[str, Callable[[InputConfig, list[pd.DataFrame]], pd.DataFrame]] = {
     InputFileType.memory_csv: load_memory_csv
 }
 
@@ -32,7 +32,7 @@ in_memory_loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
 async def create_input(
     config: InputConfig,
     storage: PipelineStorage,
-    input_files: list[pd.DataFrame] = list(),
+    input_files: list[pd.DataFrame] | None = None,
 ) -> pd.DataFrame:
     """Instantiate input data for a pipeline."""
     logger.info("loading input from root_dir=%s", config.storage.base_dir)
@@ -40,18 +40,15 @@ async def create_input(
     if config.file_type in loaders:
         logger.info("Loading Input %s from loaders", config.file_type)
         loader = loaders[config.file_type]
+        result = await loader(config, storage)
     elif config.file_type in in_memory_loaders:
         logger.info("Loading Input %s from in_memory_loaders", config.file_type)
         loader = in_memory_loaders[config.file_type]
+        result = loader(config, input_files or [])
     else:
-        loader = None
+        result = None
 
-    if loader is not None:
-        if loader == load_memory_csv:            
-            result = await loader(config, storage, input_files=input_files)
-        else:
-            result = await loader(config, storage)
-
+    if result is not None:
         # Convert metadata columns to strings and collapse them into a JSON object
         if config.metadata:
             if all(col in result.columns for col in config.metadata):

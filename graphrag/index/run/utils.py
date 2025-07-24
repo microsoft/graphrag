@@ -27,7 +27,7 @@ def create_run_context(
     callbacks: WorkflowCallbacks | None = None,
     stats: PipelineRunStats | None = None,
     state: PipelineState | None = None,
-    input_files = list[pd.DataFrame](),
+    input_files: list[pd.DataFrame] | None = None,
 ) -> PipelineRunContext:
     """Create the run context for the pipeline."""
     return PipelineRunContext(
@@ -38,9 +38,8 @@ def create_run_context(
         callbacks=callbacks or NoopWorkflowCallbacks(),
         stats=stats or PipelineRunStats(),
         state=state or {},
-        input_files=input_files,
+        input_files=input_files or [],
     )
-
 
 def create_callback_chain(
     callbacks: list[WorkflowCallbacks] | None,

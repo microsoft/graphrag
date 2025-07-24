@@ -24,7 +24,6 @@ async def run_workflow(
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
     """Load and parse update-only input documents into a standard format."""
-
     output = await load_update_documents(
         config.input,
         context.input_storage,
@@ -48,7 +47,7 @@ async def load_update_documents(
     config: InputConfig,
     input_storage: PipelineStorage,
     previous_storage: PipelineStorage,
-    input_files: list[pd.DataFrame] = list(),
+    input_files: list[pd.DataFrame] | None = None,
 ) -> pd.DataFrame:
     """Load and parse update-only input documents into a standard format."""
     input_documents = await create_input(config, input_storage, input_files=input_files)

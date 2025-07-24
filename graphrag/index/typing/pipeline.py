@@ -3,9 +3,9 @@
 
 """A module containing the Pipeline class."""
 
-import pandas as pd
-
 from collections.abc import Generator
+
+import pandas as pd
 
 from graphrag.index.typing.workflow import Workflow
 
