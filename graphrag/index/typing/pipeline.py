@@ -5,14 +5,21 @@
 
 from collections.abc import Generator
 
+import pandas as pd
+
 from graphrag.index.typing.workflow import Workflow
 
 
 class Pipeline:
     """Encapsulates running workflows."""
 
-    def __init__(self, workflows: list[Workflow]):
+    def __init__(
+        self,
+        workflows: list[Workflow],
+        input_files: dict[str, pd.DataFrame] | None = None,
+    ):
         self.workflows = workflows
+        self.input_files = input_files
 
     def run(self) -> Generator[Workflow]:
         """Return a Generator over the pipeline workflows."""

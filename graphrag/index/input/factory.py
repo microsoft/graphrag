@@ -35,6 +35,10 @@ async def create_input(
         logger.info("Loading Input %s", config.file_type)
         loader = loaders[config.file_type]
         result = await loader(config, storage)
+    else:
+        result = None
+
+    if result is not None:
         # Convert metadata columns to strings and collapse them into a JSON object
         if config.metadata:
             if all(col in result.columns for col in config.metadata):
