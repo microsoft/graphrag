@@ -53,6 +53,39 @@ async def load_files(
     return result
 
 
+def load_files_from_memory(
+    loader: Any,
+    config: InputConfig,
+    input_files: list[pd.DataFrame] | None = None,
+) -> pd.DataFrame:
+    """Load files from storage and apply a loader function."""
+    if not input_files or len(input_files) == 0:
+        msg = f"No {config.file_type} files found in {config.storage.base_dir}"
+        raise ValueError(msg)
+
+    files_loaded = []
+
+    for file in input_files:
+        try:
+            files_loaded.append(loader(None, file))
+        except Exception as e:  # noqa: BLE001 (catching Exception is fine here)
+            logger.warning("Warning! Error loading file %s. Skipping...", file)
+            logger.warning("Error: %s", e)
+
+    logger.info(
+        "Found %d %s files, loading %d",
+        len(input_files or []),
+        config.file_type,
+        len(files_loaded),
+    )
+    result = pd.concat(files_loaded)
+    total_files_log = (
+        f"Total number of unfiltered {config.file_type} rows: {len(result)}"
+    )
+    logger.info(total_files_log)
+    return result
+
+
 def process_data_columns(
     documents: pd.DataFrame, config: InputConfig, path: str
 ) -> pd.DataFrame:

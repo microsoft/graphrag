@@ -62,6 +62,7 @@ async def run_pipeline(
             cache=cache,
             callbacks=callbacks,
             state=state,
+            input_files=pipeline.input_files,
         )
 
     else:
@@ -73,6 +74,7 @@ async def run_pipeline(
             cache=cache,
             callbacks=callbacks,
             state=state,
+            input_files=pipeline.input_files,
         )
 
     async for table in _run_pipeline(

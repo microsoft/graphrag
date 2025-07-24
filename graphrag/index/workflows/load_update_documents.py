@@ -28,6 +28,7 @@ async def run_workflow(
         config.input,
         context.input_storage,
         context.previous_storage,
+        input_files=context.input_files,
     )
 
     logger.info("Final # of update rows loaded: %s", len(output))
@@ -46,9 +47,10 @@ async def load_update_documents(
     config: InputConfig,
     input_storage: PipelineStorage,
     previous_storage: PipelineStorage,
+    input_files: list[pd.DataFrame] | None = None,
 ) -> pd.DataFrame:
     """Load and parse update-only input documents into a standard format."""
-    input_documents = await create_input(config, input_storage)
+    input_documents = await create_input(config, input_storage, input_files=input_files)
     # previous storage is the output of the previous run
     # we'll use this to diff the input from the prior
     delta_documents = await get_delta_docs(input_documents, previous_storage)
