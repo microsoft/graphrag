@@ -12,7 +12,7 @@ This sample app is not published to pypi, so you'll need to clone the GraphRAG r
 We recommend always using a virtual environment:
 
 - `uv venv --python 3.11`
-- `source ./venv/bin/activate`
+- `source .venv/bin/activate`
 
 ## Run index
 Use GraphRAG to index your dataset before running Unified Search. We recommend starting with the [Getting Started guide](https://microsoft.github.io/graphrag/get_started/). You need to run GraphRAG indexing with graph embedding umap enabled to use the functionalities of Unified Search. 
