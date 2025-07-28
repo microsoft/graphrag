@@ -11,6 +11,10 @@
 
 ## Install Dependencies
 ```shell
+# (optional) create virtual environment
+uv venv --python 3.10
+source .venv/bin/activate
+
 # install python dependencies
 uv sync --extra dev
 ```
