@@ -3,7 +3,6 @@
 
 """A module containing 'InMemoryStorage' model."""
 
-import asyncio
 import logging
 import re
 from collections.abc import Iterator
@@ -36,7 +35,8 @@ class MemoryPipelineStorage(PipelineStorage):
         """Find files in the storage using a file pattern, as well as a custom filter function."""
         # In-memory storage does not support file finding
         results: list[tuple[str, dict[str, Any]]] = []
-        results = [(key, {}) for key in self._storage["files"]]
+        if self._storage.get("files") is not None:
+            results = [(key, {}) for key in self._storage["files"]]
         return iter(results)
 
     async def get(
@@ -84,7 +84,7 @@ class MemoryPipelineStorage(PipelineStorage):
         Args:
             - key - The key to delete.
         """
-        del self._storage[key]
+        del self._storage["files"][key]
 
     async def clear(self) -> None:
         """Clear the storage."""
@@ -109,14 +109,19 @@ class MemoryPipelineStorage(PipelineStorage):
             - key - The key to set the value for.
             - value - The value to set.
         """
-        task = asyncio.create_task(self.set(key, value, encoding))
-        logger.info("Setting value for key '%s' in memory storage", task.get_name())
+        logger.info("Setting value for key '%s' in memory storage", key)
+        if "files" not in self._storage:
+            self._storage["files"] = {}
+        self._storage["files"][key] = value
 
 
 def create_memory_storage(**kwargs: Any) -> PipelineStorage:
     """Create a memory based storage."""
     logger.info("Creating memory storage")
     memorystorage = MemoryPipelineStorage()
+    if kwargs.get("input_files") is None:
+        return memorystorage
+
     for key, value in kwargs["input_files"].items():
         memorystorage.set_sync(key, value)
     return memorystorage
