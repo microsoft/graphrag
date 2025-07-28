@@ -12,8 +12,8 @@ WORKDIR ./
 COPY . .
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="${PATH}:/root/.local/bin"
-RUN uv sync
+RUN uv sync --no-install-project
 
 # Run application
 EXPOSE 8501
-ENTRYPOINT ["uv","run","streamlit", "run", "./app/home_page.py"]
+ENTRYPOINT ["uv","run","poe","start_prod"]
