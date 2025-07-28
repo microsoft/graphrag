@@ -74,9 +74,11 @@ jobs:
         run: |
           uv build
 
-      - name: Install Azurite
-        id: azuright
-        uses: potatoqualitee/azuright@v1.1
+      - name: Install and start Azurite
+        shell: bash
+        run: |
+          npm install -g azurite
+          azurite --silent --location /tmp/azurite --debug /tmp/azurite-debug.log &
 
       # For more information on installation/setup of Azure Cosmos DB Emulator
       # https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=docker-linux%2Cpython&pivots=api-nosql

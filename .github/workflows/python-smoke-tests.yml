@@ -91,9 +91,11 @@ jobs:
         run: |
           uv build
 
-      - name: Install Azurite
-        id: azuright
-        uses: potatoqualitee/azuright@v1.1
+      - name: Install and start Azurite
+        shell: bash
+        run: |
+          npm install -g azurite
+          azurite --silent --location /tmp/azurite --debug /tmp/azurite-debug.log &
 
       - name: Smoke Test
         if: steps.changes.outputs.python == 'true'
