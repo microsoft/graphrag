@@ -5,7 +5,7 @@
 | Name                | Installation                                                 | Purpose                                                                             |
 | ------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
 | Python 3.10 or 3.11 | [Download](https://www.python.org/downloads/)                | The library is Python-based.                                                        |
-| uv                  | [Instructions](https://docs.astral.sh/uv/)                  | uv is used for package management and virtualenv management in Python codebases |
+| uv                  | [Instructions](https://docs.astral.sh/uv/)                   | uv is used for package management and virtualenv management in Python codebases     |
 
 # Getting Started
 

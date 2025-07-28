@@ -103,5 +103,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: smoke-test-artifacts-${{ matrix.python-version }}-${{ matrix.poetry-version }}-${{ runner.os }}
+          name: smoke-test-artifacts-${{ matrix.python-version }}-${{ runner.os }}
           path: tests/fixtures/*
