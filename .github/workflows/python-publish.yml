@@ -38,7 +38,7 @@ jobs:
         run: uv sync
 
       - name: Export Publication Version
-        run: echo "version=$(uv run python -c "import graphrag; print(graphrag.__version__)")" >> $GITHUB_OUTPUT
+        run: echo "version=$(uv version --short)" >> $GITHUB_OUTPUT
 
       - name: Build Distributable
         shell: bash
