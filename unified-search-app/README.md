@@ -5,13 +5,13 @@ Unified demo for GraphRAG search comparisons.
 
 ## Requirements:
 - Python 3.11
-- Poetry
+- UV
     
 This sample app is not published to pypi, so you'll need to clone the GraphRAG repo and run from this folder.
 
 We recommend always using a virtual environment:
 
-- `python -m venv ./venv`
+- `uv venv --python 3.11`
 - `source ./venv/bin/activate`
 
 ## Run index
@@ -91,9 +91,9 @@ You can host Unified Search datasets locally or in a blob.
 
 # Run the app
 
-Install all the dependencies: `poetry install`
+Install all the dependencies: `uv sync`
 
-Run the project using streamlit: `poetry run poe start`
+Run the project using streamlit: `uv run poe start`
 
 # How to use it
 
