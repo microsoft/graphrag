@@ -95,7 +95,7 @@ jobs:
         shell: bash
         run: |
           npm install -g azurite
-          azurite --silent --location /tmp/azurite --debug /tmp/azurite-debug.log &
+          azurite --silent --skipApiVersionCheck --location /tmp/azurite --debug /tmp/azurite-debug.log &
 
       - name: Smoke Test
         if: steps.changes.outputs.python == 'true'
