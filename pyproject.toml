@@ -109,6 +109,7 @@ mkdocs-jupyter = "^0.25.1"
 mkdocs-exclude-search = "^0.6.6"
 pytest-dotenv = "^0.5.2"
 mkdocs-typer = "^0.0.3"
+freezegun = "^1.5.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
@@ -268,3 +269,6 @@ asyncio_default_fixture_loop_scope = "function"
 asyncio_mode = "auto"
 timeout = 1000
 env_files = [".env"]
+pythonpath = [
+  "./tests"
+]

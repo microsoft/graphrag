@@ -4,6 +4,7 @@
 """Parameterization settings for the default configuration."""
 
 from pathlib import Path
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -14,6 +15,10 @@ from graphrag.config.enums import StorageType
 class StorageConfig(BaseModel):
     """The default configuration section for storage."""
 
+    input_files: dict[str, Any] | None = Field(
+        description="A dictionary of input files to load, where the key is the file name and the value is the file path.",
+        default=None,
+    )
     type: StorageType = Field(
         description="The storage type to use.",
         default=graphrag_config_defaults.storage.type,

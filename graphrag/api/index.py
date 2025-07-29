@@ -10,6 +10,8 @@ Backwards compatibility is not guaranteed at this time.
 
 import logging
 
+import pandas as pd
+
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import IndexingMethod
@@ -30,6 +32,7 @@ async def build_index(
     is_update_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
+    input_files: dict[str, pd.DataFrame] | None = None,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -64,7 +67,8 @@ async def build_index(
     logger.info("Initializing indexing pipeline...")
     # todo: this could propagate out to the cli for better clarity, but will be a breaking api change
     method = _get_method(method, is_update_run)
-    pipeline = PipelineFactory.create_pipeline(config, method)
+    config.input.storage.input_files = input_files
+    pipeline = PipelineFactory.create_pipeline(config, input_files, method)
 
     workflow_callbacks.pipeline_start(pipeline.names())
 

@@ -7,6 +7,7 @@ These tests will test the StorageFactory class and the creation of each storage 
 
 import sys
 
+import pandas as pd
 import pytest
 
 from graphrag.config.enums import StorageType
@@ -57,7 +58,10 @@ def test_create_file_storage():
 
 
 def test_create_memory_storage():
-    kwargs = {"type": "memory"}
+    kwargs = {
+        "type": "memory",
+        "input_files": {"test.txt": pd.DataFrame({"text": ["Hello, World!"]})},
+    }
     storage = StorageFactory.create_storage(StorageType.memory, kwargs)
     assert isinstance(storage, MemoryPipelineStorage)
 

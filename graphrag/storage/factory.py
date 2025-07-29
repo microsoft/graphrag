@@ -12,7 +12,7 @@ from graphrag.config.enums import StorageType
 from graphrag.storage.blob_pipeline_storage import create_blob_storage
 from graphrag.storage.cosmosdb_pipeline_storage import create_cosmosdb_storage
 from graphrag.storage.file_pipeline_storage import create_file_storage
-from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
+from graphrag.storage.memory_pipeline_storage import create_memory_storage
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -98,4 +98,4 @@ class StorageFactory:
 StorageFactory.register(StorageType.blob.value, create_blob_storage)
 StorageFactory.register(StorageType.cosmosdb.value, create_cosmosdb_storage)
 StorageFactory.register(StorageType.file.value, create_file_storage)
-StorageFactory.register(StorageType.memory.value, lambda **_: MemoryPipelineStorage())
+StorageFactory.register(StorageType.memory.value, create_memory_storage)
