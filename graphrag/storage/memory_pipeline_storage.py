@@ -20,6 +20,7 @@ class MemoryPipelineStorage(PipelineStorage):
     """In memory storage class definition."""
 
     _storage: dict[str, Any]
+    files_key: str = "files"
 
     def __init__(self):
         """Init method definition."""
@@ -35,13 +36,13 @@ class MemoryPipelineStorage(PipelineStorage):
         """Find files in the storage using a file pattern, as well as a custom filter function."""
         # In-memory storage does not support file finding
         results: list[tuple[str, dict[str, Any]]] = []
-        if self._storage.get("files") is not None:
-            results = [(key, {}) for key in self._storage["files"]]
+        if self._storage.get(self.files_key) is not None:
+            results = [(key, {}) for key in self._storage[self.files_key]]
         return iter(results)
 
     async def get(
         self, key: str, as_bytes: bool | None = None, encoding: str | None = None
-    ) -> pd.DataFrame | Any:
+    ) -> Any:
         """Get the value for the given key.
 
         Args:
@@ -52,7 +53,18 @@ class MemoryPipelineStorage(PipelineStorage):
         -------
             - output - The value for the given key.
         """
-        return self._storage["files"].get(key)
+        if self.files_key not in self._storage:
+            return None
+        val = self._storage[self.files_key].get(key)
+        if as_bytes and val is not None and not isinstance(val, bytes):
+            if isinstance(val, str):
+                val = val.encode(encoding or "utf-8")
+            elif isinstance(val, pd.DataFrame):
+                val = val.to_csv(index=False).encode(encoding or "utf-8")
+            else:
+                val = bytes(val)
+
+        return val
 
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Set the value for the given key.
@@ -61,10 +73,10 @@ class MemoryPipelineStorage(PipelineStorage):
             - key - The key to set the value for.
             - value - The value to set.
         """
-        if "files" not in self._storage:
-            self._storage["files"] = {}
+        if self.files_key not in self._storage:
+            self._storage[self.files_key] = {}
 
-        self._storage["files"][key] = value
+        self._storage[self.files_key][key] = value
 
     async def has(self, key: str) -> bool:
         """Return True if the given key exists in the storage.
@@ -76,7 +88,11 @@ class MemoryPipelineStorage(PipelineStorage):
         -------
             - output - True if the key exists in the storage, False otherwise.
         """
-        return key in self._storage
+        return (
+            key in self._storage[self.files_key]
+            if self.files_key in self._storage
+            else False
+        )
 
     async def delete(self, key: str) -> None:
         """Delete the given key from the storage.
@@ -84,7 +100,7 @@ class MemoryPipelineStorage(PipelineStorage):
         Args:
             - key - The key to delete.
         """
-        del self._storage["files"][key]
+        del self._storage[self.files_key][key]
 
     async def clear(self) -> None:
         """Clear the storage."""
@@ -96,7 +112,10 @@ class MemoryPipelineStorage(PipelineStorage):
 
     def keys(self) -> list[str]:
         """Return the keys in the storage."""
-        return list(self._storage.keys())
+        if self.files_key not in self._storage:
+            return []
+        # Return the keys of the 'files' dictionary
+        return list(self._storage[self.files_key].keys())
 
     async def get_creation_date(self, key: str) -> str:
         """Get the creation date for the given key."""
@@ -110,9 +129,9 @@ class MemoryPipelineStorage(PipelineStorage):
             - value - The value to set.
         """
         logger.info("Setting value for key '%s' in memory storage", key)
-        if "files" not in self._storage:
-            self._storage["files"] = {}
-        self._storage["files"][key] = value
+        if self.files_key not in self._storage:
+            self._storage[self.files_key] = {}
+        self._storage[self.files_key][key] = value
 
 
 def create_memory_storage(**kwargs: Any) -> PipelineStorage:

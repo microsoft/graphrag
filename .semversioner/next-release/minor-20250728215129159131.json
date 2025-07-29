@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Added support for providing in memory dataframe files for indexing"
+}

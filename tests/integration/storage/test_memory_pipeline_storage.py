@@ -5,6 +5,7 @@
 import os
 import re
 from datetime import datetime, timezone
+from io import BytesIO
 
 import pandas as pd
 from freezegun import freeze_time
@@ -46,6 +47,11 @@ async def test_find():
     await storage.delete("test.txt")
     output = await storage.get("test.txt")
     assert output is None
+
+    output = await storage.get("tests/fixtures/text/input/dulce.txt", as_bytes=True)
+    assert isinstance(output, bytes)
+    data_frame = pd.read_csv(BytesIO(output), dtype=str)
+    assert data_frame.shape == (1, 2)
 
 
 @freeze_time("2023-10-01T15:55:00.12345")

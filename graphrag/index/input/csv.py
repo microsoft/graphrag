@@ -10,7 +10,6 @@ import pandas as pd
 
 from graphrag.config.models.input_config import InputConfig
 from graphrag.index.input.util import load_files, process_data_columns
-from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 logger = logging.getLogger(__name__)
@@ -26,14 +25,8 @@ async def load_csv(
     async def load_file(path: str, group: dict | None) -> pd.DataFrame:
         if group is None:
             group = {}
-
-        if isinstance(storage, MemoryPipelineStorage):
-            # If using memory storage, we can directly read from the in-memory DataFrame
-            data = await storage.get(path)
-        else:
-            buffer = BytesIO(await storage.get(path, as_bytes=True))
-            data = pd.read_csv(buffer, encoding=config.encoding)
-
+        buffer = BytesIO(await storage.get(path, as_bytes=True))
+        data = pd.read_csv(buffer, encoding=config.encoding)
         additional_keys = group.keys()
         if len(additional_keys) > 0:
             data[[*additional_keys]] = data.apply(
