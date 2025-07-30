@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing cache factory for creating cache implementations."""
+"""Factory functions for creating a cache."""
 
 from __future__ import annotations
 

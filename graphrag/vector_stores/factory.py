@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A package containing a factory and supported vector store types."""
+"""Factory functions for creating a vector store."""
 
 from __future__ import annotations
 
