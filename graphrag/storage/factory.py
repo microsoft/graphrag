@@ -8,9 +8,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 from graphrag.config.enums import StorageType
-from graphrag.storage.blob_pipeline_storage import create_blob_storage
-from graphrag.storage.cosmosdb_pipeline_storage import create_cosmosdb_storage
-from graphrag.storage.file_pipeline_storage import create_file_storage
+from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
+from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
 
 if TYPE_CHECKING:
@@ -28,7 +28,7 @@ class StorageFactory:
     for individual enforcement of required/optional arguments.
     """
 
-    _storage_registry: ClassVar[dict[str, Callable[..., PipelineStorage]]] = {}
+    _registry: ClassVar[dict[str, Callable[..., PipelineStorage]]] = {}
 
     @classmethod
     def register(
@@ -44,10 +44,7 @@ class StorageFactory:
         ------
             TypeError: If creator is a class type instead of a factory function.
         """
-        if isinstance(creator, type):
-            msg = "Registering classes directly is no longer supported. Please provide a factory function instead."
-            raise TypeError(msg)
-        cls._storage_registry[storage_type] = creator
+        cls._registry[storage_type] = creator
 
     @classmethod
     def create_storage(
@@ -67,31 +64,31 @@ class StorageFactory:
         ------
             ValueError: If the storage type is not registered.
         """
-        storage_type_str = (
+        type_str = (
             storage_type.value
             if isinstance(storage_type, StorageType)
             else storage_type
         )
 
-        if storage_type_str not in cls._storage_registry:
+        if type_str not in cls._storage_registry:
             msg = f"Unknown storage type: {storage_type}"
             raise ValueError(msg)
 
-        return cls._storage_registry[storage_type_str](**kwargs)
+        return cls._storage_registry[type_str](**kwargs)
 
     @classmethod
     def get_storage_types(cls) -> list[str]:
         """Get the registered storage implementations."""
-        return list(cls._storage_registry.keys())
+        return list(cls._registry.keys())
 
     @classmethod
-    def is_supported_storage_type(cls, storage_type: str) -> bool:
+    def is_supported_type(cls, storage_type: str) -> bool:
         """Check if the given storage type is supported."""
-        return storage_type in cls._storage_registry
+        return storage_type in cls._registry
 
 
-# --- Register default implementations ---
-StorageFactory.register(StorageType.blob.value, create_blob_storage)
-StorageFactory.register(StorageType.cosmosdb.value, create_cosmosdb_storage)
-StorageFactory.register(StorageType.file.value, create_file_storage)
-StorageFactory.register(StorageType.memory.value, lambda **_: MemoryPipelineStorage())
+# --- register built-in storage implementations ---
+StorageFactory.register(StorageType.blob.value, BlobPipelineStorage)
+StorageFactory.register(StorageType.cosmosdb.value, CosmosDBPipelineStorage)
+StorageFactory.register(StorageType.file.value, FilePipelineStorage)
+StorageFactory.register(StorageType.memory.value, MemoryPipelineStorage)

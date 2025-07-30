@@ -75,7 +75,7 @@ def test_register_and_create_custom_vector_store():
 
     # Check if it's in the list of registered vector store types
     assert "custom" in VectorStoreFactory.get_vector_store_types()
-    assert VectorStoreFactory.is_supported_vector_store_type("custom")
+    assert VectorStoreFactory.is_supported_type("custom")
 
 
 def test_get_vector_store_types():
@@ -91,20 +91,14 @@ def test_create_unknown_vector_store():
         VectorStoreFactory.create_vector_store("unknown", {})
 
 
-def test_is_supported_vector_store_type():
+def test_is_supported_type():
     # Test built-in types
-    assert VectorStoreFactory.is_supported_vector_store_type(
-        VectorStoreType.LanceDB.value
-    )
-    assert VectorStoreFactory.is_supported_vector_store_type(
-        VectorStoreType.AzureAISearch.value
-    )
-    assert VectorStoreFactory.is_supported_vector_store_type(
-        VectorStoreType.CosmosDB.value
-    )
+    assert VectorStoreFactory.is_supported_type(VectorStoreType.LanceDB.value)
+    assert VectorStoreFactory.is_supported_type(VectorStoreType.AzureAISearch.value)
+    assert VectorStoreFactory.is_supported_type(VectorStoreType.CosmosDB.value)
 
     # Test unknown type
-    assert not VectorStoreFactory.is_supported_vector_store_type("unknown")
+    assert not VectorStoreFactory.is_supported_type("unknown")
 
 
 def test_enum_and_string_compatibility():

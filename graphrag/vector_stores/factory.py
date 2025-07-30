@@ -8,6 +8,10 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING, ClassVar
 
+from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
+from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
+from graphrag.vector_stores.lancedb import LanceDBVectorStore
+
 if TYPE_CHECKING:
     from collections.abc import Callable
 
@@ -31,7 +35,7 @@ class VectorStoreFactory:
     for individual enforcement of required/optional arguments.
     """
 
-    _vector_store_registry: ClassVar[dict[str, Callable[..., BaseVectorStore]]] = {}
+    _registry: ClassVar[dict[str, Callable[..., BaseVectorStore]]] = {}
 
     @classmethod
     def register(
@@ -47,10 +51,7 @@ class VectorStoreFactory:
         ------
             TypeError: If creator is a class type instead of a factory function.
         """
-        if isinstance(creator, type):
-            msg = "Registering classes directly is no longer supported. Please provide a factory function instead."
-            raise TypeError(msg)
-        cls._vector_store_registry[vector_store_type] = creator
+        cls._registry[vector_store_type] = creator
 
     @classmethod
     def create_vector_store(
@@ -70,56 +71,32 @@ class VectorStoreFactory:
         ------
             ValueError: If the vector store type is not registered.
         """
-        vector_store_type_str = (
+        type_str = (
             vector_store_type.value
             if isinstance(vector_store_type, VectorStoreType)
             else vector_store_type
         )
 
-        if vector_store_type_str not in cls._vector_store_registry:
+        if type_str not in cls._registry:
             msg = f"Unknown vector store type: {vector_store_type}"
             raise ValueError(msg)
 
-        return cls._vector_store_registry[vector_store_type_str](**kwargs)
+        return cls._registry[type_str](**kwargs)
 
     @classmethod
     def get_vector_store_types(cls) -> list[str]:
         """Get the registered vector store implementations."""
-        return list(cls._vector_store_registry.keys())
+        return list(cls._registry.keys())
 
     @classmethod
-    def is_supported_vector_store_type(cls, vector_store_type: str) -> bool:
+    def is_supported_type(cls, vector_store_type: str) -> bool:
         """Check if the given vector store type is supported."""
-        return vector_store_type in cls._vector_store_registry
+        return vector_store_type in cls._registry
 
 
-# --- Factory functions for built-in vector stores ---
-def create_lancedb_vector_store(**kwargs) -> BaseVectorStore:
-    """Create a LanceDB vector store."""
-    from graphrag.vector_stores.lancedb import LanceDBVectorStore
-
-    return LanceDBVectorStore(**kwargs)
-
-
-def create_azure_ai_search_vector_store(**kwargs) -> BaseVectorStore:
-    """Create an Azure AI Search vector store."""
-    from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
-
-    return AzureAISearchVectorStore(**kwargs)
-
-
-def create_cosmosdb_vector_store(**kwargs) -> BaseVectorStore:
-    """Create a CosmosDB vector store."""
-    from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
-
-    return CosmosDBVectorStore(**kwargs)
-
-
-# --- register default implementations ---
-VectorStoreFactory.register(VectorStoreType.LanceDB.value, create_lancedb_vector_store)
+# --- register built-in vector store implementations ---
+VectorStoreFactory.register(VectorStoreType.LanceDB.value, LanceDBVectorStore)
 VectorStoreFactory.register(
-    VectorStoreType.AzureAISearch.value, create_azure_ai_search_vector_store
+    VectorStoreType.AzureAISearch.value, AzureAISearchVectorStore
 )
-VectorStoreFactory.register(
-    VectorStoreType.CosmosDB.value, create_cosmosdb_vector_store
-)
+VectorStoreFactory.register(VectorStoreType.CosmosDB.value, CosmosDBVectorStore)

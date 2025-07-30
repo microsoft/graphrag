@@ -84,7 +84,7 @@ def test_register_and_create_custom_storage():
 
     # Check if it's in the list of registered storage types
     assert "custom" in StorageFactory.get_storage_types()
-    assert StorageFactory.is_supported_storage_type("custom")
+    assert StorageFactory.is_supported_type("custom")
 
 
 def test_get_storage_types():
