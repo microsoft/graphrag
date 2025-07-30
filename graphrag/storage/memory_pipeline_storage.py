@@ -18,7 +18,11 @@ class MemoryPipelineStorage(FilePipelineStorage):
 
     def __init__(self):
         """Init method definition."""
-        super().__init__()
+        # MemoryPipelineStorage doesn't need actual file storage, use temp dir
+        import tempfile
+
+        temp_dir = tempfile.mkdtemp()
+        super().__init__(base_dir=temp_dir)
         self._storage = {}
 
     async def get(

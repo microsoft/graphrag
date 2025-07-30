@@ -149,7 +149,8 @@ class FilePipelineStorage(PipelineStorage):
         """Create a child storage instance."""
         if name is None:
             return self
-        return FilePipelineStorage(str(Path(self._root_dir) / Path(name)))
+        child_path = str(Path(self._root_dir) / Path(name))
+        return FilePipelineStorage(base_dir=child_path, encoding=self._encoding)
 
     def keys(self) -> list[str]:
         """Return the keys in the storage."""

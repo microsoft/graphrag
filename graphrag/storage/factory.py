@@ -44,6 +44,9 @@ class StorageFactory:
         ------
             TypeError: If creator is a class type instead of a factory function.
         """
+        if isinstance(creator, type):
+            msg = "Registering classes directly is no longer supported. Please provide a factory function instead."
+            raise TypeError(msg)
         cls._registry[storage_type] = creator
 
     @classmethod
@@ -70,11 +73,11 @@ class StorageFactory:
             else storage_type
         )
 
-        if type_str not in cls._storage_registry:
+        if type_str not in cls._registry:
             msg = f"Unknown storage type: {storage_type}"
             raise ValueError(msg)
 
-        return cls._storage_registry[type_str](**kwargs)
+        return cls._registry[type_str](**kwargs)
 
     @classmethod
     def get_storage_types(cls) -> list[str]:
@@ -88,7 +91,24 @@ class StorageFactory:
 
 
 # --- register built-in storage implementations ---
-StorageFactory.register(StorageType.blob.value, BlobPipelineStorage)
-StorageFactory.register(StorageType.cosmosdb.value, CosmosDBPipelineStorage)
-StorageFactory.register(StorageType.file.value, FilePipelineStorage)
-StorageFactory.register(StorageType.memory.value, MemoryPipelineStorage)
+StorageFactory.register(
+    StorageType.blob.value,
+    lambda **kwargs: BlobPipelineStorage(**{
+        k: v for k, v in kwargs.items() if k != "type"
+    }),
+)
+StorageFactory.register(
+    StorageType.cosmosdb.value,
+    lambda **kwargs: CosmosDBPipelineStorage(**{
+        k: v for k, v in kwargs.items() if k != "type"
+    }),
+)
+StorageFactory.register(
+    StorageType.file.value,
+    lambda **kwargs: FilePipelineStorage(**{
+        k: v for k, v in kwargs.items() if k != "type"
+    }),
+)
+StorageFactory.register(
+    StorageType.memory.value, lambda **_kwargs: MemoryPipelineStorage()
+)
