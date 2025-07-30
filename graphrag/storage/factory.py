@@ -38,7 +38,7 @@ class StorageFactory:
 
         Args:
             storage_type: The type identifier for the storage.
-            creator: A callable that creates an instance of the storage.
+            creator: A class or callable that creates an instance of PipelineStorage.
 
         Raises
         ------

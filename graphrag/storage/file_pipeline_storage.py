@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'FileStorage' and 'FilePipelineStorage' models."""
+"""File-based Storage implementation of PipelineStorage."""
 
 import logging
 import os

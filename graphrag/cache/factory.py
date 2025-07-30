@@ -7,6 +7,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
+from graphrag.cache.json_pipeline_cache import JsonPipelineCache
+from graphrag.cache.memory_pipeline_cache import InMemoryCache
+from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.config.enums import CacheType
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
@@ -16,40 +19,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from graphrag.cache.pipeline_cache import PipelineCache
-
-from graphrag.cache.json_pipeline_cache import JsonPipelineCache
-from graphrag.cache.memory_pipeline_cache import InMemoryCache
-from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
-
-
-def create_noop_cache(**_kwargs) -> PipelineCache:
-    """Create a no-op cache implementation."""
-    return NoopPipelineCache()
-
-
-def create_memory_cache(**_kwargs) -> PipelineCache:
-    """Create an in-memory cache implementation."""
-    return InMemoryCache()
-
-
-def create_file_cache(root_dir: str, base_dir: str, **kwargs) -> PipelineCache:
-    """Create a file-based cache implementation."""
-    # Create storage with base_dir in kwargs since FilePipelineStorage expects it there
-    storage_kwargs = {"base_dir": root_dir, **kwargs}
-    storage = FilePipelineStorage(**storage_kwargs).child(base_dir)
-    return JsonPipelineCache(storage)
-
-
-def create_blob_cache(**kwargs) -> PipelineCache:
-    """Create a blob storage-based cache implementation."""
-    storage = BlobPipelineStorage(**kwargs)
-    return JsonPipelineCache(storage)
-
-
-def create_cosmosdb_cache(**kwargs) -> PipelineCache:
-    """Create a CosmosDB-based cache implementation."""
-    storage = CosmosDBPipelineStorage(**kwargs)
-    return JsonPipelineCache(storage)
 
 
 class CacheFactory:
@@ -69,7 +38,7 @@ class CacheFactory:
 
         Args:
             cache_type: The type identifier for the cache.
-            creator: A callable that creates an instance of the cache.
+            creator: A class or callable that creates an instance of PipelineCache.
 
         Raises
         ------
@@ -100,7 +69,7 @@ class CacheFactory:
             ValueError: If the cache type is not registered.
         """
         if not cache_type or cache_type == CacheType.none:
-            return create_noop_cache()
+            return NoopPipelineCache()
 
         type_str = cache_type.value if isinstance(cache_type, CacheType) else cache_type
 
@@ -126,8 +95,28 @@ class CacheFactory:
 
 
 # --- register built-in cache implementations ---
-CacheFactory.register(CacheType.none.value, create_noop_cache)
-CacheFactory.register(CacheType.memory.value, create_memory_cache)
+def create_file_cache(root_dir: str, base_dir: str, **kwargs) -> PipelineCache:
+    """Create a file-based cache implementation."""
+    # Create storage with base_dir in kwargs since FilePipelineStorage expects it there
+    storage_kwargs = {"base_dir": root_dir, **kwargs}
+    storage = FilePipelineStorage(**storage_kwargs).child(base_dir)
+    return JsonPipelineCache(storage)
+
+
+def create_blob_cache(**kwargs) -> PipelineCache:
+    """Create a blob storage-based cache implementation."""
+    storage = BlobPipelineStorage(**kwargs)
+    return JsonPipelineCache(storage)
+
+
+def create_cosmosdb_cache(**kwargs) -> PipelineCache:
+    """Create a CosmosDB-based cache implementation."""
+    storage = CosmosDBPipelineStorage(**kwargs)
+    return JsonPipelineCache(storage)
+
+
+CacheFactory.register(CacheType.none.value, NoopPipelineCache)
+CacheFactory.register(CacheType.memory.value, InMemoryCache)
 CacheFactory.register(CacheType.file.value, create_file_cache)
 CacheFactory.register(CacheType.blob.value, create_blob_cache)
 CacheFactory.register(CacheType.cosmosdb.value, create_cosmosdb_cache)

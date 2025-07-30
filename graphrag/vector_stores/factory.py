@@ -45,7 +45,7 @@ class VectorStoreFactory:
 
         Args:
             vector_store_type: The type identifier for the vector store.
-            creator: A callable that creates an instance of the vector store.
+            creator: A class or callable that creates an instance of BaseVectorStore.
 
         Raises
         ------
