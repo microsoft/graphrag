@@ -51,9 +51,6 @@ class VectorStoreFactory:
         ------
             TypeError: If creator is a class type instead of a factory function.
         """
-        if isinstance(creator, type):
-            msg = "Registering classes directly is no longer supported. Please provide a factory function instead."
-            raise TypeError(msg)
         cls._registry[vector_store_type] = creator
 
     @classmethod
@@ -98,13 +95,8 @@ class VectorStoreFactory:
 
 
 # --- register built-in vector store implementations ---
+VectorStoreFactory.register(VectorStoreType.LanceDB.value, LanceDBVectorStore)
 VectorStoreFactory.register(
-    VectorStoreType.LanceDB.value, lambda **kwargs: LanceDBVectorStore(**kwargs)
+    VectorStoreType.AzureAISearch.value, AzureAISearchVectorStore
 )
-VectorStoreFactory.register(
-    VectorStoreType.AzureAISearch.value,
-    lambda **kwargs: AzureAISearchVectorStore(**kwargs),
-)
-VectorStoreFactory.register(
-    VectorStoreType.CosmosDB.value, lambda **kwargs: CosmosDBVectorStore(**kwargs)
-)
+VectorStoreFactory.register(VectorStoreType.CosmosDB.value, CosmosDBVectorStore)
