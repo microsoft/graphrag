@@ -94,8 +94,6 @@ class VectorStoreFactory:
 
 
 # --- Factory functions for built-in vector stores ---
-
-
 def create_lancedb_vector_store(**kwargs) -> BaseVectorStore:
     """Create a LanceDB vector store."""
     from graphrag.vector_stores.lancedb import LanceDBVectorStore
@@ -117,7 +115,7 @@ def create_cosmosdb_vector_store(**kwargs) -> BaseVectorStore:
     return CosmosDBVectorStore(**kwargs)
 
 
-# --- Register default implementations ---
+# --- register default implementations ---
 VectorStoreFactory.register(VectorStoreType.LanceDB.value, create_lancedb_vector_store)
 VectorStoreFactory.register(
     VectorStoreType.AzureAISearch.value, create_azure_ai_search_vector_store
