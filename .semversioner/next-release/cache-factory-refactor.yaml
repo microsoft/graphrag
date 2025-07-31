@@ -1,3 +1,0 @@
-changes:
-  - type: patch
-    description: Refactor CacheFactory to use registration functionality like StorageFactory and VectorStoreFactory. Added factory functions, utility methods, and comprehensive test suite. Fixed issues with FilePipelineStorage child method and MemoryPipelineStorage constructor compatibility.

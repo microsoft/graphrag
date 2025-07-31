@@ -277,11 +277,11 @@ class BlobPipelineStorage(PipelineStorage):
             return self
         path = str(Path(self._path_prefix) / name)
         return BlobPipelineStorage(
-            self._connection_string,
-            self._container_name,
-            self._encoding,
-            path,
-            self._storage_account_blob_url,
+            connection_string=self._connection_string,
+            container_name=self._container_name,
+            encoding=self._encoding,
+            base_dir=path,
+            storage_account_blob_url=self._storage_account_blob_url,
         )
 
     def keys(self) -> list[str]:
