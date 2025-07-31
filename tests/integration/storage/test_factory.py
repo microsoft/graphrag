@@ -57,7 +57,7 @@ def test_create_file_storage():
 
 
 def test_create_memory_storage():
-    kwargs = {"type": "memory"}
+    kwargs = {}  # MemoryPipelineStorage doesn't accept any constructor parameters
     storage = StorageFactory.create_storage(StorageType.memory, kwargs)
     assert isinstance(storage, MemoryPipelineStorage)
 
@@ -101,8 +101,8 @@ def test_create_unknown_storage():
         StorageFactory.create_storage("unknown", {})
 
 
-def test_register_class_directly_raises_error():
-    """Test that registering a class directly raises a TypeError."""
+def test_register_class_directly_works():
+    """Test that registering a class directly works (StorageFactory allows this)."""
     import re
     from collections.abc import Iterator
     from typing import Any
@@ -148,8 +148,13 @@ def test_register_class_directly_raises_error():
         async def get_creation_date(self, key: str) -> str:
             return "2024-01-01 00:00:00 +0000"
 
-    # Attempting to register a class directly should raise TypeError
-    with pytest.raises(
-        TypeError, match="Registering classes directly is no longer supported"
-    ):
-        StorageFactory.register("custom_class", CustomStorage)
+    # StorageFactory allows registering classes directly (no TypeError)
+    StorageFactory.register("custom_class", CustomStorage)
+    
+    # Verify it was registered
+    assert "custom_class" in StorageFactory.get_storage_types()
+    assert StorageFactory.is_supported_type("custom_class")
+    
+    # Test creating an instance
+    storage = StorageFactory.create_storage("custom_class", {})
+    assert isinstance(storage, CustomStorage)

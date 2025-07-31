@@ -39,14 +39,7 @@ class CacheFactory:
         Args:
             cache_type: The type identifier for the cache.
             creator: A class or callable that creates an instance of PipelineCache.
-
-        Raises
-        ------
-            TypeError: If creator is a class type instead of a factory function.
         """
-        if isinstance(creator, type):
-            msg = "Registering classes directly is no longer supported. Please provide a factory function instead."
-            raise TypeError(msg)
         cls._registry[cache_type] = creator
 
     @classmethod

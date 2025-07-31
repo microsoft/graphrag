@@ -122,13 +122,13 @@ def test_enum_and_string_compatibility():
     assert type(vector_store_enum) is type(vector_store_str)
 
 
-def test_register_class_directly_raises_error():
-    """Test that registering a class directly raises a TypeError."""
+def test_register_class_directly_works():
+    """Test that registering a class directly works (VectorStoreFactory allows this)."""
     from graphrag.vector_stores.base import BaseVectorStore
 
     class CustomVectorStore(BaseVectorStore):
         def __init__(self, **kwargs):
-            super().__init__(collection_name="test", **kwargs)
+            super().__init__(**kwargs)
 
         def connect(self, **kwargs):
             pass
@@ -150,8 +150,13 @@ def test_register_class_directly_raises_error():
 
             return VectorStoreDocument(id=id, text="test", vector=None)
 
-    # Attempting to register a class directly should raise TypeError
-    with pytest.raises(
-        TypeError, match="Registering classes directly is no longer supported"
-    ):
-        VectorStoreFactory.register("custom_class", CustomVectorStore)
+    # VectorStoreFactory allows registering classes directly (no TypeError)
+    VectorStoreFactory.register("custom_class", CustomVectorStore)
+    
+    # Verify it was registered
+    assert "custom_class" in VectorStoreFactory.get_vector_store_types()
+    assert VectorStoreFactory.is_supported_type("custom_class")
+    
+    # Test creating an instance
+    vector_store = VectorStoreFactory.create_vector_store("custom_class", {"collection_name": "test"})
+    assert isinstance(vector_store, CustomVectorStore)

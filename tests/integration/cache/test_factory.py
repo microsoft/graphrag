@@ -132,8 +132,8 @@ def test_enum_and_string_compatibility():
     assert type(cache_enum) is type(cache_str)
 
 
-def test_register_class_directly_raises_error():
-    """Test that registering a class directly raises a TypeError."""
+def test_register_class_directly_works():
+    """Test that registering a class directly works (CacheFactory allows this)."""
     from graphrag.cache.pipeline_cache import PipelineCache
 
     class CustomCache(PipelineCache):
@@ -158,8 +158,13 @@ def test_register_class_directly_raises_error():
         def child(self, name: str):
             return self
 
-    # Attempting to register a class directly should raise TypeError
-    with pytest.raises(
-        TypeError, match="Registering classes directly is no longer supported"
-    ):
-        CacheFactory.register("custom_class", CustomCache)
+    # CacheFactory allows registering classes directly (no TypeError)
+    CacheFactory.register("custom_class", CustomCache)
+    
+    # Verify it was registered
+    assert "custom_class" in CacheFactory.get_cache_types()
+    assert CacheFactory.is_supported_type("custom_class")
+    
+    # Test creating an instance
+    cache = CacheFactory.create_cache("custom_class", "/tmp", {})
+    assert isinstance(cache, CustomCache)
