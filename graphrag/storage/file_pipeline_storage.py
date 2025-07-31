@@ -32,7 +32,7 @@ class FilePipelineStorage(PipelineStorage):
 
     def __init__(self, **kwargs: Any) -> None:
         """Create a file based storage."""
-        self._root_dir = kwargs["base_dir"]
+        self._root_dir = kwargs.get("base_dir", "")
         self._encoding = kwargs.get("encoding", "utf-8")
         logger.info("Creating file storage at %s", self._root_dir)
         Path(self._root_dir).mkdir(parents=True, exist_ok=True)
