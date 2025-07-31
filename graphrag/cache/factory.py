@@ -44,7 +44,7 @@ class CacheFactory:
 
     @classmethod
     def create_cache(
-        cls, cache_type: CacheType | str | None, root_dir: str, kwargs: dict
+        cls, cache_type: CacheType | str | None, kwargs: dict
     ) -> PipelineCache:
         """Create a cache object from the provided type.
 
@@ -69,10 +69,6 @@ class CacheFactory:
         if type_str not in cls._registry:
             msg = f"Unknown cache type: {cache_type}"
             raise ValueError(msg)
-
-        # Add root_dir to kwargs for file cache
-        if type_str == CacheType.file.value:
-            kwargs = {**kwargs, "root_dir": root_dir}
 
         return cls._registry[type_str](**kwargs)
 
