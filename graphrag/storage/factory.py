@@ -40,9 +40,6 @@ class StorageFactory:
             storage_type: The type identifier for the storage.
             creator: A class or callable that creates an instance of PipelineStorage.
 
-        Raises
-        ------
-            TypeError: If creator is a class type instead of a factory function.
         """
         cls._registry[storage_type] = creator
 
