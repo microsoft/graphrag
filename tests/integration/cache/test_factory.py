@@ -17,19 +17,19 @@ from graphrag.config.enums import CacheType
 
 def test_create_noop_cache():
     kwargs = {}
-    cache = CacheFactory.create_cache(CacheType.none, "/tmp", kwargs)
+    cache = CacheFactory.create_cache(CacheType.none, kwargs)
     assert isinstance(cache, NoopPipelineCache)
 
 
 def test_create_memory_cache():
     kwargs = {}
-    cache = CacheFactory.create_cache(CacheType.memory, "/tmp", kwargs)
+    cache = CacheFactory.create_cache(CacheType.memory, kwargs)
     assert isinstance(cache, InMemoryCache)
 
 
 def test_create_file_cache():
-    kwargs = {"base_dir": "testcache"}
-    cache = CacheFactory.create_cache(CacheType.file, "/tmp", kwargs)
+    kwargs = {"root_dir": "/tmp", "base_dir": "testcache"}
+    cache = CacheFactory.create_cache(CacheType.file, kwargs)
     assert isinstance(cache, JsonPipelineCache)
 
 
@@ -42,7 +42,7 @@ def test_create_blob_cache():
         "container_name": "testcontainer",
         "base_dir": "testcache",
     }
-    cache = CacheFactory.create_cache(CacheType.blob, "/tmp", kwargs)
+    cache = CacheFactory.create_cache(CacheType.blob, kwargs)
     assert isinstance(cache, JsonPipelineCache)
 
 
@@ -55,13 +55,13 @@ def test_create_cosmosdb_cache():
         "database_name": "testdatabase",
         "container_name": "testcontainer",
     }
-    cache = CacheFactory.create_cache(CacheType.cosmosdb, "/tmp", kwargs)
+    cache = CacheFactory.create_cache(CacheType.cosmosdb, kwargs)
     assert isinstance(cache, JsonPipelineCache)
 
 
 def test_create_none_cache_with_none_type():
     """Test creating cache with None cache type returns NoopPipelineCache."""
-    cache = CacheFactory.create_cache(None, "/tmp", {})
+    cache = CacheFactory.create_cache(None, {})
     assert isinstance(cache, NoopPipelineCache)
 
 
@@ -77,7 +77,7 @@ def test_register_and_create_custom_cache():
     custom_cache_class.return_value = instance
 
     CacheFactory.register("custom", lambda **kwargs: custom_cache_class(**kwargs))
-    cache = CacheFactory.create_cache("custom", "/tmp", {})
+    cache = CacheFactory.create_cache("custom", {})
 
     assert custom_cache_class.called
     assert cache is instance
@@ -101,7 +101,7 @@ def test_get_cache_types():
 
 def test_create_unknown_cache():
     with pytest.raises(ValueError, match="Unknown cache type: unknown"):
-        CacheFactory.create_cache("unknown", "/tmp", {})
+        CacheFactory.create_cache("unknown", {})
 
 
 def test_is_supported_type():
@@ -121,11 +121,11 @@ def test_enum_and_string_compatibility():
     kwargs = {}
 
     # Test with enum
-    cache_enum = CacheFactory.create_cache(CacheType.memory, "/tmp", kwargs)
+    cache_enum = CacheFactory.create_cache(CacheType.memory, kwargs)
     assert isinstance(cache_enum, InMemoryCache)
 
     # Test with string
-    cache_str = CacheFactory.create_cache("memory", "/tmp", kwargs)
+    cache_str = CacheFactory.create_cache("memory", kwargs)
     assert isinstance(cache_str, InMemoryCache)
 
     # Both should create the same type
@@ -166,5 +166,5 @@ def test_register_class_directly_works():
     assert CacheFactory.is_supported_type("custom_class")
 
     # Test creating an instance
-    cache = CacheFactory.create_cache("custom_class", "/tmp", {})
+    cache = CacheFactory.create_cache("custom_class", {})
     assert isinstance(cache, CustomCache)
