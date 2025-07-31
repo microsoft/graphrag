@@ -150,11 +150,11 @@ def test_register_class_directly_works():
 
     # StorageFactory allows registering classes directly (no TypeError)
     StorageFactory.register("custom_class", CustomStorage)
-    
+
     # Verify it was registered
     assert "custom_class" in StorageFactory.get_storage_types()
     assert StorageFactory.is_supported_type("custom_class")
-    
+
     # Test creating an instance
     storage = StorageFactory.create_storage("custom_class", {})
     assert isinstance(storage, CustomStorage)

@@ -160,11 +160,11 @@ def test_register_class_directly_works():
 
     # CacheFactory allows registering classes directly (no TypeError)
     CacheFactory.register("custom_class", CustomCache)
-    
+
     # Verify it was registered
     assert "custom_class" in CacheFactory.get_cache_types()
     assert CacheFactory.is_supported_type("custom_class")
-    
+
     # Test creating an instance
     cache = CacheFactory.create_cache("custom_class", "/tmp", {})
     assert isinstance(cache, CustomCache)

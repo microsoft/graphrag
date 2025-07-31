@@ -152,11 +152,13 @@ def test_register_class_directly_works():
 
     # VectorStoreFactory allows registering classes directly (no TypeError)
     VectorStoreFactory.register("custom_class", CustomVectorStore)
-    
+
     # Verify it was registered
     assert "custom_class" in VectorStoreFactory.get_vector_store_types()
     assert VectorStoreFactory.is_supported_type("custom_class")
-    
+
     # Test creating an instance
-    vector_store = VectorStoreFactory.create_vector_store("custom_class", {"collection_name": "test"})
+    vector_store = VectorStoreFactory.create_vector_store(
+        "custom_class", {"collection_name": "test"}
+    )
     assert isinstance(vector_store, CustomVectorStore)
