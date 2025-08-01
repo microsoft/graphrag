@@ -14,6 +14,10 @@ from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.config.enums import CacheType
 
+# cspell:disable-next-line well-known-key
+WELL_KNOWN_BLOB_STORAGE_KEY = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;"
+WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+
 
 def test_create_noop_cache():
     kwargs = {}
@@ -33,12 +37,9 @@ def test_create_file_cache():
     assert isinstance(cache, JsonPipelineCache)
 
 
-@pytest.mark.skip(reason="Blob storage emulator is not available in this environment")
 def test_create_blob_cache():
-    # cspell:disable-next-line well-known-key
-    well_known_blob_storage_key = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;"
     kwargs = {
-        "connection_string": well_known_blob_storage_key,
+        "connection_string": WELL_KNOWN_BLOB_STORAGE_KEY,
         "container_name": "testcontainer",
         "base_dir": "testcache",
     }
@@ -46,12 +47,9 @@ def test_create_blob_cache():
     assert isinstance(cache, JsonPipelineCache)
 
 
-@pytest.mark.skip(reason="CosmosDB emulator is not available in this environment")
 def test_create_cosmosdb_cache():
-    # cspell:disable-next-line well-known-key
-    well_known_cosmos_connection_string = "AccountEndpoint=https://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
     kwargs = {
-        "connection_string": well_known_cosmos_connection_string,
+        "connection_string": WELL_KNOWN_COSMOS_CONNECTION_STRING,
         "database_name": "testdatabase",
         "container_name": "testcontainer",
     }
