@@ -50,7 +50,7 @@ def test_create_blob_cache():
 def test_create_cosmosdb_cache():
     kwargs = {
         "connection_string": WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        "database_name": "testdatabase",
+        "base_dir": "testdatabase",
         "container_name": "testcontainer",
     }
     cache = CacheFactory.create_cache(CacheType.cosmosdb, kwargs)
