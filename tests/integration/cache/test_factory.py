@@ -5,6 +5,8 @@
 These tests will test the CacheFactory class and the creation of each cache type that is natively supported.
 """
 
+import sys
+
 import pytest
 
 from graphrag.cache.factory import CacheFactory
@@ -18,6 +20,7 @@ from graphrag.config.enums import CacheType
 WELL_KNOWN_BLOB_STORAGE_KEY = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;"
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+
 
 def test_create_noop_cache():
     kwargs = {}
@@ -47,6 +50,10 @@ def test_create_blob_cache():
     assert isinstance(cache, JsonPipelineCache)
 
 
+@pytest.mark.skipif(
+    not sys.platform.startswith("win"),
+    reason="cosmosdb emulator is only available on windows runners at this time",
+)
 def test_create_cosmosdb_cache():
     kwargs = {
         "connection_string": WELL_KNOWN_COSMOS_CONNECTION_STRING,
