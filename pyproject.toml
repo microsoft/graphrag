@@ -251,7 +251,7 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S", "D", "ANN", "T201", "ASYNC", "ARG", "PTH", "TRY"]
 "graphrag/index/config/*" = ["TCH"]
-"*.ipynb" = ["T201"]
+"*.ipynb" = ["T201", "S101", "PT015", "B011"]
 
 [tool.ruff.lint.flake8-builtins]
 builtins-ignorelist = ["input", "id", "bytes"]
