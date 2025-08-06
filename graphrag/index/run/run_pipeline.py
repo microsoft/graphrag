@@ -28,6 +28,7 @@ async def run_pipeline(
     config: GraphRagConfig,
     callbacks: WorkflowCallbacks,
     is_update_run: bool = False,
+    additional_context: dict | None = None,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
     root_dir = config.root_dir
@@ -39,6 +40,9 @@ async def run_pipeline(
     # load existing state in case any workflows are stateful
     state_json = await output_storage.get("context.json")
     state = json.loads(state_json) if state_json else {}
+
+    for key, value in (additional_context or {}).items():
+        state["additional_context"][key] = value
 
     if is_update_run:
         logger.info("Running incremental indexing.")

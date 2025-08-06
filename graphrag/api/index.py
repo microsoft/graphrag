@@ -30,6 +30,7 @@ async def build_index(
     is_update_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
+    additional_context: dict | None = None,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -65,7 +66,7 @@ async def build_index(
     # todo: this could propagate out to the cli for better clarity, but will be a breaking api change
     method = _get_method(method, is_update_run)
     pipeline = PipelineFactory.create_pipeline(config, method)
-
+    
     workflow_callbacks.pipeline_start(pipeline.names())
 
     async for output in run_pipeline(
@@ -73,6 +74,7 @@ async def build_index(
         config,
         callbacks=workflow_callbacks,
         is_update_run=is_update_run,
+        additional_context=additional_context,
     ):
         outputs.append(output)
         if output.errors and len(output.errors) > 0:
