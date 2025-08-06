@@ -9,6 +9,7 @@ import re
 import time
 from collections.abc import AsyncIterable
 from dataclasses import asdict
+from typing import Any
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -28,7 +29,7 @@ async def run_pipeline(
     config: GraphRagConfig,
     callbacks: WorkflowCallbacks,
     is_update_run: bool = False,
-    additional_context: dict | None = None,
+    additional_context: dict[str, Any] | None = None,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
     root_dir = config.root_dir
@@ -41,8 +42,13 @@ async def run_pipeline(
     state_json = await output_storage.get("context.json")
     state = json.loads(state_json) if state_json else {}
 
-    for key, value in (additional_context or {}).items():
-        state["additional_context"][key] = value
+    if additional_context is not None:
+        if "additional_context" not in state:
+            state["additional_context"] = {}
+
+        # add additional context to the state
+        for key, value in (additional_context or {}).items():
+            state["additional_context"][key] = value
 
     if is_update_run:
         logger.info("Running incremental indexing.")
