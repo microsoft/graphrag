@@ -46,7 +46,7 @@ async def build_index(
     callbacks : list[WorkflowCallbacks] | None default=None
         A list of callbacks to register.
     additional_context : dict[str, Any] | None default=None
-        Additional context to pass to the pipeline run. This can be accessed using PipelineState.
+        Additional context to pass to the pipeline run. This can be accessed in the pipeline state under the 'additional_context' key.
 
     Returns
     -------
