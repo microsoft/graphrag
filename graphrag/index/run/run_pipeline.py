@@ -131,9 +131,17 @@ async def _dump_json(context: PipelineRunContext) -> None:
     await context.output_storage.set(
         "stats.json", json.dumps(asdict(context.stats), indent=4, ensure_ascii=False)
     )
-    await context.output_storage.set(
-        "context.json", json.dumps(context.state, indent=4, ensure_ascii=False)
-    )
+    # Dump context state, excluding additional_context
+    temp_context = context.state.pop(
+        "additional_context", None
+    )  # Remove reference only, as object size is uncertain
+    try:
+        state_blob = json.dumps(context.state, indent=4, ensure_ascii=False)
+    finally:
+        if temp_context:
+            context.state["additional_context"] = temp_context
+
+    await context.output_storage.set("context.json", state_blob)
 
 
 async def _copy_previous_output(
