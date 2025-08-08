@@ -2706,7 +2706,7 @@ print(result.response)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>2025-07-15 00:56:04.0936 - ERROR - graphrag.query.structured_search.global_search.search - Exception in _map_response_single_batch
+<pre>2025-08-08 23:01:05.0881 - ERROR - graphrag.query.structured_search.global_search.search - Exception in _map_response_single_batch
 Traceback (most recent call last):
   File "/home/runner/work/graphrag/graphrag/graphrag/query/structured_search/global_search/search.py", line 227, in _map_response_single_batch
     model_response = await self.model.achat(
@@ -2759,7 +2759,7 @@ openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect A
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>2025-07-15 00:56:04.0941 - WARNING - graphrag.query.structured_search.global_search.search - Warning: All map responses have score 0 (i.e., no relevant information found from the dataset), returning a canned 'I do not know' answer. You can try enabling `allow_general_knowledge` to encourage the LLM to incorporate relevant general knowledge, at the risk of increasing hallucinations.
+<pre>2025-08-08 23:01:05.0885 - WARNING - graphrag.query.structured_search.global_search.search - Warning: All map responses have score 0 (i.e., no relevant information found from the dataset), returning a canned 'I do not know' answer. You can try enabling `allow_general_knowledge` to encourage the LLM to incorporate relevant general knowledge, at the risk of increasing hallucinations.
 </pre>
 </div>
 </div>
