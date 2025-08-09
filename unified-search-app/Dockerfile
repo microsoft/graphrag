@@ -10,11 +10,10 @@ RUN apt-get update -y
 # Install dependencies
 WORKDIR ./
 COPY . .
-RUN curl -sSL https://install.python-poetry.org | python -
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="${PATH}:/root/.local/bin"
-RUN poetry config virtualenvs.in-project true
-RUN poetry install --no-root
+RUN uv sync --no-install-project
 
 # Run application
 EXPOSE 8501
-ENTRYPOINT ["poetry","run","streamlit", "run", "./app/home_page.py"]
+ENTRYPOINT ["uv","run","poe","start_prod"]

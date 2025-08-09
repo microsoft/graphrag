@@ -22,7 +22,7 @@ or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any addi
 2. Create a new branch for your contribution: `git checkout -b my-contribution`.
 3. Make your changes and ensure that the code passes all tests.
 4. Commit your changes: `git commit -m "Add my contribution"`.
-5. Create and commit a semver impact document by running `poetry run semversioner add-change -t <major|minor|patch> -d <description>`.
+5. Create and commit a semver impact document by running `uv run semversioner add-change -t <major|minor|patch> -d <description>`.
 6. Push your changes to your forked repository: `git push origin my-contribution`.
 7. Open a pull request to the main repository.
 

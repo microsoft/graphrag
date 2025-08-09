@@ -26,9 +26,6 @@ concurrency:
   # Only run the for the latest commit
   cancel-in-progress: true
 
-env:
-  POETRY_VERSION: 1.8.3
-
 jobs:
   python-ci:
     # skip draft PRs
@@ -68,7 +65,7 @@ jobs:
           filters: |
             python:
               - 'graphrag/**/*'
-              - 'poetry.lock'
+              - 'uv.lock'
               - 'pyproject.toml'
               - '**/*.py'
               - '**/*.toml'
@@ -81,33 +78,32 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v3.0.0
-        with:
-          poetry-version: $POETRY_VERSION
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
 
       - name: Install dependencies
         shell: bash
         run: |
-          poetry self add setuptools wheel
-          poetry run python -m pip install gensim
-          poetry install
+          uv sync --extra dev
+          uv pip install gensim
 
       - name: Build
         run: |
-          poetry build
+          uv build
 
-      - name: Install Azurite
-        id: azuright
-        uses: potatoqualitee/azuright@v1.1
+      - name: Install and start Azurite
+        shell: bash
+        run: |
+          npm install -g azurite
+          azurite --silent --skipApiVersionCheck --location /tmp/azurite --debug /tmp/azurite-debug.log &
 
       - name: Smoke Test
         if: steps.changes.outputs.python == 'true'
         run: |
-          poetry run poe test_smoke
+          uv run poe test_smoke
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: smoke-test-artifacts-${{ matrix.python-version }}-${{ matrix.poetry-version }}-${{ runner.os }}
+          name: smoke-test-artifacts-${{ matrix.python-version }}-${{ runner.os }}
           path: tests/fixtures/*

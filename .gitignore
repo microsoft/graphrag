@@ -1,6 +1,8 @@
 # Python Artifacts
 python/*/lib/
 dist/
+build/
+*.egg-info/
 
 # Test Output
 .coverage

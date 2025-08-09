@@ -1,119 +1,110 @@
-[tool.poetry]
+[project]
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
 version = "2.4.0"
 description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
 authors = [
-    "Alonso Guevara Fernández <alonsog@microsoft.com>",
-    "Andrés Morales Esquivel <andresmor@microsoft.com>",
-    "Chris Trevino <chtrevin@microsoft.com>",
-    "David Tittsworth <datittsw@microsoft.com>",
-    "Dayenne de Souza <ddesouza@microsoft.com>",
-    "Derek Worthen <deworthe@microsoft.com>",
-    "Gaudy Blanco Meneses <gaudyb@microsoft.com>",
-    "Ha Trinh <trinhha@microsoft.com>",
-    "Jonathan Larson <jolarso@microsoft.com>",
-    "Josh Bradley <joshbradley@microsoft.com>",
-    "Kate Lytvynets <kalytv@microsoft.com>",
-    "Kenny Zhang <zhangken@microsoft.com>",
-    "Mónica Carvajal",
-    "Nathan Evans <naevans@microsoft.com>",
-    "Rodrigo Racanicci <rracanicci@microsoft.com>",
-    "Sarah Smith <smithsarah@microsoft.com>",
+    {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
+    {name = "Andrés Morales Esquivel", email = "andresmor@microsoft.com"},
+    {name = "Chris Trevino", email = "chtrevin@microsoft.com"},
+    {name = "David Tittsworth", email = "datittsw@microsoft.com"},
+    {name = "Dayenne de Souza", email = "ddesouza@microsoft.com"},
+    {name = "Derek Worthen", email = "deworthe@microsoft.com"},
+    {name = "Gaudy Blanco Meneses", email = "gaudyb@microsoft.com"},
+    {name = "Ha Trinh", email = "trinhha@microsoft.com"},
+    {name = "Jonathan Larson", email = "jolarso@microsoft.com"},
+    {name = "Josh Bradley", email = "joshbradley@microsoft.com"},
+    {name = "Kate Lytvynets", email = "kalytv@microsoft.com"},
+    {name = "Kenny Zhang", email = "zhangken@microsoft.com"},
+    {name = "Mónica Carvajal"},
+    {name = "Nathan Evans", email = "naevans@microsoft.com"},
+    {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
+    {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
 ]
 license = "MIT"
 readme = "README.md"
-packages = [{ include = "graphrag" }]
+requires-python = ">=3.10,<3.13"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
 
-[tool.poetry.urls]
-"Source" = "https://github.com/microsoft/graphrag"
+dependencies = [
+    "environs>=11.0.0",
+    # Vector Stores
+    "azure-search-documents>=11.5.2",
+    "lancedb>=0.17.0",
+    # Async IO
+    "aiofiles>=24.1.0",
+    # LLM
+    "fnllm[azure,openai]>=0.3.0",
+    "json-repair>=0.30.3",
+    "openai>=1.68.0",
+    "nltk==3.9.1",
+    "tiktoken>=0.9.0",
+    # Data-Science
+    "numpy>=1.25.2",
+    "graspologic>=3.4.1",
+    "networkx>=3.4.2",
+    "pandas>=2.2.3",
+    "pyarrow>=17.0.0",
+    "umap-learn>=0.5.6",
+    # Configuration
+    "pyyaml>=6.0.2",
+    "python-dotenv>=1.0.1",
+    "pydantic>=2.10.3",
+    "devtools>=0.12.2",
+    "typing-extensions>=4.12.2",
+    # Azure
+    "azure-cosmos>=4.9.0",
+    "azure-identity>=1.19.0",
+    "azure-storage-blob>=12.24.0",
+    "future>=1.0.0", # Needed until graspologic fixes their dependency
+    "typer>=0.16.0",
+    "tqdm>=4.67.1",
+    "textblob>=0.18.0.post0",
+    "spacy>=3.8.4",
+]
 
-[tool.poetry.scripts]
+[project.optional-dependencies]
+dev = [
+    "coverage>=7.6.9",
+    "ipykernel>=6.29.5",
+    "jupyter>=1.1.1",
+    "nbconvert>=7.16.4",
+    "poethepoet>=0.31.1",
+    "pyright>=1.1.390",
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.24.0",
+    "pytest-timeout>=2.3.1",
+    "ruff>=0.8.2",
+    "semversioner>=2.0.5",
+    "update-toml>=0.2.1",
+    "deptry>=0.21.1",
+    "mkdocs-material>=9.5.48",
+    "mkdocs-jupyter>=0.25.1",
+    "mkdocs-exclude-search>=0.6.6",
+    "pytest-dotenv>=0.5.2",
+    "mkdocs-typer>=0.0.3",
+]
+
+[project.scripts]
 graphrag = "graphrag.cli.main:app"
 
-[tool.poetry-dynamic-versioning]
-enable = true
-style = "pep440"
-vcs = "git"
-bump = true
-format-jinja = """
-    {%- if distance == 0 -%}
-        {{ serialize_pep440(base, stage, revision) }}
-    {%- else -%}
-        {{ serialize_pep440(base, stage, revision, dev=distance) }}
-    {%- endif -%}
-"""
-
-[tool.poetry.dependencies]
-python = ">=3.10,<3.13"
-environs = "^11.0.0"
-
-# Vector Stores
-azure-search-documents = "^11.5.2"
-lancedb = "^0.17.0"
-
-# Async IO
-aiofiles = "^24.1.0"
-
-# LLM
-fnllm = {extras = ["azure", "openai"], version = "^0.3.0"}
-json-repair = "^0.30.3"
-openai = "^1.68.0"
-nltk = "3.9.1"
-tiktoken = "^0.9.0"
-
-# Data-Science
-numpy = "^1.25.2"
-graspologic = "^3.4.1"
-networkx = "^3.4.2"
-pandas = "^2.2.3"
-pyarrow = ">=17.0.0"
-umap-learn = "^0.5.6"
-
-# Configuration
-pyyaml = "^6.0.2"
-python-dotenv = "^1.0.1"
-
-pydantic = "^2.10.3"
-devtools = "^0.12.2"
-typing-extensions = "^4.12.2"
-
-# Azure
-azure-cosmos = "^4.9.0"
-azure-identity = "^1.19.0"
-azure-storage-blob = "^12.24.0"
-
-future = "^1.0.0" # Needed until graspologic fixes their dependency
-typer = "^0.16.0"
-tqdm = "^4.67.1"
-
-textblob = "^0.18.0.post0"
-spacy = "^3.8.4"
-
-[tool.poetry.group.dev.dependencies]
-coverage = "^7.6.9"
-ipykernel = "^6.29.5"
-jupyter = "^1.1.1"
-nbconvert = "^7.16.4"
-poethepoet = "^0.31.1"
-pyright = "^1.1.390"
-pytest = "^8.3.4"
-pytest-asyncio = "^0.24.0"
-pytest-timeout = "^2.3.1"
-ruff = "^0.8.2"
-semversioner = "^2.0.5"
-update-toml = "^0.2.1"
-deptry = "^0.21.1"
-mkdocs-material = "^9.5.48"
-mkdocs-jupyter = "^0.25.1"
-mkdocs-exclude-search = "^0.6.6"
-pytest-dotenv = "^0.5.2"
-mkdocs-typer = "^0.0.3"
+[project.urls]
+Source = "https://github.com/microsoft/graphrag"
 
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
-build-backend = "poetry_dynamic_versioning.backend"
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["graphrag*"]
+exclude = ["examples_notebooks*", "tests*"]
+
+# Keep poethepoet for task management to minimize changes
 [tool.poe.tasks]
 _sort_imports = "ruff check --select I --fix ."
 _format_code = "ruff format  ."
@@ -123,7 +114,7 @@ _convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/n
 _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
 _semversioner_release = "semversioner release"
 _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
-_semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value $(poetry run semversioner current-version)"
+_semversioner_update_toml_version = "update-toml update --path project.version --value $(semversioner current-version)"
 semversioner_add = "semversioner add-change"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check'
@@ -169,6 +160,7 @@ ignore_fail = 'return_non_zero'
 sequence = ['_test_all', 'coverage_report']
 ignore_fail = 'return_non_zero'
 
+# Keep all existing tool configurations
 [tool.ruff]
 target-version = "py310"
 extend-include = ["*.ipynb"]
