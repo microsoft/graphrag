@@ -9,6 +9,7 @@ Backwards compatibility is not guaranteed at this time.
 """
 
 import logging
+from typing import Any
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -30,6 +31,7 @@ async def build_index(
     is_update_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
+    additional_context: dict[str, Any] | None = None,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -43,6 +45,8 @@ async def build_index(
         Whether to enable memory profiling.
     callbacks : list[WorkflowCallbacks] | None default=None
         A list of callbacks to register.
+    additional_context : dict[str, Any] | None default=None
+        Additional context to pass to the pipeline run. This can be accessed in the pipeline state under the 'additional_context' key.
 
     Returns
     -------
@@ -73,6 +77,7 @@ async def build_index(
         config,
         callbacks=workflow_callbacks,
         is_update_run=is_update_run,
+        additional_context=additional_context,
     ):
         outputs.append(output)
         if output.errors and len(output.errors) > 0:
