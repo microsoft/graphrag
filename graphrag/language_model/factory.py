@@ -14,6 +14,10 @@ from graphrag.language_model.providers.fnllm.models import (
     OpenAIChatFNLLM,
     OpenAIEmbeddingFNLLM,
 )
+from graphrag.language_model.providers.litellm.chat_model import LitellmChatModel
+from graphrag.language_model.providers.litellm.embedding_model import (
+    LitellmEmbeddingModel,
+)
 
 
 class ModelFactory:
@@ -105,10 +109,16 @@ ModelFactory.register_chat(
 ModelFactory.register_chat(
     ModelType.OpenAIChat, lambda **kwargs: OpenAIChatFNLLM(**kwargs)
 )
+ModelFactory.register_chat(
+    ModelType.LitellmChat, lambda **kwargs: LitellmChatModel(**kwargs)
+)
 
 ModelFactory.register_embedding(
     ModelType.AzureOpenAIEmbedding, lambda **kwargs: AzureOpenAIEmbeddingFNLLM(**kwargs)
 )
 ModelFactory.register_embedding(
     ModelType.OpenAIEmbedding, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
+)
+ModelFactory.register_embedding(
+    ModelType.LitellmEmbedding, lambda **kwargs: LitellmEmbeddingModel(**kwargs)
 )
