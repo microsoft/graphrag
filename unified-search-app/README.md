@@ -91,7 +91,7 @@ You can host Unified Search datasets locally or in a blob.
 
 # Run the app
 
-Install all the dependencies: `uv sync`
+Install all the dependencies: `uv sync --extra dev`
 
 Run the project using streamlit: `uv run poe start`
 
