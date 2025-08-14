@@ -71,7 +71,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             else None
         )
         self._no_id_prefixes = []
-        logger.info(
+        logger.debug(
             "creating cosmosdb storage with account: %s and database: %s and container: %s",
             self._cosmosdb_account_name,
             self._database_name,

@@ -61,7 +61,7 @@ class BlobPipelineStorage(PipelineStorage):
             if storage_account_blob_url
             else None
         )
-        logger.info(
+        logger.debug(
             "creating blob storage at container=%s, path=%s",
             self._container_name,
             self._path_prefix,
