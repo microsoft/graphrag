@@ -1545,22 +1545,26 @@
 <td>The library is Python-based.</td>
 </tr>
 <tr>
-<td>Poetry</td>
-<td><a href="https://python-poetry.org/docs/#installation">Instructions</a></td>
-<td>Poetry is used for package management and virtualenv management in Python codebases</td>
+<td>uv</td>
+<td><a href="https://docs.astral.sh/uv/">Instructions</a></td>
+<td>uv is used for package management and virtualenv management in Python codebases</td>
 </tr>
 </tbody>
 </table>
 <h1 id="getting-started">Getting Started</h1>
 <h2 id="install-dependencies">Install Dependencies</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Install Python dependencies.</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>poetry<span class="w"> </span>install
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># (optional) create virtual environment</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>uv<span class="w"> </span>venv<span class="w"> </span>--python<span class="w"> </span><span class="m">3</span>.10
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># install python dependencies</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>uv<span class="w"> </span>sync<span class="w"> </span>--extra<span class="w"> </span>dev
 </code></pre></div>
 <h2 id="execute-the-indexing-engine">Execute the Indexing Engine</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>poetry<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>index<span class="w"> </span>&lt;...args&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>index<span class="w"> </span>&lt;...args&gt;
 </code></pre></div>
 <h2 id="executing-queries">Executing Queries</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>poetry<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>query<span class="w"> </span>&lt;...args&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>uv<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>query<span class="w"> </span>&lt;...args&gt;
 </code></pre></div>
 <h1 id="azurite">Azurite</h1>
 <p>Some unit and smoke tests use Azurite to emulate Azure resources. This can be started by running:</p>
@@ -1568,36 +1572,33 @@
 </code></pre></div>
 <p>or by simply running <code>azurite</code> in the terminal if already installed globally. See the <a href="https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite">Azurite documentation</a> for more information about how to install and use Azurite.</p>
 <h1 id="lifecycle-scripts">Lifecycle Scripts</h1>
-<p>Our Python package utilizes Poetry to manage dependencies and <a href="https://pypi.org/project/poethepoet/">poethepoet</a> to manage build scripts.</p>
+<p>Our Python package utilize uv to manage dependencies and <a href="https://pypi.org/project/poethepoet/">poethepoet</a> to manage build scripts.</p>
 <p>Available scripts are:</p>
 <ul>
-<li><code>poetry run poe index</code> - Run the Indexing CLI</li>
-<li><code>poetry run poe query</code> - Run the Query CLI</li>
-<li><code>poetry build</code> - This invokes <code>poetry build</code>, which will build a wheel file and other distributable artifacts.</li>
-<li><code>poetry run poe test</code> - This will execute all tests.</li>
-<li><code>poetry run poe test_unit</code> - This will execute unit tests.</li>
-<li><code>poetry run poe test_integration</code> - This will execute integration tests.</li>
-<li><code>poetry run poe test_smoke</code> - This will execute smoke tests.</li>
-<li><code>poetry run poe test_verbs</code> - This will execute tests of the basic workflows.</li>
-<li><code>poetry run poe check</code> - This will perform a suite of static checks across the package, including:</li>
+<li><code>uv run poe index</code> - Run the Indexing CLI</li>
+<li><code>uv run poe query</code> - Run the Query CLI</li>
+<li><code>uv build</code> - This will build a wheel file and other distributable artifacts.</li>
+<li><code>uv run poe test</code> - This will execute all tests.</li>
+<li><code>uv run poe test_unit</code> - This will execute unit tests.</li>
+<li><code>uv run poe test_integration</code> - This will execute integration tests.</li>
+<li><code>uv run poe test_smoke</code> - This will execute smoke tests.</li>
+<li><code>uv run poe test_verbs</code> - This will execute tests of the basic workflows.</li>
+<li><code>uv run poe check</code> - This will perform a suite of static checks across the package, including:</li>
 <li>formatting</li>
 <li>documentation formatting</li>
 <li>linting</li>
 <li>security patterns</li>
 <li>type-checking</li>
-<li><code>poetry run poe fix</code> - This will apply any available auto-fixes to the package. Usually this is just formatting fixes.</li>
-<li><code>poetry run poe fix_unsafe</code> - This will apply any available auto-fixes to the package, including those that may be unsafe.</li>
-<li><code>poetry run poe format</code> - Explicitly run the formatter across the package.</li>
+<li><code>uv run poe fix</code> - This will apply any available auto-fixes to the package. Usually this is just formatting fixes.</li>
+<li><code>uv run poe fix_unsafe</code> - This will apply any available auto-fixes to the package, including those that may be unsafe.</li>
+<li><code>uv run poe format</code> - Explicitly run the formatter across the package.</li>
 </ul>
 <h2 id="troubleshooting">Troubleshooting</h2>
-<h3 id="runtimeerror-llvm-config-failed-executing-please-point-llvm_config-to-the-path-for-llvm-config-when-running-poetry-install">"RuntimeError: llvm-config failed executing, please point LLVM_CONFIG to the path for llvm-config" when running poetry install</h3>
+<h3 id="runtimeerror-llvm-config-failed-executing-please-point-llvm_config-to-the-path-for-llvm-config-when-running-uv-install">"RuntimeError: llvm-config failed executing, please point LLVM_CONFIG to the path for llvm-config" when running uv install</h3>
 <p>Make sure llvm-9 and llvm-9-dev are installed:</p>
 <p><code>sudo apt-get install llvm-9 llvm-9-dev</code></p>
 <p>and then in your bashrc, add</p>
 <p><code>export LLVM_CONFIG=/usr/bin/llvm-config-9</code></p>
-<h3 id="numba_pymoduleh610-fatal-error-pythonh-no-such-file-or-directory-when-running-poetry-install">"numba/_pymodule.h:6:10: fatal error: Python.h: No such file or directory" when running poetry install</h3>
-<p>Make sure you have python3.10-dev installed or more generally <code>python&lt;version&gt;-dev</code></p>
-<p><code>sudo apt-get install python3.10-dev</code></p>
 <h3 id="llm-call-constantly-exceeds-tpm-rpm-or-time-limits">LLM call constantly exceeds TPM, RPM or time limits</h3>
 <p><code>GRAPHRAG_LLM_THREAD_COUNT</code> and <code>GRAPHRAG_EMBEDDING_THREAD_COUNT</code> are both set to 50 by default. You can modify these values
 to reduce concurrency. Please refer to the <a href="../config/overview/">Configuration Documents</a></p>

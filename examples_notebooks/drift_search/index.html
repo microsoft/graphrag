@@ -2569,38 +2569,38 @@ search = DRIFTSearch(
 <span class="ansi-green-fg">     83</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
 <span class="ansi-green-fg">     84</span>     response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.model(prompt, history=history, **kwargs)
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/openai/llm/openai_chat_llm.py:94</span>, in <span class="ansi-cyan-fg">OpenAIChatLLMImpl.__call__</span><span class="ansi-blue-fg">(self, prompt, stream, **kwargs)</span>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/openai/llm/openai_chat_llm.py:94</span>, in <span class="ansi-cyan-fg">OpenAIChatLLMImpl.__call__</span><span class="ansi-blue-fg">(self, prompt, stream, **kwargs)</span>
 <span class="ansi-green-fg">     91</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> stream:
 <span class="ansi-green-fg">     92</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._streaming_chat_llm(prompt, **kwargs)
 <span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">94</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._text_chat_llm(prompt, **kwargs)
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/openai/services/openai_tools_parsing.py:130</span>, in <span class="ansi-cyan-fg">OpenAIParseToolsLLM.__call__</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/openai/services/openai_tools_parsing.py:130</span>, in <span class="ansi-cyan-fg">OpenAIParseToolsLLM.__call__</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
 <span class="ansi-green-fg">    127</span> tools = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">tools</span><span class="ansi-yellow-fg">"</span>, [])
 <span class="ansi-green-fg">    129</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> tools:
 <span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">130</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._delegate(prompt, **kwargs)
 <span class="ansi-green-fg">    132</span> completion_parameters = <span style="color: rgb(0,135,0)">self</span>._add_tools_to_parameters(kwargs, tools)
 <span class="ansi-green-fg">    134</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._delegate(prompt, **completion_parameters)
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/base_llm.py:144</span>, in <span class="ansi-cyan-fg">BaseLLM.__call__</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/base_llm.py:144</span>, in <span class="ansi-cyan-fg">BaseLLM.__call__</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
 <span class="ansi-green-fg">    142</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
 <span class="ansi-green-fg">    143</span>     prompt, kwargs = <span style="color: rgb(0,135,0)">self</span>._rewrite_input(prompt, kwargs)
 <span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">144</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._decorated_target(prompt, **kwargs)
 <span class="ansi-green-fg">    145</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">BaseException</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
 <span class="ansi-green-fg">    146</span>     stack_trace = traceback.format_exc()
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/services/json.py:78</span>, in <span class="ansi-cyan-fg">JsonReceiver.decorate.&lt;locals&gt;.invoke</span><span class="ansi-blue-fg">(prompt, **kwargs)</span>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/services/json.py:78</span>, in <span class="ansi-cyan-fg">JsonReceiver.decorate.&lt;locals&gt;.invoke</span><span class="ansi-blue-fg">(prompt, **kwargs)</span>
 <span class="ansi-green-fg">     76</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">json_model</span><span class="ansi-yellow-fg">"</span>) <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">json</span><span class="ansi-yellow-fg">"</span>):
 <span class="ansi-green-fg">     77</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> this.invoke_json(delegate, prompt, kwargs)
 <span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">78</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> delegate(prompt, **kwargs)
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/services/rate_limiter.py:75</span>, in <span class="ansi-cyan-fg">RateLimiter.decorate.&lt;locals&gt;.invoke</span><span class="ansi-blue-fg">(prompt, **args)</span>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/services/rate_limiter.py:75</span>, in <span class="ansi-cyan-fg">RateLimiter.decorate.&lt;locals&gt;.invoke</span><span class="ansi-blue-fg">(prompt, **args)</span>
 <span class="ansi-green-fg">     73</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span style="color: rgb(0,135,0)">self</span>._limiter.use(manifest):
 <span class="ansi-green-fg">     74</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._events.on_limit_acquired(manifest)
 <span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">75</span>         result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> delegate(prompt, **args)
 <span class="ansi-green-fg">     76</span> <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
 <span class="ansi-green-fg">     77</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._events.on_limit_released(manifest)
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/base_llm.py:126</span>, in <span class="ansi-cyan-fg">BaseLLM._decorator_target</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/base_llm.py:126</span>, in <span class="ansi-cyan-fg">BaseLLM._decorator_target</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
 <span class="ansi-green-fg">    121</span> <span class="ansi-yellow-fg">"""Target for the decorator chain.</span>
 <span class="ansi-green-fg">    122</span> 
 <span class="ansi-green-fg">    123</span> <span class="ansi-yellow-fg">Leave signature alone as prompt,  kwargs.</span>
@@ -2610,22 +2610,22 @@ search = DRIFTSearch(
 <span class="ansi-green-fg">    127</span> result = LLMOutput(output=output)
 <span class="ansi-green-fg">    128</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._inject_usage(result)
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/openai/llm/openai_text_chat_llm.py:166</span>, in <span class="ansi-cyan-fg">OpenAITextChatLLMImpl._execute_llm</span><span class="ansi-blue-fg">(self, prompt, kwargs)</span>
-<span class="ansi-green-fg">    163</span> local_model_parameters = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">model_parameters</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">    164</span> parameters = <span style="color: rgb(0,135,0)">self</span>._build_completion_parameters(local_model_parameters)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">166</span> raw_response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._client.chat.completions.with_raw_response.create(
-<span class="ansi-green-fg">    167</span>     messages=cast(Iterator[ChatCompletionMessageParam], messages),
-<span class="ansi-green-fg">    168</span>     **parameters,
-<span class="ansi-green-fg">    169</span> )
-<span class="ansi-green-fg">    170</span> completion = raw_response.parse()
-<span class="ansi-green-fg">    171</span> headers = raw_response.headers
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/openai/llm/openai_text_chat_llm.py:173</span>, in <span class="ansi-cyan-fg">OpenAITextChatLLMImpl._execute_llm</span><span class="ansi-blue-fg">(self, prompt, kwargs)</span>
+<span class="ansi-green-fg">    170</span> local_model_parameters = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">model_parameters</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">    171</span> parameters = <span style="color: rgb(0,135,0)">self</span>._build_completion_parameters(local_model_parameters)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">173</span> raw_response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._client.chat.completions.with_raw_response.create(
+<span class="ansi-green-fg">    174</span>     messages=cast(Iterator[ChatCompletionMessageParam], messages),
+<span class="ansi-green-fg">    175</span>     **parameters,
+<span class="ansi-green-fg">    176</span> )
+<span class="ansi-green-fg">    177</span> completion = raw_response.parse()
+<span class="ansi-green-fg">    178</span> headers = raw_response.headers
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_legacy_response.py:381</span>, in <span class="ansi-cyan-fg">async_to_raw_response_wrapper.&lt;locals&gt;.wrapped</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_legacy_response.py:381</span>, in <span class="ansi-cyan-fg">async_to_raw_response_wrapper.&lt;locals&gt;.wrapped</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
 <span class="ansi-green-fg">    377</span> extra_headers[RAW_RESPONSE_HEADER] = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">true</span><span class="ansi-yellow-fg">"</span>
 <span class="ansi-green-fg">    379</span> kwargs[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">extra_headers</span><span class="ansi-yellow-fg">"</span>] = extra_headers
 <span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">381</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(LegacyAPIResponse[R], <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> func(*args, **kwargs))
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py:2454</span>, in <span class="ansi-cyan-fg">AsyncCompletions.create</span><span class="ansi-blue-fg">(self, messages, model, audio, frequency_penalty, function_call, functions, logit_bias, logprobs, max_completion_tokens, max_tokens, metadata, modalities, n, parallel_tool_calls, prediction, presence_penalty, reasoning_effort, response_format, seed, service_tier, stop, store, stream, stream_options, temperature, tool_choice, tools, top_logprobs, top_p, user, web_search_options, extra_headers, extra_query, extra_body, timeout)</span>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py:2454</span>, in <span class="ansi-cyan-fg">AsyncCompletions.create</span><span class="ansi-blue-fg">(self, messages, model, audio, frequency_penalty, function_call, functions, logit_bias, logprobs, max_completion_tokens, max_tokens, metadata, modalities, n, parallel_tool_calls, prediction, presence_penalty, reasoning_effort, response_format, seed, service_tier, stop, store, stream, stream_options, temperature, tool_choice, tools, top_logprobs, top_p, user, web_search_options, extra_headers, extra_query, extra_body, timeout)</span>
 <span class="ansi-green-fg">   2411</span> <span style="color: rgb(175,0,255)">@required_args</span>([<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">messages</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">model</span><span class="ansi-yellow-fg">"</span>], [<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">messages</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">model</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">stream</span><span class="ansi-yellow-fg">"</span>])
 <span class="ansi-green-fg">   2412</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">create</span>(
 <span class="ansi-green-fg">   2413</span>     <span style="color: rgb(0,135,0)">self</span>,
@@ -2680,23 +2680,23 @@ search = DRIFTSearch(
 <span class="ansi-green-fg">   2499</span>         stream_cls=AsyncStream[ChatCompletionChunk],
 <span class="ansi-green-fg">   2500</span>     )
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1784</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.post</span><span class="ansi-blue-fg">(self, path, cast_to, body, files, options, stream, stream_cls)</span>
-<span class="ansi-green-fg">   1770</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">post</span>(
-<span class="ansi-green-fg">   1771</span>     <span style="color: rgb(0,135,0)">self</span>,
-<span class="ansi-green-fg">   1772</span>     path: <span style="color: rgb(0,135,0)">str</span>,
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   1779</span>     stream_cls: <span style="color: rgb(0,135,0)">type</span>[_AsyncStreamT] | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
-<span class="ansi-green-fg">   1780</span> ) -&gt; ResponseT | _AsyncStreamT:
-<span class="ansi-green-fg">   1781</span>     opts = FinalRequestOptions.construct(
-<span class="ansi-green-fg">   1782</span>         method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">post</span><span class="ansi-yellow-fg">"</span>, url=path, json_data=body, files=<span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_to_httpx_files(files), **options
-<span class="ansi-green-fg">   1783</span>     )
-<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1784</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_base_client.py:1791</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.post</span><span class="ansi-blue-fg">(self, path, cast_to, body, files, options, stream, stream_cls)</span>
+<span class="ansi-green-fg">   1777</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">post</span>(
+<span class="ansi-green-fg">   1778</span>     <span style="color: rgb(0,135,0)">self</span>,
+<span class="ansi-green-fg">   1779</span>     path: <span style="color: rgb(0,135,0)">str</span>,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   1786</span>     stream_cls: <span style="color: rgb(0,135,0)">type</span>[_AsyncStreamT] | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
+<span class="ansi-green-fg">   1787</span> ) -&gt; ResponseT | _AsyncStreamT:
+<span class="ansi-green-fg">   1788</span>     opts = FinalRequestOptions.construct(
+<span class="ansi-green-fg">   1789</span>         method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">post</span><span class="ansi-yellow-fg">"</span>, url=path, json_data=body, files=<span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_to_httpx_files(files), **options
+<span class="ansi-green-fg">   1790</span>     )
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1791</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1584</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls)</span>
-<span class="ansi-green-fg">   1581</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> err.response.aread()
-<span class="ansi-green-fg">   1583</span>         log.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Re-raising status error</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1584</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._make_status_error_from_response(err.response) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-fg">   1586</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">break</span>
-<span class="ansi-green-fg">   1588</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> response <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">could not resolve response (should never happen)</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_base_client.py:1591</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls)</span>
+<span class="ansi-green-fg">   1588</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> err.response.aread()
+<span class="ansi-green-fg">   1590</span>         log.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Re-raising status error</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1591</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._make_status_error_from_response(err.response) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">   1593</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">break</span>
+<span class="ansi-green-fg">   1595</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> response <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">could not resolve response (should never happen)</span><span class="ansi-yellow-fg">"</span>
 
 <span class="ansi-red-fg">AuthenticationError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zWYA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}</pre>
 </div>

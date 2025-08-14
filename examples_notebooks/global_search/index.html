@@ -2706,7 +2706,7 @@ print(result.response)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>2025-08-08 23:01:05.0881 - ERROR - graphrag.query.structured_search.global_search.search - Exception in _map_response_single_batch
+<pre>2025-08-14 00:58:35.0530 - ERROR - graphrag.query.structured_search.global_search.search - Exception in _map_response_single_batch
 Traceback (most recent call last):
   File "/home/runner/work/graphrag/graphrag/graphrag/query/structured_search/global_search/search.py", line 227, in _map_response_single_batch
     model_response = await self.model.achat(
@@ -2714,43 +2714,43 @@ Traceback (most recent call last):
   File "/home/runner/work/graphrag/graphrag/graphrag/language_model/providers/fnllm/models.py", line 84, in achat
     response = await self.model(prompt, history=history, **kwargs)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/openai/llm/openai_chat_llm.py", line 94, in __call__
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/openai/llm/openai_chat_llm.py", line 94, in __call__
     return await self._text_chat_llm(prompt, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/openai/services/openai_tools_parsing.py", line 130, in __call__
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/openai/services/openai_tools_parsing.py", line 130, in __call__
     return await self._delegate(prompt, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/base_llm.py", line 144, in __call__
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/base_llm.py", line 144, in __call__
     return await self._decorated_target(prompt, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/services/json.py", line 77, in invoke
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/services/json.py", line 77, in invoke
     return await this.invoke_json(delegate, prompt, kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/services/json.py", line 96, in invoke_json
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/services/json.py", line 96, in invoke_json
     return await self.try_receive_json(delegate, prompt, kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/services/json.py", line 162, in try_receive_json
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/services/json.py", line 162, in try_receive_json
     result = await delegate(prompt, **kwargs)
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/services/rate_limiter.py", line 75, in invoke
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/services/rate_limiter.py", line 75, in invoke
     result = await delegate(prompt, **args)
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/base/base_llm.py", line 126, in _decorator_target
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/base_llm.py", line 126, in _decorator_target
     output = await self._execute_llm(prompt, kwargs)
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/fnllm/openai/llm/openai_text_chat_llm.py", line 166, in _execute_llm
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/openai/llm/openai_text_chat_llm.py", line 173, in _execute_llm
     raw_response = await self._client.chat.completions.with_raw_response.create(
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_legacy_response.py", line 381, in wrapped
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_legacy_response.py", line 381, in wrapped
     return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py", line 2454, in create
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py", line 2454, in create
     return await self._post(
            ^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py", line 1784, in post
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1791, in post
     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py", line 1584, in request
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1591, in request
     raise self._make_status_error_from_response(err.response) from None
 openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zWYA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
 </pre>
@@ -2759,7 +2759,7 @@ openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect A
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>2025-08-08 23:01:05.0885 - WARNING - graphrag.query.structured_search.global_search.search - Warning: All map responses have score 0 (i.e., no relevant information found from the dataset), returning a canned 'I do not know' answer. You can try enabling `allow_general_knowledge` to encourage the LLM to incorporate relevant general knowledge, at the risk of increasing hallucinations.
+<pre>2025-08-14 00:58:35.0534 - WARNING - graphrag.query.structured_search.global_search.search - Warning: All map responses have score 0 (i.e., no relevant information found from the dataset), returning a canned 'I do not know' answer. You can try enabling `allow_general_knowledge` to encourage the LLM to incorporate relevant general knowledge, at the risk of increasing hallucinations.
 </pre>
 </div>
 </div>
