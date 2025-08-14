@@ -1,6 +1,11 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 2.5.0
+
+- minor: Add additional context variable to build index signature for custom parameter bag
+- minor: swap package management from Poetry -> UV
+
 ## 2.4.0
 
 - minor: Allow injection of custom pipelines.

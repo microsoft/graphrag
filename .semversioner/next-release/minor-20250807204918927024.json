@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Add additional context variable to build index signature for custom parameter bag"
-}

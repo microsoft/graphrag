@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "swap package management from Poetry -> UV"
-}
