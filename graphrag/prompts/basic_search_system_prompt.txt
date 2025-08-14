@@ -1,9 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation.
-# Licensed under the MIT License
 
-"""Basic Search prompts."""
-
-BASIC_SEARCH_SYSTEM_PROMPT = """
 ---Role---
 
 You are a helpful assistant responding to questions about data in the tables provided.
@@ -70,4 +65,3 @@ Do not include information where the supporting evidence for it is not provided.
 {response_type}
 
 Add sections and commentary to the response as appropriate for the length and format. Style the response in markdown.
-"""
