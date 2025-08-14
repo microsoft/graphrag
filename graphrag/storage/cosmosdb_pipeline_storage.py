@@ -193,7 +193,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     progress_status.total_items,
                 )
         except Exception:
-            logger.exception(
+            logger.warning(
                 "An error occurred while searching for documents in Cosmos DB."
             )
 
@@ -230,7 +230,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             item_body = item.get("body")
             return json.dumps(item_body)
         except Exception:
-            logger.exception("Error reading item %s", key)
+            logger.warning("Error reading item %s", key)
             return None
 
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
@@ -344,7 +344,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             )
 
         except Exception:
-            logger.exception("Error getting key %s", key)
+            logger.warning("Error getting key %s", key)
             return ""
 
 
