@@ -192,7 +192,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     progress_status.completed_items,
                     progress_status.total_items,
                 )
-        except Exception:
+        except Exception:  # noqa: BLE001
             logger.warning(
                 "An error occurred while searching for documents in Cosmos DB."
             )
@@ -229,7 +229,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             item = self._container_client.read_item(item=key, partition_key=key)
             item_body = item.get("body")
             return json.dumps(item_body)
-        except Exception:
+        except Exception:  # noqa: BLE001
             logger.warning("Error reading item %s", key)
             return None
 
@@ -343,7 +343,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 datetime.fromtimestamp(item["_ts"], tz=timezone.utc)
             )
 
-        except Exception:
+        except Exception:  # noqa: BLE001
             logger.warning("Error getting key %s", key)
             return ""
 

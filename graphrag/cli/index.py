@@ -155,7 +155,7 @@ def _run_index(
             method=method,
             is_update_run=is_update_run,
             memory_profile=memprofile,
-            callbacks=[ConsoleWorkflowCallbacks(verbose=verbose)]
+            callbacks=[ConsoleWorkflowCallbacks(verbose=verbose)],
         )
     )
     encountered_errors = any(
