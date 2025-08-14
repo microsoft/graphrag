@@ -10,6 +10,7 @@ import warnings
 from pathlib import Path
 
 import graphrag.api as api
+from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.config.enums import CacheType, IndexingMethod, ReportingType
 from graphrag.config.load_config import load_config
 from graphrag.index.validate_config import validate_config_names
@@ -154,6 +155,7 @@ def _run_index(
             method=method,
             is_update_run=is_update_run,
             memory_profile=memprofile,
+            callbacks=[ConsoleWorkflowCallbacks(verbose=verbose)]
         )
     )
     encountered_errors = any(

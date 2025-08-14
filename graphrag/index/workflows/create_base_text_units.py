@@ -69,8 +69,6 @@ def create_base_text_units(
         zip(*[sort[col] for col in ["id", "text"]], strict=True)
     )
 
-    callbacks.progress(Progress(percent=0))
-
     agg_dict = {"text_with_ids": list}
     if "metadata" in documents:
         agg_dict["metadata"] = "first"  # type: ignore
