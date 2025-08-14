@@ -112,3 +112,13 @@ ModelFactory.register_embedding(
 ModelFactory.register_embedding(
     ModelType.OpenAIEmbedding, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
 )
+
+# --- Register Google implementations ---
+# These reuse the OpenAI providers, which are now flexible enough
+# to handle the Google API via the OpenAI compatibility layer.
+ModelFactory.register_chat(
+    ModelType.GoogleChat, lambda **kwargs: OpenAIChatFNLLM(**kwargs)
+)
+ModelFactory.register_embedding(
+    ModelType.GoogleEmbedding, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
+)
