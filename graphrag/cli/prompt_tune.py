@@ -9,6 +9,7 @@ from pathlib import Path
 import graphrag.api as api
 from graphrag.config.enums import ReportingType
 from graphrag.config.load_config import load_config
+from graphrag.logger.standard_logging import DEFAULT_LOG_FILENAME
 from graphrag.prompt_tune.generator.community_report_summarization import (
     COMMUNITY_SUMMARIZATION_FILENAME,
 )
@@ -75,14 +76,13 @@ async def prompt_tune(
     # initialize loggers with config
     init_loggers(
         config=graph_config,
-        root_dir=str(root_path),
         verbose=verbose,
     )
 
     # log the configuration details
     if graph_config.reporting.type == ReportingType.file:
-        log_dir = Path(root_path) / (graph_config.reporting.base_dir or "")
-        log_path = log_dir / "logs.txt"
+        log_dir = Path(root_path) / graph_config.reporting.base_dir
+        log_path = log_dir / DEFAULT_LOG_FILENAME
         logger.info("Logging enabled at %s", log_path)
     else:
         logger.info(

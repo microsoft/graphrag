@@ -9,7 +9,7 @@ logging system for use within the graphrag package.
 Usage:
     # Configuration should be done once at the start of your application:
     from graphrag.logger.standard_logging import init_loggers
-    init_loggers(log_file="/path/to/app.log")
+    init_loggers(config)
 
     # Then throughout your code:
     import logging
@@ -33,22 +33,20 @@ Notes
 """
 
 import logging
-import sys
 from pathlib import Path
 
 from graphrag.config.enums import ReportingType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.models.reporting_config import ReportingConfig
 
+DEFAULT_LOG_FILENAME = "indexing-engine.log"
 LOG_FORMAT = "%(asctime)s.%(msecs)04d - %(levelname)s - %(name)s - %(message)s"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def init_loggers(
-    config: GraphRagConfig | None = None,
-    root_dir: str | None = None,
+    config: GraphRagConfig,
     verbose: bool = False,
-    log_file: str | Path | None = None,
+    filename: str = DEFAULT_LOG_FILENAME,
 ) -> None:
     """Initialize logging handlers for graphrag based on configuration.
 
@@ -70,20 +68,7 @@ def init_loggers(
     from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
 
     # extract reporting config from GraphRagConfig if provided
-    reporting_config: ReportingConfig
-    if log_file:
-        # if log_file is provided directly, override config to use file-based logging
-        log_path = Path(log_file)
-        reporting_config = ReportingConfig(
-            type=ReportingType.file,
-            base_dir=str(log_path.parent),
-        )
-    elif config is not None:
-        # use the reporting configuration from GraphRagConfig
-        reporting_config = config.reporting
-    else:
-        # default to file-based logging if no config provided
-        reporting_config = ReportingConfig(base_dir="logs", type=ReportingType.file)
+    reporting_config = config.reporting
 
     logger = logging.getLogger("graphrag")
     log_level = logging.DEBUG if verbose else logging.INFO
@@ -100,23 +85,15 @@ def init_loggers(
     # create formatter with custom format
     formatter = logging.Formatter(fmt=LOG_FORMAT, datefmt=DATE_FORMAT)
 
-    init_console_logger(verbose)
-
     # add more handlers based on configuration
     handler: logging.Handler
     match reporting_config.type:
         case ReportingType.file:
-            if log_file:
-                # use the specific log file provided
-                log_file_path = Path(log_file)
-                log_file_path.parent.mkdir(parents=True, exist_ok=True)
-                handler = logging.FileHandler(str(log_file_path), mode="a")
-            else:
-                # use the config-based file path
-                log_dir = Path(root_dir or "") / (reporting_config.base_dir or "")
-                log_dir.mkdir(parents=True, exist_ok=True)
-                log_file_path = log_dir / "logs.txt"
-                handler = logging.FileHandler(str(log_file_path), mode="a")
+            # use the config-based file path
+            log_dir = Path(config.root_dir) / (reporting_config.base_dir)
+            log_dir.mkdir(parents=True, exist_ok=True)
+            log_file_path = log_dir / filename
+            handler = logging.FileHandler(str(log_file_path), mode="a")
             handler.setFormatter(formatter)
             logger.addHandler(handler)
         case ReportingType.blob:
@@ -129,25 +106,3 @@ def init_loggers(
             logger.addHandler(handler)
         case _:
             logger.error("Unknown reporting type '%s'.", reporting_config.type)
-
-
-def init_console_logger(verbose: bool = False) -> None:
-    """Initialize a console logger if not already present.
-
-    This function sets up a logger that outputs log messages to STDOUT.
-
-    Parameters
-    ----------
-    verbose : bool, default=False
-        Whether to enable verbose (DEBUG) logging.
-    """
-    logger = logging.getLogger("graphrag")
-    logger.setLevel(logging.DEBUG if verbose else logging.INFO)
-    has_console_handler = any(
-        isinstance(h, logging.StreamHandler) for h in logger.handlers
-    )
-    if not has_console_handler:
-        console_handler = logging.StreamHandler(sys.stdout)
-        formatter = logging.Formatter(fmt=LOG_FORMAT, datefmt=DATE_FORMAT)
-        console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)

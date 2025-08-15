@@ -17,7 +17,6 @@ from graphrag.index.operations.chunk_text.strategies import get_encoding_fn
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash
-from graphrag.logger.progress import Progress
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -68,8 +67,6 @@ def create_base_text_units(
     sort["text_with_ids"] = list(
         zip(*[sort[col] for col in ["id", "text"]], strict=True)
     )
-
-    callbacks.progress(Progress(percent=0))
 
     agg_dict = {"text_with_ids": list}
     if "metadata" in documents:
