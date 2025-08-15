@@ -3449,202 +3449,32 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AuthenticationError</span>                       Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[13]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search_engine.search(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Tell me about Agent Mercer</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">      2</span> <span style="color: rgb(0,135,0)">print</span>(result.response)
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>2025-08-15 23:39:14.0304 - WARNING - graphrag.query.structured_search.local_search.mixed_context - Reached token limit - reverting to previous context state
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>### Overview of Agent Alex Mercer
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/local_search/search.py:63</span>, in <span class="ansi-cyan-fg">LocalSearch.search</span><span class="ansi-blue-fg">(self, query, conversation_history, **kwargs)</span>
-<span class="ansi-green-fg">     61</span> search_prompt = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">     62</span> llm_calls, prompt_tokens, output_tokens = {}, {}, {}
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">63</span> context_result = <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">context_builder</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">build_context</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">     64</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     65</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">conversation_history</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">conversation_history</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     66</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     67</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">context_builder_params</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     68</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">     69</span> llm_calls[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">build_context</span><span class="ansi-yellow-fg">"</span>] = context_result.llm_calls
-<span class="ansi-green-fg">     70</span> prompt_tokens[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">build_context</span><span class="ansi-yellow-fg">"</span>] = context_result.prompt_tokens
+Agent Alex Mercer is a prominent member of the Paranormal Military Squad, an elite group tasked with executing Operation: Dulce. He plays a crucial role in the mission, providing guidance and emphasizing the importance of intuition and trust among his team members [Data: Reports (1); Entities (0, 4)]. Mercer's leadership and mentorship are particularly significant, as he serves as a mentor to Sam Rivera, offering valuable support and leadership [Data: Reports (1); Entities (0, 3)].
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/local_search/mixed_context.py:139</span>, in <span class="ansi-cyan-fg">LocalSearchMixedContext.build_context</span><span class="ansi-blue-fg">(self, query, conversation_history, include_entity_names, exclude_entity_names, conversation_history_max_turns, conversation_history_user_turns_only, max_context_tokens, text_unit_prop, community_prop, top_k_mapped_entities, top_k_relationships, include_community_rank, include_entity_rank, rank_description, include_relationship_weight, relationship_ranking_attribute, return_candidate_context, use_community_summary, min_community_rank, community_context_name, column_delimiter, **kwargs)</span>
-<span class="ansi-green-fg">    134</span>     pre_user_questions = <span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-fg">"</span>.join(
-<span class="ansi-green-fg">    135</span>         conversation_history.get_user_turns(conversation_history_max_turns)
-<span class="ansi-green-fg">    136</span>     )
-<span class="ansi-green-fg">    137</span>     query = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>query<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>pre_user_questions<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">139</span> selected_entities = <span class="ansi-yellow-bg">map_query_to_entities</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">    140</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    141</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">text_embedding_vectorstore</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">entity_text_embeddings</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    142</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    143</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">all_entities_dict</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">entities</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    144</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">embedding_vectorstore_key</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">embedding_vectorstore_key</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    145</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">include_entity_names</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">include_entity_names</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    146</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">exclude_entity_names</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">exclude_entity_names</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    147</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">k</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">top_k_mapped_entities</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    148</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">oversample_scaler</span><span class="ansi-yellow-bg">=</span><span class="ansi-green-fg ansi-yellow-bg">2</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    149</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    151</span> <span style="color: rgb(95,135,135)"># build context</span>
-<span class="ansi-green-fg">    152</span> final_context = <span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">str</span>]()
+### Role in Operation: Dulce
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/context_builder/entity_extraction.py:58</span>, in <span class="ansi-cyan-fg">map_query_to_entities</span><span class="ansi-blue-fg">(query, text_embedding_vectorstore, text_embedder, all_entities_dict, embedding_vectorstore_key, include_entity_names, exclude_entity_names, k, oversample_scaler)</span>
-<span class="ansi-green-fg">     54</span> matched_entities = []
-<span class="ansi-green-fg">     55</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query != <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>:
-<span class="ansi-green-fg">     56</span>     <span style="color: rgb(95,135,135)"># get entities with highest semantic similarity to query</span>
-<span class="ansi-green-fg">     57</span>     <span style="color: rgb(95,135,135)"># oversample to account for excluded entities</span>
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">58</span>     search_results = <span class="ansi-yellow-bg">text_embedding_vectorstore</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">similarity_search_by_text</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">     59</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     60</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">lambda</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">t</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">embed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">t</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     61</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">k</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">k</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">oversample_scaler</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     62</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">     63</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> search_results:
-<span class="ansi-green-fg">     64</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> embedding_vectorstore_key == EntityVectorStoreKey.ID <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">isinstance</span>(
-<span class="ansi-green-fg">     65</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
-<span class="ansi-green-fg">     66</span>         ):
+In the context of Operation: Dulce, Alex Mercer is one of the agents exploring the Dulce base, a mysterious and secretive location associated with advanced alien technology [Data: Reports (1); Entities (0, 8); Relationships (23, 24, 37)]. His involvement in the mission is marked by a balance between compliance with protocols and a natural inclination to question and explore all details, which sometimes leads to internal conflict [Data: Claims (3, 5)].
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/vector_stores/lancedb.py:134</span>, in <span class="ansi-cyan-fg">LanceDBVectorStore.similarity_search_by_text</span><span class="ansi-blue-fg">(self, text, text_embedder, k, **kwargs)</span>
-<span class="ansi-green-fg">    130</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">similarity_search_by_text</span>(
-<span class="ansi-green-fg">    131</span>     <span style="color: rgb(0,135,0)">self</span>, text: <span style="color: rgb(0,135,0)">str</span>, text_embedder: TextEmbedder, k: <span style="color: rgb(0,135,0)">int</span> = <span class="ansi-green-fg">10</span>, **kwargs: Any
-<span class="ansi-green-fg">    132</span> ) -&gt; <span style="color: rgb(0,135,0)">list</span>[VectorStoreSearchResult]:
-<span class="ansi-green-fg">    133</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""Perform a similarity search using a given input text."""</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">134</span>     query_embedding = <span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    135</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query_embedding:
-<span class="ansi-green-fg">    136</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span>.similarity_search_by_vector(query_embedding, k)
+### Relationships and Interactions
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/context_builder/entity_extraction.py:60</span>, in <span class="ansi-cyan-fg">map_query_to_entities.&lt;locals&gt;.&lt;lambda&gt;</span><span class="ansi-blue-fg">(t)</span>
-<span class="ansi-green-fg">     54</span> matched_entities = []
-<span class="ansi-green-fg">     55</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query != <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>:
-<span class="ansi-green-fg">     56</span>     <span style="color: rgb(95,135,135)"># get entities with highest semantic similarity to query</span>
-<span class="ansi-green-fg">     57</span>     <span style="color: rgb(95,135,135)"># oversample to account for excluded entities</span>
-<span class="ansi-green-fg">     58</span>     search_results = text_embedding_vectorstore.similarity_search_by_text(
-<span class="ansi-green-fg">     59</span>         text=query,
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">60</span>         text_embedder=<span class="ansi-bold" style="color: rgb(0,135,0)">lambda</span> t: <span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">embed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">t</span><span class="ansi-yellow-bg">)</span>,
-<span class="ansi-green-fg">     61</span>         k=k * oversample_scaler,
-<span class="ansi-green-fg">     62</span>     )
-<span class="ansi-green-fg">     63</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> search_results:
-<span class="ansi-green-fg">     64</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> embedding_vectorstore_key == EntityVectorStoreKey.ID <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">isinstance</span>(
-<span class="ansi-green-fg">     65</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
-<span class="ansi-green-fg">     66</span>         ):
+Mercer shares a professional relationship with other key members of the Paranormal Military Squad, including Taylor Cruz, Jordan Hayes, and Sam Rivera. His relationship with Taylor Cruz is primarily professional, with a competitive undercurrent due to Cruz's authoritative nature [Data: Relationships (0, 2)]. With Jordan Hayes, Mercer shares mutual respect and understanding, particularly admiring each other's expertise and analytical abilities [Data: Relationships (1)]. His mentorship of Sam Rivera highlights his role in guiding and supporting his colleagues [Data: Relationships (2, 15)].
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/language_model/providers/fnllm/models.py:240</span>, in <span class="ansi-cyan-fg">OpenAIEmbeddingFNLLM.embed</span><span class="ansi-blue-fg">(self, text, **kwargs)</span>
-<span class="ansi-green-fg">    228</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">embed</span>(<span style="color: rgb(0,135,0)">self</span>, text: <span style="color: rgb(0,135,0)">str</span>, **kwargs) -&gt; <span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">float</span>]:
-<span class="ansi-green-fg">    229</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    230</span> <span class="ansi-yellow-fg">    Embed the given text using the Model.</span>
-<span class="ansi-green-fg">    231</span> 
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    238</span> <span class="ansi-yellow-fg">        The embeddings of the text.</span>
-<span class="ansi-green-fg">    239</span> <span class="ansi-yellow-fg">    """</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">240</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">run_coroutine_sync</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">aembed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
+### Leadership and Challenges
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/language_model/providers/fnllm/utils.py:132</span>, in <span class="ansi-cyan-fg">run_coroutine_sync</span><span class="ansi-blue-fg">(coroutine)</span>
-<span class="ansi-green-fg">    130</span>     _thr.start()
-<span class="ansi-green-fg">    131</span> future = asyncio.run_coroutine_threadsafe(coroutine, _loop)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">132</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">future</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">result</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+As a leader, Alex Mercer is depicted as experiencing internal conflict between adhering to protocols and his natural curiosity to explore and question details. This conflict is highlighted through his interactions with Taylor Cruz and his own reflections [Data: Claims (3)]. Despite these challenges, Mercer's leadership is crucial to the success of Operation: Dulce, as he is involved in leading the mission into the Dulce base [Data: Claims (5)].
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/concurrent/futures/_base.py:456</span>, in <span class="ansi-cyan-fg">Future.result</span><span class="ansi-blue-fg">(self, timeout)</span>
-<span class="ansi-green-fg">    454</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> CancelledError()
-<span class="ansi-green-fg">    455</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> <span style="color: rgb(0,135,0)">self</span>._state == FINISHED:
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">456</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">__get_result</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    457</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-fg">    458</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">TimeoutError</span>()
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/concurrent/futures/_base.py:401</span>, in <span class="ansi-cyan-fg">Future.__get_result</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg">    399</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span>._exception:
-<span class="ansi-green-fg">    400</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">401</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._exception
-<span class="ansi-green-fg">    402</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
-<span class="ansi-green-fg">    403</span>         <span style="color: rgb(95,135,135)"># Break a reference cycle with the exception in self._exception</span>
-<span class="ansi-green-fg">    404</span>         <span style="color: rgb(0,135,0)">self</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/language_model/providers/fnllm/models.py:207</span>, in <span class="ansi-cyan-fg">OpenAIEmbeddingFNLLM.aembed</span><span class="ansi-blue-fg">(self, text, **kwargs)</span>
-<span class="ansi-green-fg">    195</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">aembed</span>(<span style="color: rgb(0,135,0)">self</span>, text: <span style="color: rgb(0,135,0)">str</span>, **kwargs) -&gt; <span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">float</span>]:
-<span class="ansi-green-fg">    196</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    197</span> <span class="ansi-yellow-fg">    Embed the given text using the Model.</span>
-<span class="ansi-green-fg">    198</span> 
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    205</span> <span class="ansi-yellow-fg">        The embeddings of the text.</span>
-<span class="ansi-green-fg">    206</span> <span class="ansi-yellow-fg">    """</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">207</span>     response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.model([text], **kwargs)
-<span class="ansi-green-fg">    208</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> response.output.embeddings <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg">    209</span>         msg = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">No embeddings found in response</span><span class="ansi-yellow-fg">"</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/base_llm.py:144</span>, in <span class="ansi-cyan-fg">BaseLLM.__call__</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
-<span class="ansi-green-fg">    142</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">    143</span>     prompt, kwargs = <span style="color: rgb(0,135,0)">self</span>._rewrite_input(prompt, kwargs)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">144</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._decorated_target(prompt, **kwargs)
-<span class="ansi-green-fg">    145</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">BaseException</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
-<span class="ansi-green-fg">    146</span>     stack_trace = traceback.format_exc()
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/services/rate_limiter.py:75</span>, in <span class="ansi-cyan-fg">RateLimiter.decorate.&lt;locals&gt;.invoke</span><span class="ansi-blue-fg">(prompt, **args)</span>
-<span class="ansi-green-fg">     73</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span style="color: rgb(0,135,0)">self</span>._limiter.use(manifest):
-<span class="ansi-green-fg">     74</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._events.on_limit_acquired(manifest)
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">75</span>         result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> delegate(prompt, **args)
-<span class="ansi-green-fg">     76</span> <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
-<span class="ansi-green-fg">     77</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._events.on_limit_released(manifest)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/base_llm.py:126</span>, in <span class="ansi-cyan-fg">BaseLLM._decorator_target</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
-<span class="ansi-green-fg">    121</span> <span class="ansi-yellow-fg">"""Target for the decorator chain.</span>
-<span class="ansi-green-fg">    122</span> 
-<span class="ansi-green-fg">    123</span> <span class="ansi-yellow-fg">Leave signature alone as prompt,  kwargs.</span>
-<span class="ansi-green-fg">    124</span> <span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    125</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._events.on_execute_llm()
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">126</span> output = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._execute_llm(prompt, kwargs)
-<span class="ansi-green-fg">    127</span> result = LLMOutput(output=output)
-<span class="ansi-green-fg">    128</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._inject_usage(result)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/openai/llm/openai_embeddings_llm.py:126</span>, in <span class="ansi-cyan-fg">OpenAIEmbeddingsLLMImpl._execute_llm</span><span class="ansi-blue-fg">(self, prompt, kwargs)</span>
-<span class="ansi-green-fg">    121</span> local_model_parameters = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">model_parameters</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">    122</span> embeddings_parameters = <span style="color: rgb(0,135,0)">self</span>._build_embeddings_parameters(
-<span class="ansi-green-fg">    123</span>     local_model_parameters
-<span class="ansi-green-fg">    124</span> )
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">126</span> result_raw = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._client.embeddings.with_raw_response.create(
-<span class="ansi-green-fg">    127</span>     <span style="color: rgb(0,135,0)">input</span>=prompt,
-<span class="ansi-green-fg">    128</span>     **embeddings_parameters,
-<span class="ansi-green-fg">    129</span> )
-<span class="ansi-green-fg">    130</span> result = result_raw.parse()
-<span class="ansi-green-fg">    131</span> headers = result_raw.headers
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_legacy_response.py:381</span>, in <span class="ansi-cyan-fg">async_to_raw_response_wrapper.&lt;locals&gt;.wrapped</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
-<span class="ansi-green-fg">    377</span> extra_headers[RAW_RESPONSE_HEADER] = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">true</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">    379</span> kwargs[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">extra_headers</span><span class="ansi-yellow-fg">"</span>] = extra_headers
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">381</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(LegacyAPIResponse[R], <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> func(*args, **kwargs))
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/resources/embeddings.py:251</span>, in <span class="ansi-cyan-fg">AsyncEmbeddings.create</span><span class="ansi-blue-fg">(self, input, model, dimensions, encoding_format, user, extra_headers, extra_query, extra_body, timeout)</span>
-<span class="ansi-green-fg">    245</span>             embedding.embedding = np.frombuffer(  <span style="color: rgb(95,135,135)"># type: ignore[no-untyped-call]</span>
-<span class="ansi-green-fg">    246</span>                 base64.b64decode(data), dtype=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">float32</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">    247</span>             ).tolist()
-<span class="ansi-green-fg">    249</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> obj
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">251</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._post(
-<span class="ansi-green-fg">    252</span>     <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">/embeddings</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">    253</span>     body=maybe_transform(params, embedding_create_params.EmbeddingCreateParams),
-<span class="ansi-green-fg">    254</span>     options=make_request_options(
-<span class="ansi-green-fg">    255</span>         extra_headers=extra_headers,
-<span class="ansi-green-fg">    256</span>         extra_query=extra_query,
-<span class="ansi-green-fg">    257</span>         extra_body=extra_body,
-<span class="ansi-green-fg">    258</span>         timeout=timeout,
-<span class="ansi-green-fg">    259</span>         post_parser=parser,
-<span class="ansi-green-fg">    260</span>     ),
-<span class="ansi-green-fg">    261</span>     cast_to=CreateEmbeddingResponse,
-<span class="ansi-green-fg">    262</span> )
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_base_client.py:1791</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.post</span><span class="ansi-blue-fg">(self, path, cast_to, body, files, options, stream, stream_cls)</span>
-<span class="ansi-green-fg">   1777</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">post</span>(
-<span class="ansi-green-fg">   1778</span>     <span style="color: rgb(0,135,0)">self</span>,
-<span class="ansi-green-fg">   1779</span>     path: <span style="color: rgb(0,135,0)">str</span>,
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   1786</span>     stream_cls: <span style="color: rgb(0,135,0)">type</span>[_AsyncStreamT] | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
-<span class="ansi-green-fg">   1787</span> ) -&gt; ResponseT | _AsyncStreamT:
-<span class="ansi-green-fg">   1788</span>     opts = FinalRequestOptions.construct(
-<span class="ansi-green-fg">   1789</span>         method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">post</span><span class="ansi-yellow-fg">"</span>, url=path, json_data=body, files=<span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_to_httpx_files(files), **options
-<span class="ansi-green-fg">   1790</span>     )
-<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1791</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_base_client.py:1591</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls)</span>
-<span class="ansi-green-fg">   1588</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> err.response.aread()
-<span class="ansi-green-fg">   1590</span>         log.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Re-raising status error</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1591</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._make_status_error_from_response(err.response) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-fg">   1593</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">break</span>
-<span class="ansi-green-fg">   1595</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> response <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">could not resolve response (should never happen)</span><span class="ansi-yellow-fg">"</span>
-
-<span class="ansi-red-fg">AuthenticationError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zWYA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}</pre>
+In summary, Agent Alex Mercer is a key figure in the Paranormal Military Squad, known for his leadership, mentorship, and critical role in Operation: Dulce. His relationships with other team members and his internal conflicts add depth to his character, making him an integral part of the mission's dynamics [Data: Reports (1); Entities (0, 4); Relationships (0, 1, 2, 23, 24, 37); Claims (3, 5)].
+</pre>
 </div>
 </div>
 </div>
@@ -3686,203 +3516,32 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AuthenticationError</span>                       Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[14]</span><span class="ansi-green-fg">, line 2</span>
-<span class="ansi-green-fg">      1</span> question = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Tell me about Dr. Jordan Hayes</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search_engine.search(question)
-<span class="ansi-green-fg">      3</span> <span style="color: rgb(0,135,0)">print</span>(result.response)
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>2025-08-15 23:39:36.0519 - WARNING - graphrag.query.structured_search.local_search.mixed_context - Reached token limit - reverting to previous context state
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>## Overview of Dr. Jordan Hayes
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/local_search/search.py:63</span>, in <span class="ansi-cyan-fg">LocalSearch.search</span><span class="ansi-blue-fg">(self, query, conversation_history, **kwargs)</span>
-<span class="ansi-green-fg">     61</span> search_prompt = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">     62</span> llm_calls, prompt_tokens, output_tokens = {}, {}, {}
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">63</span> context_result = <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">context_builder</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">build_context</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">     64</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     65</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">conversation_history</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">conversation_history</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     66</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     67</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">context_builder_params</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     68</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">     69</span> llm_calls[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">build_context</span><span class="ansi-yellow-fg">"</span>] = context_result.llm_calls
-<span class="ansi-green-fg">     70</span> prompt_tokens[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">build_context</span><span class="ansi-yellow-fg">"</span>] = context_result.prompt_tokens
+Dr. Jordan Hayes is a prominent scientist and a key member of the Paranormal Military Squad, known for their expertise in physics and composed demeanor. They play a significant role in Operation: Dulce, particularly in working with alien technology. Dr. Hayes is recognized for their analytical mind and reflective nature, often contemplating the complexities of their missions and the layers of data they encounter [Data: Entities (2); Reports (1)].
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/local_search/mixed_context.py:139</span>, in <span class="ansi-cyan-fg">LocalSearchMixedContext.build_context</span><span class="ansi-blue-fg">(self, query, conversation_history, include_entity_names, exclude_entity_names, conversation_history_max_turns, conversation_history_user_turns_only, max_context_tokens, text_unit_prop, community_prop, top_k_mapped_entities, top_k_relationships, include_community_rank, include_entity_rank, rank_description, include_relationship_weight, relationship_ranking_attribute, return_candidate_context, use_community_summary, min_community_rank, community_context_name, column_delimiter, **kwargs)</span>
-<span class="ansi-green-fg">    134</span>     pre_user_questions = <span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-fg">"</span>.join(
-<span class="ansi-green-fg">    135</span>         conversation_history.get_user_turns(conversation_history_max_turns)
-<span class="ansi-green-fg">    136</span>     )
-<span class="ansi-green-fg">    137</span>     query = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>query<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>pre_user_questions<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">139</span> selected_entities = <span class="ansi-yellow-bg">map_query_to_entities</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">    140</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    141</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">text_embedding_vectorstore</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">entity_text_embeddings</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    142</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    143</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">all_entities_dict</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">entities</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    144</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">embedding_vectorstore_key</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">embedding_vectorstore_key</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    145</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">include_entity_names</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">include_entity_names</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    146</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">exclude_entity_names</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">exclude_entity_names</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    147</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">k</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">top_k_mapped_entities</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    148</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">oversample_scaler</span><span class="ansi-yellow-bg">=</span><span class="ansi-green-fg ansi-yellow-bg">2</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    149</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    151</span> <span style="color: rgb(95,135,135)"># build context</span>
-<span class="ansi-green-fg">    152</span> final_context = <span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">str</span>]()
+## Role in Operation: Dulce
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/context_builder/entity_extraction.py:58</span>, in <span class="ansi-cyan-fg">map_query_to_entities</span><span class="ansi-blue-fg">(query, text_embedding_vectorstore, text_embedder, all_entities_dict, embedding_vectorstore_key, include_entity_names, exclude_entity_names, k, oversample_scaler)</span>
-<span class="ansi-green-fg">     54</span> matched_entities = []
-<span class="ansi-green-fg">     55</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query != <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>:
-<span class="ansi-green-fg">     56</span>     <span style="color: rgb(95,135,135)"># get entities with highest semantic similarity to query</span>
-<span class="ansi-green-fg">     57</span>     <span style="color: rgb(95,135,135)"># oversample to account for excluded entities</span>
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">58</span>     search_results = <span class="ansi-yellow-bg">text_embedding_vectorstore</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">similarity_search_by_text</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">     59</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     60</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">lambda</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">t</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">embed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">t</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     61</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">k</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">k</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">oversample_scaler</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     62</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">     63</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> search_results:
-<span class="ansi-green-fg">     64</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> embedding_vectorstore_key == EntityVectorStoreKey.ID <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">isinstance</span>(
-<span class="ansi-green-fg">     65</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
-<span class="ansi-green-fg">     66</span>         ):
+In the context of Operation: Dulce, Dr. Hayes is deeply involved in exploring the Dulce base and working on alien technology. Their role is crucial as they provide analytical insights and express concerns about the mission, indicating a strong involvement in the analytical assessment of the operation. Dr. Hayes is also noted for identifying a suspicious panel within the base, suggesting a hidden element that could be critical to the mission's success [Data: Reports (1); Claims (6, 10)].
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/vector_stores/lancedb.py:134</span>, in <span class="ansi-cyan-fg">LanceDBVectorStore.similarity_search_by_text</span><span class="ansi-blue-fg">(self, text, text_embedder, k, **kwargs)</span>
-<span class="ansi-green-fg">    130</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">similarity_search_by_text</span>(
-<span class="ansi-green-fg">    131</span>     <span style="color: rgb(0,135,0)">self</span>, text: <span style="color: rgb(0,135,0)">str</span>, text_embedder: TextEmbedder, k: <span style="color: rgb(0,135,0)">int</span> = <span class="ansi-green-fg">10</span>, **kwargs: Any
-<span class="ansi-green-fg">    132</span> ) -&gt; <span style="color: rgb(0,135,0)">list</span>[VectorStoreSearchResult]:
-<span class="ansi-green-fg">    133</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""Perform a similarity search using a given input text."""</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">134</span>     query_embedding = <span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    135</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query_embedding:
-<span class="ansi-green-fg">    136</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span>.similarity_search_by_vector(query_embedding, k)
+## Professional Relationships
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/context_builder/entity_extraction.py:60</span>, in <span class="ansi-cyan-fg">map_query_to_entities.&lt;locals&gt;.&lt;lambda&gt;</span><span class="ansi-blue-fg">(t)</span>
-<span class="ansi-green-fg">     54</span> matched_entities = []
-<span class="ansi-green-fg">     55</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query != <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>:
-<span class="ansi-green-fg">     56</span>     <span style="color: rgb(95,135,135)"># get entities with highest semantic similarity to query</span>
-<span class="ansi-green-fg">     57</span>     <span style="color: rgb(95,135,135)"># oversample to account for excluded entities</span>
-<span class="ansi-green-fg">     58</span>     search_results = text_embedding_vectorstore.similarity_search_by_text(
-<span class="ansi-green-fg">     59</span>         text=query,
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">60</span>         text_embedder=<span class="ansi-bold" style="color: rgb(0,135,0)">lambda</span> t: <span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">embed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">t</span><span class="ansi-yellow-bg">)</span>,
-<span class="ansi-green-fg">     61</span>         k=k * oversample_scaler,
-<span class="ansi-green-fg">     62</span>     )
-<span class="ansi-green-fg">     63</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> search_results:
-<span class="ansi-green-fg">     64</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> embedding_vectorstore_key == EntityVectorStoreKey.ID <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">isinstance</span>(
-<span class="ansi-green-fg">     65</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
-<span class="ansi-green-fg">     66</span>         ):
+Dr. Hayes maintains professional relationships with other key members of the Paranormal Military Squad, including Taylor Cruz and Sam Rivera. Their relationship with Taylor Cruz is marked by differing views on protocol and adaptability, with Dr. Hayes advocating for adaptability in the face of unknown variables. This skepticism towards strict adherence to protocols is evident in their interactions during mission briefings. Additionally, Dr. Hayes shares a common belief in the importance of adaptability with Sam Rivera, further emphasizing their role in promoting flexibility within the team [Data: Reports (1); Relationships (5, 9, 25); Claims (2)].
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/language_model/providers/fnllm/models.py:240</span>, in <span class="ansi-cyan-fg">OpenAIEmbeddingFNLLM.embed</span><span class="ansi-blue-fg">(self, text, **kwargs)</span>
-<span class="ansi-green-fg">    228</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">embed</span>(<span style="color: rgb(0,135,0)">self</span>, text: <span style="color: rgb(0,135,0)">str</span>, **kwargs) -&gt; <span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">float</span>]:
-<span class="ansi-green-fg">    229</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    230</span> <span class="ansi-yellow-fg">    Embed the given text using the Model.</span>
-<span class="ansi-green-fg">    231</span> 
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    238</span> <span class="ansi-yellow-fg">        The embeddings of the text.</span>
-<span class="ansi-green-fg">    239</span> <span class="ansi-yellow-fg">    """</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">240</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">run_coroutine_sync</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">aembed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
+## Contributions and Expertise
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/language_model/providers/fnllm/utils.py:132</span>, in <span class="ansi-cyan-fg">run_coroutine_sync</span><span class="ansi-blue-fg">(coroutine)</span>
-<span class="ansi-green-fg">    130</span>     _thr.start()
-<span class="ansi-green-fg">    131</span> future = asyncio.run_coroutine_threadsafe(coroutine, _loop)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">132</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">future</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">result</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+Dr. Hayes' expertise in physics and alien technology is a cornerstone of their contributions to the Paranormal Military Squad. They work in a lab dedicated to alien technology, where their analytical skills are put to use in understanding and potentially leveraging this technology for the mission's objectives. Their composed and reflective nature allows them to approach challenges with a calculated skepticism, ensuring that the team remains adaptable and prepared for the unpredictable elements of their mission [Data: Entities (2, 13); Relationships (51); Reports (1)].
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/concurrent/futures/_base.py:456</span>, in <span class="ansi-cyan-fg">Future.result</span><span class="ansi-blue-fg">(self, timeout)</span>
-<span class="ansi-green-fg">    454</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> CancelledError()
-<span class="ansi-green-fg">    455</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> <span style="color: rgb(0,135,0)">self</span>._state == FINISHED:
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">456</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">__get_result</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    457</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-fg">    458</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">TimeoutError</span>()
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/concurrent/futures/_base.py:401</span>, in <span class="ansi-cyan-fg">Future.__get_result</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg">    399</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span>._exception:
-<span class="ansi-green-fg">    400</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">401</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._exception
-<span class="ansi-green-fg">    402</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
-<span class="ansi-green-fg">    403</span>         <span style="color: rgb(95,135,135)"># Break a reference cycle with the exception in self._exception</span>
-<span class="ansi-green-fg">    404</span>         <span style="color: rgb(0,135,0)">self</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/language_model/providers/fnllm/models.py:207</span>, in <span class="ansi-cyan-fg">OpenAIEmbeddingFNLLM.aembed</span><span class="ansi-blue-fg">(self, text, **kwargs)</span>
-<span class="ansi-green-fg">    195</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">aembed</span>(<span style="color: rgb(0,135,0)">self</span>, text: <span style="color: rgb(0,135,0)">str</span>, **kwargs) -&gt; <span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">float</span>]:
-<span class="ansi-green-fg">    196</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    197</span> <span class="ansi-yellow-fg">    Embed the given text using the Model.</span>
-<span class="ansi-green-fg">    198</span> 
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    205</span> <span class="ansi-yellow-fg">        The embeddings of the text.</span>
-<span class="ansi-green-fg">    206</span> <span class="ansi-yellow-fg">    """</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">207</span>     response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.model([text], **kwargs)
-<span class="ansi-green-fg">    208</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> response.output.embeddings <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg">    209</span>         msg = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">No embeddings found in response</span><span class="ansi-yellow-fg">"</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/base_llm.py:144</span>, in <span class="ansi-cyan-fg">BaseLLM.__call__</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
-<span class="ansi-green-fg">    142</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">    143</span>     prompt, kwargs = <span style="color: rgb(0,135,0)">self</span>._rewrite_input(prompt, kwargs)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">144</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._decorated_target(prompt, **kwargs)
-<span class="ansi-green-fg">    145</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">BaseException</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
-<span class="ansi-green-fg">    146</span>     stack_trace = traceback.format_exc()
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/services/rate_limiter.py:75</span>, in <span class="ansi-cyan-fg">RateLimiter.decorate.&lt;locals&gt;.invoke</span><span class="ansi-blue-fg">(prompt, **args)</span>
-<span class="ansi-green-fg">     73</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span style="color: rgb(0,135,0)">self</span>._limiter.use(manifest):
-<span class="ansi-green-fg">     74</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._events.on_limit_acquired(manifest)
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">75</span>         result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> delegate(prompt, **args)
-<span class="ansi-green-fg">     76</span> <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
-<span class="ansi-green-fg">     77</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._events.on_limit_released(manifest)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/base_llm.py:126</span>, in <span class="ansi-cyan-fg">BaseLLM._decorator_target</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
-<span class="ansi-green-fg">    121</span> <span class="ansi-yellow-fg">"""Target for the decorator chain.</span>
-<span class="ansi-green-fg">    122</span> 
-<span class="ansi-green-fg">    123</span> <span class="ansi-yellow-fg">Leave signature alone as prompt,  kwargs.</span>
-<span class="ansi-green-fg">    124</span> <span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    125</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._events.on_execute_llm()
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">126</span> output = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._execute_llm(prompt, kwargs)
-<span class="ansi-green-fg">    127</span> result = LLMOutput(output=output)
-<span class="ansi-green-fg">    128</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._inject_usage(result)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/openai/llm/openai_embeddings_llm.py:126</span>, in <span class="ansi-cyan-fg">OpenAIEmbeddingsLLMImpl._execute_llm</span><span class="ansi-blue-fg">(self, prompt, kwargs)</span>
-<span class="ansi-green-fg">    121</span> local_model_parameters = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">model_parameters</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">    122</span> embeddings_parameters = <span style="color: rgb(0,135,0)">self</span>._build_embeddings_parameters(
-<span class="ansi-green-fg">    123</span>     local_model_parameters
-<span class="ansi-green-fg">    124</span> )
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">126</span> result_raw = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._client.embeddings.with_raw_response.create(
-<span class="ansi-green-fg">    127</span>     <span style="color: rgb(0,135,0)">input</span>=prompt,
-<span class="ansi-green-fg">    128</span>     **embeddings_parameters,
-<span class="ansi-green-fg">    129</span> )
-<span class="ansi-green-fg">    130</span> result = result_raw.parse()
-<span class="ansi-green-fg">    131</span> headers = result_raw.headers
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_legacy_response.py:381</span>, in <span class="ansi-cyan-fg">async_to_raw_response_wrapper.&lt;locals&gt;.wrapped</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
-<span class="ansi-green-fg">    377</span> extra_headers[RAW_RESPONSE_HEADER] = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">true</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">    379</span> kwargs[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">extra_headers</span><span class="ansi-yellow-fg">"</span>] = extra_headers
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">381</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(LegacyAPIResponse[R], <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> func(*args, **kwargs))
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/resources/embeddings.py:251</span>, in <span class="ansi-cyan-fg">AsyncEmbeddings.create</span><span class="ansi-blue-fg">(self, input, model, dimensions, encoding_format, user, extra_headers, extra_query, extra_body, timeout)</span>
-<span class="ansi-green-fg">    245</span>             embedding.embedding = np.frombuffer(  <span style="color: rgb(95,135,135)"># type: ignore[no-untyped-call]</span>
-<span class="ansi-green-fg">    246</span>                 base64.b64decode(data), dtype=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">float32</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">    247</span>             ).tolist()
-<span class="ansi-green-fg">    249</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> obj
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">251</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._post(
-<span class="ansi-green-fg">    252</span>     <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">/embeddings</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">    253</span>     body=maybe_transform(params, embedding_create_params.EmbeddingCreateParams),
-<span class="ansi-green-fg">    254</span>     options=make_request_options(
-<span class="ansi-green-fg">    255</span>         extra_headers=extra_headers,
-<span class="ansi-green-fg">    256</span>         extra_query=extra_query,
-<span class="ansi-green-fg">    257</span>         extra_body=extra_body,
-<span class="ansi-green-fg">    258</span>         timeout=timeout,
-<span class="ansi-green-fg">    259</span>         post_parser=parser,
-<span class="ansi-green-fg">    260</span>     ),
-<span class="ansi-green-fg">    261</span>     cast_to=CreateEmbeddingResponse,
-<span class="ansi-green-fg">    262</span> )
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_base_client.py:1791</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.post</span><span class="ansi-blue-fg">(self, path, cast_to, body, files, options, stream, stream_cls)</span>
-<span class="ansi-green-fg">   1777</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">post</span>(
-<span class="ansi-green-fg">   1778</span>     <span style="color: rgb(0,135,0)">self</span>,
-<span class="ansi-green-fg">   1779</span>     path: <span style="color: rgb(0,135,0)">str</span>,
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   1786</span>     stream_cls: <span style="color: rgb(0,135,0)">type</span>[_AsyncStreamT] | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
-<span class="ansi-green-fg">   1787</span> ) -&gt; ResponseT | _AsyncStreamT:
-<span class="ansi-green-fg">   1788</span>     opts = FinalRequestOptions.construct(
-<span class="ansi-green-fg">   1789</span>         method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">post</span><span class="ansi-yellow-fg">"</span>, url=path, json_data=body, files=<span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_to_httpx_files(files), **options
-<span class="ansi-green-fg">   1790</span>     )
-<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1791</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_base_client.py:1591</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls)</span>
-<span class="ansi-green-fg">   1588</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> err.response.aread()
-<span class="ansi-green-fg">   1590</span>         log.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Re-raising status error</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1591</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._make_status_error_from_response(err.response) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-fg">   1593</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">break</span>
-<span class="ansi-green-fg">   1595</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> response <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">could not resolve response (should never happen)</span><span class="ansi-yellow-fg">"</span>
-
-<span class="ansi-red-fg">AuthenticationError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zWYA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}</pre>
+In summary, Dr. Jordan Hayes is a vital member of the Paranormal Military Squad, bringing a unique blend of scientific expertise and analytical insight to Operation: Dulce. Their role in exploring the Dulce base and working with alien technology, coupled with their advocacy for adaptability, makes them an indispensable asset to the team.
+</pre>
 </div>
 </div>
 </div>
@@ -3929,16 +3588,78 @@ print(result.response)</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[15]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">entities</span><span class="ansi-yellow-fg">"</span>].head()
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[15]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>entity</th>
+<th>description</th>
+<th>number of relationships</th>
+<th>in_context</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>2</td>
+<td>JORDAN HAYES</td>
+<td>Dr. Jordan Hayes is a scientist and a member o...</td>
+<td>9</td>
+<td>True</td>
+</tr>
+<tr>
+<th>1</th>
+<td>13</td>
+<td>LAB</td>
+<td>A lab where Dr. Jordan Hayes works on alien te...</td>
+<td>1</td>
+<td>True</td>
+</tr>
+<tr>
+<th>2</th>
+<td>10</td>
+<td>AGENT HAYES</td>
+<td>Agent Hayes is a member of the team exploring ...</td>
+<td>5</td>
+<td>True</td>
+</tr>
+<tr>
+<th>3</th>
+<td>12</td>
+<td>AGENT CRUZ</td>
+<td></td>
+<td>5</td>
+<td>True</td>
+</tr>
+<tr>
+<th>4</th>
+<td>15</td>
+<td>BRIEFING ROOM</td>
+<td></td>
+<td>2</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -3974,23 +3695,97 @@ print(result.response)</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[16]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">relationships</span><span class="ansi-yellow-fg">"</span>].head()
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>source</th>
+<th>target</th>
+<th>description</th>
+<th>weight</th>
+<th>links</th>
+<th>in_context</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>5</td>
+<td>TAYLOR CRUZ</td>
+<td>JORDAN HAYES</td>
+<td>Taylor Cruz and Jordan Hayes have a profession...</td>
+<td>7.0</td>
+<td>1</td>
+<td>True</td>
+</tr>
+<tr>
+<th>1</th>
+<td>9</td>
+<td>JORDAN HAYES</td>
+<td>SAM RIVERA</td>
+<td>Jordan Hayes and Sam Rivera are both agents wo...</td>
+<td>14.0</td>
+<td>4</td>
+<td>True</td>
+</tr>
+<tr>
+<th>2</th>
+<td>25</td>
+<td>JORDAN HAYES</td>
+<td>TAYLOR CRUZ</td>
+<td>Jordan Hayes and Taylor Cruz are both agents w...</td>
+<td>18.0</td>
+<td>1</td>
+<td>True</td>
+</tr>
+<tr>
+<th>3</th>
+<td>6</td>
+<td>TAYLOR CRUZ</td>
+<td>SAM RIVERA</td>
+<td>Taylor Cruz and Sam Rivera are both agents wor...</td>
+<td>20.0</td>
+<td>4</td>
+<td>True</td>
+</tr>
+<tr>
+<th>4</th>
+<td>10</td>
+<td>JORDAN HAYES</td>
+<td>PARANORMAL MILITARY SQUAD</td>
+<td>Jordan Hayes is a member of the Paranormal Mil...</td>
+<td>9.0</td>
+<td>3</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -4013,25 +3808,6 @@ print(result.response)</div>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-17">if "reports" in result.context_data:
     result.context_data["reports"].head()</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[17]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">reports</span><span class="ansi-yellow-fg">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-yellow-bg">result</span>.context_data:
-<span class="ansi-green-fg">      2</span>     result.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">reports</span><span class="ansi-yellow-fg">"</span>].head()
-
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -4067,16 +3843,50 @@ print(result.response)</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[18]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">sources</span><span class="ansi-yellow-fg">"</span>].head()
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>0</td>
+<td># Operation: Dulce\n\n## Chapter 1\n\nThe thru...</td>
+</tr>
+<tr>
+<th>1</th>
+<td>2</td>
+<td>differently than praise from others. This was...</td>
+</tr>
+<tr>
+<th>2</th>
+<td>3</td>
+<td>contrast to the rigid silence enveloping the ...</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -4116,15 +3926,21 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[19]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">claims</span><span class="ansi-yellow-fg">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-yellow-bg">result</span>.context_data:
-<span class="ansi-green-fg">      2</span>     <span style="color: rgb(0,135,0)">print</span>(result.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">claims</span><span class="ansi-yellow-fg">"</span>].head())
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>   id        entity object_id     status start_date end_date  \
+0   2  JORDAN HAYES      NONE  SUSPECTED       NONE     NONE   
+1   6  JORDAN HAYES      NONE  SUSPECTED       NONE     NONE   
+2  10  JORDAN HAYES      NONE       TRUE       NONE     NONE   
+3   1   TAYLOR CRUZ      NONE  SUSPECTED       NONE     NONE   
+4   7   TAYLOR CRUZ      NONE  SUSPECTED       NONE     NONE   
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+                                         description  in_context  
+0  Jordan Hayes is portrayed as skeptical of Tayl...        True  
+1  Jordan Hayes is providing analytical insights ...        True  
+2  Jordan Hayes identified a suspicious panel tha...        True  
+3  Taylor Cruz's leadership style is described as...        True  
+4  Taylor Cruz is asserting command over the miss...        True  
+</pre>
 </div>
 </div>
 </div>
@@ -4237,212 +4053,16 @@ print(candidate_questions.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AuthenticationError</span>                       Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[21]</span><span class="ansi-green-fg">, line 5</span>
-<span class="ansi-green-fg">      1</span> question_history = [
-<span class="ansi-green-fg">      2</span>     <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Tell me about Agent Mercer</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">      3</span>     <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">What happens in Dulce military base?</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">      4</span> ]
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> candidate_questions = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> question_generator.agenerate(
-<span class="ansi-green-fg">      6</span>     question_history=question_history, context_data=<span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, question_count=<span class="ansi-green-fg">5</span>
-<span class="ansi-green-fg">      7</span> )
-<span class="ansi-green-fg">      8</span> <span style="color: rgb(0,135,0)">print</span>(candidate_questions.response)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/question_gen/local_gen.py:80</span>, in <span class="ansi-cyan-fg">LocalQuestionGen.agenerate</span><span class="ansi-blue-fg">(self, question_history, context_data, question_count, **kwargs)</span>
-<span class="ansi-green-fg">     74</span>     conversation_history = ConversationHistory.from_list(history)
-<span class="ansi-green-fg">     76</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> context_data <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg">     77</span>     <span style="color: rgb(95,135,135)"># generate context data based on the question history</span>
-<span class="ansi-green-fg">     78</span>     result = cast(
-<span class="ansi-green-fg">     79</span>         <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">ContextBuilderResult</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">80</span>         <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">context_builder</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">build_context</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">     81</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">question_text</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     82</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">conversation_history</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">conversation_history</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     83</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     84</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">context_builder_params</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     85</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">)</span>,
-<span class="ansi-green-fg">     86</span>     )
-<span class="ansi-green-fg">     87</span>     context_data = cast(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">str</span><span class="ansi-yellow-fg">"</span>, result.context_chunks)
-<span class="ansi-green-fg">     88</span>     context_records = result.context_records
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/local_search/mixed_context.py:139</span>, in <span class="ansi-cyan-fg">LocalSearchMixedContext.build_context</span><span class="ansi-blue-fg">(self, query, conversation_history, include_entity_names, exclude_entity_names, conversation_history_max_turns, conversation_history_user_turns_only, max_context_tokens, text_unit_prop, community_prop, top_k_mapped_entities, top_k_relationships, include_community_rank, include_entity_rank, rank_description, include_relationship_weight, relationship_ranking_attribute, return_candidate_context, use_community_summary, min_community_rank, community_context_name, column_delimiter, **kwargs)</span>
-<span class="ansi-green-fg">    134</span>     pre_user_questions = <span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-fg">"</span>.join(
-<span class="ansi-green-fg">    135</span>         conversation_history.get_user_turns(conversation_history_max_turns)
-<span class="ansi-green-fg">    136</span>     )
-<span class="ansi-green-fg">    137</span>     query = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>query<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>pre_user_questions<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">139</span> selected_entities = <span class="ansi-yellow-bg">map_query_to_entities</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">    140</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    141</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">text_embedding_vectorstore</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">entity_text_embeddings</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    142</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    143</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">all_entities_dict</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">entities</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    144</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">embedding_vectorstore_key</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">embedding_vectorstore_key</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    145</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">include_entity_names</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">include_entity_names</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    146</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">exclude_entity_names</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">exclude_entity_names</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    147</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">k</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">top_k_mapped_entities</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    148</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">oversample_scaler</span><span class="ansi-yellow-bg">=</span><span class="ansi-green-fg ansi-yellow-bg">2</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    149</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    151</span> <span style="color: rgb(95,135,135)"># build context</span>
-<span class="ansi-green-fg">    152</span> final_context = <span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">str</span>]()
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/context_builder/entity_extraction.py:58</span>, in <span class="ansi-cyan-fg">map_query_to_entities</span><span class="ansi-blue-fg">(query, text_embedding_vectorstore, text_embedder, all_entities_dict, embedding_vectorstore_key, include_entity_names, exclude_entity_names, k, oversample_scaler)</span>
-<span class="ansi-green-fg">     54</span> matched_entities = []
-<span class="ansi-green-fg">     55</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query != <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>:
-<span class="ansi-green-fg">     56</span>     <span style="color: rgb(95,135,135)"># get entities with highest semantic similarity to query</span>
-<span class="ansi-green-fg">     57</span>     <span style="color: rgb(95,135,135)"># oversample to account for excluded entities</span>
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">58</span>     search_results = <span class="ansi-yellow-bg">text_embedding_vectorstore</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">similarity_search_by_text</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">     59</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     60</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">lambda</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">t</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">embed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">t</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     61</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">k</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">k</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">oversample_scaler</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     62</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">     63</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> search_results:
-<span class="ansi-green-fg">     64</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> embedding_vectorstore_key == EntityVectorStoreKey.ID <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">isinstance</span>(
-<span class="ansi-green-fg">     65</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
-<span class="ansi-green-fg">     66</span>         ):
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/vector_stores/lancedb.py:134</span>, in <span class="ansi-cyan-fg">LanceDBVectorStore.similarity_search_by_text</span><span class="ansi-blue-fg">(self, text, text_embedder, k, **kwargs)</span>
-<span class="ansi-green-fg">    130</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">similarity_search_by_text</span>(
-<span class="ansi-green-fg">    131</span>     <span style="color: rgb(0,135,0)">self</span>, text: <span style="color: rgb(0,135,0)">str</span>, text_embedder: TextEmbedder, k: <span style="color: rgb(0,135,0)">int</span> = <span class="ansi-green-fg">10</span>, **kwargs: Any
-<span class="ansi-green-fg">    132</span> ) -&gt; <span style="color: rgb(0,135,0)">list</span>[VectorStoreSearchResult]:
-<span class="ansi-green-fg">    133</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""Perform a similarity search using a given input text."""</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">134</span>     query_embedding = <span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    135</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query_embedding:
-<span class="ansi-green-fg">    136</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span>.similarity_search_by_vector(query_embedding, k)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/context_builder/entity_extraction.py:60</span>, in <span class="ansi-cyan-fg">map_query_to_entities.&lt;locals&gt;.&lt;lambda&gt;</span><span class="ansi-blue-fg">(t)</span>
-<span class="ansi-green-fg">     54</span> matched_entities = []
-<span class="ansi-green-fg">     55</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query != <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>:
-<span class="ansi-green-fg">     56</span>     <span style="color: rgb(95,135,135)"># get entities with highest semantic similarity to query</span>
-<span class="ansi-green-fg">     57</span>     <span style="color: rgb(95,135,135)"># oversample to account for excluded entities</span>
-<span class="ansi-green-fg">     58</span>     search_results = text_embedding_vectorstore.similarity_search_by_text(
-<span class="ansi-green-fg">     59</span>         text=query,
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">60</span>         text_embedder=<span class="ansi-bold" style="color: rgb(0,135,0)">lambda</span> t: <span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">embed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">t</span><span class="ansi-yellow-bg">)</span>,
-<span class="ansi-green-fg">     61</span>         k=k * oversample_scaler,
-<span class="ansi-green-fg">     62</span>     )
-<span class="ansi-green-fg">     63</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> search_results:
-<span class="ansi-green-fg">     64</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> embedding_vectorstore_key == EntityVectorStoreKey.ID <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">isinstance</span>(
-<span class="ansi-green-fg">     65</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
-<span class="ansi-green-fg">     66</span>         ):
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/language_model/providers/fnllm/models.py:240</span>, in <span class="ansi-cyan-fg">OpenAIEmbeddingFNLLM.embed</span><span class="ansi-blue-fg">(self, text, **kwargs)</span>
-<span class="ansi-green-fg">    228</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">embed</span>(<span style="color: rgb(0,135,0)">self</span>, text: <span style="color: rgb(0,135,0)">str</span>, **kwargs) -&gt; <span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">float</span>]:
-<span class="ansi-green-fg">    229</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    230</span> <span class="ansi-yellow-fg">    Embed the given text using the Model.</span>
-<span class="ansi-green-fg">    231</span> 
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    238</span> <span class="ansi-yellow-fg">        The embeddings of the text.</span>
-<span class="ansi-green-fg">    239</span> <span class="ansi-yellow-fg">    """</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">240</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">run_coroutine_sync</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">aembed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/language_model/providers/fnllm/utils.py:132</span>, in <span class="ansi-cyan-fg">run_coroutine_sync</span><span class="ansi-blue-fg">(coroutine)</span>
-<span class="ansi-green-fg">    130</span>     _thr.start()
-<span class="ansi-green-fg">    131</span> future = asyncio.run_coroutine_threadsafe(coroutine, _loop)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">132</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">future</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">result</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/concurrent/futures/_base.py:456</span>, in <span class="ansi-cyan-fg">Future.result</span><span class="ansi-blue-fg">(self, timeout)</span>
-<span class="ansi-green-fg">    454</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> CancelledError()
-<span class="ansi-green-fg">    455</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> <span style="color: rgb(0,135,0)">self</span>._state == FINISHED:
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">456</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">__get_result</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    457</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-fg">    458</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">TimeoutError</span>()
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/concurrent/futures/_base.py:401</span>, in <span class="ansi-cyan-fg">Future.__get_result</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-fg">    399</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span>._exception:
-<span class="ansi-green-fg">    400</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">401</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._exception
-<span class="ansi-green-fg">    402</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
-<span class="ansi-green-fg">    403</span>         <span style="color: rgb(95,135,135)"># Break a reference cycle with the exception in self._exception</span>
-<span class="ansi-green-fg">    404</span>         <span style="color: rgb(0,135,0)">self</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/language_model/providers/fnllm/models.py:207</span>, in <span class="ansi-cyan-fg">OpenAIEmbeddingFNLLM.aembed</span><span class="ansi-blue-fg">(self, text, **kwargs)</span>
-<span class="ansi-green-fg">    195</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">aembed</span>(<span style="color: rgb(0,135,0)">self</span>, text: <span style="color: rgb(0,135,0)">str</span>, **kwargs) -&gt; <span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">float</span>]:
-<span class="ansi-green-fg">    196</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    197</span> <span class="ansi-yellow-fg">    Embed the given text using the Model.</span>
-<span class="ansi-green-fg">    198</span> 
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    205</span> <span class="ansi-yellow-fg">        The embeddings of the text.</span>
-<span class="ansi-green-fg">    206</span> <span class="ansi-yellow-fg">    """</span>
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">207</span>     response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.model([text], **kwargs)
-<span class="ansi-green-fg">    208</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> response.output.embeddings <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg">    209</span>         msg = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">No embeddings found in response</span><span class="ansi-yellow-fg">"</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/base_llm.py:144</span>, in <span class="ansi-cyan-fg">BaseLLM.__call__</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
-<span class="ansi-green-fg">    142</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">    143</span>     prompt, kwargs = <span style="color: rgb(0,135,0)">self</span>._rewrite_input(prompt, kwargs)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">144</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._decorated_target(prompt, **kwargs)
-<span class="ansi-green-fg">    145</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">BaseException</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
-<span class="ansi-green-fg">    146</span>     stack_trace = traceback.format_exc()
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/services/rate_limiter.py:75</span>, in <span class="ansi-cyan-fg">RateLimiter.decorate.&lt;locals&gt;.invoke</span><span class="ansi-blue-fg">(prompt, **args)</span>
-<span class="ansi-green-fg">     73</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span style="color: rgb(0,135,0)">self</span>._limiter.use(manifest):
-<span class="ansi-green-fg">     74</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._events.on_limit_acquired(manifest)
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">75</span>         result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> delegate(prompt, **args)
-<span class="ansi-green-fg">     76</span> <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
-<span class="ansi-green-fg">     77</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._events.on_limit_released(manifest)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/base/base_llm.py:126</span>, in <span class="ansi-cyan-fg">BaseLLM._decorator_target</span><span class="ansi-blue-fg">(self, prompt, **kwargs)</span>
-<span class="ansi-green-fg">    121</span> <span class="ansi-yellow-fg">"""Target for the decorator chain.</span>
-<span class="ansi-green-fg">    122</span> 
-<span class="ansi-green-fg">    123</span> <span class="ansi-yellow-fg">Leave signature alone as prompt,  kwargs.</span>
-<span class="ansi-green-fg">    124</span> <span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    125</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._events.on_execute_llm()
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">126</span> output = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._execute_llm(prompt, kwargs)
-<span class="ansi-green-fg">    127</span> result = LLMOutput(output=output)
-<span class="ansi-green-fg">    128</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._inject_usage(result)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/fnllm/openai/llm/openai_embeddings_llm.py:126</span>, in <span class="ansi-cyan-fg">OpenAIEmbeddingsLLMImpl._execute_llm</span><span class="ansi-blue-fg">(self, prompt, kwargs)</span>
-<span class="ansi-green-fg">    121</span> local_model_parameters = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">model_parameters</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">    122</span> embeddings_parameters = <span style="color: rgb(0,135,0)">self</span>._build_embeddings_parameters(
-<span class="ansi-green-fg">    123</span>     local_model_parameters
-<span class="ansi-green-fg">    124</span> )
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">126</span> result_raw = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._client.embeddings.with_raw_response.create(
-<span class="ansi-green-fg">    127</span>     <span style="color: rgb(0,135,0)">input</span>=prompt,
-<span class="ansi-green-fg">    128</span>     **embeddings_parameters,
-<span class="ansi-green-fg">    129</span> )
-<span class="ansi-green-fg">    130</span> result = result_raw.parse()
-<span class="ansi-green-fg">    131</span> headers = result_raw.headers
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_legacy_response.py:381</span>, in <span class="ansi-cyan-fg">async_to_raw_response_wrapper.&lt;locals&gt;.wrapped</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
-<span class="ansi-green-fg">    377</span> extra_headers[RAW_RESPONSE_HEADER] = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">true</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">    379</span> kwargs[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">extra_headers</span><span class="ansi-yellow-fg">"</span>] = extra_headers
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">381</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(LegacyAPIResponse[R], <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> func(*args, **kwargs))
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/resources/embeddings.py:251</span>, in <span class="ansi-cyan-fg">AsyncEmbeddings.create</span><span class="ansi-blue-fg">(self, input, model, dimensions, encoding_format, user, extra_headers, extra_query, extra_body, timeout)</span>
-<span class="ansi-green-fg">    245</span>             embedding.embedding = np.frombuffer(  <span style="color: rgb(95,135,135)"># type: ignore[no-untyped-call]</span>
-<span class="ansi-green-fg">    246</span>                 base64.b64decode(data), dtype=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">float32</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">    247</span>             ).tolist()
-<span class="ansi-green-fg">    249</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> obj
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">251</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._post(
-<span class="ansi-green-fg">    252</span>     <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">/embeddings</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">    253</span>     body=maybe_transform(params, embedding_create_params.EmbeddingCreateParams),
-<span class="ansi-green-fg">    254</span>     options=make_request_options(
-<span class="ansi-green-fg">    255</span>         extra_headers=extra_headers,
-<span class="ansi-green-fg">    256</span>         extra_query=extra_query,
-<span class="ansi-green-fg">    257</span>         extra_body=extra_body,
-<span class="ansi-green-fg">    258</span>         timeout=timeout,
-<span class="ansi-green-fg">    259</span>         post_parser=parser,
-<span class="ansi-green-fg">    260</span>     ),
-<span class="ansi-green-fg">    261</span>     cast_to=CreateEmbeddingResponse,
-<span class="ansi-green-fg">    262</span> )
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_base_client.py:1791</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.post</span><span class="ansi-blue-fg">(self, path, cast_to, body, files, options, stream, stream_cls)</span>
-<span class="ansi-green-fg">   1777</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">post</span>(
-<span class="ansi-green-fg">   1778</span>     <span style="color: rgb(0,135,0)">self</span>,
-<span class="ansi-green-fg">   1779</span>     path: <span style="color: rgb(0,135,0)">str</span>,
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   1786</span>     stream_cls: <span style="color: rgb(0,135,0)">type</span>[_AsyncStreamT] | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
-<span class="ansi-green-fg">   1787</span> ) -&gt; ResponseT | _AsyncStreamT:
-<span class="ansi-green-fg">   1788</span>     opts = FinalRequestOptions.construct(
-<span class="ansi-green-fg">   1789</span>         method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">post</span><span class="ansi-yellow-fg">"</span>, url=path, json_data=body, files=<span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_to_httpx_files(files), **options
-<span class="ansi-green-fg">   1790</span>     )
-<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1791</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.11/site-packages/openai/_base_client.py:1591</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls)</span>
-<span class="ansi-green-fg">   1588</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> err.response.aread()
-<span class="ansi-green-fg">   1590</span>         log.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Re-raising status error</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1591</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._make_status_error_from_response(err.response) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-fg">   1593</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">break</span>
-<span class="ansi-green-fg">   1595</span> <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> response <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">could not resolve response (should never happen)</span><span class="ansi-yellow-fg">"</span>
-
-<span class="ansi-red-fg">AuthenticationError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zWYA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>2025-08-15 23:40:34.0597 - WARNING - graphrag.query.structured_search.local_search.mixed_context - Reached token limit - reverting to previous context state
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>['- What is the role of Agent Alex Mercer in the exploration of the Dulce base?', '- How does Agent Mercer interact with other members of the Paranormal Military Squad during Operation: Dulce?', '- What are the key responsibilities of Agent Mercer in Operation: Dulce?', "- How does Agent Mercer's leadership style impact the success of the mission at the Dulce base?", '- What challenges does Agent Mercer face while exploring the Dulce base?']
+</pre>
 </div>
 </div>
 </div>
