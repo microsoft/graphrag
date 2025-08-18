@@ -233,7 +233,7 @@ async def multi_index_global_search(
 
     # Streaming not supported yet
     if streaming:
-        message = "Streaming not yet implemented for multi_global_search"
+        message = "Streaming not yet implemented for multi_index_global_search"
         raise NotImplementedError(message)
 
     links = {
@@ -263,6 +263,12 @@ async def multi_index_global_search(
                 "id": str(i),
             }
         community_reports_df["community"] += max_vals["community_reports"] + 1
+        community_reports_df["parent"] = community_reports_df["parent"].apply(
+            lambda x: x if x == -1 else x + max_vals["communities"] + 1
+        )
+        community_reports_df["children"] = community_reports_df["children"].apply(
+            lambda xl: [x if x == -1 else x + max_vals["communities"] + 1 for x in xl]
+        )
         community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
         max_vals["community_reports"] = int(community_reports_df["community"].max())
         community_reports_dfs.append(community_reports_df)
@@ -279,6 +285,12 @@ async def multi_index_global_search(
         communities_df["community"] += max_vals["communities"] + 1
         communities_df["parent"] = communities_df["parent"].apply(
             lambda x: x if x == -1 else x + max_vals["communities"] + 1
+        )
+        communities_df["children"] = communities_df["children"].apply(
+            lambda xl: [x if x == -1 else x + max_vals["communities"] + 1 for x in xl]
+        )
+        communities_df["title"] = communities_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
         )
         communities_df["human_readable_id"] += max_vals["communities"] + 1
         # concat the index name to the entity_ids, since this is used for joining later
@@ -548,6 +560,15 @@ async def multi_index_local_search(
                 "id": str(i),
             }
         communities_df["community"] += max_vals["communities"] + 1
+        communities_df["parent"] = communities_df["parent"].apply(
+            lambda x: x if x == -1 else x + max_vals["communities"] + 1
+        )
+        communities_df["children"] = communities_df["children"].apply(
+            lambda xl: [x if x == -1 else x + max_vals["communities"] + 1 for x in xl]
+        )
+        communities_df["title"] = communities_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
         communities_df["human_readable_id"] += max_vals["communities"] + 1
         # concat the index name to the entity_ids, since this is used for joining later
         communities_df["entity_ids"] = communities_df["entity_ids"].apply(
@@ -567,6 +588,12 @@ async def multi_index_local_search(
                 "id": str(i),
             }
         community_reports_df["community"] += max_vals["community_reports"] + 1
+        community_reports_df["parent"] = community_reports_df["parent"].apply(
+            lambda x: x if x == -1 else x + max_vals["communities"] + 1
+        )
+        community_reports_df["children"] = community_reports_df["children"].apply(
+            lambda xl: [x if x == -1 else x + max_vals["communities"] + 1 for x in xl]
+        )
         community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
         max_vals["community_reports"] = int(community_reports_df["community"].max())
         community_reports_dfs.append(community_reports_df)
@@ -876,7 +903,7 @@ async def multi_index_drift_search(
 
     # Streaming not supported yet
     if streaming:
-        message = "Streaming not yet implemented for multi_drift_search"
+        message = "Streaming not yet implemented for multi_index_drift_search"
         raise NotImplementedError(message)
 
     links = {
@@ -910,6 +937,15 @@ async def multi_index_drift_search(
                 "id": str(i),
             }
         communities_df["community"] += max_vals["communities"] + 1
+        communities_df["parent"] = communities_df["parent"].apply(
+            lambda x: x if x == -1 else x + max_vals["communities"] + 1
+        )
+        communities_df["children"] = communities_df["children"].apply(
+            lambda xl: [x if x == -1 else x + max_vals["communities"] + 1 for x in xl]
+        )
+        communities_df["title"] = communities_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
         communities_df["human_readable_id"] += max_vals["communities"] + 1
         # concat the index name to the entity_ids, since this is used for joining later
         communities_df["entity_ids"] = communities_df["entity_ids"].apply(
@@ -929,6 +965,12 @@ async def multi_index_drift_search(
                 "id": str(i),
             }
         community_reports_df["community"] += max_vals["community_reports"] + 1
+        community_reports_df["parent"] = community_reports_df["parent"].apply(
+            lambda x: x if x == -1 else x + max_vals["communities"] + 1
+        )
+        community_reports_df["children"] = community_reports_df["children"].apply(
+            lambda xl: [x if x == -1 else x + max_vals["communities"] + 1 for x in xl]
+        )
         community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
         community_reports_df["id"] = community_reports_df["id"].apply(
             lambda x, index_name=index_name: x + f"-{index_name}"
@@ -1037,8 +1079,6 @@ async def multi_index_drift_search(
             context[key] = update_context_data(result[1][key], links)
     else:
         context = result[1]
-
-    logger.debug("Query response: %s", truncate(result[0], 400))  # type: ignore
     return (result[0], context)
 
 
@@ -1168,7 +1208,7 @@ async def multi_index_basic_search(
 
     # Streaming not supported yet
     if streaming:
-        message = "Streaming not yet implemented for multi_basic_search"
+        message = "Streaming not yet implemented for multi_index_basic_search"
         raise NotImplementedError(message)
 
     links = {
