@@ -130,7 +130,7 @@ class TestIndexer:
         input_file_type: str,
     ):
         command = [
-            "poetry",
+            "uv",
             "run",
             "poe",
             "index",
@@ -202,7 +202,7 @@ class TestIndexer:
 
     def __run_query(self, root: Path, query_config: dict[str, str]):
         command = [
-            "poetry",
+            "uv",
             "run",
             "poe",
             "query",

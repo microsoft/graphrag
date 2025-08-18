@@ -9,6 +9,7 @@ import re
 import time
 from collections.abc import AsyncIterable
 from dataclasses import asdict
+from typing import Any
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -28,6 +29,7 @@ async def run_pipeline(
     config: GraphRagConfig,
     callbacks: WorkflowCallbacks,
     is_update_run: bool = False,
+    additional_context: dict[str, Any] | None = None,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
     root_dir = config.root_dir
@@ -39,6 +41,9 @@ async def run_pipeline(
     # load existing state in case any workflows are stateful
     state_json = await output_storage.get("context.json")
     state = json.loads(state_json) if state_json else {}
+
+    if additional_context:
+        state.setdefault("additional_context", {}).update(additional_context)
 
     if is_update_run:
         logger.info("Running incremental indexing.")
@@ -126,9 +131,17 @@ async def _dump_json(context: PipelineRunContext) -> None:
     await context.output_storage.set(
         "stats.json", json.dumps(asdict(context.stats), indent=4, ensure_ascii=False)
     )
-    await context.output_storage.set(
-        "context.json", json.dumps(context.state, indent=4, ensure_ascii=False)
-    )
+    # Dump context state, excluding additional_context
+    temp_context = context.state.pop(
+        "additional_context", None
+    )  # Remove reference only, as object size is uncertain
+    try:
+        state_blob = json.dumps(context.state, indent=4, ensure_ascii=False)
+    finally:
+        if temp_context:
+            context.state["additional_context"] = temp_context
+
+    await context.output_storage.set("context.json", state_blob)
 
 
 async def _copy_previous_output(
