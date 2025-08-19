@@ -5,7 +5,4 @@
 
 import logging
 
-from graphrag.logger.standard_logging import init_console_logger
-
 logger = logging.getLogger(__name__)
-init_console_logger()

@@ -39,7 +39,7 @@ class SummarizeDescriptionsConfig(BaseModel):
         self, root_dir: str, model_config: LanguageModelConfig
     ) -> dict:
         """Get the resolved description summarization strategy."""
-        from graphrag.index.operations.summarize_descriptions import (
+        from graphrag.index.operations.summarize_descriptions.summarize_descriptions import (
             SummarizeStrategyType,
         )
 

@@ -5,9 +5,9 @@
 
 from __future__ import annotations
 
-from enum import Enum
 from typing import TYPE_CHECKING, ClassVar
 
+from graphrag.config.enums import VectorStoreType
 from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
 from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
@@ -16,14 +16,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from graphrag.vector_stores.base import BaseVectorStore
-
-
-class VectorStoreType(str, Enum):
-    """The supported vector store types."""
-
-    LanceDB = "lancedb"
-    AzureAISearch = "azure_ai_search"
-    CosmosDB = "cosmosdb"
 
 
 class VectorStoreFactory:

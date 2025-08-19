@@ -32,13 +32,18 @@ Notes
     All progress logging now uses this standard logging system for consistency.
 """
 
+from __future__ import annotations
+
 import logging
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from graphrag.config.enums import ReportingType
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.reporting_config import ReportingConfig
+
+if TYPE_CHECKING:
+    from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 LOG_FORMAT = "%(asctime)s.%(msecs)04d - %(levelname)s - %(name)s - %(message)s"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"

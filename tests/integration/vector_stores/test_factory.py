@@ -7,10 +7,11 @@ These tests will test the VectorStoreFactory class and the creation of each vect
 
 import pytest
 
+from graphrag.config.enums import VectorStoreType
 from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
 from graphrag.vector_stores.base import BaseVectorStore
 from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
-from graphrag.vector_stores.factory import VectorStoreFactory, VectorStoreType
+from graphrag.vector_stores.factory import VectorStoreFactory
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
 
