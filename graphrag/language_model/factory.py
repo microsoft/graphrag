@@ -7,7 +7,7 @@ from collections.abc import Callable
 from typing import Any, ClassVar
 
 from graphrag.config.enums import ModelType
-from graphrag.language_model.protocol import ChatModel, EmbeddingModel
+from graphrag.language_model.protocol.base import ChatModel, EmbeddingModel
 from graphrag.language_model.providers.fnllm.models import (
     AzureOpenAIChatFNLLM,
     AzureOpenAIEmbeddingFNLLM,
