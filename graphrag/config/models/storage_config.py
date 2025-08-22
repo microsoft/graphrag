@@ -76,3 +76,19 @@ class StorageConfig(BaseModel):
         description="Prefix for PostgreSQL collection names (for postgres type).",
         default="graphrag_"
     )
+    batch_size: int = Field(
+        description="Batch size for database operations (for postgres type).",
+        default=50
+    )
+    command_timeout: int = Field(
+        description="Command timeout for database operations (for postgres type).",
+        default=600
+    )
+    server_timeout: int = Field(
+        description="Server timeout for database connections (for postgres type).",
+        default=120
+    )
+    connection_timeout: int = Field(
+        description="Connection timeout for establishing database connections (for postgres type).",
+        default=60
+    )

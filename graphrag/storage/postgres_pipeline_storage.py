@@ -43,6 +43,10 @@ class PostgresPipelineStorage(PipelineStorage):
         collection_prefix: str = "lgr_",
         encoding: str = "utf-8",
         connection_string: str | None = None,
+        command_timeout: int = 600,      # 10 minutes for SQL commands
+        server_timeout: int = 120,       # 2 minutes for server connection
+        connection_timeout: int = 60,    # 1 minute to establish connection
+        batch_size: int = 50,           # Smaller batch size to reduce timeout risk
         **kwargs: Any,
     ):
         """Initialize the PostgreSQL Storage."""
@@ -53,6 +57,10 @@ class PostgresPipelineStorage(PipelineStorage):
         self._password = password
         self._collection_prefix = collection_prefix
         self._encoding = encoding
+        self._command_timeout = command_timeout
+        self._server_timeout = server_timeout
+        self._connection_timeout = connection_timeout
+        self._batch_size = batch_size
         self._no_id_prefixes = []
         self._pool = None
 
@@ -66,11 +74,13 @@ class PostgresPipelineStorage(PipelineStorage):
                 self._connection_string = f"postgresql://{username}@{host}:{port}/{database}"
 
         log.info(
-            "Initializing PostgreSQL storage with host: %s:%s, database: %s, collection_prefix: %s",
+            "Initializing PostgreSQL storage with host: %s:%s, database: %s, collection_prefix: %s, command_timeout: %s, batch_size: %s",
             self._host,
             self._port,
             self._database,
             self._collection_prefix,
+            self._command_timeout,
+            self._batch_size,
         )
 
     async def _get_connection(self) -> Connection:
@@ -81,9 +91,15 @@ class PostgresPipelineStorage(PipelineStorage):
                     self._connection_string,
                     min_size=1,
                     max_size=10,
-                    command_timeout=60
+                    command_timeout=self._command_timeout,
+                    server_settings={
+                        'application_name': 'graphrag_postgres_storage'
+                    },
+                    # Use connection_timeout for initial connection establishment
+                    timeout=self._connection_timeout
                 )
-                log.info("Created PostgreSQL connection pool")
+                log.info("Created PostgreSQL connection pool with command_timeout: %s, connection_timeout: %s", 
+                        self._command_timeout, self._connection_timeout)
             except Exception as e:
                 log.error("Failed to create PostgreSQL connection pool: %s", e)
                 raise
@@ -590,10 +606,10 @@ class PostgresPipelineStorage(PipelineStorage):
             # For any other type, return current time
             return datetime.now(timezone.utc)
 
-    async def _batch_upsert_records(self, conn: Connection, table_name: str, records: list[dict], batch_size: int = 1000) -> None:
+    async def _batch_upsert_records(self, conn: Connection, table_name: str, records: list[dict]) -> None:
         """Perform high-performance batch upsert of records using executemany."""
         total_records = len(records)
-        log.info(f"Starting batch upsert of {total_records} records to {table_name} with batch size {batch_size}")
+        log.info(f"Starting batch upsert of {total_records} records to {table_name} with batch size {self._batch_size}")
         
         # Ensure all datetime fields are timezone-aware
         records = self._ensure_timezone_aware_datetimes(records)
@@ -605,10 +621,10 @@ class PostgresPipelineStorage(PipelineStorage):
                            ['entities', 'relationships', 'communities', 'text_units', 'documents'])
         
         # Process records in batches for optimal performance
-        for i in range(0, total_records, batch_size):
-            batch = records[i:i + batch_size]
-            batch_end = min(i + batch_size, total_records)
-            
+        for i in range(0, total_records, self._batch_size):
+            batch = records[i:i + self._batch_size]
+            batch_end = min(i + self._batch_size, total_records)
+
             try:
                 if is_typed_table:
                     await self._batch_upsert_typed_records(conn, table_name, batch)
@@ -642,7 +658,7 @@ class PostgresPipelineStorage(PipelineStorage):
             processed_count += len(batch)
             
             # Log progress every batch for visibility
-            if i % batch_size == 0 or batch_end == total_records:
+            if i % self._batch_size == 0 or batch_end == total_records:
                 log.info(f"Batch upsert progress: {processed_count}/{total_records} records ({processed_count/total_records*100:.1f}%)")
 
     async def _batch_upsert_typed_records(self, conn: Connection, table_name: str, batch: list[dict]) -> None:
