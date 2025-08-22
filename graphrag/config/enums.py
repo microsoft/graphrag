@@ -53,6 +53,8 @@ class StorageType(str, Enum):
     """The blob output type."""
     cosmosdb = "cosmosdb"
     """The cosmosdb output type"""
+    postgres = "postgres"
+    """The postgres output type."""
 
     def __repr__(self):
         """Get a string representation."""

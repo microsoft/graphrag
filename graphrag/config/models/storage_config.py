@@ -50,3 +50,29 @@ class StorageConfig(BaseModel):
         description="The cosmosdb account url to use.",
         default=graphrag_config_defaults.storage.cosmosdb_account_url,
     )
+
+    ### PostgreSQL
+    host: str = Field(
+        description="PostgreSQL server host (for postgres type).",
+        default="localhost"
+    )
+    port: int = Field(
+        description="PostgreSQL server port (for postgres type).",
+        default=5432
+    )
+    database: str = Field(
+        description="PostgreSQL database name (for postgres type).",
+        default="graphrag"
+    )
+    username: str | None = Field(
+        description="PostgreSQL username for authentication (for postgres type).",
+        default=None
+    )
+    password: str | None = Field(
+        description="PostgreSQL password for authentication (for postgres type).",
+        default=None
+    )
+    collection_prefix: str = Field(
+        description="Prefix for PostgreSQL collection names (for postgres type).",
+        default="graphrag_"
+    )
