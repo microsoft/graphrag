@@ -111,46 +111,12 @@ class PostgresPipelineStorage(PipelineStorage):
         if self._pool:
             await self._pool.release(conn)
 
-    def _sanitize_table_name(self, name: str) -> str:
-        """Sanitize a name to be a valid PostgreSQL table name."""
-        return name
-        import re
-        
-        # Replace common problematic characters
-        sanitized = name.replace("-", "_").replace(":", "_").replace(" ", "_")
-        
-        # Remove any characters that aren't alphanumeric, underscore, or dollar sign
-        sanitized = re.sub(r'[^a-zA-Z0-9_$]', '_', sanitized)
-        
-        # Remove consecutive underscores
-        sanitized = re.sub(r'_+', '_', sanitized)
-        
-        # Remove leading/trailing underscores
-        sanitized = sanitized.strip('_')
-        
-        # Ensure it starts with a letter or underscore (not a digit)
-        if sanitized and sanitized[0].isdigit():
-            sanitized = f"tbl_{sanitized}"
-        
-        # Ensure it's not empty
-        if not sanitized:
-            sanitized = "tbl_unnamed"
-        
-        # PostgreSQL has a limit of 63 characters for identifiers
-        if len(sanitized) > 59:  # Leave room for prefix
-            sanitized = sanitized[:59]
-        log.info(f"Sanitied name {name} to {sanitized}")
-        return sanitized
-
     def _get_table_name(self, key: str) -> str:
         """Get the table name for a given key."""
         # Extract the base name without file extension
         base_name = key.split(".")[0]
         
-        # Sanitize for PostgreSQL compatibility
-        sanitized_name = self._sanitize_table_name(base_name)
-        
-        return f"{self._collection_prefix}{sanitized_name}"
+        return f"{self._collection_prefix}{base_name}"
 
     def _get_prefix(self, key: str) -> str:
         """Get the prefix of the filename key."""
@@ -158,8 +124,6 @@ class PostgresPipelineStorage(PipelineStorage):
 
     def _get_entities_table_schema(self, table_name: str) -> str:
         """Get the SQL schema for entities table."""
-        # Sanitize table name for index names
-        table_name = self._sanitize_table_name(table_name)
         return f"""
         CREATE TABLE {table_name} (
             id TEXT PRIMARY KEY,
@@ -185,8 +149,6 @@ class PostgresPipelineStorage(PipelineStorage):
 
     def _get_relationships_table_schema(self, table_name: str) -> str:
         """Get the SQL schema for relationships table."""
-        # Sanitize table name for index names
-        table_name = self._sanitize_table_name(table_name)
         return f"""
         CREATE TABLE {table_name} (
             id TEXT PRIMARY KEY,
@@ -211,8 +173,6 @@ class PostgresPipelineStorage(PipelineStorage):
 
     def _get_communities_table_schema(self, table_name: str) -> str:
         """Get the SQL schema for communities table."""
-        # Sanitize table name for index names
-        table_name = self._sanitize_table_name(table_name)
         return f"""
         CREATE TABLE {table_name} (
             id TEXT PRIMARY KEY,
@@ -239,8 +199,6 @@ class PostgresPipelineStorage(PipelineStorage):
 
     def _get_text_units_table_schema(self, table_name: str) -> str:
         """Get the SQL schema for text_units table."""
-        # Sanitize table name for index names
-        table_name = self._sanitize_table_name(table_name)
         return f"""
         CREATE TABLE {table_name} (
             id TEXT PRIMARY KEY,
@@ -264,8 +222,6 @@ class PostgresPipelineStorage(PipelineStorage):
 
     def _get_documents_table_schema(self, table_name: str) -> str:
         """Get the SQL schema for documents table."""
-        # Sanitize table name for index names
-        table_name = self._sanitize_table_name(table_name)
         return f"""
         CREATE TABLE {table_name} (
             id TEXT PRIMARY KEY,
@@ -289,8 +245,6 @@ class PostgresPipelineStorage(PipelineStorage):
 
     def _get_generic_table_schema(self, table_name: str) -> str:
         """Get the SQL schema for generic data (fallback)."""
-        # Sanitize table name for index names
-        table_name = self._sanitize_table_name(table_name)
         return f"""
         CREATE TABLE {table_name} (
             id TEXT PRIMARY KEY,
@@ -307,8 +261,6 @@ class PostgresPipelineStorage(PipelineStorage):
 
     def _get_table_schema_sql(self, table_name: str) -> str:
         """Get the appropriate schema SQL for the table type."""
-        # Sanitize table name for schema generation
-        table_name = self._sanitize_table_name(table_name)
         
         if 'entities' in table_name:
             return self._get_entities_table_schema(table_name)
@@ -324,9 +276,6 @@ class PostgresPipelineStorage(PipelineStorage):
             return self._get_generic_table_schema(table_name)
 
     async def _ensure_table_exists_with_schema(self, table_name: str) -> None:
-        # Ensure table name is properly sanitized for SQL operations
-        table_name = self._sanitize_table_name(table_name)
-
         conn = await self._get_connection()
         try:
             table_exists = await conn.fetchval(
@@ -664,8 +613,6 @@ class PostgresPipelineStorage(PipelineStorage):
     async def _batch_upsert_typed_records(self, conn: Connection, table_name: str, batch: list[dict]) -> None:
         """Batch upsert for typed tables with specific columns."""
         async with conn.transaction():
-            # Ensure table name is properly sanitized for SQL
-            table_name = self._sanitize_table_name(table_name)
 
             if 'entities' in table_name:
                 upsert_sql = f"""
@@ -779,8 +726,6 @@ class PostgresPipelineStorage(PipelineStorage):
     async def _batch_upsert_generic_records(self, conn: Connection, table_name: str, batch: list[dict]) -> None:
         """Batch upsert for generic tables using JSONB."""
         async with conn.transaction():
-            # Ensure table name is properly sanitized for SQL
-            table_name = self._sanitize_table_name(table_name)
             upsert_sql = f"""
                 INSERT INTO {table_name} (id, data, metadata, updated_at)
                 VALUES ($1, $2, $3, NOW())
@@ -972,11 +917,10 @@ class PostgresPipelineStorage(PipelineStorage):
                     # Use the storage ID as is since we simplified ID handling
                     storage_id = row['id']
                     cleaned_data['id'] = storage_id
-                    
                     records.append(cleaned_data)
 
                 df = pd.DataFrame(records)
-                
+
                 # Additional cleanup for NaN values in the DataFrame
                 df = df.where(pd.notna(df), None)
                 log.info(f"Created DataFrame with shape: {df.shape}")
