@@ -24,7 +24,7 @@ def finalize_entities(
     """All the steps to transform final entities."""
     # # Remove the default column degree, x and y for Postgres storage compatibility. And below entities.merge method
     # # will add them back with calculated values.
-    # entities = entities.drop(columns=["degree", "x", "y"], errors="ignore")
+    entities = entities.drop(columns=["degree", "x", "y"], errors="ignore")
     graph = create_graph(relationships, edge_attr=["weight"])
     graph_embeddings = None
     if embed_config is not None and embed_config.enabled:
