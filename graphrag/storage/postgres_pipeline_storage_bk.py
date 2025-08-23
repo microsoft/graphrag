@@ -764,7 +764,7 @@ class PostgresPipelineStorage(PipelineStorage):
         return iter([])
 
     async def get(self, key: str, as_bytes: bool | None = None, encoding: str | None = None, **kwargs) -> Any:
-        """Retrieve data from PostgreSQL table."""
+        """Retrieve data from PostgreSQL table - simplified approach."""
         try:
             table_name = self._get_table_name(key)
             log.info(f"Retrieving data from table: {table_name}")
@@ -778,285 +778,342 @@ class PostgresPipelineStorage(PipelineStorage):
                 )
                 
                 if not table_exists:
-                    log.warning(f"Table {table_name} does not exist")
                     return None
                 
-                # Determine if this is a typed table or generic table
-                is_typed_table = any(table_type in table_name for table_type in 
-                                   ['entities', 'relationships', 'communities', 'text_units', 'documents'])
-                
-                if is_typed_table:
-                    # For typed tables, select all columns except created_at/updated_at
-                    if 'documents' in table_name:
-                        query = "SELECT id, human_readable_id, title, text, text_unit_ids, creation_date, metadata FROM {} ORDER BY created_at".format(table_name)
-                    elif 'entities' in table_name:
-                        query = "SELECT id, human_readable_id, title, type, description, text_unit_ids, frequency, degree, x, y FROM {} ORDER BY created_at".format(table_name)
-                    elif 'relationships' in table_name:
-                        query = "SELECT id, human_readable_id, source, target, description, weight, combined_degree, text_unit_ids FROM {} ORDER BY created_at".format(table_name)
-                    elif 'communities' in table_name:
-                        query = "SELECT id, human_readable_id, community, level, parent, children, text_unit_ids, entity_ids, relationship_ids FROM {} ORDER BY created_at".format(table_name)
-                    elif 'text_units' in table_name:
-                        query = "SELECT id, human_readable_id, text, n_tokens, document_ids, entity_ids, relationship_ids FROM {} ORDER BY created_at".format(table_name)
-                    else:
-                        # Fallback for unknown typed table
-                        query = "SELECT * FROM {} ORDER BY created_at".format(table_name)
-                else:
-                    # For generic tables, use the data column
-                    query = "SELECT id, data FROM {} ORDER BY created_at".format(table_name)
-                
-                rows = await conn.fetch(query)
+                # Simple approach: get all data and convert directly to DataFrame
+                rows = await conn.fetch(f"SELECT * FROM {table_name} ORDER BY created_at")
                 
                 if not rows:
-                    log.info(f"No data found in table {table_name}")
                     return None
 
-                log.info(f"Retrieved {len(rows)} records from table {table_name}")
-
-                # Check if this should be treated as raw data instead of tabular data
-                if (not key.endswith('.parquet') or 
-                    'state' in key.lower() or 
-                    key.endswith('.json') or 
-                    'context' in table_name.lower()):
-                    # Handle state.json or context.json as raw data
-                    # For non-tabular data, return the raw content from the first record
-                    if rows:
-                        if is_typed_table:
-                            # For typed tables, convert row to dict and return as JSON
-                            row_dict = dict(rows[0])
-                            json_str = json.dumps(row_dict)
-                            return json_str.encode(encoding or self._encoding) if as_bytes else json_str
-                        elif 'data' in rows[0]:
-                            raw_content = rows[0]['data']
-                            if isinstance(raw_content, dict):
-                                json_str = json.dumps(raw_content)
-                                return json_str.encode(encoding or self._encoding) if as_bytes else json_str
-                    return b"" if as_bytes else ""
-
-                # Convert to DataFrame
-                records = []
-                for row in rows:
-                    if is_typed_table:
-                        # For typed tables, the row is already the data we need
-                        record_data = dict(row)
-                        
-                        # Convert JSONB fields back to proper Python objects
-                        for field in ['text_unit_ids', 'children', 'entity_ids', 'relationship_ids', 'document_ids', 'metadata']:
-                            if field in record_data:
-                                value = record_data[field]
-                                
-                                if value is None:
-                                    record_data[field] = {} if field == 'metadata' else []
-                                elif isinstance(value, str):
-                                    # Handle JSONB strings - they should always be valid JSON
-                                    try:
-                                        parsed = json.loads(value)
-                                        # Validate the parsed type
-                                        if field == 'metadata':
-                                            record_data[field] = parsed if isinstance(parsed, dict) else {}
-                                        else:
-                                            record_data[field] = parsed if isinstance(parsed, list) else []
-                                    except (json.JSONDecodeError, TypeError):
-                                        log.warning(f"Failed to parse JSONB field {field}: {value}")
-                                        # Fallback for non-JSON strings
-                                        if field == 'metadata':
-                                            record_data[field] = {}
-                                        else:
-                                            record_data[field] = []
-                                elif isinstance(value, (list, dict)):
-                                    # Already correct type (shouldn't happen with JSONB, but handle it)
-                                    record_data[field] = value
-                                else:
-                                    # Convert other types
-                                    if field == 'metadata':
-                                        record_data[field] = {'value': str(value)} if value else {}
-                                    else:
-                                        record_data[field] = [value] if value else []
-                    else:
-                        # Handle generic table data (JSONB data column)
-                        if isinstance(row['data'], dict):
-                            record_data = dict(row['data'])
-                        else:
-                            # If it's a string, parse it as JSON
-                            record_data = json.loads(row['data']) if isinstance(row['data'], str) else row['data']
-                    
-                    # Clean up the record data - convert None to proper values and handle NaN
-                    cleaned_data = {}
-                    for key_name, value in record_data.items():
-                        if self._is_scalar_na(value) or value is None:
-                            cleaned_data[key_name] = None
-                        elif isinstance(value, str) and key_name == 'text_unit_ids' and not is_typed_table:
-                            # Try to parse text_unit_ids back from JSON string if needed (only for generic tables)
-                            try:
-                                parsed_value = json.loads(value)
-                                cleaned_data[key_name] = parsed_value if isinstance(parsed_value, list) else [value]
-                            except (json.JSONDecodeError, TypeError):
-                                # If it's not JSON, treat as a single item list or keep as string
-                                cleaned_data[key_name] = [value] if value else []
-                        elif key_name in ['children', 'entity_ids', 'relationship_ids', 'text_unit_ids', 'document_ids'] and not is_typed_table:
-                            # Always ensure these columns are lists (only for generic tables - typed tables already handled this)
-                            if isinstance(value, list):
-                                cleaned_data[key_name] = value
-                            elif isinstance(value, str):
-                                try:
-                                    parsed_value = json.loads(value)
-                                    cleaned_data[key_name] = parsed_value if isinstance(parsed_value, list) else []
-                                except (json.JSONDecodeError, TypeError):
-                                    cleaned_data[key_name] = []
-                            elif value is None:
-                                cleaned_data[key_name] = []
-                            else:
-                                # fallback: wrap single value in a list
-                                cleaned_data[key_name] = [value]
-                        elif isinstance(value, (list, np.ndarray)) and len(value) == 0:
-                            # Handle empty arrays/lists
-                            cleaned_data[key_name] = []
-                        else:
-                            cleaned_data[key_name] = value
-                    
-                    # Always include the ID column for GraphRAG compatibility
-                    # Use the storage ID as is since we simplified ID handling
-                    storage_id = row['id']
-                    cleaned_data['id'] = storage_id
-                    records.append(cleaned_data)
-
+                # Convert to DataFrame with minimal transformation
+                records = [dict(row) for row in rows]
                 df = pd.DataFrame(records)
-
-                # Additional cleanup for NaN values in the DataFrame
-                df = df.where(pd.notna(df), None)
-                log.info(f"Created DataFrame with shape: {df.shape}")
-                log.info(f"Table {table_name} DataFrame columns: {df.columns.tolist()}")
-
-                if len(df) > 0:
-                    log.debug(f"Table {table_name} Sample record: {df.iloc[0].to_dict()}")
-                    # Debug: Check if children column exists and its type
-                    if 'children' in df.columns:
-                        sample_children = df.iloc[0]['children']
-                        log.debug(f"Table {table_name} Sample children value: {sample_children}, type: {type(sample_children)}")
-
+                
+                # Only handle JSONB fields - convert back from JSON strings to lists/dicts
+                for col in df.columns:
+                    if col in ['text_unit_ids', 'children', 'entity_ids', 'relationship_ids', 'document_ids', 'metadata']:
+                        df[col] = df[col].apply(self._parse_jsonb_field)
+                
                 # Handle bytes conversion for GraphRAG compatibility
                 if as_bytes or kwargs.get("as_bytes"):
-                    log.info(f"Converting DataFrame to parquet bytes for key: {key}")
-                    
-                    # Apply column filtering similar to Milvus implementation
-                    df_clean = df.copy()
-                    
-                    # Define expected columns for each data type
-                    if 'documents' in table_name:
-                        expected_columns = ['id', 'human_readable_id', 'title', 'text', 'creation_date', 'metadata']
-                    elif 'entities' in table_name:
-                        expected_columns = ['id', 'human_readable_id', 'title', 'type', 'description', 'text_unit_ids', 'frequency', 'degree', 'x', 'y']
-                    elif 'relationships' in table_name:
-                        expected_columns = ['id', 'human_readable_id', 'source', 'target', 'description', 'weight', 'text_unit_ids']
-                        if 'combined_degree' in df_clean.columns:
-                            expected_columns.append('combined_degree')
-                    elif 'text_units' in table_name:
-                        expected_columns = ['id', 'human_readable_id', 'text', 'n_tokens', 'document_ids', 'entity_ids', 'relationship_ids']
-                    elif 'communities' in table_name:
-                        expected_columns = ['id', 'human_readable_id', 'community', 'level', 'parent', 'children', 'text_unit_ids', 'entity_ids', 'relationship_ids']
-                    else:
-                        expected_columns = list(df_clean.columns)
-                    
-                    # Filter columns
-                    available_columns = [col for col in expected_columns if col in df_clean.columns]
-                    if available_columns != expected_columns:
-                        missing = set(expected_columns) - set(available_columns)
-                        extra = set(df_clean.columns) - set(expected_columns)
-                        log.warning(f"Column mismatch - Expected: {expected_columns}, Available: {available_columns}, Missing: {missing}, Extra: {extra}")
-                    
-                    df_clean = df_clean[available_columns]
-                    log.info(f"Table {table_name} final filtered columns: {df_clean.columns.tolist()}")
-
-                    # Convert to parquet bytes
-                    try:
-                        # Handle list columns for PyArrow compatibility
-                        df_for_parquet = df_clean.copy()
-                        
-                        # For PyArrow/parquet compatibility, we need to handle list columns carefully
-                        # Instead of converting to JSON strings, let's try a different approach
-                        list_columns = []
-                        for col in df_for_parquet.columns:
-                            if col in df_for_parquet.columns and len(df_for_parquet) > 0:
-                                # Check if this column contains lists
-                                first_non_null = None
-                                for val in df_for_parquet[col]:
-                                    if isinstance(val, list):
-                                        first_non_null = val
-                                        break
-                                    elif val is not None and not isinstance(val, (list, np.ndarray)) and pd.notna(val):
-                                        first_non_null = val
-                                        break
-                                
-                                if isinstance(first_non_null, list) or col in ['children', 'entity_ids', 'relationship_ids', 'text_unit_ids', 'document_ids']:
-                                    list_columns.append(col)
-                                    # Ensure all values in this column are proper lists
-                                    df_for_parquet[col] = df_for_parquet[col].apply(
-                                        lambda x: x if isinstance(x, list) else ([] if x is None or pd.isna(x) else [str(x)])
-                                    )
-                        
-                        if list_columns:
-                            log.info(f"Ensured list columns are proper lists for parquet: {list_columns}")
-                        
-                        # Try to convert to parquet without JSON string conversion
-                        buffer = BytesIO()
-                        df_for_parquet.to_parquet(buffer, engine='pyarrow')
-                        buffer.seek(0)
-                        parquet_bytes = buffer.getvalue()
-                        log.info(f"Successfully converted DataFrame to {len(parquet_bytes)} bytes of parquet data")
-                        return parquet_bytes
-                    except Exception as e:
-                        log.warning(f"Direct parquet conversion failed: {e}, trying with JSON string conversion")
-                        
-                        # Fallback: convert lists to JSON strings
-                        try:
-                            df_for_parquet = df_clean.copy()
-                            
-                            # Convert list columns to JSON strings for parquet compatibility
-                            list_columns = []
-                            for col in df_for_parquet.columns:
-                                if col in df_for_parquet.columns and len(df_for_parquet) > 0:
-                                    # Check if this column contains lists
-                                    first_non_null = None
-                                    for val in df_for_parquet[col]:
-                                        if isinstance(val, list):
-                                            first_non_null = val
-                                            break
-                                        elif val is not None and not isinstance(val, (list, np.ndarray)) and pd.notna(val):
-                                            first_non_null = val
-                                            break
-                                    if isinstance(first_non_null, list):
-                                        list_columns.append(col)
-                                        # Convert lists to JSON strings
-                                        df_for_parquet[col] = df_for_parquet[col].apply(
-                                            lambda x: json.dumps(x) if isinstance(x, list) else (json.dumps([]) if x is None else str(x))
-                                        )
-                                    elif col in ['children', 'entity_ids', 'relationship_ids', 'text_unit_ids', 'document_ids']:
-                                        # These columns should always be lists, even if empty
-                                        list_columns.append(col)
-                                        df_for_parquet[col] = df_for_parquet[col].apply(
-                                            lambda x: json.dumps(x) if isinstance(x, list) else (json.dumps([]) if x is None else str(x))
-                                        )
-                            
-                            if list_columns:
-                                log.info(f"Converted list columns to JSON strings for parquet: {list_columns}")
-                            
-                            buffer = BytesIO()
-                            df_for_parquet.to_parquet(buffer, engine='pyarrow')
-                            buffer.seek(0)
-                            parquet_bytes = buffer.getvalue()
-                            log.info(f"Successfully converted DataFrame to {len(parquet_bytes)} bytes of parquet data (with JSON conversion)")
-                            return parquet_bytes
-                        except Exception as e2:
-                            log.exception(f"Failed to convert DataFrame to parquet bytes: {e2}")
-                            return b""
+                    return self._dataframe_to_parquet_bytes(df)
                 
                 return df
-                
+                    
             finally:
                 await self._release_connection(conn)
                 
         except Exception as e:
             log.exception(f"Error retrieving data from table {table_name}: {e}")
             return None
+
+    def _parse_jsonb_field(self, value):
+        """Simple JSONB field parser."""
+        if value is None:
+            return []
+        if isinstance(value, (list, dict)):
+            return value
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except:
+                return []
+        return []
+    # async def get(self, key: str, as_bytes: bool | None = None, encoding: str | None = None, **kwargs) -> Any:
+    #     """Retrieve data from PostgreSQL table."""
+    #     try:
+    #         table_name = self._get_table_name(key)
+    #         log.info(f"Retrieving data from table: {table_name}")
+            
+    #         conn = await self._get_connection()
+    #         try:
+    #             # Check if table exists
+    #             table_exists = await conn.fetchval(
+    #                 "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = $1)",
+    #                 table_name
+    #             )
+                
+    #             if not table_exists:
+    #                 log.warning(f"Table {table_name} does not exist")
+    #                 return None
+                
+    #             # Determine if this is a typed table or generic table
+    #             is_typed_table = any(table_type in table_name for table_type in 
+    #                                ['entities', 'relationships', 'communities', 'text_units', 'documents'])
+                
+    #             if is_typed_table:
+    #                 # For typed tables, select all columns except created_at/updated_at
+    #                 if 'documents' in table_name:
+    #                     query = "SELECT id, human_readable_id, title, text, text_unit_ids, creation_date, metadata FROM {} ORDER BY created_at".format(table_name)
+    #                 elif 'entities' in table_name:
+    #                     query = "SELECT id, human_readable_id, title, type, description, text_unit_ids, frequency, degree, x, y FROM {} ORDER BY created_at".format(table_name)
+    #                 elif 'relationships' in table_name:
+    #                     query = "SELECT id, human_readable_id, source, target, description, weight, combined_degree, text_unit_ids FROM {} ORDER BY created_at".format(table_name)
+    #                 elif 'communities' in table_name:
+    #                     query = "SELECT id, human_readable_id, community, level, parent, children, text_unit_ids, entity_ids, relationship_ids FROM {} ORDER BY created_at".format(table_name)
+    #                 elif 'text_units' in table_name:
+    #                     query = "SELECT id, human_readable_id, text, n_tokens, document_ids, entity_ids, relationship_ids FROM {} ORDER BY created_at".format(table_name)
+    #                 else:
+    #                     # Fallback for unknown typed table
+    #                     query = "SELECT * FROM {} ORDER BY created_at".format(table_name)
+    #             else:
+    #                 # For generic tables, use the data column
+    #                 query = "SELECT id, data FROM {} ORDER BY created_at".format(table_name)
+                
+    #             rows = await conn.fetch(query)
+                
+    #             if not rows:
+    #                 log.info(f"No data found in table {table_name}")
+    #                 return None
+
+    #             log.info(f"Retrieved {len(rows)} records from table {table_name}")
+
+    #             # Check if this should be treated as raw data instead of tabular data
+    #             if (not key.endswith('.parquet') or 
+    #                 'state' in key.lower() or 
+    #                 key.endswith('.json') or 
+    #                 'context' in table_name.lower()):
+    #                 # Handle state.json or context.json as raw data
+    #                 # For non-tabular data, return the raw content from the first record
+    #                 if rows:
+    #                     if is_typed_table:
+    #                         # For typed tables, convert row to dict and return as JSON
+    #                         row_dict = dict(rows[0])
+    #                         json_str = json.dumps(row_dict)
+    #                         return json_str.encode(encoding or self._encoding) if as_bytes else json_str
+    #                     elif 'data' in rows[0]:
+    #                         raw_content = rows[0]['data']
+    #                         if isinstance(raw_content, dict):
+    #                             json_str = json.dumps(raw_content)
+    #                             return json_str.encode(encoding or self._encoding) if as_bytes else json_str
+    #                 return b"" if as_bytes else ""
+
+    #             # Convert to DataFrame
+    #             records = []
+    #             for row in rows:
+    #                 if is_typed_table:
+    #                     # For typed tables, the row is already the data we need
+    #                     record_data = dict(row)
+                        
+    #                     # Convert JSONB fields back to proper Python objects
+    #                     for field in ['text_unit_ids', 'children', 'entity_ids', 'relationship_ids', 'document_ids', 'metadata']:
+    #                         if field in record_data:
+    #                             value = record_data[field]
+                                
+    #                             if value is None:
+    #                                 record_data[field] = {} if field == 'metadata' else []
+    #                             elif isinstance(value, str):
+    #                                 # Handle JSONB strings - they should always be valid JSON
+    #                                 try:
+    #                                     parsed = json.loads(value)
+    #                                     # Validate the parsed type
+    #                                     if field == 'metadata':
+    #                                         record_data[field] = parsed if isinstance(parsed, dict) else {}
+    #                                     else:
+    #                                         record_data[field] = parsed if isinstance(parsed, list) else []
+    #                                 except (json.JSONDecodeError, TypeError):
+    #                                     log.warning(f"Failed to parse JSONB field {field}: {value}")
+    #                                     # Fallback for non-JSON strings
+    #                                     if field == 'metadata':
+    #                                         record_data[field] = {}
+    #                                     else:
+    #                                         record_data[field] = []
+    #                             elif isinstance(value, (list, dict)):
+    #                                 # Already correct type (shouldn't happen with JSONB, but handle it)
+    #                                 record_data[field] = value
+    #                             else:
+    #                                 # Convert other types
+    #                                 if field == 'metadata':
+    #                                     record_data[field] = {'value': str(value)} if value else {}
+    #                                 else:
+    #                                     record_data[field] = [value] if value else []
+    #                 else:
+    #                     # Handle generic table data (JSONB data column)
+    #                     if isinstance(row['data'], dict):
+    #                         record_data = dict(row['data'])
+    #                     else:
+    #                         # If it's a string, parse it as JSON
+    #                         record_data = json.loads(row['data']) if isinstance(row['data'], str) else row['data']
+                    
+    #                 # Clean up the record data - convert None to proper values and handle NaN
+    #                 cleaned_data = {}
+    #                 for key_name, value in record_data.items():
+    #                     if self._is_scalar_na(value) or value is None:
+    #                         cleaned_data[key_name] = None
+    #                     elif isinstance(value, str) and key_name == 'text_unit_ids' and not is_typed_table:
+    #                         # Try to parse text_unit_ids back from JSON string if needed (only for generic tables)
+    #                         try:
+    #                             parsed_value = json.loads(value)
+    #                             cleaned_data[key_name] = parsed_value if isinstance(parsed_value, list) else [value]
+    #                         except (json.JSONDecodeError, TypeError):
+    #                             # If it's not JSON, treat as a single item list or keep as string
+    #                             cleaned_data[key_name] = [value] if value else []
+    #                     elif key_name in ['children', 'entity_ids', 'relationship_ids', 'text_unit_ids', 'document_ids'] and not is_typed_table:
+    #                         # Always ensure these columns are lists (only for generic tables - typed tables already handled this)
+    #                         if isinstance(value, list):
+    #                             cleaned_data[key_name] = value
+    #                         elif isinstance(value, str):
+    #                             try:
+    #                                 parsed_value = json.loads(value)
+    #                                 cleaned_data[key_name] = parsed_value if isinstance(parsed_value, list) else []
+    #                             except (json.JSONDecodeError, TypeError):
+    #                                 cleaned_data[key_name] = []
+    #                         elif value is None:
+    #                             cleaned_data[key_name] = []
+    #                         else:
+    #                             # fallback: wrap single value in a list
+    #                             cleaned_data[key_name] = [value]
+    #                     elif isinstance(value, (list, np.ndarray)) and len(value) == 0:
+    #                         # Handle empty arrays/lists
+    #                         cleaned_data[key_name] = []
+    #                     else:
+    #                         cleaned_data[key_name] = value
+                    
+    #                 # Always include the ID column for GraphRAG compatibility
+    #                 # Use the storage ID as is since we simplified ID handling
+    #                 storage_id = row['id']
+    #                 cleaned_data['id'] = storage_id
+    #                 records.append(cleaned_data)
+
+    #             df = pd.DataFrame(records)
+
+    #             # Additional cleanup for NaN values in the DataFrame
+    #             df = df.where(pd.notna(df), None)
+    #             log.info(f"Created DataFrame with shape: {df.shape}")
+    #             log.info(f"Table {table_name} DataFrame columns: {df.columns.tolist()}")
+
+    #             if len(df) > 0:
+    #                 log.debug(f"Table {table_name} Sample record: {df.iloc[0].to_dict()}")
+    #                 # Debug: Check if children column exists and its type
+    #                 if 'children' in df.columns:
+    #                     sample_children = df.iloc[0]['children']
+    #                     log.debug(f"Table {table_name} Sample children value: {sample_children}, type: {type(sample_children)}")
+
+    #             # Handle bytes conversion for GraphRAG compatibility
+    #             if as_bytes or kwargs.get("as_bytes"):
+    #                 log.info(f"Converting DataFrame to parquet bytes for key: {key}")
+                    
+    #                 # Apply column filtering similar to Milvus implementation
+    #                 df_clean = df.copy()
+                    
+    #                 # Define expected columns for each data type
+    #                 if 'documents' in table_name:
+    #                     expected_columns = ['id', 'human_readable_id', 'title', 'text', 'creation_date', 'metadata']
+    #                 elif 'entities' in table_name:
+    #                     expected_columns = ['id', 'human_readable_id', 'title', 'type', 'description', 'text_unit_ids', 'frequency', 'degree', 'x', 'y']
+    #                 elif 'relationships' in table_name:
+    #                     expected_columns = ['id', 'human_readable_id', 'source', 'target', 'description', 'weight', 'text_unit_ids']
+    #                     if 'combined_degree' in df_clean.columns:
+    #                         expected_columns.append('combined_degree')
+    #                 elif 'text_units' in table_name:
+    #                     expected_columns = ['id', 'human_readable_id', 'text', 'n_tokens', 'document_ids', 'entity_ids', 'relationship_ids']
+    #                 elif 'communities' in table_name:
+    #                     expected_columns = ['id', 'human_readable_id', 'community', 'level', 'parent', 'children', 'text_unit_ids', 'entity_ids', 'relationship_ids']
+    #                 else:
+    #                     expected_columns = list(df_clean.columns)
+                    
+    #                 # Filter columns
+    #                 available_columns = [col for col in expected_columns if col in df_clean.columns]
+    #                 if available_columns != expected_columns:
+    #                     missing = set(expected_columns) - set(available_columns)
+    #                     extra = set(df_clean.columns) - set(expected_columns)
+    #                     log.warning(f"Column mismatch - Expected: {expected_columns}, Available: {available_columns}, Missing: {missing}, Extra: {extra}")
+                    
+    #                 df_clean = df_clean[available_columns]
+    #                 log.info(f"Table {table_name} final filtered columns: {df_clean.columns.tolist()}")
+
+    #                 # Convert to parquet bytes
+    #                 try:
+    #                     # Handle list columns for PyArrow compatibility
+    #                     df_for_parquet = df_clean.copy()
+                        
+    #                     # For PyArrow/parquet compatibility, we need to handle list columns carefully
+    #                     # Instead of converting to JSON strings, let's try a different approach
+    #                     list_columns = []
+    #                     for col in df_for_parquet.columns:
+    #                         if col in df_for_parquet.columns and len(df_for_parquet) > 0:
+    #                             # Check if this column contains lists
+    #                             first_non_null = None
+    #                             for val in df_for_parquet[col]:
+    #                                 if isinstance(val, list):
+    #                                     first_non_null = val
+    #                                     break
+    #                                 elif val is not None and not isinstance(val, (list, np.ndarray)) and pd.notna(val):
+    #                                     first_non_null = val
+    #                                     break
+                                
+    #                             if isinstance(first_non_null, list) or col in ['children', 'entity_ids', 'relationship_ids', 'text_unit_ids', 'document_ids']:
+    #                                 list_columns.append(col)
+    #                                 # Ensure all values in this column are proper lists
+    #                                 df_for_parquet[col] = df_for_parquet[col].apply(
+    #                                     lambda x: x if isinstance(x, list) else ([] if x is None or pd.isna(x) else [str(x)])
+    #                                 )
+                        
+    #                     if list_columns:
+    #                         log.info(f"Ensured list columns are proper lists for parquet: {list_columns}")
+                        
+    #                     # Try to convert to parquet without JSON string conversion
+    #                     buffer = BytesIO()
+    #                     df_for_parquet.to_parquet(buffer, engine='pyarrow')
+    #                     buffer.seek(0)
+    #                     parquet_bytes = buffer.getvalue()
+    #                     log.info(f"Successfully converted DataFrame to {len(parquet_bytes)} bytes of parquet data")
+    #                     return parquet_bytes
+    #                 except Exception as e:
+    #                     log.warning(f"Direct parquet conversion failed: {e}, trying with JSON string conversion")
+                        
+    #                     # Fallback: convert lists to JSON strings
+    #                     try:
+    #                         df_for_parquet = df_clean.copy()
+                            
+    #                         # Convert list columns to JSON strings for parquet compatibility
+    #                         list_columns = []
+    #                         for col in df_for_parquet.columns:
+    #                             if col in df_for_parquet.columns and len(df_for_parquet) > 0:
+    #                                 # Check if this column contains lists
+    #                                 first_non_null = None
+    #                                 for val in df_for_parquet[col]:
+    #                                     if isinstance(val, list):
+    #                                         first_non_null = val
+    #                                         break
+    #                                     elif val is not None and not isinstance(val, (list, np.ndarray)) and pd.notna(val):
+    #                                         first_non_null = val
+    #                                         break
+    #                                 if isinstance(first_non_null, list):
+    #                                     list_columns.append(col)
+    #                                     # Convert lists to JSON strings
+    #                                     df_for_parquet[col] = df_for_parquet[col].apply(
+    #                                         lambda x: json.dumps(x) if isinstance(x, list) else (json.dumps([]) if x is None else str(x))
+    #                                     )
+    #                                 elif col in ['children', 'entity_ids', 'relationship_ids', 'text_unit_ids', 'document_ids']:
+    #                                     # These columns should always be lists, even if empty
+    #                                     list_columns.append(col)
+    #                                     df_for_parquet[col] = df_for_parquet[col].apply(
+    #                                         lambda x: json.dumps(x) if isinstance(x, list) else (json.dumps([]) if x is None else str(x))
+    #                                     )
+                            
+    #                         if list_columns:
+    #                             log.info(f"Converted list columns to JSON strings for parquet: {list_columns}")
+                            
+    #                         buffer = BytesIO()
+    #                         df_for_parquet.to_parquet(buffer, engine='pyarrow')
+    #                         buffer.seek(0)
+    #                         parquet_bytes = buffer.getvalue()
+    #                         log.info(f"Successfully converted DataFrame to {len(parquet_bytes)} bytes of parquet data (with JSON conversion)")
+    #                         return parquet_bytes
+    #                     except Exception as e2:
+    #                         log.exception(f"Failed to convert DataFrame to parquet bytes: {e2}")
+    #                         return b""
+                
+    #             return df
+                
+    #         finally:
+    #             await self._release_connection(conn)
+                
+    #     except Exception as e:
+    #         log.exception(f"Error retrieving data from table {table_name}: {e}")
+    #         return None
 
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Insert data into PostgreSQL table with drop/recreate to avoid duplicates."""
