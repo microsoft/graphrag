@@ -145,16 +145,27 @@ class PostgresPipelineStorage(PipelineStorage):
     def _is_scalar_na(self, value: Any) -> bool:
         """Safely check if a value is NA/null, avoiding issues with arrays."""
         try:
-            # Don't check pd.isna on complex objects or large arrays
-            if isinstance(value, (list, dict)):
-                return False
-            if hasattr(value, '__len__') and len(str(value)) > 100:
-                return False
+            # Handle arrays/lists - check if it's an array-like object
+            if hasattr(value, '__len__') and hasattr(value, '__getitem__'):
+                # For arrays, check if all elements are NA
+                if isinstance(value, (list, tuple)):
+                    return all(pd.isna(item) if not hasattr(item, '__len__') or len(str(item)) < 100 else False for item in value)
+                elif hasattr(value, 'size'):
+                    # NumPy array - be careful with large arrays
+                    if value.size > 100:
+                        return False
+                    try:
+                        return pd.isna(value).all() if value.size > 1 else pd.isna(value.item())
+                    except (ValueError, TypeError):
+                        return False
+                else:
+                    return False
+            
+            # For scalar values, use pandas isna
             return pd.isna(value)
         except (ValueError, TypeError):
             # If pd.isna fails, assume it's not NA
             return False
-
     def _prepare_data_for_postgres(self, df: pd.DataFrame, table_name: str) -> list[dict]:
         """Prepare DataFrame data for PostgreSQL insertion following CosmosDB pattern."""
         log.info(f"Preparing data for table {table_name}, DataFrame shape: {df.shape}")
@@ -176,9 +187,23 @@ class PostgresPipelineStorage(PipelineStorage):
             
             # Convert numpy types to native Python types for JSON serialization
             for key, value in record_data.items():
-                # Handle different value types carefully
-                if isinstance(value, (list, dict)):
-                    # Keep lists and dicts as-is (like text_unit_ids)
+                if key in ['text_unit_ids', 'children', 'entity_ids', 'relationship_ids', 'document_ids']:
+                    # Clean list fields during storage preparation
+                    if isinstance(value, list):
+                        record_data[key] = self._ensure_string_list(value)
+                    elif self._is_scalar_na(value) or value is None:
+                        record_data[key] = []
+                    elif hasattr(value, '__len__') and len(value) == 0:
+                        # Handle empty arrays/lists
+                        record_data[key] = []
+                    elif hasattr(value, '__len__') and len(value) > 0:
+                        # Handle non-empty arrays/lists
+                        record_data[key] = self._ensure_string_list(value.tolist() if hasattr(value, 'tolist') else list(value))
+                    else:
+                        # Handle single values or other scalar types
+                        record_data[key] = [str(value)] if str(value).strip() else []
+                elif isinstance(value, (list, dict)):
+                    # Keep other lists and dicts as-is
                     record_data[key] = value
                 elif hasattr(value, 'item') and hasattr(value, 'size') and value.size == 1:
                     # Only use .item() for numpy scalars (arrays of size 1)
@@ -186,8 +211,18 @@ class PostgresPipelineStorage(PipelineStorage):
                 elif hasattr(value, 'tolist'):
                     # Convert numpy arrays to Python lists
                     record_data[key] = value.tolist()
-                elif isinstance(value, (pd.Timestamp, pd.DatetimeTZDtype)):
-                    record_data[key] = value.isoformat() if pd.notna(value) else None
+                elif isinstance(value, pd.Timestamp):
+                    # Handle pandas Timestamp objects
+                    try:
+                        record_data[key] = value.isoformat() if not self._is_scalar_na(value) else None
+                    except AttributeError:
+                        record_data[key] = str(value) if not self._is_scalar_na(value) else None
+                elif hasattr(value, 'isoformat') and callable(getattr(value, 'isoformat', None)):
+                    # Handle other datetime-like objects
+                    try:
+                        record_data[key] = value.isoformat() if not self._is_scalar_na(value) else None
+                    except (AttributeError, TypeError):
+                        record_data[key] = str(value) if not self._is_scalar_na(value) else None
                 elif self._is_scalar_na(value):
                     # Only check pd.isna for scalar-like values
                     record_data[key] = None
@@ -205,7 +240,6 @@ class PostgresPipelineStorage(PipelineStorage):
         
         log.info(f"Prepared {len(records)} records for PostgreSQL")
         return records
-
     async def _batch_upsert_records(self, conn: Connection, table_name: str, records: list[dict]) -> None:
         """Perform high-performance batch upsert of records using executemany."""
         total_records = len(records)
@@ -276,16 +310,22 @@ class PostgresPipelineStorage(PipelineStorage):
         return iter([])
         
     def _parse_jsonb_field(self, value: Any, default_type: str = "list") -> Any:
-        """Parse JSONB field back to Python object."""
+        """Parse JSONB field back to Python object with better type consistency."""
         if value is None:
             return {} if default_type == "dict" else []
         if isinstance(value, (list, dict)):
             return value
         if isinstance(value, str):
             try:
-                return json.loads(value)
+                parsed = json.loads(value)
+                # Ensure we return the correct type
+                if default_type == "dict":
+                    return parsed if isinstance(parsed, dict) else {}
+                else:
+                    return parsed if isinstance(parsed, list) else []
             except (json.JSONDecodeError, TypeError):
                 return {} if default_type == "dict" else []
+        # For any other type (including float/NaN), return empty default
         return {} if default_type == "dict" else []
 
     def _convert_dataframe_to_parquet_bytes(self, df: pd.DataFrame) -> bytes:
@@ -299,10 +339,30 @@ class PostgresPipelineStorage(PipelineStorage):
             log.error(f"Failed to convert DataFrame to parquet bytes: {e}")
             return b""
 
+    def _ensure_string_list(self, value: Any) -> list[str]:
+        """Ensure a value is a list of strings, filtering out invalid items."""
+        if not isinstance(value, list):
+            return []
+        
+        result = []
+        for item in value:
+            # Skip None values
+            if item is None:
+                continue
+            # Skip NaN values (both float NaN and string 'nan')
+            if isinstance(item, float) and (pd.isna(item) or item != item):  # NaN check
+                continue
+            if isinstance(item, str) and item.lower() in ['nan', 'none', '']:
+                continue
+            # Convert to string and add
+            result.append(str(item))
+        
+        return result
+
     async def get(self, key: str, as_bytes: bool | None = None, encoding: str | None = None, **kwargs) -> Any:
         """Retrieve data from PostgreSQL table."""
+        table_name = self._get_table_name(key)
         try:
-            table_name = self._get_table_name(key)
             log.info(f"Retrieving data from table: {table_name}")
             
             conn = await self._get_connection()
@@ -343,24 +403,60 @@ class PostgresPipelineStorage(PipelineStorage):
                 for row in rows:
                     record_data = dict(row['data']) if isinstance(row['data'], dict) else json.loads(row['data'])
                     
-                    # Parse JSONB list fields back to proper Python lists
-                    for field in ['text_unit_ids', 'children', 'entity_ids', 'relationship_ids', 'document_ids']:
-                        if field in record_data:
-                            record_data[field] = self._parse_jsonb_field(record_data[field], "list")
+                    # Clean up the record data with better type consistency
+                    cleaned_data = {}
+                    for field_name, value in record_data.items():
+                        if field_name in ['text_unit_ids', 'children', 'entity_ids', 'relationship_ids', 'document_ids']:
+                            # These should always be lists of strings
+                            parsed_list = self._parse_jsonb_field(value, "list")
+                            # Use the robust string list converter
+                            cleaned_data[field_name] = self._ensure_string_list(parsed_list)
+                        elif field_name == 'metadata':
+                            # Metadata should be a dict
+                            cleaned_data[field_name] = self._parse_jsonb_field(value, "dict")
+                        elif self._is_scalar_na(value) or value is None:
+                            cleaned_data[field_name] = None
+                        elif isinstance(value, float) and pd.isna(value):
+                            cleaned_data[field_name] = None
+                        else:
+                            cleaned_data[field_name] = value
                     
-                    # Parse metadata as dict
-                    if 'metadata' in record_data:
-                        record_data['metadata'] = self._parse_jsonb_field(record_data['metadata'], "dict")
-                    
-                    records.append(record_data)
+                    records.append(cleaned_data)
 
                 df = pd.DataFrame(records)
+                
+                # Additional cleanup - ensure list columns are properly typed using the robust method
+                for col in ['text_unit_ids', 'children', 'entity_ids', 'relationship_ids', 'document_ids']:
+                    if col in df.columns:
+                        df[col] = df[col].apply(self._ensure_string_list)
                 
                 # Clean up NaN values
                 df = df.where(pd.notna(df), None)
 
                 log.info(f"Get table {table_name} DataFrame with shape: {df.shape}")
                 log.info(f"Get table {table_name} DataFrame columns: {df.columns.tolist()}")
+
+                # Debug: Log sample data to verify type consistency
+                if 'text_unit_ids' in df.columns and len(df) > 0:
+                    sample_ids = df['text_unit_ids'].iloc[0]
+                    log.info(f"Sample text_unit_ids: {sample_ids}, type: {type(sample_ids)}")
+                    if isinstance(sample_ids, list) and len(sample_ids) > 0:
+                        log.info(f"First item: {sample_ids[0]}, type: {type(sample_ids[0])}")
+                    
+                    # Check all values in the column for mixed types
+                    all_types = set()
+                    for idx, row_ids in enumerate(df['text_unit_ids']):
+                        if isinstance(row_ids, list):
+                            for item in row_ids:
+                                all_types.add(type(item).__name__)
+                        else:
+                            all_types.add(type(row_ids).__name__)
+                        
+                        # Log first few rows for debugging
+                        if idx < 3:
+                            log.debug(f"Row {idx} text_unit_ids: {row_ids}, types: {[type(x).__name__ for x in row_ids] if isinstance(row_ids, list) else type(row_ids).__name__}")
+                    
+                    log.info(f"All types found in text_unit_ids column: {all_types}")
 
                 # Convert to bytes if requested
                 if as_bytes or kwargs.get("as_bytes"):
@@ -372,7 +468,7 @@ class PostgresPipelineStorage(PipelineStorage):
                 await self._release_connection(conn)
                 
         except Exception as e:
-            log.exception(f"Error retrieving data from table {table_name}: {e}")
+            log.exception(f"Error retrieving data from table {table_name}: %s", e)
             return None
 
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
@@ -435,7 +531,7 @@ class PostgresPipelineStorage(PipelineStorage):
                 await self._release_connection(conn)
                 
         except Exception as e:
-            log.exception("Error setting data in PostgreSQL table %s: %s", table_name, e)
+            log.exception("Error setting data for key %s: %s", key, e)
 
     async def has(self, key: str) -> bool:
         """Check if data exists for the given key."""
@@ -458,10 +554,7 @@ class PostgresPipelineStorage(PipelineStorage):
                     total_count = await conn.fetchval(
                         f"SELECT COUNT(*) FROM {table_name}"
                     )
-                    if total_count > 0:
-                        return True
-                    else:
-                        raise ValueError(f"No records found in table {table_name} for parquet key {key}")
+                    return total_count > 0
                 else:
                     # Check for exact key match
                     exists = await conn.fetchval(
