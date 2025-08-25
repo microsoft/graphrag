@@ -239,7 +239,7 @@ class GlobalSearchDefaults:
 class StorageDefaults:
     """Default values for storage."""
 
-    type = StorageType.file
+    type: ClassVar[StorageType] = StorageType.file
     base_dir: str = DEFAULT_OUTPUT_BASE_DIR
     connection_string: None = None
     container_name: None = None

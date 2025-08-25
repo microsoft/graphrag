@@ -26,9 +26,6 @@ concurrency:
   # Only run the for the latest commit
   cancel-in-progress: true
 
-env:
-  POETRY_VERSION: 1.8.3
-
 jobs:
   python-ci:
     # skip draft PRs
@@ -54,7 +51,7 @@ jobs:
           filters: |
             python:
               - 'graphrag/**/*'
-              - 'poetry.lock'
+              - 'uv.lock'
               - 'pyproject.toml'
               - '**/*.py'
               - '**/*.toml'
@@ -66,18 +63,15 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v3.0.0
-        with:
-          poetry-version: $POETRY_VERSION
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
 
       - name: Install dependencies
         shell: bash
         run: |
-          poetry self add setuptools wheel
-          poetry run python -m pip install gensim
-          poetry install
+          uv sync --extra dev
+          uv pip install gensim
 
       - name: Notebook Test
         run: |
-          poetry run poe test_notebook
+          uv run poe test_notebook
