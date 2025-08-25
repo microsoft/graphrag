@@ -3,7 +3,6 @@
 
 """LiteLLM Rate Limiter."""
 
-import threading
 from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -16,8 +15,7 @@ class RateLimiter(ABC):
     @abstractmethod
     def __init__(
         self,
-        *,
-        processing_event: threading.Event,
+        /,
         **kwargs: Any,
     ) -> None: ...
 

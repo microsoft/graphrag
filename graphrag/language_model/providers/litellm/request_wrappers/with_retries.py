@@ -44,13 +44,11 @@ def with_retries(
     )
 
     def _wrapped_with_retries(**kwargs: Any) -> Any:
-        return retry_service.retry(model_config=model_config, func=sync_fn, **kwargs)
+        return retry_service.retry(func=sync_fn, **kwargs)
 
     async def _wrapped_with_retries_async(
         **kwargs: Any,
     ) -> Any:
-        return await retry_service.aretry(
-            model_config=model_config, func=async_fn, **kwargs
-        )
+        return await retry_service.aretry(func=async_fn, **kwargs)
 
     return (_wrapped_with_retries, _wrapped_with_retries_async)
