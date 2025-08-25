@@ -66,6 +66,7 @@ dependencies = [
     "tqdm>=4.67.1",
     "textblob>=0.18.0.post0",
     "spacy>=3.8.4",
+    "litellm>=1.76.0",
 ]
 
 [project.optional-dependencies]
