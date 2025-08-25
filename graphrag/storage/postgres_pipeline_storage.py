@@ -13,9 +13,7 @@ import numpy as np
 import pandas as pd
 import asyncpg
 from asyncpg import Connection, Pool
-import asyncio
 
-from graphrag.logger.progress import Progress
 from graphrag.storage.pipeline_storage import (
     PipelineStorage,
     get_timestamp_formatted_with_local_tz,
@@ -435,28 +433,6 @@ class PostgresPipelineStorage(PipelineStorage):
 
                 log.info(f"Get table {table_name} DataFrame with shape: {df.shape}")
                 log.info(f"Get table {table_name} DataFrame columns: {df.columns.tolist()}")
-
-                # Debug: Log sample data to verify type consistency
-                if 'text_unit_ids' in df.columns and len(df) > 0:
-                    sample_ids = df['text_unit_ids'].iloc[0]
-                    log.info(f"Sample text_unit_ids: {sample_ids}, type: {type(sample_ids)}")
-                    if isinstance(sample_ids, list) and len(sample_ids) > 0:
-                        log.info(f"First item: {sample_ids[0]}, type: {type(sample_ids[0])}")
-                    
-                    # Check all values in the column for mixed types
-                    all_types = set()
-                    for idx, row_ids in enumerate(df['text_unit_ids']):
-                        if isinstance(row_ids, list):
-                            for item in row_ids:
-                                all_types.add(type(item).__name__)
-                        else:
-                            all_types.add(type(row_ids).__name__)
-                        
-                        # Log first few rows for debugging
-                        if idx < 3:
-                            log.debug(f"Row {idx} text_unit_ids: {row_ids}, types: {[type(x).__name__ for x in row_ids] if isinstance(row_ids, list) else type(row_ids).__name__}")
-                    
-                    log.info(f"All types found in text_unit_ids column: {all_types}")
 
                 # Convert to bytes if requested
                 if as_bytes or kwargs.get("as_bytes"):
