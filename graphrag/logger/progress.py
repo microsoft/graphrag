@@ -16,9 +16,6 @@ logger = logging.getLogger(__name__)
 class Progress:
     """A class representing the progress of a task."""
 
-    percent: float | None = None
-    """0 - 1 progress"""
-
     description: str | None = None
     """Description of the progress"""
 
