@@ -29,6 +29,10 @@ def prune_graph(
     # remove ego nodes if needed
     degree = cast("DegreeView", graph.degree)
     degrees = list(degree())  # type: ignore
+    # empty graph with nothing to prune
+    if not degrees:
+        return graph
+
     if remove_ego_nodes:
         # ego node is one with highest degree
         ego_node = max(degrees, key=lambda x: x[1])
