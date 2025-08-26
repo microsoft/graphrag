@@ -93,7 +93,7 @@ async def global_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     callbacks = callbacks or []
     full_response = ""
@@ -156,7 +156,7 @@ def global_search_streaming(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     communities_ = read_indexer_communities(communities, community_reports)
     reports = read_indexer_reports(
@@ -229,7 +229,7 @@ async def multi_index_global_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     # Streaming not supported yet
     if streaming:
@@ -369,7 +369,7 @@ async def local_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     callbacks = callbacks or []
     full_response = ""
@@ -435,7 +435,7 @@ def local_search_streaming(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     vector_store_args = {}
     for index, store in config.vector_store.items():
@@ -508,7 +508,7 @@ async def multi_index_local_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     # Streaming not supported yet
     if streaming:
@@ -730,7 +730,7 @@ async def drift_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     callbacks = callbacks or []
     full_response = ""
@@ -792,7 +792,7 @@ def drift_search_streaming(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     vector_store_args = {}
     for index, store in config.vector_store.items():
@@ -872,7 +872,7 @@ async def multi_index_drift_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     # Streaming not supported yet
     if streaming:
@@ -1065,7 +1065,7 @@ async def basic_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     callbacks = callbacks or []
     full_response = ""
@@ -1111,7 +1111,7 @@ def basic_search_streaming(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     vector_store_args = {}
     for index, store in config.vector_store.items():
@@ -1164,7 +1164,7 @@ async def multi_index_basic_search(
     -------
     TODO: Document the search response type and format.
     """
-    init_loggers(config=config, verbose=verbose)
+    init_loggers(config=config, verbose=verbose, filename="query.log")
 
     # Streaming not supported yet
     if streaming:
