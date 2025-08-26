@@ -1119,7 +1119,7 @@ def basic_search_streaming(
     msg = f"Vector Store Args: {redact(vector_store_args)}"
     logger.debug(msg)
 
-    description_embedding_store = get_embedding_store(
+    embedding_store = get_embedding_store(
         config_args=vector_store_args,
         embedding_name=text_unit_text_embedding,
     )
@@ -1130,7 +1130,7 @@ def basic_search_streaming(
     search_engine = get_basic_search_engine(
         config=config,
         text_units=read_indexer_text_units(text_units),
-        text_unit_embeddings=description_embedding_store,
+        text_unit_embeddings=embedding_store,
         system_prompt=prompt,
         callbacks=callbacks,
     )
