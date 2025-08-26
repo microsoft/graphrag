@@ -61,5 +61,5 @@ def test_get_logger_types():
 
 
 def test_create_unknown_logger():
-    with pytest.raises(ValueError, match="Unknown logger type: unknown"):
+    with pytest.raises(ValueError, match="Unknown reporting type: unknown"):
         LoggerFactory.create_logger("unknown", {})
