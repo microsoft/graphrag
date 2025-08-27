@@ -104,6 +104,8 @@ isin
 nocache
 nbconvert
 levelno
+acompletion
+aembedding
 
 # HTML
 nbsp
