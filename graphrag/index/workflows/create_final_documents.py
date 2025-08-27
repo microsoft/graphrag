@@ -69,7 +69,7 @@ def create_final_documents(
     ).reset_index(drop=True)
 
     rejoined["id"] = rejoined["id"].astype(str)
-    rejoined["human_readable_id"] = rejoined.index + 1
+    rejoined["human_readable_id"] = rejoined.index
 
     if "metadata" not in rejoined.columns:
         rejoined["metadata"] = pd.Series(dtype="object")
