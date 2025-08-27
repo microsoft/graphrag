@@ -68,7 +68,7 @@ class FixedModelCompletion(Protocol):
     def __call__(
         self,
         *,
-        messages: list = [],  # type: ignore
+        messages: list = [],  # type: ignore  # noqa: B006
         stream: bool | None = None,
         stream_options: dict | None = None,  # type: ignore
         stop=None,  # type: ignore
@@ -114,7 +114,7 @@ class AFixedModelCompletion(Protocol):
         self,
         *,
         # Optional OpenAI params: see https://platform.openai.com/docs/api-reference/chat/create
-        messages: list = [],  # type: ignore
+        messages: list = [],  # type: ignore  # noqa: B006
         stream: bool | None = None,
         stream_options: dict | None = None,  # type: ignore
         stop=None,  # type: ignore
@@ -160,7 +160,7 @@ class FixedModelEmbedding(Protocol):
         self,
         *,
         request_id: str | None = None,
-        input: list = [],  # type: ignore
+        input: list = [],  # type: ignore  # noqa: B006
         # Optional params
         dimensions: int | None = None,
         encoding_format: str | None = None,
@@ -191,7 +191,7 @@ class AFixedModelEmbedding(Protocol):
         self,
         *,
         request_id: str | None = None,
-        input: list = [],  # type: ignore
+        input: list = [],  # type: ignore  # noqa: B006
         # Optional params
         dimensions: int | None = None,
         encoding_format: str | None = None,

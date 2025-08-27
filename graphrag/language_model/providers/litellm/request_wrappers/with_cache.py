@@ -65,7 +65,7 @@ def with_cache(
                 if request_type == "chat":
                     return ModelResponse(**cached_response["response"])
                 return EmbeddingResponse(**cached_response["response"])
-            except Exception:
+            except Exception:  # noqa: BLE001
                 # Try to retrieve value from cache but if it fails, continue
                 # to make the request.
                 ...
@@ -96,7 +96,7 @@ def with_cache(
                 if request_type == "chat":
                     return ModelResponse(**cached_response["response"])
                 return EmbeddingResponse(**cached_response["response"])
-            except Exception:
+            except Exception:  # noqa: BLE001
                 # Try to retrieve value from cache but if it fails, continue
                 # to make the request.
                 ...
