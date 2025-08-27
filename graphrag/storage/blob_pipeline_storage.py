@@ -61,7 +61,7 @@ class BlobPipelineStorage(PipelineStorage):
             if storage_account_blob_url
             else None
         )
-        logger.info(
+        logger.debug(
             "creating blob storage at container=%s, path=%s",
             self._container_name,
             self._path_prefix,
@@ -162,14 +162,13 @@ class BlobPipelineStorage(PipelineStorage):
                     num_filtered,
                     num_total,
                 )
-        except Exception:
-            logger.exception(
+        except Exception:  # noqa: BLE001
+            logger.warning(
                 "Error finding blobs: base_dir=%s, file_pattern=%s, file_filter=%s",
                 base_dir,
                 file_pattern,
                 file_filter,
             )
-            raise
 
     async def get(
         self, key: str, as_bytes: bool | None = False, encoding: str | None = None
@@ -185,8 +184,8 @@ class BlobPipelineStorage(PipelineStorage):
             if not as_bytes:
                 coding = encoding or self._encoding
                 blob_data = blob_data.decode(coding)
-        except Exception:
-            logger.exception("Error getting key %s", key)
+        except Exception:  # noqa: BLE001
+            logger.warning("Error getting key %s", key)
             return None
         else:
             return blob_data
@@ -303,8 +302,8 @@ class BlobPipelineStorage(PipelineStorage):
             blob_client = container_client.get_blob_client(key)
             timestamp = blob_client.download_blob().properties.creation_time
             return get_timestamp_formatted_with_local_tz(timestamp)
-        except Exception:
-            logger.exception("Error getting key %s", key)
+        except Exception:  # noqa: BLE001
+            logger.warning("Error getting key %s", key)
             return ""
 
 

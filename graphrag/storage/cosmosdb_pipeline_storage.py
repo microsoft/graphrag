@@ -71,7 +71,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             else None
         )
         self._no_id_prefixes = []
-        logger.info(
+        logger.debug(
             "creating cosmosdb storage with account: %s and database: %s and container: %s",
             self._cosmosdb_account_name,
             self._database_name,
@@ -192,8 +192,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     progress_status.completed_items,
                     progress_status.total_items,
                 )
-        except Exception:
-            logger.exception(
+        except Exception:  # noqa: BLE001
+            logger.warning(
                 "An error occurred while searching for documents in Cosmos DB."
             )
 
@@ -229,8 +229,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
             item = self._container_client.read_item(item=key, partition_key=key)
             item_body = item.get("body")
             return json.dumps(item_body)
-        except Exception:
-            logger.exception("Error reading item %s", key)
+        except Exception:  # noqa: BLE001
+            logger.warning("Error reading item %s", key)
             return None
 
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
@@ -343,8 +343,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 datetime.fromtimestamp(item["_ts"], tz=timezone.utc)
             )
 
-        except Exception:
-            logger.exception("Error getting key %s", key)
+        except Exception:  # noqa: BLE001
+            logger.warning("Error getting key %s", key)
             return ""
 
 
