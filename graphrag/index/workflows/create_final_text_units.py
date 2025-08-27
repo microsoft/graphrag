@@ -60,7 +60,7 @@ def create_final_text_units(
 ) -> pd.DataFrame:
     """All the steps to transform the text units."""
     selected = text_units.loc[:, ["id", "text", "document_ids", "n_tokens"]]
-    selected["human_readable_id"] = selected.index + 1
+    selected["human_readable_id"] = selected.index
 
     entity_join = _entities(final_entities)
     relationship_join = _relationships(final_relationships)

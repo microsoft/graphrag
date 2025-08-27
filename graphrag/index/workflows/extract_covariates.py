@@ -88,6 +88,6 @@ async def extract_covariates(
     )
     text_units.drop(columns=["text_unit_id"], inplace=True)  # don't pollute the global
     covariates["id"] = covariates["covariate_type"].apply(lambda _x: str(uuid4()))
-    covariates["human_readable_id"] = covariates.index + 1
+    covariates["human_readable_id"] = covariates.index
 
     return covariates.loc[:, COVARIATES_FINAL_COLUMNS]
