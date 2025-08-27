@@ -14,6 +14,12 @@ from graphrag.language_model.providers.fnllm.models import (
     OpenAIChatFNLLM,
     OpenAIEmbeddingFNLLM,
 )
+from graphrag.language_model.providers.bedrock_models import (
+    BedrockChatLLM,
+    BedrockEmbeddingLLM,
+    BedrockAnthropicChatLLM,
+    BedrockNovaChatLLM,
+)
 
 
 class ModelFactory:
@@ -105,10 +111,22 @@ ModelFactory.register_chat(
 ModelFactory.register_chat(
     ModelType.OpenAIChat, lambda **kwargs: OpenAIChatFNLLM(**kwargs)
 )
+ModelFactory.register_chat(
+    ModelType.BedrockChat, lambda **kwargs: BedrockChatLLM(**kwargs)
+)
+ModelFactory.register_chat(
+    ModelType.BedrockAnthropicChat, lambda **kwargs: BedrockAnthropicChatLLM(**kwargs)
+)
+ModelFactory.register_chat(
+    ModelType.BedrockNovaChat, lambda **kwargs: BedrockNovaChatLLM(**kwargs)
+)
 
 ModelFactory.register_embedding(
     ModelType.AzureOpenAIEmbedding, lambda **kwargs: AzureOpenAIEmbeddingFNLLM(**kwargs)
 )
 ModelFactory.register_embedding(
     ModelType.OpenAIEmbedding, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
+)
+ModelFactory.register_embedding(
+    ModelType.BedrockTextEmbeddingV2, lambda **kwargs: BedrockEmbeddingLLM(**kwargs)
 )
