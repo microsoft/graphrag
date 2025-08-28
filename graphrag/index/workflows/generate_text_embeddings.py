@@ -21,7 +21,7 @@ from graphrag.config.embeddings import (
 )
 from graphrag.config.get_embedding_settings import get_embedding_settings
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.operations.embed_text import embed_text
+from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import (

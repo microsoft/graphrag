@@ -1,6 +1,7 @@
 # API Notebooks
 
 - [API Overview Notebook](../../examples_notebooks/api_overview.ipynb)
+- [Bring-Your-Own Vector Store](../../examples_notebooks/custom_vector_store.ipynb)
 
 # Query Engine Notebooks
 

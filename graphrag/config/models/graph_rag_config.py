@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
+from graphrag.config.enums import VectorStoreType
 from graphrag.config.errors import LanguageModelConfigMissingError
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
@@ -36,7 +37,6 @@ from graphrag.config.models.summarize_descriptions_config import (
 from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.config.models.umap_config import UmapConfig
 from graphrag.config.models.vector_store_config import VectorStoreConfig
-from graphrag.vector_stores.factory import VectorStoreType
 
 
 class GraphRagConfig(BaseModel):

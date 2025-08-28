@@ -24,7 +24,7 @@ if not sys.platform.startswith("win"):
 async def test_find():
     storage = CosmosDBPipelineStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        database_name="testfind",
+        base_dir="testfind",
         container_name="testfindcontainer",
     )
     try:
@@ -70,7 +70,7 @@ async def test_find():
 async def test_child():
     storage = CosmosDBPipelineStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        database_name="testchild",
+        base_dir="testchild",
         container_name="testchildcontainer",
     )
     try:
@@ -83,7 +83,7 @@ async def test_child():
 async def test_clear():
     storage = CosmosDBPipelineStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        database_name="testclear",
+        base_dir="testclear",
         container_name="testclearcontainer",
     )
     try:
@@ -113,7 +113,7 @@ async def test_clear():
 async def test_get_creation_date():
     storage = CosmosDBPipelineStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        database_name="testclear",
+        base_dir="testclear",
         container_name="testclearcontainer",
     )
     try:

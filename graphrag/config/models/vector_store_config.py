@@ -6,7 +6,7 @@
 from pydantic import BaseModel, Field, model_validator
 
 from graphrag.config.defaults import vector_store_defaults
-from graphrag.vector_stores.factory import VectorStoreType
+from graphrag.config.enums import VectorStoreType
 
 
 class VectorStoreConfig(BaseModel):
