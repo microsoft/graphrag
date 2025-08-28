@@ -9,10 +9,6 @@
       
       
       
-        <link rel="prev" href="../local_search/">
-      
-      
-        <link rel="next" href="../../config/overview/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -20,7 +16,7 @@
     
     
       
-        <title>DRIFT Search - GraphRAG</title>
+        <title>Bring-Your-Own Vector Store - GraphRAG</title>
       
     
     
@@ -75,6 +71,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#bring-your-own-vector-store" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -105,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              DRIFT Search
+              Bring-Your-Own Vector Store
             
           </span>
         </div>
@@ -274,12 +275,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../../query/overview/" class="md-tabs__link">
           
   
@@ -820,29 +819,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   
@@ -855,7 +849,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             Query
@@ -981,8 +975,6 @@
                 
   
   
-    
-  
   
   
     
@@ -993,11 +985,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" >
         
           
           <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
@@ -1013,7 +1005,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4_6">
             <span class="md-nav__icon md-icon"></span>
             Notebooks
@@ -1093,17 +1085,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../drift_search/" class="md-nav__link">
         
   
   
@@ -1114,7 +1099,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1503,6 +1487,163 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-youll-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What You'll Learn
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-import-required-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: Import Required Dependencies
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-understand-the-basevectorstore-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: Understand the BaseVectorStore Interface
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-implement-a-custom-vector-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3: Implement a Custom Vector Store
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-register-the-custom-vector-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 4: Register the Custom Vector Store
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-test-the-custom-vector-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 5: Test the Custom Vector Store
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-6-configuration-for-graphrag" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 6: Configuration for GraphRAG
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-7-integration-with-graphrag-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 7: Integration with GraphRAG Pipeline
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-8-testing-and-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 8: Testing and Validation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-and-next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary and Next Steps
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Summary and Next Steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-you-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      What You Built
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-takeaways" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Takeaways
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next Steps
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resources
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1520,8 +1661,6 @@
   
   
 
-
-  <h1>DRIFT Search</h1>
 
 <script>
 (function (global, factory) {
@@ -1988,8 +2127,46 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="bring-your-own-vector-store">Bring-Your-Own Vector Store<a class="anchor-link" href="#bring-your-own-vector-store">¶</a></h1><p>This notebook demonstrates how to implement a custom vector store and register for usage with GraphRAG.</p>
+<h2 id="overview">Overview<a class="anchor-link" href="#overview">¶</a></h2><p>GraphRAG uses a plug-and-play architecture that allow for easy integration of custom vector stores (outside of what is natively supported) by following a factory design pattern. This allows you to:</p>
+<ul>
+<li><strong>Extend functionality</strong>: Add support for new vector database backends</li>
+<li><strong>Customize behavior</strong>: Implement specialized search logic or data structures</li>
+<li><strong>Integrate existing systems</strong>: Connect GraphRAG to your existing vector database infrastructure</li>
+</ul>
+<h3 id="what-youll-learn">What You'll Learn<a class="anchor-link" href="#what-youll-learn">¶</a></h3><ol>
+<li>Understanding the <code>BaseVectorStore</code> interface</li>
+<li>Implementing a custom vector store class</li>
+<li>Registering your vector store with the <code>VectorStoreFactory</code></li>
+<li>Testing and validating your implementation</li>
+<li>Configuring GraphRAG to use your custom vector store</li>
+</ol>
+<p>Let's get started!</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="step-1-import-required-dependencies">Step 1: Import Required Dependencies<a class="anchor-link" href="#step-1-import-required-dependencies">¶</a></h2><p>First, let's import the necessary GraphRAG components and other dependencies we'll need.</p>
+<div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>graphrag
+</pre></div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2007,262 +2184,53 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">tiktoken</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.models.drift_search_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DRIFTSearchConfig</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.models.language_model_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LanguageModelConfig</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.language_model.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.indexer_adapters</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">read_indexer_entities</span><span class="p">,</span>
-    <span class="n">read_indexer_relationships</span><span class="p">,</span>
-    <span class="n">read_indexer_report_embeddings</span><span class="p">,</span>
-    <span class="n">read_indexer_reports</span><span class="p">,</span>
-    <span class="n">read_indexer_text_units</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.data_model.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextEmbedder</span>
+
+<span class="c1"># GraphRAG vector store components</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.vector_stores.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseVectorStore</span><span class="p">,</span>
+    <span class="n">VectorStoreDocument</span><span class="p">,</span>
+    <span class="n">VectorStoreSearchResult</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.structured_search.drift_search.drift_context</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DRIFTSearchContextBuilder</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.structured_search.drift_search.search</span><span class="w"> </span><span class="kn">import</span> <span class="n">DRIFTSearch</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.vector_stores.lancedb</span><span class="w"> </span><span class="kn">import</span> <span class="n">LanceDBVectorStore</span>
-
-<span class="n">INPUT_DIR</span> <span class="o">=</span> <span class="s2">"./inputs/operation dulce"</span>
-<span class="n">LANCEDB_URI</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/lancedb"</span>
-
-<span class="n">COMMUNITY_REPORT_TABLE</span> <span class="o">=</span> <span class="s2">"community_reports"</span>
-<span class="n">COMMUNITY_TABLE</span> <span class="o">=</span> <span class="s2">"communities"</span>
-<span class="n">ENTITY_TABLE</span> <span class="o">=</span> <span class="s2">"entities"</span>
-<span class="n">RELATIONSHIP_TABLE</span> <span class="o">=</span> <span class="s2">"relationships"</span>
-<span class="n">COVARIATE_TABLE</span> <span class="o">=</span> <span class="s2">"covariates"</span>
-<span class="n">TEXT_UNIT_TABLE</span> <span class="o">=</span> <span class="s2">"text_units"</span>
-<span class="n">COMMUNITY_LEVEL</span> <span class="o">=</span> <span class="mi">2</span>
-
-
-<span class="c1"># read nodes table to get community and degree data</span>
-<span class="n">entity_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-<span class="n">community_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">COMMUNITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Entity df columns: </span><span class="si">{</span><span class="n">entity_df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-<span class="n">entities</span> <span class="o">=</span> <span class="n">read_indexer_entities</span><span class="p">(</span><span class="n">entity_df</span><span class="p">,</span> <span class="n">community_df</span><span class="p">,</span> <span class="n">COMMUNITY_LEVEL</span><span class="p">)</span>
-
-<span class="c1"># load description embeddings to an in-memory lancedb vectorstore</span>
-<span class="c1"># to connect to a remote db, specify url and port values.</span>
-<span class="n">description_embedding_store</span> <span class="o">=</span> <span class="n">LanceDBVectorStore</span><span class="p">(</span>
-    <span class="n">collection_name</span><span class="o">=</span><span class="s2">"default-entity-description"</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">description_embedding_store</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_uri</span><span class="o">=</span><span class="n">LANCEDB_URI</span><span class="p">)</span>
-
-<span class="n">full_content_embedding_store</span> <span class="o">=</span> <span class="n">LanceDBVectorStore</span><span class="p">(</span>
-    <span class="n">collection_name</span><span class="o">=</span><span class="s2">"default-community-full_content"</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">full_content_embedding_store</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_uri</span><span class="o">=</span><span class="n">LANCEDB_URI</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Entity count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">entity_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">entity_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-
-<span class="n">relationship_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">RELATIONSHIP_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-<span class="n">relationships</span> <span class="o">=</span> <span class="n">read_indexer_relationships</span><span class="p">(</span><span class="n">relationship_df</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Relationship count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">relationship_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">relationship_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-
-<span class="n">text_unit_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">TEXT_UNIT_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-<span class="n">text_units</span> <span class="o">=</span> <span class="n">read_indexer_text_units</span><span class="p">(</span><span class="n">text_unit_df</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Text unit records: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">text_unit_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">text_unit_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.vector_stores.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorStoreFactory</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">import os
-from pathlib import Path
+<div class="clipboard-copy-txt" id="cell-2">from typing import Any
 
-import pandas as pd
-import tiktoken
+import numpy as np
+import yaml
 
-from graphrag.config.enums import ModelType
-from graphrag.config.models.drift_search_config import DRIFTSearchConfig
-from graphrag.config.models.language_model_config import LanguageModelConfig
-from graphrag.language_model.manager import ModelManager
-from graphrag.query.indexer_adapters import (
-    read_indexer_entities,
-    read_indexer_relationships,
-    read_indexer_report_embeddings,
-    read_indexer_reports,
-    read_indexer_text_units,
+from graphrag.data_model.types import TextEmbedder
+
+# GraphRAG vector store components
+from graphrag.vector_stores.base import (
+    BaseVectorStore,
+    VectorStoreDocument,
+    VectorStoreSearchResult,
 )
-from graphrag.query.structured_search.drift_search.drift_context import (
-    DRIFTSearchContextBuilder,
-)
-from graphrag.query.structured_search.drift_search.search import DRIFTSearch
-from graphrag.vector_stores.lancedb import LanceDBVectorStore
-
-INPUT_DIR = "./inputs/operation dulce"
-LANCEDB_URI = f"{INPUT_DIR}/lancedb"
-
-COMMUNITY_REPORT_TABLE = "community_reports"
-COMMUNITY_TABLE = "communities"
-ENTITY_TABLE = "entities"
-RELATIONSHIP_TABLE = "relationships"
-COVARIATE_TABLE = "covariates"
-TEXT_UNIT_TABLE = "text_units"
-COMMUNITY_LEVEL = 2
-
-
-# read nodes table to get community and degree data
-entity_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_TABLE}.parquet")
-community_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_TABLE}.parquet")
-
-print(f"Entity df columns: {entity_df.columns}")
-
-entities = read_indexer_entities(entity_df, community_df, COMMUNITY_LEVEL)
-
-# load description embeddings to an in-memory lancedb vectorstore
-# to connect to a remote db, specify url and port values.
-description_embedding_store = LanceDBVectorStore(
-    collection_name="default-entity-description",
-)
-description_embedding_store.connect(db_uri=LANCEDB_URI)
-
-full_content_embedding_store = LanceDBVectorStore(
-    collection_name="default-community-full_content",
-)
-full_content_embedding_store.connect(db_uri=LANCEDB_URI)
-
-print(f"Entity count: {len(entity_df)}")
-entity_df.head()
-
-relationship_df = pd.read_parquet(f"{INPUT_DIR}/{RELATIONSHIP_TABLE}.parquet")
-relationships = read_indexer_relationships(relationship_df)
-
-print(f"Relationship count: {len(relationship_df)}")
-relationship_df.head()
-
-text_unit_df = pd.read_parquet(f"{INPUT_DIR}/{TEXT_UNIT_TABLE}.parquet")
-text_units = read_indexer_text_units(text_unit_df)
-
-print(f"Text unit records: {len(text_unit_df)}")
-text_unit_df.head()</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Entity df columns: Index(['id', 'human_readable_id', 'title', 'type', 'description',
-       'text_unit_ids', 'frequency', 'degree', 'x', 'y'],
-      dtype='object')
-Entity count: 18
-Relationship count: 54
-Text unit records: 5
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>human_readable_id</th>
-<th>text</th>
-<th>n_tokens</th>
-<th>document_ids</th>
-<th>entity_ids</th>
-<th>relationship_ids</th>
-<th>covariate_ids</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>8e938693af886bfd081acbbe8384c3671446bff84a134a...</td>
-<td>1</td>
-<td># Operation: Dulce\n\n## Chapter 1\n\nThe thru...</td>
-<td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[745d28dd-be20-411b-85ff-1c69ca70e7b3, 9cba185...</td>
-</tr>
-<tr>
-<th>1</th>
-<td>fd1f46d32e1df6cd429542aeda3d64ddf3745ccb80f443...</td>
-<td>2</td>
-<td>, the hollow echo of the bay a stark reminder ...</td>
-<td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[4f9b461f-5e8f-465d-9586-e2fc81787062, 0f74618...</td>
-</tr>
-<tr>
-<th>2</th>
-<td>7296d9a1f046854d59079dc183de8a054c27c4843d2979...</td>
-<td>3</td>
-<td>differently than praise from others. This was...</td>
-<td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[3ef1be9c-4080-4fac-99bd-c4a636248904, 8730b20...</td>
-</tr>
-<tr>
-<th>3</th>
-<td>ac72722a02ac71242a2a91fca323198d04197daf60515d...</td>
-<td>4</td>
-<td>contrast to the rigid silence enveloping the ...</td>
-<td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[2c292047-b79a-4958-ab57-7bf7d7a22c92, 3cbd18a...</td>
-</tr>
-<tr>
-<th>4</th>
-<td>4c277337d461a16aaf8f9760ddb8b44ef220e948a2341d...</td>
-<td>5</td>
-<td>a mask of duty.\n\nIn the midst of the descen...</td>
-<td>35</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[d084d615-3584-4ec8-9931-90aa6075c764, 4b84859...</td>
-<td>[6efdc42e-69a2-47c0-97ec-4b296cd16d5e]</td>
-<td>[db8da02f-f889-4bb5-8e81-ab2a72e380bb]</td>
-</tr>
-</tbody>
-</table>
+from graphrag.vector_stores.factory import VectorStoreFactory</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="step-2-understand-the-basevectorstore-interface">Step 2: Understand the BaseVectorStore Interface<a class="anchor-link" href="#step-2-understand-the-basevectorstore-interface">¶</a></h2><p>Before using a custom vector store, let's examine the <code>BaseVectorStore</code> interface to understand what methods need to be implemented.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2280,74 +2248,80 @@ Text unit records: 5
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"GRAPHRAG_API_KEY"</span><span class="p">]</span>
-<span class="n">llm_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"GRAPHRAG_LLM_MODEL"</span><span class="p">]</span>
-<span class="n">embedding_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"GRAPHRAG_EMBEDDING_MODEL"</span><span class="p">]</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Let's inspect the BaseVectorStore class to understand the required methods</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 
-<span class="n">chat_config</span> <span class="o">=</span> <span class="n">LanguageModelConfig</span><span class="p">(</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="n">ModelType</span><span class="o">.</span><span class="n">OpenAIChat</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">llm_model</span><span class="p">,</span>
-    <span class="n">max_retries</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">chat_model</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="p">()</span><span class="o">.</span><span class="n">get_or_create_chat_model</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">"local_search"</span><span class="p">,</span>
-    <span class="n">model_type</span><span class="o">=</span><span class="n">ModelType</span><span class="o">.</span><span class="n">OpenAIChat</span><span class="p">,</span>
-    <span class="n">config</span><span class="o">=</span><span class="n">chat_config</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"BaseVectorStore Abstract Methods:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
 
-<span class="n">token_encoder</span> <span class="o">=</span> <span class="n">tiktoken</span><span class="o">.</span><span class="n">encoding_for_model</span><span class="p">(</span><span class="n">llm_model</span><span class="p">)</span>
+<span class="n">abstract_methods</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">BaseVectorStore</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s2">"__isabstractmethod__"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+        <span class="n">abstract_methods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"• </span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">signature</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"• </span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">signature</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="n">embedding_config</span> <span class="o">=</span> <span class="n">LanguageModelConfig</span><span class="p">(</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="n">ModelType</span><span class="o">.</span><span class="n">OpenAIEmbedding</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">embedding_model</span><span class="p">,</span>
-    <span class="n">max_retries</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">text_embedder</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="p">()</span><span class="o">.</span><span class="n">get_or_create_embedding_model</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">"local_search_embedding"</span><span class="p">,</span>
-    <span class="n">model_type</span><span class="o">=</span><span class="n">ModelType</span><span class="o">.</span><span class="n">OpenAIEmbedding</span><span class="p">,</span>
-    <span class="n">config</span><span class="o">=</span><span class="n">embedding_config</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Total abstract methods to implement: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">abstract_methods</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">api_key = os.environ["GRAPHRAG_API_KEY"]
-llm_model = os.environ["GRAPHRAG_LLM_MODEL"]
-embedding_model = os.environ["GRAPHRAG_EMBEDDING_MODEL"]
+<div class="clipboard-copy-txt" id="cell-3"># Let's inspect the BaseVectorStore class to understand the required methods
+import inspect
 
-chat_config = LanguageModelConfig(
-    api_key=api_key,
-    type=ModelType.OpenAIChat,
-    model=llm_model,
-    max_retries=20,
-)
-chat_model = ModelManager().get_or_create_chat_model(
-    name="local_search",
-    model_type=ModelType.OpenAIChat,
-    config=chat_config,
-)
+print("BaseVectorStore Abstract Methods:")
+print("=" * 40)
 
-token_encoder = tiktoken.encoding_for_model(llm_model)
+abstract_methods = []
+for name, method in inspect.getmembers(BaseVectorStore, predicate=inspect.isfunction):
+    if getattr(method, "__isabstractmethod__", False):
+        signature = inspect.signature(method)
+        abstract_methods.append(f"• {name}{signature}")
+        print(f"• {name}{signature}")
 
-embedding_config = LanguageModelConfig(
-    api_key=api_key,
-    type=ModelType.OpenAIEmbedding,
-    model=embedding_model,
-    max_retries=20,
-)
+print(f"\nTotal abstract methods to implement: {len(abstract_methods)}")</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>BaseVectorStore Abstract Methods:
+========================================
+• connect(self, **kwargs: Any) -&gt; None
+• filter_by_id(self, include_ids: list[str] | list[int]) -&gt; Any
+• load_documents(self, documents: list[graphrag.vector_stores.base.VectorStoreDocument], overwrite: bool = True) -&gt; None
+• search_by_id(self, id: str) -&gt; graphrag.vector_stores.base.VectorStoreDocument
+• similarity_search_by_text(self, text: str, text_embedder: collections.abc.Callable[[str], list[float]], k: int = 10, **kwargs: Any) -&gt; list[graphrag.vector_stores.base.VectorStoreSearchResult]
+• similarity_search_by_vector(self, query_embedding: list[float], k: int = 10, **kwargs: Any) -&gt; list[graphrag.vector_stores.base.VectorStoreSearchResult]
 
-text_embedder = ModelManager().get_or_create_embedding_model(
-    name="local_search_embedding",
-    model_type=ModelType.OpenAIEmbedding,
-    config=embedding_config,
-)</div>
+Total abstract methods to implement: 6
+</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="step-3-implement-a-custom-vector-store">Step 3: Implement a Custom Vector Store<a class="anchor-link" href="#step-3-implement-a-custom-vector-store">¶</a></h2><p>Now let's implement a simple in-memory vector store as an example. This vector store will:</p>
+<ul>
+<li>Store documents and vectors in memory using Python data structures</li>
+<li>Support all required BaseVectorStore methods</li>
+</ul>
+<p><strong>Note</strong>: This is a simplified example for demonstration. Production vector stores would typically use optimized libraries like FAISS, more sophisticated indexing, and persistent storage.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2365,48 +2339,314 @@ text_embedder = ModelManager().get_or_create_embedding_model(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">read_community_reports</span><span class="p">(</span>
-    <span class="n">input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">community_report_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">COMMUNITY_REPORT_TABLE</span><span class="p">,</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Embeds the full content of the community reports and saves the DataFrame with embeddings to the output path."""</span>
-    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">community_report_table</span><span class="si">}</span><span class="s2">.parquet"</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">SimpleInMemoryVectorStore</span><span class="p">(</span><span class="n">BaseVectorStore</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A simple in-memory vector store implementation for demonstration purposes.</span>
+
+<span class="sd">    This vector store stores documents and their embeddings in memory and provides</span>
+<span class="sd">    basic similarity search functionality using cosine similarity.</span>
+
+<span class="sd">    WARNING: This is for demonstration only - not suitable for production use.</span>
+<span class="sd">    For production, consider using optimized vector databases like LanceDB,</span>
+<span class="sd">    Azure AI Search, or other specialized vector stores.</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># Internal storage for documents and vectors</span>
+    <span class="n">documents</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VectorStoreDocument</span><span class="p">]</span>
+    <span class="n">vectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="n">connected</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize the in-memory vector store."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">documents</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VectorStoreDocument</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"🚀 SimpleInMemoryVectorStore initialized for collection: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Connect to the vector storage (no-op for in-memory store)."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✅ Connected to in-memory vector store: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_documents</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">VectorStoreDocument</span><span class="p">],</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Load documents into the vector store."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Vector store not connected. Call connect() first."</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">documents</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="n">loaded_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">doc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">documents</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+                <span class="n">loaded_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"📚 Loaded </span><span class="si">{</span><span class="n">loaded_count</span><span class="si">}</span><span class="s2"> documents into vector store"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cosine_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vec1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Calculate cosine similarity between two vectors."""</span>
+        <span class="c1"># Normalize vectors</span>
+        <span class="n">norm1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vec1</span><span class="p">)</span>
+        <span class="n">norm2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vec2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">norm1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">norm2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">norm1</span> <span class="o">*</span> <span class="n">norm2</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">similarity_search_by_vector</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">query_embedding</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">VectorStoreSearchResult</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Perform similarity search using a query vector."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Vector store not connected. Call connect() first."</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">query_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">similarities</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Calculate similarity with all stored vectors</span>
+        <span class="k">for</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">stored_vec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">similarity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cosine_similarity</span><span class="p">(</span><span class="n">query_vec</span><span class="p">,</span> <span class="n">stored_vec</span><span class="p">)</span>
+            <span class="n">similarities</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">similarity</span><span class="p">))</span>
+
+        <span class="c1"># Sort by similarity (descending) and take top k</span>
+        <span class="n">similarities</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">top_k</span> <span class="o">=</span> <span class="n">similarities</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="c1"># Create search results</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">top_k</span><span class="p">:</span>
+            <span class="n">document</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">documents</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">VectorStoreSearchResult</span><span class="p">(</span><span class="n">document</span><span class="o">=</span><span class="n">document</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">similarity_search_by_text</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text_embedder</span><span class="p">:</span> <span class="n">TextEmbedder</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">VectorStoreSearchResult</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Perform similarity search using text (which gets embedded first)."""</span>
+        <span class="c1"># Embed the text first</span>
+        <span class="n">query_embedding</span> <span class="o">=</span> <span class="n">text_embedder</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="c1"># Use vector search with the embedding</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity_search_by_vector</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Build a query filter to filter documents by id.</span>
+
+<span class="sd">        For this simple implementation, we return the list of IDs as the filter.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span> <span class="k">for</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">include_ids</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VectorStoreDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Search for a document by id."""</span>
+        <span class="n">doc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">doc_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">documents</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Document with id '</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">' not found"</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">documents</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Get statistics about the vector store (custom method)."""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"collection_name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+            <span class="s2">"document_count"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">documents</span><span class="p">),</span>
+            <span class="s2">"vector_count"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">),</span>
+            <span class="s2">"connected"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected</span><span class="p">,</span>
+            <span class="s2">"vector_dimension"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span>
+            <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
 
 
-<span class="n">report_df</span> <span class="o">=</span> <span class="n">read_community_reports</span><span class="p">(</span><span class="n">INPUT_DIR</span><span class="p">)</span>
-<span class="n">reports</span> <span class="o">=</span> <span class="n">read_indexer_reports</span><span class="p">(</span>
-    <span class="n">report_df</span><span class="p">,</span>
-    <span class="n">community_df</span><span class="p">,</span>
-    <span class="n">COMMUNITY_LEVEL</span><span class="p">,</span>
-    <span class="n">content_embedding_col</span><span class="o">=</span><span class="s2">"full_content_embeddings"</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">read_indexer_report_embeddings</span><span class="p">(</span><span class="n">reports</span><span class="p">,</span> <span class="n">full_content_embedding_store</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"✅ SimpleInMemoryVectorStore class defined!"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">def read_community_reports(
-    input_dir: str,
-    community_report_table: str = COMMUNITY_REPORT_TABLE,
-):
-    """Embeds the full content of the community reports and saves the DataFrame with embeddings to the output path."""
-    input_path = Path(input_dir) / f"{community_report_table}.parquet"
-    return pd.read_parquet(input_path)
+<div class="clipboard-copy-txt" id="cell-4">class SimpleInMemoryVectorStore(BaseVectorStore):
+    """A simple in-memory vector store implementation for demonstration purposes.
+
+    This vector store stores documents and their embeddings in memory and provides
+    basic similarity search functionality using cosine similarity.
+
+    WARNING: This is for demonstration only - not suitable for production use.
+    For production, consider using optimized vector databases like LanceDB,
+    Azure AI Search, or other specialized vector stores.
+    """
+
+    # Internal storage for documents and vectors
+    documents: dict[str, VectorStoreDocument]
+    vectors: dict[str, np.ndarray]
+    connected: bool
+
+    def __init__(self, **kwargs: Any):
+        """Initialize the in-memory vector store."""
+        super().__init__(**kwargs)
+
+        self.documents: dict[str, VectorStoreDocument] = {}
+        self.vectors: dict[str, np.ndarray] = {}
+        self.connected = False
+
+        print(
+            f"🚀 SimpleInMemoryVectorStore initialized for collection: {self.collection_name}"
+        )
+
+    def connect(self, **kwargs: Any) -&gt; None:
+        """Connect to the vector storage (no-op for in-memory store)."""
+        self.connected = True
+        print(f"✅ Connected to in-memory vector store: {self.collection_name}")
+
+    def load_documents(
+        self, documents: list[VectorStoreDocument], overwrite: bool = True
+    ) -&gt; None:
+        """Load documents into the vector store."""
+        if not self.connected:
+            msg = "Vector store not connected. Call connect() first."
+            raise RuntimeError(msg)
+
+        if overwrite:
+            self.documents.clear()
+            self.vectors.clear()
+
+        loaded_count = 0
+        for doc in documents:
+            if doc.vector is not None:
+                doc_id = str(doc.id)
+                self.documents[doc_id] = doc
+                self.vectors[doc_id] = np.array(doc.vector, dtype=np.float32)
+                loaded_count += 1
+
+        print(f"📚 Loaded {loaded_count} documents into vector store")
+
+    def _cosine_similarity(self, vec1: np.ndarray, vec2: np.ndarray) -&gt; float:
+        """Calculate cosine similarity between two vectors."""
+        # Normalize vectors
+        norm1 = np.linalg.norm(vec1)
+        norm2 = np.linalg.norm(vec2)
+
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+
+        return float(np.dot(vec1, vec2) / (norm1 * norm2))
+
+    def similarity_search_by_vector(
+        self, query_embedding: list[float], k: int = 10, **kwargs: Any
+    ) -&gt; list[VectorStoreSearchResult]:
+        """Perform similarity search using a query vector."""
+        if not self.connected:
+            msg = "Vector store not connected. Call connect() first."
+            raise RuntimeError(msg)
+
+        if not self.vectors:
+            return []
+
+        query_vec = np.array(query_embedding, dtype=np.float32)
+        similarities = []
+
+        # Calculate similarity with all stored vectors
+        for doc_id, stored_vec in self.vectors.items():
+            similarity = self._cosine_similarity(query_vec, stored_vec)
+            similarities.append((doc_id, similarity))
+
+        # Sort by similarity (descending) and take top k
+        similarities.sort(key=lambda x: x[1], reverse=True)
+        top_k = similarities[:k]
+
+        # Create search results
+        results = []
+        for doc_id, score in top_k:
+            document = self.documents[doc_id]
+            result = VectorStoreSearchResult(document=document, score=score)
+            results.append(result)
+
+        return results
+
+    def similarity_search_by_text(
+        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+    ) -&gt; list[VectorStoreSearchResult]:
+        """Perform similarity search using text (which gets embedded first)."""
+        # Embed the text first
+        query_embedding = text_embedder(text)
+
+        # Use vector search with the embedding
+        return self.similarity_search_by_vector(query_embedding, k, **kwargs)
+
+    def filter_by_id(self, include_ids: list[str] | list[int]) -&gt; Any:
+        """Build a query filter to filter documents by id.
+
+        For this simple implementation, we return the list of IDs as the filter.
+        """
+        return [str(id_) for id_ in include_ids]
+
+    def search_by_id(self, id: str) -&gt; VectorStoreDocument:
+        """Search for a document by id."""
+        doc_id = str(id)
+        if doc_id not in self.documents:
+            msg = f"Document with id '{id}' not found"
+            raise KeyError(msg)
+
+        return self.documents[doc_id]
+
+    def get_stats(self) -&gt; dict[str, Any]:
+        """Get statistics about the vector store (custom method)."""
+        return {
+            "collection_name": self.collection_name,
+            "document_count": len(self.documents),
+            "vector_count": len(self.vectors),
+            "connected": self.connected,
+            "vector_dimension": len(next(iter(self.vectors.values())))
+            if self.vectors
+            else 0,
+        }
 
 
-report_df = read_community_reports(INPUT_DIR)
-reports = read_indexer_reports(
-    report_df,
-    community_df,
-    COMMUNITY_LEVEL,
-    content_embedding_col="full_content_embeddings",
-)
-read_indexer_report_embeddings(reports, full_content_embedding_store)</div>
+print("✅ SimpleInMemoryVectorStore class defined!")</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>✅ SimpleInMemoryVectorStore class defined!
+</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="step-4-register-the-custom-vector-store">Step 4: Register the Custom Vector Store<a class="anchor-link" href="#step-4-register-the-custom-vector-store">¶</a></h2><p>Now let's register our custom vector store with the <code>VectorStoreFactory</code> so it can be used throughout GraphRAG.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2424,57 +2664,64 @@ read_indexer_report_embeddings(reports, full_content_embedding_store)</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">drift_params</span> <span class="o">=</span> <span class="n">DRIFTSearchConfig</span><span class="p">(</span>
-    <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">12_000</span><span class="p">,</span>
-    <span class="n">primer_folds</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">drift_k_followups</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">n_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Register our custom vector store with a unique identifier</span>
+<span class="n">CUSTOM_VECTOR_STORE_TYPE</span> <span class="o">=</span> <span class="s2">"simple_memory"</span>
 
-<span class="n">context_builder</span> <span class="o">=</span> <span class="n">DRIFTSearchContextBuilder</span><span class="p">(</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">chat_model</span><span class="p">,</span>
-    <span class="n">text_embedder</span><span class="o">=</span><span class="n">text_embedder</span><span class="p">,</span>
-    <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span>
-    <span class="n">relationships</span><span class="o">=</span><span class="n">relationships</span><span class="p">,</span>
-    <span class="n">reports</span><span class="o">=</span><span class="n">reports</span><span class="p">,</span>
-    <span class="n">entity_text_embeddings</span><span class="o">=</span><span class="n">description_embedding_store</span><span class="p">,</span>
-    <span class="n">text_units</span><span class="o">=</span><span class="n">text_units</span><span class="p">,</span>
-    <span class="n">token_encoder</span><span class="o">=</span><span class="n">token_encoder</span><span class="p">,</span>
-    <span class="n">config</span><span class="o">=</span><span class="n">drift_params</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="c1"># Register the vector store class</span>
+<span class="n">VectorStoreFactory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span> <span class="n">SimpleInMemoryVectorStore</span><span class="p">)</span>
 
-<span class="n">search</span> <span class="o">=</span> <span class="n">DRIFTSearch</span><span class="p">(</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">chat_model</span><span class="p">,</span> <span class="n">context_builder</span><span class="o">=</span><span class="n">context_builder</span><span class="p">,</span> <span class="n">token_encoder</span><span class="o">=</span><span class="n">token_encoder</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✅ Registered custom vector store with type: '</span><span class="si">{</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+
+<span class="c1"># Verify registration</span>
+<span class="n">available_types</span> <span class="o">=</span> <span class="n">VectorStoreFactory</span><span class="o">.</span><span class="n">get_vector_store_types</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">📋 Available vector store types: </span><span class="si">{</span><span class="n">available_types</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">"🔍 Is our custom type supported? </span><span class="si">{</span><span class="n">VectorStoreFactory</span><span class="o">.</span><span class="n">is_supported_type</span><span class="p">(</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5">drift_params = DRIFTSearchConfig(
-    temperature=0,
-    max_tokens=12_000,
-    primer_folds=1,
-    drift_k_followups=3,
-    n_depth=3,
-    n=1,
-)
+<div class="clipboard-copy-txt" id="cell-5"># Register our custom vector store with a unique identifier
+CUSTOM_VECTOR_STORE_TYPE = "simple_memory"
 
-context_builder = DRIFTSearchContextBuilder(
-    model=chat_model,
-    text_embedder=text_embedder,
-    entities=entities,
-    relationships=relationships,
-    reports=reports,
-    entity_text_embeddings=description_embedding_store,
-    text_units=text_units,
-    token_encoder=token_encoder,
-    config=drift_params,
-)
+# Register the vector store class
+VectorStoreFactory.register(CUSTOM_VECTOR_STORE_TYPE, SimpleInMemoryVectorStore)
 
-search = DRIFTSearch(
-    model=chat_model, context_builder=context_builder, token_encoder=token_encoder
+print(f"✅ Registered custom vector store with type: '{CUSTOM_VECTOR_STORE_TYPE}'")
+
+# Verify registration
+available_types = VectorStoreFactory.get_vector_store_types()
+print(f"\n📋 Available vector store types: {available_types}")
+print(
+    f"🔍 Is our custom type supported? {VectorStoreFactory.is_supported_type(CUSTOM_VECTOR_STORE_TYPE)}"
 )</div>
 </div>
 </div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>✅ Registered custom vector store with type: 'simple_memory'
+
+📋 Available vector store types: ['lancedb', 'azure_ai_search', 'cosmosdb', 'simple_memory']
+🔍 Is our custom type supported? True
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="step-5-test-the-custom-vector-store">Step 5: Test the Custom Vector Store<a class="anchor-link" href="#step-5-test-the-custom-vector-store">¶</a></h2><p>Let's create some sample data and test our custom vector store implementation.</p>
 </div>
 </div>
 </div>
@@ -2497,9 +2744,77 @@ search = DRIFTSearch(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">"Who is agent Mercer?"</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Create sample documents with mock embeddings</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_mock_embedding</span><span class="p">(</span><span class="n">dimension</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">384</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Create a random embedding vector for testing."""</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dimension</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+
+<span class="c1"># Sample documents</span>
+<span class="n">sample_documents</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">VectorStoreDocument</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">"doc_1"</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="s2">"GraphRAG is a powerful knowledge graph extraction and reasoning framework."</span><span class="p">,</span>
+        <span class="n">vector</span><span class="o">=</span><span class="n">create_mock_embedding</span><span class="p">(),</span>
+        <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"category"</span><span class="p">:</span> <span class="s2">"technology"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">:</span> <span class="s2">"documentation"</span><span class="p">},</span>
+    <span class="p">),</span>
+    <span class="n">VectorStoreDocument</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">"doc_2"</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="s2">"Vector stores enable efficient similarity search over high-dimensional data."</span><span class="p">,</span>
+        <span class="n">vector</span><span class="o">=</span><span class="n">create_mock_embedding</span><span class="p">(),</span>
+        <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"category"</span><span class="p">:</span> <span class="s2">"technology"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">:</span> <span class="s2">"research"</span><span class="p">},</span>
+    <span class="p">),</span>
+    <span class="n">VectorStoreDocument</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">"doc_3"</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="s2">"Machine learning models can process and understand natural language text."</span><span class="p">,</span>
+        <span class="n">vector</span><span class="o">=</span><span class="n">create_mock_embedding</span><span class="p">(),</span>
+        <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"category"</span><span class="p">:</span> <span class="s2">"AI"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">:</span> <span class="s2">"article"</span><span class="p">},</span>
+    <span class="p">),</span>
+    <span class="n">VectorStoreDocument</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">"doc_4"</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="s2">"Custom implementations allow for specialized behavior and integration."</span><span class="p">,</span>
+        <span class="n">vector</span><span class="o">=</span><span class="n">create_mock_embedding</span><span class="p">(),</span>
+        <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"category"</span><span class="p">:</span> <span class="s2">"development"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">:</span> <span class="s2">"tutorial"</span><span class="p">},</span>
+    <span class="p">),</span>
+<span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"📝 Created </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_documents</span><span class="p">)</span><span class="si">}</span><span class="s2"> sample documents"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-6">resp = await search.search("Who is agent Mercer?")</div>
+<div class="clipboard-copy-txt" id="cell-6"># Create sample documents with mock embeddings
+def create_mock_embedding(dimension: int = 384) -&gt; list[float]:
+    """Create a random embedding vector for testing."""
+    return np.random.normal(0, 1, dimension).tolist()
+
+
+# Sample documents
+sample_documents = [
+    VectorStoreDocument(
+        id="doc_1",
+        text="GraphRAG is a powerful knowledge graph extraction and reasoning framework.",
+        vector=create_mock_embedding(),
+        attributes={"category": "technology", "source": "documentation"},
+    ),
+    VectorStoreDocument(
+        id="doc_2",
+        text="Vector stores enable efficient similarity search over high-dimensional data.",
+        vector=create_mock_embedding(),
+        attributes={"category": "technology", "source": "research"},
+    ),
+    VectorStoreDocument(
+        id="doc_3",
+        text="Machine learning models can process and understand natural language text.",
+        vector=create_mock_embedding(),
+        attributes={"category": "AI", "source": "article"},
+    ),
+    VectorStoreDocument(
+        id="doc_4",
+        text="Custom implementations allow for specialized behavior and integration.",
+        vector=create_mock_embedding(),
+        attributes={"category": "development", "source": "tutorial"},
+    ),
+]
+
+print(f"📝 Created {len(sample_documents)} sample documents")</div>
 </div>
 </div>
 </div>
@@ -2510,197 +2825,9 @@ search = DRIFTSearch(
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>  0%|          | 0/1 [00:00&lt;?, ?it/s]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>100%|██████████| 1/1 [00:11&lt;00:00, 11.48s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                             </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre></pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>  0%|          | 0/3 [00:00&lt;?, ?it/s]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>📝 Created 4 sample documents
 </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 33%|███▎      | 1/3 [00:15&lt;00:30, 15.40s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 67%|██████▋   | 2/3 [00:17&lt;00:07,  7.43s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>100%|██████████| 3/3 [00:18&lt;00:00,  4.82s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                             </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre></pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>  0%|          | 0/3 [00:00&lt;?, ?it/s]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 33%|███▎      | 1/3 [00:11&lt;00:22, 11.49s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 67%|██████▋   | 2/3 [00:12&lt;00:05,  5.05s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>100%|██████████| 3/3 [00:24&lt;00:00,  8.31s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                             </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre></pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>  0%|          | 0/3 [00:00&lt;?, ?it/s]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 33%|███▎      | 1/3 [00:13&lt;00:26, 13.42s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 67%|██████▋   | 2/3 [00:13&lt;00:05,  5.73s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>100%|██████████| 3/3 [00:14&lt;00:00,  3.62s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                             </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre></pre>
 </div>
 </div>
 </div>
@@ -2725,9 +2852,27 @@ search = DRIFTSearch(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">resp</span><span class="o">.</span><span class="n">response</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Test creating vector store using the factory</span>
+<span class="n">vector_store_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"collection_name"</span><span class="p">:</span> <span class="s2">"test_collection"</span><span class="p">}</span>
+
+<span class="c1"># Create vector store instance using factory</span>
+<span class="n">vector_store</span> <span class="o">=</span> <span class="n">VectorStoreFactory</span><span class="o">.</span><span class="n">create_vector_store</span><span class="p">(</span>
+    <span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span> <span class="n">vector_store_config</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✅ Created vector store instance: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">vector_store</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"📊 Initial stats: </span><span class="si">{</span><span class="n">vector_store</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-7">resp.response</div>
+<div class="clipboard-copy-txt" id="cell-7"># Test creating vector store using the factory
+vector_store_config = {"collection_name": "test_collection"}
+
+# Create vector store instance using factory
+vector_store = VectorStoreFactory.create_vector_store(
+    CUSTOM_VECTOR_STORE_TYPE, vector_store_config
+)
+
+print(f"✅ Created vector store instance: {type(vector_store).__name__}")
+print(f"📊 Initial stats: {vector_store.get_stats()}")</div>
 </div>
 </div>
 </div>
@@ -2736,10 +2881,13 @@ search = DRIFTSearch(
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>"Agent Alex Mercer is a pivotal figure within the Paranormal Military Squad, playing a crucial role in Operation: Dulce. This operation involves the exploration and investigation of the Dulce base, which is associated with advanced alien technology. Mercer's role is multifaceted, encompassing leadership, mentorship, and active participation in the mission's objectives [Data: Reports (0)].\n\n### Leadership and Mentorship\nMercer is noted for his leadership style that emphasizes intuition, trust, and mentorship. He serves as a mentor to Sam Rivera, a cybersecurity expert within the squad, highlighting his focus on nurturing talent and fostering a collaborative environment [Data: Reports (0, 1)]. His leadership is characterized by flexibility and openness to adapting to the unknown, valuing the analytical insights of team members like Dr. Jordan Hayes [Data: Reports (0, 1)].\n\n### Role in Operation: Dulce\nMercer's involvement in the exploration of the Dulce base is critical. He works closely with other key agents, such as Taylor Cruz and Jordan Hayes, balancing differing perspectives and expertise. While Cruz is known for a more authoritative and protocol-driven approach, Mercer's emphasis on adaptability and intuition provides a necessary balance for the mission's success [Data: Reports (0, 1)].\n\n### Challenges and Impact\nMercer faces several challenges during the mission, including navigating complex team dynamics and the psychological pressures of dealing with alien technology. His ability to maintain clear-headedness and adaptability is crucial in overcoming these challenges [Data: Reports (2)]. The outcomes of Operation: Dulce could have significant long-term implications for Mercer's career, potentially elevating his status within the military and scientific communities [Data: Reports (3)].\n\nOverall, Agent Alex Mercer is a key figure whose leadership, mentorship, and active participation are integral to the success of Operation: Dulce, making him a central character in the narrative of this high-stakes mission [Data: Reports (0)]."</pre>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>🚀 SimpleInMemoryVectorStore initialized for collection: test_collection
+✅ Created vector store instance: SimpleInMemoryVectorStore
+📊 Initial stats: {'collection_name': 'test_collection', 'document_count': 0, 'vector_count': 0, 'connected': False, 'vector_dimension': 0}
+</pre>
 </div>
 </div>
 </div>
@@ -2764,9 +2912,17 @@ search = DRIFTSearch(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">context_data</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Connect and load documents</span>
+<span class="n">vector_store</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">vector_store</span><span class="o">.</span><span class="n">load_documents</span><span class="p">(</span><span class="n">sample_documents</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"📊 Updated stats: </span><span class="si">{</span><span class="n">vector_store</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-8">print(resp.context_data)</div>
+<div class="clipboard-copy-txt" id="cell-8"># Connect and load documents
+vector_store.connect()
+vector_store.load_documents(sample_documents)
+
+print(f"📊 Updated stats: {vector_store.get_stats()}")</div>
 </div>
 </div>
 </div>
@@ -2778,109 +2934,681 @@ search = DRIFTSearch(
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>{"How does Agent Mercer's leadership style differ from that of Agent Taylor Cruz?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-1  2   differently than praise from others. This was...
-2  3   contrast to the rigid silence enveloping the ...
-3  1  , the hollow echo of the bay a stark reminder ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, 'What specific challenges did Agent Mercer face during Operation: Dulce?': {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  2   differently than praise from others. This was...
-1  3   contrast to the rigid silence enveloping the ...
-2  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-3  1  , the hollow echo of the bay a stark reminder ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, "What are the long-term implications of Operation: Dulce for Agent Mercer's career?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  3   contrast to the rigid silence enveloping the ...
-1  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-2  1  , the hollow echo of the bay a stark reminder ...
-3  2   differently than praise from others. This was...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, 'What specific events during Operation: Dulce highlight the differences in leadership between Mercer and Cruz?': {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  3   contrast to the rigid silence enveloping the ...
-1  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-2  1  , the hollow echo of the bay a stark reminder ...
-3  2   differently than praise from others. This was...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, "Are there any instances where Mercer's and Cruz's leadership styles complement each other?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  2   differently than praise from others. This was...
-1  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-2  3   contrast to the rigid silence enveloping the ...
-3  1  , the hollow echo of the bay a stark reminder ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, "How did Agent Mercer's leadership style differ from Taylor Cruz's during the mission?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-1  2   differently than praise from others. This was...
-2  3   contrast to the rigid silence enveloping the ...
-3  1  , the hollow echo of the bay a stark reminder ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, "How did the team dynamics affect the mission's outcome?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  1  , the hollow echo of the bay a stark reminder ...
-1  2   differently than praise from others. This was...
-2  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-3  3   contrast to the rigid silence enveloping the ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, 'What specific technical challenges did the team face with the alien technology?': {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  3   contrast to the rigid silence enveloping the ...
-1  1  , the hollow echo of the bay a stark reminder ...
-2  2   differently than praise from others. This was...
-3  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, "In what ways did Jordan Hayes' scientific expertise contribute to the mission's success?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-1  2   differently than praise from others. This was...
-2  3   contrast to the rigid silence enveloping the ...
-3  1  , the hollow echo of the bay a stark reminder ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}}
+<pre>✅ Connected to in-memory vector store: test_collection
+📚 Loaded 4 documents into vector store
+📊 Updated stats: {'collection_name': 'test_collection', 'document_count': 4, 'vector_count': 4, 'connected': True, 'vector_dimension': 384}
 </pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-9">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Test similarity search</span>
+<span class="n">query_vector</span> <span class="o">=</span> <span class="n">create_mock_embedding</span><span class="p">()</span>  <span class="c1"># Random query vector for testing</span>
+
+<span class="n">search_results</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">similarity_search_by_vector</span><span class="p">(</span>
+    <span class="n">query_vector</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># Get top 3 similar documents</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"🔍 Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">search_results</span><span class="p">)</span><span class="si">}</span><span class="s2"> similar documents:</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">search_results</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">document</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">. ID: </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   Text: </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">[:</span><span class="mi">60</span><span class="p">]</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   Similarity Score: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">score</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   Category: </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'category'</span><span class="p">,</span><span class="w"> </span><span class="s1">'N/A'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-9"># Test similarity search
+query_vector = create_mock_embedding()  # Random query vector for testing
+
+search_results = vector_store.similarity_search_by_vector(
+    query_vector,
+    k=3,  # Get top 3 similar documents
+)
+
+print(f"🔍 Found {len(search_results)} similar documents:\n")
+
+for i, result in enumerate(search_results, 1):
+    doc = result.document
+    print(f"{i}. ID: {doc.id}")
+    print(f"   Text: {doc.text[:60]}...")
+    print(f"   Similarity Score: {result.score:.4f}")
+    print(f"   Category: {doc.attributes.get('category', 'N/A')}")
+    print()</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>🔍 Found 3 similar documents:
+
+1. ID: doc_3
+   Text: Machine learning models can process and understand natural l...
+   Similarity Score: -0.0021
+   Category: AI
+
+2. ID: doc_1
+   Text: GraphRAG is a powerful knowledge graph extraction and reason...
+   Similarity Score: -0.0240
+   Category: technology
+
+3. ID: doc_2
+   Text: Vector stores enable efficient similarity search over high-d...
+   Similarity Score: -0.0463
+   Category: technology
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-10">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Test search by ID</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">found_doc</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">search_by_id</span><span class="p">(</span><span class="s2">"doc_2"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Found document by ID:"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   ID: </span><span class="si">{</span><span class="n">found_doc</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   Text: </span><span class="si">{</span><span class="n">found_doc</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   Attributes: </span><span class="si">{</span><span class="n">found_doc</span><span class="o">.</span><span class="n">attributes</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"❌ Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># Test filter by ID</span>
+<span class="n">id_filter</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">filter_by_id</span><span class="p">([</span><span class="s2">"doc_1"</span><span class="p">,</span> <span class="s2">"doc_3"</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">🔧 ID filter result: </span><span class="si">{</span><span class="n">id_filter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-10"># Test search by ID
+try:
+    found_doc = vector_store.search_by_id("doc_2")
+    print("✅ Found document by ID:")
+    print(f"   ID: {found_doc.id}")
+    print(f"   Text: {found_doc.text}")
+    print(f"   Attributes: {found_doc.attributes}")
+except KeyError as e:
+    print(f"❌ Error: {e}")
+
+# Test filter by ID
+id_filter = vector_store.filter_by_id(["doc_1", "doc_3"])
+print(f"\n🔧 ID filter result: {id_filter}")</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>✅ Found document by ID:
+   ID: doc_2
+   Text: Vector stores enable efficient similarity search over high-dimensional data.
+   Attributes: {'category': 'technology', 'source': 'research'}
+
+🔧 ID filter result: ['doc_1', 'doc_3']
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="step-6-configuration-for-graphrag">Step 6: Configuration for GraphRAG<a class="anchor-link" href="#step-6-configuration-for-graphrag">¶</a></h2><p>Now let's see how you would configure GraphRAG to use your custom vector store in a settings file.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-11">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Example GraphRAG yaml settings</span>
+<span class="n">example_settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"vector_store"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"default_vector_store"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span>  <span class="c1"># "simple_memory"</span>
+            <span class="s2">"collection_name"</span><span class="p">:</span> <span class="s2">"graphrag_entities"</span><span class="p">,</span>
+            <span class="c1"># Add any custom parameters your vector store needs</span>
+            <span class="s2">"custom_parameter"</span><span class="p">:</span> <span class="s2">"custom_value"</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="c1"># Other GraphRAG configuration...</span>
+    <span class="s2">"models"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"default_embedding_model"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"openai_embedding"</span><span class="p">,</span>
+            <span class="s2">"model"</span><span class="p">:</span> <span class="s2">"text-embedding-3-small"</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="c1"># Convert to YAML format for settings.yml</span>
+<span class="n">yaml_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">example_settings</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"📄 Example settings.yml configuration:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">yaml_config</span><span class="p">)</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-11"># Example GraphRAG yaml settings
+example_settings = {
+    "vector_store": {
+        "default_vector_store": {
+            "type": CUSTOM_VECTOR_STORE_TYPE,  # "simple_memory"
+            "collection_name": "graphrag_entities",
+            # Add any custom parameters your vector store needs
+            "custom_parameter": "custom_value",
+        }
+    },
+    # Other GraphRAG configuration...
+    "models": {
+        "default_embedding_model": {
+            "type": "openai_embedding",
+            "model": "text-embedding-3-small",
+        }
+    },
+}
+
+# Convert to YAML format for settings.yml
+yaml_config = yaml.dump(example_settings, default_flow_style=False, indent=2)
+
+print("📄 Example settings.yml configuration:")
+print("=" * 40)
+print(yaml_config)</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>📄 Example settings.yml configuration:
+========================================
+models:
+  default_embedding_model:
+    model: text-embedding-3-small
+    type: openai_embedding
+vector_store:
+  default_vector_store:
+    collection_name: graphrag_entities
+    custom_parameter: custom_value
+    type: simple_memory
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="step-7-integration-with-graphrag-pipeline">Step 7: Integration with GraphRAG Pipeline<a class="anchor-link" href="#step-7-integration-with-graphrag-pipeline">¶</a></h2><p>Here's how your custom vector store would be used in a typical GraphRAG pipeline.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-12">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Example of how GraphRAG would use your custom vector store</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_graphrag_pipeline</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Simulate how GraphRAG would use the custom vector store."""</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"🚀 Simulating GraphRAG pipeline with custom vector store...</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="c1"># 1. GraphRAG creates vector store using factory</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"collection_name"</span><span class="p">:</span> <span class="s2">"graphrag_entities"</span><span class="p">,</span> <span class="s2">"similarity_threshold"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">}</span>
+
+    <span class="n">store</span> <span class="o">=</span> <span class="n">VectorStoreFactory</span><span class="o">.</span><span class="n">create_vector_store</span><span class="p">(</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+    <span class="n">store</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Step 1: Vector store created and connected"</span><span class="p">)</span>
+
+    <span class="c1"># 2. During indexing, GraphRAG loads extracted entities</span>
+    <span class="n">entity_documents</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">VectorStoreDocument</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="sa">f</span><span class="s2">"entity_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Entity </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> description: Important concept in the knowledge graph"</span><span class="p">,</span>
+            <span class="n">vector</span><span class="o">=</span><span class="n">create_mock_embedding</span><span class="p">(),</span>
+            <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"entity"</span><span class="p">,</span> <span class="s2">"importance"</span><span class="p">:</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="n">store</span><span class="o">.</span><span class="n">load_documents</span><span class="p">(</span><span class="n">entity_documents</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✅ Step 2: Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">entity_documents</span><span class="p">)</span><span class="si">}</span><span class="s2"> entity documents"</span><span class="p">)</span>
+
+    <span class="c1"># 3. During query time, GraphRAG searches for relevant entities</span>
+    <span class="n">query_embedding</span> <span class="o">=</span> <span class="n">create_mock_embedding</span><span class="p">()</span>
+    <span class="n">relevant_entities</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">similarity_search_by_vector</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✅ Step 3: Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">relevant_entities</span><span class="p">)</span><span class="si">}</span><span class="s2"> relevant entities for query"</span><span class="p">)</span>
+
+    <span class="c1"># 4. GraphRAG uses these entities for context building</span>
+    <span class="n">context_entities</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">document</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">relevant_entities</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Step 4: Context built using retrieved entities"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"📊 Final stats: </span><span class="si">{</span><span class="n">store</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">context_entities</span>
+
+
+<span class="c1"># Run the simulation</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">simulate_graphrag_pipeline</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">🎯 Retrieved </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="si">}</span><span class="s2"> entities for context building"</span><span class="p">)</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-12"># Example of how GraphRAG would use your custom vector store
+def simulate_graphrag_pipeline():
+    """Simulate how GraphRAG would use the custom vector store."""
+    print("🚀 Simulating GraphRAG pipeline with custom vector store...\n")
+
+    # 1. GraphRAG creates vector store using factory
+    config = {"collection_name": "graphrag_entities", "similarity_threshold": 0.3}
+
+    store = VectorStoreFactory.create_vector_store(CUSTOM_VECTOR_STORE_TYPE, config)
+    store.connect()
+
+    print("✅ Step 1: Vector store created and connected")
+
+    # 2. During indexing, GraphRAG loads extracted entities
+    entity_documents = [
+        VectorStoreDocument(
+            id=f"entity_{i}",
+            text=f"Entity {i} description: Important concept in the knowledge graph",
+            vector=create_mock_embedding(),
+            attributes={"type": "entity", "importance": i % 3 + 1},
+        )
+        for i in range(10)
+    ]
+
+    store.load_documents(entity_documents)
+    print(f"✅ Step 2: Loaded {len(entity_documents)} entity documents")
+
+    # 3. During query time, GraphRAG searches for relevant entities
+    query_embedding = create_mock_embedding()
+    relevant_entities = store.similarity_search_by_vector(query_embedding, k=5)
+
+    print(f"✅ Step 3: Found {len(relevant_entities)} relevant entities for query")
+
+    # 4. GraphRAG uses these entities for context building
+    context_entities = [result.document for result in relevant_entities]
+
+    print("✅ Step 4: Context built using retrieved entities")
+    print(f"📊 Final stats: {store.get_stats()}")
+
+    return context_entities
+
+
+# Run the simulation
+context = simulate_graphrag_pipeline()
+print(f"\n🎯 Retrieved {len(context)} entities for context building")</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>🚀 Simulating GraphRAG pipeline with custom vector store...
+
+🚀 SimpleInMemoryVectorStore initialized for collection: graphrag_entities
+✅ Connected to in-memory vector store: graphrag_entities
+✅ Step 1: Vector store created and connected
+📚 Loaded 10 documents into vector store
+✅ Step 2: Loaded 10 entity documents
+✅ Step 3: Found 5 relevant entities for query
+✅ Step 4: Context built using retrieved entities
+📊 Final stats: {'collection_name': 'graphrag_entities', 'document_count': 10, 'vector_count': 10, 'connected': True, 'vector_dimension': 384}
+
+🎯 Retrieved 5 entities for context building
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="step-8-testing-and-validation">Step 8: Testing and Validation<a class="anchor-link" href="#step-8-testing-and-validation">¶</a></h2><p>Let's create a comprehensive test suite to ensure our vector store works correctly.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-13">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_custom_vector_store</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Comprehensive test suite for the custom vector store."""</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"🧪 Running comprehensive vector store tests...</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="c1"># Test 1: Basic functionality</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Test 1: Basic functionality"</span><span class="p">)</span>
+    <span class="n">store</span> <span class="o">=</span> <span class="n">VectorStoreFactory</span><span class="o">.</span><span class="n">create_vector_store</span><span class="p">(</span>
+        <span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span> <span class="p">{</span><span class="s2">"collection_name"</span><span class="p">:</span> <span class="s2">"test"</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">store</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+    <span class="c1"># Load test documents</span>
+    <span class="n">test_docs</span> <span class="o">=</span> <span class="n">sample_documents</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">store</span><span class="o">.</span><span class="n">load_documents</span><span class="p">(</span><span class="n">test_docs</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">documents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Should have 2 documents"</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">vectors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Should have 2 vectors"</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Basic functionality test passed"</span><span class="p">)</span>
+
+    <span class="c1"># Test 2: Search functionality</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Test 2: Search functionality"</span><span class="p">)</span>
+    <span class="n">query_vec</span> <span class="o">=</span> <span class="n">create_mock_embedding</span><span class="p">()</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">similarity_search_by_vector</span><span class="p">(</span><span class="n">query_vec</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Should not return more results than documents"</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">VectorStoreSearchResult</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">),</span> <span class="p">(</span>
+        <span class="s2">"Should return VectorStoreSearchResult objects"</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="o">.</span><span class="n">score</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">),</span> <span class="p">(</span>
+        <span class="s2">"Similarity scores should be between -1 and 1"</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Search functionality test passed"</span><span class="p">)</span>
+
+    <span class="c1"># Test 3: Search by ID</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Test 3: Search by ID"</span><span class="p">)</span>
+    <span class="n">found_doc</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">search_by_id</span><span class="p">(</span><span class="s2">"doc_1"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">found_doc</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">"doc_1"</span><span class="p">,</span> <span class="s2">"Should find correct document"</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">store</span><span class="o">.</span><span class="n">search_by_id</span><span class="p">(</span><span class="s2">"nonexistent"</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"Should raise KeyError for nonexistent ID"</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># Expected</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Search by ID test passed"</span><span class="p">)</span>
+
+    <span class="c1"># Test 4: Filter functionality</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Test 4: Filter functionality"</span><span class="p">)</span>
+    <span class="n">filter_result</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">filter_by_id</span><span class="p">([</span><span class="s2">"doc_1"</span><span class="p">,</span> <span class="s2">"doc_2"</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">filter_result</span> <span class="o">==</span> <span class="p">[</span><span class="s2">"doc_1"</span><span class="p">,</span> <span class="s2">"doc_2"</span><span class="p">],</span> <span class="s2">"Should return filtered IDs"</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Filter functionality test passed"</span><span class="p">)</span>
+
+    <span class="c1"># Test 5: Error handling</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Test 5: Error handling"</span><span class="p">)</span>
+    <span class="n">disconnected_store</span> <span class="o">=</span> <span class="n">VectorStoreFactory</span><span class="o">.</span><span class="n">create_vector_store</span><span class="p">(</span>
+        <span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span> <span class="p">{</span><span class="s2">"collection_name"</span><span class="p">:</span> <span class="s2">"test2"</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">disconnected_store</span><span class="o">.</span><span class="n">load_documents</span><span class="p">(</span><span class="n">test_docs</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"Should raise error when not connected"</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># Expected</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">disconnected_store</span><span class="o">.</span><span class="n">similarity_search_by_vector</span><span class="p">(</span><span class="n">query_vec</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"Should raise error when not connected"</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># Expected</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Error handling test passed"</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">🎉 All tests passed! Your custom vector store is working correctly."</span><span class="p">)</span>
+
+
+<span class="c1"># Run the tests</span>
+<span class="n">test_custom_vector_store</span><span class="p">()</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-13">def test_custom_vector_store():
+    """Comprehensive test suite for the custom vector store."""
+    print("🧪 Running comprehensive vector store tests...\n")
+
+    # Test 1: Basic functionality
+    print("Test 1: Basic functionality")
+    store = VectorStoreFactory.create_vector_store(
+        CUSTOM_VECTOR_STORE_TYPE, {"collection_name": "test"}
+    )
+    store.connect()
+
+    # Load test documents
+    test_docs = sample_documents[:2]
+    store.load_documents(test_docs)
+
+    assert len(store.documents) == 2, "Should have 2 documents"
+    assert len(store.vectors) == 2, "Should have 2 vectors"
+    print("✅ Basic functionality test passed")
+
+    # Test 2: Search functionality
+    print("\nTest 2: Search functionality")
+    query_vec = create_mock_embedding()
+    results = store.similarity_search_by_vector(query_vec, k=5)
+
+    assert len(results) &lt;= 2, "Should not return more results than documents"
+    assert all(isinstance(r, VectorStoreSearchResult) for r in results), (
+        "Should return VectorStoreSearchResult objects"
+    )
+    assert all(-1 &lt;= r.score &lt;= 1 for r in results), (
+        "Similarity scores should be between -1 and 1"
+    )
+    print("✅ Search functionality test passed")
+
+    # Test 3: Search by ID
+    print("\nTest 3: Search by ID")
+    found_doc = store.search_by_id("doc_1")
+    assert found_doc.id == "doc_1", "Should find correct document"
+
+    try:
+        store.search_by_id("nonexistent")
+        assert False, "Should raise KeyError for nonexistent ID"
+    except KeyError:
+        pass  # Expected
+
+    print("✅ Search by ID test passed")
+
+    # Test 4: Filter functionality
+    print("\nTest 4: Filter functionality")
+    filter_result = store.filter_by_id(["doc_1", "doc_2"])
+    assert filter_result == ["doc_1", "doc_2"], "Should return filtered IDs"
+    print("✅ Filter functionality test passed")
+
+    # Test 5: Error handling
+    print("\nTest 5: Error handling")
+    disconnected_store = VectorStoreFactory.create_vector_store(
+        CUSTOM_VECTOR_STORE_TYPE, {"collection_name": "test2"}
+    )
+
+    try:
+        disconnected_store.load_documents(test_docs)
+        assert False, "Should raise error when not connected"
+    except RuntimeError:
+        pass  # Expected
+
+    try:
+        disconnected_store.similarity_search_by_vector(query_vec)
+        assert False, "Should raise error when not connected"
+    except RuntimeError:
+        pass  # Expected
+
+    print("✅ Error handling test passed")
+
+    print("\n🎉 All tests passed! Your custom vector store is working correctly.")
+
+
+# Run the tests
+test_custom_vector_store()</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>🧪 Running comprehensive vector store tests...
+
+Test 1: Basic functionality
+🚀 SimpleInMemoryVectorStore initialized for collection: test
+✅ Connected to in-memory vector store: test
+📚 Loaded 2 documents into vector store
+✅ Basic functionality test passed
+
+Test 2: Search functionality
+✅ Search functionality test passed
+
+Test 3: Search by ID
+✅ Search by ID test passed
+
+Test 4: Filter functionality
+✅ Filter functionality test passed
+
+Test 5: Error handling
+🚀 SimpleInMemoryVectorStore initialized for collection: test2
+✅ Error handling test passed
+
+🎉 All tests passed! Your custom vector store is working correctly.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="summary-and-next-steps">Summary and Next Steps<a class="anchor-link" href="#summary-and-next-steps">¶</a></h2><p>Congratulations! You've successfully learned how to implement and register a custom vector store with GraphRAG. Here's what you accomplished:</p>
+<h3 id="what-you-built">What You Built<a class="anchor-link" href="#what-you-built">¶</a></h3><ul>
+<li>✅ <strong>Custom Vector Store Class</strong>: Implemented <code>SimpleInMemoryVectorStore</code> with all required methods</li>
+<li>✅ <strong>Factory Integration</strong>: Registered your vector store with <code>VectorStoreFactory</code></li>
+<li>✅ <strong>Comprehensive Testing</strong>: Validated functionality with a full test suite</li>
+<li>✅ <strong>Configuration Examples</strong>: Learned how to configure GraphRAG to use your vector store</li>
+</ul>
+<h3 id="key-takeaways">Key Takeaways<a class="anchor-link" href="#key-takeaways">¶</a></h3><ol>
+<li><strong>Interface Compliance</strong>: Always implement all methods from <code>BaseVectorStore</code></li>
+<li><strong>Factory Pattern</strong>: Use <code>VectorStoreFactory.register()</code> to make your vector store available</li>
+<li><strong>Configuration</strong>: Vector stores are configured in GraphRAG settings files</li>
+<li><strong>Testing</strong>: Thoroughly test all functionality before deploying</li>
+</ol>
+<h3 id="next-steps">Next Steps<a class="anchor-link" href="#next-steps">¶</a></h3><p>Check out the API Overview notebook to learn how to index and query data via the graphrag API.</p>
+<h3 id="resources">Resources<a class="anchor-link" href="#resources">¶</a></h3><ul>
+<li><a href="https://microsoft.github.io/graphrag/">GraphRAG Documentation</a></li>
+</ul>
+<p>Happy building! 🚀</p>
 </div>
 </div>
 </div>
@@ -2916,44 +3644,6 @@ Index: [], 'sources':   id                                               text
       
         <footer class="md-footer">
   
-    
-      
-      <nav class="md-footer__inner md-grid" aria-label="Footer" >
-        
-          
-          <a href="../local_search/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Local Search">
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-            </div>
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              <div class="md-ellipsis">
-                Local Search
-              </div>
-            </div>
-          </a>
-        
-        
-          
-          <a href="../../config/overview/" class="md-footer__link md-footer__link--next" aria-label="Next: Overview">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                Overview
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
-            </div>
-          </a>
-        
-      </nav>
     
   
   <div class="md-footer-meta md-typeset">
