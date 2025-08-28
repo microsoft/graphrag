@@ -45,9 +45,7 @@ class LoggerFactory:
         cls._registry[reporting_type] = creator
 
     @classmethod
-    def create_logger(
-        cls, reporting_type: ReportingType | str, kwargs: dict
-    ) -> logging.Handler:
+    def create_logger(cls, reporting_type: str, kwargs: dict) -> logging.Handler:
         """Create a logger from the provided type.
 
         Args:
@@ -63,17 +61,11 @@ class LoggerFactory:
         ------
             ValueError: If the logger type is not registered.
         """
-        reporting_type_str = (
-            reporting_type.value
-            if isinstance(reporting_type, ReportingType)
-            else reporting_type
-        )
-
-        if reporting_type_str not in cls._registry:
-            msg = f"Unknown reporting type: {reporting_type_str}"
+        if reporting_type not in cls._registry:
+            msg = f"Unknown reporting type: {reporting_type}"
             raise ValueError(msg)
 
-        return cls._registry[reporting_type_str](**kwargs)
+        return cls._registry[reporting_type](**kwargs)
 
     @classmethod
     def get_logger_types(cls) -> list[str]:

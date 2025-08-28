@@ -44,9 +44,7 @@ class StorageFactory:
         cls._registry[storage_type] = creator
 
     @classmethod
-    def create_storage(
-        cls, storage_type: StorageType | str, kwargs: dict
-    ) -> PipelineStorage:
+    def create_storage(cls, storage_type: str, kwargs: dict) -> PipelineStorage:
         """Create a storage object from the provided type.
 
         Args:
@@ -61,17 +59,11 @@ class StorageFactory:
         ------
             ValueError: If the storage type is not registered.
         """
-        type_str = (
-            storage_type.value
-            if isinstance(storage_type, StorageType)
-            else storage_type
-        )
-
-        if type_str not in cls._registry:
+        if storage_type not in cls._registry:
             msg = f"Unknown storage type: {storage_type}"
             raise ValueError(msg)
 
-        return cls._registry[type_str](**kwargs)
+        return cls._registry[storage_type](**kwargs)
 
     @classmethod
     def get_storage_types(cls) -> list[str]:

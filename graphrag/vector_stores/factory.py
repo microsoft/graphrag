@@ -47,7 +47,7 @@ class VectorStoreFactory:
 
     @classmethod
     def create_vector_store(
-        cls, vector_store_type: VectorStoreType | str, kwargs: dict
+        cls, vector_store_type: str, kwargs: dict
     ) -> BaseVectorStore:
         """Create a vector store object from the provided type.
 
@@ -63,17 +63,11 @@ class VectorStoreFactory:
         ------
             ValueError: If the vector store type is not registered.
         """
-        type_str = (
-            vector_store_type.value
-            if isinstance(vector_store_type, VectorStoreType)
-            else vector_store_type
-        )
-
-        if type_str not in cls._registry:
+        if vector_store_type not in cls._registry:
             msg = f"Unknown vector store type: {vector_store_type}"
             raise ValueError(msg)
 
-        return cls._registry[type_str](**kwargs)
+        return cls._registry[vector_store_type](**kwargs)
 
     @classmethod
     def get_vector_store_types(cls) -> list[str]:

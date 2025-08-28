@@ -27,7 +27,7 @@ def test_create_blob_logger():
         "base_dir": "testbasedir",
         "container_name": "testcontainer",
     }
-    logger = LoggerFactory.create_logger(ReportingType.blob, kwargs)
+    logger = LoggerFactory.create_logger(ReportingType.blob.value, kwargs)
     assert isinstance(logger, BlobWorkflowLogger)
 
 

@@ -31,7 +31,7 @@ def test_create_blob_storage():
         "base_dir": "testbasedir",
         "container_name": "testcontainer",
     }
-    storage = StorageFactory.create_storage(StorageType.blob, kwargs)
+    storage = StorageFactory.create_storage(StorageType.blob.value, kwargs)
     assert isinstance(storage, BlobPipelineStorage)
 
 
@@ -46,19 +46,19 @@ def test_create_cosmosdb_storage():
         "base_dir": "testdatabase",
         "container_name": "testcontainer",
     }
-    storage = StorageFactory.create_storage(StorageType.cosmosdb, kwargs)
+    storage = StorageFactory.create_storage(StorageType.cosmosdb.value, kwargs)
     assert isinstance(storage, CosmosDBPipelineStorage)
 
 
 def test_create_file_storage():
     kwargs = {"type": "file", "base_dir": "/tmp/teststorage"}
-    storage = StorageFactory.create_storage(StorageType.file, kwargs)
+    storage = StorageFactory.create_storage(StorageType.file.value, kwargs)
     assert isinstance(storage, FilePipelineStorage)
 
 
 def test_create_memory_storage():
     kwargs = {}  # MemoryPipelineStorage doesn't accept any constructor parameters
-    storage = StorageFactory.create_storage(StorageType.memory, kwargs)
+    storage = StorageFactory.create_storage(StorageType.memory.value, kwargs)
     assert isinstance(storage, MemoryPipelineStorage)
 
 

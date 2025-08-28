@@ -21,7 +21,7 @@ def test_create_lancedb_vector_store():
         "db_uri": "/tmp/lancedb",
     }
     vector_store = VectorStoreFactory.create_vector_store(
-        VectorStoreType.LanceDB, kwargs
+        VectorStoreType.LanceDB.value, kwargs
     )
     assert isinstance(vector_store, LanceDBVectorStore)
     assert vector_store.collection_name == "test_collection"
@@ -35,7 +35,7 @@ def test_create_azure_ai_search_vector_store():
         "api_key": "test_key",
     }
     vector_store = VectorStoreFactory.create_vector_store(
-        VectorStoreType.AzureAISearch, kwargs
+        VectorStoreType.AzureAISearch.value, kwargs
     )
     assert isinstance(vector_store, AzureAISearchVectorStore)
 
@@ -48,7 +48,7 @@ def test_create_cosmosdb_vector_store():
         "database_name": "test_db",
     }
     vector_store = VectorStoreFactory.create_vector_store(
-        VectorStoreType.CosmosDB, kwargs
+        VectorStoreType.CosmosDB.value, kwargs
     )
     assert isinstance(vector_store, CosmosDBVectorStore)
 
@@ -100,27 +100,6 @@ def test_is_supported_type():
 
     # Test unknown type
     assert not VectorStoreFactory.is_supported_type("unknown")
-
-
-def test_enum_and_string_compatibility():
-    """Test that both enum and string types work for vector store creation."""
-    kwargs = {
-        "collection_name": "test_collection",
-        "db_uri": "/tmp/lancedb",
-    }
-
-    # Test with enum
-    vector_store_enum = VectorStoreFactory.create_vector_store(
-        VectorStoreType.LanceDB, kwargs
-    )
-    assert isinstance(vector_store_enum, LanceDBVectorStore)
-
-    # Test with string
-    vector_store_str = VectorStoreFactory.create_vector_store("lancedb", kwargs)
-    assert isinstance(vector_store_str, LanceDBVectorStore)
-
-    # Both should create the same type
-    assert type(vector_store_enum) is type(vector_store_str)
 
 
 def test_register_class_directly_works():

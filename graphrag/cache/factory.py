@@ -43,9 +43,7 @@ class CacheFactory:
         cls._registry[cache_type] = creator
 
     @classmethod
-    def create_cache(
-        cls, cache_type: CacheType | str | None, kwargs: dict
-    ) -> PipelineCache:
+    def create_cache(cls, cache_type: str, kwargs: dict) -> PipelineCache:
         """Create a cache object from the provided type.
 
         Args:
@@ -61,16 +59,11 @@ class CacheFactory:
         ------
             ValueError: If the cache type is not registered.
         """
-        if not cache_type or cache_type == CacheType.none:
-            return NoopPipelineCache()
-
-        type_str = cache_type.value if isinstance(cache_type, CacheType) else cache_type
-
-        if type_str not in cls._registry:
+        if cache_type not in cls._registry:
             msg = f"Unknown cache type: {cache_type}"
             raise ValueError(msg)
 
-        return cls._registry[type_str](**kwargs)
+        return cls._registry[cache_type](**kwargs)
 
     @classmethod
     def get_cache_types(cls) -> list[str]:

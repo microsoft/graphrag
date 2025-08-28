@@ -100,15 +100,16 @@ class ModelFactory:
 
 # --- Register default implementations ---
 ModelFactory.register_chat(
-    ModelType.AzureOpenAIChat, lambda **kwargs: AzureOpenAIChatFNLLM(**kwargs)
+    ModelType.AzureOpenAIChat.value, lambda **kwargs: AzureOpenAIChatFNLLM(**kwargs)
 )
 ModelFactory.register_chat(
-    ModelType.OpenAIChat, lambda **kwargs: OpenAIChatFNLLM(**kwargs)
+    ModelType.OpenAIChat.value, lambda **kwargs: OpenAIChatFNLLM(**kwargs)
 )
 
 ModelFactory.register_embedding(
-    ModelType.AzureOpenAIEmbedding, lambda **kwargs: AzureOpenAIEmbeddingFNLLM(**kwargs)
+    ModelType.AzureOpenAIEmbedding.value,
+    lambda **kwargs: AzureOpenAIEmbeddingFNLLM(**kwargs),
 )
 ModelFactory.register_embedding(
-    ModelType.OpenAIEmbedding, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
+    ModelType.OpenAIEmbedding.value, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
 )

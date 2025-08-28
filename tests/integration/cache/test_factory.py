@@ -24,19 +24,19 @@ WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://127.0.0.1:8081/;A
 
 def test_create_noop_cache():
     kwargs = {}
-    cache = CacheFactory.create_cache(CacheType.none, kwargs)
+    cache = CacheFactory.create_cache(CacheType.none.value, kwargs)
     assert isinstance(cache, NoopPipelineCache)
 
 
 def test_create_memory_cache():
     kwargs = {}
-    cache = CacheFactory.create_cache(CacheType.memory, kwargs)
+    cache = CacheFactory.create_cache(CacheType.memory.value, kwargs)
     assert isinstance(cache, InMemoryCache)
 
 
 def test_create_file_cache():
     kwargs = {"root_dir": "/tmp", "base_dir": "testcache"}
-    cache = CacheFactory.create_cache(CacheType.file, kwargs)
+    cache = CacheFactory.create_cache(CacheType.file.value, kwargs)
     assert isinstance(cache, JsonPipelineCache)
 
 
@@ -46,7 +46,7 @@ def test_create_blob_cache():
         "container_name": "testcontainer",
         "base_dir": "testcache",
     }
-    cache = CacheFactory.create_cache(CacheType.blob, kwargs)
+    cache = CacheFactory.create_cache(CacheType.blob.value, kwargs)
     assert isinstance(cache, JsonPipelineCache)
 
 
@@ -60,14 +60,8 @@ def test_create_cosmosdb_cache():
         "base_dir": "testdatabase",
         "container_name": "testcontainer",
     }
-    cache = CacheFactory.create_cache(CacheType.cosmosdb, kwargs)
+    cache = CacheFactory.create_cache(CacheType.cosmosdb.value, kwargs)
     assert isinstance(cache, JsonPipelineCache)
-
-
-def test_create_none_cache_with_none_type():
-    """Test creating cache with None cache type returns NoopPipelineCache."""
-    cache = CacheFactory.create_cache(None, {})
-    assert isinstance(cache, NoopPipelineCache)
 
 
 def test_register_and_create_custom_cache():
