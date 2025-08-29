@@ -81,6 +81,7 @@ typer
 spacy
 kwargs
 ollama
+litellm
 
 # Library Methods
 iterrows
@@ -103,6 +104,8 @@ isin
 nocache
 nbconvert
 levelno
+acompletion
+aembedding
 
 # HTML
 nbsp

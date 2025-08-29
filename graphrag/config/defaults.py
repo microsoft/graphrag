@@ -274,6 +274,7 @@ class LanguageModelDefaults:
 
     api_key: None = None
     auth_type: ClassVar[AuthType] = AuthType.APIKey
+    model_provider: str = ""
     encoding_model: str = ""
     max_tokens: int | None = None
     temperature: float = 0
