@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Make cache, storage, and vector_store factories consistent with similar registration support"
+}

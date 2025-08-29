@@ -15,7 +15,7 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.extract_graph.extract_graph import (
     extract_graph as extractor,
 )
-from graphrag.index.operations.summarize_descriptions import (
+from graphrag.index.operations.summarize_descriptions.summarize_descriptions import (
     summarize_descriptions,
 )
 from graphrag.index.typing.context import PipelineRunContext

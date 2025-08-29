@@ -67,6 +67,7 @@ async def generate_indexing_prompts(
     min_examples_required: PositiveInt = 2,
     n_subset_max: PositiveInt = 300,
     k: PositiveInt = 15,
+    verbose: bool = False,
 ) -> tuple[str, str, str]:
     """Generate indexing prompts.
 
@@ -89,7 +90,7 @@ async def generate_indexing_prompts(
     -------
     tuple[str, str, str]: entity extraction prompt, entity summarization prompt, community summarization prompt
     """
-    init_loggers(config=config)
+    init_loggers(config=config, verbose=verbose, filename="prompt-tuning.log")
 
     # Retrieve documents
     logger.info("Chunking documents...")
