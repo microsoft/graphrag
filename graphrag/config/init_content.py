@@ -82,7 +82,7 @@ cache:
   base_dir: "{graphrag_config_defaults.cache.base_dir}"
 
 reporting:
-  type: {graphrag_config_defaults.reporting.type.value} # [file, blob, cosmosdb]
+  type: {graphrag_config_defaults.reporting.type.value} # [file, blob]
   base_dir: "{graphrag_config_defaults.reporting.base_dir}"
 
 vector_store:

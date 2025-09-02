@@ -31,7 +31,7 @@ def test_create_blob_storage():
         "base_dir": "testbasedir",
         "container_name": "testcontainer",
     }
-    storage = StorageFactory.create_storage(StorageType.blob, kwargs)
+    storage = StorageFactory.create_storage(StorageType.blob.value, kwargs)
     assert isinstance(storage, BlobPipelineStorage)
 
 
@@ -46,19 +46,19 @@ def test_create_cosmosdb_storage():
         "base_dir": "testdatabase",
         "container_name": "testcontainer",
     }
-    storage = StorageFactory.create_storage(StorageType.cosmosdb, kwargs)
+    storage = StorageFactory.create_storage(StorageType.cosmosdb.value, kwargs)
     assert isinstance(storage, CosmosDBPipelineStorage)
 
 
 def test_create_file_storage():
     kwargs = {"type": "file", "base_dir": "/tmp/teststorage"}
-    storage = StorageFactory.create_storage(StorageType.file, kwargs)
+    storage = StorageFactory.create_storage(StorageType.file.value, kwargs)
     assert isinstance(storage, FilePipelineStorage)
 
 
 def test_create_memory_storage():
-    kwargs = {"type": "memory"}
-    storage = StorageFactory.create_storage(StorageType.memory, kwargs)
+    kwargs = {}  # MemoryPipelineStorage doesn't accept any constructor parameters
+    storage = StorageFactory.create_storage(StorageType.memory.value, kwargs)
     assert isinstance(storage, MemoryPipelineStorage)
 
 
@@ -84,7 +84,7 @@ def test_register_and_create_custom_storage():
 
     # Check if it's in the list of registered storage types
     assert "custom" in StorageFactory.get_storage_types()
-    assert StorageFactory.is_supported_storage_type("custom")
+    assert StorageFactory.is_supported_type("custom")
 
 
 def test_get_storage_types():
@@ -96,13 +96,65 @@ def test_get_storage_types():
     assert StorageType.cosmosdb.value in storage_types
 
 
-def test_backward_compatibility():
-    """Test that the storage_types attribute is still accessible for backward compatibility."""
-    assert hasattr(StorageFactory, "storage_types")
-    # The storage_types attribute should be a dict
-    assert isinstance(StorageFactory.storage_types, dict)
-
-
 def test_create_unknown_storage():
     with pytest.raises(ValueError, match="Unknown storage type: unknown"):
         StorageFactory.create_storage("unknown", {})
+
+
+def test_register_class_directly_works():
+    """Test that registering a class directly works (StorageFactory allows this)."""
+    import re
+    from collections.abc import Iterator
+    from typing import Any
+
+    from graphrag.storage.pipeline_storage import PipelineStorage
+
+    class CustomStorage(PipelineStorage):
+        def __init__(self, **kwargs):
+            pass
+
+        def find(
+            self,
+            file_pattern: re.Pattern[str],
+            base_dir: str | None = None,
+            file_filter: dict[str, Any] | None = None,
+            max_count=-1,
+        ) -> Iterator[tuple[str, dict[str, Any]]]:
+            return iter([])
+
+        async def get(
+            self, key: str, as_bytes: bool | None = None, encoding: str | None = None
+        ) -> Any:
+            return None
+
+        async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
+            pass
+
+        async def delete(self, key: str) -> None:
+            pass
+
+        async def has(self, key: str) -> bool:
+            return False
+
+        async def clear(self) -> None:
+            pass
+
+        def child(self, name: str | None) -> "PipelineStorage":
+            return self
+
+        def keys(self) -> list[str]:
+            return []
+
+        async def get_creation_date(self, key: str) -> str:
+            return "2024-01-01 00:00:00 +0000"
+
+    # StorageFactory allows registering classes directly (no TypeError)
+    StorageFactory.register("custom_class", CustomStorage)
+
+    # Verify it was registered
+    assert "custom_class" in StorageFactory.get_storage_types()
+    assert StorageFactory.is_supported_type("custom_class")
+
+    # Test creating an instance
+    storage = StorageFactory.create_storage("custom_class", {})
+    assert isinstance(storage, CustomStorage)

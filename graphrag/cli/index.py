@@ -11,10 +11,9 @@ from pathlib import Path
 
 import graphrag.api as api
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
-from graphrag.config.enums import CacheType, IndexingMethod, ReportingType
+from graphrag.config.enums import CacheType, IndexingMethod
 from graphrag.config.load_config import load_config
 from graphrag.index.validate_config import validate_config_names
-from graphrag.logger.standard_logging import DEFAULT_LOG_FILENAME
 from graphrag.utils.cli import redact
 
 # Ignore warnings from numba
@@ -123,17 +122,6 @@ def _run_index(
     if not cache:
         config.cache.type = CacheType.none
 
-    # Log the configuration details
-    if config.reporting.type == ReportingType.file:
-        log_dir = Path(config.root_dir) / config.reporting.base_dir
-        log_path = log_dir / DEFAULT_LOG_FILENAME
-        logger.info("Logging enabled at %s", log_path)
-    else:
-        logger.info(
-            "Logging not enabled for config %s",
-            redact(config.model_dump()),
-        )
-
     if not skip_validation:
         validate_config_names(config)
 
@@ -156,6 +144,7 @@ def _run_index(
             is_update_run=is_update_run,
             memory_profile=memprofile,
             callbacks=[ConsoleWorkflowCallbacks(verbose=verbose)],
+            verbose=verbose,
         )
     )
     encountered_errors = any(

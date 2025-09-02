@@ -12,7 +12,7 @@ from graphrag.config.enums import ReportingType
 class ReportingConfig(BaseModel):
     """The default configuration section for Reporting."""
 
-    type: ReportingType = Field(
+    type: ReportingType | str = Field(
         description="The reporting type to use.",
         default=graphrag_config_defaults.reporting.type,
     )

@@ -33,6 +33,7 @@ async def build_index(
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
     additional_context: dict[str, Any] | None = None,
+    verbose: bool = False,
     input_documents: pd.DataFrame | None = None,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
@@ -56,7 +57,7 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    init_loggers(config=config)
+    init_loggers(config=config, verbose=verbose)
 
     # Create callbacks for pipeline lifecycle events if provided
     workflow_callbacks = (

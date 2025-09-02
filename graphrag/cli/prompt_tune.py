@@ -7,9 +7,7 @@ import logging
 from pathlib import Path
 
 import graphrag.api as api
-from graphrag.config.enums import ReportingType
 from graphrag.config.load_config import load_config
-from graphrag.logger.standard_logging import DEFAULT_LOG_FILENAME
 from graphrag.prompt_tune.generator.community_report_summarization import (
     COMMUNITY_SUMMARIZATION_FILENAME,
 )
@@ -74,21 +72,13 @@ async def prompt_tune(
     from graphrag.logger.standard_logging import init_loggers
 
     # initialize loggers with config
-    init_loggers(
-        config=graph_config,
-        verbose=verbose,
-    )
+    init_loggers(config=graph_config, verbose=verbose, filename="prompt-tuning.log")
 
-    # log the configuration details
-    if graph_config.reporting.type == ReportingType.file:
-        log_dir = Path(root_path) / graph_config.reporting.base_dir
-        log_path = log_dir / DEFAULT_LOG_FILENAME
-        logger.info("Logging enabled at %s", log_path)
-    else:
-        logger.info(
-            "Logging not enabled for config %s",
-            redact(graph_config.model_dump()),
-        )
+    logger.info("Starting prompt tune.")
+    logger.info(
+        "Using default configuration: %s",
+        redact(graph_config.model_dump()),
+    )
 
     prompts = await api.generate_indexing_prompts(
         config=graph_config,
@@ -103,6 +93,7 @@ async def prompt_tune(
         min_examples_required=min_examples_required,
         n_subset_max=n_subset_max,
         k=k,
+        verbose=verbose,
     )
 
     output_path = output.resolve()
