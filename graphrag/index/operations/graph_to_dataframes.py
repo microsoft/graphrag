@@ -35,4 +35,8 @@ def graph_to_dataframes(
     if edge_columns:
         edges = edges.loc[:, edge_columns]
 
+    # ndarray embeddings to be stored as list objects to avoid broadcasting errors
+    if "embedding" in nodes.columns and isinstance(nodes["embedding"].iloc[0], (list, tuple)) is False:
+        nodes["embedding"] = nodes["embedding"].apply(lambda x: x.tolist() if hasattr(x, "tolist") else x)
+
     return (nodes, edges)
