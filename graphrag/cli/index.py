@@ -125,7 +125,7 @@ def _run_index(
     if not skip_validation:
         validate_config_names(config)
 
-    logger.info("Starting pipeline run. %s", dry_run)
+    logger.info("Starting pipeline run. Dry run? %s", dry_run)
     logger.info(
         "Using default configuration: %s",
         redact(config.model_dump()),
@@ -150,12 +150,5 @@ def _run_index(
     encountered_errors = any(
         output.errors and len(output.errors) > 0 for output in outputs
     )
-
-    if encountered_errors:
-        logger.error(
-            "Errors occurred during the pipeline run, see logs for more details."
-        )
-    else:
-        logger.info("All workflows completed successfully.")
 
     sys.exit(1 if encountered_errors else 0)

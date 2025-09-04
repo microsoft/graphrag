@@ -37,6 +37,10 @@ class ConsoleWorkflowCallbacks(NoopWorkflowCallbacks):
         if self._verbose:
             print(instance)
 
+    def workflow_error(self, name: str) -> None:
+        """Execute this callback when a workflow encounters an error."""
+        print(f"Workflow error: {name}. See logs for details.")
+
     def progress(self, progress: Progress) -> None:
         """Handle when progress occurs."""
         complete = progress.completed_items or 0

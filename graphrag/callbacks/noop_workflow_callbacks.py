@@ -23,5 +23,8 @@ class NoopWorkflowCallbacks(WorkflowCallbacks):
     def workflow_end(self, name: str, instance: object) -> None:
         """Execute this callback when a workflow ends."""
 
+    def workflow_error(self, name: str) -> None:
+        """Execute this callback when a workflow encounters an error."""
+
     def progress(self, progress: Progress) -> None:
         """Handle when progress occurs."""

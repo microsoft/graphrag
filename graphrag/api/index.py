@@ -83,6 +83,7 @@ async def build_index(
         outputs.append(output)
         if output.errors and len(output.errors) > 0:
             logger.error("Workflow %s completed with errors", output.workflow)
+            workflow_callbacks.workflow_error(output.workflow)
         else:
             logger.info("Workflow %s completed successfully", output.workflow)
         logger.debug(str(output.result))
