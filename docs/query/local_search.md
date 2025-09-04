@@ -59,4 +59,3 @@ Below are the key parameters of the [LocalSearch class](https://github.com/micro
 ## How to Use
 
 An example of a local search scenario can be found in the following [notebook](../examples_notebooks/local_search.ipynb).
-
