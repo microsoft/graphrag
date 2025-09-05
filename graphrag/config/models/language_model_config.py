@@ -8,7 +8,7 @@ from typing import Literal
 import tiktoken
 from pydantic import BaseModel, Field, model_validator
 
-from graphrag.config.defaults import language_model_defaults
+from graphrag.config.defaults import ENCODING_MODEL, language_model_defaults
 from graphrag.config.enums import AsyncType, AuthType, ModelType
 from graphrag.config.errors import (
     ApiKeyMissingError,
@@ -73,8 +73,11 @@ class LanguageModelConfig(BaseModel):
         ConflictingSettingsError
             If the Azure authentication type conflicts with the model being used.
         """
-        if self.auth_type == AuthType.AzureManagedIdentity and (
-            self.type == ModelType.OpenAIChat or self.type == ModelType.OpenAIEmbedding
+        if (
+            self.auth_type == AuthType.AzureManagedIdentity
+            and self.type != ModelType.AzureOpenAIChat
+            and self.type != ModelType.AzureOpenAIEmbedding
+            and self.model_provider != "azure"  # indicates Litellm + AOI
         ):
             msg = f"auth_type of azure_managed_identity is not supported for model type {self.type}. Please rerun `graphrag init` and set the auth_type to api_key."
             raise ConflictingSettingsError(msg)
@@ -94,6 +97,28 @@ class LanguageModelConfig(BaseModel):
             msg = f"Model type {self.type} is not recognized, must be one of {ModelFactory.get_chat_models() + ModelFactory.get_embedding_models()}."
             raise KeyError(msg)
 
+    model_provider: str = Field(
+        description="The model provider to use.",
+        default=language_model_defaults.model_provider,
+    )
+
+    def _validate_model_provider(self) -> None:
+        """Validate the model provider.
+
+        Required when using Litellm.
+
+        Raises
+        ------
+        KeyError
+            If the model provider is not recognized.
+        """
+        if (
+            self.type == ModelType.LitellmChat
+            or self.type == ModelType.LitellmEmbedding
+        ) and self.model_provider.strip() == "":
+            msg = "Model provider must be specified when using Litellm."
+            raise KeyError(msg)
+
     model: str = Field(description="The LLM model to use.")
     encoding_model: str = Field(
         description="The encoding model to use",
@@ -103,13 +128,26 @@ class LanguageModelConfig(BaseModel):
     def _validate_encoding_model(self) -> None:
         """Validate the encoding model.
 
+        If not using Litellm and the encoding model is not set, use tiktoken to get the encoding model based on the model name.
+        If using Litellm and the encoding model is not set, use the default encoding model.
+
+        TODO: Replace the use of tiktoken + encoding_model in the codebase
+        with an Encoder protocol and pass the encoder instance directly to
+        functions that need it like text chunking, etc.
+
         Raises
         ------
         KeyError
             If the model name is not recognized.
         """
-        if self.encoding_model.strip() == "":
+        if (
+            self.type != ModelType.LitellmChat
+            and self.type != ModelType.LitellmEmbedding
+            and self.encoding_model.strip() == ""
+        ):
             self.encoding_model = tiktoken.encoding_name_for_model(self.model)
+        elif self.encoding_model.strip() == "":
+            self.encoding_model = ENCODING_MODEL
 
     api_base: str | None = Field(
         description="The base URL for the LLM API.",
@@ -129,6 +167,7 @@ class LanguageModelConfig(BaseModel):
         if (
             self.type == ModelType.AzureOpenAIChat
             or self.type == ModelType.AzureOpenAIEmbedding
+            or self.model_provider == "azure"  # indicates Litellm + AOI
         ) and (self.api_base is None or self.api_base.strip() == ""):
             raise AzureApiBaseMissingError(self.type)
 
@@ -150,6 +189,7 @@ class LanguageModelConfig(BaseModel):
         if (
             self.type == ModelType.AzureOpenAIChat
             or self.type == ModelType.AzureOpenAIEmbedding
+            or self.model_provider == "azure"  # indicates Litellm + AOI
         ) and (self.api_version is None or self.api_version.strip() == ""):
             raise AzureApiVersionMissingError(self.type)
 
@@ -171,6 +211,7 @@ class LanguageModelConfig(BaseModel):
         if (
             self.type == ModelType.AzureOpenAIChat
             or self.type == ModelType.AzureOpenAIEmbedding
+            or self.model_provider == "azure"  # indicates Litellm + AOI
         ) and (self.deployment_name is None or self.deployment_name.strip() == ""):
             raise AzureDeploymentNameMissingError(self.type)
 
@@ -318,6 +359,7 @@ class LanguageModelConfig(BaseModel):
     @model_validator(mode="after")
     def _validate_model(self):
         self._validate_type()
+        self._validate_model_provider()
         self._validate_auth_type()
         self._validate_api_key()
         self._validate_tokens_per_minute()
