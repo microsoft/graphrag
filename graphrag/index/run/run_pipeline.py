@@ -11,6 +11,8 @@ from collections.abc import AsyncIterable
 from dataclasses import asdict
 from typing import Any
 
+import pandas as pd
+
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.utils import create_run_context
@@ -30,6 +32,7 @@ async def run_pipeline(
     callbacks: WorkflowCallbacks,
     is_update_run: bool = False,
     additional_context: dict[str, Any] | None = None,
+    input_documents: pd.DataFrame | None = None,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
     root_dir = config.root_dir
@@ -60,6 +63,11 @@ async def run_pipeline(
 
         state["update_timestamp"] = update_timestamp
 
+        # if the user passes in a df directly, write directly to storage so we can skip finding/parsing later
+        if input_documents is not None:
+            await write_table_to_storage(input_documents, "documents", delta_storage)
+            pipeline.remove("load_update_documents")
+
         context = create_run_context(
             input_storage=input_storage,
             output_storage=delta_storage,
@@ -71,6 +79,11 @@ async def run_pipeline(
 
     else:
         logger.info("Running standard indexing.")
+
+        # if the user passes in a df directly, write directly to storage so we can skip finding/parsing later
+        if input_documents is not None:
+            await write_table_to_storage(input_documents, "documents", output_storage)
+            pipeline.remove("load_input_documents")
 
         context = create_run_context(
             input_storage=input_storage,
