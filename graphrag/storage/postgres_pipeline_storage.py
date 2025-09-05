@@ -552,22 +552,11 @@ class PostgresPipelineStorage(PipelineStorage):
             table_name = self._get_table_name(key)
             conn = await self._get_connection()
             try:
-                if key.endswith('.parquet'):
-                    # Delete all records with this prefix
-                    prefix = self._get_prefix(key)
-                    result = await conn.execute(
-                        f"DELETE FROM {table_name} WHERE id LIKE $1",
-                        f"{prefix}:%"
-                    )
-                    log.info(f"Deleted records for prefix {prefix}: {result}")
-                else:
-                    # Delete exact key match
-                    result = await conn.execute(
-                        f"DELETE FROM {table_name} WHERE id = $1",
-                        key
-                    )
-                    log.info(f"Deleted record for key {key}: {result}")
-                    
+                await conn.execute(
+                    f"TRUNCATE TABLE {table_name}"
+                )
+                log.info(f"Deleted records for key: {key}")
+
             finally:
                 await self._release_connection(conn)
                 
