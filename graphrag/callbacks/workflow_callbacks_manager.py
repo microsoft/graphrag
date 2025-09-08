@@ -44,7 +44,7 @@ class WorkflowCallbacksManager(WorkflowCallbacks):
         for callback in self._callbacks:
             if hasattr(callback, "workflow_end"):
                 callback.workflow_end(name, instance)
-    
+
     def workflow_error(self, name: str) -> None:
         """Execute this callback when a workflow has an error."""
         for callback in self._callbacks:

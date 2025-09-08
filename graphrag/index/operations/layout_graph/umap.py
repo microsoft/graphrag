@@ -16,10 +16,6 @@ from graphrag.index.operations.layout_graph.typing import (
 )
 from graphrag.index.typing.error_handler import ErrorHandlerFn
 
-# TODO: This could be handled more elegantly, like what columns to use
-# for "size" or "cluster"
-# We could also have a boolean to indicate to use node sizes or clusters
-
 logger = logging.getLogger(__name__)
 
 

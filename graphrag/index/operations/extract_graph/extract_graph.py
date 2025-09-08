@@ -5,6 +5,7 @@
 
 import logging
 from typing import Any
+from uuid import uuid4
 
 import pandas as pd
 
@@ -77,7 +78,11 @@ async def extract_graph(
             relationship_dfs.append(pd.DataFrame(result[1]))
 
     entities = _merge_entities(entity_dfs)
+    entities = entities.loc[entities["title"].notna()].reset_index()
+    entities["id"] = entities.apply(lambda _x: str(uuid4()), axis=1)
+
     relationships = _merge_relationships(relationship_dfs)
+    relationships["id"] = relationships.apply(lambda _x: str(uuid4()), axis=1)
 
     return (entities, relationships)
 

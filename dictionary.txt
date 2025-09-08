@@ -103,6 +103,8 @@ isin
 nocache
 nbconvert
 levelno
+toarray
+tsvd
 
 # HTML
 nbsp

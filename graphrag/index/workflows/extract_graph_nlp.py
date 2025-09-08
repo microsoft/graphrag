@@ -4,6 +4,7 @@
 """A module containing run_workflow method definition."""
 
 import logging
+from uuid import uuid4
 
 import pandas as pd
 
@@ -67,6 +68,9 @@ async def extract_graph_nlp(
     # add in any other columns required by downstream workflows
     extracted_nodes["type"] = "NOUN PHRASE"
     extracted_nodes["description"] = ""
+    extracted_nodes["id"] = extracted_nodes.apply(lambda _x: str(uuid4()), axis=1)
+
     extracted_edges["description"] = ""
+    extracted_edges["id"] = extracted_edges.apply(lambda _x: str(uuid4()), axis=1)
 
     return (extracted_nodes, extracted_edges)
