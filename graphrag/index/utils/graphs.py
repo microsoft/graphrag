@@ -4,17 +4,18 @@
 """
 Collection of graph utility functions.
 
-These are largely copies/reimplementations of graspologic methods to avoid dependency issues.
+These are largely copies/re-implementations of graspologic methods to avoid dependency issues.
 """
 
 import logging
+import math
+from collections import defaultdict
 from typing import Any, cast
 
 import graspologic_native as gn
 import networkx as nx
 import numpy as np
 import pandas as pd
-from graspologic.partition import modularity
 
 from graphrag.config.enums import ModularityMetric
 
@@ -69,6 +70,65 @@ def hierarchical_leiden(
         use_modularity=True,
         iterations=1,
     )
+
+
+def modularity(
+    graph: nx.Graph,
+    partitions: dict[Any, int],
+    weight_attribute: str = "weight",
+    resolution: float = 1.0,
+) -> float:
+    """Given an undirected graph and a dictionary of vertices to community ids, calculate the modularity."""
+    components = _modularity_components(graph, partitions, weight_attribute, resolution)
+    return sum(components.values())
+
+
+def _modularity_component(
+    intra_community_degree: float,
+    total_community_degree: float,
+    network_degree_sum: float,
+    resolution: float,
+) -> float:
+    community_degree_ratio = math.pow(total_community_degree, 2.0) / (
+        2.0 * network_degree_sum
+    )
+    return (intra_community_degree - resolution * community_degree_ratio) / (
+        2.0 * network_degree_sum
+    )
+
+
+def _modularity_components(
+    graph: nx.Graph,
+    partitions: dict[Any, int],
+    weight_attribute: str = "weight",
+    resolution: float = 1.0,
+) -> dict[int, float]:
+    total_edge_weight = 0.0
+    communities = set(partitions.values())
+
+    degree_sums_within_community: dict[int, float] = defaultdict(lambda: 0.0)
+    degree_sums_for_community: dict[int, float] = defaultdict(lambda: 0.0)
+    for vertex, neighbor_vertex, weight in graph.edges(data=weight_attribute):
+        vertex_community = partitions[vertex]
+        neighbor_community = partitions[neighbor_vertex]
+        if vertex_community == neighbor_community:
+            if vertex == neighbor_vertex:
+                degree_sums_within_community[vertex_community] += weight
+            else:
+                degree_sums_within_community[vertex_community] += weight * 2.0
+        degree_sums_for_community[vertex_community] += weight
+        degree_sums_for_community[neighbor_community] += weight
+        total_edge_weight += weight
+
+    return {
+        comm: _modularity_component(
+            degree_sums_within_community[comm],
+            degree_sums_for_community[comm],
+            total_edge_weight,
+            resolution,
+        )
+        for comm in communities
+    }
 
 
 def calculate_root_modularity(
@@ -201,9 +261,6 @@ def calculate_modularity(
                 random_seed=random_seed,
                 use_root_modularity=use_root_modularity,
             )
-        case _:
-            msg = f"Unknown modularity metric type: {modularity_metric}"
-            raise ValueError(msg)
 
 
 def calculate_pmi_edge_weights(
