@@ -8,7 +8,7 @@ from typing import Literal
 import tiktoken
 from pydantic import BaseModel, Field, model_validator
 
-from graphrag.config.defaults import ENCODING_MODEL, language_model_defaults
+from graphrag.config.defaults import language_model_defaults
 from graphrag.config.enums import AsyncType, AuthType, ModelType
 from graphrag.config.errors import (
     ApiKeyMissingError,
@@ -128,12 +128,16 @@ class LanguageModelConfig(BaseModel):
     def _validate_encoding_model(self) -> None:
         """Validate the encoding model.
 
-        If not using Litellm and the encoding model is not set, use tiktoken to get the encoding model based on the model name.
-        If using Litellm and the encoding model is not set, use the default encoding model.
+        The default behavior is to use an encoding model that matches the LLM model.
+        LiteLLM supports 100+ models and their tokenization. There is no need to
+        set the encoding model when using the new LiteLLM provider as was done with fnllm provider.
 
-        TODO: Replace the use of tiktoken + encoding_model in the codebase
-        with an Encoder protocol and pass the encoder instance directly to
-        functions that need it like text chunking, etc.
+        Users can still manually specify a tiktoken based encoding model to use even with the LiteLLM provider
+        in which case the specified encoding model will be used regardless of the LLM model being used, even if
+        it is not an openai based model.
+
+        If not using LiteLLM provider, set the encoding model based on the LLM model name.
+        This is for backward compatibility with existing fnllm provider until fnllm is removed.
 
         Raises
         ------
@@ -146,8 +150,6 @@ class LanguageModelConfig(BaseModel):
             and self.encoding_model.strip() == ""
         ):
             self.encoding_model = tiktoken.encoding_name_for_model(self.model)
-        elif self.encoding_model.strip() == "":
-            self.encoding_model = ENCODING_MODEL
 
     api_base: str | None = Field(
         description="The base URL for the LLM API.",

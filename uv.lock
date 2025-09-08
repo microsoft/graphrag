@@ -1291,7 +1291,7 @@ requires-dist = [
     { name = "semversioner", marker = "extra == 'dev'", specifier = ">=2.0.5" },
     { name = "spacy", specifier = ">=3.8.4" },
     { name = "textblob", specifier = ">=0.18.0.post0" },
-    { name = "tiktoken", specifier = ">=0.9.0" },
+    { name = "tiktoken", specifier = ">=0.11.0" },
     { name = "tqdm", specifier = ">=4.67.1" },
     { name = "typer", specifier = ">=0.16.0" },
     { name = "typing-extensions", specifier = ">=4.12.2" },

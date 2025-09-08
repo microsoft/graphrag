@@ -18,6 +18,7 @@ from graphrag.index.utils.is_null import is_null
 from graphrag.language_model.manager import ModelManager
 from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.logger.progress import ProgressTicker, progress_ticker
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +80,7 @@ def _get_splitter(
     config: LanguageModelConfig, batch_max_tokens: int
 ) -> TokenTextSplitter:
     return TokenTextSplitter(
-        encoding_name=config.encoding_model,
+        tokenizer=get_tokenizer(model_config=config),
         chunk_size=batch_max_tokens,
     )
 

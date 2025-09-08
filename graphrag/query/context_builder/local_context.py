@@ -7,7 +7,6 @@ from collections import defaultdict
 from typing import Any, cast
 
 import pandas as pd
-import tiktoken
 
 from graphrag.data_model.covariate import Covariate
 from graphrag.data_model.entity import Entity
@@ -24,12 +23,13 @@ from graphrag.query.input.retrieval.relationships import (
     get_out_network_relationships,
     to_relationship_dataframe,
 )
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 def build_entity_context(
     selected_entities: list[Entity],
-    token_encoder: tiktoken.Encoding | None = None,
+    tokenizer: Tokenizer = get_tokenizer(),
     max_context_tokens: int = 8000,
     include_entity_rank: bool = True,
     rank_description: str = "number of relationships",
@@ -52,7 +52,7 @@ def build_entity_context(
     )
     header.extend(attribute_cols)
     current_context_text += column_delimiter.join(header) + "\n"
-    current_tokens = num_tokens(current_context_text, token_encoder)
+    current_tokens = len(tokenizer.encode(current_context_text))
 
     all_context_records = [header]
     for entity in selected_entities:
@@ -71,7 +71,7 @@ def build_entity_context(
             )
             new_context.append(field_value)
         new_context_text = column_delimiter.join(new_context) + "\n"
-        new_tokens = num_tokens(new_context_text, token_encoder)
+        new_tokens = len(tokenizer.encode(new_context_text))
         if current_tokens + new_tokens > max_context_tokens:
             break
         current_context_text += new_context_text
@@ -91,7 +91,7 @@ def build_entity_context(
 def build_covariates_context(
     selected_entities: list[Entity],
     covariates: list[Covariate],
-    token_encoder: tiktoken.Encoding | None = None,
+    tokenizer: Tokenizer = get_tokenizer(),
     max_context_tokens: int = 8000,
     column_delimiter: str = "|",
     context_name: str = "Covariates",
@@ -113,7 +113,7 @@ def build_covariates_context(
     attribute_cols = list(attributes.keys()) if len(covariates) > 0 else []
     header.extend(attribute_cols)
     current_context_text += column_delimiter.join(header) + "\n"
-    current_tokens = num_tokens(current_context_text, token_encoder)
+    current_tokens = len(tokenizer.encode(current_context_text))
 
     all_context_records = [header]
     for entity in selected_entities:
@@ -135,7 +135,7 @@ def build_covariates_context(
             new_context.append(field_value)
 
         new_context_text = column_delimiter.join(new_context) + "\n"
-        new_tokens = num_tokens(new_context_text, token_encoder)
+        new_tokens = len(tokenizer.encode(new_context_text))
         if current_tokens + new_tokens > max_context_tokens:
             break
         current_context_text += new_context_text
@@ -155,7 +155,7 @@ def build_covariates_context(
 def build_relationship_context(
     selected_entities: list[Entity],
     relationships: list[Relationship],
-    token_encoder: tiktoken.Encoding | None = None,
+    tokenizer: Tokenizer = get_tokenizer(),
     include_relationship_weight: bool = False,
     max_context_tokens: int = 8000,
     top_k_relationships: int = 10,
@@ -188,7 +188,7 @@ def build_relationship_context(
     header.extend(attribute_cols)
 
     current_context_text += column_delimiter.join(header) + "\n"
-    current_tokens = num_tokens(current_context_text, token_encoder)
+    current_tokens = len(tokenizer.encode(current_context_text))
 
     all_context_records = [header]
     for rel in selected_relationships:
@@ -208,7 +208,7 @@ def build_relationship_context(
             )
             new_context.append(field_value)
         new_context_text = column_delimiter.join(new_context) + "\n"
-        new_tokens = num_tokens(new_context_text, token_encoder)
+        new_tokens = len(tokenizer.encode(new_context_text))
         if current_tokens + new_tokens > max_context_tokens:
             break
         current_context_text += new_context_text
