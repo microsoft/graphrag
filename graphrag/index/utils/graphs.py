@@ -1,7 +1,11 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Collection of graph utility functions."""
+"""
+Collection of graph utility functions.
+
+These are largely copies/reimplementations of graspologic methods to avoid dependency issues.
+"""
 
 import logging
 from typing import Any, cast
@@ -11,11 +15,19 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 from graspologic.partition import modularity
-from graspologic.utils import largest_connected_component
 
 from graphrag.config.enums import ModularityMetric
 
 logger = logging.getLogger(__name__)
+
+
+def largest_connected_component(graph: nx.Graph) -> nx.Graph:
+    """Return the largest connected component of the graph."""
+    graph = graph.copy()
+    lcc_nodes = max(nx.connected_components(graph), key=len)
+    lcc = graph.subgraph(lcc_nodes).copy()
+    lcc.remove_nodes_from([n for n in lcc if n not in lcc_nodes])
+    return cast("nx.Graph", lcc)
 
 
 def _nx_to_edge_list(

@@ -5,11 +5,11 @@
 
 from typing import TYPE_CHECKING, cast
 
-import graspologic as glc
 import networkx as nx
 import numpy as np
 
 import graphrag.data_model.schemas as schemas
+from graphrag.index.utils.graphs import largest_connected_component
 
 if TYPE_CHECKING:
     from networkx.classes.reportviews import DegreeView
@@ -78,7 +78,7 @@ def prune_graph(
         ])
 
     if lcc_only:
-        return glc.utils.largest_connected_component(graph)  # type: ignore
+        return largest_connected_component(graph)
 
     return graph
 
