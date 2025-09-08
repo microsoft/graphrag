@@ -130,9 +130,6 @@ community_reports:
   max_length: {graphrag_config_defaults.community_reports.max_length}
   max_input_length: {graphrag_config_defaults.community_reports.max_input_length}
 
-embed_graph:
-  enabled: false # if true, will generate node2vec embeddings for nodes
-
 snapshots:
   graphml: false
   embeddings: false

@@ -12,7 +12,6 @@ from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
-from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.extract_claims_config import ClaimExtractionConfig
 from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import (
@@ -178,19 +177,6 @@ def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
     assert actual.text_column == expected.text_column
     assert actual.title_column == expected.title_column
     assert actual.metadata == expected.metadata
-
-
-def assert_embed_graph_configs(
-    actual: EmbedGraphConfig, expected: EmbedGraphConfig
-) -> None:
-    assert actual.enabled == expected.enabled
-    assert actual.dimensions == expected.dimensions
-    assert actual.num_walks == expected.num_walks
-    assert actual.walk_length == expected.walk_length
-    assert actual.window_size == expected.window_size
-    assert actual.iterations == expected.iterations
-    assert actual.random_seed == expected.random_seed
-    assert actual.use_lcc == expected.use_lcc
 
 
 def assert_text_embedding_configs(
@@ -404,7 +390,6 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
 
     assert_cache_configs(actual.cache, expected.cache)
     assert_input_configs(actual.input, expected.input)
-    assert_embed_graph_configs(actual.embed_graph, expected.embed_graph)
     assert_text_embedding_configs(actual.embed_text, expected.embed_text)
     assert_chunking_configs(actual.chunks, expected.chunks)
     assert_snapshots_configs(actual.snapshots, expected.snapshots)

@@ -287,21 +287,6 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 - `max_length` **int** - The maximum number of output tokens per report.
 - `max_input_length` **int** - The maximum number of input tokens to use when generating reports.
 
-### embed_graph
-
-We use node2vec to embed the graph. This is primarily used for visualization, so it is not turned on by default.
-
-#### Fields
-
-- `enabled` **bool** - Whether to enable graph embeddings.
-- `dimensions` **int** - Number of vector dimensions to produce.
-- `num_walks` **int** - The node2vec number of walks.
-- `walk_length` **int** - The node2vec walk length.
-- `window_size` **int** - The node2vec window size.
-- `iterations` **int** - The node2vec number of iterations.
-- `random_seed` **int** - The node2vec random seed.
-- `strategy` **dict** - Fully override the embed graph strategy.
-
 ### snapshots
 
 #### Fields

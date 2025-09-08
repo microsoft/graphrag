@@ -19,7 +19,6 @@ from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
-from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.extract_claims_config import ClaimExtractionConfig
 from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
@@ -252,12 +251,6 @@ class GraphRagConfig(BaseModel):
         default=CommunityReportsConfig(),
     )
     """The community reports configuration to use."""
-
-    embed_graph: EmbedGraphConfig = Field(
-        description="Graph embedding configuration.",
-        default=EmbedGraphConfig(),
-    )
-    """Graph Embedding configuration."""
 
     snapshots: SnapshotsConfig = Field(
         description="The snapshots configuration to use.",

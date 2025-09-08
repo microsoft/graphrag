@@ -7,26 +7,17 @@ from uuid import uuid4
 
 import pandas as pd
 
-from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.data_model.schemas import ENTITIES_FINAL_COLUMNS
 from graphrag.index.operations.compute_degree import compute_degree
 from graphrag.index.operations.create_graph import create_graph
-from graphrag.index.operations.embed_graph.embed_graph import embed_graph
 
 
 def finalize_entities(
     entities: pd.DataFrame,
     relationships: pd.DataFrame,
-    embed_config: EmbedGraphConfig | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final entities."""
     graph = create_graph(relationships, edge_attr=["weight"])
-    graph_embeddings = None
-    if embed_config is not None and embed_config.enabled:
-        graph_embeddings = embed_graph(
-            graph,
-            embed_config,
-        )
     degrees = compute_degree(graph)
     final_entities = entities.merge(degrees, on="title", how="left").drop_duplicates(
         subset="title"
