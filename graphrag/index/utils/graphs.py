@@ -4,17 +4,59 @@
 """Collection of graph utility functions."""
 
 import logging
-from typing import cast
+from typing import Any, cast
 
+import graspologic_native as gn
 import networkx as nx
 import numpy as np
 import pandas as pd
-from graspologic.partition import hierarchical_leiden, modularity
+from graspologic.partition import modularity
 from graspologic.utils import largest_connected_component
 
 from graphrag.config.enums import ModularityMetric
 
 logger = logging.getLogger(__name__)
+
+
+def _nx_to_edge_list(
+    graph: nx.Graph,
+    weight_attribute: str = "weight",
+    weight_default: float = 1.0,
+) -> list[tuple[str, str, float]]:
+    """
+    Convert an undirected, non-multigraph networkx graph to a list of edges.
+
+    Each edge is represented as a tuple of (source_str, target_str, weight).
+    """
+    edge_list: list[tuple[str, str, float]] = []
+
+    # Decide how to retrieve the weight data
+    edge_iter = graph.edges(data=weight_attribute, default=weight_default)  # type: ignore
+
+    for source, target, weight in edge_iter:
+        source_str = str(source)
+        target_str = str(target)
+        edge_list.append((source_str, target_str, float(weight)))
+
+    return edge_list
+
+
+def hierarchical_leiden(
+    graph: nx.Graph,
+    max_cluster_size: int = 10,
+    random_seed: int | None = 0xDEADBEEF,
+) -> Any:
+    """Run hierarchical leiden on the graph."""
+    return gn.hierarchical_leiden(
+        edges=_nx_to_edge_list(graph),
+        max_cluster_size=max_cluster_size,
+        seed=random_seed,
+        starting_communities=None,
+        resolution=1.0,
+        randomness=0.001,
+        use_modularity=True,
+        iterations=1,
+    )
 
 
 def calculate_root_modularity(
