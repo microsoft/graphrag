@@ -12,14 +12,12 @@ from graphrag.data_model.schemas import ENTITIES_FINAL_COLUMNS
 from graphrag.index.operations.compute_degree import compute_degree
 from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.operations.embed_graph.embed_graph import embed_graph
-from graphrag.index.operations.layout_graph.layout_graph import layout_graph
 
 
 def finalize_entities(
     entities: pd.DataFrame,
     relationships: pd.DataFrame,
     embed_config: EmbedGraphConfig | None = None,
-    layout_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform final entities."""
     graph = create_graph(relationships, edge_attr=["weight"])
@@ -29,16 +27,9 @@ def finalize_entities(
             graph,
             embed_config,
         )
-    layout = layout_graph(
-        graph,
-        layout_enabled,
-        embeddings=graph_embeddings,
-    )
     degrees = compute_degree(graph)
-    final_entities = (
-        entities.merge(layout, left_on="title", right_on="label", how="left")
-        .merge(degrees, on="title", how="left")
-        .drop_duplicates(subset="title")
+    final_entities = entities.merge(degrees, on="title", how="left").drop_duplicates(
+        subset="title"
     )
     final_entities = final_entities.loc[entities["title"].notna()].reset_index()
     # disconnected nodes and those with no community even at level 0 can be missing degree

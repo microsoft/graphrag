@@ -30,35 +30,6 @@ async def test_finalize_graph():
         "relationships", context.output_storage
     )
 
-    # x and y will be zero with the default configuration, because we do not embed/umap
-    assert nodes_actual["x"].sum() == 0
-    assert nodes_actual["y"].sum() == 0
-
-    for column in ENTITIES_FINAL_COLUMNS:
-        assert column in nodes_actual.columns
-    for column in RELATIONSHIPS_FINAL_COLUMNS:
-        assert column in edges_actual.columns
-
-
-async def test_finalize_graph_umap():
-    context = await _prep_tables()
-
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-
-    config.embed_graph.enabled = True
-    config.umap.enabled = True
-
-    await run_workflow(config, context)
-
-    nodes_actual = await load_table_from_storage("entities", context.output_storage)
-    edges_actual = await load_table_from_storage(
-        "relationships", context.output_storage
-    )
-
-    # x and y should have some value other than zero due to umap
-    assert nodes_actual["x"].sum() != 0
-    assert nodes_actual["y"].sum() != 0
-
     for column in ENTITIES_FINAL_COLUMNS:
         assert column in nodes_actual.columns
     for column in RELATIONSHIPS_FINAL_COLUMNS:
@@ -72,7 +43,7 @@ async def _prep_tables():
 
     # edit the tables to eliminate final fields that wouldn't be on the inputs
     entities = load_test_table("entities")
-    entities.drop(columns=["x", "y", "degree"], inplace=True)
+    entities.drop(columns=["degree"], inplace=True)
     await write_table_to_storage(entities, "entities", context.output_storage)
     relationships = load_test_table("relationships")
     relationships.drop(columns=["combined_degree"], inplace=True)

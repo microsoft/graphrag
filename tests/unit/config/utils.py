@@ -32,7 +32,6 @@ from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
 from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
-from graphrag.config.models.umap_config import UmapConfig
 from graphrag.config.models.vector_store_config import VectorStoreConfig
 
 FAKE_API_KEY = "NOT_AN_API_KEY"
@@ -306,10 +305,6 @@ def assert_cluster_graph_configs(
     assert actual.seed == expected.seed
 
 
-def assert_umap_configs(actual: UmapConfig, expected: UmapConfig) -> None:
-    assert actual.enabled == expected.enabled
-
-
 def assert_local_search_configs(
     actual: LocalSearchConfig, expected: LocalSearchConfig
 ) -> None:
@@ -426,7 +421,6 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
     assert_extract_claims_configs(actual.extract_claims, expected.extract_claims)
     assert_prune_graph_configs(actual.prune_graph, expected.prune_graph)
     assert_cluster_graph_configs(actual.cluster_graph, expected.cluster_graph)
-    assert_umap_configs(actual.umap, expected.umap)
     assert_local_search_configs(actual.local_search, expected.local_search)
     assert_global_search_configs(actual.global_search, expected.global_search)
     assert_drift_search_configs(actual.drift_search, expected.drift_search)

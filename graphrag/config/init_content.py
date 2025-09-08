@@ -133,9 +133,6 @@ community_reports:
 embed_graph:
   enabled: false # if true, will generate node2vec embeddings for nodes
 
-umap:
-  enabled: false # if true, will generate UMAP embeddings for nodes (embed_graph must also be enabled)
-
 snapshots:
   graphml: false
   embeddings: false

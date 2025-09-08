@@ -46,8 +46,7 @@ flowchart TB
     end
     subgraph phase6[Phase 6: Network Visualization]
     graph_outputs --> graph_embed[Graph Embedding]
-    graph_embed --> umap_entities[Umap Entities]
-    umap_entities --> combine_nodes[Final Entities]
+    graph_embed --> combine_nodes[Final Entities]
     end
     subgraph phase7[Phase 7: Text Embeddings]
     textUnits --> text_embed[Text Embedding]

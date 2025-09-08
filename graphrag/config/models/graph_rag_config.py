@@ -35,7 +35,6 @@ from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
 from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
-from graphrag.config.models.umap_config import UmapConfig
 from graphrag.config.models.vector_store_config import VectorStoreConfig
 
 
@@ -259,11 +258,6 @@ class GraphRagConfig(BaseModel):
         default=EmbedGraphConfig(),
     )
     """Graph Embedding configuration."""
-
-    umap: UmapConfig = Field(
-        description="The UMAP configuration to use.", default=UmapConfig()
-    )
-    """The UMAP configuration to use."""
 
     snapshots: SnapshotsConfig = Field(
         description="The snapshots configuration to use.",

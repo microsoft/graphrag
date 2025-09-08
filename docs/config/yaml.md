@@ -302,14 +302,6 @@ We use node2vec to embed the graph. This is primarily used for visualization, so
 - `random_seed` **int** - The node2vec random seed.
 - `strategy` **dict** - Fully override the embed graph strategy.
 
-### umap
-
-Indicates whether we should run UMAP dimensionality reduction. This is used to provide an x/y coordinate to each graph node, suitable for visualization. If this is not enabled, nodes will receive a 0/0 x/y coordinate. If this is enabled, you *must* enable graph embedding as well.
-
-#### Fields
-
-- `enabled` **bool** - Whether to enable UMAP layouts.
-
 ### snapshots
 
 #### Fields

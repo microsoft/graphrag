@@ -82,8 +82,6 @@ List of all entities found in the data by the LM.
 | text_unit_ids | str[] | List of the text units containing the entity. |
 | frequency     | int   | Count of text units the entity was found within. |
 | degree        | int   | Node degree (connectedness) in the graph. |
-| x             | float | X position of the node for visual layouts. If graph embeddings and UMAP are not turned on, this will be 0. |
-| y             | float | Y position of the node for visual layouts. If graph embeddings and UMAP are not turned on, this will be 0. |
 
 ## relationships
 List of all entity-to-entity relationships found in the data by the LM. This is also the _edge list_ for the graph.
