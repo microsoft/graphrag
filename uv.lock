@@ -973,6 +973,26 @@ wheels = [
 ]
 
 [[package]]
+name = "fastuuid"
+version = "0.12.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/19/17/13146a1e916bd2971d0a58db5e0a4ad23efdd49f78f33ac871c161f8007b/fastuuid-0.12.0.tar.gz", hash = "sha256:d0bd4e5b35aad2826403f4411937c89e7c88857b1513fe10f696544c03e9bd8e", size = 19180 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/97/c3/9db9aee6f34e6dfd1f909d3d7432ac26e491a0471f8bb8b676c44b625b3f/fastuuid-0.12.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:22a900ef0956aacf862b460e20541fdae2d7c340594fe1bd6fdcb10d5f0791a9", size = 247356 },
+    { url = "https://files.pythonhosted.org/packages/14/a5/999e6e017af3d85841ce1e172d32fd27c8700804c125f496f71bfddc1a9f/fastuuid-0.12.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0302f5acf54dc75de30103025c5a95db06d6c2be36829043a0aa16fc170076bc", size = 258384 },
+    { url = "https://files.pythonhosted.org/packages/c4/e6/beae8411cac5b3b0b9d59ee08405eb39c3abe81dad459114363eff55c14a/fastuuid-0.12.0-cp310-cp310-manylinux_2_34_x86_64.whl", hash = "sha256:7946b4a310cfc2d597dcba658019d72a2851612a2cebb949d809c0e2474cf0a6", size = 278480 },
+    { url = "https://files.pythonhosted.org/packages/f1/f6/c598b9a052435716fc5a084ef17049edd35ca2c8241161269bfea4905ab4/fastuuid-0.12.0-cp310-cp310-win_amd64.whl", hash = "sha256:a1b6764dd42bf0c46c858fb5ade7b7a3d93b7a27485a7a5c184909026694cd88", size = 156799 },
+    { url = "https://files.pythonhosted.org/packages/d4/99/555eab31381c7912103d4c8654082611e5e82a7bb88ad5ab067e36b622d7/fastuuid-0.12.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:2bced35269315d16fe0c41003f8c9d63f2ee16a59295d90922cad5e6a67d0418", size = 247249 },
+    { url = "https://files.pythonhosted.org/packages/6d/3b/d62ce7f2af3d50a8e787603d44809770f43a3f2ff708bf10c252bf479109/fastuuid-0.12.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:82106e4b0a24f4f2f73c88f89dadbc1533bb808900740ca5db9bbb17d3b0c824", size = 258369 },
+    { url = "https://files.pythonhosted.org/packages/86/23/33ec5355036745cf83ea9ca7576d2e0750ff8d268c03b4af40ed26f1a303/fastuuid-0.12.0-cp311-cp311-manylinux_2_34_x86_64.whl", hash = "sha256:4db1bc7b8caa1d7412e1bea29b016d23a8d219131cff825b933eb3428f044dca", size = 278316 },
+    { url = "https://files.pythonhosted.org/packages/40/91/32ce82a14650148b6979ccd1a0089fd63d92505a90fb7156d2acc3245cbd/fastuuid-0.12.0-cp311-cp311-win_amd64.whl", hash = "sha256:07afc8e674e67ac3d35a608c68f6809da5fab470fb4ef4469094fdb32ba36c51", size = 156643 },
+    { url = "https://files.pythonhosted.org/packages/f6/28/442e79d6219b90208cb243ac01db05d89cc4fdf8ecd563fb89476baf7122/fastuuid-0.12.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:328694a573fe9dce556b0b70c9d03776786801e028d82f0b6d9db1cb0521b4d1", size = 247372 },
+    { url = "https://files.pythonhosted.org/packages/40/eb/e0fd56890970ca7a9ec0d116844580988b692b1a749ac38e0c39e1dbdf23/fastuuid-0.12.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:02acaea2c955bb2035a7d8e7b3fba8bd623b03746ae278e5fa932ef54c702f9f", size = 258200 },
+    { url = "https://files.pythonhosted.org/packages/f5/3c/4b30e376e65597a51a3dc929461a0dec77c8aec5d41d930f482b8f43e781/fastuuid-0.12.0-cp312-cp312-manylinux_2_34_x86_64.whl", hash = "sha256:ed9f449cba8cf16cced252521aee06e633d50ec48c807683f21cc1d89e193eb0", size = 278446 },
+    { url = "https://files.pythonhosted.org/packages/fe/96/cc5975fd23d2197b3e29f650a7a9beddce8993eaf934fa4ac595b77bb71f/fastuuid-0.12.0-cp312-cp312-win_amd64.whl", hash = "sha256:0df2ea4c9db96fd8f4fa38d0e88e309b3e56f8fd03675a2f6958a5b082a0c1e4", size = 157185 },
+]
+
+[[package]]
 name = "filelock"
 version = "3.19.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1245,7 +1265,7 @@ requires-dist = [
     { name = "json-repair", specifier = ">=0.30.3" },
     { name = "jupyter", marker = "extra == 'dev'", specifier = ">=1.1.1" },
     { name = "lancedb", specifier = ">=0.17.0" },
-    { name = "litellm", specifier = ">=1.76.0" },
+    { name = "litellm", specifier = ">=1.76.3" },
     { name = "mkdocs-exclude-search", marker = "extra == 'dev'", specifier = ">=0.6.6" },
     { name = "mkdocs-jupyter", marker = "extra == 'dev'", specifier = ">=0.25.1" },
     { name = "mkdocs-material", marker = "extra == 'dev'", specifier = ">=9.5.48" },
@@ -2041,11 +2061,12 @@ wheels = [
 
 [[package]]
 name = "litellm"
-version = "1.76.0"
+version = "1.76.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
     { name = "click" },
+    { name = "fastuuid" },
     { name = "httpx" },
     { name = "importlib-metadata" },
     { name = "jinja2" },
@@ -2056,9 +2077,9 @@ dependencies = [
     { name = "tiktoken" },
     { name = "tokenizers" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c9/e8/47c791c3d2cb4397ddece90840aecfc6cdc4a003f039dde42d7c861f4709/litellm-1.76.0.tar.gz", hash = "sha256:d26d12333135edd72af60e0e310284dac3b079f4d7c47c79dfbb2430b9b4b421", size = 10170569 }
+sdist = { url = "https://files.pythonhosted.org/packages/72/46/57b6539365616452bb6f4401487448ce62e62755738fce55d8222d7a557e/litellm-1.76.3.tar.gz", hash = "sha256:fc81219c59b17b26cc81276ce32582f3715612877ab11c1ea2c26e4853ac67e8", size = 10210403 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/86/f2/891b4b6c09021046d7f5bcff57178b18f352a67b032d35cc693d79b38620/litellm-1.76.0-py3-none-any.whl", hash = "sha256:357464242fc1eeda384810c9e334e48ad67a50ecd30cf61e86c15f89e2f2e0b4", size = 8953112 },
+    { url = "https://files.pythonhosted.org/packages/d0/d9/5f8ed27241b487f51f04573b8ba06d4460ebed9f792ff5cc148649fbf862/litellm-1.76.3-py3-none-any.whl", hash = "sha256:d62e3ff2a80ec5e551c6d7a0fe199ffe718ecb6cbaa43fc9250dd8d7c0944352", size = 9000797 },
 ]
 
 [[package]]
