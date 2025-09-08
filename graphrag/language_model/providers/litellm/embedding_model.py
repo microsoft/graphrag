@@ -229,7 +229,11 @@ class LitellmEmbeddingModel:
         new_kwargs = self._get_kwargs(**kwargs)
         response = await self.aembedding(input=[text], **new_kwargs)
 
-        return response.data[0].embedding if response.data else []
+        return (
+            response.data[0].get("embedding", [])
+            if response.data and response.data[0]
+            else []
+        )
 
     def embed_batch(self, text_list: list[str], **kwargs: Any) -> list[list[float]]:
         """
@@ -246,7 +250,7 @@ class LitellmEmbeddingModel:
         new_kwargs = self._get_kwargs(**kwargs)
         response = self.embedding(input=text_list, **new_kwargs)
 
-        return [emb.embedding for emb in response.data]
+        return [emb.get("embedding", []) for emb in response.data]
 
     def embed(self, text: str, **kwargs: Any) -> list[float]:
         """
@@ -263,4 +267,8 @@ class LitellmEmbeddingModel:
         new_kwargs = self._get_kwargs(**kwargs)
         response = self.embedding(input=[text], **new_kwargs)
 
-        return response.data[0].embedding if response.data else []
+        return (
+            response.data[0].get("embedding", [])
+            if response.data and response.data[0]
+            else []
+        )
