@@ -234,7 +234,7 @@ def read_text_units(
     relationships_col: str | None = "relationship_ids",
     covariates_col: str | None = "covariate_ids",
     tokens_col: str | None = "n_tokens",
-    document_ids_col: str | None = "document_ids",
+    document_id_col: str | None = "document_id",
     attributes_cols: list[str] | None = None,
 ) -> list[TextUnit]:
     """Read text units from a dataframe using pre-converted records."""
@@ -250,7 +250,7 @@ def read_text_units(
                 row, covariates_col, key_type=str, value_type=str
             ),
             n_tokens=to_optional_int(row, tokens_col),
-            document_ids=to_optional_list(row, document_ids_col, item_type=str),
+            document_id=to_optional_str(row, document_id_col),
             attributes=(
                 {col: row.get(col) for col in attributes_cols}
                 if attributes_cols

@@ -58,7 +58,6 @@ async def load_docs_in_chunks(
     chunks_df = create_base_text_units(
         documents=dataset,
         callbacks=NoopWorkflowCallbacks(),
-        group_by_columns=chunk_config.group_by_columns,
         size=chunk_size,
         overlap=overlap,
         encoding_model=chunk_config.encoding_model,

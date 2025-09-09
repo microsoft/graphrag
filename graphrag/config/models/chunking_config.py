@@ -20,10 +20,6 @@ class ChunkingConfig(BaseModel):
         description="The chunk overlap to use.",
         default=graphrag_config_defaults.chunks.overlap,
     )
-    group_by_columns: list[str] = Field(
-        description="The chunk by columns to use.",
-        default=graphrag_config_defaults.chunks.group_by_columns,
-    )
     strategy: ChunkStrategyType = Field(
         description="The chunking strategy to use.",
         default=graphrag_config_defaults.chunks.strategy,

@@ -67,7 +67,6 @@ input:
 chunks:
   size: {graphrag_config_defaults.chunks.size}
   overlap: {graphrag_config_defaults.chunks.overlap}
-  group_by_columns: [{",".join(graphrag_config_defaults.chunks.group_by_columns)}]
 
 ### Output/storage settings ###
 ## If blob storage is specified in the following four sections,

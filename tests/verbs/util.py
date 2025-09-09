@@ -66,7 +66,10 @@ def compare_outputs(
     )
 
     for column in cols:
-        assert column in actual.columns
+        try:
+            assert column in actual.columns
+        except AssertionError:
+            print(f"Column '{column}' not found in actual output.")
         try:
             # dtypes can differ since the test data is read from parquet and our workflow runs in memory
             if column != "id":  # don't check uuids
@@ -77,6 +80,7 @@ def compare_outputs(
                     check_index=False,
                 )
         except AssertionError:
+            print(f"Column '{column}' does not match.")
             print("Expected:")
             print(expected[column])
             print("Actual:")

@@ -35,7 +35,6 @@ async def run_workflow(
     output = create_base_text_units(
         documents,
         context.callbacks,
-        chunks.group_by_columns,
         chunks.size,
         chunks.overlap,
         chunks.encoding_model,
@@ -53,7 +52,6 @@ async def run_workflow(
 def create_base_text_units(
     documents: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    group_by_columns: list[str],
     size: int,
     overlap: int,
     encoding_model: str,
@@ -62,26 +60,9 @@ def create_base_text_units(
     chunk_size_includes_metadata: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
-    sort = documents.sort_values(by=["id"], ascending=[True])
+    documents.sort_values(by=["id"], ascending=[True], inplace=True)
 
-    sort["text_with_ids"] = list(
-        zip(*[sort[col] for col in ["id", "text"]], strict=True)
-    )
-
-    agg_dict = {"text_with_ids": list}
-    if "metadata" in documents:
-        agg_dict["metadata"] = "first"  # type: ignore
-
-    aggregated = (
-        (
-            sort.groupby(group_by_columns, sort=False)
-            if len(group_by_columns) > 0
-            else sort.groupby(lambda _x: True)
-        )
-        .agg(agg_dict)
-        .reset_index()
-    )
-    aggregated.rename(columns={"text_with_ids": "texts"}, inplace=True)
+    encode, _ = get_encoding_fn(encoding_model)
 
     def chunker(row: pd.Series) -> Any:
         line_delimiter = ".\n"
@@ -99,7 +80,6 @@ def create_base_text_units(
                 )
 
             if chunk_size_includes_metadata:
-                encode, _ = get_encoding_fn(encoding_model)
                 metadata_tokens = len(encode(metadata_str))
                 if metadata_tokens >= size:
                     message = "Metadata tokens exceeds the maximum tokens per chunk. Please increase the tokens per chunk."
@@ -107,7 +87,7 @@ def create_base_text_units(
 
         chunked = chunk_text(
             pd.DataFrame([row]).reset_index(drop=True),
-            column="texts",
+            column="text",
             size=size - metadata_tokens,
             overlap=overlap,
             encoding_model=encoding_model,
@@ -128,7 +108,7 @@ def create_base_text_units(
         return row
 
     # Track progress of row-wise apply operation
-    total_rows = len(aggregated)
+    total_rows = len(documents)
     logger.info("Starting chunking process for %d documents", total_rows)
 
     def chunker_with_logging(row: pd.Series, row_index: int) -> Any:
@@ -137,27 +117,26 @@ def create_base_text_units(
         logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
         return result
 
-    aggregated = aggregated.apply(
+    text_units = documents.apply(
         lambda row: chunker_with_logging(row, row.name), axis=1
     )
 
-    aggregated = cast("pd.DataFrame", aggregated[[*group_by_columns, "chunks"]])
-    aggregated = aggregated.explode("chunks")
-    aggregated.rename(
+    text_units = cast("pd.DataFrame", text_units[["id", "chunks"]])
+    text_units = text_units.explode("chunks")
+    text_units.rename(
         columns={
-            "chunks": "chunk",
+            "id": "document_id",
+            "chunks": "text",
         },
         inplace=True,
     )
-    aggregated["id"] = aggregated.apply(
-        lambda row: gen_sha512_hash(row, ["chunk"]), axis=1
+
+    text_units["id"] = text_units.apply(
+        lambda row: gen_sha512_hash(row, ["text"]), axis=1
     )
-    aggregated[["document_ids", "chunk", "n_tokens"]] = pd.DataFrame(
-        aggregated["chunk"].tolist(), index=aggregated.index
-    )
-    # rename for downstream consumption
-    aggregated.rename(columns={"chunk": "text"}, inplace=True)
+    # get a final token measurement
+    text_units["n_tokens"] = text_units["text"].apply(lambda x: len(encode(x)))
 
     return cast(
-        "pd.DataFrame", aggregated[aggregated["text"].notna()].reset_index(drop=True)
+        "pd.DataFrame", text_units[text_units["text"].notna()].reset_index(drop=True)
     )
