@@ -27,15 +27,15 @@ from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import 
 DEFAULT_OUTPUT_BASE_DIR = "output"
 DEFAULT_CHAT_MODEL_ID = "default_chat_model"
 DEFAULT_CHAT_MODEL_TYPE = ModelType.OpenAIChat
-DEFAULT_CHAT_MODEL = "gpt-4-turbo-preview"
+DEFAULT_CHAT_MODEL = "gpt-4o"
 DEFAULT_CHAT_MODEL_AUTH_TYPE = AuthType.APIKey
 DEFAULT_EMBEDDING_MODEL_ID = "default_embedding_model"
 DEFAULT_EMBEDDING_MODEL_TYPE = ModelType.OpenAIEmbedding
-DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
+DEFAULT_EMBEDDING_MODEL = "text-embedding-ada-002"
 DEFAULT_EMBEDDING_MODEL_AUTH_TYPE = AuthType.APIKey
 DEFAULT_VECTOR_STORE_ID = "default_vector_store"
 
-ENCODING_MODEL = "cl100k_base"
+ENCODING_MODEL = "o200k_base"
 COGNITIVE_SERVICES_AUDIENCE = "https://cognitiveservices.azure.com/.default"
 
 
@@ -68,9 +68,8 @@ class ChunksDefaults:
 
     size: int = 1200
     overlap: int = 100
-    group_by_columns: list[str] = field(default_factory=lambda: ["id"])
     strategy: ClassVar[ChunkStrategyType] = ChunkStrategyType.tokens
-    encoding_model: str = "cl100k_base"
+    encoding_model: str = ENCODING_MODEL
     prepend_metadata: bool = False
     chunk_size_includes_metadata: bool = False
 

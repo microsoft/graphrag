@@ -29,7 +29,7 @@ async def test_extract_graph_nlp():
 
     # this will be the raw count of entities and edges with no pruning
     # with NLP it is deterministic, so we can assert exact row counts
-    assert len(nodes_actual) == 1148
+    assert len(nodes_actual) == 1147
     assert len(nodes_actual.columns) == 5
-    assert len(edges_actual) == 29445
+    assert len(edges_actual) == 29442
     assert len(edges_actual.columns) == 5

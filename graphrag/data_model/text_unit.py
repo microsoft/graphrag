@@ -28,8 +28,8 @@ class TextUnit(Identified):
     n_tokens: int | None = None
     """The number of tokens in the text (optional)."""
 
-    document_ids: list[str] | None = None
-    """List of document IDs in which the text unit appears (optional)."""
+    document_id: str | None = None
+    """ID of the document in which the text unit appears (optional)."""
 
     attributes: dict[str, Any] | None = None
     """A dictionary of additional attributes associated with the text unit (optional)."""
@@ -45,7 +45,7 @@ class TextUnit(Identified):
         relationships_key: str = "relationship_ids",
         covariates_key: str = "covariate_ids",
         n_tokens_key: str = "n_tokens",
-        document_ids_key: str = "document_ids",
+        document_id_key: str = "document_id",
         attributes_key: str = "attributes",
     ) -> "TextUnit":
         """Create a new text unit from the dict data."""
@@ -57,6 +57,6 @@ class TextUnit(Identified):
             relationship_ids=d.get(relationships_key),
             covariate_ids=d.get(covariates_key),
             n_tokens=d.get(n_tokens_key),
-            document_ids=d.get(document_ids_key),
+            document_id=d.get(document_id_key),
             attributes=d.get(attributes_key),
         )

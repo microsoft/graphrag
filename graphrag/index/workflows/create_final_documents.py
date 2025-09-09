@@ -37,19 +37,15 @@ def create_final_documents(
     documents: pd.DataFrame, text_units: pd.DataFrame
 ) -> pd.DataFrame:
     """All the steps to transform final documents."""
-    exploded = (
-        text_units.explode("document_ids")
-        .loc[:, ["id", "document_ids", "text"]]
-        .rename(
-            columns={
-                "document_ids": "chunk_doc_id",
-                "id": "chunk_id",
-                "text": "chunk_text",
-            }
-        )
+    renamed = text_units.loc[:, ["id", "document_id", "text"]].rename(
+        columns={
+            "document_id": "chunk_doc_id",
+            "id": "chunk_id",
+            "text": "chunk_text",
+        }
     )
 
-    joined = exploded.merge(
+    joined = renamed.merge(
         documents,
         left_on="chunk_doc_id",
         right_on="id",

@@ -208,7 +208,6 @@ def assert_text_embedding_configs(
 def assert_chunking_configs(actual: ChunkingConfig, expected: ChunkingConfig) -> None:
     assert actual.size == expected.size
     assert actual.overlap == expected.overlap
-    assert actual.group_by_columns == expected.group_by_columns
     assert actual.strategy == expected.strategy
     assert actual.encoding_model == expected.encoding_model
     assert actual.prepend_metadata == expected.prepend_metadata

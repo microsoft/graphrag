@@ -104,7 +104,7 @@ List of all text chunks parsed from the input documents.
 | ----------------- | ----- | ----------- |
 | text              | str   | Raw full text of the chunk. |
 | n_tokens          | int   | Number of tokens in the chunk. This should normally match the `chunk_size` config parameter, except for the last chunk which is often shorter. |
-| document_ids      | str[] | List of document IDs the chunk came from. This is normally only 1 due to our default groupby, but for very short text documents (e.g., microblogs) it can be configured so text units span multiple documents. |
+| document_id       | str   | ID of the document the chunk came from. |
 | entity_ids        | str[] | List of entities found in the text unit. |
 | relationships_ids | str[] | List of relationships found in the text unit. |
 | covariate_ids     | str[] | Optional list of covariates found in the text unit. |

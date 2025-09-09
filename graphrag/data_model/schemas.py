@@ -54,7 +54,7 @@ ENTITY_IDS = "entity_ids"
 RELATIONSHIP_IDS = "relationship_ids"
 TEXT_UNIT_IDS = "text_unit_ids"
 COVARIATE_IDS = "covariate_ids"
-DOCUMENT_IDS = "document_ids"
+DOCUMENT_ID = "document_id"
 
 PERIOD = "period"
 SIZE = "size"
@@ -146,7 +146,7 @@ TEXT_UNITS_FINAL_COLUMNS = [
     SHORT_ID,
     TEXT,
     N_TOKENS,
-    DOCUMENT_IDS,
+    DOCUMENT_ID,
     ENTITY_IDS,
     RELATIONSHIP_IDS,
     COVARIATE_IDS,
