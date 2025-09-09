@@ -60,8 +60,6 @@ def _group_and_resolve_entities(
             # Concatenate nd.array into a single list
             "text_unit_ids": lambda x: list(itertools.chain(*x.tolist())),
             "degree": "first",  # todo: we could probably re-compute this with the entire new graph
-            "x": "first",
-            "y": "first",
         })
         .reset_index()
     )

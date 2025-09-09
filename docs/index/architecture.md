@@ -23,7 +23,6 @@ stateDiagram-v2
     Chunk --> EmbedDocuments
     ExtractGraph --> GenerateReports
     ExtractGraph --> EmbedEntities
-    ExtractGraph --> EmbedGraph
 ```
 
 ### LLM Caching

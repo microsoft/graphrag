@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing cluster_graph, apply_clustering and run_layout methods definition."""
+"""A module containing cluster_graph, apply_clustering methods definition."""
 
 import logging
 
