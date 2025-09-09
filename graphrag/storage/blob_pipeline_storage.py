@@ -101,15 +101,13 @@ class BlobPipelineStorage(PipelineStorage):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        file_filter: dict[str, Any] | None = None,
         max_count=-1,
-    ) -> Iterator[tuple[str, dict[str, Any]]]:
-        """Find blobs in a container using a file pattern, as well as a custom filter function.
+    ) -> Iterator[str]:
+        """Find blobs in a container using a file pattern.
 
         Params:
             base_dir: The name of the base container.
             file_pattern: The file pattern to use.
-            file_filter: A dictionary of key-value pairs to filter the blobs.
             max_count: The maximum number of blobs to return. If -1, all blobs are returned.
 
         Returns
@@ -131,14 +129,6 @@ class BlobPipelineStorage(PipelineStorage):
                 blob_name = blob_name[1:]
             return blob_name
 
-        def item_filter(item: dict[str, Any]) -> bool:
-            if file_filter is None:
-                return True
-
-            return all(
-                re.search(value, item[key]) for key, value in file_filter.items()
-            )
-
         try:
             container_client = self._blob_service_client.get_container_client(
                 self._container_name
@@ -151,14 +141,10 @@ class BlobPipelineStorage(PipelineStorage):
             for blob in all_blobs:
                 match = file_pattern.search(blob.name)
                 if match and blob.name.startswith(base_dir):
-                    group = match.groupdict()
-                    if item_filter(group):
-                        yield (_blobname(blob.name), group)
-                        num_loaded += 1
-                        if max_count > 0 and num_loaded >= max_count:
-                            break
-                    else:
-                        num_filtered += 1
+                    yield _blobname(blob.name)
+                    num_loaded += 1
+                    if max_count > 0 and num_loaded >= max_count:
+                        break
                 else:
                     num_filtered += 1
                 logger.debug(
@@ -169,10 +155,9 @@ class BlobPipelineStorage(PipelineStorage):
                 )
         except Exception:  # noqa: BLE001
             logger.warning(
-                "Error finding blobs: base_dir=%s, file_pattern=%s, file_filter=%s",
+                "Error finding blobs: base_dir=%s, file_pattern=%s",
                 base_dir,
                 file_pattern,
-                file_filter,
             )
 
     async def get(

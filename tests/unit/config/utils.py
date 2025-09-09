@@ -173,7 +173,6 @@ def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
     assert actual.storage.container_name == expected.storage.container_name
     assert actual.encoding == expected.encoding
     assert actual.file_pattern == expected.file_pattern
-    assert actual.file_filter == expected.file_filter
     assert actual.text_column == expected.text_column
     assert actual.title_column == expected.title_column
     assert actual.metadata == expected.metadata

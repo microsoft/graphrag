@@ -248,7 +248,6 @@ class InputDefaults:
     file_type: ClassVar[InputFileType] = InputFileType.text
     encoding: str = "utf-8"
     file_pattern: str = ""
-    file_filter: None = None
     text_column: str = "text"
     title_column: None = None
     metadata: None = None
