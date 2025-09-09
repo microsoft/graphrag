@@ -1,0 +1,4 @@
+{
+  "type": "major",
+  "description": "Re-implement graspologic methods to remove dependency. Remove visualization steps."
+}
