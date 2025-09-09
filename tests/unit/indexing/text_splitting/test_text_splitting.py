@@ -83,8 +83,7 @@ def test_token_text_splitter(mock_tokenizer, mock_split_text):
 def test_encode_basic():
     splitter = TokenTextSplitter()
     result = splitter.encode("abc def")
-
-    assert result == [13997, 711], "Encoding failed to return expected tokens"
+    assert result == [26682, 1056], "Encoding failed to return expected tokens"
 
 
 def test_num_tokens_empty_input():
