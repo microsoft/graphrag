@@ -41,18 +41,9 @@ class FilePipelineStorage(PipelineStorage):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        file_filter: dict[str, Any] | None = None,
         max_count=-1,
-    ) -> Iterator[tuple[str, dict[str, Any]]]:
-        """Find files in the storage using a file pattern, as well as a custom filter function."""
-
-        def item_filter(item: dict[str, Any]) -> bool:
-            if file_filter is None:
-                return True
-            return all(
-                re.search(value, item[key]) for key, value in file_filter.items()
-            )
-
+    ) -> Iterator[str]:
+        """Find files in the storage using a file pattern."""
         search_path = Path(self._root_dir) / (base_dir or "")
         logger.info(
             "search %s for files matching %s", search_path, file_pattern.pattern
@@ -64,17 +55,13 @@ class FilePipelineStorage(PipelineStorage):
         for file in all_files:
             match = file_pattern.search(f"{file}")
             if match:
-                group = match.groupdict()
-                if item_filter(group):
-                    filename = f"{file}".replace(self._root_dir, "")
-                    if filename.startswith(os.sep):
-                        filename = filename[1:]
-                    yield (filename, group)
-                    num_loaded += 1
-                    if max_count > 0 and num_loaded >= max_count:
-                        break
-                else:
-                    num_filtered += 1
+                filename = f"{file}".replace(self._root_dir, "")
+                if filename.startswith(os.sep):
+                    filename = filename[1:]
+                yield filename
+                num_loaded += 1
+                if max_count > 0 and num_loaded >= max_count:
+                    break
             else:
                 num_filtered += 1
             logger.debug(

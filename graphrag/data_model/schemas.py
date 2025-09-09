@@ -13,8 +13,6 @@ TYPE = "type"
 NODE_DEGREE = "degree"
 NODE_FREQUENCY = "frequency"
 NODE_DETAILS = "node_details"
-NODE_X = "x"
-NODE_Y = "y"
 
 # POST-PREP EDGE TABLE SCHEMA
 EDGE_SOURCE = "source"
@@ -78,8 +76,6 @@ ENTITIES_FINAL_COLUMNS = [
     TEXT_UNIT_IDS,
     NODE_FREQUENCY,
     NODE_DEGREE,
-    NODE_X,
-    NODE_Y,
 ]
 
 RELATIONSHIPS_FINAL_COLUMNS = [

@@ -7,7 +7,6 @@ import logging
 
 import pandas as pd
 
-from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.operations.finalize_entities import finalize_entities
@@ -34,8 +33,6 @@ async def run_workflow(
     final_entities, final_relationships = finalize_graph(
         entities,
         relationships,
-        embed_config=config.embed_graph,
-        layout_enabled=config.umap.enabled,
     )
 
     await write_table_to_storage(final_entities, "entities", context.output_storage)
@@ -65,12 +62,8 @@ async def run_workflow(
 def finalize_graph(
     entities: pd.DataFrame,
     relationships: pd.DataFrame,
-    embed_config: EmbedGraphConfig | None = None,
-    layout_enabled: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to finalize the entity and relationship formats."""
-    final_entities = finalize_entities(
-        entities, relationships, embed_config, layout_enabled
-    )
+    final_entities = finalize_entities(entities, relationships)
     final_relationships = finalize_relationships(relationships)
     return (final_entities, final_relationships)

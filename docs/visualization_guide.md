@@ -8,13 +8,6 @@ Before building an index, please review your `settings.yaml` configuration file 
 snapshots:
   graphml: true
 ```
-(Optional) To support other visualization tools and exploration, additional parameters can be enabled that provide access to vector embeddings.
-```yaml
-embed_graph:
-  enabled: true # will generate node2vec embeddings for nodes
-umap:
-  enabled: true # will generate UMAP embeddings for nodes, giving the entities table an x/y position to plot
-```
 After running the indexing pipeline over your data, there will be an output folder (defined by the `storage.base_dir` setting).
 
 - **Output Folder**: Contains artifacts from the LLM’s indexing pass.

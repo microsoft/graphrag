@@ -22,12 +22,7 @@ async def load_files(
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load files from storage and apply a loader function."""
-    files = list(
-        storage.find(
-            re.compile(config.file_pattern),
-            file_filter=config.file_filter,
-        )
-    )
+    files = list(storage.find(re.compile(config.file_pattern)))
 
     if len(files) == 0:
         msg = f"No {config.file_type} files found in {config.storage.base_dir}"
@@ -35,9 +30,9 @@ async def load_files(
 
     files_loaded = []
 
-    for file, group in files:
+    for file in files:
         try:
-            files_loaded.append(await loader(file, group))
+            files_loaded.append(await loader(file))
         except Exception as e:  # noqa: BLE001 (catching Exception is fine here)
             logger.warning("Warning! Error loading file %s. Skipping...", file)
             logger.warning("Error: %s", e)
