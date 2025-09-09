@@ -22,19 +22,10 @@ async def load_csv(
     """Load csv inputs from a directory."""
     logger.info("Loading csv files from %s", config.storage.base_dir)
 
-    async def load_file(path: str, group: dict | None) -> pd.DataFrame:
-        if group is None:
-            group = {}
+    async def load_file(path: str) -> pd.DataFrame:
         buffer = BytesIO(await storage.get(path, as_bytes=True))
         data = pd.read_csv(buffer, encoding=config.encoding)
-        additional_keys = group.keys()
-        if len(additional_keys) > 0:
-            data[[*additional_keys]] = data.apply(
-                lambda _row: pd.Series([group[key] for key in additional_keys]), axis=1
-            )
-
         data = process_data_columns(data, config, path)
-
         creation_date = await storage.get_creation_date(path)
         data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
 

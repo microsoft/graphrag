@@ -126,20 +126,6 @@ class DriftSearchDefaults:
 
 
 @dataclass
-class EmbedGraphDefaults:
-    """Default values for embedding graph."""
-
-    enabled: bool = False
-    dimensions: int = 1536
-    num_walks: int = 10
-    walk_length: int = 40
-    window_size: int = 2
-    iterations: int = 3
-    random_seed: int = 597832
-    use_lcc: bool = True
-
-
-@dataclass
 class EmbedTextDefaults:
     """Default values for embedding text."""
 
@@ -262,7 +248,6 @@ class InputDefaults:
     file_type: ClassVar[InputFileType] = InputFileType.text
     encoding: str = "utf-8"
     file_pattern: str = ""
-    file_filter: None = None
     text_column: str = "text"
     title_column: None = None
     metadata: None = None
@@ -368,13 +353,6 @@ class SummarizeDescriptionsDefaults:
 
 
 @dataclass
-class UmapDefaults:
-    """Default values for UMAP."""
-
-    enabled: bool = False
-
-
-@dataclass
 class UpdateIndexOutputDefaults(StorageDefaults):
     """Default values for update index output."""
 
@@ -410,7 +388,6 @@ class GraphRagConfigDefaults:
     )
     cache: CacheDefaults = field(default_factory=CacheDefaults)
     input: InputDefaults = field(default_factory=InputDefaults)
-    embed_graph: EmbedGraphDefaults = field(default_factory=EmbedGraphDefaults)
     embed_text: EmbedTextDefaults = field(default_factory=EmbedTextDefaults)
     chunks: ChunksDefaults = field(default_factory=ChunksDefaults)
     snapshots: SnapshotsDefaults = field(default_factory=SnapshotsDefaults)
@@ -427,7 +404,6 @@ class GraphRagConfigDefaults:
     extract_claims: ExtractClaimsDefaults = field(default_factory=ExtractClaimsDefaults)
     prune_graph: PruneGraphDefaults = field(default_factory=PruneGraphDefaults)
     cluster_graph: ClusterGraphDefaults = field(default_factory=ClusterGraphDefaults)
-    umap: UmapDefaults = field(default_factory=UmapDefaults)
     local_search: LocalSearchDefaults = field(default_factory=LocalSearchDefaults)
     global_search: GlobalSearchDefaults = field(default_factory=GlobalSearchDefaults)
     drift_search: DriftSearchDefaults = field(default_factory=DriftSearchDefaults)

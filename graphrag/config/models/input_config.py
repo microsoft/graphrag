@@ -32,10 +32,6 @@ class InputConfig(BaseModel):
         description="The input file pattern to use.",
         default=graphrag_config_defaults.input.file_pattern,
     )
-    file_filter: dict[str, str] | None = Field(
-        description="The optional file filter for the input files.",
-        default=graphrag_config_defaults.input.file_filter,
-    )
     text_column: str = Field(
         description="The input text column to use.",
         default=graphrag_config_defaults.input.text_column,

@@ -117,9 +117,8 @@ def test_register_class_directly_works():
             self,
             file_pattern: re.Pattern[str],
             base_dir: str | None = None,
-            file_filter: dict[str, Any] | None = None,
             max_count=-1,
-        ) -> Iterator[tuple[str, dict[str, Any]]]:
+        ) -> Iterator[str]:
             return iter([])
 
         async def get(

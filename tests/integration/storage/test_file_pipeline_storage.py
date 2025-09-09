@@ -18,12 +18,10 @@ async def test_find():
     storage = FilePipelineStorage()
     items = list(
         storage.find(
-            base_dir="tests/fixtures/text/input",
-            file_pattern=re.compile(r".*\.txt$"),
-            file_filter=None,
+            base_dir="tests/fixtures/text/input", file_pattern=re.compile(r".*\.txt$")
         )
     )
-    assert items == [(str(Path("tests/fixtures/text/input/dulce.txt")), {})]
+    assert items == [str(Path("tests/fixtures/text/input/dulce.txt"))]
     output = await storage.get("tests/fixtures/text/input/dulce.txt")
     assert len(output) > 0
 
@@ -52,7 +50,7 @@ async def test_child():
     storage = FilePipelineStorage()
     storage = storage.child("tests/fixtures/text/input")
     items = list(storage.find(re.compile(r".*\.txt$")))
-    assert items == [(str(Path("dulce.txt")), {})]
+    assert items == [str(Path("dulce.txt"))]
 
     output = await storage.get("dulce.txt")
     assert len(output) > 0

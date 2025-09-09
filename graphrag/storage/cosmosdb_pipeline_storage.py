@@ -121,15 +121,13 @@ class CosmosDBPipelineStorage(PipelineStorage):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        file_filter: dict[str, Any] | None = None,
         max_count=-1,
-    ) -> Iterator[tuple[str, dict[str, Any]]]:
-        """Find documents in a Cosmos DB container using a file pattern regex and custom file filter (optional).
+    ) -> Iterator[str]:
+        """Find documents in a Cosmos DB container using a file pattern regex.
 
         Params:
             base_dir: The name of the base directory (not used in Cosmos DB context).
             file_pattern: The file pattern to use.
-            file_filter: A dictionary of key-value pairs to filter the documents.
             max_count: The maximum number of documents to return. If -1, all documents are returned.
 
         Returns
@@ -145,23 +143,12 @@ class CosmosDBPipelineStorage(PipelineStorage):
         if not self._database_client or not self._container_client:
             return
 
-        def item_filter(item: dict[str, Any]) -> bool:
-            if file_filter is None:
-                return True
-            return all(
-                re.search(value, item.get(key, ""))
-                for key, value in file_filter.items()
-            )
-
         try:
             query = "SELECT * FROM c WHERE RegexMatch(c.id, @pattern)"
             parameters: list[dict[str, Any]] = [
                 {"name": "@pattern", "value": file_pattern.pattern}
             ]
-            if file_filter:
-                for key, value in file_filter.items():
-                    query += f" AND c.{key} = @{key}"
-                    parameters.append({"name": f"@{key}", "value": value})
+
             items = list(
                 self._container_client.query_items(
                     query=query,
@@ -177,14 +164,10 @@ class CosmosDBPipelineStorage(PipelineStorage):
             for item in items:
                 match = file_pattern.search(item["id"])
                 if match:
-                    group = match.groupdict()
-                    if item_filter(group):
-                        yield (item["id"], group)
-                        num_loaded += 1
-                        if max_count > 0 and num_loaded >= max_count:
-                            break
-                    else:
-                        num_filtered += 1
+                    yield item["id"]
+                    num_loaded += 1
+                    if max_count > 0 and num_loaded >= max_count:
+                        break
                 else:
                     num_filtered += 1
 

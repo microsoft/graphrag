@@ -87,7 +87,6 @@ Our pipeline can ingest .csv, .txt, or .json data from an input location. See th
 - `file_type` **text|csv|json** - The type of input data to load. Default is `text`
 - `encoding` **str** - The encoding of the input file. Default is `utf-8`
 - `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$`, `.*\.txt$`, or `.*\.json$` depending on the specified `file_type`, but you can customize it if needed.
-- `file_filter` **dict** - Key/value pairs to filter. Default is None.
 - `text_column` **str** - (CSV/JSON only) The text column name. If unset we expect a column named `text`.
 - `title_column` **str** - (CSV/JSON only) The title column name, filename will be used if unset.
 - `metadata` **list[str]** - (CSV/JSON only) The additional document attributes fields to keep.
@@ -286,29 +285,6 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 - `prompt` **str** - The prompt file to use.
 - `max_length` **int** - The maximum number of output tokens per report.
 - `max_input_length` **int** - The maximum number of input tokens to use when generating reports.
-
-### embed_graph
-
-We use node2vec to embed the graph. This is primarily used for visualization, so it is not turned on by default.
-
-#### Fields
-
-- `enabled` **bool** - Whether to enable graph embeddings.
-- `dimensions` **int** - Number of vector dimensions to produce.
-- `num_walks` **int** - The node2vec number of walks.
-- `walk_length` **int** - The node2vec walk length.
-- `window_size` **int** - The node2vec window size.
-- `iterations` **int** - The node2vec number of iterations.
-- `random_seed` **int** - The node2vec random seed.
-- `strategy` **dict** - Fully override the embed graph strategy.
-
-### umap
-
-Indicates whether we should run UMAP dimensionality reduction. This is used to provide an x/y coordinate to each graph node, suitable for visualization. If this is not enabled, nodes will receive a 0/0 x/y coordinate. If this is enabled, you *must* enable graph embedding as well.
-
-#### Fields
-
-- `enabled` **bool** - Whether to enable UMAP layouts.
 
 ### snapshots
 

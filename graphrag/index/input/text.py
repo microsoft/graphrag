@@ -22,11 +22,9 @@ async def load_text(
 ) -> pd.DataFrame:
     """Load text inputs from a directory."""
 
-    async def load_file(path: str, group: dict | None = None) -> pd.DataFrame:
-        if group is None:
-            group = {}
+    async def load_file(path: str) -> pd.DataFrame:
         text = await storage.get(path, encoding=config.encoding)
-        new_item = {**group, "text": text}
+        new_item = {"text": text}
         new_item["id"] = gen_sha512_hash(new_item, new_item.keys())
         new_item["title"] = str(Path(path).name)
         new_item["creation_date"] = await storage.get_creation_date(path)
