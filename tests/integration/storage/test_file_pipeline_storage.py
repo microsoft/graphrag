@@ -50,7 +50,7 @@ async def test_child():
     storage = FilePipelineStorage()
     storage = storage.child("tests/fixtures/text/input")
     items = list(storage.find(re.compile(r".*\.txt$")))
-    assert items == [(str(Path("dulce.txt")), {})]
+    assert items == [str(Path("dulce.txt"))]
 
     output = await storage.get("dulce.txt")
     assert len(output) > 0
