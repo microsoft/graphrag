@@ -30,7 +30,6 @@ async def test_find():
     try:
         try:
             items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
-            items = [item[0] for item in items]
             assert items == []
 
             json_content = {
@@ -40,7 +39,6 @@ async def test_find():
                 "christmas.json", json.dumps(json_content), encoding="utf-8"
             )
             items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
-            items = [item[0] for item in items]
             assert items == ["christmas.json"]
 
             json_content = {
@@ -48,7 +46,6 @@ async def test_find():
             }
             await storage.set("test.json", json.dumps(json_content), encoding="utf-8")
             items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
-            items = [item[0] for item in items]
             assert items == ["christmas.json", "test.json"]
 
             output = await storage.get("test.json")

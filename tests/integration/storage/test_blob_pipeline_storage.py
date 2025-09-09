@@ -21,7 +21,6 @@ async def test_find():
             items = list(
                 storage.find(base_dir="input", file_pattern=re.compile(r".*\.txt$"))
             )
-            items = [item[0] for item in items]
             assert items == []
 
             await storage.set(
@@ -30,12 +29,10 @@ async def test_find():
             items = list(
                 storage.find(base_dir="input", file_pattern=re.compile(r".*\.txt$"))
             )
-            items = [item[0] for item in items]
             assert items == ["input/christmas.txt"]
 
             await storage.set("test.txt", "Hello, World!", encoding="utf-8")
             items = list(storage.find(file_pattern=re.compile(r".*\.txt$")))
-            items = [item[0] for item in items]
             assert items == ["input/christmas.txt", "test.txt"]
 
             output = await storage.get("test.txt")
@@ -91,12 +88,10 @@ async def test_child():
             storage = parent.child("input")
             await storage.set("christmas.txt", "Merry Christmas!", encoding="utf-8")
             items = list(storage.find(re.compile(r".*\.txt$")))
-            items = [item[0] for item in items]
             assert items == ["christmas.txt"]
 
             await storage.set("test.txt", "Hello, World!", encoding="utf-8")
             items = list(storage.find(re.compile(r".*\.txt$")))
-            items = [item[0] for item in items]
             print("FOUND", items)
             assert items == ["christmas.txt", "test.txt"]
 
@@ -104,7 +99,6 @@ async def test_child():
             assert output == "Hello, World!"
 
             items = list(parent.find(re.compile(r".*\.txt$")))
-            items = [item[0] for item in items]
             print("FOUND ITEMS", items)
             assert items == ["input/christmas.txt", "input/test.txt"]
         finally:

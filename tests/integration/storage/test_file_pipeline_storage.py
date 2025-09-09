@@ -21,7 +21,7 @@ async def test_find():
             base_dir="tests/fixtures/text/input", file_pattern=re.compile(r".*\.txt$")
         )
     )
-    assert items == [(str(Path("tests/fixtures/text/input/dulce.txt")), {})]
+    assert items == [str(Path("tests/fixtures/text/input/dulce.txt"))]
     output = await storage.get("tests/fixtures/text/input/dulce.txt")
     assert len(output) > 0
 
