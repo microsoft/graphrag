@@ -54,7 +54,6 @@ async def test_dotprefix():
     try:
         await storage.set("input/christmas.txt", "Merry Christmas!", encoding="utf-8")
         items = list(storage.find(file_pattern=re.compile(r".*\.txt$")))
-        items = [item[0] for item in items]
         assert items == ["input/christmas.txt"]
     finally:
         storage._delete_container()  # noqa: SLF001
