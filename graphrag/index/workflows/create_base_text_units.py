@@ -60,7 +60,7 @@ def create_base_text_units(
     chunk_size_includes_metadata: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
-    documents.sort_values(by=["id"], ascending=[True])
+    documents.sort_values(by=["id"], ascending=[True], inplace=True)
 
     encode, _ = get_encoding_fn(encoding_model)
 
