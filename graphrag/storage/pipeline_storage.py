@@ -18,10 +18,9 @@ class PipelineStorage(metaclass=ABCMeta):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        file_filter: dict[str, Any] | None = None,
         max_count=-1,
-    ) -> Iterator[tuple[str, dict[str, Any]]]:
-        """Find files in the storage using a file pattern, as well as a custom filter function."""
+    ) -> Iterator[str]:
+        """Find files in the storage using a file pattern."""
 
     @abstractmethod
     async def get(

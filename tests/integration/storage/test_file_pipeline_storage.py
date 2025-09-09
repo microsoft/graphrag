@@ -18,9 +18,7 @@ async def test_find():
     storage = FilePipelineStorage()
     items = list(
         storage.find(
-            base_dir="tests/fixtures/text/input",
-            file_pattern=re.compile(r".*\.txt$"),
-            file_filter=None,
+            base_dir="tests/fixtures/text/input", file_pattern=re.compile(r".*\.txt$")
         )
     )
     assert items == [(str(Path("tests/fixtures/text/input/dulce.txt")), {})]
