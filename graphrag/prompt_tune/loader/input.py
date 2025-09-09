@@ -69,8 +69,8 @@ async def load_docs_in_chunks(
 
     # Depending on the select method, build the dataset
     if limit <= 0 or limit > len(chunks_df):
-        logger.warning(f"Limit out of range, using default number of chunks: {LIMIT}")  # noqa: G004
-        limit = LIMIT
+        limit = min(LIMIT, len(chunks_df))
+        logger.warning(f"Limit out of range, using default number of chunks: {limit}")  # noqa: G004
 
     if select_method == DocSelectionType.TOP:
         chunks_df = chunks_df[:limit]
