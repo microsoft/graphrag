@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Remove manual use of tiktoken and replace with Tokenizer interface. Adds support for encoding and decoding the large array of models supported by LiteLLM."
-}
