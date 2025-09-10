@@ -63,6 +63,7 @@ def _create_base_completions(
         "temperature": model_config.temperature,
         "frequency_penalty": model_config.frequency_penalty,
         "presence_penalty": model_config.presence_penalty,
+        "drop_params": True,
     }
 
     if model_config.api_base:

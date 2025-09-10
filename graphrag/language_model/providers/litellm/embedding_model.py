@@ -52,6 +52,7 @@ def _create_base_embeddings(
     base_args: dict[str, Any] = {
         "model": f"{model_provider}/{model}",
         "timeout": model_config.request_timeout,
+        "drop_params": True,
     }
 
     if model_config.api_base:
