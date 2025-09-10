@@ -58,13 +58,13 @@ graphrag prompt-tune [--root ROOT] [--config CONFIG] [--domain DOMAIN]  [--selec
 ```bash
 python -m graphrag prompt-tune --root /path/to/project --config /path/to/settings.yaml --domain "environmental news" \
 --selection-method random --limit 10 --language English --max-tokens 2048 --chunk-size 256 --min-examples-required 3 \
---no-entity-types --output /path/to/output
+--no-discover-entity-types --output /path/to/output
 ```
 
 or, with minimal configuration (suggested):
 
 ```bash
-python -m graphrag prompt-tune --root /path/to/project --config /path/to/settings.yaml --no-entity-types
+python -m graphrag prompt-tune --root /path/to/project --config /path/to/settings.yaml --no-discover-entity-types
 ```
 
 ## Document Selection Methods
