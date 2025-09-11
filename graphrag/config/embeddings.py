@@ -29,14 +29,14 @@ default_embeddings: list[str] = [
 ]
 
 
-def create_collection_name(
+def create_index_name(
     container_name: str, embedding_name: str, validate: bool = True
 ) -> str:
     """
-    Create a collection name for the embedding store.
+    Create a index name for the embedding store.
 
     Within any given vector store, we can have multiple sets of embeddings organized into projects.
-    The `container` param is used for this partitioning, and is added as a prefix to the collection name for differentiation.
+    The `container` param is used for this partitioning, and is added as a prefix to the index name for differentiation.
 
     The embedding name is fixed, with the available list defined in graphrag.index.config.embeddings
 

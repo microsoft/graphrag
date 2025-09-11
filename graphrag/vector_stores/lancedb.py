@@ -8,6 +8,7 @@ from typing import Any
 
 import pyarrow as pa
 
+from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.data_model.types import TextEmbedder
 
 from graphrag.vector_stores.base import (
@@ -21,18 +22,19 @@ import lancedb
 class LanceDBVectorStore(BaseVectorStore):
     """LanceDB vector storage implementation."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
+    def __init__(self, vector_store_schema_config: VectorStoreSchemaConfig, **kwargs: Any) -> None:
+        super().__init__(vector_store_schema_config=vector_store_schema_config, **kwargs)
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to the vector storage."""
         self.db_connection = lancedb.connect(kwargs["db_uri"])
+
         if (
-            self.collection_name
-            and self.collection_name in self.db_connection.table_names()
+            self.index_name
+            and self.index_name in self.db_connection.table_names()
         ):
             self.document_collection = self.db_connection.open_table(
-                self.collection_name
+                self.index_name
             )
 
     def load_documents(
@@ -41,10 +43,10 @@ class LanceDBVectorStore(BaseVectorStore):
         """Load documents into vector storage."""
         data = [
             {
-                "id": document.id,
-                "text": document.text,
-                "vector": document.vector,
-                "attributes": json.dumps(document.attributes),
+                self.id_field: document.id,
+                self.text_field: document.text,
+                self.vector_field: document.vector,
+                self.attributes_field: json.dumps(document.attributes),
             }
             for document in documents
             if document.vector is not None
@@ -54,10 +56,10 @@ class LanceDBVectorStore(BaseVectorStore):
             data = None
 
         schema = pa.schema([
-            pa.field("id", pa.string()),
-            pa.field("text", pa.string()),
-            pa.field("vector", pa.list_(pa.float64())),
-            pa.field("attributes", pa.string()),
+            pa.field(self.id_field, pa.string()),
+            pa.field(self.text_field, pa.string()),
+            pa.field(self.vector_field, pa.list_(pa.float64())),
+            pa.field(self.attributes_field, pa.string()),
         ])
         # NOTE: If modifying the next section of code, ensure that the schema remains the same.
         #       The pyarrow format of the 'vector' field may change if the order of operations is changed
@@ -65,19 +67,20 @@ class LanceDBVectorStore(BaseVectorStore):
         if overwrite:
             if data:
                 self.document_collection = self.db_connection.create_table(
-                    self.collection_name, data=data, mode="overwrite"
+                    self.index_name, data=data, mode="overwrite"
                 )
             else:
                 self.document_collection = self.db_connection.create_table(
-                    self.collection_name, schema=schema, mode="overwrite"
+                    self.index_name, schema=schema, mode="overwrite"
                 )
         else:
             # add data to existing table
             self.document_collection = self.db_connection.open_table(
-                self.collection_name
+                self.index_name
             )
             if data:
                 self.document_collection.add(data)
+                self.document_collection.create_index(vector_column_name=self.vector_field)
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         """Build a query filter to filter documents by id."""
@@ -100,7 +103,7 @@ class LanceDBVectorStore(BaseVectorStore):
         if self.query_filter:
             docs = (
                 self.document_collection.search(
-                    query=query_embedding, vector_column_name="vector"
+                    query=query_embedding, vector_column_name=self.vector_field
                 )
                 .where(self.query_filter, prefilter=True)
                 .limit(k)
@@ -109,7 +112,7 @@ class LanceDBVectorStore(BaseVectorStore):
         else:
             docs = (
                 self.document_collection.search(
-                    query=query_embedding, vector_column_name="vector"
+                    query=query_embedding, vector_column_name=self.vector_field
                 )
                 .limit(k)
                 .to_list()
@@ -117,10 +120,10 @@ class LanceDBVectorStore(BaseVectorStore):
         return [
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
-                    id=doc["id"],
-                    text=doc["text"],
-                    vector=doc["vector"],
-                    attributes=json.loads(doc["attributes"]),
+                    id=doc[self.id_field],
+                    text=doc[self.text_field],
+                    vector=doc[self.vector_field],
+                    attributes=json.loads(doc[self.attributes_field]),
                 ),
                 score=1 - abs(float(doc["_distance"])),
             )
@@ -145,9 +148,9 @@ class LanceDBVectorStore(BaseVectorStore):
         )
         if doc:
             return VectorStoreDocument(
-                id=doc[0]["id"],
-                text=doc[0]["text"],
-                vector=doc[0]["vector"],
-                attributes=json.loads(doc[0]["attributes"]),
+                id=doc[0][self.id_field],
+                text=doc[0][self.text_field],
+                vector=doc[0][self.vector_field],
+                attributes=json.loads(doc[0][self.attributes_field]),
             )
         return VectorStoreDocument(id=id, text=None, vector=None)

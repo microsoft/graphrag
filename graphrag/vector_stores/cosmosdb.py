@@ -13,7 +13,6 @@ from azure.identity import DefaultAzureCredential
 
 from graphrag.data_model.types import TextEmbedder
 from graphrag.vector_stores.base import (
-    DEFAULT_VECTOR_SIZE,
     BaseVectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
@@ -49,13 +48,13 @@ class CosmosDBVectorStore(BaseVectorStore):
             msg = "Database name must be provided."
             raise ValueError(msg)
         self._database_name = database_name
-        collection_name = self.collection_name
+        collection_name = self.index_name
         if collection_name is None:
             msg = "Collection name is empty or not provided."
             raise ValueError(msg)
         self._container_name = collection_name
 
-        self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
+        self.vector_size = kwargs.get("vector_size", 1024) #TODO GAUDY fix it
         self._create_database()
         self._create_container()
 
