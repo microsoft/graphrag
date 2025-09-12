@@ -58,8 +58,8 @@ def create_extract_graph_prompt(
 
     tokens_left = (
         max_token_count
-        - len(tokenizer.encode(prompt))
-        - len(tokenizer.encode(entity_types))
+        - tokenizer.num_tokens(prompt)
+        - tokenizer.num_tokens(entity_types)
         if entity_types
         else 0
     )
@@ -79,7 +79,7 @@ def create_extract_graph_prompt(
             )
         )
 
-        example_tokens = len(tokenizer.encode(example_formatted))
+        example_tokens = tokenizer.num_tokens(example_formatted)
 
         # Ensure at least three examples are included
         if i >= min_examples_required and example_tokens > tokens_left:

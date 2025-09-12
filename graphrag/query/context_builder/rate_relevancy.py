@@ -63,8 +63,8 @@ async def rate_relevancy(
             logger.warning("Error parsing json response, defaulting to rating 1")
             ratings.append(1)
         llm_calls += 1
-        prompt_tokens += len(tokenizer.encode(messages[0]["content"]))
-        output_tokens += len(tokenizer.encode(response))
+        prompt_tokens += tokenizer.num_tokens(messages[0]["content"])
+        output_tokens += tokenizer.num_tokens(response)
     # select the decision with the most votes
     options, counts = np.unique(ratings, return_counts=True)
     rating = int(options[np.argmax(counts)])

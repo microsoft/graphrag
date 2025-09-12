@@ -125,7 +125,7 @@ def build_community_context(
         batch_text = (
             f"-----{context_name}-----" + "\n" + column_delimiter.join(header) + "\n"
         )
-        batch_tokens = len(tokenizer.encode(batch_text))
+        batch_tokens = tokenizer.num_tokens(batch_text)
         batch_records = []
 
     def _cut_batch() -> None:
@@ -152,7 +152,7 @@ def build_community_context(
 
     for report in selected_reports:
         new_context_text, new_context = _report_context_text(report, attributes)
-        new_tokens = len(tokenizer.encode(new_context_text))
+        new_tokens = tokenizer.num_tokens(new_context_text)
 
         if batch_tokens + new_tokens > max_context_tokens:
             # add the current batch to the context data and start a new batch if we are in multi-batch mode

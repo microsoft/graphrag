@@ -202,7 +202,7 @@ class ConversationHistory:
 
             context_df = pd.DataFrame(turn_list)
             context_text = header + context_df.to_csv(sep=column_delimiter, index=False)
-            if len(tokenizer.encode(context_text)) > max_context_tokens:
+            if tokenizer.num_tokens(context_text) > max_context_tokens:
                 break
 
             current_context_df = context_df

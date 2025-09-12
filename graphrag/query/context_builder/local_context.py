@@ -52,7 +52,7 @@ def build_entity_context(
     )
     header.extend(attribute_cols)
     current_context_text += column_delimiter.join(header) + "\n"
-    current_tokens = len(tokenizer.encode(current_context_text))
+    current_tokens = tokenizer.num_tokens(current_context_text)
 
     all_context_records = [header]
     for entity in selected_entities:
@@ -71,7 +71,7 @@ def build_entity_context(
             )
             new_context.append(field_value)
         new_context_text = column_delimiter.join(new_context) + "\n"
-        new_tokens = len(tokenizer.encode(new_context_text))
+        new_tokens = tokenizer.num_tokens(new_context_text)
         if current_tokens + new_tokens > max_context_tokens:
             break
         current_context_text += new_context_text
@@ -113,7 +113,7 @@ def build_covariates_context(
     attribute_cols = list(attributes.keys()) if len(covariates) > 0 else []
     header.extend(attribute_cols)
     current_context_text += column_delimiter.join(header) + "\n"
-    current_tokens = len(tokenizer.encode(current_context_text))
+    current_tokens = tokenizer.num_tokens(current_context_text)
 
     all_context_records = [header]
     for entity in selected_entities:
@@ -135,7 +135,7 @@ def build_covariates_context(
             new_context.append(field_value)
 
         new_context_text = column_delimiter.join(new_context) + "\n"
-        new_tokens = len(tokenizer.encode(new_context_text))
+        new_tokens = tokenizer.num_tokens(new_context_text)
         if current_tokens + new_tokens > max_context_tokens:
             break
         current_context_text += new_context_text
@@ -188,7 +188,7 @@ def build_relationship_context(
     header.extend(attribute_cols)
 
     current_context_text += column_delimiter.join(header) + "\n"
-    current_tokens = len(tokenizer.encode(current_context_text))
+    current_tokens = tokenizer.num_tokens(current_context_text)
 
     all_context_records = [header]
     for rel in selected_relationships:
@@ -208,7 +208,7 @@ def build_relationship_context(
             )
             new_context.append(field_value)
         new_context_text = column_delimiter.join(new_context) + "\n"
-        new_tokens = len(tokenizer.encode(new_context_text))
+        new_tokens = tokenizer.num_tokens(new_context_text)
         if current_tokens + new_tokens > max_context_tokens:
             break
         current_context_text += new_context_text

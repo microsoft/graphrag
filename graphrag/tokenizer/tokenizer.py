@@ -38,3 +38,16 @@ class Tokenizer(ABC):
         """
         msg = "The decode method must be implemented by subclasses."
         raise NotImplementedError(msg)
+
+    def num_tokens(self, text: str) -> int:
+        """Return the number of tokens in the given text.
+
+        Args
+        ----
+            text (str): The input text to analyze.
+
+        Returns
+        -------
+            int: The number of tokens in the input text.
+        """
+        return len(self.encode(text))
