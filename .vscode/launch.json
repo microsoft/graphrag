@@ -6,21 +6,24 @@
 			"name": "Indexer",
 			"type": "debugpy",
 			"request": "launch",
-			"module": "uv",
+			"module": "graphrag",
 			"args": [
-				"poe", "index",
-				"--root", "<path_to_ragtest_root_demo>"
+				"index",
+				"--root", 
+				"<path_to_index_folder>"
 			],
+			"console": "integratedTerminal"
 		},
 		{
 			"name": "Query",
 			"type": "debugpy",
 			"request": "launch",
-			"module": "uv",
+			"module": "graphrag",
 			"args": [
-				"poe", "query",
-				"--root", "<path_to_ragtest_root_demo>",
-				"--method", "global",
+				"query",
+				"--root", 
+				"<path_to_index_folder>",
+				"--method", "basic",
 				"--query", "What are the top themes in this story",
 			]
 		},
