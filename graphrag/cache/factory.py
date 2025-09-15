@@ -96,9 +96,11 @@ def create_cosmosdb_cache(**kwargs) -> PipelineCache:
     storage = CosmosDBPipelineStorage(**kwargs)
     return JsonPipelineCache(storage)
 
+
 def create_noop_cache(**_kwargs) -> PipelineCache:
     """Create a no-op cache implementation."""
     return NoopPipelineCache()
+
 
 # --- register built-in cache implementations ---
 CacheFactory.register(CacheType.none.value, create_noop_cache)
