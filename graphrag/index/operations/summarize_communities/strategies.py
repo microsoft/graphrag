@@ -52,7 +52,10 @@ async def _run_extractor(
     args: StrategyConfig,
 ) -> CommunityReport | None:
     # RateLimiter
-    rate_limiter = RateLimiter(rate=1, per=60)
+    # Read rate and per from the config, defaulting to 1 per 60 if not provided
+    rate = args.get("rate", 1)
+    per = args.get("per", 60)
+    rate_limiter = RateLimiter(rate=rate, per=per)
     extractor = CommunityReportsExtractor(
         model,
         extraction_prompt=args.get("extraction_prompt", None),
