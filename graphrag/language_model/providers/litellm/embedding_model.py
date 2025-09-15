@@ -120,33 +120,25 @@ def _create_embeddings(
     # LiteLLM does not support "auto", so we have to check those values here.
     # For v3 release, force rpm/tpm to be int and remove the type checks below
     # and just check if rate_limit_strategy is enabled.
-    if model_config.rate_limit_strategy is not None and (
-        (
-            type(model_config.requests_per_minute) is int
-            and model_config.requests_per_minute > 0
-        )
-        or (
-            type(model_config.tokens_per_minute) is int
-            and model_config.tokens_per_minute > 0
-        )
-    ):
+    if model_config.rate_limit_strategy is not None:
         rpm = (
             model_config.requests_per_minute
             if type(model_config.requests_per_minute) is int
-            else 0
+            else None
         )
         tpm = (
             model_config.tokens_per_minute
             if type(model_config.tokens_per_minute) is int
-            else 0
+            else None
         )
-        embedding, aembedding = with_rate_limiter(
-            sync_fn=embedding,
-            async_fn=aembedding,
-            model_config=model_config,
-            rpm=rpm,
-            tpm=tpm,
-        )
+        if rpm is not None or tpm is not None:
+            embedding, aembedding = with_rate_limiter(
+                sync_fn=embedding,
+                async_fn=aembedding,
+                model_config=model_config,
+                rpm=rpm,
+                tpm=tpm,
+            )
 
     embedding, aembedding = with_retries(
         sync_fn=embedding,

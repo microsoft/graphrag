@@ -62,50 +62,42 @@ def test_rate_limiter_validation():
     # Invalid strategy
     with pytest.raises(
         ValueError,
-        match="Strategy 'invalid_strategy' is not registered.",  # noqa: RUF043
+        match=r"Strategy 'invalid_strategy' is not registered.",
     ):
         rate_limiter_factory.create(strategy="invalid_strategy", rpm=60, tpm=10000)
 
+    # Both rpm and tpm are None
+    with pytest.raises(
+        ValueError,
+        match=r"Both TPM and RPM cannot be None \(disabled\), one or both must be set to a positive integer.",
+    ):
+        rate_limiter_factory.create(strategy="static")
+
     # Invalid rpm
-    with pytest.raises(ValueError, match=r"RPM and TPM must be non-negative integers."):
+    with pytest.raises(
+        ValueError,
+        match=r"RPM and TPM must be either None \(disabled\) or positive integers.",
+    ):
         rate_limiter_factory.create(strategy="static", rpm=-10)
 
     # Invalid tpm
-    with pytest.raises(ValueError, match=r"RPM and TPM must be non-negative integers."):
+    with pytest.raises(
+        ValueError,
+        match=r"RPM and TPM must be either None \(disabled\) or positive integers.",
+    ):
         rate_limiter_factory.create(strategy="static", tpm=-10)
 
     # Invalid period_in_seconds
     with pytest.raises(
         ValueError, match=r"Period in seconds must be a positive integer."
     ):
-        rate_limiter_factory.create(strategy="static", period_in_seconds=-10)
-
-
-def test_disabled_rate_limiter():
-    """Test that the disabled rate limiter does not limit requests.
-
-    static rate limiter with rpm=0 and tpm=0 should not limit requests.
-    """
-    rate_limiter = rate_limiter_factory.create(strategy="static", rpm=0, tpm=0)
-
-    time_values: list[float] = []
-    start_time = time.time()
-    for _ in range(_num_requests):
-        with rate_limiter.acquire(token_count=_tokens_per_request):
-            time_values.append(time.time() - start_time)
-
-    assert len(time_values) == _num_requests
-    binned_time_values = bin_time_intervals(time_values, _period_in_seconds)
-
-    # All requests should be in the first bin
-    assert len(binned_time_values) == 1
-    assert_max_num_values_per_period(binned_time_values, _num_requests)
+        rate_limiter_factory.create(strategy="static", rpm=10, period_in_seconds=-10)
 
 
 def test_rpm():
     """Test that the rate limiter enforces RPM limits."""
     rate_limiter = rate_limiter_factory.create(
-        strategy="static", rpm=_rpm, tpm=0, period_in_seconds=_period_in_seconds
+        strategy="static", rpm=_rpm, period_in_seconds=_period_in_seconds
     )
 
     time_values: list[float] = []
@@ -133,7 +125,7 @@ def test_rpm():
 def test_tpm():
     """Test that the rate limiter enforces TPM limits."""
     rate_limiter = rate_limiter_factory.create(
-        strategy="static", rpm=0, tpm=_tpm, period_in_seconds=_period_in_seconds
+        strategy="static", tpm=_tpm, period_in_seconds=_period_in_seconds
     )
 
     time_values: list[float] = []
@@ -166,7 +158,7 @@ def test_token_in_request_exceeds_tpm():
     In this case, the request should still be allowed to proceed but may take up its own rate limit bin.
     """
     rate_limiter = rate_limiter_factory.create(
-        strategy="static", rpm=0, tpm=_tpm, period_in_seconds=_period_in_seconds
+        strategy="static", tpm=_tpm, period_in_seconds=_period_in_seconds
     )
 
     time_values: list[float] = []

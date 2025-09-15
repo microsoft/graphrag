@@ -21,14 +21,17 @@ class StaticRateLimiter(RateLimiter):
     def __init__(
         self,
         *,
-        rpm: int = 0,
-        tpm: int = 0,
+        rpm: int | None = None,
+        tpm: int | None = None,
         default_stagger: float = 0.0,
         period_in_seconds: int = 60,
         **kwargs: Any,
     ):
-        if rpm < 0 or tpm < 0:
-            msg = "RPM and TPM must be non-negative integers."
+        if rpm is None and tpm is None:
+            msg = "Both TPM and RPM cannot be None (disabled), one or both must be set to a positive integer."
+            raise ValueError(msg)
+        if (rpm is not None and rpm <= 0) or (tpm is not None and tpm <= 0):
+            msg = "RPM and TPM must be either None (disabled) or positive integers."
             raise ValueError(msg)
         if default_stagger < 0:
             msg = "Default stagger must be a >= 0."
@@ -45,7 +48,7 @@ class StaticRateLimiter(RateLimiter):
         self._last_time: float | None = None
 
         self.stagger = default_stagger
-        if self.rpm > 0:
+        if self.rpm is not None and self.rpm > 0:
             self.stagger = self.period_in_seconds / self.rpm
 
     @contextmanager
@@ -61,9 +64,6 @@ class StaticRateLimiter(RateLimiter):
         ------
             None: This context manager does not return any value.
         """
-        if self.rpm == 0 and self.tpm == 0:
-            yield
-            return
         while True:
             with self._lock:
                 current_time = time.time()
@@ -81,7 +81,11 @@ class StaticRateLimiter(RateLimiter):
                 # Waiting requires reacquiring the lock, allowing other threads
                 # to see if their request fits within the rate limiting windows
                 # Makes more sense for token limit than request limit
-                if self.rpm > 0 and len(self.rate_queue) >= self.rpm:
+                if (
+                    self.rpm is not None
+                    and self.rpm > 0
+                    and len(self.rate_queue) >= self.rpm
+                ):
                     continue
 
                 # Check if current token window exceeds token limit
@@ -90,7 +94,11 @@ class StaticRateLimiter(RateLimiter):
                 # This is intentional, as we want to allow the current request
                 # to be processed if it is larger than the tpm but smaller than context window.
                 # tpm is a rate/soft limit and not the hard limit of context window limits.
-                if self.tpm > 0 and sum(self.token_queue) >= self.tpm:
+                if (
+                    self.tpm is not None
+                    and self.tpm > 0
+                    and sum(self.token_queue) >= self.tpm
+                ):
                     continue
 
                 # This check accounts for the current request token usage
@@ -98,7 +106,8 @@ class StaticRateLimiter(RateLimiter):
                 # If the current requests token limit exceeds the token limit,
                 # Then let it be processed.
                 if (
-                    self.tpm > 0
+                    self.tpm is not None
+                    and self.tpm > 0
                     and token_count <= self.tpm
                     and sum(self.token_queue) + token_count > self.tpm
                 ):

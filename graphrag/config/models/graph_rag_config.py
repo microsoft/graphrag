@@ -134,16 +134,17 @@ class GraphRagConfig(BaseModel):
                 rpm = (
                     model.requests_per_minute
                     if type(model.requests_per_minute) is int
-                    else 0
+                    else None
                 )
                 tpm = (
                     model.tokens_per_minute
                     if type(model.tokens_per_minute) is int
-                    else 0
+                    else None
                 )
-                _ = rate_limiter_factory.create(
-                    strategy=model.rate_limit_strategy, rpm=rpm, tpm=tpm
-                )
+                if rpm is not None or tpm is not None:
+                    _ = rate_limiter_factory.create(
+                        strategy=model.rate_limit_strategy, rpm=rpm, tpm=tpm
+                    )
 
     input: InputConfig = Field(
         description="The input configuration.", default=InputConfig()

@@ -24,8 +24,8 @@ def with_rate_limiter(
     sync_fn: LitellmRequestFunc,
     async_fn: AsyncLitellmRequestFunc,
     model_config: "LanguageModelConfig",
-    rpm: int = 0,
-    tpm: int = 0,
+    rpm: int | None = None,
+    tpm: int | None = None,
 ) -> tuple[LitellmRequestFunc, AsyncLitellmRequestFunc]:
     """
     Wrap the synchronous and asynchronous request functions with rate limiting.
