@@ -113,8 +113,7 @@ class LanguageModelConfig(BaseModel):
             If the model provider is not recognized.
         """
         if (
-            self.type == ModelType.LitellmChat
-            or self.type == ModelType.LitellmEmbedding
+            self.type == ModelType.Chat or self.type == ModelType.Embedding
         ) and self.model_provider.strip() == "":
             msg = "Model provider must be specified when using Litellm."
             raise KeyError(msg)
@@ -145,8 +144,8 @@ class LanguageModelConfig(BaseModel):
             If the model name is not recognized.
         """
         if (
-            self.type != ModelType.LitellmChat
-            and self.type != ModelType.LitellmEmbedding
+            self.type != ModelType.Chat
+            and self.type != ModelType.Embedding
             and self.encoding_model.strip() == ""
         ):
             self.encoding_model = tiktoken.encoding_name_for_model(self.model)

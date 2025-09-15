@@ -109,9 +109,7 @@ ModelFactory.register_chat(
 ModelFactory.register_chat(
     ModelType.OpenAIChat.value, lambda **kwargs: OpenAIChatFNLLM(**kwargs)
 )
-ModelFactory.register_chat(
-    ModelType.LitellmChat, lambda **kwargs: LitellmChatModel(**kwargs)
-)
+ModelFactory.register_chat(ModelType.Chat, lambda **kwargs: LitellmChatModel(**kwargs))
 
 ModelFactory.register_embedding(
     ModelType.AzureOpenAIEmbedding.value,
@@ -121,5 +119,5 @@ ModelFactory.register_embedding(
     ModelType.OpenAIEmbedding.value, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
 )
 ModelFactory.register_embedding(
-    ModelType.LitellmEmbedding, lambda **kwargs: LitellmEmbeddingModel(**kwargs)
+    ModelType.Embedding, lambda **kwargs: LitellmEmbeddingModel(**kwargs)
 )
