@@ -10,6 +10,7 @@ from queue import Queue
 
 import pytest
 
+from graphrag.config.defaults import DEFAULT_RATE_LIMITER_SERVICES
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter import (
     RateLimiter,
 )
@@ -23,6 +24,9 @@ from tests.unit.litellm_services.utils import (
 )
 
 rate_limiter_factory = RateLimiterFactory()
+
+for strategy, service in DEFAULT_RATE_LIMITER_SERVICES.items():
+    rate_limiter_factory.register(strategy=strategy, service_initializer=service)
 
 _period_in_seconds = 1
 _rpm = 4
@@ -50,34 +54,31 @@ def test_rate_limiter_validation():
     """Test that the rate limiter can be created with valid parameters."""
 
     # Valid parameters
-    rate_limiter = rate_limiter_factory.create_rate_limiter_service(
+    rate_limiter = rate_limiter_factory.create(
         strategy="static", rpm=60, tpm=10000, period_in_seconds=60
     )
     assert rate_limiter is not None
 
     # Invalid strategy
     with pytest.raises(
-        ValueError, match="Unknown rate limiter service: invalid_strategy"
+        ValueError,
+        match="Strategy 'invalid_strategy' is not registered.",  # noqa: RUF043
     ):
-        rate_limiter_factory.create_rate_limiter_service(
-            strategy="invalid_strategy", rpm=60, tpm=10000
-        )
+        rate_limiter_factory.create(strategy="invalid_strategy", rpm=60, tpm=10000)
 
     # Invalid rpm
     with pytest.raises(ValueError, match=r"RPM and TPM must be non-negative integers."):
-        rate_limiter_factory.create_rate_limiter_service(strategy="static", rpm=-10)
+        rate_limiter_factory.create(strategy="static", rpm=-10)
 
     # Invalid tpm
     with pytest.raises(ValueError, match=r"RPM and TPM must be non-negative integers."):
-        rate_limiter_factory.create_rate_limiter_service(strategy="static", tpm=-10)
+        rate_limiter_factory.create(strategy="static", tpm=-10)
 
     # Invalid period_in_seconds
     with pytest.raises(
         ValueError, match=r"Period in seconds must be a positive integer."
     ):
-        rate_limiter_factory.create_rate_limiter_service(
-            strategy="static", period_in_seconds=-10
-        )
+        rate_limiter_factory.create(strategy="static", period_in_seconds=-10)
 
 
 def test_disabled_rate_limiter():
@@ -85,9 +86,7 @@ def test_disabled_rate_limiter():
 
     static rate limiter with rpm=0 and tpm=0 should not limit requests.
     """
-    rate_limiter = rate_limiter_factory.create_rate_limiter_service(
-        strategy="static", rpm=0, tpm=0
-    )
+    rate_limiter = rate_limiter_factory.create(strategy="static", rpm=0, tpm=0)
 
     time_values: list[float] = []
     start_time = time.time()
@@ -105,7 +104,7 @@ def test_disabled_rate_limiter():
 
 def test_rpm():
     """Test that the rate limiter enforces RPM limits."""
-    rate_limiter = rate_limiter_factory.create_rate_limiter_service(
+    rate_limiter = rate_limiter_factory.create(
         strategy="static", rpm=_rpm, tpm=0, period_in_seconds=_period_in_seconds
     )
 
@@ -133,7 +132,7 @@ def test_rpm():
 
 def test_tpm():
     """Test that the rate limiter enforces TPM limits."""
-    rate_limiter = rate_limiter_factory.create_rate_limiter_service(
+    rate_limiter = rate_limiter_factory.create(
         strategy="static", rpm=0, tpm=_tpm, period_in_seconds=_period_in_seconds
     )
 
@@ -166,7 +165,7 @@ def test_token_in_request_exceeds_tpm():
     greater than the tpm limit but still below the context window limit of the underlying model.
     In this case, the request should still be allowed to proceed but may take up its own rate limit bin.
     """
-    rate_limiter = rate_limiter_factory.create_rate_limiter_service(
+    rate_limiter = rate_limiter_factory.create(
         strategy="static", rpm=0, tpm=_tpm, period_in_seconds=_period_in_seconds
     )
 
@@ -190,7 +189,7 @@ def test_token_in_request_exceeds_tpm():
 
 def test_rpm_and_tpm_with_rpm_as_limiting_factor():
     """Test that the rate limiter enforces RPM and TPM limits."""
-    rate_limiter = rate_limiter_factory.create_rate_limiter_service(
+    rate_limiter = rate_limiter_factory.create(
         strategy="static", rpm=_rpm, tpm=_tpm, period_in_seconds=_period_in_seconds
     )
 
@@ -219,7 +218,7 @@ def test_rpm_and_tpm_with_rpm_as_limiting_factor():
 
 def test_rpm_and_tpm_with_tpm_as_limiting_factor():
     """Test that the rate limiter enforces TPM limits."""
-    rate_limiter = rate_limiter_factory.create_rate_limiter_service(
+    rate_limiter = rate_limiter_factory.create(
         strategy="static", rpm=_rpm, tpm=_tpm, period_in_seconds=_period_in_seconds
     )
 
@@ -263,7 +262,7 @@ def _run_rate_limiter(
 
 def test_rpm_threaded():
     """Test that the rate limiter enforces RPM limits in a threaded environment."""
-    rate_limiter = rate_limiter_factory.create_rate_limiter_service(
+    rate_limiter = rate_limiter_factory.create(
         strategy="static", rpm=_rpm, tpm=_tpm, period_in_seconds=_period_in_seconds
     )
 
@@ -323,7 +322,7 @@ def test_rpm_threaded():
 
 def test_tpm_threaded():
     """Test that the rate limiter enforces TPM limits in a threaded environment."""
-    rate_limiter = rate_limiter_factory.create_rate_limiter_service(
+    rate_limiter = rate_limiter_factory.create(
         strategy="static", rpm=_rpm, tpm=_tpm, period_in_seconds=_period_in_seconds
     )
 

@@ -273,6 +273,11 @@ class LanguageModelConfig(BaseModel):
             msg = f"Requests per minute must be a non zero positive number, 'auto' or null. Suggested value: {language_model_defaults.requests_per_minute}."
             raise ValueError(msg)
 
+    rate_limit_strategy: str | None = Field(
+        description="The rate limit strategy to use for the LLM service.",
+        default=language_model_defaults.rate_limit_strategy,
+    )
+
     retry_strategy: str = Field(
         description="The retry strategy to use for the LLM service.",
         default=language_model_defaults.retry_strategy,

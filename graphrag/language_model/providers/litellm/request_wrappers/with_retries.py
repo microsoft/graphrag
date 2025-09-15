@@ -37,7 +37,7 @@ def with_retries(
         A tuple containing the wrapped synchronous and asynchronous chat/embedding request functions.
     """
     retry_factory = RetryFactory()
-    retry_service = retry_factory.create_retry_service(
+    retry_service = retry_factory.create(
         strategy=model_config.retry_strategy,
         max_attempts=model_config.max_retries,
         max_retry_wait=model_config.max_retry_wait,

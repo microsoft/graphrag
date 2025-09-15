@@ -47,9 +47,15 @@ def with_rate_limiter(
     """
     rate_limiter_factory = RateLimiterFactory()
 
-    # TODO: Expose rate_limiter_strategy in the language model config and use it here.
-    rate_limiter_service = rate_limiter_factory.create_rate_limiter_service(
-        strategy="static", rpm=rpm, tpm=tpm
+    if (
+        model_config.rate_limit_strategy is None
+        or model_config.rate_limit_strategy not in rate_limiter_factory
+    ):
+        msg = f"Rate Limiter strategy '{model_config.rate_limit_strategy}' is none or not registered. Available strategies: {', '.join(rate_limiter_factory.keys())}"
+        raise ValueError(msg)
+
+    rate_limiter_service = rate_limiter_factory.create(
+        strategy=model_config.rate_limit_strategy, rpm=rpm, tpm=tpm
     )
 
     max_tokens = model_config.max_completion_tokens or model_config.max_tokens or 0
