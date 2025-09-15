@@ -53,20 +53,13 @@ def _create_base_embeddings(
         "model": f"{model_provider}/{model}",
         "timeout": model_config.request_timeout,
         "drop_params": True,
+        "api_base": model_config.api_base,
+        "api_version": model_config.api_version,
+        "api_key": model_config.api_key,
+        "organization": model_config.organization,
+        "proxy": model_config.proxy,
+        "audience": model_config.audience,
     }
-
-    if model_config.api_base:
-        base_args["api_base"] = model_config.api_base
-    if model_config.api_version:
-        base_args["api_version"] = model_config.api_version
-    if model_config.api_key:
-        base_args["api_key"] = model_config.api_key
-    if model_config.organization:
-        base_args["organization"] = model_config.organization
-    if model_config.proxy:
-        base_args["proxy"] = model_config.proxy
-    if model_config.audience:
-        base_args["audience"] = model_config.audience
 
     if model_config.auth_type == AuthType.AzureManagedIdentity:
         if model_config.model_provider != "azure":
