@@ -36,7 +36,7 @@ from graphrag.language_model.providers.litellm.services.retry.exponential_retry 
 from graphrag.language_model.providers.litellm.services.retry.incremental_wait_retry import (
     IncrementalWaitRetry,
 )
-from graphrag.language_model.providers.litellm.services.retry.native_retry import (
+from graphrag.language_model.providers.litellm.services.retry.native_wait_retry import (
     NativeRetry,
 )
 from graphrag.language_model.providers.litellm.services.retry.random_wait_retry import (
