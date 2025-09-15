@@ -105,12 +105,16 @@ class GraphRagConfig(BaseModel):
             )
 
         for model_id, model in self.models.items():
-            if (
-                model.retry_strategy != "none"
-                and model.retry_strategy not in retry_factory
-            ):
-                msg = f"Retry strategy '{model.retry_strategy}' for model '{model_id}' is not registered. Available strategies: {', '.join(retry_factory.keys())}"
-                raise ValueError(msg)
+            if model.retry_strategy != "none":
+                if model.retry_strategy not in retry_factory:
+                    msg = f"Retry strategy '{model.retry_strategy}' for model '{model_id}' is not registered. Available strategies: {', '.join(retry_factory.keys())}"
+                    raise ValueError(msg)
+
+                _ = retry_factory.create(
+                    strategy=model.retry_strategy,
+                    max_attempts=model.max_retries,
+                    max_retry_wait=model.max_retry_wait,
+                )
 
     def _validate_rate_limiter_services(self) -> None:
         """Validate the rate limiter services configuration."""
@@ -122,12 +126,24 @@ class GraphRagConfig(BaseModel):
             )
 
         for model_id, model in self.models.items():
-            if (
-                model.rate_limit_strategy is not None
-                and model.rate_limit_strategy not in rate_limiter_factory
-            ):
-                msg = f"Rate Limiter strategy '{model.rate_limit_strategy}' for model '{model_id}' is not registered. Available strategies: {', '.join(rate_limiter_factory.keys())}"
-                raise ValueError(msg)
+            if model.rate_limit_strategy is not None:
+                if model.rate_limit_strategy not in rate_limiter_factory:
+                    msg = f"Rate Limiter strategy '{model.rate_limit_strategy}' for model '{model_id}' is not registered. Available strategies: {', '.join(rate_limiter_factory.keys())}"
+                    raise ValueError(msg)
+
+                rpm = (
+                    model.requests_per_minute
+                    if type(model.requests_per_minute) is int
+                    else 0
+                )
+                tpm = (
+                    model.tokens_per_minute
+                    if type(model.tokens_per_minute) is int
+                    else 0
+                )
+                _ = rate_limiter_factory.create(
+                    strategy=model.rate_limit_strategy, rpm=rpm, tpm=tpm
+                )
 
     input: InputConfig = Field(
         description="The input configuration.", default=InputConfig()
