@@ -30,11 +30,11 @@ class BasicSearchContext(BasicContextBuilder):
         text_embedder: EmbeddingModel,
         text_unit_embeddings: BaseVectorStore,
         text_units: list[TextUnit] | None = None,
-        tokenizer: Tokenizer = get_tokenizer(),
+        tokenizer: Tokenizer | None = None,
         embedding_vectorstore_key: str = "id",
     ):
         self.text_embedder = text_embedder
-        self.tokenizer = tokenizer
+        self.tokenizer = tokenizer or get_tokenizer()
         self.text_units = text_units
         self.text_unit_embeddings = text_unit_embeddings
         self.embedding_vectorstore_key = embedding_vectorstore_key

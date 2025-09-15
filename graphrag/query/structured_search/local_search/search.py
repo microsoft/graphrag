@@ -18,7 +18,6 @@ from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
@@ -31,7 +30,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         self,
         model: ChatModel,
         context_builder: LocalContextBuilder,
-        tokenizer: Tokenizer = get_tokenizer(),
+        tokenizer: Tokenizer | None = None,
         system_prompt: str | None = None,
         response_type: str = "multiple paragraphs",
         callbacks: list[QueryCallbacks] | None = None,

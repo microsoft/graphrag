@@ -38,7 +38,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         self,
         model: ChatModel,
         context_builder: DRIFTSearchContextBuilder,
-        tokenizer: Tokenizer = get_tokenizer(),
+        tokenizer: Tokenizer | None = None,
         query_state: QueryState | None = None,
         callbacks: list[QueryCallbacks] | None = None,
     ):
@@ -55,12 +55,12 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         super().__init__(model, context_builder, tokenizer)
 
         self.context_builder = context_builder
-        self.tokenizer = tokenizer
+        self.tokenizer = tokenizer or get_tokenizer()
         self.query_state = query_state or QueryState()
         self.primer = DRIFTPrimer(
             config=self.context_builder.config,
             chat_model=model,
-            tokenizer=tokenizer,
+            tokenizer=self.tokenizer,
         )
         self.callbacks = callbacks or []
         self.local_search = self.init_local_search()

@@ -20,7 +20,7 @@ Contain util functions to build text unit context for the search's system prompt
 
 def build_text_unit_context(
     text_units: list[TextUnit],
-    tokenizer: Tokenizer = get_tokenizer(),
+    tokenizer: Tokenizer | None = None,
     column_delimiter: str = "|",
     shuffle_data: bool = True,
     max_context_tokens: int = 8000,
@@ -28,6 +28,7 @@ def build_text_unit_context(
     random_state: int = 86,
 ) -> tuple[str, dict[str, pd.DataFrame]]:
     """Prepare text-unit data table as context data for system prompt."""
+    tokenizer = tokenizer or get_tokenizer()
     if text_units is None or len(text_units) == 0:
         return ("", {})
 

@@ -85,12 +85,12 @@ class TokenTextSplitter(TextSplitter):
 
     def __init__(
         self,
-        tokenizer: Tokenizer = get_tokenizer(),
+        tokenizer: Tokenizer | None = None,
         **kwargs: Any,
     ):
         """Init method definition."""
         super().__init__(**kwargs)
-        self._tokenizer = tokenizer
+        self._tokenizer = tokenizer or get_tokenizer()
 
     def num_tokens(self, text: str) -> int:
         """Return the number of tokens in a string."""

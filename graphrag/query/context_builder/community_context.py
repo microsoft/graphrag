@@ -24,7 +24,7 @@ NO_COMMUNITY_RECORDS_WARNING: str = (
 def build_community_context(
     community_reports: list[CommunityReport],
     entities: list[Entity] | None = None,
-    tokenizer: Tokenizer = get_tokenizer(),
+    tokenizer: Tokenizer | None = None,
     use_community_summary: bool = True,
     column_delimiter: str = "|",
     shuffle_data: bool = True,
@@ -46,6 +46,7 @@ def build_community_context(
 
     The calculated weight is added as an attribute to the community reports and added to the context data table.
     """
+    tokenizer = tokenizer or get_tokenizer()
 
     def _is_included(report: CommunityReport) -> bool:
         return report.rank is not None and report.rank >= min_community_rank

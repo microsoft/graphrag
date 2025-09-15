@@ -24,7 +24,7 @@ def create_extract_graph_prompt(
     examples: list[str],
     language: str,
     max_token_count: int,
-    tokenizer: Tokenizer = get_tokenizer(),
+    tokenizer: Tokenizer | None = None,
     json_mode: bool = False,
     output_path: Path | None = None,
     min_examples_required: int = 2,
@@ -55,6 +55,8 @@ def create_extract_graph_prompt(
     )
     if isinstance(entity_types, list):
         entity_types = ", ".join(map(str, entity_types))
+
+    tokenizer = tokenizer or get_tokenizer()
 
     tokens_left = (
         max_token_count

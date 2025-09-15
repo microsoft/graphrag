@@ -29,7 +29,7 @@ from graphrag.tokenizer.tokenizer import Tokenizer
 
 def build_entity_context(
     selected_entities: list[Entity],
-    tokenizer: Tokenizer = get_tokenizer(),
+    tokenizer: Tokenizer | None = None,
     max_context_tokens: int = 8000,
     include_entity_rank: bool = True,
     rank_description: str = "number of relationships",
@@ -37,6 +37,8 @@ def build_entity_context(
     context_name="Entities",
 ) -> tuple[str, pd.DataFrame]:
     """Prepare entity data table as context data for system prompt."""
+    tokenizer = tokenizer or get_tokenizer()
+
     if len(selected_entities) == 0:
         return "", pd.DataFrame()
 
@@ -91,12 +93,13 @@ def build_entity_context(
 def build_covariates_context(
     selected_entities: list[Entity],
     covariates: list[Covariate],
-    tokenizer: Tokenizer = get_tokenizer(),
+    tokenizer: Tokenizer | None = None,
     max_context_tokens: int = 8000,
     column_delimiter: str = "|",
     context_name: str = "Covariates",
 ) -> tuple[str, pd.DataFrame]:
     """Prepare covariate data tables as context data for system prompt."""
+    tokenizer = tokenizer or get_tokenizer()
     # create an empty list of covariates
     if len(selected_entities) == 0 or len(covariates) == 0:
         return "", pd.DataFrame()
@@ -155,7 +158,7 @@ def build_covariates_context(
 def build_relationship_context(
     selected_entities: list[Entity],
     relationships: list[Relationship],
-    tokenizer: Tokenizer = get_tokenizer(),
+    tokenizer: Tokenizer | None = None,
     include_relationship_weight: bool = False,
     max_context_tokens: int = 8000,
     top_k_relationships: int = 10,
@@ -164,6 +167,7 @@ def build_relationship_context(
     context_name: str = "Relationships",
 ) -> tuple[str, pd.DataFrame]:
     """Prepare relationship data tables as context data for system prompt."""
+    tokenizer = tokenizer or get_tokenizer()
     selected_relationships = _filter_relationships(
         selected_entities=selected_entities,
         relationships=relationships,

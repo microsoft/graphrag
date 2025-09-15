@@ -31,7 +31,6 @@ from graphrag.query.context_builder.conversation_history import (
 )
 from graphrag.query.llm.text_utils import try_parse_json_object
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
@@ -53,7 +52,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         self,
         model: ChatModel,
         context_builder: GlobalContextBuilder,
-        tokenizer: Tokenizer = get_tokenizer(),
+        tokenizer: Tokenizer | None = None,
         map_system_prompt: str | None = None,
         reduce_system_prompt: str | None = None,
         response_type: str = "multiple paragraphs",

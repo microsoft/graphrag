@@ -47,7 +47,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         reports: list[CommunityReport] | None = None,
         relationships: list[Relationship] | None = None,
         covariates: dict[str, list[Covariate]] | None = None,
-        tokenizer: Tokenizer = get_tokenizer(),
+        tokenizer: Tokenizer | None = None,
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
         config: DRIFTSearchConfig | None = None,
         local_system_prompt: str | None = None,
@@ -59,7 +59,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         self.config = config or DRIFTSearchConfig()
         self.model = model
         self.text_embedder = text_embedder
-        self.tokenizer = tokenizer
+        self.tokenizer = tokenizer or get_tokenizer()
         self.local_system_prompt = local_system_prompt or DRIFT_LOCAL_SYSTEM_PROMPT
         self.reduce_system_prompt = reduce_system_prompt or DRIFT_REDUCE_PROMPT
 

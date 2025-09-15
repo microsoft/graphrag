@@ -33,7 +33,7 @@ class PrimerQueryProcessor:
         chat_model: ChatModel,
         text_embedder: EmbeddingModel,
         reports: list[CommunityReport],
-        tokenizer: Tokenizer = get_tokenizer(),
+        tokenizer: Tokenizer | None = None,
     ):
         """
         Initialize the PrimerQueryProcessor.
@@ -46,7 +46,7 @@ class PrimerQueryProcessor:
         """
         self.chat_model = chat_model
         self.text_embedder = text_embedder
-        self.tokenizer = tokenizer
+        self.tokenizer = tokenizer or get_tokenizer()
         self.reports = reports
 
     async def expand_query(self, query: str) -> tuple[str, dict[str, int]]:
@@ -105,7 +105,7 @@ class DRIFTPrimer:
         self,
         config: DRIFTSearchConfig,
         chat_model: ChatModel,
-        tokenizer: Tokenizer = get_tokenizer(),
+        tokenizer: Tokenizer | None = None,
     ):
         """
         Initialize the DRIFTPrimer.
@@ -117,7 +117,7 @@ class DRIFTPrimer:
         """
         self.chat_model = chat_model
         self.config = config
-        self.tokenizer = tokenizer
+        self.tokenizer = tokenizer or get_tokenizer()
 
     async def decompose_query(
         self, query: str, reports: pd.DataFrame

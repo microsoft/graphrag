@@ -31,14 +31,14 @@ class GlobalCommunityContext(GlobalContextBuilder):
         community_reports: list[CommunityReport],
         communities: list[Community],
         entities: list[Entity] | None = None,
-        tokenizer: Tokenizer = get_tokenizer(),
+        tokenizer: Tokenizer | None = None,
         dynamic_community_selection: bool = False,
         dynamic_community_selection_kwargs: dict[str, Any] | None = None,
         random_state: int = 86,
     ):
         self.community_reports = community_reports
         self.entities = entities
-        self.tokenizer = tokenizer
+        self.tokenizer = tokenizer or get_tokenizer()
         self.dynamic_community_selection = None
         if dynamic_community_selection and isinstance(
             dynamic_community_selection_kwargs, dict

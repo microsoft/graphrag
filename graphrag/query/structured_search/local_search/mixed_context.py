@@ -59,7 +59,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         community_reports: list[CommunityReport] | None = None,
         relationships: list[Relationship] | None = None,
         covariates: dict[str, list[Covariate]] | None = None,
-        tokenizer: Tokenizer = get_tokenizer(),
+        tokenizer: Tokenizer | None = None,
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
     ):
         if community_reports is None:
@@ -81,7 +81,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         self.covariates = covariates
         self.entity_text_embeddings = entity_text_embeddings
         self.text_embedder = text_embedder
-        self.tokenizer = tokenizer
+        self.tokenizer = tokenizer or get_tokenizer()
         self.embedding_vectorstore_key = embedding_vectorstore_key
 
     def filter_by_entity_keys(self, entity_keys: list[int] | list[str]):

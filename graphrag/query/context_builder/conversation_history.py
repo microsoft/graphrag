@@ -148,7 +148,7 @@ class ConversationHistory:
 
     def build_context(
         self,
-        tokenizer: Tokenizer = get_tokenizer(),
+        tokenizer: Tokenizer | None = None,
         include_user_turns_only: bool = True,
         max_qa_turns: int | None = 5,
         max_context_tokens: int = 8000,
@@ -168,6 +168,7 @@ class ConversationHistory:
             context_name: Name of the context, default is "Conversation History".
 
         """
+        tokenizer = tokenizer or get_tokenizer()
         qa_turns = self.to_qa_turns()
         if include_user_turns_only:
             qa_turns = [
