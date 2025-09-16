@@ -64,7 +64,7 @@ async def _extract_nodes(
         text_unit_df,
         extract,
         num_threads=num_threads,
-        async_type=AsyncType.Threaded,
+        async_type=AsyncType.AsyncIO,
         progress_msg="extract noun phrases progress: ",
     )
 
