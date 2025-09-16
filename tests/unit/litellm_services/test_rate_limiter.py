@@ -10,7 +10,6 @@ from queue import Queue
 
 import pytest
 
-from graphrag.config.defaults import DEFAULT_RATE_LIMITER_SERVICES
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter import (
     RateLimiter,
 )
@@ -24,9 +23,6 @@ from tests.unit.litellm_services.utils import (
 )
 
 rate_limiter_factory = RateLimiterFactory()
-
-for strategy, service in DEFAULT_RATE_LIMITER_SERVICES.items():
-    rate_limiter_factory.register(strategy=strategy, service_initializer=service)
 
 _period_in_seconds = 1
 _rpm = 4

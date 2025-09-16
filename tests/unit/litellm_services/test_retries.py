@@ -7,15 +7,11 @@ import time
 
 import pytest
 
-from graphrag.config.defaults import DEFAULT_RETRY_SERVICES
 from graphrag.language_model.providers.litellm.services.retry.retry_factory import (
     RetryFactory,
 )
 
 retry_factory = RetryFactory()
-
-for strategy, service in DEFAULT_RETRY_SERVICES.items():
-    retry_factory.register(strategy=strategy, service_initializer=service)
 
 
 @pytest.mark.parametrize(

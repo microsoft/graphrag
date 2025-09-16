@@ -99,11 +99,6 @@ class GraphRagConfig(BaseModel):
         """Validate the retry services configuration."""
         retry_factory = RetryFactory()
 
-        for service_name, service_cls in defs.DEFAULT_RETRY_SERVICES.items():
-            retry_factory.register(
-                strategy=service_name, service_initializer=service_cls
-            )
-
         for model_id, model in self.models.items():
             if model.retry_strategy != "none":
                 if model.retry_strategy not in retry_factory:
@@ -119,11 +114,6 @@ class GraphRagConfig(BaseModel):
     def _validate_rate_limiter_services(self) -> None:
         """Validate the rate limiter services configuration."""
         rate_limiter_factory = RateLimiterFactory()
-
-        for service_name, service_cls in defs.DEFAULT_RATE_LIMITER_SERVICES.items():
-            rate_limiter_factory.register(
-                strategy=service_name, service_initializer=service_cls
-            )
 
         for model_id, model in self.models.items():
             if model.rate_limit_strategy is not None:
