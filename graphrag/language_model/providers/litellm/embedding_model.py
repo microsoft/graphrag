@@ -5,6 +5,7 @@
 
 from typing import TYPE_CHECKING, Any
 
+import litellm
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from litellm import (
     EmbeddingResponse,  # type: ignore
@@ -32,6 +33,8 @@ if TYPE_CHECKING:
     from graphrag.cache.pipeline_cache import PipelineCache
     from graphrag.config.models.language_model_config import LanguageModelConfig
 
+litellm.suppress_debug_info = True
+
 
 def _create_base_embeddings(
     model_config: "LanguageModelConfig",
@@ -50,9 +53,9 @@ def _create_base_embeddings(
     model = model_config.deployment_name or model_config.model
 
     base_args: dict[str, Any] = {
+        "drop_params": True,  # LiteLLM drop unsupported params for selected model.
         "model": f"{model_provider}/{model}",
         "timeout": model_config.request_timeout,
-        "drop_params": True,
         "api_base": model_config.api_base,
         "api_version": model_config.api_version,
         "api_key": model_config.api_key,

@@ -8,6 +8,7 @@ import json
 from collections.abc import AsyncGenerator, Generator
 from typing import TYPE_CHECKING, Any, cast
 
+import litellm
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from litellm import (
     CustomStreamWrapper,
@@ -38,6 +39,8 @@ if TYPE_CHECKING:
     from graphrag.config.models.language_model_config import LanguageModelConfig
     from graphrag.language_model.response.base import ModelResponse as MR  # noqa: N817
 
+litellm.suppress_debug_info = True
+
 
 def _create_base_completions(
     model_config: "LanguageModelConfig",
@@ -56,6 +59,7 @@ def _create_base_completions(
     model = model_config.deployment_name or model_config.model
 
     base_args: dict[str, Any] = {
+        "drop_params": True,  # LiteLLM drop unsupported params for selected model.
         "model": f"{model_provider}/{model}",
         "timeout": model_config.request_timeout,
         "top_p": model_config.top_p,
@@ -63,7 +67,6 @@ def _create_base_completions(
         "temperature": model_config.temperature,
         "frequency_penalty": model_config.frequency_penalty,
         "presence_penalty": model_config.presence_penalty,
-        "drop_params": True,
         "api_base": model_config.api_base,
         "api_version": model_config.api_version,
         "api_key": model_config.api_key,

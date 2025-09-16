@@ -255,8 +255,10 @@ class LanguageModelConfig(BaseModel):
             raise ValueError(msg)
 
         if (
-            self.type == ModelType.Chat or self.type == ModelType.Embedding
-        ) and self.tokens_per_minute == "auto":
+            (self.type == ModelType.Chat or self.type == ModelType.Embedding)
+            and self.rate_limit_strategy is not None
+            and self.tokens_per_minute == "auto"
+        ):
             msg = f"tokens_per_minute cannot be set to 'auto' when using type '{self.type}'. Please set it to a positive integer or null to disable."
             raise ValueError(msg)
 
@@ -279,8 +281,10 @@ class LanguageModelConfig(BaseModel):
             raise ValueError(msg)
 
         if (
-            self.type == ModelType.Chat or self.type == ModelType.Embedding
-        ) and self.requests_per_minute == "auto":
+            (self.type == ModelType.Chat or self.type == ModelType.Embedding)
+            and self.rate_limit_strategy is not None
+            and self.requests_per_minute == "auto"
+        ):
             msg = f"requests_per_minute cannot be set to 'auto' when using type '{self.type}'. Please set it to a positive integer or null to disable."
             raise ValueError(msg)
 
