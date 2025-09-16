@@ -27,7 +27,7 @@ retry_factory = RetryFactory()
             "exponential_backoff",
             3,  # 3 retries
             0,  # exponential retry does not adhere to max_retry_wait
-            14,  # 2^1 + 2^2 + 2^3 = 2 + 4 + 8 = 14 seconds total runtime
+            14,  # (2^1 + jitter) + (2^2 + jitter) + (2^3 + jitter) = 2 + 4 + 8 + 3*jitter = 14 seconds min total runtime
         ),
         (
             "random_wait",
@@ -96,7 +96,7 @@ def test_retries(
             "exponential_backoff",
             3,  # 3 retries
             0,  # exponential retry does not adhere to max_retry_wait
-            14,  # 2^1 + 2^2 + 2^3 = 2 + 4 + 8 = 14 seconds total runtime
+            14,  # (2^1 + jitter) + (2^2 + jitter) + (2^3 + jitter) = 2 + 4 + 8 + 3*jitter = 14 seconds min total runtime
         ),
         (
             "random_wait",

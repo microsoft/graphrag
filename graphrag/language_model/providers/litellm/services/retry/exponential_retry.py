@@ -5,6 +5,7 @@
 
 import asyncio
 import logging
+import random
 import time
 from collections.abc import Awaitable, Callable
 from typing import Any
@@ -21,6 +22,8 @@ class ExponentialRetry(Retry):
         self,
         *,
         max_attempts: int = 5,
+        base_delay: float = 2.0,
+        jitter: bool = True,
         **kwargs: Any,
     ):
         if max_attempts <= 0:
@@ -28,7 +31,8 @@ class ExponentialRetry(Retry):
             raise ValueError(msg)
 
         self._max_attempts = max_attempts
-        self._base_delay = 2
+        self._base_delay = base_delay
+        self._jitter = jitter
 
     def retry(self, func: Callable[..., Any], **kwargs: Any) -> Any:
         """Retry a synchronous function."""
@@ -48,7 +52,7 @@ class ExponentialRetry(Retry):
                 logger.exception(
                     f"ExponentialRetry: Request failed, retrying, retries={retries}, delay={delay}, max_retries={self._max_attempts}, exception={e}",  # noqa: G004, TRY401
                 )
-                time.sleep(delay)
+                time.sleep(delay + (self._jitter * random.uniform(0, 1)))  # noqa: S311
 
     async def aretry(
         self,
@@ -72,4 +76,4 @@ class ExponentialRetry(Retry):
                 logger.exception(
                     f"ExponentialRetry: Request failed, retrying, retries={retries}, delay={delay}, max_retries={self._max_attempts}, exception={e}",  # noqa: G004, TRY401
                 )
-                await asyncio.sleep(delay)
+                await asyncio.sleep(delay + (self._jitter * random.uniform(0, 1)))  # noqa: S311
