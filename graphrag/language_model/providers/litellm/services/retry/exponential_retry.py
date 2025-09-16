@@ -30,6 +30,10 @@ class ExponentialRetry(Retry):
             msg = "max_attempts must be greater than 0."
             raise ValueError(msg)
 
+        if base_delay <= 1.0:
+            msg = "base_delay must be greater than 1.0."
+            raise ValueError(msg)
+
         self._max_attempts = max_attempts
         self._base_delay = base_delay
         self._jitter = jitter

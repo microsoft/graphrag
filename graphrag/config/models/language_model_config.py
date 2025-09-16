@@ -254,6 +254,12 @@ class LanguageModelConfig(BaseModel):
             msg = f"Tokens per minute must be a non zero positive number, 'auto' or null. Suggested value: {language_model_defaults.tokens_per_minute}."
             raise ValueError(msg)
 
+        if (
+            self.type == ModelType.Chat or self.type == ModelType.Embedding
+        ) and self.tokens_per_minute == "auto":
+            msg = f"tokens_per_minute cannot be set to 'auto' when using type '{self.type}'. Please set it to a positive integer or null to disable."
+            raise ValueError(msg)
+
     requests_per_minute: int | Literal["auto"] | None = Field(
         description="The number of requests per minute to use for the LLM service.",
         default=language_model_defaults.requests_per_minute,
@@ -270,6 +276,12 @@ class LanguageModelConfig(BaseModel):
         # If the value is a number, check if it is less than 1
         if isinstance(self.requests_per_minute, int) and self.requests_per_minute < 1:
             msg = f"Requests per minute must be a non zero positive number, 'auto' or null. Suggested value: {language_model_defaults.requests_per_minute}."
+            raise ValueError(msg)
+
+        if (
+            self.type == ModelType.Chat or self.type == ModelType.Embedding
+        ) and self.requests_per_minute == "auto":
+            msg = f"requests_per_minute cannot be set to 'auto' when using type '{self.type}'. Please set it to a positive integer or null to disable."
             raise ValueError(msg)
 
     rate_limit_strategy: str | None = Field(
