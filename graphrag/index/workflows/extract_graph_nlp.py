@@ -61,6 +61,7 @@ async def extract_graph_nlp(
         text_analyzer=text_analyzer,
         normalize_edge_weights=extraction_config.normalize_edge_weights,
         num_threads=extraction_config.concurrent_requests,
+        async_mode=extraction_config.async_mode,
         cache=cache,
     )
 
