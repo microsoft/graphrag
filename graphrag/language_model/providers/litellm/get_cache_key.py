@@ -33,6 +33,8 @@ thus we start with version 3 for litellm.
 def get_cache_key(
     model_config: "LanguageModelConfig",
     prefix: str,
+    messages: str | None = None,
+    input: str | None = None,
     **kwargs: Any,
 ) -> str:
     """Generate a cache key based on the model configuration and input arguments.
@@ -54,12 +56,16 @@ def get_cache_key(
         "parameters": _get_parameters(model_config, **kwargs),
     }
 
-    if "messages" in kwargs:
-        cache_key["messages"] = kwargs["messages"]
-    elif "input" in kwargs:
-        cache_key["input"] = kwargs["input"]
+    if messages is not None and input is not None:
+        msg = "Only one of 'messages' or 'input' should be provided."
+        raise ValueError(msg)
+
+    if messages is not None:
+        cache_key["messages"] = messages
+    elif input is not None:
+        cache_key["input"] = input
     else:
-        msg = "Either 'messages' or 'input' must be provided in kwargs."
+        msg = "Either 'messages' or 'input' must be provided."
         raise ValueError(msg)
 
     data_hash = _hash(json.dumps(cache_key, sort_keys=True))
