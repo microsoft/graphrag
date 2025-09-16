@@ -140,9 +140,6 @@ async def _derive_from_rows_base(
 
     This is useful for IO bound operations.
     """
-    tick = progress_ticker(
-        callbacks.progress, num_total=len(input), description=progress_msg
-    )
     errors: list[tuple[BaseException, str]] = []
 
     async def execute(row: tuple[Any, pd.Series]) -> ItemType | None:
@@ -155,12 +152,8 @@ async def _derive_from_rows_base(
             return None
         else:
             return cast("ItemType", result)
-        finally:
-            tick(1)
 
     result = await gather(execute)
-
-    tick.done()
 
     for error, stack in errors:
         logger.error(
