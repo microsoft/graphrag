@@ -112,6 +112,7 @@ summarize_descriptions:
 extract_graph_nlp:
   text_analyzer:
     extractor_type: {graphrag_config_defaults.extract_graph_nlp.text_analyzer.extractor_type.value} # [regex_english, syntactic_parser, cfg]
+  async_mode: {graphrag_config_defaults.extract_graph_nlp.async_mode.value} # or asyncio
 
 cluster_graph:
   max_cluster_size: {graphrag_config_defaults.cluster_graph.max_cluster_size}
