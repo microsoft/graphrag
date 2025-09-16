@@ -97,7 +97,7 @@ class LanguageModelConfig(BaseModel):
             msg = f"Model type {self.type} is not recognized, must be one of {ModelFactory.get_chat_models() + ModelFactory.get_embedding_models()}."
             raise KeyError(msg)
 
-    model_provider: str = Field(
+    model_provider: str | None = Field(
         description="The model provider to use.",
         default=language_model_defaults.model_provider,
     )
@@ -112,10 +112,10 @@ class LanguageModelConfig(BaseModel):
         KeyError
             If the model provider is not recognized.
         """
-        if (
-            self.type == ModelType.Chat or self.type == ModelType.Embedding
-        ) and self.model_provider.strip() == "":
-            msg = "Model provider must be specified when using Litellm."
+        if (self.type == ModelType.Chat or self.type == ModelType.Embedding) and (
+            self.model_provider is None or self.model_provider.strip() == ""
+        ):
+            msg = f"Model provider must be specified when using type == {self.type}."
             raise KeyError(msg)
 
     model: str = Field(description="The LLM model to use.")

@@ -306,7 +306,7 @@ class LanguageModelDefaults:
 
     api_key: None = None
     auth_type: ClassVar[AuthType] = AuthType.APIKey
-    model_provider: str = "openai"
+    model_provider: str | None = None
     encoding_model: str = ""
     max_tokens: int | None = None
     temperature: float = 0
