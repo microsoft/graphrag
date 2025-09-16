@@ -18,6 +18,9 @@ from graphrag.config.enums import AuthType
 from graphrag.language_model.providers.litellm.request_wrappers.with_cache import (
     with_cache,
 )
+from graphrag.language_model.providers.litellm.request_wrappers.with_logging import (
+    with_logging,
+)
 from graphrag.language_model.providers.litellm.request_wrappers.with_rate_limiter import (
     with_rate_limiter,
 )
@@ -104,7 +107,7 @@ def _create_embeddings(
     Then wrap additional features such as rate limiting, retries, and caching, if enabled.
 
     Final function composition order:
-    - Cache(Retries(RateLimiter(ModelEmbedding())))
+    - Logging(Cache(Retries(RateLimiter(ModelEmbedding()))))
 
     Args
     ----
@@ -143,11 +146,12 @@ def _create_embeddings(
                 tpm=tpm,
             )
 
-    embedding, aembedding = with_retries(
-        sync_fn=embedding,
-        async_fn=aembedding,
-        model_config=model_config,
-    )
+    if model_config.retry_strategy != "none":
+        embedding, aembedding = with_retries(
+            sync_fn=embedding,
+            async_fn=aembedding,
+            model_config=model_config,
+        )
 
     if cache is not None:
         embedding, aembedding = with_cache(
@@ -158,6 +162,11 @@ def _create_embeddings(
             request_type="embedding",
             cache_key_prefix=cache_key_prefix,
         )
+
+    embedding, aembedding = with_logging(
+        sync_fn=embedding,
+        async_fn=aembedding,
+    )
 
     return (embedding, aembedding)
 

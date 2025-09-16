@@ -23,6 +23,9 @@ from graphrag.config.enums import AuthType
 from graphrag.language_model.providers.litellm.request_wrappers.with_cache import (
     with_cache,
 )
+from graphrag.language_model.providers.litellm.request_wrappers.with_logging import (
+    with_logging,
+)
 from graphrag.language_model.providers.litellm.request_wrappers.with_rate_limiter import (
     with_rate_limiter,
 )
@@ -118,7 +121,7 @@ def _create_completions(
     Then wrap additional features such as rate limiting, retries, and caching, if enabled.
 
     Final function composition order:
-    - Cache(Retries(RateLimiter(ModelCompletion())))
+    - Logging(Cache(Retries(RateLimiter(ModelCompletion()))))
 
     Args
     ----
@@ -157,11 +160,12 @@ def _create_completions(
                 tpm=tpm,
             )
 
-    completion, acompletion = with_retries(
-        sync_fn=completion,
-        async_fn=acompletion,
-        model_config=model_config,
-    )
+    if model_config.retry_strategy != "none":
+        completion, acompletion = with_retries(
+            sync_fn=completion,
+            async_fn=acompletion,
+            model_config=model_config,
+        )
 
     if cache is not None:
         completion, acompletion = with_cache(
@@ -172,6 +176,11 @@ def _create_completions(
             request_type="chat",
             cache_key_prefix=cache_key_prefix,
         )
+
+    completion, acompletion = with_logging(
+        sync_fn=completion,
+        async_fn=acompletion,
+    )
 
     return (completion, acompletion)
 
