@@ -20,7 +20,8 @@ def test_vector_store_operations():
     try:
         vector_store = LanceDBVectorStore(
             vector_store_schema_config=VectorStoreSchemaConfig(
-                index_name="test_collection"
+                index_name="test_collection",
+                vector_size=5
             )
         )
         vector_store.connect(db_uri=temp_dir)
@@ -98,7 +99,8 @@ def test_empty_collection():
     try:
         vector_store = LanceDBVectorStore(
             vector_store_schema_config=VectorStoreSchemaConfig(
-                index_name="empty_collection"
+                index_name="empty_collection",
+                vector_size=5
             )
         )
         vector_store.connect(db_uri=temp_dir)
@@ -142,7 +144,8 @@ def test_filter_search():
     try:
         vector_store = LanceDBVectorStore(
             vector_store_schema_config=VectorStoreSchemaConfig(
-                index_name="filter_collection"
+                index_name="filter_collection",
+                vector_size=5
             )
         )
 
