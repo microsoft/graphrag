@@ -18,12 +18,11 @@ from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
 def test_create_lancedb_vector_store():
     kwargs = {
-        "collection_name": "test_collection",
         "db_uri": "/tmp/lancedb",
     }
     vector_store = VectorStoreFactory.create_vector_store(
         vector_store_type=VectorStoreType.LanceDB.value,
-        vector_store_schema_config=VectorStoreSchemaConfig(),
+        vector_store_schema_config=VectorStoreSchemaConfig(index_name="test_collection"),
         kwargs=kwargs,
     )
     assert isinstance(vector_store, LanceDBVectorStore)
@@ -33,13 +32,12 @@ def test_create_lancedb_vector_store():
 @pytest.mark.skip(reason="Azure AI Search requires credentials and setup")
 def test_create_azure_ai_search_vector_store():
     kwargs = {
-        "collection_name": "test_collection",
         "url": "https://test.search.windows.net",
         "api_key": "test_key",
     }
     vector_store = VectorStoreFactory.create_vector_store(
         vector_store_type=VectorStoreType.AzureAISearch.value,
-        vector_store_schema_config=VectorStoreSchemaConfig(),
+        vector_store_schema_config=VectorStoreSchemaConfig(index_name="test_collection"),
         kwargs=kwargs,
     )
     assert isinstance(vector_store, AzureAISearchVectorStore)
@@ -48,14 +46,13 @@ def test_create_azure_ai_search_vector_store():
 @pytest.mark.skip(reason="CosmosDB requires credentials and setup")
 def test_create_cosmosdb_vector_store():
     kwargs = {
-        "collection_name": "test_collection",
         "connection_string": "AccountEndpoint=https://test.documents.azure.com:443/;AccountKey=test_key==",
         "database_name": "test_db",
     }
 
     vector_store = VectorStoreFactory.create_vector_store(
         vector_store_type=VectorStoreType.CosmosDB.value,
-        vector_store_schema_config=VectorStoreSchemaConfig(),
+        vector_store_schema_config=VectorStoreSchemaConfig(index_name="test_collection"),
         kwargs=kwargs,
     )
 
