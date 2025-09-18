@@ -8,6 +8,7 @@ import tempfile
 
 import numpy as np
 
+from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.vector_stores.base import VectorStoreDocument
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
@@ -17,7 +18,11 @@ def test_vector_store_operations():
     # Create a temporary directory for the test database
     temp_dir = tempfile.mkdtemp()
     try:
-        vector_store = LanceDBVectorStore(collection_name="test_collection")
+        vector_store = LanceDBVectorStore(
+            vector_store_schema_config=VectorStoreSchemaConfig(
+                index_name="test_collection"
+            )
+        )
         vector_store.connect(db_uri=temp_dir)
 
         docs = [
@@ -42,7 +47,7 @@ def test_vector_store_operations():
         ]
         vector_store.load_documents(docs[:2])
 
-        assert vector_store.collection_name in vector_store.db_connection.table_names()
+        assert vector_store.index_name in vector_store.db_connection.table_names()
 
         doc = vector_store.search_by_id("1")
         assert doc.id == "1"
@@ -91,7 +96,11 @@ def test_empty_collection():
     # Create a temporary directory for the test database
     temp_dir = tempfile.mkdtemp()
     try:
-        vector_store = LanceDBVectorStore(collection_name="empty_collection")
+        vector_store = LanceDBVectorStore(
+            vector_store_schema_config=VectorStoreSchemaConfig(
+                index_name="empty_collection"
+            )
+        )
         vector_store.connect(db_uri=temp_dir)
 
         # Load the vector store with a document, then delete it
@@ -102,12 +111,12 @@ def test_empty_collection():
             attributes={"title": "Tmp"},
         )
         vector_store.load_documents([sample_doc])
-        vector_store.db_connection.open_table(vector_store.collection_name).delete(
+        vector_store.db_connection.open_table(vector_store.index_name).delete(
             "id = 'tmp'"
         )
 
         # Should still have the collection
-        assert vector_store.collection_name in vector_store.db_connection.table_names()
+        assert vector_store.index_name in vector_store.db_connection.table_names()
 
         # Add a document after creating an empty collection
         doc = VectorStoreDocument(
@@ -131,7 +140,12 @@ def test_filter_search():
     # Create a temporary directory for the test database
     temp_dir = tempfile.mkdtemp()
     try:
-        vector_store = LanceDBVectorStore(collection_name="filter_collection")
+        vector_store = LanceDBVectorStore(
+            vector_store_schema_config=VectorStoreSchemaConfig(
+                index_name="filter_collection"
+            )
+        )
+
         vector_store.connect(db_uri=temp_dir)
 
         # Create test documents with different categories

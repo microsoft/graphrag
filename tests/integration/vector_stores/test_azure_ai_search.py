@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
 from graphrag.vector_stores.base import VectorStoreDocument
 
@@ -39,7 +40,10 @@ class TestAzureAISearchVectorStore:
     @pytest.fixture
     def vector_store(self, mock_search_client, mock_index_client):
         """Create an Azure AI Search vector store instance."""
-        vector_store = AzureAISearchVectorStore(collection_name="test_vectors")
+        vector_store = AzureAISearchVectorStore(
+            collection_name="test_vectors",
+            vector_store_schema_config=VectorStoreSchemaConfig(),
+        )
 
         # Create the necessary mocks first
         vector_store.db_connection = mock_search_client

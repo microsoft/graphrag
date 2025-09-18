@@ -8,6 +8,7 @@ import sys
 import numpy as np
 import pytest
 
+from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.vector_stores.base import VectorStoreDocument
 from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
 
@@ -25,6 +26,7 @@ def test_vector_store_operations():
     """Test basic vector store operations with CosmosDB."""
     vector_store = CosmosDBVectorStore(
         collection_name="testvector",
+        vector_store_schema_config=VectorStoreSchemaConfig(),
     )
 
     try:
@@ -79,6 +81,7 @@ def test_clear():
     """Test clearing the vector store."""
     vector_store = CosmosDBVectorStore(
         collection_name="testclear",
+        vector_store_schema_config=VectorStoreSchemaConfig(),
     )
     try:
         vector_store.connect(
