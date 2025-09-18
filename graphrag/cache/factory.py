@@ -102,9 +102,14 @@ def create_noop_cache(**_kwargs) -> PipelineCache:
     return NoopPipelineCache()
 
 
+def create_memory_cache(**kwargs) -> PipelineCache:
+    """Create a memory cache implementation."""
+    return InMemoryCache(**kwargs)
+
+
 # --- register built-in cache implementations ---
 CacheFactory.register(CacheType.none.value, create_noop_cache)
-CacheFactory.register(CacheType.memory.value, InMemoryCache)
+CacheFactory.register(CacheType.memory.value, create_memory_cache)
 CacheFactory.register(CacheType.file.value, create_file_cache)
 CacheFactory.register(CacheType.blob.value, create_blob_cache)
 CacheFactory.register(CacheType.cosmosdb.value, create_cosmosdb_cache)
