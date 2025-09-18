@@ -168,57 +168,58 @@ def update_context_data(
     """
     updated_context_data = {}
     for key in context_data:
+        entries = context_data[key].to_dict(orient="records")
         updated_entry = []
         if key == "reports":
             updated_entry = [
                 dict(
-                    {k: entry[k] for k in entry},
+                    entry,
                     index_name=links["community_reports"][int(entry["id"])][
                         "index_name"
                     ],
                     index_id=links["community_reports"][int(entry["id"])]["id"],
                 )
-                for entry in context_data[key]
+                for entry in entries
             ]
         if key == "entities":
             updated_entry = [
                 dict(
-                    {k: entry[k] for k in entry},
+                    entry,
                     entity=entry["entity"].split("-")[0],
                     index_name=links["entities"][int(entry["id"])]["index_name"],
                     index_id=links["entities"][int(entry["id"])]["id"],
                 )
-                for entry in context_data[key]
+                for entry in entries
             ]
         if key == "relationships":
             updated_entry = [
                 dict(
-                    {k: entry[k] for k in entry},
+                    entry,
                     source=entry["source"].split("-")[0],
                     target=entry["target"].split("-")[0],
                     index_name=links["relationships"][int(entry["id"])]["index_name"],
                     index_id=links["relationships"][int(entry["id"])]["id"],
                 )
-                for entry in context_data[key]
+                for entry in entries
             ]
         if key == "claims":
             updated_entry = [
                 dict(
-                    {k: entry[k] for k in entry},
+                    entry,
                     entity=entry["entity"].split("-")[0],
                     index_name=links["covariates"][int(entry["id"])]["index_name"],
                     index_id=links["covariates"][int(entry["id"])]["id"],
                 )
-                for entry in context_data[key]
+                for entry in entries
             ]
         if key == "sources":
             updated_entry = [
                 dict(
-                    {k: entry[k] for k in entry},
+                    entry,
                     index_name=links["text_units"][int(entry["id"])]["index_name"],
                     index_id=links["text_units"][int(entry["id"])]["id"],
                 )
-                for entry in context_data[key]
+                for entry in entries
             ]
         updated_context_data[key] = updated_entry
     return updated_context_data
