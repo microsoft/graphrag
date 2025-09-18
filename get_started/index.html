@@ -1626,9 +1626,8 @@ Since we have already configured a directory named <code>./ragtest</code> in the
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="nt">deployment_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;azure_model_deployment_name&gt;</span>
 </code></pre></div>
 <h4 id="using-managed-auth-on-azure">Using Managed Auth on Azure</h4>
-<p>To use managed auth, add an additional value to your model config and comment out or remove the api_key line:</p>
+<p>To use managed auth, edit the auth_type in your model config and <em>remove</em> the api_key line:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">auth_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure_managed_identity</span><span class="w"> </span><span class="c1"># Default auth_type is is api_key</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># api_key: ${GRAPHRAG_API_KEY}</span>
 </code></pre></div>
 <p>You will also need to login with <a href="https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli">az login</a> and select the subscription with your endpoint.</p>
 <h2 id="running-the-indexing-pipeline">Running the Indexing pipeline</h2>
