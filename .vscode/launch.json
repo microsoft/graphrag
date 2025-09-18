@@ -37,6 +37,18 @@
 				"--config",
 				"<path_to_ragtest_root_demo>/settings.yaml",
 			]
-		}
+		},
+		{
+			"name": "Debug Integration Pytest",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "pytest",
+			"args": [
+				"./tests/integration/vector_stores",
+				"-k", "test_lancedb"
+			],
+			"console": "integratedTerminal",
+    		"justMyCode": false 
+		},
 	]
 }

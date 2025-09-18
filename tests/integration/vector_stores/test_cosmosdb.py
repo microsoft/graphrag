@@ -25,8 +25,7 @@ if not sys.platform.startswith("win"):
 def test_vector_store_operations():
     """Test basic vector store operations with CosmosDB."""
     vector_store = CosmosDBVectorStore(
-        collection_name="testvector",
-        vector_store_schema_config=VectorStoreSchemaConfig(),
+        vector_store_schema_config=VectorStoreSchemaConfig(index_name="testvector"),
     )
 
     try:
@@ -80,8 +79,7 @@ def test_vector_store_operations():
 def test_clear():
     """Test clearing the vector store."""
     vector_store = CosmosDBVectorStore(
-        collection_name="testclear",
-        vector_store_schema_config=VectorStoreSchemaConfig(),
+        vector_store_schema_config=VectorStoreSchemaConfig(index_name="testclear"),
     )
     try:
         vector_store.connect(
