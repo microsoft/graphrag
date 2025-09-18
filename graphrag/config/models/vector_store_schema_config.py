@@ -11,17 +11,16 @@ DEFAULT_VECTOR_SIZE: int = 1536
 
 VALID_IDENTIFIER_REGEX = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
+
 def is_valid_field_name(field: str) -> bool:
     """Check if a field name is valid for CosmosDB."""
     return bool(VALID_IDENTIFIER_REGEX.match(field))
 
+
 class VectorStoreSchemaConfig(BaseModel):
     """The default configuration section for Vector Store Schema."""
 
-    index_name: str = Field(
-        description="The index name to use.",
-        default=""
-    )
+    index_name: str = Field(description="The index name to use.", default="")
 
     id_field: str = Field(
         description="The ID field to use.",

@@ -108,10 +108,16 @@ def get_embedding_store(
             store.get("container_name", "default"), embedding_name
         )
 
-        embeddings_schema: dict[str, VectorStoreSchemaConfig] = store.get("embeddings_schema", {})
+        embeddings_schema: dict[str, VectorStoreSchemaConfig] = store.get(
+            "embeddings_schema", {}
+        )
         single_embedding_config: VectorStoreSchemaConfig = VectorStoreSchemaConfig()
 
-        if embeddings_schema is not None and embedding_name is not None and embedding_name in embeddings_schema:
+        if (
+            embeddings_schema is not None
+            and embedding_name is not None
+            and embedding_name in embeddings_schema
+        ):
             raw_config = embeddings_schema[embedding_name]
             if isinstance(raw_config, dict):
                 single_embedding_config = VectorStoreSchemaConfig(**raw_config)

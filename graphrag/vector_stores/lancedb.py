@@ -21,21 +21,19 @@ import lancedb
 class LanceDBVectorStore(BaseVectorStore):
     """LanceDB vector storage implementation."""
 
-    def __init__(self, vector_store_schema_config: VectorStoreSchemaConfig, **kwargs: Any) -> None:
-        super().__init__(vector_store_schema_config=vector_store_schema_config, **kwargs)
+    def __init__(
+        self, vector_store_schema_config: VectorStoreSchemaConfig, **kwargs: Any
+    ) -> None:
+        super().__init__(
+            vector_store_schema_config=vector_store_schema_config, **kwargs
+        )
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to the vector storage."""
         self.db_connection = lancedb.connect(kwargs["db_uri"])
 
-        if (
-            self.index_name
-            and self.index_name in self.db_connection.table_names()
-        ):
-            self.document_collection = self.db_connection.open_table(
-                self.index_name
-            )
-
+        if self.index_name and self.index_name in self.db_connection.table_names():
+            self.document_collection = self.db_connection.open_table(self.index_name)
 
     def load_documents(
         self, documents: list[VectorStoreDocument], overwrite: bool = True
@@ -61,14 +59,16 @@ class LanceDBVectorStore(BaseVectorStore):
             # Step 3: Flatten the vectors and build FixedSizeListArray manually
             flat_vector = np.concatenate(vectors).astype(np.float32)
             flat_array = pa.array(flat_vector, type=pa.float32())
-            vector_column = pa.FixedSizeListArray.from_arrays(flat_array, self.vector_size)
+            vector_column = pa.FixedSizeListArray.from_arrays(
+                flat_array, self.vector_size
+            )
 
             # Step 4: Create PyArrow table (let schema be inferred)
             data = pa.table({
                 self.id_field: pa.array(ids, type=pa.string()),
                 self.text_field: pa.array(texts, type=pa.string()),
                 self.vector_field: vector_column,
-                self.attributes_field: pa.array(attributes, type=pa.string())
+                self.attributes_field: pa.array(attributes, type=pa.string()),
             })
 
         # NOTE: If modifying the next section of code, ensure that the schema remains the same.
@@ -83,12 +83,12 @@ class LanceDBVectorStore(BaseVectorStore):
                 self.document_collection = self.db_connection.create_table(
                     self.index_name, mode="overwrite"
                 )
-            self.document_collection.create_index(vector_column_name=self.vector_field, index_type="IVF_FLAT")
+            self.document_collection.create_index(
+                vector_column_name=self.vector_field, index_type="IVF_FLAT"
+            )
         else:
             # add data to existing table
-            self.document_collection = self.db_connection.open_table(
-                self.index_name
-            )
+            self.document_collection = self.db_connection.open_table(self.index_name)
             if data:
                 self.document_collection.add(data)
 

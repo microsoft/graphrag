@@ -38,8 +38,12 @@ class AzureAISearchVectorStore(BaseVectorStore):
 
     index_client: SearchIndexClient
 
-    def __init__(self, vector_store_schema_config: VectorStoreSchemaConfig, **kwargs: Any) -> None:
-        super().__init__(vector_store_schema_config=vector_store_schema_config, **kwargs)
+    def __init__(
+        self, vector_store_schema_config: VectorStoreSchemaConfig, **kwargs: Any
+    ) -> None:
+        super().__init__(
+            vector_store_schema_config=vector_store_schema_config, **kwargs
+        )
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to AI search vector storage."""
@@ -77,8 +81,11 @@ class AzureAISearchVectorStore(BaseVectorStore):
     ) -> None:
         """Load documents into an Azure AI Search index."""
         if overwrite:
-            if self.index_name != "" and self.index_name in self.index_client.list_index_names():
-                    self.index_client.delete_index(self.index_name)
+            if (
+                self.index_name != ""
+                and self.index_name in self.index_client.list_index_names()
+            ):
+                self.index_client.delete_index(self.index_name)
 
             # Configure vector search profile
             vector_search = VectorSearch(
@@ -114,8 +121,12 @@ class AzureAISearchVectorStore(BaseVectorStore):
                         vector_search_dimensions=self.vector_size,
                         vector_search_profile_name=self.vector_search_profile_name,
                     ),
-                    SearchableField(name=self.text_field, type=SearchFieldDataType.String),
-                    SimpleField(name=self.attributes_field, type=SearchFieldDataType.String,
+                    SearchableField(
+                        name=self.text_field, type=SearchFieldDataType.String
+                    ),
+                    SimpleField(
+                        name=self.attributes_field,
+                        type=SearchFieldDataType.String,
                     ),
                 ],
                 vector_search=vector_search,

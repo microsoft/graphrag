@@ -51,14 +51,13 @@ class BaseVectorStore(ABC):
         self.document_collection = document_collection
         self.query_filter = query_filter
         self.kwargs = kwargs
-        
+
         self.index_name = vector_store_schema_config.index_name
         self.id_field = vector_store_schema_config.id_field
         self.text_field = vector_store_schema_config.text_field
         self.vector_field = vector_store_schema_config.vector_field
         self.attributes_field = vector_store_schema_config.attributes_field
         self.vector_size = vector_store_schema_config.vector_size
-
 
     @abstractmethod
     def connect(self, **kwargs: Any) -> None:

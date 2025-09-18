@@ -50,7 +50,10 @@ class VectorStoreFactory:
 
     @classmethod
     def create_vector_store(
-        cls, vector_store_type: str, vector_store_schema_config: VectorStoreSchemaConfig, kwargs: dict
+        cls,
+        vector_store_type: str,
+        vector_store_schema_config: VectorStoreSchemaConfig,
+        kwargs: dict,
     ) -> BaseVectorStore:
         """Create a vector store object from the provided type.
 
@@ -71,10 +74,9 @@ class VectorStoreFactory:
             raise ValueError(msg)
 
         return cls._registry[vector_store_type](
-            vector_store_schema_config=vector_store_schema_config,
-            **kwargs
+            vector_store_schema_config=vector_store_schema_config, **kwargs
         )
-    
+
     @classmethod
     def get_vector_store_types(cls) -> list[str]:
         """Get the registered vector store implementations."""

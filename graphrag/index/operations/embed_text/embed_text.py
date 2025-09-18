@@ -188,10 +188,16 @@ def _create_vector_store(
 ) -> BaseVectorStore:
     vector_store_type: str = str(vector_store_config.get("type"))
 
-    embeddings_schema: dict[str, VectorStoreSchemaConfig] = vector_store_config.get("embeddings_schema", {})
+    embeddings_schema: dict[str, VectorStoreSchemaConfig] = vector_store_config.get(
+        "embeddings_schema", {}
+    )
     single_embedding_config: VectorStoreSchemaConfig = VectorStoreSchemaConfig()
 
-    if embeddings_schema is not None and embedding_name is not None and embedding_name in embeddings_schema:
+    if (
+        embeddings_schema is not None
+        and embedding_name is not None
+        and embedding_name in embeddings_schema
+    ):
         raw_config = embeddings_schema[embedding_name]
         if isinstance(raw_config, dict):
             single_embedding_config = VectorStoreSchemaConfig(**raw_config)
@@ -202,7 +208,9 @@ def _create_vector_store(
         single_embedding_config.index_name = index_name
 
     vector_store = VectorStoreFactory().create_vector_store(
-        vector_store_schema_config=single_embedding_config, vector_store_type=vector_store_type, kwargs=vector_store_config
+        vector_store_schema_config=single_embedding_config,
+        vector_store_type=vector_store_type,
+        kwargs=vector_store_config,
     )
 
     vector_store.connect(**vector_store_config)

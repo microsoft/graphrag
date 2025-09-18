@@ -27,8 +27,12 @@ class CosmosDBVectorStore(BaseVectorStore):
     _database_client: DatabaseProxy
     _container_client: ContainerProxy
 
-    def __init__(self, vector_store_schema_config: VectorStoreSchemaConfig, **kwargs: Any) -> None:
-        super().__init__(vector_store_schema_config=vector_store_schema_config, **kwargs)
+    def __init__(
+        self, vector_store_schema_config: VectorStoreSchemaConfig, **kwargs: Any
+    ) -> None:
+        super().__init__(
+            vector_store_schema_config=vector_store_schema_config, **kwargs
+        )
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to CosmosDB vector storage."""
@@ -98,13 +102,18 @@ class CosmosDBVectorStore(BaseVectorStore):
             "indexingMode": "consistent",
             "automatic": True,
             "includedPaths": [{"path": "/*"}],
-            "excludedPaths": [{"path": "/_etag/?"}, {"path": f"/{self.vector_field}/*"}],
+            "excludedPaths": [
+                {"path": "/_etag/?"},
+                {"path": f"/{self.vector_field}/*"},
+            ],
         }
 
         # Currently, the CosmosDB emulator does not support the diskANN policy.
         try:
             # First try with the standard diskANN policy
-            indexing_policy["vectorIndexes"] = [{"path": f"/{self.vector_field}", "type": "diskANN"}]
+            indexing_policy["vectorIndexes"] = [
+                {"path": f"/{self.vector_field}", "type": "diskANN"}
+            ]
 
             # Create the container and container client
             self._database_client.create_container_if_not_exists(
@@ -247,7 +256,9 @@ class CosmosDBVectorStore(BaseVectorStore):
                 id_filter = ", ".join([f"'{id}'" for id in include_ids])
             else:
                 id_filter = ", ".join([str(id) for id in include_ids])
-            self.query_filter = f"SELECT * FROM c WHERE c.{self.id_field} IN ({id_filter})"  # noqa: S608
+            self.query_filter = (
+                f"SELECT * FROM c WHERE c.{self.id_field} IN ({id_filter})"  # noqa: S608
+            )
         return self.query_filter
 
     def search_by_id(self, id: str) -> VectorStoreDocument:
