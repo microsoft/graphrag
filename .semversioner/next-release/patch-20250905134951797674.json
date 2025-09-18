@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add gpt-5 support by updating fnllm dependency."
+}
