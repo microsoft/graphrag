@@ -24,12 +24,17 @@ async def build_noun_graph(
     text_analyzer: BaseNounPhraseExtractor,
     normalize_edge_weights: bool,
     num_threads: int = 4,
+    async_mode: AsyncType = AsyncType.Threaded,
     cache: PipelineCache | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Build a noun graph from text units."""
     text_units = text_unit_df.loc[:, ["id", "text"]]
     nodes_df = await _extract_nodes(
-        text_units, text_analyzer, num_threads=num_threads, cache=cache
+        text_units,
+        text_analyzer,
+        num_threads=num_threads,
+        async_mode=async_mode,
+        cache=cache,
     )
     edges_df = _extract_edges(nodes_df, normalize_edge_weights=normalize_edge_weights)
     return (nodes_df, edges_df)
@@ -39,6 +44,7 @@ async def _extract_nodes(
     text_unit_df: pd.DataFrame,
     text_analyzer: BaseNounPhraseExtractor,
     num_threads: int = 4,
+    async_mode: AsyncType = AsyncType.Threaded,
     cache: PipelineCache | None = None,
 ) -> pd.DataFrame:
     """
@@ -64,7 +70,7 @@ async def _extract_nodes(
         text_unit_df,
         extract,
         num_threads=num_threads,
-        async_type=AsyncType.Threaded,
+        async_type=async_mode,
         progress_msg="extract noun phrases progress: ",
     )
 

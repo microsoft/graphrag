@@ -6,7 +6,7 @@
 from pydantic import BaseModel, Field
 
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import NounPhraseExtractorType
+from graphrag.config.enums import AsyncType, NounPhraseExtractorType
 
 
 class TextAnalyzerConfig(BaseModel):
@@ -67,4 +67,8 @@ class ExtractGraphNLPConfig(BaseModel):
     concurrent_requests: int = Field(
         description="The number of threads to use for the extraction process.",
         default=graphrag_config_defaults.extract_graph_nlp.concurrent_requests,
+    )
+    async_mode: AsyncType = Field(
+        description="The async mode to use.",
+        default=graphrag_config_defaults.extract_graph_nlp.async_mode,
     )
