@@ -246,6 +246,7 @@ class ExtractGraphNLPDefaults:
     normalize_edge_weights: bool = True
     text_analyzer: TextAnalyzerDefaults = field(default_factory=TextAnalyzerDefaults)
     concurrent_requests: int = 25
+    async_mode: AsyncType = AsyncType.Threaded
 
 
 @dataclass
@@ -427,6 +428,7 @@ class VectorStoreDefaults:
     api_key: None = None
     audience: None = None
     database_name: None = None
+    schema: None = None
 
 
 @dataclass

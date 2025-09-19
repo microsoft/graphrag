@@ -8,9 +8,10 @@ from typing import Any
 
 from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.config.embeddings import create_collection_name
+from graphrag.config.embeddings import create_index_name
 from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.storage_config import StorageConfig
+from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.data_model.types import TextEmbedder
 from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -103,12 +104,33 @@ def get_embedding_store(
     index_names = []
     for index, store in config_args.items():
         vector_store_type = store["type"]
-        collection_name = create_collection_name(
+        index_name = create_index_name(
             store.get("container_name", "default"), embedding_name
         )
+
+        embeddings_schema: dict[str, VectorStoreSchemaConfig] = store.get(
+            "embeddings_schema", {}
+        )
+        single_embedding_config: VectorStoreSchemaConfig = VectorStoreSchemaConfig()
+
+        if (
+            embeddings_schema is not None
+            and embedding_name is not None
+            and embedding_name in embeddings_schema
+        ):
+            raw_config = embeddings_schema[embedding_name]
+            if isinstance(raw_config, dict):
+                single_embedding_config = VectorStoreSchemaConfig(**raw_config)
+            else:
+                single_embedding_config = raw_config
+
+        if single_embedding_config.index_name is None:
+            single_embedding_config.index_name = index_name
+
         embedding_store = VectorStoreFactory().create_vector_store(
             vector_store_type=vector_store_type,
-            kwargs={**store, "collection_name": collection_name},
+            vector_store_schema_config=single_embedding_config,
+            kwargs={**store},
         )
         embedding_store.connect(**store)
         # If there is only a single index, return the embedding store directly
@@ -168,57 +190,58 @@ def update_context_data(
     """
     updated_context_data = {}
     for key in context_data:
+        entries = context_data[key].to_dict(orient="records")
         updated_entry = []
         if key == "reports":
             updated_entry = [
                 dict(
-                    {k: entry[k] for k in entry},
+                    entry,
                     index_name=links["community_reports"][int(entry["id"])][
                         "index_name"
                     ],
                     index_id=links["community_reports"][int(entry["id"])]["id"],
                 )
-                for entry in context_data[key]
+                for entry in entries
             ]
         if key == "entities":
             updated_entry = [
                 dict(
-                    {k: entry[k] for k in entry},
+                    entry,
                     entity=entry["entity"].split("-")[0],
                     index_name=links["entities"][int(entry["id"])]["index_name"],
                     index_id=links["entities"][int(entry["id"])]["id"],
                 )
-                for entry in context_data[key]
+                for entry in entries
             ]
         if key == "relationships":
             updated_entry = [
                 dict(
-                    {k: entry[k] for k in entry},
+                    entry,
                     source=entry["source"].split("-")[0],
                     target=entry["target"].split("-")[0],
                     index_name=links["relationships"][int(entry["id"])]["index_name"],
                     index_id=links["relationships"][int(entry["id"])]["id"],
                 )
-                for entry in context_data[key]
+                for entry in entries
             ]
         if key == "claims":
             updated_entry = [
                 dict(
-                    {k: entry[k] for k in entry},
+                    entry,
                     entity=entry["entity"].split("-")[0],
                     index_name=links["covariates"][int(entry["id"])]["index_name"],
                     index_id=links["covariates"][int(entry["id"])]["id"],
                 )
-                for entry in context_data[key]
+                for entry in entries
             ]
         if key == "sources":
             updated_entry = [
                 dict(
-                    {k: entry[k] for k in entry},
+                    entry,
                     index_name=links["text_units"][int(entry["id"])]["index_name"],
                     index_id=links["text_units"][int(entry["id"])]["id"],
                 )
-                for entry in context_data[key]
+                for entry in entries
             ]
         updated_context_data[key] = updated_entry
     return updated_context_data

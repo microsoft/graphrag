@@ -16,7 +16,6 @@ from graphrag.index.operations.summarize_communities.typing import (
     Finding,
     StrategyConfig,
 )
-from graphrag.index.utils.rate_limiter import RateLimiter
 from graphrag.language_model.manager import ModelManager
 from graphrag.language_model.protocol.base import ChatModel
 
@@ -51,8 +50,6 @@ async def _run_extractor(
     level: int,
     args: StrategyConfig,
 ) -> CommunityReport | None:
-    # RateLimiter
-    rate_limiter = RateLimiter(rate=1, per=60)
     extractor = CommunityReportsExtractor(
         model,
         extraction_prompt=args.get("extraction_prompt", None),
@@ -63,7 +60,6 @@ async def _run_extractor(
     )
 
     try:
-        await rate_limiter.acquire()
         results = await extractor(input)
         report = results.structured_output
         if report is None:

@@ -15,6 +15,9 @@ from graphrag.vector_stores.lancedb import LanceDBVectorStore
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from graphrag.config.models.vector_store_schema_config import (
+        VectorStoreSchemaConfig,
+    )
     from graphrag.vector_stores.base import BaseVectorStore
 
 
@@ -47,7 +50,10 @@ class VectorStoreFactory:
 
     @classmethod
     def create_vector_store(
-        cls, vector_store_type: str, kwargs: dict
+        cls,
+        vector_store_type: str,
+        vector_store_schema_config: VectorStoreSchemaConfig,
+        kwargs: dict,
     ) -> BaseVectorStore:
         """Create a vector store object from the provided type.
 
@@ -67,7 +73,9 @@ class VectorStoreFactory:
             msg = f"Unknown vector store type: {vector_store_type}"
             raise ValueError(msg)
 
-        return cls._registry[vector_store_type](**kwargs)
+        return cls._registry[vector_store_type](
+            vector_store_schema_config=vector_store_schema_config, **kwargs
+        )
 
     @classmethod
     def get_vector_store_types(cls) -> list[str]:
