@@ -172,6 +172,8 @@ class CosmosDBVectorStore(BaseVectorStore):
                     self.text_field: doc.text,
                     self.attributes_field: json.dumps(doc.attributes),
                 }
+                print("Storing document in CosmosDB:")  # noqa: T201
+                print(doc_json)  # noqa: T201
                 self._container_client.upsert_item(doc_json)
 
     def similarity_search_by_vector(
