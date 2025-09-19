@@ -2883,11 +2883,20 @@ print(f"📊 Initial stats: {vector_store.get_stats()}")</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>🚀 SimpleInMemoryVectorStore initialized for collection: test_collection
-✅ Created vector store instance: SimpleInMemoryVectorStore
-📊 Initial stats: {'collection_name': 'test_collection', 'document_count': 0, 'vector_count': 0, 'connected': False, 'vector_dimension': 0}
-</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 5</span>
+<span class="ansi-green-fg">      2</span> vector_store_config = {<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">collection_name</span><span class="ansi-yellow-fg">"</span>: <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">test_collection</span><span class="ansi-yellow-fg">"</span>}
+<span class="ansi-green-fg">      4</span> <span style="color: rgb(95,135,135)"># Create vector store instance using factory</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> vector_store = <span class="ansi-yellow-bg">VectorStoreFactory</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">create_vector_store</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">      6</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">CUSTOM_VECTOR_STORE_TYPE</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">vector_store_config</span>
+<span class="ansi-green-fg">      7</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">      9</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">✅ Created vector store instance: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">type</span>(vector_store).<span class="ansi-blue-fg">__name__</span><span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     10</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">📊 Initial stats: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>vector_store.get_stats()<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-red-fg">TypeError</span>: VectorStoreFactory.create_vector_store() missing 1 required positional argument: 'kwargs'</pre>
 </div>
 </div>
 </div>
@@ -2933,11 +2942,17 @@ print(f"📊 Updated stats: {vector_store.get_stats()}")</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>✅ Connected to in-memory vector store: test_collection
-📚 Loaded 4 documents into vector store
-📊 Updated stats: {'collection_name': 'test_collection', 'document_count': 4, 'vector_count': 4, 'connected': True, 'vector_dimension': 384}
-</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[8]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># Connect and load documents</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> <span class="ansi-yellow-bg">vector_store</span>.connect()
+<span class="ansi-green-fg">      3</span> vector_store.load_documents(sample_documents)
+<span class="ansi-green-fg">      5</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">📊 Updated stats: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>vector_store.get_stats()<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'vector_store' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3007,25 +3022,21 @@ for i, result in enumerate(search_results, 1):
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>🔍 Found 3 similar documents:
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[9]</span><span class="ansi-green-fg">, line 4</span>
+<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># Test similarity search</span>
+<span class="ansi-green-fg">      2</span> query_vector = create_mock_embedding()  <span style="color: rgb(95,135,135)"># Random query vector for testing</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> search_results = <span class="ansi-yellow-bg">vector_store</span>.similarity_search_by_vector(
+<span class="ansi-green-fg">      5</span>     query_vector,
+<span class="ansi-green-fg">      6</span>     k=<span class="ansi-green-fg">3</span>,  <span style="color: rgb(95,135,135)"># Get top 3 similar documents</span>
+<span class="ansi-green-fg">      7</span> )
+<span class="ansi-green-fg">      9</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">🔍 Found </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">len</span>(search_results)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> similar documents:</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     11</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> i, result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">enumerate</span>(search_results, <span class="ansi-green-fg">1</span>):
 
-1. ID: doc_1
-   Text: GraphRAG is a powerful knowledge graph extraction and reason...
-   Similarity Score: 0.0917
-   Category: technology
-
-2. ID: doc_2
-   Text: Vector stores enable efficient similarity search over high-d...
-   Similarity Score: 0.0492
-   Category: technology
-
-3. ID: doc_3
-   Text: Machine learning models can process and understand natural l...
-   Similarity Score: 0.0162
-   Category: AI
-
-</pre>
+<span class="ansi-red-fg">NameError</span>: name 'vector_store' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3087,14 +3098,18 @@ print(f"\n🔧 ID filter result: {id_filter}")</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>✅ Found document by ID:
-   ID: doc_2
-   Text: Vector stores enable efficient similarity search over high-dimensional data.
-   Attributes: {'category': 'technology', 'source': 'research'}
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 3</span>
+<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># Test search by ID</span>
+<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span>     found_doc = <span class="ansi-yellow-bg">vector_store</span>.search_by_id(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">doc_2</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      4</span>     <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">✅ Found document by ID:</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      5</span>     <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">   ID: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>found_doc.id<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
 
-🔧 ID filter result: ['doc_1', 'doc_3']
-</pre>
+<span class="ansi-red-fg">NameError</span>: name 'vector_store' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3344,17 +3359,29 @@ print(f"\n🎯 Retrieved {len(context)} entities for context building")</div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>🚀 Simulating GraphRAG pipeline with custom vector store...
 
-🚀 SimpleInMemoryVectorStore initialized for collection: graphrag_entities
-✅ Connected to in-memory vector store: graphrag_entities
-✅ Step 1: Vector store created and connected
-📚 Loaded 10 documents into vector store
-✅ Step 2: Loaded 10 entity documents
-✅ Step 3: Found 5 relevant entities for query
-✅ Step 4: Context built using retrieved entities
-📊 Final stats: {'collection_name': 'graphrag_entities', 'document_count': 10, 'vector_count': 10, 'connected': True, 'vector_dimension': 384}
-
-🎯 Retrieved 5 entities for context building
 </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 44</span>
+<span class="ansi-green-fg">     40</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> context_entities
+<span class="ansi-green-fg">     43</span> <span style="color: rgb(95,135,135)"># Run the simulation</span>
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">44</span> context = <span class="ansi-yellow-bg">simulate_graphrag_pipeline</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     45</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-fg">🎯 Retrieved </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">len</span>(context)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> entities for context building</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 9</span>, in <span class="ansi-cyan-fg">simulate_graphrag_pipeline</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">      6</span> <span style="color: rgb(95,135,135)"># 1. GraphRAG creates vector store using factory</span>
+<span class="ansi-green-fg">      7</span> config = {<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">collection_name</span><span class="ansi-yellow-fg">"</span>: <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">graphrag_entities</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">similarity_threshold</span><span class="ansi-yellow-fg">"</span>: <span class="ansi-green-fg">0.3</span>}
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">9</span> store = <span class="ansi-yellow-bg">VectorStoreFactory</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">create_vector_store</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">CUSTOM_VECTOR_STORE_TYPE</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">config</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     10</span> store.connect()
+<span class="ansi-green-fg">     12</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">✅ Step 1: Vector store created and connected</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-red-fg">TypeError</span>: VectorStoreFactory.create_vector_store() missing 1 required positional argument: 'kwargs'</pre>
 </div>
 </div>
 </div>
@@ -3559,26 +3586,30 @@ test_custom_vector_store()</div>
 <pre>🧪 Running comprehensive vector store tests...
 
 Test 1: Basic functionality
-🚀 SimpleInMemoryVectorStore initialized for collection: test
-✅ Connected to in-memory vector store: test
-📚 Loaded 2 documents into vector store
-✅ Basic functionality test passed
-
-Test 2: Search functionality
-✅ Search functionality test passed
-
-Test 3: Search by ID
-✅ Search by ID test passed
-
-Test 4: Filter functionality
-✅ Filter functionality test passed
-
-Test 5: Error handling
-🚀 SimpleInMemoryVectorStore initialized for collection: test2
-✅ Error handling test passed
-
-🎉 All tests passed! Your custom vector store is working correctly.
 </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[13]</span><span class="ansi-green-fg">, line 77</span>
+<span class="ansi-green-fg">     73</span>     <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-fg">🎉 All tests passed! Your custom vector store is working correctly.</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     76</span> <span style="color: rgb(95,135,135)"># Run the tests</span>
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">77</span> <span class="ansi-yellow-bg">test_custom_vector_store</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[13]</span><span class="ansi-green-fg">, line 7</span>, in <span class="ansi-cyan-fg">test_custom_vector_store</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">      5</span> <span style="color: rgb(95,135,135)"># Test 1: Basic functionality</span>
+<span class="ansi-green-fg">      6</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Test 1: Basic functionality</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">7</span> store = <span class="ansi-yellow-bg">VectorStoreFactory</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">create_vector_store</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">      8</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">CUSTOM_VECTOR_STORE_TYPE</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">{</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">collection_name</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">test</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">}</span>
+<span class="ansi-green-fg">      9</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     10</span> store.connect()
+<span class="ansi-green-fg">     12</span> <span style="color: rgb(95,135,135)"># Load test documents</span>
+
+<span class="ansi-red-fg">TypeError</span>: VectorStoreFactory.create_vector_store() missing 1 required positional argument: 'kwargs'</pre>
 </div>
 </div>
 </div>
