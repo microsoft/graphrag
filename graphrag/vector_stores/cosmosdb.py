@@ -166,7 +166,7 @@ class CosmosDBVectorStore(BaseVectorStore):
         # Upload documents to CosmosDB
         for doc in documents:
             if doc.vector is not None:
-                print("Dcoument to store:")  # noqa: T201
+                print("Document to store:")  # noqa: T201
                 print(doc)  # noqa: T201
                 doc_json = {
                     self.id_field: doc.id,
