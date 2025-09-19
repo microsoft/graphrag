@@ -99,10 +99,10 @@ class LanceDBVectorStore(BaseVectorStore):
         else:
             if isinstance(include_ids[0], str):
                 id_filter = ", ".join([f"'{id}'" for id in include_ids])
-                self.query_filter = f"id in ({id_filter})"
+                self.query_filter = f"{self.id_field} in ({id_filter})"
             else:
                 self.query_filter = (
-                    f"id in ({', '.join([str(id) for id in include_ids])})"
+                    f"{self.id_field} in ({', '.join([str(id) for id in include_ids])})"
                 )
         return self.query_filter
 
@@ -155,7 +155,7 @@ class LanceDBVectorStore(BaseVectorStore):
         """Search for a document by id."""
         doc = (
             self.document_collection.search()
-            .where(f"id == '{id}'", prefilter=True)
+            .where(f"{self.id_field} == '{id}'", prefilter=True)
             .to_list()
         )
         if doc:

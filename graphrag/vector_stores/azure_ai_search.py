@@ -159,7 +159,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
         # More info about odata filtering here: https://learn.microsoft.com/en-us/azure/search/search-query-odata-search-in-function
         # search.in is faster that joined and/or conditions
         id_filter = ",".join([f"{id!s}" for id in include_ids])
-        self.query_filter = f"search.in(id, '{id_filter}', ',')"
+        self.query_filter = f"search.in({self.id_field}, '{id_filter}', ',')"
 
         # Returning to keep consistency with other methods, but not needed
         # TODO: Refactor on a future PR

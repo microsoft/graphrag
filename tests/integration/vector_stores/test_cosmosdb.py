@@ -103,3 +103,64 @@ def test_clear():
         assert vector_store._database_exists() is False  # noqa: SLF001
     finally:
         pass
+
+
+def test_vector_store_customization():
+    """Test vector store customization with CosmosDB."""
+    vector_store = CosmosDBVectorStore(
+        vector_store_schema_config=VectorStoreSchemaConfig(
+            index_name="text-embeddings",
+            id_field="id_custom",
+            text_field="text_custom",
+            vector_field="vector_custom",
+            attributes_field="attributes_custom",
+            vector_size=5,
+        ),
+    )
+
+    try:
+        vector_store.connect(
+            connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+            database_name="test_db",
+        )
+
+        docs = [
+            VectorStoreDocument(
+                id="doc1",
+                text="This is document 1",
+                vector=[0.1, 0.2, 0.3, 0.4, 0.5],
+                attributes={"title": "Doc 1", "category": "test"},
+            ),
+            VectorStoreDocument(
+                id="doc2",
+                text="This is document 2",
+                vector=[0.2, 0.3, 0.4, 0.5, 0.6],
+                attributes={"title": "Doc 2", "category": "test"},
+            ),
+        ]
+        vector_store.load_documents(docs)
+
+        vector_store.filter_by_id(["doc1"])
+
+        doc = vector_store.search_by_id("doc1")
+        assert doc.id == "doc1"
+        assert doc.text == "This is document 1"
+        assert doc.vector is not None
+        assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
+        assert doc.attributes["title"] == "Doc 1"
+
+        # Define a simple text embedder function for testing
+        def mock_embedder(text: str) -> list[float]:
+            return [0.1, 0.2, 0.3, 0.4, 0.5]  # Return fixed embedding
+
+        vector_results = vector_store.similarity_search_by_vector(
+            [0.1, 0.2, 0.3, 0.4, 0.5], k=2
+        )
+        assert len(vector_results) > 0
+
+        text_results = vector_store.similarity_search_by_text(
+            "test query", mock_embedder, k=2
+        )
+        assert len(text_results) > 0
+    finally:
+        vector_store.clear()
