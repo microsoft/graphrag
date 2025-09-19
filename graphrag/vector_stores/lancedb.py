@@ -80,18 +80,23 @@ class LanceDBVectorStore(BaseVectorStore):
         if overwrite:
             if data:
                 self.document_collection = self.db_connection.create_table(
-                    self.index_name, data=data, mode="overwrite", schema=data.schema
+                    self.index_name if self.index_name else "",
+                    data=data,
+                    mode="overwrite",
+                    schema=data.schema,
                 )
             else:
                 self.document_collection = self.db_connection.create_table(
-                    self.index_name, mode="overwrite"
+                    self.index_name if self.index_name else "", mode="overwrite"
                 )
             self.document_collection.create_index(
                 vector_column_name=self.vector_field, index_type="IVF_FLAT"
             )
         else:
             # add data to existing table
-            self.document_collection = self.db_connection.open_table(self.index_name)
+            self.document_collection = self.db_connection.open_table(
+                self.index_name if self.index_name else ""
+            )
             if data:
                 self.document_collection.add(data)
 

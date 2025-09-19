@@ -78,7 +78,10 @@ class TestLanceDBVectorStore:
             vector_store.connect(db_uri=temp_dir)
             vector_store.load_documents(sample_documents[:2])
 
-            assert vector_store.index_name in vector_store.db_connection.table_names()
+            if vector_store.index_name:
+                assert (
+                    vector_store.index_name in vector_store.db_connection.table_names()
+                )
 
             doc = vector_store.search_by_id("1")
             assert doc.id == "1"
@@ -141,12 +144,15 @@ class TestLanceDBVectorStore:
                 attributes={"title": "Tmp"},
             )
             vector_store.load_documents([sample_doc])
-            vector_store.db_connection.open_table(vector_store.index_name).delete(
-                "id = 'tmp'"
-            )
+            vector_store.db_connection.open_table(
+                vector_store.index_name if vector_store.index_name else ""
+            ).delete("id = 'tmp'")
 
             # Should still have the collection
-            assert vector_store.index_name in vector_store.db_connection.table_names()
+            if vector_store.index_name:
+                assert (
+                    vector_store.index_name in vector_store.db_connection.table_names()
+                )
 
             # Add a document after creating an empty collection
             doc = VectorStoreDocument(
@@ -211,7 +217,10 @@ class TestLanceDBVectorStore:
             vector_store.connect(db_uri=temp_dir)
             vector_store.load_documents(sample_documents[:2])
 
-            assert vector_store.index_name in vector_store.db_connection.table_names()
+            if vector_store.index_name:
+                assert (
+                    vector_store.index_name in vector_store.db_connection.table_names()
+                )
 
             doc = vector_store.search_by_id("1")
             assert doc.id == "1"

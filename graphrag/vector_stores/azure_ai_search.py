@@ -59,7 +59,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
             audience_arg = {"audience": audience} if audience and not api_key else {}
             self.db_connection = SearchClient(
                 endpoint=url,
-                index_name=self.index_name,
+                index_name=self.index_name if self.index_name else "",
                 credential=(
                     AzureKeyCredential(api_key) if api_key else DefaultAzureCredential()
                 ),
@@ -82,7 +82,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
         """Load documents into an Azure AI Search index."""
         if overwrite:
             if (
-                self.index_name != ""
+                self.index_name is not None
                 and self.index_name in self.index_client.list_index_names()
             ):
                 self.index_client.delete_index(self.index_name)
@@ -106,7 +106,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
             )
             # Configure the index
             index = SearchIndex(
-                name=self.index_name,
+                name=self.index_name if self.index_name else "",
                 fields=[
                     SimpleField(
                         name=self.id_field,

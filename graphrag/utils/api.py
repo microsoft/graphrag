@@ -124,7 +124,7 @@ def get_embedding_store(
             else:
                 single_embedding_config = raw_config
 
-        if single_embedding_config.index_name == "":
+        if single_embedding_config.index_name is None:
             single_embedding_config.index_name = index_name
 
         embedding_store = VectorStoreFactory().create_vector_store(
