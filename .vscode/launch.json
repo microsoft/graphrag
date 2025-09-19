@@ -62,5 +62,17 @@
 			"console": "integratedTerminal",
     		"justMyCode": false 
 		},
+		{
+			"name": "Debug Smoke Pytest",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "pytest",
+			"args": [
+				"./tests/smoke",
+				"-k", "test_fixtures"
+			],
+			"console": "integratedTerminal",
+    		"justMyCode": false 
+		},
 	]
 }
