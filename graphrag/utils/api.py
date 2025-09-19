@@ -8,9 +8,10 @@ from typing import Any
 
 from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.config.embeddings import create_collection_name
+from graphrag.config.embeddings import create_index_name
 from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.storage_config import StorageConfig
+from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.data_model.types import TextEmbedder
 from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -103,12 +104,33 @@ def get_embedding_store(
     index_names = []
     for index, store in config_args.items():
         vector_store_type = store["type"]
-        collection_name = create_collection_name(
+        index_name = create_index_name(
             store.get("container_name", "default"), embedding_name
         )
+
+        embeddings_schema: dict[str, VectorStoreSchemaConfig] = store.get(
+            "embeddings_schema", {}
+        )
+        single_embedding_config: VectorStoreSchemaConfig = VectorStoreSchemaConfig()
+
+        if (
+            embeddings_schema is not None
+            and embedding_name is not None
+            and embedding_name in embeddings_schema
+        ):
+            raw_config = embeddings_schema[embedding_name]
+            if isinstance(raw_config, dict):
+                single_embedding_config = VectorStoreSchemaConfig(**raw_config)
+            else:
+                single_embedding_config = raw_config
+
+        if single_embedding_config.index_name is None:
+            single_embedding_config.index_name = index_name
+
         embedding_store = VectorStoreFactory().create_vector_store(
             vector_store_type=vector_store_type,
-            kwargs={**store, "collection_name": collection_name},
+            vector_store_schema_config=single_embedding_config,
+            kwargs={**store},
         )
         embedding_store.connect(**store)
         # If there is only a single index, return the embedding store directly

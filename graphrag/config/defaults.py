@@ -394,6 +394,7 @@ class VectorStoreDefaults:
     api_key: None = None
     audience: None = None
     database_name: None = None
+    schema: None = None
 
 
 @dataclass
