@@ -39,13 +39,16 @@ class LanceDBVectorStore(BaseVectorStore):
         self, documents: list[VectorStoreDocument], overwrite: bool = True
     ) -> None:
         """Load documents into vector storage."""
-        # TODO GAUDY Step 1: Prepare data columns manually
+        # Step 1: Prepare data columns manually
         ids = []
         texts = []
         vectors = []
         attributes = []
 
         for document in documents:
+            self.vector_size = (
+                len(document.vector) if document.vector else self.vector_size
+            )
             if document.vector is not None and len(document.vector) == self.vector_size:
                 ids.append(document.id)
                 texts.append(document.text)

@@ -50,5 +50,17 @@
 			"console": "integratedTerminal",
     		"justMyCode": false 
 		},
+		{
+			"name": "Debug Verbs Pytest",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "pytest",
+			"args": [
+				"./tests/verbs",
+				"-k", "test_generate_text_embeddings"
+			],
+			"console": "integratedTerminal",
+    		"justMyCode": false 
+		},
 	]
 }
