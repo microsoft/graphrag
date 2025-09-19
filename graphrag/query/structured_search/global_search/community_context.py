@@ -5,8 +5,6 @@
 
 from typing import Any
 
-import tiktoken
-
 from graphrag.data_model.community import Community
 from graphrag.data_model.community_report import CommunityReport
 from graphrag.data_model.entity import Entity
@@ -21,6 +19,8 @@ from graphrag.query.context_builder.dynamic_community_selection import (
     DynamicCommunitySelection,
 )
 from graphrag.query.structured_search.base import GlobalContextBuilder
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 class GlobalCommunityContext(GlobalContextBuilder):
@@ -31,14 +31,14 @@ class GlobalCommunityContext(GlobalContextBuilder):
         community_reports: list[CommunityReport],
         communities: list[Community],
         entities: list[Entity] | None = None,
-        token_encoder: tiktoken.Encoding | None = None,
+        tokenizer: Tokenizer | None = None,
         dynamic_community_selection: bool = False,
         dynamic_community_selection_kwargs: dict[str, Any] | None = None,
         random_state: int = 86,
     ):
         self.community_reports = community_reports
         self.entities = entities
-        self.token_encoder = token_encoder
+        self.tokenizer = tokenizer or get_tokenizer()
         self.dynamic_community_selection = None
         if dynamic_community_selection and isinstance(
             dynamic_community_selection_kwargs, dict
@@ -47,7 +47,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
                 community_reports=community_reports,
                 communities=communities,
                 model=dynamic_community_selection_kwargs.pop("model"),
-                token_encoder=dynamic_community_selection_kwargs.pop("token_encoder"),
+                tokenizer=dynamic_community_selection_kwargs.pop("tokenizer"),
                 **dynamic_community_selection_kwargs,
             )
         self.random_state = random_state
@@ -103,7 +103,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
         community_context, community_context_data = build_community_context(
             community_reports=community_reports,
             entities=self.entities,
-            token_encoder=self.token_encoder,
+            tokenizer=self.tokenizer,
             use_community_summary=use_community_summary,
             column_delimiter=column_delimiter,
             shuffle_data=shuffle_data,

@@ -3,6 +3,7 @@
 
 """Common default configuration values."""
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import ClassVar, Literal
@@ -23,6 +24,25 @@ from graphrag.config.enums import (
 from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
     EN_STOP_WORDS,
 )
+from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter import (
+    RateLimiter,
+)
+from graphrag.language_model.providers.litellm.services.rate_limiter.static_rate_limiter import (
+    StaticRateLimiter,
+)
+from graphrag.language_model.providers.litellm.services.retry.exponential_retry import (
+    ExponentialRetry,
+)
+from graphrag.language_model.providers.litellm.services.retry.incremental_wait_retry import (
+    IncrementalWaitRetry,
+)
+from graphrag.language_model.providers.litellm.services.retry.native_wait_retry import (
+    NativeRetry,
+)
+from graphrag.language_model.providers.litellm.services.retry.random_wait_retry import (
+    RandomWaitRetry,
+)
+from graphrag.language_model.providers.litellm.services.retry.retry import Retry
 
 DEFAULT_OUTPUT_BASE_DIR = "output"
 DEFAULT_CHAT_MODEL_ID = "default_chat_model"
@@ -37,6 +57,18 @@ DEFAULT_VECTOR_STORE_ID = "default_vector_store"
 
 ENCODING_MODEL = "cl100k_base"
 COGNITIVE_SERVICES_AUDIENCE = "https://cognitiveservices.azure.com/.default"
+
+
+DEFAULT_RETRY_SERVICES: dict[str, Callable[..., Retry]] = {
+    "native": NativeRetry,
+    "exponential_backoff": ExponentialRetry,
+    "random_wait": RandomWaitRetry,
+    "incremental_wait": IncrementalWaitRetry,
+}
+
+DEFAULT_RATE_LIMITER_SERVICES: dict[str, Callable[..., RateLimiter]] = {
+    "static": StaticRateLimiter,
+}
 
 
 @dataclass
@@ -275,6 +307,7 @@ class LanguageModelDefaults:
 
     api_key: None = None
     auth_type: ClassVar[AuthType] = AuthType.APIKey
+    model_provider: str | None = None
     encoding_model: str = ""
     max_tokens: int | None = None
     temperature: float = 0
@@ -294,6 +327,7 @@ class LanguageModelDefaults:
     model_supports_json: None = None
     tokens_per_minute: Literal["auto"] = "auto"
     requests_per_minute: Literal["auto"] = "auto"
+    rate_limit_strategy: str | None = "static"
     retry_strategy: str = "native"
     max_retries: int = 10
     max_retry_wait: float = 10.0

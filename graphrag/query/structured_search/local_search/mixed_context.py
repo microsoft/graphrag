@@ -7,7 +7,6 @@ from copy import deepcopy
 from typing import Any
 
 import pandas as pd
-import tiktoken
 
 from graphrag.data_model.community_report import CommunityReport
 from graphrag.data_model.covariate import Covariate
@@ -40,8 +39,9 @@ from graphrag.query.input.retrieval.community_reports import (
     get_candidate_communities,
 )
 from graphrag.query.input.retrieval.text_units import get_candidate_text_units
-from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import LocalContextBuilder
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.vector_stores.base import BaseVectorStore
 
 logger = logging.getLogger(__name__)
@@ -59,7 +59,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         community_reports: list[CommunityReport] | None = None,
         relationships: list[Relationship] | None = None,
         covariates: dict[str, list[Covariate]] | None = None,
-        token_encoder: tiktoken.Encoding | None = None,
+        tokenizer: Tokenizer | None = None,
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
     ):
         if community_reports is None:
@@ -81,7 +81,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         self.covariates = covariates
         self.entity_text_embeddings = entity_text_embeddings
         self.text_embedder = text_embedder
-        self.token_encoder = token_encoder
+        self.tokenizer = tokenizer or get_tokenizer()
         self.embedding_vectorstore_key = embedding_vectorstore_key
 
     def filter_by_entity_keys(self, entity_keys: list[int] | list[str]):
@@ -167,8 +167,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
             if conversation_history_context.strip() != "":
                 final_context.append(conversation_history_context)
                 final_context_data = conversation_history_context_data
-                max_context_tokens = max_context_tokens - num_tokens(
-                    conversation_history_context, self.token_encoder
+                max_context_tokens = max_context_tokens - len(
+                    self.tokenizer.encode(conversation_history_context)
                 )
 
         # build community context
@@ -264,7 +264,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
 
         context_text, context_data = build_community_context(
             community_reports=selected_communities,
-            token_encoder=self.token_encoder,
+            tokenizer=self.tokenizer,
             use_community_summary=use_community_summary,
             column_delimiter=column_delimiter,
             shuffle_data=False,
@@ -344,7 +344,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
 
         context_text, context_data = build_text_unit_context(
             text_units=selected_text_units,
-            token_encoder=self.token_encoder,
+            tokenizer=self.tokenizer,
             max_context_tokens=max_context_tokens,
             shuffle_data=False,
             context_name=context_name,
@@ -390,14 +390,14 @@ class LocalSearchMixedContext(LocalContextBuilder):
         # build entity context
         entity_context, entity_context_data = build_entity_context(
             selected_entities=selected_entities,
-            token_encoder=self.token_encoder,
+            tokenizer=self.tokenizer,
             max_context_tokens=max_context_tokens,
             column_delimiter=column_delimiter,
             include_entity_rank=include_entity_rank,
             rank_description=rank_description,
             context_name="Entities",
         )
-        entity_tokens = num_tokens(entity_context, self.token_encoder)
+        entity_tokens = len(self.tokenizer.encode(entity_context))
 
         # build relationship-covariate context
         added_entities = []
@@ -417,7 +417,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             ) = build_relationship_context(
                 selected_entities=added_entities,
                 relationships=list(self.relationships.values()),
-                token_encoder=self.token_encoder,
+                tokenizer=self.tokenizer,
                 max_context_tokens=max_context_tokens,
                 column_delimiter=column_delimiter,
                 top_k_relationships=top_k_relationships,
@@ -427,8 +427,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
             )
             current_context.append(relationship_context)
             current_context_data["relationships"] = relationship_context_data
-            total_tokens = entity_tokens + num_tokens(
-                relationship_context, self.token_encoder
+            total_tokens = entity_tokens + len(
+                self.tokenizer.encode(relationship_context)
             )
 
             # build covariate context
@@ -436,12 +436,12 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 covariate_context, covariate_context_data = build_covariates_context(
                     selected_entities=added_entities,
                     covariates=self.covariates[covariate],
-                    token_encoder=self.token_encoder,
+                    tokenizer=self.tokenizer,
                     max_context_tokens=max_context_tokens,
                     column_delimiter=column_delimiter,
                     context_name=covariate,
                 )
-                total_tokens += num_tokens(covariate_context, self.token_encoder)
+                total_tokens += len(self.tokenizer.encode(covariate_context))
                 current_context.append(covariate_context)
                 current_context_data[covariate.lower()] = covariate_context_data
 

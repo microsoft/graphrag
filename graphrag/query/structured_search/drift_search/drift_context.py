@@ -9,7 +9,6 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-import tiktoken
 
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.data_model.community_report import CommunityReport
@@ -28,6 +27,8 @@ from graphrag.query.structured_search.drift_search.primer import PrimerQueryProc
 from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.vector_stores.base import BaseVectorStore
 
 logger = logging.getLogger(__name__)
@@ -46,7 +47,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         reports: list[CommunityReport] | None = None,
         relationships: list[Relationship] | None = None,
         covariates: dict[str, list[Covariate]] | None = None,
-        token_encoder: tiktoken.Encoding | None = None,
+        tokenizer: Tokenizer | None = None,
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
         config: DRIFTSearchConfig | None = None,
         local_system_prompt: str | None = None,
@@ -58,7 +59,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         self.config = config or DRIFTSearchConfig()
         self.model = model
         self.text_embedder = text_embedder
-        self.token_encoder = token_encoder
+        self.tokenizer = tokenizer or get_tokenizer()
         self.local_system_prompt = local_system_prompt or DRIFT_LOCAL_SYSTEM_PROMPT
         self.reduce_system_prompt = reduce_system_prompt or DRIFT_REDUCE_PROMPT
 
@@ -93,7 +94,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
             entity_text_embeddings=self.entity_text_embeddings,
             embedding_vectorstore_key=self.embedding_vectorstore_key,
             text_embedder=self.text_embedder,
-            token_encoder=self.token_encoder,
+            tokenizer=self.tokenizer,
         )
 
     @staticmethod
@@ -192,7 +193,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         query_processor = PrimerQueryProcessor(
             chat_model=self.model,
             text_embedder=self.text_embedder,
-            token_encoder=self.token_encoder,
+            tokenizer=self.tokenizer,
             reports=self.reports,
         )
 

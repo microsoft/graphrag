@@ -43,7 +43,7 @@ dependencies = [
     "json-repair>=0.30.3",
     "openai>=1.68.0",
     "nltk==3.9.1",
-    "tiktoken>=0.9.0",
+    "tiktoken>=0.11.0",
     # Data-Science
     "numpy>=1.25.2",
     "graspologic>=3.4.1",
@@ -66,6 +66,7 @@ dependencies = [
     "tqdm>=4.67.1",
     "textblob>=0.18.0.post0",
     "spacy>=3.8.4",
+    "litellm>=1.77.1",
 ]
 
 [project.optional-dependencies]

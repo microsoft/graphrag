@@ -10,7 +10,6 @@ import time
 
 import numpy as np
 import pandas as pd
-import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
@@ -19,8 +18,9 @@ from graphrag.language_model.protocol.base import ChatModel, EmbeddingModel
 from graphrag.prompts.query.drift_search_system_prompt import (
     DRIFT_PRIMER_PROMPT,
 )
-from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import SearchResult
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class PrimerQueryProcessor:
         chat_model: ChatModel,
         text_embedder: EmbeddingModel,
         reports: list[CommunityReport],
-        token_encoder: tiktoken.Encoding | None = None,
+        tokenizer: Tokenizer | None = None,
     ):
         """
         Initialize the PrimerQueryProcessor.
@@ -42,11 +42,11 @@ class PrimerQueryProcessor:
             chat_llm (ChatOpenAI): The language model used to process the query.
             text_embedder (BaseTextEmbedding): The text embedding model.
             reports (list[CommunityReport]): List of community reports.
-            token_encoder (tiktoken.Encoding, optional): Token encoder for token counting.
+            tokenizer (Tokenizer, optional): Token encoder for token counting.
         """
         self.chat_model = chat_model
         self.text_embedder = text_embedder
-        self.token_encoder = token_encoder
+        self.tokenizer = tokenizer or get_tokenizer()
         self.reports = reports
 
     async def expand_query(self, query: str) -> tuple[str, dict[str, int]]:
@@ -70,8 +70,8 @@ class PrimerQueryProcessor:
         model_response = await self.chat_model.achat(prompt)
         text = model_response.output.content
 
-        prompt_tokens = num_tokens(prompt, self.token_encoder)
-        output_tokens = num_tokens(text, self.token_encoder)
+        prompt_tokens = len(self.tokenizer.encode(prompt))
+        output_tokens = len(self.tokenizer.encode(text))
         token_ct = {
             "llm_calls": 1,
             "prompt_tokens": prompt_tokens,
@@ -105,7 +105,7 @@ class DRIFTPrimer:
         self,
         config: DRIFTSearchConfig,
         chat_model: ChatModel,
-        token_encoder: tiktoken.Encoding | None = None,
+        tokenizer: Tokenizer | None = None,
     ):
         """
         Initialize the DRIFTPrimer.
@@ -113,11 +113,11 @@ class DRIFTPrimer:
         Args:
             config (DRIFTSearchConfig): Configuration settings for DRIFT search.
             chat_llm (ChatOpenAI): The language model used for searching.
-            token_encoder (tiktoken.Encoding, optional): Token encoder for managing tokens.
+            tokenizer (Tokenizer, optional): Tokenizer for managing tokens.
         """
         self.chat_model = chat_model
         self.config = config
-        self.token_encoder = token_encoder
+        self.tokenizer = tokenizer or get_tokenizer()
 
     async def decompose_query(
         self, query: str, reports: pd.DataFrame
@@ -144,8 +144,8 @@ class DRIFTPrimer:
 
         token_ct = {
             "llm_calls": 1,
-            "prompt_tokens": num_tokens(prompt, self.token_encoder),
-            "output_tokens": num_tokens(response, self.token_encoder),
+            "prompt_tokens": len(self.tokenizer.encode(prompt)),
+            "output_tokens": len(self.tokenizer.encode(response)),
         }
 
         return parsed_response, token_ct

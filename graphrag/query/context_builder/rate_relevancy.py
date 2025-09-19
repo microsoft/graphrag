@@ -9,11 +9,11 @@ from contextlib import nullcontext
 from typing import Any
 
 import numpy as np
-import tiktoken
 
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
-from graphrag.query.llm.text_utils import num_tokens, try_parse_json_object
+from graphrag.query.llm.text_utils import try_parse_json_object
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ async def rate_relevancy(
     query: str,
     description: str,
     model: ChatModel,
-    token_encoder: tiktoken.Encoding,
+    tokenizer: Tokenizer,
     rate_query: str = RATE_QUERY,
     num_repeats: int = 1,
     semaphore: asyncio.Semaphore | None = None,
@@ -36,7 +36,7 @@ async def rate_relevancy(
         description: the community description to rate, it can be the community
             title, summary, or the full content.
         llm: LLM model to use for rating
-        token_encoder: token encoder
+        tokenizer: tokenizer
         num_repeats: number of times to repeat the rating process for the same community (default: 1)
         model_params: additional arguments to pass to the LLM model
         semaphore: asyncio.Semaphore to limit the number of concurrent LLM calls (default: None)
@@ -63,8 +63,8 @@ async def rate_relevancy(
             logger.warning("Error parsing json response, defaulting to rating 1")
             ratings.append(1)
         llm_calls += 1
-        prompt_tokens += num_tokens(messages[0]["content"], token_encoder)
-        output_tokens += num_tokens(response, token_encoder)
+        prompt_tokens += tokenizer.num_tokens(messages[0]["content"])
+        output_tokens += tokenizer.num_tokens(response)
     # select the decision with the most votes
     options, counts = np.unique(ratings, return_counts=True)
     rating = int(options[np.argmax(counts)])

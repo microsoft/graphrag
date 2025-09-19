@@ -10,13 +10,12 @@ from copy import deepcopy
 from time import time
 from typing import Any
 
-import tiktoken
-
 from graphrag.data_model.community import Community
 from graphrag.data_model.community_report import CommunityReport
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
 from graphrag.query.context_builder.rate_relevancy import rate_relevancy
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +31,7 @@ class DynamicCommunitySelection:
         community_reports: list[CommunityReport],
         communities: list[Community],
         model: ChatModel,
-        token_encoder: tiktoken.Encoding,
+        tokenizer: Tokenizer,
         rate_query: str = RATE_QUERY,
         use_summary: bool = False,
         threshold: int = 1,
@@ -43,7 +42,7 @@ class DynamicCommunitySelection:
         model_params: dict[str, Any] | None = None,
     ):
         self.model = model
-        self.token_encoder = token_encoder
+        self.tokenizer = tokenizer
         self.rate_query = rate_query
         self.num_repeats = num_repeats
         self.use_summary = use_summary
@@ -97,7 +96,7 @@ class DynamicCommunitySelection:
                         else self.reports[community].full_content
                     ),
                     model=self.model,
-                    token_encoder=self.token_encoder,
+                    tokenizer=self.tokenizer,
                     rate_query=self.rate_query,
                     num_repeats=self.num_repeats,
                     semaphore=self.semaphore,

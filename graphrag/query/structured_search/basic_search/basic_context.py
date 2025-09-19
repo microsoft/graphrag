@@ -7,7 +7,6 @@ import logging
 from typing import cast
 
 import pandas as pd
-import tiktoken
 
 from graphrag.data_model.text_unit import TextUnit
 from graphrag.language_model.protocol.base import EmbeddingModel
@@ -16,7 +15,8 @@ from graphrag.query.context_builder.builders import (
     ContextBuilderResult,
 )
 from graphrag.query.context_builder.conversation_history import ConversationHistory
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.vector_stores.base import BaseVectorStore
 
 logger = logging.getLogger(__name__)
@@ -30,11 +30,11 @@ class BasicSearchContext(BasicContextBuilder):
         text_embedder: EmbeddingModel,
         text_unit_embeddings: BaseVectorStore,
         text_units: list[TextUnit] | None = None,
-        token_encoder: tiktoken.Encoding | None = None,
+        tokenizer: Tokenizer | None = None,
         embedding_vectorstore_key: str = "id",
     ):
         self.text_embedder = text_embedder
-        self.token_encoder = token_encoder
+        self.tokenizer = tokenizer or get_tokenizer()
         self.text_units = text_units
         self.text_unit_embeddings = text_unit_embeddings
         self.embedding_vectorstore_key = embedding_vectorstore_key
@@ -76,12 +76,12 @@ class BasicSearchContext(BasicContextBuilder):
         # add these related text chunks into context until we fill up the context window
         current_tokens = 0
         text_ids = []
-        current_tokens = num_tokens(
-            text_id_col + column_delimiter + text_col + "\n", self.token_encoder
+        current_tokens = len(
+            self.tokenizer.encode(text_id_col + column_delimiter + text_col + "\n")
         )
         for i, row in related_text_df.iterrows():
             text = row[text_id_col] + column_delimiter + row[text_col] + "\n"
-            tokens = num_tokens(text, self.token_encoder)
+            tokens = len(self.tokenizer.encode(text))
             if current_tokens + tokens > max_context_tokens:
                 msg = f"Reached token limit: {current_tokens + tokens}. Reverting to previous context state"
                 logger.warning(msg)

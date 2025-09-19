@@ -7,11 +7,11 @@ import random
 from typing import Any, cast
 
 import pandas as pd
-import tiktoken
 
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 """
 Contain util functions to build text unit context for the search's system prompt
@@ -20,7 +20,7 @@ Contain util functions to build text unit context for the search's system prompt
 
 def build_text_unit_context(
     text_units: list[TextUnit],
-    token_encoder: tiktoken.Encoding | None = None,
+    tokenizer: Tokenizer | None = None,
     column_delimiter: str = "|",
     shuffle_data: bool = True,
     max_context_tokens: int = 8000,
@@ -28,6 +28,7 @@ def build_text_unit_context(
     random_state: int = 86,
 ) -> tuple[str, dict[str, pd.DataFrame]]:
     """Prepare text-unit data table as context data for system prompt."""
+    tokenizer = tokenizer or get_tokenizer()
     if text_units is None or len(text_units) == 0:
         return ("", {})
 
@@ -47,7 +48,7 @@ def build_text_unit_context(
     header.extend(attribute_cols)
 
     current_context_text += column_delimiter.join(header) + "\n"
-    current_tokens = num_tokens(current_context_text, token_encoder)
+    current_tokens = tokenizer.num_tokens(current_context_text)
     all_context_records = [header]
 
     for unit in text_units:
@@ -60,7 +61,7 @@ def build_text_unit_context(
             ],
         ]
         new_context_text = column_delimiter.join(new_context) + "\n"
-        new_tokens = num_tokens(new_context_text, token_encoder)
+        new_tokens = tokenizer.num_tokens(new_context_text)
 
         if current_tokens + new_tokens > max_context_tokens:
             break

@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from typing import Any, Generic, TypeVar
 
 import pandas as pd
-import tiktoken
 
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.builders import (
@@ -21,6 +20,8 @@ from graphrag.query.context_builder.builders import (
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 @dataclass
@@ -58,13 +59,13 @@ class BaseSearch(ABC, Generic[T]):
         self,
         model: ChatModel,
         context_builder: T,
-        token_encoder: tiktoken.Encoding | None = None,
+        tokenizer: Tokenizer | None = None,
         model_params: dict[str, Any] | None = None,
         context_builder_params: dict[str, Any] | None = None,
     ):
         self.model = model
         self.context_builder = context_builder
-        self.token_encoder = token_encoder
+        self.tokenizer = tokenizer or get_tokenizer()
         self.model_params = model_params or {}
         self.context_builder_params = context_builder_params or {}
 

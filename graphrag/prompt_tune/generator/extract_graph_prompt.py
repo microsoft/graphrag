@@ -5,8 +5,6 @@
 
 from pathlib import Path
 
-import graphrag.config.defaults as defs
-from graphrag.index.utils.tokens import num_tokens_from_string
 from graphrag.prompt_tune.template.extract_graph import (
     EXAMPLE_EXTRACTION_TEMPLATE,
     GRAPH_EXTRACTION_JSON_PROMPT,
@@ -14,6 +12,8 @@ from graphrag.prompt_tune.template.extract_graph import (
     UNTYPED_EXAMPLE_EXTRACTION_TEMPLATE,
     UNTYPED_GRAPH_EXTRACTION_PROMPT,
 )
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 EXTRACT_GRAPH_FILENAME = "extract_graph.txt"
 
@@ -24,7 +24,7 @@ def create_extract_graph_prompt(
     examples: list[str],
     language: str,
     max_token_count: int,
-    encoding_model: str = defs.ENCODING_MODEL,
+    tokenizer: Tokenizer | None = None,
     json_mode: bool = False,
     output_path: Path | None = None,
     min_examples_required: int = 2,
@@ -38,7 +38,7 @@ def create_extract_graph_prompt(
     - docs (list[str]): The list of documents to extract entities from
     - examples (list[str]): The list of examples to use for entity extraction
     - language (str): The language of the inputs and outputs
-    - encoding_model (str): The name of the model to use for token counting
+    - tokenizer (Tokenizer): The tokenizer to use for encoding and decoding text.
     - max_token_count (int): The maximum number of tokens to use for the prompt
     - json_mode (bool): Whether to use JSON mode for the prompt. Default is False
     - output_path (Path | None): The path to write the prompt to. Default is None.
@@ -56,10 +56,12 @@ def create_extract_graph_prompt(
     if isinstance(entity_types, list):
         entity_types = ", ".join(map(str, entity_types))
 
+    tokenizer = tokenizer or get_tokenizer()
+
     tokens_left = (
         max_token_count
-        - num_tokens_from_string(prompt, encoding_name=encoding_model)
-        - num_tokens_from_string(entity_types, encoding_name=encoding_model)
+        - tokenizer.num_tokens(prompt)
+        - tokenizer.num_tokens(entity_types)
         if entity_types
         else 0
     )
@@ -79,9 +81,7 @@ def create_extract_graph_prompt(
             )
         )
 
-        example_tokens = num_tokens_from_string(
-            example_formatted, encoding_name=encoding_model
-        )
+        example_tokens = tokenizer.num_tokens(example_formatted)
 
         # Ensure at least three examples are included
         if i >= min_examples_required and example_tokens > tokens_left:

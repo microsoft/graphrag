@@ -8,11 +8,11 @@ import random
 from typing import Any, cast
 
 import pandas as pd
-import tiktoken
 
 from graphrag.data_model.community_report import CommunityReport
 from graphrag.data_model.entity import Entity
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ NO_COMMUNITY_RECORDS_WARNING: str = (
 def build_community_context(
     community_reports: list[CommunityReport],
     entities: list[Entity] | None = None,
-    token_encoder: tiktoken.Encoding | None = None,
+    tokenizer: Tokenizer | None = None,
     use_community_summary: bool = True,
     column_delimiter: str = "|",
     shuffle_data: bool = True,
@@ -46,6 +46,7 @@ def build_community_context(
 
     The calculated weight is added as an attribute to the community reports and added to the context data table.
     """
+    tokenizer = tokenizer or get_tokenizer()
 
     def _is_included(report: CommunityReport) -> bool:
         return report.rank is not None and report.rank >= min_community_rank
@@ -125,7 +126,7 @@ def build_community_context(
         batch_text = (
             f"-----{context_name}-----" + "\n" + column_delimiter.join(header) + "\n"
         )
-        batch_tokens = num_tokens(batch_text, token_encoder)
+        batch_tokens = tokenizer.num_tokens(batch_text)
         batch_records = []
 
     def _cut_batch() -> None:
@@ -152,7 +153,7 @@ def build_community_context(
 
     for report in selected_reports:
         new_context_text, new_context = _report_context_text(report, attributes)
-        new_tokens = num_tokens(new_context_text, token_encoder)
+        new_tokens = tokenizer.num_tokens(new_context_text)
 
         if batch_tokens + new_tokens > max_context_tokens:
             # add the current batch to the context data and start a new batch if we are in multi-batch mode
