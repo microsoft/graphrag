@@ -83,7 +83,7 @@ class CosmosDBVectorStore(BaseVectorStore):
 
     def _create_container(self) -> None:
         """Create the container if it doesn't exist."""
-        partition_key = PartitionKey(path="/id", kind="Hash")
+        partition_key = PartitionKey(path=f"/{self.id_field}", kind="Hash")
 
         # Define the container vector policy
         vector_embedding_policy = {
