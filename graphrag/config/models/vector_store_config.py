@@ -97,8 +97,8 @@ class VectorStoreConfig(BaseModel):
                 raise ValueError(msg)
 
         if self.type == VectorStoreType.CosmosDB:
-            for id_field in self.embeddings_schema.values():
-                if id_field.id_field != "id":
+            for id_field in self.embeddings_schema:
+                if id_field != "id":
                     msg = "When using CosmosDB, the id_field in embeddings_schema must be 'id'. Please rerun `graphrag init` and set the id_field to 'id'."
                     raise ValueError(msg)
 
