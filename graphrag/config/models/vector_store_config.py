@@ -95,6 +95,12 @@ class VectorStoreConfig(BaseModel):
             if name not in all_embeddings:
                 msg = f"vector_store.embeddings_schema contains an invalid embedding schema name: {name}. Please rerun `graphrag init` and select the correct embedding schema names."
                 raise ValueError(msg)
+            
+        if self.type == VectorStoreType.CosmosDB:
+            for id_field in self.embeddings_schema.values():
+                if id_field.id_field != "id":
+                    msg = "When using CosmosDB, the id_field in embeddings_schema must be 'id'. Please rerun `graphrag init` and set the id_field to 'id'."
+                    raise ValueError(msg)
 
     @model_validator(mode="after")
     def _validate_model(self):

@@ -110,7 +110,7 @@ def test_vector_store_customization():
     vector_store = CosmosDBVectorStore(
         vector_store_schema_config=VectorStoreSchemaConfig(
             index_name="text-embeddings",
-            id_field="id",
+            id_field="id_custom",
             text_field="text_custom",
             vector_field="vector_custom",
             attributes_field="attributes_custom",
