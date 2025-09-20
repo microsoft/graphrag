@@ -5,6 +5,7 @@
 The [question generation](https://github.com/microsoft/graphrag/blob/main//graphrag/query/question_gen/) method combines structured data from the knowledge graph with unstructured data from the input documents to generate candidate questions related to specific entities.
 
 ## Methodology
+
 Given a list of prior user questions, the question generation method uses the same context-building approach employed in [local search](local_search.md) to extract and prioritize relevant structured and unstructured data, including entities, relationships, covariates, community reports and raw text chunks. These data records are then fitted into a single LLM prompt to generate candidate follow-up questions that represent the most important or urgent information content or themes in the data.
 
 ## Configuration
