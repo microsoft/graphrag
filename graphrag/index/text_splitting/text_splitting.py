@@ -5,16 +5,16 @@
 
 import logging
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Collection, Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from typing import Any, Literal, cast
+from typing import Any, cast
 
 import pandas as pd
-import tiktoken
 
-import graphrag.config.defaults as defs
 from graphrag.index.operations.chunk_text.typing import TextChunk
 from graphrag.logger.progress import ProgressTicker
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]
@@ -25,8 +25,8 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
-class Tokenizer:
-    """Tokenizer data class."""
+class TokenChunkerOptions:
+    """TokenChunkerOptions data class."""
 
     chunk_overlap: int
     """Overlap in tokens between chunks"""
@@ -83,44 +83,18 @@ class NoopTextSplitter(TextSplitter):
 class TokenTextSplitter(TextSplitter):
     """Token text splitter class definition."""
 
-    _allowed_special: Literal["all"] | set[str]
-    _disallowed_special: Literal["all"] | Collection[str]
-
     def __init__(
         self,
-        encoding_name: str = defs.ENCODING_MODEL,
-        model_name: str | None = None,
-        allowed_special: Literal["all"] | set[str] | None = None,
-        disallowed_special: Literal["all"] | Collection[str] = "all",
+        tokenizer: Tokenizer | None = None,
         **kwargs: Any,
     ):
         """Init method definition."""
         super().__init__(**kwargs)
-        if model_name is not None:
-            try:
-                enc = tiktoken.encoding_for_model(model_name)
-            except KeyError:
-                logger.exception(
-                    "Model %s not found, using %s", model_name, encoding_name
-                )
-                enc = tiktoken.get_encoding(encoding_name)
-        else:
-            enc = tiktoken.get_encoding(encoding_name)
-        self._tokenizer = enc
-        self._allowed_special = allowed_special or set()
-        self._disallowed_special = disallowed_special
-
-    def encode(self, text: str) -> list[int]:
-        """Encode the given text into an int-vector."""
-        return self._tokenizer.encode(
-            text,
-            allowed_special=self._allowed_special,
-            disallowed_special=self._disallowed_special,
-        )
+        self._tokenizer = tokenizer or get_tokenizer()
 
     def num_tokens(self, text: str) -> int:
         """Return the number of tokens in a string."""
-        return len(self.encode(text))
+        return len(self._tokenizer.encode(text))
 
     def split_text(self, text: str | list[str]) -> list[str]:
         """Split text method."""
@@ -132,17 +106,17 @@ class TokenTextSplitter(TextSplitter):
             msg = f"Attempting to split a non-string value, actual is {type(text)}"
             raise TypeError(msg)
 
-        tokenizer = Tokenizer(
+        token_chunker_options = TokenChunkerOptions(
             chunk_overlap=self._chunk_overlap,
             tokens_per_chunk=self._chunk_size,
             decode=self._tokenizer.decode,
-            encode=lambda text: self.encode(text),
+            encode=self._tokenizer.encode,
         )
 
-        return split_single_text_on_tokens(text=text, tokenizer=tokenizer)
+        return split_single_text_on_tokens(text=text, tokenizer=token_chunker_options)
 
 
-def split_single_text_on_tokens(text: str, tokenizer: Tokenizer) -> list[str]:
+def split_single_text_on_tokens(text: str, tokenizer: TokenChunkerOptions) -> list[str]:
     """Split a single text and return chunks using the tokenizer."""
     result = []
     input_ids = tokenizer.encode(text)
@@ -166,7 +140,7 @@ def split_single_text_on_tokens(text: str, tokenizer: Tokenizer) -> list[str]:
 # Adapted from - https://github.com/langchain-ai/langchain/blob/77b359edf5df0d37ef0d539f678cf64f5557cb54/libs/langchain/langchain/text_splitter.py#L471
 # So we could have better control over the chunking process
 def split_multiple_texts_on_tokens(
-    texts: list[str], tokenizer: Tokenizer, tick: ProgressTicker
+    texts: list[str], tokenizer: TokenChunkerOptions, tick: ProgressTicker
 ) -> list[TextChunk]:
     """Split multiple texts and return chunks with metadata using the tokenizer."""
     result = []
