@@ -2407,8 +2407,8 @@ Report count after filtering by community level None: 2
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2449,6 +2449,34 @@ Report count after filtering by community level None: 2
         "token_encoder": token_encoder,
     },
 )</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> context_builder = <span class="ansi-yellow-bg">GlobalCommunityContext</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">      2</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">community_reports</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">reports</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">      3</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">communities</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">communities</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">      4</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">entities</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">entities</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg">  </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># default to None if you don't want to use community weights for ranking</span>
+<span class="ansi-green-fg">      5</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">token_encoder</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">token_encoder</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">      6</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dynamic_community_selection</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">True</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">      7</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dynamic_community_selection_kwargs</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">{</span>
+<span class="ansi-green-fg">      8</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">model</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">model</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">      9</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">token_encoder</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">token_encoder</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">     10</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">}</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">     11</span> <span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-red-fg">TypeError</span>: GlobalCommunityContext.__init__() got an unexpected keyword argument 'token_encoder'</pre>
 </div>
 </div>
 </div>
@@ -2536,8 +2564,8 @@ reduce_llm_params = {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2586,6 +2614,36 @@ reduce_llm_params = {
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[8]</span><span class="ansi-green-fg">, line 3</span>
+<span class="ansi-green-fg">      1</span> search_engine = GlobalSearch(
+<span class="ansi-green-fg">      2</span>     model=model,
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span>     context_builder=<span class="ansi-yellow-bg">context_builder</span>,
+<span class="ansi-green-fg">      4</span>     token_encoder=token_encoder,
+<span class="ansi-green-fg">      5</span>     max_data_tokens=<span class="ansi-green-fg">12_000</span>,  <span style="color: rgb(95,135,135)"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
+<span class="ansi-green-fg">      6</span>     map_llm_params=map_llm_params,
+<span class="ansi-green-fg">      7</span>     reduce_llm_params=reduce_llm_params,
+<span class="ansi-green-fg">      8</span>     allow_general_knowledge=<span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,  <span style="color: rgb(95,135,135)"># set this to True will add instruction to encourage the LLM to incorporate general knowledge in the response, which may increase hallucinations, but could be useful in some use cases.</span>
+<span class="ansi-green-fg">      9</span>     json_mode=<span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,  <span style="color: rgb(95,135,135)"># set this to False if your LLM model does not support JSON mode.</span>
+<span class="ansi-green-fg">     10</span>     context_builder_params=context_builder_params,
+<span class="ansi-green-fg">     11</span>     concurrent_coroutines=<span class="ansi-green-fg">32</span>,
+<span class="ansi-green-fg">     12</span>     response_type=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">multiple paragraphs</span><span class="ansi-yellow-fg">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
+<span class="ansi-green-fg">     13</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'context_builder' is not defined</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell">
@@ -2623,25 +2681,15 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>### Overview of Operation: Dulce
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[9]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span>.search(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">What is operation dulce?</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      3</span> <span style="color: rgb(0,135,0)">print</span>(result.response)
 
-Operation: Dulce is a significant mission undertaken by the Paranormal Military Squad, focusing on the investigation of alien technology and its implications for humanity. This operation is centered around the exploration and analysis of the Dulce base, which is a critical element of the mission. The base is associated with advanced alien technology, and the mission's success heavily relies on uncovering its secrets [Data: Reports (0, 1)].
-
-### Key Participants
-
-The operation involves key agents such as Alex Mercer, Taylor Cruz, Jordan Hayes, and Sam Rivera. These individuals are part of the elite Paranormal Military Squad, which is tasked with executing missions like Operation: Dulce. The squad's meticulous planning and coordination are crucial to navigating the complexities of the Dulce base and achieving the mission's objectives [Data: Reports (1)].
-
-### Mission Objectives
-
-The primary objective of Operation: Dulce is to explore the depths of the Dulce base and analyze the alien technology found within. Dr. Jordan Hayes, one of the agents, works specifically on this technology in the lab, highlighting the importance of scientific analysis in the mission. The operation aims to uncover the secrets of the base, which are vital to understanding the broader implications for humanity [Data: Reports (1)].
-
-### Motivations and Implications
-
-A strong sense of duty drives the individuals involved in Operation: Dulce. This sense of responsibility motivates the team members to undertake the mission and navigate the challenges presented by the Dulce base. The operation is central to the community, connecting all key entities and driving their actions, which underscores its importance and complexity [Data: Reports (0)].
-
-In summary, Operation: Dulce is a complex and critical mission focused on the exploration of alien technology at the Dulce base. It involves a dedicated team of agents from the Paranormal Military Squad, whose sense of duty and meticulous planning are essential to the mission's success. The operation's outcomes may have significant implications for humanity, making it a central focus for the community involved.
-</pre>
+<span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2679,54 +2727,17 @@ result.context_data["reports"]</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># inspect the data used to build the context for the LLM responses</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">reports</span><span class="ansi-yellow-fg">"</span>]
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>title</th>
-<th>occurrence weight</th>
-<th>content</th>
-<th>rank</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>1</td>
-<td>Paranormal Military Squad and Operation: Dulce</td>
-<td>1.0</td>
-<td># Paranormal Military Squad and Operation: Dul...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>1</th>
-<td>0</td>
-<td>Operation: Dulce and Dulce Base Exploration</td>
-<td>1.0</td>
-<td># Operation: Dulce and Dulce Base Exploration\...</td>
-<td>8.5</td>
-</tr>
-</tbody>
-</table>
-</div>
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2798,12 +2809,17 @@ print(
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Build context (gpt-4o)
-LLM calls: 2. Prompt tokens: 1761. Output tokens: 255.
-Map-reduce (gpt-4o)
-LLM calls: 2. Prompt tokens: 3525. Output tokens: 796.
-</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># inspect number of LLM calls and tokens in dynamic community selection</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> llm_calls = <span class="ansi-yellow-bg">result</span>.llm_calls_categories[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">build_context</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">      3</span> prompt_tokens = result.prompt_tokens_categories[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">build_context</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">      4</span> output_tokens = result.output_tokens_categories[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">build_context</span><span class="ansi-yellow-fg">"</span>]
+
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
