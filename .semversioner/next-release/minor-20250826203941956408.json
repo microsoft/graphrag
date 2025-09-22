@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Add LoggerFactory and clean up related API."
-}

@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Add LiteLLM chat and embedding model providers."
-}
