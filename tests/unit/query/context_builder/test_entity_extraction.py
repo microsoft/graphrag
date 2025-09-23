@@ -3,6 +3,7 @@
 
 from typing import Any
 
+from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.data_model.entity import Entity
 from graphrag.data_model.types import TextEmbedder
 from graphrag.language_model.manager import ModelManager
@@ -19,7 +20,9 @@ from graphrag.vector_stores.base import (
 
 class MockBaseVectorStore(BaseVectorStore):
     def __init__(self, documents: list[VectorStoreDocument]) -> None:
-        super().__init__("mock")
+        super().__init__(
+            vector_store_schema_config=VectorStoreSchemaConfig(index_name="mock")
+        )
         self.documents = documents
 
     def connect(self, **kwargs: Any) -> None:
