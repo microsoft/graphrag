@@ -1,0 +1,54 @@
+{
+  "changes": [
+    {
+      "description": "Add LiteLLM chat and embedding model providers.",
+      "type": "minor"
+    },
+    {
+      "description": "Add LoggerFactory and clean up related API.",
+      "type": "minor"
+    },
+    {
+      "description": "Add config for NLP async mode.",
+      "type": "minor"
+    },
+    {
+      "description": "Add optional input documents to indexing API.",
+      "type": "minor"
+    },
+    {
+      "description": "add customization to vector store",
+      "type": "minor"
+    },
+    {
+      "description": "Add gpt-5 support by updating fnllm dependency.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix all human_readable_id fields to be 0-based.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix multi-index search.",
+      "type": "patch"
+    },
+    {
+      "description": "Improve upon recent logging refactor",
+      "type": "patch"
+    },
+    {
+      "description": "Make cache, storage, and vector_store factories consistent with similar registration support",
+      "type": "patch"
+    },
+    {
+      "description": "Remove hard-coded community rate limiter.",
+      "type": "patch"
+    },
+    {
+      "description": "generate_text_embeddings only loads tables if embedding field is specified.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2025-09-22T21:44:51+00:00",
+  "version": "2.6.0"
+}

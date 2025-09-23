@@ -8,7 +8,6 @@ import time
 from collections.abc import AsyncGenerator
 from typing import Any
 
-import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
@@ -18,7 +17,6 @@ from graphrag.language_model.providers.fnllm.utils import (
 )
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
-from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 from graphrag.query.structured_search.drift_search.action import DriftAction
 from graphrag.query.structured_search.drift_search.drift_context import (
@@ -27,6 +25,8 @@ from graphrag.query.structured_search.drift_search.drift_context import (
 from graphrag.query.structured_search.drift_search.primer import DRIFTPrimer
 from graphrag.query.structured_search.drift_search.state import QueryState
 from graphrag.query.structured_search.local_search.search import LocalSearch
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         self,
         model: ChatModel,
         context_builder: DRIFTSearchContextBuilder,
-        token_encoder: tiktoken.Encoding | None = None,
+        tokenizer: Tokenizer | None = None,
         query_state: QueryState | None = None,
         callbacks: list[QueryCallbacks] | None = None,
     ):
@@ -49,18 +49,18 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             llm (ChatOpenAI): The language model used for searching.
             context_builder (DRIFTSearchContextBuilder): Builder for search context.
             config (DRIFTSearchConfig, optional): Configuration settings for DRIFTSearch.
-            token_encoder (tiktoken.Encoding, optional): Token encoder for managing tokens.
+            tokenizer (Tokenizer, optional): Token encoder for managing tokens.
             query_state (QueryState, optional): State of the current search query.
         """
-        super().__init__(model, context_builder, token_encoder)
+        super().__init__(model, context_builder, tokenizer)
 
         self.context_builder = context_builder
-        self.token_encoder = token_encoder
+        self.tokenizer = tokenizer or get_tokenizer()
         self.query_state = query_state or QueryState()
         self.primer = DRIFTPrimer(
             config=self.context_builder.config,
             chat_model=model,
-            token_encoder=token_encoder,
+            tokenizer=self.tokenizer,
         )
         self.callbacks = callbacks or []
         self.local_search = self.init_local_search()
@@ -100,7 +100,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             model=self.model,
             system_prompt=self.context_builder.local_system_prompt,
             context_builder=self.context_builder.local_mixed_context,
-            token_encoder=self.token_encoder,
+            tokenizer=self.tokenizer,
             model_params=model_params,
             context_builder_params=local_context_params,
             response_type="multiple paragraphs",
@@ -392,10 +392,10 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         reduced_response = model_response.output.content
 
         llm_calls["reduce"] = 1
-        prompt_tokens["reduce"] = num_tokens(
-            search_prompt, self.token_encoder
-        ) + num_tokens(query, self.token_encoder)
-        output_tokens["reduce"] = num_tokens(reduced_response, self.token_encoder)
+        prompt_tokens["reduce"] = len(self.tokenizer.encode(search_prompt)) + len(
+            self.tokenizer.encode(query)
+        )
+        output_tokens["reduce"] = len(self.tokenizer.encode(reduced_response))
 
         return reduced_response
 

@@ -7,9 +7,9 @@ from dataclasses import dataclass
 from enum import Enum
 
 import pandas as pd
-import tiktoken
 
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 """
 Enum for conversation roles
@@ -148,7 +148,7 @@ class ConversationHistory:
 
     def build_context(
         self,
-        token_encoder: tiktoken.Encoding | None = None,
+        tokenizer: Tokenizer | None = None,
         include_user_turns_only: bool = True,
         max_qa_turns: int | None = 5,
         max_context_tokens: int = 8000,
@@ -168,6 +168,7 @@ class ConversationHistory:
             context_name: Name of the context, default is "Conversation History".
 
         """
+        tokenizer = tokenizer or get_tokenizer()
         qa_turns = self.to_qa_turns()
         if include_user_turns_only:
             qa_turns = [
@@ -202,7 +203,7 @@ class ConversationHistory:
 
             context_df = pd.DataFrame(turn_list)
             context_text = header + context_df.to_csv(sep=column_delimiter, index=False)
-            if num_tokens(context_text, token_encoder) > max_context_tokens:
+            if tokenizer.num_tokens(context_text) > max_context_tokens:
                 break
 
             current_context_df = context_df

@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix all human_readable_id fields to be 0-based."
-}
