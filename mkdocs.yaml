@@ -22,11 +22,12 @@ theme:
 
 nav:
   - Home:
-      - Welcome: index.md
-      - Getting Started: get_started.md
-      - Development Guide: developing.md
+      - Welcome: "index.md"
+      - Getting Started: "get_started.md"
+      - Development Guide: "developing.md"
   - Indexing:
       - Overview: "index/overview.md"
+      - Architecture: "index/architecture.md"
       - Dataflow: "index/default_dataflow.md"
       - Methods: "index/methods.md"
       - Inputs: "index/inputs.md"
