@@ -645,6 +645,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../index/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../index/default_dataflow/" class="md-nav__link">
         
   
@@ -1587,6 +1610,7 @@
 
 
 <h1 id="getting-started">Getting Started</h1>
+<p>⚠️ GraphRAG can consume a lot of LLM resources! We strongly recommend starting with the tutorial dataset here until you understand how the system works, and consider experimenting with fast/inexpensive models first before committing to a big indexing job.</p>
 <h2 id="requirements">Requirements</h2>
 <p><a href="https://www.python.org/downloads/">Python 3.10-3.12</a></p>
 <p>To get started with the GraphRAG system, you have a few options:</p>
@@ -1599,17 +1623,17 @@
 </code></pre></div>
 <h1 id="running-the-indexer">Running the Indexer</h1>
 <p>We need to set up a data project and some initial configuration. First let's get a sample dataset ready:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>./ragtest/input
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>./christmas/input
 </code></pre></div>
 <p>Get a copy of A Christmas Carol by Charles Dickens from a trusted source:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>curl<span class="w"> </span>https://www.gutenberg.org/cache/epub/24022/pg24022.txt<span class="w"> </span>-o<span class="w"> </span>./ragtest/input/book.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>curl<span class="w"> </span>https://www.gutenberg.org/cache/epub/24022/pg24022.txt<span class="w"> </span>-o<span class="w"> </span>./christmas/input/book.txt
 </code></pre></div>
 <h2 id="set-up-your-workspace-variables">Set Up Your Workspace Variables</h2>
 <p>To initialize your workspace, first run the <code>graphrag init</code> command.
-Since we have already configured a directory named <code>./ragtest</code> in the previous step, run the following command:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>graphrag<span class="w"> </span>init<span class="w"> </span>--root<span class="w"> </span>./ragtest
+Since we have already configured a directory named <code>./christmas</code> in the previous step, run the following command:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>graphrag<span class="w"> </span>init<span class="w"> </span>--root<span class="w"> </span>./christmas
 </code></pre></div>
-<p>This will create two files: <code>.env</code> and <code>settings.yaml</code> in the <code>./ragtest</code> directory.</p>
+<p>This will create two files: <code>.env</code> and <code>settings.yaml</code> in the <code>./christmas</code> directory.</p>
 <ul>
 <li><code>.env</code> contains the environment variables required to run the GraphRAG pipeline. If you inspect the file, you'll see a single environment variable defined,
   <code>GRAPHRAG_API_KEY=&lt;API_KEY&gt;</code>. Replace <code>&lt;API_KEY&gt;</code> with your own OpenAI or Azure API key.</li>
@@ -1632,22 +1656,22 @@ Since we have already configured a directory named <code>./ragtest</code> in the
 <p>You will also need to login with <a href="https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli">az login</a> and select the subscription with your endpoint.</p>
 <h2 id="running-the-indexing-pipeline">Running the Indexing pipeline</h2>
 <p>Finally we'll run the pipeline!</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>graphrag<span class="w"> </span>index<span class="w"> </span>--root<span class="w"> </span>./ragtest
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>graphrag<span class="w"> </span>index<span class="w"> </span>--root<span class="w"> </span>./christmas
 </code></pre></div>
 <p><img alt="pipeline executing from the CLI" src="../img/pipeline-running.png" /></p>
 <p>This process will take some time to run. This depends on the size of your input data, what model you're using, and the text chunk size being used (these can be configured in your <code>settings.yaml</code> file).
-Once the pipeline is complete, you should see a new folder called <code>./ragtest/output</code> with a series of parquet files.</p>
+Once the pipeline is complete, you should see a new folder called <code>./christmas/output</code> with a series of parquet files.</p>
 <h1 id="using-the-query-engine">Using the Query Engine</h1>
 <p>Now let's ask some questions using this dataset.</p>
 <p>Here is an example using Global search to ask a high-level question:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>graphrag<span class="w"> </span>query<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>--root<span class="w"> </span>./ragtest<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>--root<span class="w"> </span>./christmas<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>--method<span class="w"> </span>global<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>--query<span class="w"> </span><span class="s2">&quot;What are the top themes in this story?&quot;</span>
 </code></pre></div>
 <p>Here is an example using Local search to ask a more specific question about a particular character:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>graphrag<span class="w"> </span>query<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>--root<span class="w"> </span>./ragtest<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>--root<span class="w"> </span>./christmas<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>--method<span class="w"> </span><span class="nb">local</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>--query<span class="w"> </span><span class="s2">&quot;Who is Scrooge and what are his main relationships?&quot;</span>
 </code></pre></div>

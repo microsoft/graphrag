@@ -594,6 +594,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../default_dataflow/" class="md-nav__link">
         
   
@@ -693,6 +716,15 @@
   <a href="#input-loading-and-schema" class="md-nav__link">
     <span class="md-ellipsis">
       Input Loading and Schema
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bring-your-own-dataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bring-your-own DataFrame
     </span>
   </a>
   
@@ -1709,6 +1741,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bring-your-own-dataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bring-your-own DataFrame
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#formats" class="md-nav__link">
     <span class="md-ellipsis">
       Formats
@@ -1909,6 +1950,8 @@
 </tbody>
 </table>
 <p>Also see the <a href="../outputs/">outputs</a> documentation for the final documents table schema saved to parquet after pipeline completion.</p>
+<h2 id="bring-your-own-dataframe">Bring-your-own DataFrame</h2>
+<p>As of version 2.6.0, GraphRAG's <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py">indexing API method</a> allows you to pass in your own pandas DataFrame and bypass all of the input loading/parsing described in the next section. This is convenient if you have content in a format or storage location we don't support out-of-the-box. <strong>You must ensure that your input DataFrame conforms to the schema described above.</strong> All of the chunking behavior described later will proceed exactly the same.</p>
 <h2 id="formats">Formats</h2>
 <p>We support three file formats out-of-the-box. This covers the overwhelming majority of use cases we have encountered. If you have a different format, we recommend writing a script to convert to one of these, which are widely used and supported by many tools and libraries.</p>
 <h3 id="plain-text">Plain Text</h3>

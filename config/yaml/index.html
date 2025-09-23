@@ -589,6 +589,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../../index/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../index/default_dataflow/" class="md-nav__link">
         
   
@@ -1559,7 +1582,8 @@
 <ul>
 <li><code>api_key</code> <strong>str</strong> - The OpenAI API key to use.</li>
 <li><code>auth_type</code> <strong>api_key|azure_managed_identity</strong> - Indicate how you want to authenticate requests.</li>
-<li><code>type</code> <strong>openai_chat|azure_openai_chat|openai_embedding|azure_openai_embedding|mock_chat|mock_embeddings</strong> - The type of LLM to use.</li>
+<li><code>type</code> <strong>chat</strong>|<strong>embedding</strong>|<strong>openai_chat|azure_openai_chat|openai_embedding|azure_openai_embedding|mock_chat|mock_embeddings</strong> - The type of LLM to use.</li>
+<li><code>model_provider</code> <strong>str|None</strong> - The model provider to use, e.g., openai, azure, anthropic, etc. Required when <code>type == chat|embedding</code>. When <code>type == chat|embedding</code>, <a href="https://docs.litellm.ai/">LiteLLM</a> is used under the hood which has support for calling 100+ models. <a href="https://docs.litellm.ai/docs/#basic-usage">View LiteLLm basic usage</a> for details on how models are called (The <code>model_provider</code> is the portion prior to <code>/</code> while the <code>model</code> is the portion following the <code>/</code>). <a href="../models/">View Language Model Selection</a> for more details and examples on using LiteLLM.</li>
 <li><code>model</code> <strong>str</strong> - The model name.</li>
 <li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset).</li>
 <li><code>api_base</code> <strong>str</strong> - The API base url to use.</li>

@@ -9,6 +9,10 @@
       
       
       
+        <link rel="prev" href="../overview/">
+      
+      
+        <link rel="next" href="../default_dataflow/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -16,7 +20,7 @@
     
     
       
-        <title>Indexing Architecture - GraphRAG</title>
+        <title>Architecture - GraphRAG</title>
       
     
     
@@ -106,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Indexing Architecture
+              Architecture
             
           </span>
         </div>
@@ -235,10 +239,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../overview/" class="md-tabs__link">
           
   
@@ -516,24 +522,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
             
   
   
@@ -546,7 +557,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Indexing
@@ -571,6 +582,122 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Concepts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#knowledge-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Knowledge Model
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workflows
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#llm-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      LLM Caching
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#providers-factories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Providers &amp; Factories
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1533,6 +1660,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#providers-factories" class="md-nav__link">
+    <span class="md-ellipsis">
+      Providers &amp; Factories
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1581,6 +1717,19 @@ stateDiagram-v2
 Because of these potential error cases, we've added a cache layer around LLM interactions.
 When completion requests are made using the same input set (prompt and tuning parameters), we return a cached result if one exists.
 This allows our indexer to be more resilient to network issues, to act idempotently, and to provide a more efficient end-user experience.</p>
+<h3 id="providers-factories">Providers &amp; Factories</h3>
+<p>Several subsystems within GraphRAG use a factory pattern to register and retrieve provider implementations. This allows deep customization to support models, storage, and so on that you may use but isn't built directly into GraphRAG.</p>
+<p>The following subsystems use a factory pattern that allows you to register your own implementations:</p>
+<ul>
+<li><a href="https://github.com/microsoft/graphrag/blob/main/graphrag/language_model/factory.py">language model</a> - implement your own <code>chat</code> and <code>embed</code> methods to use a model provider of choice beyond the built-in OpenAI/Azure support</li>
+<li><a href="https://github.com/microsoft/graphrag/blob/main/graphrag/cache/factory.py">cache</a> - create your own cache storage location in addition to the file, blob, and CosmosDB ones we provide</li>
+<li><a href="https://github.com/microsoft/graphrag/blob/main/graphrag/logger/factory.py">logger</a> - create your own log writing location in addition to the built-in file and blob storage</li>
+<li><a href="https://github.com/microsoft/graphrag/blob/main/graphrag/storage/factory.py">storage</a> - create your own storage provider (database, etc.) beyond the file, blob, and CosmosDB ones built in</li>
+<li><a href="https://github.com/microsoft/graphrag/blob/main/graphrag/vector_stores/factory.py">vector store</a> - implement your own vector store other than the built-in lancedb, Azure AI Search, and CosmosDB ones built in</li>
+<li><a href="https://github.com/microsoft/graphrag/blob/main/graphrag/index/workflows/factory.py">pipeline + workflows</a> - implement your own workflow steps with a custom <code>run_workflow</code> function, or register an entire pipeline (list of named workflows)</li>
+</ul>
+<p>The links for each of these subsystems point to the source code of the factory, which includes registration of the default built-in implementations. In addition, we have a detailed discussion of <a href="../../config/models/">language models</a>, which includes and example of a custom provider, and a <a href="../../examples_notebooks/custom_vector_store/">sample notebook</a> that demonstrates a custom vector store.</p>
+<p>All of these factories allow you to register an impl using any string name you would like, even overriding built-in ones directly.</p>
 
 
 
@@ -1605,6 +1754,44 @@ This allows our indexer to be more resilient to network issues, to act idempoten
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../overview/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Overview
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../default_dataflow/" class="md-footer__link md-footer__link--next" aria-label="Next: Dataflow">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Dataflow
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">
