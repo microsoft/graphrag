@@ -71,19 +71,15 @@ class BaseVectorStore(ABC):
 
     @abstractmethod
     def similarity_search_by_vector(
-        self, query_embedding: list[float], k: int = 10, **kwargs: Any
+        self, query_embedding: list[float], k: int = 10
     ) -> list[VectorStoreSearchResult]:
         """Perform ANN search by vector."""
 
     @abstractmethod
     def similarity_search_by_text(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+        self, text: str, text_embedder: TextEmbedder, k: int = 10
     ) -> list[VectorStoreSearchResult]:
         """Perform ANN search by text."""
-
-    @abstractmethod
-    def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
-        """Build a query filter to filter documents by id."""
 
     @abstractmethod
     def search_by_id(self, id: str) -> VectorStoreDocument:

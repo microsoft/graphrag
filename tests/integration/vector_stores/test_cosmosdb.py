@@ -50,8 +50,6 @@ def test_vector_store_operations():
         ]
         vector_store.load_documents(docs)
 
-        vector_store.filter_by_id(["doc1"])
-
         doc = vector_store.search_by_id("doc1")
         assert doc.id == "doc1"
         assert doc.text == "This is document 1"
@@ -139,8 +137,6 @@ def test_vector_store_customization():
             ),
         ]
         vector_store.load_documents(docs)
-
-        vector_store.filter_by_id(["doc1"])
 
         doc = vector_store.search_by_id("doc1")
         assert doc.id == "doc1"
