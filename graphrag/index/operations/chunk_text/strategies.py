@@ -11,7 +11,7 @@ import tiktoken
 from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.index.operations.chunk_text.typing import TextChunk
 from graphrag.index.text_splitting.text_splitting import (
-    Tokenizer,
+    TokenChunkerOptions,
     split_multiple_texts_on_tokens,
 )
 from graphrag.logger.progress import ProgressTicker
@@ -45,7 +45,7 @@ def run_tokens(
     encode, decode = get_encoding_fn(encoding_name)
     return split_multiple_texts_on_tokens(
         input,
-        Tokenizer(
+        TokenChunkerOptions(
             chunk_overlap=chunk_overlap,
             tokens_per_chunk=tokens_per_chunk,
             encode=encode,

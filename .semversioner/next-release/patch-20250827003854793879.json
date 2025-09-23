@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "generate_text_embeddings only loads tables if embedding field is specified."
-}
