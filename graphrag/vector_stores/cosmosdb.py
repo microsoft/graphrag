@@ -241,7 +241,8 @@ class CosmosDBVectorStore(BaseVectorStore):
         ]
 
     def similarity_search_by_text(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10) -> list[VectorStoreSearchResult]:
+        self, text: str, text_embedder: TextEmbedder, k: int = 10
+    ) -> list[VectorStoreSearchResult]:
         """Perform a text-based similarity search."""
         query_embedding = text_embedder(text)
         if query_embedding:
@@ -249,7 +250,7 @@ class CosmosDBVectorStore(BaseVectorStore):
                 query_embedding=query_embedding, k=k
             )
         return []
-    
+
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""
         if self._container_client is None:
