@@ -50,8 +50,8 @@ class TextSplitter(ABC):
 
     def __init__(
         self,
-        # based on text-ada-002-embedding max input buffer length
-        # https://platform.openai.com/docs/guides/embeddings/second-generation-models
+        # based on OpenAI embedding chunk size limits
+        # https://devblogs.microsoft.com/azure-sql/embedding-models-and-dimensions-optimizing-the-performance-resource-usage-ratio/
         chunk_size: int = 8191,
         chunk_overlap: int = 100,
         length_function: LengthFn = len,
