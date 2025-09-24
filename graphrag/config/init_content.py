@@ -32,10 +32,10 @@ models:
     model_supports_json: true # recommended if this is available for your model.
     concurrent_requests: {language_model_defaults.concurrent_requests} # max number of simultaneous LLM requests allowed
     async_mode: {language_model_defaults.async_mode.value} # or asyncio
-    retry_strategy: native
+    retry_strategy: exponential_backoff
     max_retries: {language_model_defaults.max_retries}
-    tokens_per_minute: {language_model_defaults.tokens_per_minute}              # set to null to disable rate limiting
-    requests_per_minute: {language_model_defaults.requests_per_minute}            # set to null to disable rate limiting
+    tokens_per_minute: null              # set to null to disable rate limiting
+    requests_per_minute: null            # set to null to disable rate limiting
   {defs.DEFAULT_EMBEDDING_MODEL_ID}:
     type: {defs.DEFAULT_EMBEDDING_MODEL_TYPE.value} # or azure_openai_embedding
     # api_base: https://<instance>.openai.azure.com
@@ -50,7 +50,7 @@ models:
     model_supports_json: true # recommended if this is available for your model.
     concurrent_requests: {language_model_defaults.concurrent_requests} # max number of simultaneous LLM requests allowed
     async_mode: {language_model_defaults.async_mode.value} # or asyncio
-    retry_strategy: native
+    retry_strategy: exponential_backoff
     max_retries: {language_model_defaults.max_retries}
     tokens_per_minute: null              # set to null to disable rate limiting or auto for dynamic
     requests_per_minute: null            # set to null to disable rate limiting or auto for dynamic

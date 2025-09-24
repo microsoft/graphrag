@@ -30,7 +30,7 @@ class MockChatLLM:
         self.responses = config.responses if config and config.responses else responses
         self.response_index = 0
         self.config = config or LanguageModelConfig(
-            type=ModelType.MockChat, model="gpt-4o", api_key="mock"
+            type=ModelType.MockChat, model="gpt-4.1", api_key="mock"
         )
 
     async def achat(
@@ -99,7 +99,7 @@ class MockEmbeddingLLM:
 
     def __init__(self, **kwargs: Any):
         self.config = LanguageModelConfig(
-            type=ModelType.MockEmbedding, model="text-embedding-ada-002", api_key="mock"
+            type=ModelType.MockEmbedding, model="text-embedding-3-large", api_key="mock"
         )
 
     def embed_batch(self, text_list: list[str], **kwargs: Any) -> list[list[float]]:

@@ -29,12 +29,12 @@ models:
   default_chat_model:
     api_key: ${GRAPHRAG_API_KEY}
     type: openai_chat
-    model: gpt-4o
+    model: gpt-4.1
     model_supports_json: true
   default_embedding_model:
     api_key: ${GRAPHRAG_API_KEY}
     type: openai_embedding
-    model: text-embedding-ada-002
+    model: text-embedding-3-large
 ```
 
 #### Fields

@@ -7,7 +7,7 @@ import re
 
 from pydantic import BaseModel, Field, model_validator
 
-DEFAULT_VECTOR_SIZE: int = 1536
+DEFAULT_VECTOR_SIZE: int = 3072
 
 VALID_IDENTIFIER_REGEX = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
