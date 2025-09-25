@@ -10,7 +10,7 @@
 			"args": [
 				"index",
 				"--root", 
-				"/Users/gaudy-microsoft/Desktop/indexes_examples/christmas-carol"
+				"<path_to_index_folder>"
 			],
 			"console": "integratedTerminal"
 		},
