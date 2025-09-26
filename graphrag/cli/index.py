@@ -10,7 +10,8 @@ import warnings
 from pathlib import Path
 
 import graphrag.api as api
-from graphrag.config.enums import CacheType, IndexingMethod, ReportingType
+from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
+from graphrag.config.enums import CacheType, IndexingMethod
 from graphrag.config.load_config import load_config
 from graphrag.index.validate_config import validate_config_names
 from graphrag.utils.cli import redact
@@ -115,23 +116,11 @@ def _run_index(
     # Initialize loggers and reporting config
     init_loggers(
         config=config,
-        root_dir=str(config.root_dir) if config.root_dir else None,
         verbose=verbose,
     )
 
     if not cache:
         config.cache.type = CacheType.none
-
-    # Log the configuration details
-    if config.reporting.type == ReportingType.file:
-        log_dir = Path(config.root_dir or "") / (config.reporting.base_dir or "")
-        log_path = log_dir / "logs.txt"
-        logger.info("Logging enabled at %s", log_path)
-    else:
-        logger.info(
-            "Logging not enabled for config %s",
-            redact(config.model_dump()),
-        )
 
     if not skip_validation:
         validate_config_names(config)
@@ -154,6 +143,8 @@ def _run_index(
             method=method,
             is_update_run=is_update_run,
             memory_profile=memprofile,
+            callbacks=[ConsoleWorkflowCallbacks(verbose=verbose)],
+            verbose=verbose,
         )
     )
     encountered_errors = any(

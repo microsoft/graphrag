@@ -1,5 +1,7 @@
 # Getting Started
 
+⚠️ GraphRAG can consume a lot of LLM resources! We strongly recommend starting with the tutorial dataset here until you understand how the system works, and consider experimenting with fast/inexpensive models first before committing to a big indexing job.
+
 ## Requirements
 
 [Python 3.10-3.12](https://www.python.org/downloads/)
@@ -24,25 +26,25 @@ pip install graphrag
 We need to set up a data project and some initial configuration. First let's get a sample dataset ready:
 
 ```sh
-mkdir -p ./ragtest/input
+mkdir -p ./christmas/input
 ```
 
 Get a copy of A Christmas Carol by Charles Dickens from a trusted source:
 
 ```sh
-curl https://www.gutenberg.org/cache/epub/24022/pg24022.txt -o ./ragtest/input/book.txt
+curl https://www.gutenberg.org/cache/epub/24022/pg24022.txt -o ./christmas/input/book.txt
 ```
 
 ## Set Up Your Workspace Variables
 
 To initialize your workspace, first run the `graphrag init` command.
-Since we have already configured a directory named `./ragtest` in the previous step, run the following command:
+Since we have already configured a directory named `./christmas` in the previous step, run the following command:
 
 ```sh
-graphrag init --root ./ragtest
+graphrag init --root ./christmas
 ```
 
-This will create two files: `.env` and `settings.yaml` in the `./ragtest` directory.
+This will create two files: `.env` and `settings.yaml` in the `./christmas` directory.
 
 - `.env` contains the environment variables required to run the GraphRAG pipeline. If you inspect the file, you'll see a single environment variable defined,
   `GRAPHRAG_API_KEY=<API_KEY>`. Replace `<API_KEY>` with your own OpenAI or Azure API key.
@@ -65,11 +67,10 @@ deployment_name: <azure_model_deployment_name>
 ```
 
 #### Using Managed Auth on Azure
-To use managed auth, add an additional value to your model config and comment out or remove the api_key line:
+To use managed auth, edit the auth_type in your model config and *remove* the api_key line:
 
 ```yaml
 auth_type: azure_managed_identity # Default auth_type is is api_key
-# api_key: ${GRAPHRAG_API_KEY}
 ```
 
 You will also need to login with [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli) and select the subscription with your endpoint.
@@ -79,13 +80,13 @@ You will also need to login with [az login](https://learn.microsoft.com/en-us/cl
 Finally we'll run the pipeline!
 
 ```sh
-graphrag index --root ./ragtest
+graphrag index --root ./christmas
 ```
 
 ![pipeline executing from the CLI](img/pipeline-running.png)
 
 This process will take some time to run. This depends on the size of your input data, what model you're using, and the text chunk size being used (these can be configured in your `settings.yaml` file).
-Once the pipeline is complete, you should see a new folder called `./ragtest/output` with a series of parquet files.
+Once the pipeline is complete, you should see a new folder called `./christmas/output` with a series of parquet files.
 
 # Using the Query Engine
 
@@ -95,7 +96,7 @@ Here is an example using Global search to ask a high-level question:
 
 ```sh
 graphrag query \
---root ./ragtest \
+--root ./christmas \
 --method global \
 --query "What are the top themes in this story?"
 ```
@@ -104,7 +105,7 @@ Here is an example using Local search to ask a more specific question about a pa
 
 ```sh
 graphrag query \
---root ./ragtest \
+--root ./christmas \
 --method local \
 --query "Who is Scrooge and what are his main relationships?"
 ```

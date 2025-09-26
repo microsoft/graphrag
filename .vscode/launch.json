@@ -6,21 +6,24 @@
 			"name": "Indexer",
 			"type": "debugpy",
 			"request": "launch",
-			"module": "uv",
+			"module": "graphrag",
 			"args": [
-				"poe", "index",
-				"--root", "<path_to_ragtest_root_demo>"
+				"index",
+				"--root", 
+				"<path_to_index_folder>"
 			],
+			"console": "integratedTerminal"
 		},
 		{
 			"name": "Query",
 			"type": "debugpy",
 			"request": "launch",
-			"module": "uv",
+			"module": "graphrag",
 			"args": [
-				"poe", "query",
-				"--root", "<path_to_ragtest_root_demo>",
-				"--method", "global",
+				"query",
+				"--root", 
+				"<path_to_index_folder>",
+				"--method", "basic",
 				"--query", "What are the top themes in this story",
 			]
 		},
@@ -34,6 +37,42 @@
 				"--config",
 				"<path_to_ragtest_root_demo>/settings.yaml",
 			]
-		}
+		},
+		{
+			"name": "Debug Integration Pytest",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "pytest",
+			"args": [
+				"./tests/integration/vector_stores",
+				"-k", "test_azure_ai_search"
+			],
+			"console": "integratedTerminal",
+    		"justMyCode": false 
+		},
+		{
+			"name": "Debug Verbs Pytest",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "pytest",
+			"args": [
+				"./tests/verbs",
+				"-k", "test_generate_text_embeddings"
+			],
+			"console": "integratedTerminal",
+    		"justMyCode": false 
+		},
+		{
+			"name": "Debug Smoke Pytest",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "pytest",
+			"args": [
+				"./tests/smoke",
+				"-k", "test_fixtures"
+			],
+			"console": "integratedTerminal",
+    		"justMyCode": false 
+		},
 	]
 }

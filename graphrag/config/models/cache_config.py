@@ -12,7 +12,7 @@ from graphrag.config.enums import CacheType
 class CacheConfig(BaseModel):
     """The default configuration section for Cache."""
 
-    type: CacheType = Field(
+    type: CacheType | str = Field(
         description="The cache type to use.",
         default=graphrag_config_defaults.cache.type,
     )

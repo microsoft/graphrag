@@ -39,7 +39,7 @@ class TextEmbeddingConfig(BaseModel):
 
     def resolved_strategy(self, model_config: LanguageModelConfig) -> dict:
         """Get the resolved text embedding strategy."""
-        from graphrag.index.operations.embed_text import (
+        from graphrag.index.operations.embed_text.embed_text import (
             TextEmbedStrategyType,
         )
 

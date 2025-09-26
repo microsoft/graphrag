@@ -16,6 +16,10 @@ All input formats are loaded within GraphRAG and passed to the indexing pipeline
 
 Also see the [outputs](outputs.md) documentation for the final documents table schema saved to parquet after pipeline completion.
 
+## Bring-your-own DataFrame
+
+As of version 2.6.0, GraphRAG's [indexing API method](https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py) allows you to pass in your own pandas DataFrame and bypass all of the input loading/parsing described in the next section. This is convenient if you have content in a format or storage location we don't support out-of-the-box. __You must ensure that your input DataFrame conforms to the schema described above.__ All of the chunking behavior described later will proceed exactly the same.
+
 ## Formats
 
 We support three file formats out-of-the-box. This covers the overwhelming majority of use cases we have encountered. If you have a different format, we recommend writing a script to convert to one of these, which are widely used and supported by many tools and libraries.

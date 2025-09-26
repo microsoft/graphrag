@@ -7,9 +7,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
+from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.data_model.types import TextEmbedder
-
-DEFAULT_VECTOR_SIZE: int = 1536
 
 
 @dataclass
@@ -42,17 +41,23 @@ class BaseVectorStore(ABC):
 
     def __init__(
         self,
-        collection_name: str,
+        vector_store_schema_config: VectorStoreSchemaConfig,
         db_connection: Any | None = None,
         document_collection: Any | None = None,
         query_filter: Any | None = None,
         **kwargs: Any,
     ):
-        self.collection_name = collection_name
         self.db_connection = db_connection
         self.document_collection = document_collection
         self.query_filter = query_filter
         self.kwargs = kwargs
+
+        self.index_name = vector_store_schema_config.index_name
+        self.id_field = vector_store_schema_config.id_field
+        self.text_field = vector_store_schema_config.text_field
+        self.vector_field = vector_store_schema_config.vector_field
+        self.attributes_field = vector_store_schema_config.attributes_field
+        self.vector_size = vector_store_schema_config.vector_size
 
     @abstractmethod
     def connect(self, **kwargs: Any) -> None:

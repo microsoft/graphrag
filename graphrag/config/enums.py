@@ -61,6 +61,14 @@ class StorageType(str, Enum):
         return f'"{self.value}"'
 
 
+class VectorStoreType(str, Enum):
+    """The supported vector store types."""
+
+    LanceDB = "lancedb"
+    AzureAISearch = "azure_ai_search"
+    CosmosDB = "cosmosdb"
+
+
 class ReportingType(str, Enum):
     """The reporting configuration type for the pipeline."""
 
@@ -80,10 +88,12 @@ class ModelType(str, Enum):
     # Embeddings
     OpenAIEmbedding = "openai_embedding"
     AzureOpenAIEmbedding = "azure_openai_embedding"
+    Embedding = "embedding"
 
     # Chat Completion
     OpenAIChat = "openai_chat"
     AzureOpenAIChat = "azure_openai_chat"
+    Chat = "chat"
 
     # Debug
     MockChat = "mock_chat"
