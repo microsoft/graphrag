@@ -175,8 +175,8 @@ class PostgresPipelineStorage(PipelineStorage):
             df['human_readable_id'] = range(len(df))
             log.info(f"Generated sequential human_readable_id for {len(df)} records")
         
-        # Process IDs with prefix
-        ids = df['id'].astype(str).tolist() if 'id' in df.columns else [f"{self._get_prefix(table_name.replace(self._collection_prefix, ''))}:{i}" for i in range(len(df))]
+        # Process IDs
+        ids = df['id'].astype(str).tolist()
         
         records = []
         for i in range(len(df)):
@@ -295,8 +295,8 @@ class PostgresPipelineStorage(PipelineStorage):
             processed_count += len(batch)
             
             # Log progress every batch for visibility
-            if i % batch_size == 0 or batch_end == total_records:
-                log.info(f"Batch upsert progress: {processed_count}/{total_records} records ({processed_count/total_records*100:.1f}%)")
+            # if i % batch_size == 0 or batch_end == total_records:
+            #     log.debug(f"Batch upsert progress: {processed_count}/{total_records} records ({processed_count/total_records*100:.1f}%)")
     
     def find(
     self,
@@ -460,7 +460,7 @@ class PostgresPipelineStorage(PipelineStorage):
                 if isinstance(value, bytes):
                     # Parse parquet data
                     df = pd.read_parquet(BytesIO(value))
-                    log.info(f"Parsed parquet data, DataFrame shape: {df.shape}")
+                    log.info(f"Parsed parquet data on set method, DataFrame shape: {df.shape}")
                     log.info(f"Parsed DataFrame head: {df.head()}")
                     
                     # Prepare data for PostgreSQL
@@ -471,10 +471,6 @@ class PostgresPipelineStorage(PipelineStorage):
                         await self._batch_upsert_records(conn, table_name, records)
                         
                         log.info(f"Successfully upserted {len(records)} records to {table_name}")
-                        
-                        # # Log duplicate handling info
-                        # if any(record['id'].split(':')[0] in self._no_id_prefixes for record in records):
-                        #     log.info("Some records used auto-generated IDs")
                         
                 else:
                     # Handle non-parquet data (e.g., JSON, stats)
@@ -521,27 +517,10 @@ class PostgresPipelineStorage(PipelineStorage):
                     "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = $1)",
                     table_name
                 )
-                log.debug(f"Table {table_name} exists: {table_exists}")
-                if not table_exists:
-                    return False
-                
-                if key.endswith('.parquet'):
-                    # For parquet files, check if table has any records
-                    total_count = await conn.fetchval(
-                        f"SELECT COUNT(*) FROM {table_name}"
-                    )
-                    return total_count > 0
-                else:
-                    # Check for exact key match
-                    exists = await conn.fetchval(
-                        f"SELECT EXISTS(SELECT 1 FROM {table_name} WHERE id = $1)",
-                        key
-                    )
-                    return exists
-                    
+                log.info(f"Table {table_name} exists: {table_exists}")
+                return table_exists
             finally:
                 await self._release_connection(conn)
-                
         except Exception as e:
             log.exception("Error checking existence for key %s: %s", key, e)
             return False
@@ -552,11 +531,11 @@ class PostgresPipelineStorage(PipelineStorage):
             table_name = self._get_table_name(key)
             conn = await self._get_connection()
             try:
-                await conn.execute(
-                    f"TRUNCATE TABLE {table_name}"
+                result = await conn.execute(
+                   f"TRUNCATE TABLE {table_name}"
                 )
-                log.info(f"Deleted records for key: {key}")
-
+                log.info(f"Deleted record for key {key}: {result}")
+                
             finally:
                 await self._release_connection(conn)
                 
