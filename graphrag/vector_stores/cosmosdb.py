@@ -179,7 +179,7 @@ class CosmosDBVectorStore(BaseVectorStore):
                 self._container_client.upsert_item(doc_json)
 
     def similarity_search_by_vector(
-        self, query_embedding: list[float], k: int = 10, **kwargs: Any
+        self, query_embedding: list[float], k: int = 10
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
         if self._container_client is None:
@@ -241,7 +241,7 @@ class CosmosDBVectorStore(BaseVectorStore):
         ]
 
     def similarity_search_by_text(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+        self, text: str, text_embedder: TextEmbedder, k: int = 10
     ) -> list[VectorStoreSearchResult]:
         """Perform a text-based similarity search."""
         query_embedding = text_embedder(text)
@@ -250,20 +250,6 @@ class CosmosDBVectorStore(BaseVectorStore):
                 query_embedding=query_embedding, k=k
             )
         return []
-
-    def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
-        """Build a query filter to filter documents by a list of ids."""
-        if include_ids is None or len(include_ids) == 0:
-            self.query_filter = None
-        else:
-            if isinstance(include_ids[0], str):
-                id_filter = ", ".join([f"'{id}'" for id in include_ids])
-            else:
-                id_filter = ", ".join([str(id) for id in include_ids])
-            self.query_filter = (
-                f"SELECT * FROM c WHERE c.{self.id_field} IN ({id_filter})"  # noqa: S608
-            )
-        return self.query_filter
 
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""

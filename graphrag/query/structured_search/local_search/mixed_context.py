@@ -84,10 +84,6 @@ class LocalSearchMixedContext(LocalContextBuilder):
         self.tokenizer = tokenizer or get_tokenizer()
         self.embedding_vectorstore_key = embedding_vectorstore_key
 
-    def filter_by_entity_keys(self, entity_keys: list[int] | list[str]):
-        """Filter entity text embeddings by entity keys."""
-        self.entity_text_embeddings.filter_by_id(entity_keys)
-
     def build_context(
         self,
         query: str,

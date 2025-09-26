@@ -100,22 +100,8 @@ class LanceDBVectorStore(BaseVectorStore):
             if data:
                 self.document_collection.add(data)
 
-    def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
-        """Build a query filter to filter documents by id."""
-        if len(include_ids) == 0:
-            self.query_filter = None
-        else:
-            if isinstance(include_ids[0], str):
-                id_filter = ", ".join([f"'{id}'" for id in include_ids])
-                self.query_filter = f"{self.id_field} in ({id_filter})"
-            else:
-                self.query_filter = (
-                    f"{self.id_field} in ({', '.join([str(id) for id in include_ids])})"
-                )
-        return self.query_filter
-
     def similarity_search_by_vector(
-        self, query_embedding: list[float] | np.ndarray, k: int = 10, **kwargs: Any
+        self, query_embedding: list[float] | np.ndarray, k: int = 10
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
         if self.query_filter:
@@ -151,7 +137,7 @@ class LanceDBVectorStore(BaseVectorStore):
         ]
 
     def similarity_search_by_text(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+        self, text: str, text_embedder: TextEmbedder, k: int = 10
     ) -> list[VectorStoreSearchResult]:
         """Perform a similarity search using a given input text."""
         query_embedding = text_embedder(text)

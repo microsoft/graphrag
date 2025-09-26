@@ -149,24 +149,8 @@ class AzureAISearchVectorStore(BaseVectorStore):
         if len(batch) > 0:
             self.db_connection.upload_documents(batch)
 
-    def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
-        """Build a query filter to filter documents by a list of ids."""
-        if include_ids is None or len(include_ids) == 0:
-            self.query_filter = None
-            # Returning to keep consistency with other methods, but not needed
-            return self.query_filter
-
-        # More info about odata filtering here: https://learn.microsoft.com/en-us/azure/search/search-query-odata-search-in-function
-        # search.in is faster that joined and/or conditions
-        id_filter = ",".join([f"{id!s}" for id in include_ids])
-        self.query_filter = f"search.in({self.id_field}, '{id_filter}', ',')"
-
-        # Returning to keep consistency with other methods, but not needed
-        # TODO: Refactor on a future PR
-        return self.query_filter
-
     def similarity_search_by_vector(
-        self, query_embedding: list[float], k: int = 10, **kwargs: Any
+        self, query_embedding: list[float], k: int = 10
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
         vectorized_query = VectorizedQuery(
@@ -193,7 +177,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
         ]
 
     def similarity_search_by_text(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+        self, text: str, text_embedder: TextEmbedder, k: int = 10
     ) -> list[VectorStoreSearchResult]:
         """Perform a text-based similarity search."""
         query_embedding = text_embedder(text)

@@ -136,9 +136,6 @@ class TestAzureAISearchVectorStore:
         assert mock_index_client.create_or_update_index.called
         assert mock_search_client.upload_documents.called
 
-        filter_query = vector_store.filter_by_id(["doc1", "doc2"])
-        assert filter_query == "search.in(id, 'doc1,doc2', ',')"
-
         vector_results = vector_store.similarity_search_by_vector(
             [0.1, 0.2, 0.3, 0.4, 0.5], k=2
         )
@@ -214,12 +211,6 @@ class TestAzureAISearchVectorStore:
         vector_store_custom.load_documents(sample_documents)
         assert mock_index_client.create_or_update_index.called
         assert mock_search_client.upload_documents.called
-
-        filter_query = vector_store_custom.filter_by_id(["doc1", "doc2"])
-        assert (
-            filter_query
-            == f"search.in({vector_store_custom.id_field}, 'doc1,doc2', ',')"
-        )
 
         vector_results = vector_store_custom.similarity_search_by_vector(
             [0.1, 0.2, 0.3, 0.4, 0.5], k=2

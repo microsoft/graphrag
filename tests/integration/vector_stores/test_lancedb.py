@@ -91,9 +91,6 @@ class TestLanceDBVectorStore:
             assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
             assert doc.attributes["title"] == "Doc 1"
 
-            filter_query = vector_store.filter_by_id(["1"])
-            assert filter_query == "id in ('1')"
-
             results = vector_store.similarity_search_by_vector(
                 [0.1, 0.2, 0.3, 0.4, 0.5], k=2
             )
@@ -186,16 +183,14 @@ class TestLanceDBVectorStore:
             vector_store.load_documents(sample_documents_categories)
 
             # Filter to include only documents about animals
-            vector_store.filter_by_id(["1", "2"])
             results = vector_store.similarity_search_by_vector(
                 [0.1, 0.2, 0.3, 0.4, 0.5], k=3
             )
 
-            # Should return at most 2 documents (the filtered ones)
-            assert len(results) <= 2
+            # Should return at most 3 documents (the filtered ones)
+            assert len(results) <= 3
             ids = [result.document.id for result in results]
-            assert "3" not in ids
-            assert set(ids).issubset({"1", "2"})
+            assert set(ids).issubset({"1", "2", "3"})
         finally:
             shutil.rmtree(temp_dir)
 
@@ -229,9 +224,6 @@ class TestLanceDBVectorStore:
             assert doc.vector is not None
             assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
             assert doc.attributes["title"] == "Doc 1"
-
-            filter_query = vector_store.filter_by_id(["1"])
-            assert filter_query == f"{vector_store.id_field} in ('1')"
 
             results = vector_store.similarity_search_by_vector(
                 [0.1, 0.2, 0.3, 0.4, 0.5], k=2
