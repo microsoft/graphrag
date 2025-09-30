@@ -311,6 +311,8 @@ class LanguageModelDefaults:
     model_supports_json: None = None
     rate_limit_strategy: str | None = "static"
     retry_strategy: str = "native"
+    tokens_per_minute: None = None
+    requests_per_minute: None = None
     max_retries: int = 10
     max_retry_wait: float = 10.0
     concurrent_requests: int = 25

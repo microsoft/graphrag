@@ -27,7 +27,7 @@ from graphrag.utils.api import create_storage_from_config
 
 def _sample_chunks_from_embeddings(
     text_chunks: pd.DataFrame,
-    embeddings: np.ndarray[float, np.dtype[np.float_]],
+    embeddings: np.ndarray[float, np.dtype[np.float64]],
     k: int = K,
 ) -> pd.DataFrame:
     """Sample text chunks from embeddings."""

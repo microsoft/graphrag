@@ -58,7 +58,7 @@ def hierarchical_leiden(
     graph: nx.Graph,
     max_cluster_size: int = 10,
     random_seed: int | None = 0xDEADBEEF,
-) -> Any:
+) -> list[gn.HierarchicalCluster]:
     """Run hierarchical leiden on the graph."""
     return gn.hierarchical_leiden(
         edges=_nx_to_edge_list(graph),
@@ -140,7 +140,7 @@ def calculate_root_modularity(
     hcs = hierarchical_leiden(
         graph, max_cluster_size=max_cluster_size, random_seed=random_seed
     )
-    root_clusters = hcs.first_level_hierarchical_clustering()
+    root_clusters = first_level_hierarchical_clustering(hcs)
     return modularity(graph, root_clusters)
 
 
@@ -153,7 +153,7 @@ def calculate_leaf_modularity(
     hcs = hierarchical_leiden(
         graph, max_cluster_size=max_cluster_size, random_seed=random_seed
     )
-    leaf_clusters = hcs.final_level_hierarchical_clustering()
+    leaf_clusters = final_level_hierarchical_clustering(hcs)
     return modularity(graph, leaf_clusters)
 
 
@@ -351,3 +351,27 @@ def get_upper_threshold_by_std(data: list[float] | list[int], std_trim: float) -
     mean = np.mean(data)
     std = np.std(data)
     return cast("float", mean + std_trim * std)
+
+
+def first_level_hierarchical_clustering(hcs: list[gn.HierarchicalCluster]) -> dict[Any, int]:
+    """first_level_hierarchical_clustering.
+
+    Returns
+    -------
+    dict[Any, int]
+        The initial leiden algorithm clustering results as a dictionary
+        of node id to community id.
+    """
+    return {entry.node: entry.cluster for entry in hcs if entry.level == 0}
+
+def final_level_hierarchical_clustering(hcs: list[gn.HierarchicalCluster]) -> dict[Any, int]:
+    """
+    final_level_hierarchical_clustering.
+    
+    Returns
+    -------
+    dict[Any, int]
+        The last leiden algorithm clustering results as a dictionary
+        of node id to community id.
+    """
+    return {entry.node: entry.cluster for entry in hcs if entry.is_final_cluster}
