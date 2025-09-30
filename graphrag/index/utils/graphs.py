@@ -353,7 +353,9 @@ def get_upper_threshold_by_std(data: list[float] | list[int], std_trim: float) -
     return cast("float", mean + std_trim * std)
 
 
-def first_level_hierarchical_clustering(hcs: list[gn.HierarchicalCluster]) -> dict[Any, int]:
+def first_level_hierarchical_clustering(
+    hcs: list[gn.HierarchicalCluster],
+) -> dict[Any, int]:
     """first_level_hierarchical_clustering.
 
     Returns
@@ -364,10 +366,13 @@ def first_level_hierarchical_clustering(hcs: list[gn.HierarchicalCluster]) -> di
     """
     return {entry.node: entry.cluster for entry in hcs if entry.level == 0}
 
-def final_level_hierarchical_clustering(hcs: list[gn.HierarchicalCluster]) -> dict[Any, int]:
+
+def final_level_hierarchical_clustering(
+    hcs: list[gn.HierarchicalCluster],
+) -> dict[Any, int]:
     """
     final_level_hierarchical_clustering.
-    
+
     Returns
     -------
     dict[Any, int]
