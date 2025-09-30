@@ -6,7 +6,7 @@
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import ClassVar, Literal
+from typing import ClassVar
 
 from graphrag.config.embeddings import default_embeddings
 from graphrag.config.enums import (
