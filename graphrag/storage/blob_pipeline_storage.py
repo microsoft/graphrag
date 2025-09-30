@@ -29,15 +29,20 @@ class BlobPipelineStorage(PipelineStorage):
     _encoding: str
     _storage_account_blob_url: str | None
 
-    def __init__(
-        self,
-        connection_string: str | None,
-        container_name: str,
-        encoding: str = "utf-8",
-        path_prefix: str | None = None,
-        storage_account_blob_url: str | None = None,
-    ):
+    def __init__(self, **kwargs: Any) -> None:
         """Create a new BlobStorage instance."""
+        connection_string = kwargs.get("connection_string")
+        storage_account_blob_url = kwargs.get("storage_account_blob_url")
+        path_prefix = kwargs.get("base_dir")
+        container_name = kwargs["container_name"]
+        if container_name is None:
+            msg = "No container name provided for blob storage."
+            raise ValueError(msg)
+        if connection_string is None and storage_account_blob_url is None:
+            msg = "No storage account blob url provided for blob storage."
+            raise ValueError(msg)
+
+        logger.info("Creating blob storage at %s", container_name)
         if connection_string:
             self._blob_service_client = BlobServiceClient.from_connection_string(
                 connection_string
@@ -51,7 +56,7 @@ class BlobPipelineStorage(PipelineStorage):
                 account_url=storage_account_blob_url,
                 credential=DefaultAzureCredential(),
             )
-        self._encoding = encoding
+        self._encoding = kwargs.get("encoding", "utf-8")
         self._container_name = container_name
         self._connection_string = connection_string
         self._path_prefix = path_prefix or ""
@@ -61,7 +66,7 @@ class BlobPipelineStorage(PipelineStorage):
             if storage_account_blob_url
             else None
         )
-        logger.info(
+        logger.debug(
             "creating blob storage at container=%s, path=%s",
             self._container_name,
             self._path_prefix,
@@ -162,14 +167,13 @@ class BlobPipelineStorage(PipelineStorage):
                     num_filtered,
                     num_total,
                 )
-        except Exception:
-            logger.exception(
+        except Exception:  # noqa: BLE001
+            logger.warning(
                 "Error finding blobs: base_dir=%s, file_pattern=%s, file_filter=%s",
                 base_dir,
                 file_pattern,
                 file_filter,
             )
-            raise
 
     async def get(
         self, key: str, as_bytes: bool | None = False, encoding: str | None = None
@@ -185,8 +189,8 @@ class BlobPipelineStorage(PipelineStorage):
             if not as_bytes:
                 coding = encoding or self._encoding
                 blob_data = blob_data.decode(coding)
-        except Exception:
-            logger.exception("Error getting key %s", key)
+        except Exception:  # noqa: BLE001
+            logger.warning("Error getting key %s", key)
             return None
         else:
             return blob_data
@@ -272,11 +276,11 @@ class BlobPipelineStorage(PipelineStorage):
             return self
         path = str(Path(self._path_prefix) / name)
         return BlobPipelineStorage(
-            self._connection_string,
-            self._container_name,
-            self._encoding,
-            path,
-            self._storage_account_blob_url,
+            connection_string=self._connection_string,
+            container_name=self._container_name,
+            encoding=self._encoding,
+            base_dir=path,
+            storage_account_blob_url=self._storage_account_blob_url,
         )
 
     def keys(self) -> list[str]:
@@ -303,30 +307,9 @@ class BlobPipelineStorage(PipelineStorage):
             blob_client = container_client.get_blob_client(key)
             timestamp = blob_client.download_blob().properties.creation_time
             return get_timestamp_formatted_with_local_tz(timestamp)
-        except Exception:
-            logger.exception("Error getting key %s", key)
+        except Exception:  # noqa: BLE001
+            logger.warning("Error getting key %s", key)
             return ""
-
-
-def create_blob_storage(**kwargs: Any) -> PipelineStorage:
-    """Create a blob based storage."""
-    connection_string = kwargs.get("connection_string")
-    storage_account_blob_url = kwargs.get("storage_account_blob_url")
-    base_dir = kwargs.get("base_dir")
-    container_name = kwargs["container_name"]
-    logger.info("Creating blob storage at %s", container_name)
-    if container_name is None:
-        msg = "No container name provided for blob storage."
-        raise ValueError(msg)
-    if connection_string is None and storage_account_blob_url is None:
-        msg = "No storage account blob url provided for blob storage."
-        raise ValueError(msg)
-    return BlobPipelineStorage(
-        connection_string=connection_string,
-        container_name=container_name,
-        path_prefix=base_dir,
-        storage_account_blob_url=storage_account_blob_url,
-    )
 
 
 def validate_blob_container_name(container_name: str):

@@ -47,6 +47,7 @@ from graphrag.prompt_tune.generator.language import detect_language
 from graphrag.prompt_tune.generator.persona import generate_persona
 from graphrag.prompt_tune.loader.input import load_docs_in_chunks
 from graphrag.prompt_tune.types import DocSelectionType
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +68,7 @@ async def generate_indexing_prompts(
     min_examples_required: PositiveInt = 2,
     n_subset_max: PositiveInt = 300,
     k: PositiveInt = 15,
+    verbose: bool = False,
 ) -> tuple[str, str, str]:
     """Generate indexing prompts.
 
@@ -89,7 +91,7 @@ async def generate_indexing_prompts(
     -------
     tuple[str, str, str]: entity extraction prompt, entity summarization prompt, community summarization prompt
     """
-    init_loggers(config=config)
+    init_loggers(config=config, verbose=verbose, filename="prompt-tuning.log")
 
     # Retrieve documents
     logger.info("Chunking documents...")
@@ -165,7 +167,7 @@ async def generate_indexing_prompts(
         examples=examples,
         language=language,
         json_mode=False,  # config.llm.model_supports_json should be used, but these prompts are used in non-json mode by the index engine
-        encoding_model=extract_graph_llm_settings.encoding_model,
+        tokenizer=get_tokenizer(model_config=extract_graph_llm_settings),
         max_token_count=max_tokens,
         min_examples_required=min_examples_required,
     )

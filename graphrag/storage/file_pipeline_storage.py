@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'FileStorage' and 'FilePipelineStorage' models."""
+"""File-based Storage implementation of PipelineStorage."""
 
 import logging
 import os
@@ -30,10 +30,11 @@ class FilePipelineStorage(PipelineStorage):
     _root_dir: str
     _encoding: str
 
-    def __init__(self, root_dir: str = "", encoding: str = "utf-8"):
-        """Init method definition."""
-        self._root_dir = root_dir
-        self._encoding = encoding
+    def __init__(self, **kwargs: Any) -> None:
+        """Create a file based storage."""
+        self._root_dir = kwargs.get("base_dir", "")
+        self._encoding = kwargs.get("encoding", "utf-8")
+        logger.info("Creating file storage at %s", self._root_dir)
         Path(self._root_dir).mkdir(parents=True, exist_ok=True)
 
     def find(
@@ -148,7 +149,8 @@ class FilePipelineStorage(PipelineStorage):
         """Create a child storage instance."""
         if name is None:
             return self
-        return FilePipelineStorage(str(Path(self._root_dir) / Path(name)))
+        child_path = str(Path(self._root_dir) / Path(name))
+        return FilePipelineStorage(base_dir=child_path, encoding=self._encoding)
 
     def keys(self) -> list[str]:
         """Return the keys in the storage."""
@@ -167,10 +169,3 @@ class FilePipelineStorage(PipelineStorage):
 def join_path(file_path: str, file_name: str) -> Path:
     """Join a path and a file. Independent of the OS."""
     return Path(file_path) / Path(file_name).parent / Path(file_name).name
-
-
-def create_file_storage(**kwargs: Any) -> PipelineStorage:
-    """Create a file based storage."""
-    base_dir = kwargs["base_dir"]
-    logger.info("Creating file storage at %s", base_dir)
-    return FilePipelineStorage(root_dir=base_dir)

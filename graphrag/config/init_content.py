@@ -82,7 +82,7 @@ cache:
   base_dir: "{graphrag_config_defaults.cache.base_dir}"
 
 reporting:
-  type: {graphrag_config_defaults.reporting.type.value} # [file, blob, cosmosdb]
+  type: {graphrag_config_defaults.reporting.type.value} # [file, blob]
   base_dir: "{graphrag_config_defaults.reporting.base_dir}"
 
 vector_store:
@@ -112,6 +112,7 @@ summarize_descriptions:
 extract_graph_nlp:
   text_analyzer:
     extractor_type: {graphrag_config_defaults.extract_graph_nlp.text_analyzer.extractor_type.value} # [regex_english, syntactic_parser, cfg]
+  async_mode: {graphrag_config_defaults.extract_graph_nlp.async_mode.value} # or asyncio
 
 cluster_graph:
   max_cluster_size: {graphrag_config_defaults.cluster_graph.max_cluster_size}

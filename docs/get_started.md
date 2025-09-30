@@ -65,11 +65,10 @@ deployment_name: <azure_model_deployment_name>
 ```
 
 #### Using Managed Auth on Azure
-To use managed auth, add an additional value to your model config and comment out or remove the api_key line:
+To use managed auth, edit the auth_type in your model config and *remove* the api_key line:
 
 ```yaml
 auth_type: azure_managed_identity # Default auth_type is is api_key
-# api_key: ${GRAPHRAG_API_KEY}
 ```
 
 You will also need to login with [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli) and select the subscription with your endpoint.

@@ -6,7 +6,9 @@
 from pydantic import BaseModel, Field, model_validator
 
 from graphrag.config.defaults import vector_store_defaults
-from graphrag.vector_stores.factory import VectorStoreType
+from graphrag.config.embeddings import all_embeddings
+from graphrag.config.enums import VectorStoreType
+from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 
 
 class VectorStoreConfig(BaseModel):
@@ -85,9 +87,25 @@ class VectorStoreConfig(BaseModel):
         default=vector_store_defaults.overwrite,
     )
 
+    embeddings_schema: dict[str, VectorStoreSchemaConfig] = {}
+
+    def _validate_embeddings_schema(self) -> None:
+        """Validate the embeddings schema."""
+        for name in self.embeddings_schema:
+            if name not in all_embeddings:
+                msg = f"vector_store.embeddings_schema contains an invalid embedding schema name: {name}. Please update your settings.yaml and select the correct embedding schema names."
+                raise ValueError(msg)
+
+        if self.type == VectorStoreType.CosmosDB:
+            for id_field in self.embeddings_schema:
+                if id_field != "id":
+                    msg = "When using CosmosDB, the id_field in embeddings_schema must be 'id'. Please update your settings.yaml and set the id_field to 'id'."
+                    raise ValueError(msg)
+
     @model_validator(mode="after")
     def _validate_model(self):
         """Validate the model."""
         self._validate_db_uri()
         self._validate_url()
+        self._validate_embeddings_schema()
         return self

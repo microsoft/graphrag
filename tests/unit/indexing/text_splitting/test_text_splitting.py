@@ -9,7 +9,7 @@ import tiktoken
 
 from graphrag.index.text_splitting.text_splitting import (
     NoopTextSplitter,
-    Tokenizer,
+    TokenChunkerOptions,
     TokenTextSplitter,
     split_multiple_texts_on_tokens,
     split_single_text_on_tokens,
@@ -64,7 +64,7 @@ def test_split_text_large_input(mock_split):
 
 
 @mock.patch("graphrag.index.text_splitting.text_splitting.split_single_text_on_tokens")
-@mock.patch("graphrag.index.text_splitting.text_splitting.Tokenizer")
+@mock.patch("graphrag.index.text_splitting.text_splitting.TokenChunkerOptions")
 def test_token_text_splitter(mock_tokenizer, mock_split_text):
     text = "chunk1 chunk2 chunk3"
     expected_chunks = ["chunk1", "chunk2", "chunk3"]
@@ -80,42 +80,10 @@ def test_token_text_splitter(mock_tokenizer, mock_split_text):
     mock_split_text.assert_called_once_with(text=text, tokenizer=mocked_tokenizer)
 
 
-def test_encode_basic():
-    splitter = TokenTextSplitter()
-    result = splitter.encode("abc def")
-
-    assert result == [13997, 711], "Encoding failed to return expected tokens"
-
-
-def test_num_tokens_empty_input():
-    splitter = TokenTextSplitter()
-    result = splitter.num_tokens("")
-
-    assert result == 0, "Token count for empty input should be 0"
-
-
-def test_model_name():
-    splitter = TokenTextSplitter(model_name="gpt-4o")
-    result = splitter.encode("abc def")
-
-    assert result == [26682, 1056], "Encoding failed to return expected tokens"
-
-
-@mock.patch("tiktoken.encoding_for_model", side_effect=KeyError)
-@mock.patch("tiktoken.get_encoding")
-def test_model_name_exception(mock_get_encoding, mock_encoding_for_model):
-    mock_get_encoding.return_value = mock.MagicMock()
-
-    TokenTextSplitter(model_name="mock_model", encoding_name="mock_encoding")
-
-    mock_get_encoding.assert_called_once_with("mock_encoding")
-    mock_encoding_for_model.assert_called_once_with("mock_model")
-
-
 def test_split_single_text_on_tokens():
     text = "This is a test text, meaning to be taken seriously by this test only."
     mocked_tokenizer = MockTokenizer()
-    tokenizer = Tokenizer(
+    tokenizer = TokenChunkerOptions(
         chunk_overlap=5,
         tokens_per_chunk=10,
         decode=mocked_tokenizer.decode,
@@ -150,7 +118,7 @@ def test_split_multiple_texts_on_tokens():
 
     mocked_tokenizer = MockTokenizer()
     mock_tick = MagicMock()
-    tokenizer = Tokenizer(
+    tokenizer = TokenChunkerOptions(
         chunk_overlap=5,
         tokens_per_chunk=10,
         decode=mocked_tokenizer.decode,
@@ -173,7 +141,7 @@ def test_split_single_text_on_tokens_no_overlap():
     def decode(tokens: list[int]) -> str:
         return enc.decode(tokens)
 
-    tokenizer = Tokenizer(
+    tokenizer = TokenChunkerOptions(
         chunk_overlap=1,
         tokens_per_chunk=2,
         decode=decode,

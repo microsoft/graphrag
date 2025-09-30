@@ -58,8 +58,8 @@ async def test_extract_covariates():
     assert_series_equal(actual["text_unit_id"], input["id"], check_names=False)
 
     # make sure the human ids are incrementing
-    assert actual["human_readable_id"][0] == 1
-    assert actual["human_readable_id"][1] == 2
+    assert actual["human_readable_id"][0] == 0
+    assert actual["human_readable_id"][1] == 1
 
     # check that the mock data is parsed and inserted into the correct columns
     assert actual["covariate_type"][0] == "claim"

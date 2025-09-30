@@ -16,7 +16,7 @@ from typing_extensions import Self
 from graphrag.language_model.factory import ModelFactory
 
 if TYPE_CHECKING:
-    from graphrag.language_model.protocol import ChatModel, EmbeddingModel
+    from graphrag.language_model.protocol.base import ChatModel, EmbeddingModel
 
 
 class ModelManager:

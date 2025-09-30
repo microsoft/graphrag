@@ -14,7 +14,7 @@ from graphrag.config.enums import StorageType
 class StorageConfig(BaseModel):
     """The default configuration section for storage."""
 
-    type: StorageType = Field(
+    type: StorageType | str = Field(
         description="The storage type to use.",
         default=graphrag_config_defaults.storage.type,
     )

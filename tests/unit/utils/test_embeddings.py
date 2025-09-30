@@ -3,19 +3,19 @@
 
 import pytest
 
-from graphrag.config.embeddings import create_collection_name
+from graphrag.config.embeddings import create_index_name
 
 
-def test_create_collection_name():
-    collection = create_collection_name("default", "entity.title")
+def test_create_index_name():
+    collection = create_index_name("default", "entity.title")
     assert collection == "default-entity-title"
 
 
-def test_create_collection_name_invalid_embedding_throws():
+def test_create_index_name_invalid_embedding_throws():
     with pytest.raises(KeyError):
-        create_collection_name("default", "invalid.name")
+        create_index_name("default", "invalid.name")
 
 
-def test_create_collection_name_invalid_embedding_does_not_throw():
-    collection = create_collection_name("default", "invalid.name", validate=False)
+def test_create_index_name_invalid_embedding_does_not_throw():
+    collection = create_index_name("default", "invalid.name", validate=False)
     assert collection == "default-invalid-name"

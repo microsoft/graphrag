@@ -1,7 +1,7 @@
 [project]
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
-version = "2.5.0"
+version = "2.6.0"
 description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
@@ -39,11 +39,11 @@ dependencies = [
     # Async IO
     "aiofiles>=24.1.0",
     # LLM
-    "fnllm[azure,openai]>=0.3.0",
+    "fnllm[azure,openai]>=0.4.1",
     "json-repair>=0.30.3",
     "openai>=1.68.0",
     "nltk==3.9.1",
-    "tiktoken>=0.9.0",
+    "tiktoken>=0.11.0",
     # Data-Science
     "numpy>=1.25.2",
     "graspologic>=3.4.1",
@@ -66,6 +66,7 @@ dependencies = [
     "tqdm>=4.67.1",
     "textblob>=0.18.0.post0",
     "spacy>=3.8.4",
+    "litellm>=1.77.1",
 ]
 
 [project.optional-dependencies]
@@ -75,6 +76,7 @@ dev = [
     "jupyter>=1.1.1",
     "nbconvert>=7.16.4",
     "poethepoet>=0.31.1",
+    "pandas-stubs>=2.3.0.250703",
     "pyright>=1.1.390",
     "pytest>=8.3.4",
     "pytest-asyncio>=0.24.0",
@@ -242,7 +244,7 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S", "D", "ANN", "T201", "ASYNC", "ARG", "PTH", "TRY"]
 "graphrag/index/config/*" = ["TCH"]
-"*.ipynb" = ["T201"]
+"*.ipynb" = ["T201", "S101", "PT015", "B011"]
 
 [tool.ruff.lint.flake8-builtins]
 builtins-ignorelist = ["input", "id", "bytes"]

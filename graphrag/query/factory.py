@@ -3,8 +3,6 @@
 
 """Query Factory methods to support CLI."""
 
-import tiktoken
-
 from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.community import Community
@@ -34,6 +32,7 @@ from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )
 from graphrag.query.structured_search.local_search.search import LocalSearch
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.vector_stores.base import BaseVectorStore
 
 
@@ -68,7 +67,7 @@ def get_local_search_engine(
         config=embedding_settings,
     )
 
-    token_encoder = tiktoken.get_encoding(model_settings.encoding_model)
+    tokenizer = get_tokenizer(model_config=model_settings)
 
     ls_config = config.local_search
 
@@ -86,9 +85,9 @@ def get_local_search_engine(
             entity_text_embeddings=description_embedding_store,
             embedding_vectorstore_key=EntityVectorStoreKey.ID,  # if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE
             text_embedder=embedding_model,
-            token_encoder=token_encoder,
+            tokenizer=tokenizer,
         ),
-        token_encoder=token_encoder,
+        tokenizer=tokenizer,
         model_params=model_params,
         context_builder_params={
             "text_unit_prop": ls_config.text_unit_prop,
@@ -135,7 +134,7 @@ def get_global_search_engine(
     model_params = get_openai_model_parameters_from_config(model_settings)
 
     # Here we get encoding based on specified encoding name
-    token_encoder = tiktoken.get_encoding(model_settings.encoding_model)
+    tokenizer = get_tokenizer(model_config=model_settings)
     gs_config = config.global_search
 
     dynamic_community_selection_kwargs = {}
@@ -144,7 +143,7 @@ def get_global_search_engine(
 
         dynamic_community_selection_kwargs.update({
             "model": model,
-            "token_encoder": token_encoder,
+            "tokenizer": tokenizer,
             "keep_parent": gs_config.dynamic_search_keep_parent,
             "num_repeats": gs_config.dynamic_search_num_repeats,
             "use_summary": gs_config.dynamic_search_use_summary,
@@ -163,11 +162,11 @@ def get_global_search_engine(
             community_reports=reports,
             communities=communities,
             entities=entities,
-            token_encoder=token_encoder,
+            tokenizer=tokenizer,
             dynamic_community_selection=dynamic_community_selection,
             dynamic_community_selection_kwargs=dynamic_community_selection_kwargs,
         ),
-        token_encoder=token_encoder,
+        tokenizer=tokenizer,
         max_data_tokens=gs_config.data_max_tokens,
         map_llm_params={**model_params},
         reduce_llm_params={**model_params},
@@ -226,7 +225,7 @@ def get_drift_search_engine(
         config=embedding_model_settings,
     )
 
-    token_encoder = tiktoken.get_encoding(chat_model_settings.encoding_model)
+    tokenizer = get_tokenizer(model_config=chat_model_settings)
 
     return DRIFTSearch(
         model=chat_model,
@@ -243,7 +242,7 @@ def get_drift_search_engine(
             config=config.drift_search,
             response_type=response_type,
         ),
-        token_encoder=token_encoder,
+        tokenizer=tokenizer,
         callbacks=callbacks,
     )
 
@@ -277,7 +276,7 @@ def get_basic_search_engine(
         config=embedding_model_settings,
     )
 
-    token_encoder = tiktoken.get_encoding(chat_model_settings.encoding_model)
+    tokenizer = get_tokenizer(model_config=chat_model_settings)
 
     bs_config = config.basic_search
 
@@ -291,9 +290,9 @@ def get_basic_search_engine(
             text_embedder=embedding_model,
             text_unit_embeddings=text_unit_embeddings,
             text_units=text_units,
-            token_encoder=token_encoder,
+            tokenizer=tokenizer,
         ),
-        token_encoder=token_encoder,
+        tokenizer=tokenizer,
         model_params=model_params,
         context_builder_params={
             "embedding_vectorstore_key": "id",
