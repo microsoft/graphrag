@@ -56,9 +56,7 @@ class ProgressTicker:
                 description=self._description,
             )
             if p.description:
-                logger.info(
-                    "%s%s/%s", p.description, str(p.completed_items), str(p.total_items)
-                )
+                logger.info("%s%s/%s", p.description, p.completed_items, p.total_items)
             self._callback(p)
 
     def done(self) -> None:

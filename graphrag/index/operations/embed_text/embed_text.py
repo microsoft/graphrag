@@ -89,7 +89,7 @@ async def _text_embed_in_memory(
     strategy_exec = load_strategy(strategy_type)
     strategy_config = {**strategy}
 
-    texts: list[str] = input[embed_column].to_numpy().tolist()
+    texts: list[str] = input[embed_column].tolist()
     result = await strategy_exec(texts, callbacks, cache, strategy_config)
 
     return result.embeddings
@@ -151,9 +151,9 @@ async def _text_embed_with_vector_store(
             insert_batch_size,
         )
         batch = input.iloc[insert_batch_size * i : insert_batch_size * (i + 1)]
-        texts: list[str] = batch[embed_column].to_numpy().tolist()
-        titles: list[str] = batch[title].to_numpy().tolist()
-        ids: list[str] = batch[id_column].to_numpy().tolist()
+        texts: list[str] = batch[embed_column].tolist()
+        titles: list[str] = batch[title].tolist()
+        ids: list[str] = batch[id_column].tolist()
         result = await strategy_exec(texts, callbacks, cache, strategy_config)
         if result.embeddings:
             embeddings = [
