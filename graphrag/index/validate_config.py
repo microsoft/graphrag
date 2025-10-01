@@ -17,10 +17,6 @@ logger = logging.getLogger(__name__)
 def validate_config_names(parameters: GraphRagConfig) -> None:
     """Validate config file for model deployment name typos, by running a quick test message for each."""
     for id, config in parameters.models.items():
-        # temporarily disable retry since this is just a connectivity test
-        retry_strategy = config.retry_strategy
-        config.retry_strategy = "none"
-
         if config.type in ["chat", "azure_openai", "openai"]:
             llm = ModelManager().register_chat(
                 name="test-llm",
@@ -55,5 +51,3 @@ def validate_config_names(parameters: GraphRagConfig) -> None:
                 logger.error(f"Embedding configuration error detected.\n{e}")  # noqa
                 print(f"Failed to validate embedding model ({id}) params", e)  # noqa: T201
                 sys.exit(1)
-
-        config.retry_strategy = retry_strategy
