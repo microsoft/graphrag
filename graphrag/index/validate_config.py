@@ -33,6 +33,7 @@ def validate_config_names(parameters: GraphRagConfig) -> None:
         logger.info("LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
         logger.error(f"LLM configuration error detected. Exiting...\n{e}")  # noqa
+        print("Failed to validate language model params", e)  # noqa: T201
         sys.exit(1)
 
     # Validate Embeddings LLM configs
@@ -53,4 +54,5 @@ def validate_config_names(parameters: GraphRagConfig) -> None:
         logger.info("Embedding LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
         logger.error(f"Embedding LLM configuration error detected. Exiting...\n{e}")  # noqa
+        print("Failed to validate embedding model params", e)  # noqa: T201
         sys.exit(1)
