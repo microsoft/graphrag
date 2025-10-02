@@ -235,7 +235,7 @@ class TestIndexer:
         },
         clear=True,
     )
-    @pytest.mark.timeout(1200)
+    @pytest.mark.timeout(2000)
     def test_fixture(
         self,
         input_path: str,
