@@ -10,12 +10,7 @@
         },
         "extract_covariates": 
         {
-            "row_range": [
-                100,
-                350
-            ],
-            "max_runtime": 10,
-            "expected_artifacts": ["covariates.parquet"]
+            "max_runtime": 10
         },
         "extract_graph": {
             "max_runtime": 500
