@@ -5,9 +5,9 @@ models:
     model_provider: azure
     api_key: ${GRAPHRAG_API_KEY}
     api_base: ${GRAPHRAG_API_BASE}
-    api_version: ${GRAPHRAG_API_VERSION}
-    deployment_name: ${GRAPHRAG_LLM_DEPLOYMENT_NAME}
-    model: ${GRAPHRAG_LLM_MODEL}
+    api_version: "2025-04-01-preview"
+    deployment_name: gpt-4.1
+    model: gpt-4.1
     retry_strategy: exponential_backoff
     tokens_per_minute: null
     requests_per_minute: null
@@ -20,9 +20,9 @@ models:
     model_provider: azure
     api_key: ${GRAPHRAG_API_KEY}
     api_base: ${GRAPHRAG_API_BASE}
-    api_version: ${GRAPHRAG_API_VERSION}
-    deployment_name: ${GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME}
-    model: ${GRAPHRAG_EMBEDDING_MODEL}
+    api_version: "2025-04-01-preview"
+    deployment_name: text-embedding-ada-002
+    model: text-embedding-ada-002
     retry_strategy: exponential_backoff
     tokens_per_minute: null
     requests_per_minute: null
@@ -46,8 +46,3 @@ community_reports:
 
 snapshots:
   embeddings: true
-
-drift_search:
-  n_depth: 1
-  drift_k_followups: 3
-  primer_folds: 3
