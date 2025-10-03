@@ -8,10 +8,11 @@ models:
     api_version: ${GRAPHRAG_API_VERSION}
     deployment_name: ${GRAPHRAG_LLM_DEPLOYMENT_NAME}
     model: ${GRAPHRAG_LLM_MODEL}
-    tokens_per_minute: ${GRAPHRAG_LLM_TPM}
-    requests_per_minute: ${GRAPHRAG_LLM_RPM}
+    retry_strategy: exponential_backoff
+    tokens_per_minute: null
+    requests_per_minute: null
     model_supports_json: true
-    concurrent_requests: 50
+    concurrent_requests: 25
     async_mode: threaded
   default_embedding_model:
     azure_auth_type: api_key
@@ -22,9 +23,10 @@ models:
     api_version: ${GRAPHRAG_API_VERSION}
     deployment_name: ${GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME}
     model: ${GRAPHRAG_EMBEDDING_MODEL}
+    retry_strategy: exponential_backoff
     tokens_per_minute: null
     requests_per_minute: null
-    concurrent_requests: 50
+    concurrent_requests: 25
     async_mode: threaded
 
 vector_store:
@@ -43,7 +45,7 @@ community_reports:
   max_input_length: 8000
 
 snapshots:
-  embeddings: True
+  embeddings: true
 
 drift_search:
   n_depth: 1
