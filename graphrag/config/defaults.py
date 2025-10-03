@@ -46,11 +46,11 @@ from graphrag.language_model.providers.litellm.services.retry.retry import Retry
 
 DEFAULT_OUTPUT_BASE_DIR = "output"
 DEFAULT_CHAT_MODEL_ID = "default_chat_model"
-DEFAULT_CHAT_MODEL_TYPE = ModelType.OpenAIChat
+DEFAULT_CHAT_MODEL_TYPE = ModelType.Chat
 DEFAULT_CHAT_MODEL = "gpt-4-turbo-preview"
 DEFAULT_CHAT_MODEL_AUTH_TYPE = AuthType.APIKey
 DEFAULT_EMBEDDING_MODEL_ID = "default_embedding_model"
-DEFAULT_EMBEDDING_MODEL_TYPE = ModelType.OpenAIEmbedding
+DEFAULT_EMBEDDING_MODEL_TYPE = ModelType.Embedding
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
 DEFAULT_EMBEDDING_MODEL_AUTH_TYPE = AuthType.APIKey
 DEFAULT_VECTOR_STORE_ID = "default_vector_store"
@@ -325,10 +325,10 @@ class LanguageModelDefaults:
     proxy: None = None
     audience: None = None
     model_supports_json: None = None
-    tokens_per_minute: Literal["auto"] = "auto"
-    requests_per_minute: Literal["auto"] = "auto"
+    tokens_per_minute: None = None
+    requests_per_minute: None = None
     rate_limit_strategy: str | None = "static"
-    retry_strategy: str = "native"
+    retry_strategy: str = "exponential_backoff"
     max_retries: int = 10
     max_retry_wait: float = 10.0
     concurrent_requests: int = 25
