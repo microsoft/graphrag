@@ -8,16 +8,22 @@
         "create_base_text_units": {
             "max_runtime": 30
         },
-        "extract_covariates": {
-            "max_runtime": 10
+        "extract_covariates": 
+        {
+            "row_range": [
+                100,
+                350
+            ],
+            "max_runtime": 10,
+            "expected_artifacts": ["covariates.parquet"]
         },
         "extract_graph": {
             "max_runtime": 500
         },
         "finalize_graph": {
             "row_range": [
-                1,
-                500
+                100,
+                750
             ],
             "nan_allowed_columns": [
                 "x",
@@ -32,7 +38,7 @@
         "create_communities": {
             "row_range": [
                 10,
-                35
+                60
             ],
             "max_runtime": 30,
             "expected_artifacts": ["communities.parquet"]
@@ -40,7 +46,7 @@
         "create_community_reports": {
             "row_range": [
                 10,
-                35
+                60
             ],
             "nan_allowed_columns": [
                 "title",

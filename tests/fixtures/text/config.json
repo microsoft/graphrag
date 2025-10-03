@@ -13,8 +13,8 @@
         },
         "finalize_graph": {
             "row_range": [
-                1,
-                500
+                10,
+                200
             ],
             "nan_allowed_columns": [
                 "x",
@@ -28,7 +28,7 @@
         },
         "extract_covariates": {
             "row_range": [
-                1,
+                10,
                 100
             ],
             "nan_allowed_columns": [
