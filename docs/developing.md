@@ -77,8 +77,3 @@ Make sure llvm-9 and llvm-9-dev are installed:
 and then in your bashrc, add
 
 `export LLVM_CONFIG=/usr/bin/llvm-config-9`
-
-### LLM call constantly exceeds TPM, RPM or time limits
-
-`GRAPHRAG_LLM_THREAD_COUNT` and `GRAPHRAG_EMBEDDING_THREAD_COUNT` are both set to 50 by default. You can modify these values
-to reduce concurrency. Please refer to the [Configuration Documents](config/overview.md)
