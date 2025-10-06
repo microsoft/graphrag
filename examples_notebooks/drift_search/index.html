@@ -2210,8 +2210,8 @@ text_unit_df.head()</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2290,6 +2290,34 @@ text_embedder = ModelManager().get_or_create_embedding_model(
     model_type=ModelType.OpenAIEmbedding,
     config=embedding_config,
 )</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">KeyError</span>                                  Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> api_key = os.environ[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">GRAPHRAG_API_KEY</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> llm_model = <span class="ansi-yellow-bg">os</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">environ</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">GRAPHRAG_LLM_MODEL</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">]</span>
+<span class="ansi-green-fg">      3</span> embedding_model = os.environ[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">GRAPHRAG_EMBEDDING_MODEL</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">      5</span> chat_config = LanguageModelConfig(
+<span class="ansi-green-fg">      6</span>     api_key=api_key,
+<span class="ansi-green-fg">      7</span>     <span style="color: rgb(0,135,0)">type</span>=ModelType.OpenAIChat,
+<span class="ansi-green-fg">      8</span>     model=llm_model,
+<span class="ansi-green-fg">      9</span>     max_retries=<span class="ansi-green-fg">20</span>,
+<span class="ansi-green-fg">     10</span> )
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">&lt;frozen os&gt;:679</span>, in <span class="ansi-cyan-fg">__getitem__</span><span class="ansi-blue-fg">(self, key)</span>
+
+<span class="ansi-red-fg">KeyError</span>: 'GRAPHRAG_LLM_MODEL'</pre>
 </div>
 </div>
 </div>
@@ -2461,17 +2489,17 @@ search = DRIFTSearch(
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 14</span>
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 11</span>
 <span class="ansi-green-fg">      1</span> drift_params = DRIFTSearchConfig(
 <span class="ansi-green-fg">      2</span>     temperature=<span class="ansi-green-fg">0</span>,
 <span class="ansi-green-fg">      3</span>     max_tokens=<span class="ansi-green-fg">12_000</span>,
 <span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">      7</span>     n=<span class="ansi-green-fg">1</span>,
 <span class="ansi-green-fg">      8</span> )
 <span class="ansi-green-fg">     10</span> context_builder = DRIFTSearchContextBuilder(
-<span class="ansi-green-fg">     11</span>     model=chat_model,
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">11</span>     model=<span class="ansi-yellow-bg">chat_model</span>,
 <span class="ansi-green-fg">     12</span>     text_embedder=text_embedder,
 <span class="ansi-green-fg">     13</span>     entities=entities,
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">14</span>     relationships=<span class="ansi-yellow-bg">relationships</span>,
+<span class="ansi-green-fg">     14</span>     relationships=relationships,
 <span class="ansi-green-fg">     15</span>     reports=reports,
 <span class="ansi-green-fg">     16</span>     entity_text_embeddings=description_embedding_store,
 <span class="ansi-green-fg">     17</span>     text_units=text_units,
@@ -2482,7 +2510,7 @@ search = DRIFTSearch(
 <span class="ansi-green-fg">     23</span>     model=chat_model, context_builder=context_builder, token_encoder=token_encoder
 <span class="ansi-green-fg">     24</span> )
 
-<span class="ansi-red-fg">NameError</span>: name 'relationships' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'chat_model' is not defined</pre>
 </div>
 </div>
 </div>

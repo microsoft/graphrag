@@ -2141,8 +2141,8 @@ from graphrag.query.structured_search.global_search.search import GlobalSearch</
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2193,6 +2193,38 @@ model = ModelManager().get_or_create_chat_model(
 )
 
 token_encoder = tiktoken.encoding_for_model(llm_model)</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">KeyError</span>                                  Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> api_key = os.environ[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">GRAPHRAG_API_KEY</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> llm_model = <span class="ansi-yellow-bg">os</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">environ</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">GRAPHRAG_LLM_MODEL</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">]</span>
+<span class="ansi-green-fg">      4</span> config = LanguageModelConfig(
+<span class="ansi-green-fg">      5</span>     api_key=api_key,
+<span class="ansi-green-fg">      6</span>     <span style="color: rgb(0,135,0)">type</span>=ModelType.OpenAIChat,
+<span class="ansi-green-fg">      7</span>     model=llm_model,
+<span class="ansi-green-fg">      8</span>     max_retries=<span class="ansi-green-fg">20</span>,
+<span class="ansi-green-fg">      9</span> )
+<span class="ansi-green-fg">     10</span> model = ModelManager().get_or_create_chat_model(
+<span class="ansi-green-fg">     11</span>     name=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">global_search</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">     12</span>     model_type=ModelType.OpenAIChat,
+<span class="ansi-green-fg">     13</span>     config=config,
+<span class="ansi-green-fg">     14</span> )
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">&lt;frozen os&gt;:679</span>, in <span class="ansi-cyan-fg">__getitem__</span><span class="ansi-blue-fg">(self, key)</span>
+
+<span class="ansi-red-fg">KeyError</span>: 'GRAPHRAG_LLM_MODEL'</pre>
 </div>
 </div>
 </div>
@@ -2485,21 +2517,21 @@ Report count after filtering by community level None: 2
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> context_builder = <span class="ansi-yellow-bg">GlobalCommunityContext</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">      2</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">community_reports</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">reports</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">      3</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">communities</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">communities</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">      4</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">entities</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">entities</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg">  </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># default to None if you don't want to use community weights for ranking</span>
-<span class="ansi-green-fg">      5</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">token_encoder</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">token_encoder</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">      6</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dynamic_community_selection</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">True</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">      7</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dynamic_community_selection_kwargs</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">{</span>
-<span class="ansi-green-fg">      8</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">model</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">model</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">      9</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">token_encoder</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">token_encoder</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     10</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">}</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">     11</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 5</span>
+<span class="ansi-green-fg">      1</span> context_builder = GlobalCommunityContext(
+<span class="ansi-green-fg">      2</span>     community_reports=reports,
+<span class="ansi-green-fg">      3</span>     communities=communities,
+<span class="ansi-green-fg">      4</span>     entities=entities,  <span style="color: rgb(95,135,135)"># default to None if you don't want to use community weights for ranking</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span>     token_encoder=<span class="ansi-yellow-bg">token_encoder</span>,
+<span class="ansi-green-fg">      6</span>     dynamic_community_selection=<span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
+<span class="ansi-green-fg">      7</span>     dynamic_community_selection_kwargs={
+<span class="ansi-green-fg">      8</span>         <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">model</span><span class="ansi-yellow-fg">"</span>: model,
+<span class="ansi-green-fg">      9</span>         <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">token_encoder</span><span class="ansi-yellow-fg">"</span>: token_encoder,
+<span class="ansi-green-fg">     10</span>     },
+<span class="ansi-green-fg">     11</span> )
 
-<span class="ansi-red-fg">TypeError</span>: GlobalCommunityContext.__init__() got an unexpected keyword argument 'token_encoder'</pre>
+<span class="ansi-red-fg">NameError</span>: name 'token_encoder' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2647,10 +2679,10 @@ reduce_llm_params = {
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[8]</span><span class="ansi-green-fg">, line 3</span>
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[8]</span><span class="ansi-green-fg">, line 2</span>
 <span class="ansi-green-fg">      1</span> search_engine = GlobalSearch(
-<span class="ansi-green-fg">      2</span>     model=model,
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span>     context_builder=<span class="ansi-yellow-bg">context_builder</span>,
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span>     model=<span class="ansi-yellow-bg">model</span>,
+<span class="ansi-green-fg">      3</span>     context_builder=context_builder,
 <span class="ansi-green-fg">      4</span>     token_encoder=token_encoder,
 <span class="ansi-green-fg">      5</span>     max_data_tokens=<span class="ansi-green-fg">12_000</span>,  <span style="color: rgb(95,135,135)"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
 <span class="ansi-green-fg">      6</span>     map_llm_params=map_llm_params,
@@ -2662,7 +2694,7 @@ reduce_llm_params = {
 <span class="ansi-green-fg">     12</span>     response_type=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">multiple paragraphs</span><span class="ansi-yellow-fg">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
 <span class="ansi-green-fg">     13</span> )
 
-<span class="ansi-red-fg">NameError</span>: name 'context_builder' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'model' is not defined</pre>
 </div>
 </div>
 </div>

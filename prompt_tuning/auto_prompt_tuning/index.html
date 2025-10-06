@@ -1777,19 +1777,7 @@ After that, it uses one of the following selection methods to pick a sample to w
 <li><code>auto</code>: Embed text units in a lower-dimensional space and select the k nearest neighbors to the centroid. This is useful when you have a large dataset and want to select a representative sample.</li>
 </ul>
 <h2 id="modify-env-vars">Modify Env Vars</h2>
-<p>After running auto tuning, you should modify the following environment variables (or config variables) to pick up the new prompts on your index run. Note: Please make sure to update the correct path to the generated prompts, in this example we are using the default "prompts" path.</p>
-<ul>
-<li>
-<p><code>GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE</code> = "prompts/entity_extraction.txt"</p>
-</li>
-<li>
-<p><code>GRAPHRAG_COMMUNITY_REPORT_PROMPT_FILE</code> = "prompts/community_report.txt"</p>
-</li>
-<li>
-<p><code>GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE</code> = "prompts/summarize_descriptions.txt"</p>
-</li>
-</ul>
-<p>or in your yaml config file:</p>
+<p>After running auto tuning, you should modify the following config variables to pick up the new prompts on your index run. Note: Please make sure to update the correct path to the generated prompts, in this example we are using the default "prompts" path.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">entity_extraction</span><span class="p">:</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">prompt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/entity_extraction.txt&quot;</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
