@@ -133,19 +133,6 @@ def test_missing_azure_api_version() -> None:
         })
 
 
-def test_missing_azure_deployment_name() -> None:
-    missing_deployment_name_config = base_azure_model_config.copy()
-    del missing_deployment_name_config["deployment_name"]
-
-    with pytest.raises(ValidationError):
-        create_graphrag_config({
-            "models": {
-                defs.DEFAULT_CHAT_MODEL_ID: missing_deployment_name_config,
-                defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
-            }
-        })
-
-
 def test_default_config() -> None:
     expected = get_default_graphrag_config()
     actual = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})

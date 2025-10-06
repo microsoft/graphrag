@@ -3,6 +3,7 @@
 
 """Language model configuration."""
 
+import logging
 from typing import Literal
 
 import tiktoken
@@ -14,10 +15,11 @@ from graphrag.config.errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
     AzureApiVersionMissingError,
-    AzureDeploymentNameMissingError,
     ConflictingSettingsError,
 )
 from graphrag.language_model.factory import ModelFactory
+
+logger = logging.getLogger(__name__)
 
 
 class LanguageModelConfig(BaseModel):
@@ -214,7 +216,8 @@ class LanguageModelConfig(BaseModel):
             or self.type == ModelType.AzureOpenAIEmbedding
             or self.model_provider == "azure"  # indicates Litellm + AOI
         ) and (self.deployment_name is None or self.deployment_name.strip() == ""):
-            raise AzureDeploymentNameMissingError(self.type)
+            msg = f"deployment_name is not set for Azure-hosted model. This will default to your model name ({self.model}). If different, this should be set."
+            logger.debug(msg)
 
     organization: str | None = Field(
         description="The organization to use for the LLM service.",

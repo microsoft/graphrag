@@ -19,41 +19,34 @@ INIT_YAML = f"""\
 
 models:
   {defs.DEFAULT_CHAT_MODEL_ID}:
-    type: {defs.DEFAULT_CHAT_MODEL_TYPE.value} # or azure_openai_chat
-    # api_base: https://<instance>.openai.azure.com
-    # api_version: 2024-05-01-preview
+    type: {defs.DEFAULT_CHAT_MODEL_TYPE.value}
+    model_provider: {defs.DEFAULT_MODEL_PROVIDER}
     auth_type: {defs.DEFAULT_CHAT_MODEL_AUTH_TYPE.value} # or azure_managed_identity
-    api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file
-    # audience: "https://cognitiveservices.azure.com/.default"
-    # organization: <organization_id>
+    api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file, or remove if managed identity
     model: {defs.DEFAULT_CHAT_MODEL}
-    # deployment_name: <azure_model_deployment_name>
-    # encoding_model: {defs.ENCODING_MODEL} # automatically set by tiktoken if left undefined
-    model_supports_json: true # recommended if this is available for your model.
-    concurrent_requests: {language_model_defaults.concurrent_requests} # max number of simultaneous LLM requests allowed
-    async_mode: {language_model_defaults.async_mode.value} # or asyncio
-    retry_strategy: native
-    max_retries: {language_model_defaults.max_retries}
-    tokens_per_minute: {language_model_defaults.tokens_per_minute}              # set to null to disable rate limiting
-    requests_per_minute: {language_model_defaults.requests_per_minute}            # set to null to disable rate limiting
-  {defs.DEFAULT_EMBEDDING_MODEL_ID}:
-    type: {defs.DEFAULT_EMBEDDING_MODEL_TYPE.value} # or azure_openai_embedding
     # api_base: https://<instance>.openai.azure.com
     # api_version: 2024-05-01-preview
-    auth_type: {defs.DEFAULT_EMBEDDING_MODEL_AUTH_TYPE.value} # or azure_managed_identity
-    api_key: ${{GRAPHRAG_API_KEY}}
-    # audience: "https://cognitiveservices.azure.com/.default"
-    # organization: <organization_id>
-    model: {defs.DEFAULT_EMBEDDING_MODEL}
-    # deployment_name: <azure_model_deployment_name>
-    # encoding_model: {defs.ENCODING_MODEL} # automatically set by tiktoken if left undefined
     model_supports_json: true # recommended if this is available for your model.
-    concurrent_requests: {language_model_defaults.concurrent_requests} # max number of simultaneous LLM requests allowed
+    concurrent_requests: {language_model_defaults.concurrent_requests}
     async_mode: {language_model_defaults.async_mode.value} # or asyncio
-    retry_strategy: native
+    retry_strategy: {language_model_defaults.retry_strategy}
     max_retries: {language_model_defaults.max_retries}
-    tokens_per_minute: null              # set to null to disable rate limiting or auto for dynamic
-    requests_per_minute: null            # set to null to disable rate limiting or auto for dynamic
+    tokens_per_minute: null
+    requests_per_minute: null
+  {defs.DEFAULT_EMBEDDING_MODEL_ID}:
+    type: {defs.DEFAULT_EMBEDDING_MODEL_TYPE.value}
+    model_provider: {defs.DEFAULT_MODEL_PROVIDER}
+    auth_type: {defs.DEFAULT_EMBEDDING_MODEL_AUTH_TYPE.value}
+    api_key: ${{GRAPHRAG_API_KEY}}
+    model: {defs.DEFAULT_EMBEDDING_MODEL}
+    # api_base: https://<instance>.openai.azure.com
+    # api_version: 2024-05-01-preview
+    concurrent_requests: {language_model_defaults.concurrent_requests}
+    async_mode: {language_model_defaults.async_mode.value} # or asyncio
+    retry_strategy: {language_model_defaults.retry_strategy}
+    max_retries: {language_model_defaults.max_retries}
+    tokens_per_minute: null
+    requests_per_minute: null
 
 ### Input settings ###
 
@@ -62,7 +55,6 @@ input:
     type: {graphrag_config_defaults.input.storage.type.value} # or blob
     base_dir: "{graphrag_config_defaults.input.storage.base_dir}"
   file_type: {graphrag_config_defaults.input.file_type.value} # [csv, text, json]
-  
 
 chunks:
   size: {graphrag_config_defaults.chunks.size}
@@ -90,7 +82,6 @@ vector_store:
     type: {vector_store_defaults.type}
     db_uri: {vector_store_defaults.db_uri}
     container_name: {vector_store_defaults.container_name}
-    overwrite: {vector_store_defaults.overwrite}
 
 ### Workflow settings ###
 
