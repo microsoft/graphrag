@@ -69,7 +69,7 @@ dependencies = [
     "litellm>=1.77.1",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "coverage>=7.6.9",
     "ipykernel>=6.29.5",
