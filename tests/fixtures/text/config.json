@@ -13,8 +13,8 @@
         },
         "finalize_graph": {
             "row_range": [
-                1,
-                500
+                10,
+                200
             ],
             "nan_allowed_columns": [
                 "x",
@@ -28,7 +28,7 @@
         },
         "extract_covariates": {
             "row_range": [
-                1,
+                10,
                 100
             ],
             "nan_allowed_columns": [
@@ -115,10 +115,6 @@
         {
             "query": "What is the major conflict in this story and who are the protagonist and antagonist?",
             "method": "global"
-        },
-        {
-            "query": "What is the main theme of the story?",
-            "method": "drift"
         },
         {
             "query": "Who is Jordan Hayes?",

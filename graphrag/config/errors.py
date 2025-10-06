@@ -33,15 +33,6 @@ class AzureApiVersionMissingError(ValueError):
         super().__init__(msg)
 
 
-class AzureDeploymentNameMissingError(ValueError):
-    """Azure Deployment Name missing error."""
-
-    def __init__(self, llm_type: str) -> None:
-        """Init method definition."""
-        msg = f"Deployment name is required for {llm_type}. Please rerun `graphrag init` set the deployment_name."
-        super().__init__(msg)
-
-
 class LanguageModelConfigMissingError(ValueError):
     """Missing model configuration error."""
 
