@@ -21,16 +21,20 @@ class IncrementalWaitRetry(Retry):
         self,
         *,
         max_retry_wait: float,
-        max_attempts: int = 5,
+        max_retries: int = 5,
         **kwargs: Any,
     ):
-        if max_attempts <= 0 or max_retry_wait <= 0:
-            msg = "max_attempts and max_retry_wait must be greater than 0."
+        if max_retries <= 0:
+            msg = "max_retries must be greater than 0."
             raise ValueError(msg)
 
-        self._max_attempts = max_attempts
+        if max_retry_wait <= 0:
+            msg = "max_retry_wait must be greater than 0."
+            raise ValueError(msg)
+
+        self._max_retries = max_retries
         self._max_retry_wait = max_retry_wait
-        self._increment = max_retry_wait / max_attempts
+        self._increment = max_retry_wait / max_retries
 
     def retry(self, func: Callable[..., Any], **kwargs: Any) -> Any:
         """Retry a synchronous function."""
@@ -40,15 +44,15 @@ class IncrementalWaitRetry(Retry):
             try:
                 return func(**kwargs)
             except Exception as e:
-                if retries >= self._max_attempts:
+                if retries >= self._max_retries:
                     logger.exception(
-                        f"IncrementalWaitRetry: Max retries exceeded, retries={retries}, max_retries={self._max_attempts}, exception={e}",  # noqa: G004, TRY401
+                        f"IncrementalWaitRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                     )
                     raise
                 retries += 1
                 delay += self._increment
                 logger.exception(
-                    f"IncrementalWaitRetry: Request failed, retrying after incremental delay, retries={retries}, delay={delay}, max_retries={self._max_attempts}, exception={e}",  # noqa: G004, TRY401
+                    f"IncrementalWaitRetry: Request failed, retrying after incremental delay, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                 )
                 time.sleep(delay)
 
@@ -64,14 +68,14 @@ class IncrementalWaitRetry(Retry):
             try:
                 return await func(**kwargs)
             except Exception as e:
-                if retries >= self._max_attempts:
+                if retries >= self._max_retries:
                     logger.exception(
-                        f"IncrementalWaitRetry: Max retries exceeded, retries={retries}, max_retries={self._max_attempts}, exception={e}",  # noqa: G004, TRY401
+                        f"IncrementalWaitRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                     )
                     raise
                 retries += 1
                 delay += self._increment
                 logger.exception(
-                    f"IncrementalWaitRetry: Request failed, retrying after incremental delay, retries={retries}, delay={delay}, max_retries={self._max_attempts}, exception={e}",  # noqa: G004, TRY401
+                    f"IncrementalWaitRetry: Request failed, retrying after incremental delay, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                 )
                 await asyncio.sleep(delay)
