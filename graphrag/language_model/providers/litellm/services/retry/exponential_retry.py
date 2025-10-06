@@ -21,20 +21,20 @@ class ExponentialRetry(Retry):
     def __init__(
         self,
         *,
-        max_attempts: int = 5,
+        max_retries: int = 5,
         base_delay: float = 2.0,
         jitter: bool = True,
         **kwargs: Any,
     ):
-        if max_attempts <= 0:
-            msg = "max_attempts must be greater than 0."
+        if max_retries <= 0:
+            msg = "max_retries must be greater than 0."
             raise ValueError(msg)
 
         if base_delay <= 1.0:
             msg = "base_delay must be greater than 1.0."
             raise ValueError(msg)
 
-        self._max_attempts = max_attempts
+        self._max_retries = max_retries
         self._base_delay = base_delay
         self._jitter = jitter
 
@@ -46,15 +46,15 @@ class ExponentialRetry(Retry):
             try:
                 return func(**kwargs)
             except Exception as e:
-                if retries >= self._max_attempts:
+                if retries >= self._max_retries:
                     logger.exception(
-                        f"ExponentialRetry: Max retries exceeded, retries={retries}, max_retries={self._max_attempts}, exception={e}",  # noqa: G004, TRY401
+                        f"ExponentialRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                     )
                     raise
                 retries += 1
                 delay *= self._base_delay
                 logger.exception(
-                    f"ExponentialRetry: Request failed, retrying, retries={retries}, delay={delay}, max_retries={self._max_attempts}, exception={e}",  # noqa: G004, TRY401
+                    f"ExponentialRetry: Request failed, retrying, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                 )
                 time.sleep(delay + (self._jitter * random.uniform(0, 1)))  # noqa: S311
 
@@ -70,14 +70,14 @@ class ExponentialRetry(Retry):
             try:
                 return await func(**kwargs)
             except Exception as e:
-                if retries >= self._max_attempts:
+                if retries >= self._max_retries:
                     logger.exception(
-                        f"ExponentialRetry: Max retries exceeded, retries={retries}, max_retries={self._max_attempts}, exception={e}",  # noqa: G004, TRY401
+                        f"ExponentialRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                     )
                     raise
                 retries += 1
                 delay *= self._base_delay
                 logger.exception(
-                    f"ExponentialRetry: Request failed, retrying, retries={retries}, delay={delay}, max_retries={self._max_attempts}, exception={e}",  # noqa: G004, TRY401
+                    f"ExponentialRetry: Request failed, retrying, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                 )
                 await asyncio.sleep(delay + (self._jitter * random.uniform(0, 1)))  # noqa: S311
