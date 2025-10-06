@@ -53,6 +53,7 @@ DEFAULT_EMBEDDING_MODEL_ID = "default_embedding_model"
 DEFAULT_EMBEDDING_MODEL_TYPE = ModelType.Embedding
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
 DEFAULT_EMBEDDING_MODEL_AUTH_TYPE = AuthType.APIKey
+DEFAULT_MODEL_PROVIDER = "openai"
 DEFAULT_VECTOR_STORE_ID = "default_vector_store"
 
 ENCODING_MODEL = "cl100k_base"

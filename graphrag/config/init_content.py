@@ -20,7 +20,7 @@ INIT_YAML = f"""\
 models:
   {defs.DEFAULT_CHAT_MODEL_ID}:
     type: {defs.DEFAULT_CHAT_MODEL_TYPE.value}
-    model_provider: openai
+    model_provider: {defs.DEFAULT_MODEL_PROVIDER}
     auth_type: {defs.DEFAULT_CHAT_MODEL_AUTH_TYPE.value} # or azure_managed_identity
     api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file, or remove if managed identity
     model: {defs.DEFAULT_CHAT_MODEL}
@@ -35,7 +35,7 @@ models:
     requests_per_minute: null
   {defs.DEFAULT_EMBEDDING_MODEL_ID}:
     type: {defs.DEFAULT_EMBEDDING_MODEL_TYPE.value}
-    model_provider: openai
+    model_provider: {defs.DEFAULT_MODEL_PROVIDER}
     auth_type: {defs.DEFAULT_EMBEDDING_MODEL_AUTH_TYPE.value}
     api_key: ${{GRAPHRAG_API_KEY}}
     model: {defs.DEFAULT_EMBEDDING_MODEL}
