@@ -42,7 +42,7 @@ dependencies = [
     "fnllm[azure,openai]>=0.4.1",
     "json-repair>=0.30.3",
     "openai>=1.68.0",
-    "nltk==3.9.1",
+    "nltk==3.9.2",
     "tiktoken>=0.11.0",
     # Data-Science
     "numpy>=1.25.2",
