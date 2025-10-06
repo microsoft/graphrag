@@ -98,6 +98,14 @@ class LanguageModelConfig(BaseModel):
         if not ModelFactory.is_supported_model(self.type):
             msg = f"Model type {self.type} is not recognized, must be one of {ModelFactory.get_chat_models() + ModelFactory.get_embedding_models()}."
             raise KeyError(msg)
+        if self.type in [
+            "openai_chat",
+            "openai_embedding",
+            "azure_openai_chat",
+            "azure_openai_embedding",
+        ]:
+            msg = f"Model config based on fnllm is deprecated and will be removed in GraphRAG v3, please use {ModelType.Chat} or {ModelType.Embedding} instead to switch to LiteLLM config."
+            logger.warning(msg)
 
     model_provider: str | None = Field(
         description="The model provider to use.",
