@@ -8,10 +8,12 @@ import graphrag.data_model.schemas as schemas
 from graphrag.index.operations.summarize_communities.graph_context.sort_context import (
     sort_context,
 )
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
-def build_mixed_context(context: list[dict], max_context_tokens: int) -> str:
+def build_mixed_context(
+    context: list[dict], tokenizer: Tokenizer, max_context_tokens: int
+) -> str:
     """
     Build parent context by concatenating all sub-communities' contexts.
 
@@ -45,9 +47,10 @@ def build_mixed_context(context: list[dict], max_context_tokens: int) -> str:
                 remaining_local_context.extend(sorted_context[rid][schemas.ALL_CONTEXT])
             new_context_string = sort_context(
                 local_context=remaining_local_context + final_local_contexts,
+                tokenizer=tokenizer,
                 sub_community_reports=substitute_reports,
             )
-            if num_tokens(new_context_string) <= max_context_tokens:
+            if tokenizer.num_tokens(new_context_string) <= max_context_tokens:
                 exceeded_limit = False
                 context_string = new_context_string
                 break
@@ -63,7 +66,7 @@ def build_mixed_context(context: list[dict], max_context_tokens: int) -> str:
             new_context_string = pd.DataFrame(substitute_reports).to_csv(
                 index=False, sep=","
             )
-            if num_tokens(new_context_string) > max_context_tokens:
+            if tokenizer.num_tokens(new_context_string) > max_context_tokens:
                 break
 
             context_string = new_context_string

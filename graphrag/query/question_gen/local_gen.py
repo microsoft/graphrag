@@ -17,7 +17,6 @@ from graphrag.query.context_builder.builders import (
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
-from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.question_gen.base import BaseQuestionGen, QuestionResult
 from graphrag.tokenizer.tokenizer import Tokenizer
 
@@ -117,7 +116,7 @@ class LocalQuestionGen(BaseQuestionGen):
                 },
                 completion_time=time.time() - start_time,
                 llm_calls=1,
-                prompt_tokens=num_tokens(system_prompt, self.tokenizer),
+                prompt_tokens=self.tokenizer.num_tokens(system_prompt),
             )
 
         except Exception:
@@ -127,7 +126,7 @@ class LocalQuestionGen(BaseQuestionGen):
                 context_data=context_records,
                 completion_time=time.time() - start_time,
                 llm_calls=1,
-                prompt_tokens=num_tokens(system_prompt, self.tokenizer),
+                prompt_tokens=self.tokenizer.num_tokens(system_prompt),
             )
 
     async def generate(
@@ -200,7 +199,7 @@ class LocalQuestionGen(BaseQuestionGen):
                 },
                 completion_time=time.time() - start_time,
                 llm_calls=1,
-                prompt_tokens=num_tokens(system_prompt, self.tokenizer),
+                prompt_tokens=self.tokenizer.num_tokens(system_prompt),
             )
 
         except Exception:
@@ -210,5 +209,5 @@ class LocalQuestionGen(BaseQuestionGen):
                 context_data=context_records,
                 completion_time=time.time() - start_time,
                 llm_calls=1,
-                prompt_tokens=num_tokens(system_prompt, self.tokenizer),
+                prompt_tokens=self.tokenizer.num_tokens(system_prompt),
             )

@@ -18,13 +18,6 @@ from graphrag.tokenizer.tokenizer import Tokenizer
 logger = logging.getLogger(__name__)
 
 
-def num_tokens(text: str, tokenizer: Tokenizer | None = None) -> int:
-    """Return the number of tokens in the given text."""
-    if tokenizer is None:
-        tokenizer = get_tokenizer(encoding_model=defs.ENCODING_MODEL)
-    return len(tokenizer.encode(text))  # type: ignore
-
-
 def batched(iterable: Iterator, n: int):
     """
     Batch data into tuples of length n. The last batch may be shorter.

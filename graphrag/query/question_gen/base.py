@@ -12,6 +12,7 @@ from graphrag.query.context_builder.builders import (
     GlobalContextBuilder,
     LocalContextBuilder,
 )
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
 
 
@@ -39,7 +40,7 @@ class BaseQuestionGen(ABC):
     ):
         self.model = model
         self.context_builder = context_builder
-        self.tokenizer = tokenizer
+        self.tokenizer = tokenizer or get_tokenizer(model.config)
         self.model_params = model_params or {}
         self.context_builder_params = context_builder_params or {}
 
