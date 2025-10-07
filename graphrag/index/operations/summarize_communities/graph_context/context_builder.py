@@ -30,7 +30,7 @@ from graphrag.index.utils.dataframes import (
     where_column_equals,
 )
 from graphrag.logger.progress import progress_iterable
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +39,7 @@ def build_local_context(
     nodes,
     edges,
     claims,
+    tokenizer: Tokenizer,
     callbacks: WorkflowCallbacks,
     max_context_tokens: int = 16_000,
 ):
@@ -49,7 +50,7 @@ def build_local_context(
 
     for level in progress_iterable(levels, callbacks.progress, len(levels)):
         communities_at_level_df = _prepare_reports_at_level(
-            nodes, edges, claims, level, max_context_tokens
+            nodes, edges, claims, tokenizer, level, max_context_tokens
         )
 
         communities_at_level_df.loc[:, schemas.COMMUNITY_LEVEL] = level
@@ -63,6 +64,7 @@ def _prepare_reports_at_level(
     node_df: pd.DataFrame,
     edge_df: pd.DataFrame,
     claim_df: pd.DataFrame | None,
+    tokenizer: Tokenizer,
     level: int,
     max_context_tokens: int = 16_000,
 ) -> pd.DataFrame:
@@ -181,6 +183,7 @@ def _prepare_reports_at_level(
     # Generate community-level context strings using vectorized batch processing
     return parallel_sort_context_batch(
         community_df,
+        tokenizer=tokenizer,
         max_context_tokens=max_context_tokens,
     )
 
@@ -189,6 +192,7 @@ def build_level_context(
     report_df: pd.DataFrame | None,
     community_hierarchy_df: pd.DataFrame,
     local_context_df: pd.DataFrame,
+    tokenizer: Tokenizer,
     level: int,
     max_context_tokens: int,
 ) -> pd.DataFrame:
@@ -219,11 +223,11 @@ def build_level_context(
 
     if report_df is None or report_df.empty:
         invalid_context_df.loc[:, schemas.CONTEXT_STRING] = _sort_and_trim_context(
-            invalid_context_df, max_context_tokens
+            invalid_context_df, tokenizer, max_context_tokens
         )
         invalid_context_df[schemas.CONTEXT_SIZE] = invalid_context_df.loc[
             :, schemas.CONTEXT_STRING
-        ].map(num_tokens)
+        ].map(tokenizer.num_tokens)
         invalid_context_df[schemas.CONTEXT_EXCEED_FLAG] = False
         return union(valid_context_df, invalid_context_df)
 
@@ -237,6 +241,7 @@ def build_level_context(
         invalid_context_df,
         sub_context_df,
         community_hierarchy_df,
+        tokenizer,
         max_context_tokens,
     )
 
@@ -244,11 +249,13 @@ def build_level_context(
     # this should be rare, but if it happens, we will just trim the local context to fit the limit
     remaining_df = _antijoin_reports(invalid_context_df, community_df)
     remaining_df.loc[:, schemas.CONTEXT_STRING] = _sort_and_trim_context(
-        remaining_df, max_context_tokens
+        remaining_df, tokenizer, max_context_tokens
     )
 
     result = union(valid_context_df, community_df, remaining_df)
-    result[schemas.CONTEXT_SIZE] = result.loc[:, schemas.CONTEXT_STRING].map(num_tokens)
+    result[schemas.CONTEXT_SIZE] = result.loc[:, schemas.CONTEXT_STRING].map(
+        tokenizer.num_tokens
+    )
 
     result[schemas.CONTEXT_EXCEED_FLAG] = False
     return result
@@ -269,19 +276,29 @@ def _antijoin_reports(df: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
     return antijoin(df, reports, schemas.COMMUNITY_ID)
 
 
-def _sort_and_trim_context(df: pd.DataFrame, max_context_tokens: int) -> pd.Series:
+def _sort_and_trim_context(
+    df: pd.DataFrame, tokenizer: Tokenizer, max_context_tokens: int
+) -> pd.Series:
     """Sort and trim context to fit the limit."""
     series = cast("pd.Series", df[schemas.ALL_CONTEXT])
     return transform_series(
-        series, lambda x: sort_context(x, max_context_tokens=max_context_tokens)
+        series,
+        lambda x: sort_context(
+            x, tokenizer=tokenizer, max_context_tokens=max_context_tokens
+        ),
     )
 
 
-def _build_mixed_context(df: pd.DataFrame, max_context_tokens: int) -> pd.Series:
+def _build_mixed_context(
+    df: pd.DataFrame, tokenizer: Tokenizer, max_context_tokens: int
+) -> pd.Series:
     """Sort and trim context to fit the limit."""
     series = cast("pd.Series", df[schemas.ALL_CONTEXT])
     return transform_series(
-        series, lambda x: build_mixed_context(x, max_context_tokens=max_context_tokens)
+        series,
+        lambda x: build_mixed_context(
+            x, tokenizer, max_context_tokens=max_context_tokens
+        ),
     )
 
 
@@ -303,6 +320,7 @@ def _get_community_df(
     invalid_context_df: pd.DataFrame,
     sub_context_df: pd.DataFrame,
     community_hierarchy_df: pd.DataFrame,
+    tokenizer: Tokenizer,
     max_context_tokens: int,
 ) -> pd.DataFrame:
     """Get community context for each community."""
@@ -338,7 +356,7 @@ def _get_community_df(
         .reset_index()
     )
     community_df[schemas.CONTEXT_STRING] = _build_mixed_context(
-        community_df, max_context_tokens
+        community_df, tokenizer, max_context_tokens
     )
     community_df[schemas.COMMUNITY_LEVEL] = level
     return community_df

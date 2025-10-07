@@ -69,7 +69,7 @@ dependencies = [
     "litellm>=1.77.1",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "coverage>=7.6.9",
     "ipykernel>=6.29.5",
@@ -239,6 +239,7 @@ ignore = [
     "PERF203", # Needs restructuring of errors, we should bail-out on first error
     "C901",    # needs refactoring to remove cyclomatic complexity
     "B008", # Needs to restructure our cli params with Typer into constants
+    "ASYNC240"
 ]
 
 [tool.ruff.lint.per-file-ignores]
