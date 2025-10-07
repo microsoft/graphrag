@@ -81,9 +81,7 @@ def test_register_and_create_custom_vector_store():
     )
 
     vector_store = VectorStoreFactory.create_vector_store(
-        vector_store_type="custom",
-        vector_store_schema_config=VectorStoreSchemaConfig(),
-        kwargs={},
+        vector_store_type="custom", vector_store_schema_config=VectorStoreSchemaConfig()
     )
 
     assert custom_vector_store_class.called
@@ -109,7 +107,6 @@ def test_create_unknown_vector_store():
         VectorStoreFactory.create_vector_store(
             vector_store_type="unknown",
             vector_store_schema_config=VectorStoreSchemaConfig(),
-            kwargs={},
         )
 
 
@@ -162,7 +159,6 @@ def test_register_class_directly_works():
     vector_store = VectorStoreFactory.create_vector_store(
         vector_store_type="custom_class",
         vector_store_schema_config=VectorStoreSchemaConfig(),
-        kwargs={"collection_name": "test"},
     )
 
     assert isinstance(vector_store, CustomVectorStore)

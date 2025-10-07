@@ -18,7 +18,7 @@ from graphrag.index.operations.summarize_communities.text_unit_context.prep_text
 from graphrag.index.operations.summarize_communities.text_unit_context.sort_context import (
     sort_context,
 )
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,7 @@ def build_local_context(
     community_membership_df: pd.DataFrame,
     text_units_df: pd.DataFrame,
     node_df: pd.DataFrame,
+    tokenizer: Tokenizer,
     max_context_tokens: int = 16000,
 ) -> pd.DataFrame:
     """
@@ -69,10 +70,10 @@ def build_local_context(
         .reset_index()
     )
     context_df[schemas.CONTEXT_STRING] = context_df[schemas.ALL_CONTEXT].apply(
-        lambda x: sort_context(x)
+        lambda x: sort_context(x, tokenizer)
     )
     context_df[schemas.CONTEXT_SIZE] = context_df[schemas.CONTEXT_STRING].apply(
-        lambda x: num_tokens(x)
+        lambda x: tokenizer.num_tokens(x)
     )
     context_df[schemas.CONTEXT_EXCEED_FLAG] = context_df[schemas.CONTEXT_SIZE].apply(
         lambda x: x > max_context_tokens
@@ -86,6 +87,7 @@ def build_level_context(
     community_hierarchy_df: pd.DataFrame,
     local_context_df: pd.DataFrame,
     level: int,
+    tokenizer: Tokenizer,
     max_context_tokens: int = 16000,
 ) -> pd.DataFrame:
     """
@@ -116,10 +118,12 @@ def build_level_context(
 
         invalid_context_df.loc[:, [schemas.CONTEXT_STRING]] = invalid_context_df[
             schemas.ALL_CONTEXT
-        ].apply(lambda x: sort_context(x, max_context_tokens=max_context_tokens))
+        ].apply(
+            lambda x: sort_context(x, tokenizer, max_context_tokens=max_context_tokens)
+        )
         invalid_context_df.loc[:, [schemas.CONTEXT_SIZE]] = invalid_context_df[
             schemas.CONTEXT_STRING
-        ].apply(lambda x: num_tokens(x))
+        ].apply(lambda x: tokenizer.num_tokens(x))
         invalid_context_df.loc[:, [schemas.CONTEXT_EXCEED_FLAG]] = False
 
         return pd.concat([valid_context_df, invalid_context_df])
@@ -199,10 +203,10 @@ def build_level_context(
         .reset_index()
     )
     community_df[schemas.CONTEXT_STRING] = community_df[schemas.ALL_CONTEXT].apply(
-        lambda x: build_mixed_context(x, max_context_tokens)
+        lambda x: build_mixed_context(x, tokenizer, max_context_tokens)
     )
     community_df[schemas.CONTEXT_SIZE] = community_df[schemas.CONTEXT_STRING].apply(
-        lambda x: num_tokens(x)
+        lambda x: tokenizer.num_tokens(x)
     )
     community_df[schemas.CONTEXT_EXCEED_FLAG] = False
     community_df[schemas.COMMUNITY_LEVEL] = level
@@ -220,10 +224,10 @@ def build_level_context(
     )
     remaining_df[schemas.CONTEXT_STRING] = cast(
         "pd.DataFrame", remaining_df[schemas.ALL_CONTEXT]
-    ).apply(lambda x: sort_context(x, max_context_tokens=max_context_tokens))
+    ).apply(lambda x: sort_context(x, tokenizer, max_context_tokens=max_context_tokens))
     remaining_df[schemas.CONTEXT_SIZE] = cast(
         "pd.DataFrame", remaining_df[schemas.CONTEXT_STRING]
-    ).apply(lambda x: num_tokens(x))
+    ).apply(lambda x: tokenizer.num_tokens(x))
     remaining_df[schemas.CONTEXT_EXCEED_FLAG] = False
 
     return cast(

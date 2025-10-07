@@ -7,9 +7,9 @@ import json
 from dataclasses import dataclass
 
 from graphrag.index.typing.error_handler import ErrorHandlerFn
-from graphrag.index.utils.tokens import num_tokens_from_string
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 # these tokens are used in the prompt
 ENTITY_NAME_KEY = "entity_name"
@@ -45,7 +45,7 @@ class SummarizeExtractor:
         """Init method definition."""
         # TODO: streamline construction
         self._model = model_invoker
-
+        self._tokenizer = get_tokenizer(model_invoker.config)
         self._summarization_prompt = summarization_prompt or SUMMARIZE_PROMPT
         self._on_error = on_error or (lambda _e, _s, _d: None)
         self._max_summary_length = max_summary_length
@@ -85,14 +85,14 @@ class SummarizeExtractor:
             descriptions = sorted(descriptions)
 
         # Iterate over descriptions, adding all until the max input tokens is reached
-        usable_tokens = self._max_input_tokens - num_tokens_from_string(
+        usable_tokens = self._max_input_tokens - self._tokenizer.num_tokens(
             self._summarization_prompt
         )
         descriptions_collected = []
         result = ""
 
         for i, description in enumerate(descriptions):
-            usable_tokens -= num_tokens_from_string(description)
+            usable_tokens -= self._tokenizer.num_tokens(description)
             descriptions_collected.append(description)
 
             # If buffer is full, or all descriptions have been added, summarize
@@ -109,8 +109,8 @@ class SummarizeExtractor:
                     descriptions_collected = [result]
                     usable_tokens = (
                         self._max_input_tokens
-                        - num_tokens_from_string(self._summarization_prompt)
-                        - num_tokens_from_string(result)
+                        - self._tokenizer.num_tokens(self._summarization_prompt)
+                        - self._tokenizer.num_tokens(result)
                     )
 
         return result

@@ -5,11 +5,12 @@
 import pandas as pd
 
 import graphrag.data_model.schemas as schemas
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 def sort_context(
     local_context: list[dict],
+    tokenizer: Tokenizer,
     sub_community_reports: list[dict] | None = None,
     max_context_tokens: int | None = None,
     node_name_column: str = schemas.TITLE,
@@ -112,7 +113,10 @@ def sort_context(
         new_context_string = _get_context_string(
             sorted_nodes, sorted_edges, sorted_claims, sub_community_reports
         )
-        if max_context_tokens and num_tokens(new_context_string) > max_context_tokens:
+        if (
+            max_context_tokens
+            and tokenizer.num_tokens(new_context_string) > max_context_tokens
+        ):
             break
         context_string = new_context_string
 
@@ -122,7 +126,9 @@ def sort_context(
     )
 
 
-def parallel_sort_context_batch(community_df, max_context_tokens, parallel=False):
+def parallel_sort_context_batch(
+    community_df, tokenizer: Tokenizer, max_context_tokens, parallel=False
+):
     """Calculate context using parallelization if enabled."""
     if parallel:
         # Use ThreadPoolExecutor for parallel execution
@@ -131,7 +137,9 @@ def parallel_sort_context_batch(community_df, max_context_tokens, parallel=False
         with ThreadPoolExecutor(max_workers=None) as executor:
             context_strings = list(
                 executor.map(
-                    lambda x: sort_context(x, max_context_tokens=max_context_tokens),
+                    lambda x: sort_context(
+                        x, tokenizer, max_context_tokens=max_context_tokens
+                    ),
                     community_df[schemas.ALL_CONTEXT],
                 )
             )
@@ -141,13 +149,13 @@ def parallel_sort_context_batch(community_df, max_context_tokens, parallel=False
         # Assign context strings directly to the DataFrame
         community_df[schemas.CONTEXT_STRING] = community_df[schemas.ALL_CONTEXT].apply(
             lambda context_list: sort_context(
-                context_list, max_context_tokens=max_context_tokens
+                context_list, tokenizer, max_context_tokens=max_context_tokens
             )
         )
 
     # Calculate other columns
     community_df[schemas.CONTEXT_SIZE] = community_df[schemas.CONTEXT_STRING].apply(
-        num_tokens
+        tokenizer.num_tokens
     )
     community_df[schemas.CONTEXT_EXCEED_FLAG] = (
         community_df[schemas.CONTEXT_SIZE] > max_context_tokens

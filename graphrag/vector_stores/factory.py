@@ -53,7 +53,7 @@ class VectorStoreFactory:
         cls,
         vector_store_type: str,
         vector_store_schema_config: VectorStoreSchemaConfig,
-        kwargs: dict,
+        **kwargs: dict,
     ) -> BaseVectorStore:
         """Create a vector store object from the provided type.
 

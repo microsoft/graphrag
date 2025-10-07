@@ -13,6 +13,7 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.operations.finalize_community_reports import (
     finalize_community_reports,
 )
@@ -28,6 +29,7 @@ from graphrag.index.operations.summarize_communities.summarize_communities impor
 )
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.utils.storage import (
     load_table_from_storage,
     storage_has_table,
@@ -102,6 +104,9 @@ async def create_community_reports(
 
     summarization_strategy["extraction_prompt"] = summarization_strategy["graph_prompt"]
 
+    model_config = LanguageModelConfig(**summarization_strategy["llm"])
+    tokenizer = get_tokenizer(model_config)
+
     max_input_length = summarization_strategy.get(
         "max_input_length", graphrag_config_defaults.community_reports.max_input_length
     )
@@ -110,6 +115,7 @@ async def create_community_reports(
         nodes,
         edges,
         claims,
+        tokenizer,
         callbacks,
         max_input_length,
     )
@@ -122,6 +128,7 @@ async def create_community_reports(
         callbacks,
         cache,
         summarization_strategy,
+        tokenizer=tokenizer,
         max_input_length=max_input_length,
         async_mode=async_mode,
         num_threads=num_threads,

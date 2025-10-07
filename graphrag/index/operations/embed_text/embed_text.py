@@ -210,7 +210,7 @@ def _create_vector_store(
     vector_store = VectorStoreFactory().create_vector_store(
         vector_store_schema_config=single_embedding_config,
         vector_store_type=vector_store_type,
-        kwargs=vector_store_config,
+        **vector_store_config,
     )
 
     vector_store.connect(**vector_store_config)

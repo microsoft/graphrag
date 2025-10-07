@@ -94,7 +94,7 @@ class TokenTextSplitter(TextSplitter):
 
     def num_tokens(self, text: str) -> int:
         """Return the number of tokens in a string."""
-        return len(self._tokenizer.encode(text))
+        return self._tokenizer.num_tokens(text)
 
     def split_text(self, text: str | list[str]) -> list[str]:
         """Split text method."""

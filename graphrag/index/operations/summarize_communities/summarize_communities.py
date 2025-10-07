@@ -23,6 +23,7 @@ from graphrag.index.operations.summarize_communities.utils import (
 )
 from graphrag.index.utils.derive_from_rows import derive_from_rows
 from graphrag.logger.progress import progress_ticker
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,7 @@ async def summarize_communities(
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     strategy: dict,
+    tokenizer: Tokenizer,
     max_input_length: int,
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
@@ -44,7 +46,6 @@ async def summarize_communities(
     tick = progress_ticker(callbacks.progress, len(local_contexts))
     strategy_exec = load_strategy(strategy["type"])
     strategy_config = {**strategy}
-
     community_hierarchy = (
         communities.explode("children")
         .rename({"children": "sub_community"}, axis=1)
@@ -60,6 +61,7 @@ async def summarize_communities(
             community_hierarchy_df=community_hierarchy,
             local_context_df=local_contexts,
             level=level,
+            tokenizer=tokenizer,
             max_context_tokens=max_input_length,
         )
         level_contexts.append(level_context)

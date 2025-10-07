@@ -67,7 +67,7 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
-          uv sync --extra dev
+          uv sync
           uv pip install gensim
 
       - name: Build

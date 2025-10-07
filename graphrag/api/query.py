@@ -231,6 +231,10 @@ async def multi_index_global_search(
     """
     init_loggers(config=config, verbose=verbose, filename="query.log")
 
+    logger.warning(
+        "Multi-index search is deprecated and will be removed in GraphRAG v3."
+    )
+
     # Streaming not supported yet
     if streaming:
         message = "Streaming not yet implemented for multi_global_search"
@@ -510,6 +514,9 @@ async def multi_index_local_search(
     """
     init_loggers(config=config, verbose=verbose, filename="query.log")
 
+    logger.warning(
+        "Multi-index search is deprecated and will be removed in GraphRAG v3."
+    )
     # Streaming not supported yet
     if streaming:
         message = "Streaming not yet implemented for multi_index_local_search"
@@ -874,6 +881,10 @@ async def multi_index_drift_search(
     """
     init_loggers(config=config, verbose=verbose, filename="query.log")
 
+    logger.warning(
+        "Multi-index search is deprecated and will be removed in GraphRAG v3."
+    )
+
     # Streaming not supported yet
     if streaming:
         message = "Streaming not yet implemented for multi_drift_search"
@@ -1165,6 +1176,10 @@ async def multi_index_basic_search(
     TODO: Document the search response type and format.
     """
     init_loggers(config=config, verbose=verbose, filename="query.log")
+
+    logger.warning(
+        "Multi-index search is deprecated and will be removed in GraphRAG v3."
+    )
 
     # Streaming not supported yet
     if streaming:
