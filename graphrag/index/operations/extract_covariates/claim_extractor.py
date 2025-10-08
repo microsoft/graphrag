@@ -13,10 +13,16 @@ from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_claims import (
     CONTINUE_PROMPT,
-    EXTRACT_CLAIMS_PROMPT,
     LOOP_PROMPT,
 )
 
+INPUT_TEXT_KEY = "input_text"
+INPUT_ENTITY_SPEC_KEY = "entity_specs"
+INPUT_CLAIM_DESCRIPTION_KEY = "claim_description"
+INPUT_RESOLVED_ENTITIES_KEY = "resolved_entities"
+TUPLE_DELIMITER_KEY = "tuple_delimiter"
+RECORD_DELIMITER_KEY = "record_delimiter"
+COMPLETION_DELIMITER_KEY = "completion_delimiter"
 DEFAULT_TUPLE_DELIMITER = "<|>"
 DEFAULT_RECORD_DELIMITER = "##"
 DEFAULT_COMPLETION_DELIMITER = "<|COMPLETE|>"
@@ -36,47 +42,19 @@ class ClaimExtractor:
 
     _model: ChatModel
     _extraction_prompt: str
-    _summary_prompt: str
-    _output_formatter_prompt: str
-    _input_text_key: str
-    _input_entity_spec_key: str
-    _input_claim_description_key: str
-    _tuple_delimiter_key: str
-    _record_delimiter_key: str
-    _completion_delimiter_key: str
     _max_gleanings: int
     _on_error: ErrorHandlerFn
 
     def __init__(
         self,
-        model_invoker: ChatModel,
-        extraction_prompt: str | None = None,
-        input_text_key: str | None = None,
-        input_entity_spec_key: str | None = None,
-        input_claim_description_key: str | None = None,
-        input_resolved_entities_key: str | None = None,
-        tuple_delimiter_key: str | None = None,
-        record_delimiter_key: str | None = None,
-        completion_delimiter_key: str | None = None,
+        model: ChatModel,
+        extraction_prompt: str,
         max_gleanings: int | None = None,
         on_error: ErrorHandlerFn | None = None,
     ):
         """Init method definition."""
-        self._model = model_invoker
-        self._extraction_prompt = extraction_prompt or EXTRACT_CLAIMS_PROMPT
-        self._input_text_key = input_text_key or "input_text"
-        self._input_entity_spec_key = input_entity_spec_key or "entity_specs"
-        self._tuple_delimiter_key = tuple_delimiter_key or "tuple_delimiter"
-        self._record_delimiter_key = record_delimiter_key or "record_delimiter"
-        self._completion_delimiter_key = (
-            completion_delimiter_key or "completion_delimiter"
-        )
-        self._input_claim_description_key = (
-            input_claim_description_key or "claim_description"
-        )
-        self._input_resolved_entities_key = (
-            input_resolved_entities_key or "resolved_entities"
-        )
+        self._model = model
+        self._extraction_prompt = extraction_prompt
         self._max_gleanings = (
             max_gleanings
             if max_gleanings is not None
@@ -85,28 +63,21 @@ class ClaimExtractor:
         self._on_error = on_error or (lambda _e, _s, _d: None)
 
     async def __call__(
-        self, inputs: dict[str, Any], prompt_variables: dict | None = None
+        self,
+        texts,
+        entity_spec,
+        resolved_entities,
+        claim_description,
     ) -> ClaimExtractorResult:
         """Call method definition."""
-        if prompt_variables is None:
-            prompt_variables = {}
-        texts = inputs[self._input_text_key]
-        entity_spec = str(inputs[self._input_entity_spec_key])
-        claim_description = inputs[self._input_claim_description_key]
-        resolved_entities = inputs.get(self._input_resolved_entities_key, {})
         source_doc_map = {}
 
         prompt_args = {
-            self._input_entity_spec_key: entity_spec,
-            self._input_claim_description_key: claim_description,
-            self._tuple_delimiter_key: prompt_variables.get(self._tuple_delimiter_key)
-            or DEFAULT_TUPLE_DELIMITER,
-            self._record_delimiter_key: prompt_variables.get(self._record_delimiter_key)
-            or DEFAULT_RECORD_DELIMITER,
-            self._completion_delimiter_key: prompt_variables.get(
-                self._completion_delimiter_key
-            )
-            or DEFAULT_COMPLETION_DELIMITER,
+            INPUT_ENTITY_SPEC_KEY: entity_spec,
+            INPUT_CLAIM_DESCRIPTION_KEY: claim_description,
+            TUPLE_DELIMITER_KEY: DEFAULT_TUPLE_DELIMITER,
+            RECORD_DELIMITER_KEY: DEFAULT_RECORD_DELIMITER,
+            COMPLETION_DELIMITER_KEY: DEFAULT_COMPLETION_DELIMITER,
         }
 
         all_claims: list[dict] = []
@@ -149,21 +120,14 @@ class ClaimExtractor:
     async def _process_document(
         self, prompt_args: dict, doc, doc_index: int
     ) -> list[dict]:
-        record_delimiter = prompt_args.get(
-            self._record_delimiter_key, DEFAULT_RECORD_DELIMITER
-        )
-        completion_delimiter = prompt_args.get(
-            self._completion_delimiter_key, DEFAULT_COMPLETION_DELIMITER
-        )
-
         response = await self._model.achat(
             self._extraction_prompt.format(**{
-                self._input_text_key: doc,
+                INPUT_TEXT_KEY: doc,
                 **prompt_args,
             })
         )
         results = response.output.content or ""
-        claims = results.strip().removesuffix(completion_delimiter)
+        claims = results.strip().removesuffix(DEFAULT_COMPLETION_DELIMITER)
 
         # if gleanings are specified, enter a loop to extract more claims
         # there are two exit criteria: (a) we hit the configured max, (b) the model says there are no more claims
@@ -175,8 +139,8 @@ class ClaimExtractor:
                     history=response.history,
                 )
                 extension = response.output.content or ""
-                claims += record_delimiter + extension.strip().removesuffix(
-                    completion_delimiter
+                claims += DEFAULT_RECORD_DELIMITER + extension.strip().removesuffix(
+                    DEFAULT_COMPLETION_DELIMITER
                 )
 
                 # If this isn't the last loop, check to see if we should continue
@@ -198,31 +162,24 @@ class ClaimExtractor:
         self, claims: str, prompt_variables: dict
     ) -> list[dict[str, Any]]:
         """Parse claim tuples."""
-        record_delimiter = prompt_variables.get(
-            self._record_delimiter_key, DEFAULT_RECORD_DELIMITER
-        )
-        completion_delimiter = prompt_variables.get(
-            self._completion_delimiter_key, DEFAULT_COMPLETION_DELIMITER
-        )
-        tuple_delimiter = prompt_variables.get(
-            self._tuple_delimiter_key, DEFAULT_TUPLE_DELIMITER
-        )
 
         def pull_field(index: int, fields: list[str]) -> str | None:
             return fields[index].strip() if len(fields) > index else None
 
         result: list[dict[str, Any]] = []
         claims_values = (
-            claims.strip().removesuffix(completion_delimiter).split(record_delimiter)
+            claims.strip()
+            .removesuffix(DEFAULT_COMPLETION_DELIMITER)
+            .split(DEFAULT_RECORD_DELIMITER)
         )
         for claim in claims_values:
             claim = claim.strip().removeprefix("(").removesuffix(")")
 
             # Ignore the completion delimiter
-            if claim == completion_delimiter:
+            if claim == DEFAULT_COMPLETION_DELIMITER:
                 continue
 
-            claim_fields = claim.split(tuple_delimiter)
+            claim_fields = claim.split(DEFAULT_TUPLE_DELIMITER)
             result.append({
                 "subject_id": pull_field(0, claim_fields),
                 "object_id": pull_field(1, claim_fields),

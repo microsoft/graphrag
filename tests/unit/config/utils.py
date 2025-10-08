@@ -276,7 +276,6 @@ def assert_extract_claims_configs(
     assert actual.prompt == expected.prompt
     assert actual.description == expected.description
     assert actual.max_gleanings == expected.max_gleanings
-    assert actual.strategy == expected.strategy
     assert actual.model_id == expected.model_id
 
 
