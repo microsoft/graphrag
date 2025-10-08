@@ -49,13 +49,13 @@ async def run_workflow(
         callbacks=context.callbacks,
         cache=context.cache,
         extraction_model_config=extraction_model_config,
-        extraction_prompt=extraction_prompts["extraction_prompt"],
+        extraction_prompt=extraction_prompts.extraction_prompt,
         entity_types=config.extract_graph.entity_types,
         max_gleanings=config.extract_graph.max_gleanings,
         summarization_model_config=summarization_model_config,
         max_summary_length=config.summarize_descriptions.max_length,
         max_input_tokens=config.summarize_descriptions.max_input_tokens,
-        summarization_prompt=summarization_prompts["summarize_prompt"],
+        summarization_prompt=summarization_prompts.summarize_prompt,
     )
 
     await write_table_to_storage(entities, "entities", context.output_storage)

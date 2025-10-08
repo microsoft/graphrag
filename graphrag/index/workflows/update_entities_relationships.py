@@ -93,7 +93,7 @@ async def _update_entities_and_relationships(
         summarization_model_config=summarization_model_config,
         max_summary_length=config.summarize_descriptions.max_length,
         max_input_tokens=config.summarize_descriptions.max_input_tokens,
-        summarization_prompt=prompts["summarize_prompt"],
+        summarization_prompt=prompts.summarize_prompt,
     )
 
     # Save the updated entities back to storage

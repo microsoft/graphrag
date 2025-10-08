@@ -62,7 +62,7 @@ async def run_workflow(
         claims_input=claims,
         callbacks=context.callbacks,
         cache=context.cache,
-        prompt=prompts["graph_prompt"],
+        prompt=prompts.graph_prompt,
         model_config=model_config,
         max_input_length=config.community_reports.max_input_length,
         max_report_length=config.community_reports.max_length,

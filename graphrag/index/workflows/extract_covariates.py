@@ -44,7 +44,7 @@ async def run_workflow(
             covariate_type="claim",
             max_gleanings=config.extract_claims.max_gleanings,
             claim_description=config.extract_claims.description,
-            prompt=prompts["extraction_prompt"],
+            prompt=prompts.extraction_prompt,
             entity_types=None,
         )
 

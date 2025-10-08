@@ -12,7 +12,7 @@ from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
-from graphrag.config.models.extract_claims_config import ClaimExtractionConfig
+from graphrag.config.models.extract_claims_config import ExtractClaimsConfig
 from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import (
     ExtractGraphNLPConfig,
@@ -270,7 +270,7 @@ def assert_community_reports_configs(
 
 
 def assert_extract_claims_configs(
-    actual: ClaimExtractionConfig, expected: ClaimExtractionConfig
+    actual: ExtractClaimsConfig, expected: ExtractClaimsConfig
 ) -> None:
     assert actual.enabled == expected.enabled
     assert actual.prompt == expected.prompt

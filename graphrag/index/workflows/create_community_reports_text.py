@@ -53,7 +53,7 @@ async def run_workflow(
         context.callbacks,
         context.cache,
         model_config=model_config,
-        prompt=prompts["text_prompt"],
+        prompt=prompts.text_prompt,
         max_input_length=config.community_reports.max_input_length,
         max_report_length=config.community_reports.max_length,
     )

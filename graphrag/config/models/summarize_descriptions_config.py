@@ -3,12 +3,20 @@
 
 """Parameterization settings for the default configuration."""
 
+from dataclasses import dataclass
 from pathlib import Path
 
 from pydantic import BaseModel, Field
 
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
+
+
+@dataclass
+class SummarizeDescriptionsPrompts:
+    """Description summarization prompt templates."""
+
+    summarize_prompt: str
 
 
 class SummarizeDescriptionsConfig(BaseModel):
@@ -31,12 +39,10 @@ class SummarizeDescriptionsConfig(BaseModel):
         default=graphrag_config_defaults.summarize_descriptions.max_input_tokens,
     )
 
-    def resolved_prompts(self, root_dir: str) -> dict:
+    def resolved_prompts(self, root_dir: str) -> SummarizeDescriptionsPrompts:
         """Get the resolved description summarization prompts."""
-        return {
-            "summarize_prompt": (Path(root_dir) / self.prompt).read_text(
-                encoding="utf-8"
-            )
+        return SummarizeDescriptionsPrompts(
+            summarize_prompt=(Path(root_dir) / self.prompt).read_text(encoding="utf-8")
             if self.prompt
             else SUMMARIZE_PROMPT,
-        }
+        )
