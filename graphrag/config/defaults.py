@@ -125,7 +125,6 @@ class CommunityReportDefaults:
     text_prompt: None = None
     max_length: int = 2000
     max_input_length: int = 8000
-    strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
 
 

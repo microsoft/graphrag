@@ -10,8 +10,6 @@ import pandas as pd
 import graphrag.data_model.schemas as schemas
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.operations.finalize_community_reports import (
@@ -54,14 +52,8 @@ async def run_workflow(
     ):
         claims = await load_table_from_storage("covariates", context.output_storage)
 
-    community_reports_llm_settings = config.get_language_model_config(
-        config.community_reports.model_id
-    )
-    async_mode = community_reports_llm_settings.async_mode
-    num_threads = community_reports_llm_settings.concurrent_requests
-    summarization_strategy = config.community_reports.resolved_strategy(
-        config.root_dir, community_reports_llm_settings
-    )
+    model_config = config.get_language_model_config(config.community_reports.model_id)
+    prompts = config.community_reports.resolved_prompts(config.root_dir)
 
     output = await create_community_reports(
         edges_input=edges,
@@ -70,9 +62,10 @@ async def run_workflow(
         claims_input=claims,
         callbacks=context.callbacks,
         cache=context.cache,
-        summarization_strategy=summarization_strategy,
-        async_mode=async_mode,
-        num_threads=num_threads,
+        prompt=prompts["graph_prompt"],
+        model_config=model_config,
+        max_input_length=config.community_reports.max_input_length,
+        max_report_length=config.community_reports.max_length,
     )
 
     await write_table_to_storage(output, "community_reports", context.output_storage)
@@ -88,9 +81,10 @@ async def create_community_reports(
     claims_input: pd.DataFrame | None,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
-    summarization_strategy: dict,
-    async_mode: AsyncType = AsyncType.AsyncIO,
-    num_threads: int = 4,
+    model_config: LanguageModelConfig,
+    prompt: str,
+    max_input_length: int = 8000,
+    max_report_length: int = 1500,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
     nodes = explode_communities(communities, entities)
@@ -102,14 +96,7 @@ async def create_community_reports(
     if claims_input is not None:
         claims = _prep_claims(claims_input)
 
-    summarization_strategy["extraction_prompt"] = summarization_strategy["graph_prompt"]
-
-    model_config = LanguageModelConfig(**summarization_strategy["llm"])
     tokenizer = get_tokenizer(model_config)
-
-    max_input_length = summarization_strategy.get(
-        "max_input_length", graphrag_config_defaults.community_reports.max_input_length
-    )
 
     local_contexts = build_local_context(
         nodes,
@@ -127,11 +114,11 @@ async def create_community_reports(
         build_level_context,
         callbacks,
         cache,
-        summarization_strategy,
+        model_config=model_config,
+        prompt=prompt,
         tokenizer=tokenizer,
         max_input_length=max_input_length,
-        async_mode=async_mode,
-        num_threads=num_threads,
+        max_report_length=max_report_length,
     )
 
     return finalize_community_reports(community_reports, communities)

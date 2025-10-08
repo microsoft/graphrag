@@ -4,16 +4,15 @@
 """A module containing 'Finding' and 'CommunityReport' models."""
 
 from collections.abc import Awaitable, Callable
-from enum import Enum
 from typing import Any
 
 from typing_extensions import TypedDict
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.models.language_model_config import LanguageModelConfig
 
 ExtractedEntity = dict[str, Any]
-StrategyConfig = dict[str, Any]
 RowContext = dict[str, Any]
 EntityTypes = list[str]
 Claim = dict[str, Any]
@@ -47,17 +46,9 @@ CommunityReportsStrategy = Callable[
         int,
         WorkflowCallbacks,
         PipelineCache,
-        StrategyConfig,
+        LanguageModelConfig,
+        str,
+        int,
     ],
     Awaitable[CommunityReport | None],
 ]
-
-
-class CreateCommunityReportsStrategyType(str, Enum):
-    """CreateCommunityReportsStrategyType class definition."""
-
-    graph_intelligence = "graph_intelligence"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'

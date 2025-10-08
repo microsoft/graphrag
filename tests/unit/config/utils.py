@@ -268,7 +268,6 @@ def assert_community_reports_configs(
     assert actual.text_prompt == expected.text_prompt
     assert actual.max_length == expected.max_length
     assert actual.max_input_length == expected.max_input_length
-    assert actual.strategy == expected.strategy
     assert actual.model_id == expected.model_id
 
 
