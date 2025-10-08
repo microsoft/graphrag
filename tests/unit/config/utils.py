@@ -256,7 +256,6 @@ def assert_summarize_descriptions_configs(
 ) -> None:
     assert actual.prompt == expected.prompt
     assert actual.max_length == expected.max_length
-    assert actual.strategy == expected.strategy
     assert actual.model_id == expected.model_id
 
 

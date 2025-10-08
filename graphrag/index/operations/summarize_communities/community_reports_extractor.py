@@ -57,13 +57,13 @@ class CommunityReportsExtractor:
 
     def __init__(
         self,
-        model_invoker: ChatModel,
+        model: ChatModel,
         extraction_prompt: str,
         max_report_length: int,
         on_error: ErrorHandlerFn | None = None,
     ):
         """Init method definition."""
-        self._model = model_invoker
+        self._model = model
         self._extraction_prompt = extraction_prompt
         self._on_error = on_error or (lambda _e, _s, _d: None)
         self._max_report_length = max_report_length

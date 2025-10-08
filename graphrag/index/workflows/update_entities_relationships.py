@@ -77,12 +77,10 @@ async def _update_entities_and_relationships(
         delta_relationships,
     )
 
-    summarization_llm_settings = config.get_language_model_config(
+    summarization_model_config = config.get_language_model_config(
         config.summarize_descriptions.model_id
     )
-    summarization_strategy = config.summarize_descriptions.resolved_strategy(
-        config.root_dir, summarization_llm_settings
-    )
+    prompts = config.summarize_descriptions.resolved_prompts(config.root_dir)
 
     (
         merged_entities_df,
@@ -92,8 +90,10 @@ async def _update_entities_and_relationships(
         extracted_relationships=merged_relationships_df,
         callbacks=callbacks,
         cache=cache,
-        summarization_strategy=summarization_strategy,
-        summarization_num_threads=summarization_llm_settings.concurrent_requests,
+        summarization_model_config=summarization_model_config,
+        max_summary_length=config.summarize_descriptions.max_length,
+        max_input_tokens=config.summarize_descriptions.max_input_tokens,
+        summarization_prompt=prompts["summarize_prompt"],
     )
 
     # Save the updated entities back to storage

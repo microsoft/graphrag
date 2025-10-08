@@ -55,12 +55,8 @@ async def test_extract_graph():
     ).model_dump()
     summarize_llm_settings["type"] = ModelType.MockChat
     summarize_llm_settings["responses"] = MOCK_LLM_SUMMARIZATION_RESPONSES
-    config.summarize_descriptions.strategy = {
-        "type": "graph_intelligence",
-        "llm": summarize_llm_settings,
-        "max_input_tokens": 1000,
-        "max_summary_length": 100,
-    }
+    config.summarize_descriptions.max_input_tokens = 1000
+    config.summarize_descriptions.max_length = 100
 
     await run_workflow(config, context)
 

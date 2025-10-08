@@ -8,7 +8,6 @@ from dataclasses import dataclass
 
 from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.language_model.protocol.base import ChatModel
-from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 # these tokens are used in the prompt
@@ -36,17 +35,17 @@ class SummarizeExtractor:
 
     def __init__(
         self,
-        model_invoker: ChatModel,
+        model: ChatModel,
         max_summary_length: int,
         max_input_tokens: int,
-        summarization_prompt: str | None = None,
+        summarization_prompt: str,
         on_error: ErrorHandlerFn | None = None,
     ):
         """Init method definition."""
         # TODO: streamline construction
-        self._model = model_invoker
-        self._tokenizer = get_tokenizer(model_invoker.config)
-        self._summarization_prompt = summarization_prompt or SUMMARIZE_PROMPT
+        self._model = model
+        self._tokenizer = get_tokenizer(model.config)
+        self._summarization_prompt = summarization_prompt
         self._on_error = on_error or (lambda _e, _s, _d: None)
         self._max_summary_length = max_summary_length
         self._max_input_tokens = max_input_tokens

@@ -4,7 +4,6 @@
 """A module containing run_workflow method definition."""
 
 import logging
-from typing import Any
 
 import pandas as pd
 
@@ -38,11 +37,11 @@ async def run_workflow(
     )
     extraction_prompts = config.extract_graph.resolved_prompts(config.root_dir)
 
-    summarization_llm_settings = config.get_language_model_config(
+    summarization_model_config = config.get_language_model_config(
         config.summarize_descriptions.model_id
     )
-    summarization_strategy = config.summarize_descriptions.resolved_strategy(
-        config.root_dir, summarization_llm_settings
+    summarization_prompts = config.summarize_descriptions.resolved_prompts(
+        config.root_dir
     )
 
     entities, relationships, raw_entities, raw_relationships = await extract_graph(
@@ -53,8 +52,10 @@ async def run_workflow(
         extraction_prompt=extraction_prompts["extraction_prompt"],
         entity_types=config.extract_graph.entity_types,
         max_gleanings=config.extract_graph.max_gleanings,
-        summarization_strategy=summarization_strategy,
-        summarization_num_threads=summarization_llm_settings.concurrent_requests,
+        summarization_model_config=summarization_model_config,
+        max_summary_length=config.summarize_descriptions.max_length,
+        max_input_tokens=config.summarize_descriptions.max_input_tokens,
+        summarization_prompt=summarization_prompts["summarize_prompt"],
     )
 
     await write_table_to_storage(entities, "entities", context.output_storage)
@@ -85,8 +86,10 @@ async def extract_graph(
     extraction_prompt: str,
     entity_types: list[str],
     max_gleanings: int,
-    summarization_strategy: dict[str, Any] | None = None,
-    summarization_num_threads: int = 4,
+    summarization_model_config: LanguageModelConfig,
+    max_summary_length: int,
+    max_input_tokens: int,
+    summarization_prompt: str,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
@@ -123,8 +126,10 @@ async def extract_graph(
         extracted_relationships=extracted_relationships,
         callbacks=callbacks,
         cache=cache,
-        summarization_strategy=summarization_strategy,
-        summarization_num_threads=summarization_num_threads,
+        summarization_model_config=summarization_model_config,
+        max_summary_length=max_summary_length,
+        max_input_tokens=max_input_tokens,
+        summarization_prompt=summarization_prompt,
     )
 
     return (entities, relationships, raw_entities, raw_relationships)
@@ -135,8 +140,10 @@ async def get_summarized_entities_relationships(
     extracted_relationships: pd.DataFrame,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
-    summarization_strategy: dict[str, Any] | None = None,
-    summarization_num_threads: int = 4,
+    summarization_model_config: LanguageModelConfig,
+    max_summary_length: int,
+    max_input_tokens: int,
+    summarization_prompt: str,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Summarize the entities and relationships."""
     entity_summaries, relationship_summaries = await summarize_descriptions(
@@ -144,8 +151,10 @@ async def get_summarized_entities_relationships(
         relationships_df=extracted_relationships,
         callbacks=callbacks,
         cache=cache,
-        strategy=summarization_strategy,
-        num_threads=summarization_num_threads,
+        model_config=summarization_model_config,
+        max_summary_length=max_summary_length,
+        max_input_tokens=max_input_tokens,
+        prompt=summarization_prompt,
     )
 
     relationships = extracted_relationships.drop(columns=["description"]).merge(
