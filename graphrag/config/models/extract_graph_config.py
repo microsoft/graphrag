@@ -8,7 +8,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.prompts.index.extract_graph import GRAPH_EXTRACTION_PROMPT
 
 
 class ExtractGraphConfig(BaseModel):
@@ -30,26 +30,13 @@ class ExtractGraphConfig(BaseModel):
         description="The maximum number of entity gleanings to use.",
         default=graphrag_config_defaults.extract_graph.max_gleanings,
     )
-    strategy: dict | None = Field(
-        description="Override the default entity extraction strategy",
-        default=graphrag_config_defaults.extract_graph.strategy,
-    )
 
-    def resolved_strategy(
-        self, root_dir: str, model_config: LanguageModelConfig
-    ) -> dict:
-        """Get the resolved entity extraction strategy."""
-        from graphrag.index.operations.extract_graph.typing import (
-            ExtractEntityStrategyType,
-        )
-
-        return self.strategy or {
-            "type": ExtractEntityStrategyType.graph_intelligence,
-            "llm": model_config.model_dump(),
+    def resolved_prompts(self, root_dir: str) -> dict:
+        """Get the resolved entity extraction prompts."""
+        return {
             "extraction_prompt": (Path(root_dir) / self.prompt).read_text(
                 encoding="utf-8"
             )
             if self.prompt
-            else None,
-            "max_gleanings": self.max_gleanings,
+            else GRAPH_EXTRACTION_PROMPT,
         }

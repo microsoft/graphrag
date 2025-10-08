@@ -60,6 +60,7 @@ DEFAULT_VECTOR_STORE_ID = "default_vector_store"
 ENCODING_MODEL = "o200k_base"
 COGNITIVE_SERVICES_AUDIENCE = "https://cognitiveservices.azure.com/.default"
 
+DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 DEFAULT_RETRY_SERVICES: dict[str, Callable[..., Retry]] = {
     "native": NativeRetry,

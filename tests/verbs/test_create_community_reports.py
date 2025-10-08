@@ -51,6 +51,8 @@ async def test_create_community_reports():
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config.models["default_chat_model"].type = "mock_chat"
+    config.models["default_chat_model"].responses = MOCK_RESPONSES  # type: ignore
 
     await run_workflow(config, context)
 

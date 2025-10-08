@@ -9,7 +9,8 @@ from graphrag.index.workflows.extract_graph import (
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
-    DEFAULT_MODEL_CONFIG,
+    DEFAULT_CHAT_MODEL_CONFIG,
+    DEFAULT_EMBEDDING_MODEL_CONFIG,
     create_test_context,
 )
 
@@ -39,16 +40,16 @@ async def test_extract_graph():
         storage=["text_units"],
     )
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-    extract_claims_llm_settings = config.get_language_model_config(
-        config.extract_graph.model_id
-    ).model_dump()
-    extract_claims_llm_settings["type"] = ModelType.MockChat
-    extract_claims_llm_settings["responses"] = MOCK_LLM_ENTITY_RESPONSES
-    config.extract_graph.strategy = {
-        "type": "graph_intelligence",
-        "llm": extract_claims_llm_settings,
-    }
+    extraction_model = DEFAULT_CHAT_MODEL_CONFIG.copy()
+    extraction_model["type"] = ModelType.MockChat
+    extraction_model["responses"] = MOCK_LLM_ENTITY_RESPONSES  # type: ignore
+    config = create_graphrag_config({
+        "models": {
+            "default_chat_model": extraction_model,
+            "default_embedding_model": DEFAULT_EMBEDDING_MODEL_CONFIG,
+        }
+    })
+
     summarize_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id
     ).model_dump()

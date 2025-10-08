@@ -10,8 +10,8 @@ import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.operations.extract_graph.extract_graph import (
     extract_graph as extractor,
 )
@@ -33,12 +33,10 @@ async def run_workflow(
     logger.info("Workflow started: extract_graph")
     text_units = await load_table_from_storage("text_units", context.output_storage)
 
-    extract_graph_llm_settings = config.get_language_model_config(
+    extraction_model_config = config.get_language_model_config(
         config.extract_graph.model_id
     )
-    extraction_strategy = config.extract_graph.resolved_strategy(
-        config.root_dir, extract_graph_llm_settings
-    )
+    extraction_prompts = config.extract_graph.resolved_prompts(config.root_dir)
 
     summarization_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id
@@ -51,10 +49,10 @@ async def run_workflow(
         text_units=text_units,
         callbacks=context.callbacks,
         cache=context.cache,
-        extraction_strategy=extraction_strategy,
-        extraction_num_threads=extract_graph_llm_settings.concurrent_requests,
-        extraction_async_mode=extract_graph_llm_settings.async_mode,
+        extraction_model_config=extraction_model_config,
+        extraction_prompt=extraction_prompts["extraction_prompt"],
         entity_types=config.extract_graph.entity_types,
+        max_gleanings=config.extract_graph.max_gleanings,
         summarization_strategy=summarization_strategy,
         summarization_num_threads=summarization_llm_settings.concurrent_requests,
     )
@@ -83,10 +81,10 @@ async def extract_graph(
     text_units: pd.DataFrame,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
-    extraction_strategy: dict[str, Any] | None = None,
-    extraction_num_threads: int = 4,
-    extraction_async_mode: AsyncType = AsyncType.AsyncIO,
-    entity_types: list[str] | None = None,
+    extraction_model_config: LanguageModelConfig,
+    extraction_prompt: str,
+    entity_types: list[str],
+    max_gleanings: int,
     summarization_strategy: dict[str, Any] | None = None,
     summarization_num_threads: int = 4,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -98,10 +96,10 @@ async def extract_graph(
         cache=cache,
         text_column="text",
         id_column="id",
-        strategy=extraction_strategy,
-        async_mode=extraction_async_mode,
+        model_config=extraction_model_config,
+        prompt=extraction_prompt,
         entity_types=entity_types,
-        num_threads=extraction_num_threads,
+        max_gleanings=max_gleanings,
     )
 
     if not _validate_data(extracted_entities):

@@ -12,16 +12,19 @@ from typing import Any
 
 import networkx as nx
 
-from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.index.utils.string import clean_str
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_graph import (
     CONTINUE_PROMPT,
-    GRAPH_EXTRACTION_PROMPT,
     LOOP_PROMPT,
 )
 
+INPUT_TEXT_KEY = "input_text"
+RECORD_DELIMITER_KEY = "record_delimiter"
+TUPLE_DELIMITER_KEY = "tuple_delimiter"
+COMPLETION_DELIMITER_KEY = "completion_delimiter"
+ENTITY_TYPES_KEY = "entity_types"
 DEFAULT_TUPLE_DELIMITER = "<|>"
 DEFAULT_RECORD_DELIMITER = "##"
 DEFAULT_COMPLETION_DELIMITER = "<|COMPLETE|>"
@@ -43,73 +46,38 @@ class GraphExtractor:
 
     _model: ChatModel
     _join_descriptions: bool
-    _tuple_delimiter_key: str
-    _record_delimiter_key: str
-    _entity_types_key: str
-    _input_text_key: str
-    _completion_delimiter_key: str
-    _entity_name_key: str
-    _input_descriptions_key: str
     _extraction_prompt: str
-    _summarization_prompt: str
     _max_gleanings: int
     _on_error: ErrorHandlerFn
 
     def __init__(
         self,
-        model_invoker: ChatModel,
-        tuple_delimiter_key: str | None = None,
-        record_delimiter_key: str | None = None,
-        input_text_key: str | None = None,
-        entity_types_key: str | None = None,
-        completion_delimiter_key: str | None = None,
-        prompt: str | None = None,
+        model: ChatModel,
+        prompt: str,
+        max_gleanings: int,
         join_descriptions=True,
-        max_gleanings: int | None = None,
         on_error: ErrorHandlerFn | None = None,
     ):
         """Init method definition."""
-        # TODO: streamline construction
-        self._model = model_invoker
+        self._model = model
         self._join_descriptions = join_descriptions
-        self._input_text_key = input_text_key or "input_text"
-        self._tuple_delimiter_key = tuple_delimiter_key or "tuple_delimiter"
-        self._record_delimiter_key = record_delimiter_key or "record_delimiter"
-        self._completion_delimiter_key = (
-            completion_delimiter_key or "completion_delimiter"
-        )
-        self._entity_types_key = entity_types_key or "entity_types"
-        self._extraction_prompt = prompt or GRAPH_EXTRACTION_PROMPT
-        self._max_gleanings = (
-            max_gleanings
-            if max_gleanings is not None
-            else graphrag_config_defaults.extract_graph.max_gleanings
-        )
+        self._extraction_prompt = prompt
+        self._max_gleanings = max_gleanings
         self._on_error = on_error or (lambda _e, _s, _d: None)
 
     async def __call__(
-        self, texts: list[str], prompt_variables: dict[str, Any] | None = None
+        self, texts: list[str], entity_types: list[str]
     ) -> GraphExtractionResult:
         """Call method definition."""
-        if prompt_variables is None:
-            prompt_variables = {}
         all_records: dict[int, str] = {}
         source_doc_map: dict[int, str] = {}
 
         # Wire defaults into the prompt variables
         prompt_variables = {
-            **prompt_variables,
-            self._tuple_delimiter_key: prompt_variables.get(self._tuple_delimiter_key)
-            or DEFAULT_TUPLE_DELIMITER,
-            self._record_delimiter_key: prompt_variables.get(self._record_delimiter_key)
-            or DEFAULT_RECORD_DELIMITER,
-            self._completion_delimiter_key: prompt_variables.get(
-                self._completion_delimiter_key
-            )
-            or DEFAULT_COMPLETION_DELIMITER,
-            self._entity_types_key: ",".join(
-                prompt_variables[self._entity_types_key] or DEFAULT_ENTITY_TYPES
-            ),
+            ENTITY_TYPES_KEY: ",".join(entity_types),
+            TUPLE_DELIMITER_KEY: DEFAULT_TUPLE_DELIMITER,
+            RECORD_DELIMITER_KEY: DEFAULT_RECORD_DELIMITER,
+            COMPLETION_DELIMITER_KEY: DEFAULT_COMPLETION_DELIMITER,
         }
 
         for doc_index, text in enumerate(texts):
@@ -131,8 +99,8 @@ class GraphExtractor:
 
         output = await self._process_results(
             all_records,
-            prompt_variables.get(self._tuple_delimiter_key, DEFAULT_TUPLE_DELIMITER),
-            prompt_variables.get(self._record_delimiter_key, DEFAULT_RECORD_DELIMITER),
+            DEFAULT_TUPLE_DELIMITER,
+            DEFAULT_RECORD_DELIMITER,
         )
 
         return GraphExtractionResult(
@@ -146,7 +114,7 @@ class GraphExtractor:
         response = await self._model.achat(
             self._extraction_prompt.format(**{
                 **prompt_variables,
-                self._input_text_key: text,
+                INPUT_TEXT_KEY: text,
             }),
         )
         results = response.output.content or ""
