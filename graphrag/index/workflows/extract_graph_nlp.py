@@ -8,9 +8,12 @@ import logging
 import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
+from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.build_noun_graph.build_noun_graph import build_noun_graph
+from graphrag.index.operations.build_noun_graph.np_extractors.base import (
+    BaseNounPhraseExtractor,
+)
 from graphrag.index.operations.build_noun_graph.np_extractors.factory import (
     create_noun_phrase_extractor,
 )
@@ -29,10 +32,16 @@ async def run_workflow(
     logger.info("Workflow started: extract_graph_nlp")
     text_units = await load_table_from_storage("text_units", context.output_storage)
 
+    text_analyzer_config = config.extract_graph_nlp.text_analyzer
+    text_analyzer = create_noun_phrase_extractor(text_analyzer_config)
+
     entities, relationships = await extract_graph_nlp(
         text_units,
         context.cache,
-        extraction_config=config.extract_graph_nlp,
+        text_analyzer=text_analyzer,
+        normalize_edge_weights=config.extract_graph_nlp.normalize_edge_weights,
+        num_threads=config.extract_graph_nlp.concurrent_requests,
+        async_type=config.extract_graph_nlp.async_mode,
     )
 
     await write_table_to_storage(entities, "entities", context.output_storage)
@@ -51,17 +60,18 @@ async def run_workflow(
 async def extract_graph_nlp(
     text_units: pd.DataFrame,
     cache: PipelineCache,
-    extraction_config: ExtractGraphNLPConfig,
+    text_analyzer: BaseNounPhraseExtractor,
+    normalize_edge_weights: bool,
+    num_threads: int,
+    async_type: AsyncType,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
-    text_analyzer_config = extraction_config.text_analyzer
-    text_analyzer = create_noun_phrase_extractor(text_analyzer_config)
     extracted_nodes, extracted_edges = await build_noun_graph(
         text_units,
         text_analyzer=text_analyzer,
-        normalize_edge_weights=extraction_config.normalize_edge_weights,
-        num_threads=extraction_config.concurrent_requests,
-        async_mode=extraction_config.async_mode,
+        normalize_edge_weights=normalize_edge_weights,
+        num_threads=num_threads,
+        async_mode=async_type,
         cache=cache,
     )
 
