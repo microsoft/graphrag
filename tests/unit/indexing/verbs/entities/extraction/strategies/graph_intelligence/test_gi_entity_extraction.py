@@ -19,8 +19,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             docs=[Document("test_text", "1")],
             entity_types=["person"],
             max_gleanings=0,
-            cache=_cache,
-            model_config=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -52,8 +51,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
             max_gleanings=0,
-            cache=_cache,
-            model_config=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -87,8 +85,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
             max_gleanings=0,
-            cache=_cache,
-            model_config=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -130,8 +127,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
             max_gleanings=0,
-            cache=_cache,
-            model_config=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -178,8 +174,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
             max_gleanings=0,
-            cache=_cache,
-            model_config=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)

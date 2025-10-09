@@ -8,16 +8,14 @@ import logging
 
 import pandas as pd
 
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.operations.summarize_descriptions.description_summary_extractor import (
     SummarizeExtractor,
 )
 from graphrag.index.operations.summarize_descriptions.typing import (
     SummarizedDescriptionResult,
 )
-from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.logger.progress import ProgressTicker, progress_ticker
 
 logger = logging.getLogger(__name__)
@@ -27,11 +25,11 @@ async def summarize_descriptions(
     entities_df: pd.DataFrame,
     relationships_df: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    model_config: LanguageModelConfig,
+    model: ChatModel,
     max_summary_length: int,
     max_input_tokens: int,
     prompt: str,
+    num_threads: int,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Summarize entity and relationship descriptions from an entity graph, using a language model."""
 
@@ -101,8 +99,7 @@ async def summarize_descriptions(
             results = await run_summarize_descriptions(
                 id,
                 descriptions,
-                cache,
-                model_config,
+                model,
                 max_summary_length,
                 max_input_tokens,
                 prompt,
@@ -110,7 +107,7 @@ async def summarize_descriptions(
             ticker(1)
         return results
 
-    semaphore = asyncio.Semaphore(model_config.concurrent_requests)
+    semaphore = asyncio.Semaphore(num_threads)
 
     return await get_summarized(entities_df, relationships_df, semaphore)
 
@@ -118,20 +115,12 @@ async def summarize_descriptions(
 async def run_summarize_descriptions(
     id: str | tuple[str, str],
     descriptions: list[str],
-    cache: PipelineCache,
-    model_config: LanguageModelConfig,
+    model: ChatModel,
     max_summary_length: int,
     max_input_tokens: int,
     prompt: str,
 ) -> SummarizedDescriptionResult:
     """Run the graph intelligence entity extraction strategy."""
-    model = ModelManager().get_or_create_chat_model(
-        name="summarize_descriptions",
-        model_type=model_config.type,
-        config=model_config,
-        cache=cache,
-    )
-
     extractor = SummarizeExtractor(
         model=model,
         summarization_prompt=prompt,

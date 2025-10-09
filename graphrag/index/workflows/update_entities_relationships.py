@@ -16,6 +16,7 @@ from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.update.entities import _group_and_resolve_entities
 from graphrag.index.update.relationships import _update_and_merge_relationships
 from graphrag.index.workflows.extract_graph import get_summarized_entities_relationships
+from graphrag.language_model.manager import ModelManager
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
@@ -81,6 +82,12 @@ async def _update_entities_and_relationships(
         config.summarize_descriptions.model_id
     )
     prompts = config.summarize_descriptions.resolved_prompts(config.root_dir)
+    model = ModelManager().get_or_create_chat_model(
+        name="summarize_descriptions",
+        model_type=summarization_model_config.type,
+        config=summarization_model_config,
+        cache=cache,
+    )
 
     (
         merged_entities_df,
@@ -89,11 +96,11 @@ async def _update_entities_and_relationships(
         extracted_entities=merged_entities_df,
         extracted_relationships=merged_relationships_df,
         callbacks=callbacks,
-        cache=cache,
-        summarization_model_config=summarization_model_config,
+        model=model,
         max_summary_length=config.summarize_descriptions.max_length,
         max_input_tokens=config.summarize_descriptions.max_input_tokens,
         summarization_prompt=prompts.summarize_prompt,
+        num_threads=summarization_model_config.concurrent_requests,
     )
 
     # Save the updated entities back to storage
