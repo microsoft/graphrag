@@ -22,7 +22,7 @@
 			"args": [
 				"query",
 				"--root", 
-				"/Users/gaudy-microsoft/Desktop/indexes_examples/christmas-carol",
+				"<path_to_index_folder>",
 				"--method", "basic",
 				"--query", "What are the top themes in this story",
 			]
