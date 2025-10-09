@@ -146,7 +146,7 @@ def test_register_class_directly_works():
         def search_by_id(self, id):
             from graphrag.vector_stores.base import VectorStoreDocument
 
-            return VectorStoreDocument(id=id, text="test", vector=None)
+            return VectorStoreDocument(id=id, vector=None)
 
     # VectorStoreFactory allows registering classes directly (no TypeError)
     VectorStoreFactory.register("custom_class", CustomVectorStore)

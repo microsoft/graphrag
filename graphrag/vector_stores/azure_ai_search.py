@@ -3,7 +3,6 @@
 
 """A package containing the Azure AI Search  vector store implementation."""
 
-import json
 from typing import Any
 
 from azure.core.credentials import AzureKeyCredential
@@ -13,7 +12,6 @@ from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import (
     HnswAlgorithmConfiguration,
     HnswParameters,
-    SearchableField,
     SearchField,
     SearchFieldDataType,
     SearchIndex,
@@ -121,13 +119,6 @@ class AzureAISearchVectorStore(BaseVectorStore):
                         vector_search_dimensions=self.vector_size,
                         vector_search_profile_name=self.vector_search_profile_name,
                     ),
-                    SearchableField(
-                        name=self.text_field, type=SearchFieldDataType.String
-                    ),
-                    SimpleField(
-                        name=self.attributes_field,
-                        type=SearchFieldDataType.String,
-                    ),
                 ],
                 vector_search=vector_search,
             )
@@ -139,8 +130,6 @@ class AzureAISearchVectorStore(BaseVectorStore):
             {
                 self.id_field: doc.id,
                 self.vector_field: doc.vector,
-                self.text_field: doc.text,
-                self.attributes_field: json.dumps(doc.attributes),
             }
             for doc in documents
             if doc.vector is not None
@@ -165,9 +154,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
                     id=doc.get(self.id_field, ""),
-                    text=doc.get(self.text_field, ""),
                     vector=doc.get(self.vector_field, []),
-                    attributes=(json.loads(doc.get(self.attributes_field, "{}"))),
                 ),
                 # Cosine similarity between 0.333 and 1.000
                 # https://learn.microsoft.com/en-us/azure/search/hybrid-search-ranking#scores-in-a-hybrid-search-results
@@ -192,7 +179,5 @@ class AzureAISearchVectorStore(BaseVectorStore):
         response = self.db_connection.get_document(id)
         return VectorStoreDocument(
             id=response.get(self.id_field, ""),
-            text=response.get(self.text_field, ""),
             vector=response.get(self.vector_field, []),
-            attributes=(json.loads(response.get(self.attributes_field, "{}"))),
         )

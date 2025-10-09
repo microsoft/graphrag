@@ -37,25 +37,19 @@ def test_vector_store_operations():
         docs = [
             VectorStoreDocument(
                 id="doc1",
-                text="This is document 1",
                 vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-                attributes={"title": "Doc 1", "category": "test"},
             ),
             VectorStoreDocument(
                 id="doc2",
-                text="This is document 2",
                 vector=[0.2, 0.3, 0.4, 0.5, 0.6],
-                attributes={"title": "Doc 2", "category": "test"},
             ),
         ]
         vector_store.load_documents(docs)
 
         doc = vector_store.search_by_id("doc1")
         assert doc.id == "doc1"
-        assert doc.text == "This is document 1"
         assert doc.vector is not None
         assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
-        assert doc.attributes["title"] == "Doc 1"
 
         # Define a simple text embedder function for testing
         def mock_embedder(text: str) -> list[float]:
@@ -87,9 +81,7 @@ def test_clear():
 
         doc = VectorStoreDocument(
             id="test",
-            text="Test document",
             vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-            attributes={"title": "Test Doc"},
         )
 
         vector_store.load_documents([doc])
@@ -109,9 +101,7 @@ def test_vector_store_customization():
         vector_store_schema_config=VectorStoreSchemaConfig(
             index_name="text-embeddings",
             id_field="id",
-            text_field="text_custom",
             vector_field="vector_custom",
-            attributes_field="attributes_custom",
             vector_size=5,
         ),
     )
@@ -125,25 +115,19 @@ def test_vector_store_customization():
         docs = [
             VectorStoreDocument(
                 id="doc1",
-                text="This is document 1",
                 vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-                attributes={"title": "Doc 1", "category": "test"},
             ),
             VectorStoreDocument(
                 id="doc2",
-                text="This is document 2",
                 vector=[0.2, 0.3, 0.4, 0.5, 0.6],
-                attributes={"title": "Doc 2", "category": "test"},
             ),
         ]
         vector_store.load_documents(docs)
 
         doc = vector_store.search_by_id("doc1")
         assert doc.id == "doc1"
-        assert doc.text == "This is document 1"
         assert doc.vector is not None
         assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
-        assert doc.attributes["title"] == "Doc 1"
 
         # Define a simple text embedder function for testing
         def mock_embedder(text: str) -> list[float]:

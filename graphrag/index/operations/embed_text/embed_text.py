@@ -152,7 +152,6 @@ async def _text_embed_with_vector_store(
         )
         batch = input.iloc[insert_batch_size * i : insert_batch_size * (i + 1)]
         texts: list[str] = batch[embed_column].tolist()
-        titles: list[str] = batch[title].tolist()
         ids: list[str] = batch[id_column].tolist()
         result = await strategy_exec(texts, callbacks, cache, strategy_config)
         if result.embeddings:
@@ -163,16 +162,12 @@ async def _text_embed_with_vector_store(
 
         vectors = result.embeddings or []
         documents: list[VectorStoreDocument] = []
-        for doc_id, doc_text, doc_title, doc_vector in zip(
-            ids, texts, titles, vectors, strict=True
-        ):
+        for doc_id, doc_vector in zip(ids, vectors, strict=True):
             if type(doc_vector) is np.ndarray:
                 doc_vector = doc_vector.tolist()
             document = VectorStoreDocument(
                 id=doc_id,
-                text=doc_text,
                 vector=doc_vector,
-                attributes={"title": doc_title},
             )
             documents.append(document)
 
