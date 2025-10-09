@@ -28,7 +28,6 @@ models:
     # api_version: 2024-05-01-preview
     model_supports_json: true # recommended if this is available for your model.
     concurrent_requests: {language_model_defaults.concurrent_requests}
-    async_mode: {language_model_defaults.async_mode.value} # or asyncio
     retry_strategy: {language_model_defaults.retry_strategy}
     max_retries: {language_model_defaults.max_retries}
     tokens_per_minute: null
@@ -42,7 +41,6 @@ models:
     # api_base: https://<instance>.openai.azure.com
     # api_version: 2024-05-01-preview
     concurrent_requests: {language_model_defaults.concurrent_requests}
-    async_mode: {language_model_defaults.async_mode.value} # or asyncio
     retry_strategy: {language_model_defaults.retry_strategy}
     max_retries: {language_model_defaults.max_retries}
     tokens_per_minute: null
@@ -102,7 +100,6 @@ summarize_descriptions:
 extract_graph_nlp:
   text_analyzer:
     extractor_type: {graphrag_config_defaults.extract_graph_nlp.text_analyzer.extractor_type.value} # [regex_english, syntactic_parser, cfg]
-  async_mode: {graphrag_config_defaults.extract_graph_nlp.async_mode.value} # or asyncio
 
 cluster_graph:
   max_cluster_size: {graphrag_config_defaults.cluster_graph.max_cluster_size}
