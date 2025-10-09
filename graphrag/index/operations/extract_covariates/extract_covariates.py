@@ -10,39 +10,33 @@ from typing import Any
 
 import pandas as pd
 
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.config.enums import AsyncType
 from graphrag.index.operations.extract_covariates.claim_extractor import ClaimExtractor
 from graphrag.index.operations.extract_covariates.typing import (
     Covariate,
     CovariateExtractionResult,
 )
 from graphrag.index.utils.derive_from_rows import derive_from_rows
-from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import ChatModel
 
 logger = logging.getLogger(__name__)
-
-
-DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 
 async def extract_covariates(
     input: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    model_config: LanguageModelConfig,
+    model: ChatModel,
     column: str,
     covariate_type: str,
     max_gleanings: int,
     claim_description: str,
     prompt: str,
-    entity_types: list[str] | None = None,
+    entity_types: list[str],
+    num_threads: int,
+    async_type: AsyncType,
 ):
     """Extract claims from a piece of text."""
-    if entity_types is None:
-        entity_types = DEFAULT_ENTITY_TYPES
-
     resolved_entities_map = {}
 
     async def run_strategy(row):
@@ -51,9 +45,7 @@ async def extract_covariates(
             input=text,
             entity_types=entity_types,
             resolved_entities_map=resolved_entities_map,
-            callbacks=callbacks,
-            cache=cache,
-            model_config=model_config,
+            model=model,
             max_gleanings=max_gleanings,
             claim_description=claim_description,
             prompt=prompt,
@@ -67,8 +59,8 @@ async def extract_covariates(
         input,
         run_strategy,
         callbacks,
-        async_type=model_config.async_mode,
-        num_threads=model_config.concurrent_requests,
+        num_threads=num_threads,
+        async_type=async_type,
         progress_msg="extract covariates progress: ",
     )
     return pd.DataFrame([item for row in results for item in row or []])
@@ -83,22 +75,12 @@ async def run_extract_claims(
     input: str | Iterable[str],
     entity_types: list[str],
     resolved_entities_map: dict[str, str],
-    callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    model_config: LanguageModelConfig,
+    model: ChatModel,
     max_gleanings: int,
     claim_description: str,
     prompt: str,
 ) -> CovariateExtractionResult:
     """Run the Claim extraction chain."""
-    model = ModelManager().get_or_create_chat_model(
-        name="extract_claims",
-        model_type=model_config.type,
-        config=model_config,
-        callbacks=callbacks,
-        cache=cache,
-    )
-
     extractor = ClaimExtractor(
         model=model,
         extraction_prompt=prompt,
