@@ -1,0 +1,18 @@
+{
+  "changes": [
+    {
+      "description": "Set LiteLLM as default in init_content.",
+      "type": "minor"
+    },
+    {
+      "description": "Fix Azure auth scope issue with LiteLLM.",
+      "type": "patch"
+    },
+    {
+      "description": "Housekeeping toward 2.7.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2025-10-08T22:39:42+00:00",
+  "version": "2.7.0"
+}

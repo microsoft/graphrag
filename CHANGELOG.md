@@ -1,6 +1,12 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 2.7.0
+
+- minor: Set LiteLLM as default in init_content.
+- patch: Fix Azure auth scope issue with LiteLLM.
+- patch: Housekeeping toward 2.7.
+
 ## 2.6.0
 
 - minor: Add LiteLLM chat and embedding model providers.
