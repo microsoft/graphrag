@@ -44,9 +44,15 @@ class CosmosDBVectorStore(BaseVectorStore):
             if not url:
                 msg = "Either connection_string or url must be provided."
                 raise ValueError(msg)
-            self._cosmos_client = CosmosClient(
-                url=url, credential=DefaultAzureCredential()
-            )
+            access_key = kwargs.get("api_key")
+            if access_key:
+                self._cosmos_client = CosmosClient(
+                                url=url, credential=access_key
+                            )
+            else:
+                self._cosmos_client = CosmosClient(
+                    url=url, credential=DefaultAzureCredential()
+                )
 
         database_name = kwargs.get("database_name")
         if database_name is None:
