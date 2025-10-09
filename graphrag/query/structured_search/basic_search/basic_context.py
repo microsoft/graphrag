@@ -59,14 +59,15 @@ class BasicSearchContext(BasicContextBuilder):
                 text_embedder=lambda t: self.text_embedder.embed(t),
                 k=k,
             )
-            related_text_list = [
-                {
-                    text_id_col: self.text_id_map[f"{chunk.document.id}"],
-                    text_col: chunk.document.text,
-                }
-                for chunk in related_texts
+
+            text_unit_ids = {t.document.id for t in related_texts}
+            text_units_filtered = []
+            text_units_filtered = [
+                {text_id_col: t.id, text_col: t.text}
+                for t in self.text_units or []
+                if t.id in text_unit_ids
             ]
-            related_text_df = pd.DataFrame(related_text_list)
+            related_text_df = pd.DataFrame(text_units_filtered)
         else:
             related_text_df = pd.DataFrame({
                 text_id_col: [],

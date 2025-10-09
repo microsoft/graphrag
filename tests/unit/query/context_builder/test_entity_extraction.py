@@ -47,7 +47,8 @@ class MockBaseVectorStore(BaseVectorStore):
         return sorted(
             [
                 VectorStoreSearchResult(
-                    document=document, score=abs(len(text) - len(document.text or ""))
+                    document=document,
+                    score=abs(len(text) - len(str(document.id) or "")),
                 )
                 for document in self.documents
             ],
@@ -94,8 +95,7 @@ def test_map_query_to_entities():
     assert map_query_to_entities(
         query="t22",
         text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-            for entity in entities
+            VectorStoreDocument(id=entity.id, vector=None) for entity in entities
         ]),
         text_embedder=ModelManager().get_or_create_embedding_model(
             model_type="mock_embedding", name="mock"
@@ -116,8 +116,7 @@ def test_map_query_to_entities():
     assert map_query_to_entities(
         query="t22",
         text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.title, text=entity.title, vector=None)
-            for entity in entities
+            VectorStoreDocument(id=entity.title, vector=None) for entity in entities
         ]),
         text_embedder=ModelManager().get_or_create_embedding_model(
             model_type="mock_embedding", name="mock"
@@ -138,8 +137,7 @@ def test_map_query_to_entities():
     assert map_query_to_entities(
         query="",
         text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-            for entity in entities
+            VectorStoreDocument(id=entity.id, vector=None) for entity in entities
         ]),
         text_embedder=ModelManager().get_or_create_embedding_model(
             model_type="mock_embedding", name="mock"
@@ -165,8 +163,7 @@ def test_map_query_to_entities():
     assert map_query_to_entities(
         query="",
         text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-            for entity in entities
+            VectorStoreDocument(id=entity.id, vector=None) for entity in entities
         ]),
         text_embedder=ModelManager().get_or_create_embedding_model(
             model_type="mock_embedding", name="mock"

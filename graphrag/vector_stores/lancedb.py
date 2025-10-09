@@ -3,19 +3,19 @@
 
 """The LanceDB vector storage implementation package."""
 
-import json  # noqa: I001
 from typing import Any
-import pyarrow as pa
+
+import lancedb
 import numpy as np
+import pyarrow as pa
+
 from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.data_model.types import TextEmbedder
-
 from graphrag.vector_stores.base import (
     BaseVectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
 )
-import lancedb
 
 
 class LanceDBVectorStore(BaseVectorStore):
@@ -41,9 +41,7 @@ class LanceDBVectorStore(BaseVectorStore):
         """Load documents into vector storage."""
         # Step 1: Prepare data columns manually
         ids = []
-        texts = []
         vectors = []
-        attributes = []
 
         for document in documents:
             self.vector_size = (
@@ -51,9 +49,7 @@ class LanceDBVectorStore(BaseVectorStore):
             )
             if document.vector is not None and len(document.vector) == self.vector_size:
                 ids.append(document.id)
-                texts.append(document.text)
                 vectors.append(np.array(document.vector, dtype=np.float32))
-                attributes.append(json.dumps(document.attributes))
 
         # Step 2: Handle empty case
         if len(ids) == 0:
@@ -69,9 +65,7 @@ class LanceDBVectorStore(BaseVectorStore):
             # Step 4: Create PyArrow table (let schema be inferred)
             data = pa.table({
                 self.id_field: pa.array(ids, type=pa.string()),
-                self.text_field: pa.array(texts, type=pa.string()),
                 self.vector_field: vector_column,
-                self.attributes_field: pa.array(attributes, type=pa.string()),
             })
 
         # NOTE: If modifying the next section of code, ensure that the schema remains the same.
@@ -127,9 +121,7 @@ class LanceDBVectorStore(BaseVectorStore):
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
                     id=doc[self.id_field],
-                    text=doc[self.text_field],
                     vector=doc[self.vector_field],
-                    attributes=json.loads(doc[self.attributes_field]),
                 ),
                 score=1 - abs(float(doc["_distance"])),
             )
@@ -155,8 +147,6 @@ class LanceDBVectorStore(BaseVectorStore):
         if doc:
             return VectorStoreDocument(
                 id=doc[0][self.id_field],
-                text=doc[0][self.text_field],
                 vector=doc[0][self.vector_field],
-                attributes=json.loads(doc[0][self.attributes_field]),
             )
-        return VectorStoreDocument(id=id, text=None, vector=None)
+        return VectorStoreDocument(id=id, vector=None)
