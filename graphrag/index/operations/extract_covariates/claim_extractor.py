@@ -20,12 +20,11 @@ INPUT_TEXT_KEY = "input_text"
 INPUT_ENTITY_SPEC_KEY = "entity_specs"
 INPUT_CLAIM_DESCRIPTION_KEY = "claim_description"
 INPUT_RESOLVED_ENTITIES_KEY = "resolved_entities"
-TUPLE_DELIMITER_KEY = "tuple_delimiter"
 RECORD_DELIMITER_KEY = "record_delimiter"
 COMPLETION_DELIMITER_KEY = "completion_delimiter"
-DEFAULT_TUPLE_DELIMITER = "<|>"
-DEFAULT_RECORD_DELIMITER = "##"
-DEFAULT_COMPLETION_DELIMITER = "<|COMPLETE|>"
+TUPLE_DELIMITER = "<|>"
+RECORD_DELIMITER = "##"
+COMPLETION_DELIMITER = "<|COMPLETE|>"
 logger = logging.getLogger(__name__)
 
 
@@ -71,20 +70,13 @@ class ClaimExtractor:
     ) -> ClaimExtractorResult:
         """Call method definition."""
         source_doc_map = {}
-
-        prompt_args = {
-            INPUT_ENTITY_SPEC_KEY: entity_spec,
-            INPUT_CLAIM_DESCRIPTION_KEY: claim_description,
-            TUPLE_DELIMITER_KEY: DEFAULT_TUPLE_DELIMITER,
-            RECORD_DELIMITER_KEY: DEFAULT_RECORD_DELIMITER,
-            COMPLETION_DELIMITER_KEY: DEFAULT_COMPLETION_DELIMITER,
-        }
-
         all_claims: list[dict] = []
         for doc_index, text in enumerate(texts):
             document_id = f"d{doc_index}"
             try:
-                claims = await self._process_document(prompt_args, text)
+                claims = await self._process_document(
+                    text, claim_description, entity_spec
+                )
                 all_claims += [
                     self._clean_claim(c, document_id, resolved_entities) for c in claims
                 ]
@@ -117,15 +109,18 @@ class ClaimExtractor:
         claim["subject_id"] = subject
         return claim
 
-    async def _process_document(self, prompt_args: dict, doc) -> list[dict]:
+    async def _process_document(
+        self, text: str, claim_description: str, entity_spec: dict
+    ) -> list[dict]:
         response = await self._model.achat(
             self._extraction_prompt.format(**{
-                INPUT_TEXT_KEY: doc,
-                **prompt_args,
+                INPUT_TEXT_KEY: text,
+                INPUT_CLAIM_DESCRIPTION_KEY: claim_description,
+                INPUT_ENTITY_SPEC_KEY: entity_spec,
             })
         )
         results = response.output.content or ""
-        claims = results.strip().removesuffix(DEFAULT_COMPLETION_DELIMITER)
+        claims = results.strip().removesuffix(COMPLETION_DELIMITER)
 
         # if gleanings are specified, enter a loop to extract more claims
         # there are two exit criteria: (a) we hit the configured max, (b) the model says there are no more claims
@@ -137,8 +132,8 @@ class ClaimExtractor:
                     history=response.history,
                 )
                 extension = response.output.content or ""
-                claims += DEFAULT_RECORD_DELIMITER + extension.strip().removesuffix(
-                    DEFAULT_COMPLETION_DELIMITER
+                claims += RECORD_DELIMITER + extension.strip().removesuffix(
+                    COMPLETION_DELIMITER
                 )
 
                 # If this isn't the last loop, check to see if we should continue
@@ -164,18 +159,16 @@ class ClaimExtractor:
 
         result: list[dict[str, Any]] = []
         claims_values = (
-            claims.strip()
-            .removesuffix(DEFAULT_COMPLETION_DELIMITER)
-            .split(DEFAULT_RECORD_DELIMITER)
+            claims.strip().removesuffix(COMPLETION_DELIMITER).split(RECORD_DELIMITER)
         )
         for claim in claims_values:
             claim = claim.strip().removeprefix("(").removesuffix(")")
 
             # Ignore the completion delimiter
-            if claim == DEFAULT_COMPLETION_DELIMITER:
+            if claim == COMPLETION_DELIMITER:
                 continue
 
-            claim_fields = claim.split(DEFAULT_TUPLE_DELIMITER)
+            claim_fields = claim.split(TUPLE_DELIMITER)
             result.append({
                 "subject_id": pull_field(0, claim_fields),
                 "object_id": pull_field(1, claim_fields),

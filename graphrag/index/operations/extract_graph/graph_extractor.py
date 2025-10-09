@@ -22,12 +22,11 @@ from graphrag.prompts.index.extract_graph import (
 
 INPUT_TEXT_KEY = "input_text"
 RECORD_DELIMITER_KEY = "record_delimiter"
-TUPLE_DELIMITER_KEY = "tuple_delimiter"
 COMPLETION_DELIMITER_KEY = "completion_delimiter"
 ENTITY_TYPES_KEY = "entity_types"
-DEFAULT_TUPLE_DELIMITER = "<|>"
-DEFAULT_RECORD_DELIMITER = "##"
-DEFAULT_COMPLETION_DELIMITER = "<|COMPLETE|>"
+TUPLE_DELIMITER = "<|>"
+RECORD_DELIMITER = "##"
+COMPLETION_DELIMITER = "<|COMPLETE|>"
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 logger = logging.getLogger(__name__)
@@ -72,18 +71,10 @@ class GraphExtractor:
         all_records: dict[int, str] = {}
         source_doc_map: dict[int, str] = {}
 
-        # Wire defaults into the prompt variables
-        prompt_variables = {
-            ENTITY_TYPES_KEY: ",".join(entity_types),
-            TUPLE_DELIMITER_KEY: DEFAULT_TUPLE_DELIMITER,
-            RECORD_DELIMITER_KEY: DEFAULT_RECORD_DELIMITER,
-            COMPLETION_DELIMITER_KEY: DEFAULT_COMPLETION_DELIMITER,
-        }
-
         for doc_index, text in enumerate(texts):
             try:
                 # Invoke the entity extraction
-                result = await self._process_document(text, prompt_variables)
+                result = await self._process_document(text, entity_types)
                 source_doc_map[doc_index] = text
                 all_records[doc_index] = result
             except Exception as e:
@@ -99,8 +90,8 @@ class GraphExtractor:
 
         output = await self._process_results(
             all_records,
-            DEFAULT_TUPLE_DELIMITER,
-            DEFAULT_RECORD_DELIMITER,
+            TUPLE_DELIMITER,
+            RECORD_DELIMITER,
         )
 
         return GraphExtractionResult(
@@ -108,13 +99,11 @@ class GraphExtractor:
             source_docs=source_doc_map,
         )
 
-    async def _process_document(
-        self, text: str, prompt_variables: dict[str, str]
-    ) -> str:
+    async def _process_document(self, text: str, entity_types: list[str]) -> str:
         response = await self._model.achat(
             self._extraction_prompt.format(**{
-                **prompt_variables,
                 INPUT_TEXT_KEY: text,
+                ENTITY_TYPES_KEY: ",".join(entity_types),
             }),
         )
         results = response.output.content or ""
