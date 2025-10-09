@@ -8,9 +8,7 @@ from typing import Any
 
 from typing_extensions import TypedDict
 
-from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.language_model.protocol.base import ChatModel
 
 ExtractedEntity = dict[str, Any]
 RowContext = dict[str, Any]
@@ -44,9 +42,7 @@ CommunityReportsStrategy = Callable[
         str | int,
         str,
         int,
-        WorkflowCallbacks,
-        PipelineCache,
-        LanguageModelConfig,
+        ChatModel,
         str,
         int,
     ],

@@ -9,10 +9,9 @@ from collections.abc import Callable
 import pandas as pd
 
 import graphrag.data_model.schemas as schemas
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.config.enums import AsyncType
 from graphrag.index.operations.summarize_communities.community_reports_extractor import (
     CommunityReportsExtractor,
 )
@@ -25,7 +24,7 @@ from graphrag.index.operations.summarize_communities.utils import (
     get_levels,
 )
 from graphrag.index.utils.derive_from_rows import derive_from_rows
-from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.logger.progress import progress_ticker
 from graphrag.tokenizer.tokenizer import Tokenizer
 
@@ -38,12 +37,13 @@ async def summarize_communities(
     local_contexts,
     level_context_builder: Callable,
     callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    model_config: LanguageModelConfig,
+    model: ChatModel,
     prompt: str,
     tokenizer: Tokenizer,
     max_input_length: int,
     max_report_length: int,
+    num_threads: int,
+    async_type: AsyncType,
 ):
     """Generate community summaries."""
     reports: list[CommunityReport | None] = []
@@ -76,9 +76,7 @@ async def summarize_communities(
                 community_id=record[schemas.COMMUNITY_ID],
                 community_level=record[schemas.COMMUNITY_LEVEL],
                 community_context=record[schemas.CONTEXT_STRING],
-                callbacks=callbacks,
-                cache=cache,
-                model_config=model_config,
+                model=model,
                 extraction_prompt=prompt,
                 max_report_length=max_report_length,
             )
@@ -89,8 +87,8 @@ async def summarize_communities(
             level_context,
             run_generate,
             callbacks=NoopWorkflowCallbacks(),
-            num_threads=model_config.concurrent_requests,
-            async_type=model_config.async_mode,
+            num_threads=num_threads,
+            async_type=async_type,
             progress_msg=f"level {levels[i]} summarize communities progress: ",
         )
         reports.extend([lr for lr in local_reports if lr is not None])
@@ -100,9 +98,7 @@ async def summarize_communities(
 
 async def _generate_report(
     runner: CommunityReportsStrategy,
-    callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    model_config: LanguageModelConfig,
+    model: ChatModel,
     extraction_prompt: str,
     community_id: int,
     community_level: int,
@@ -114,9 +110,7 @@ async def _generate_report(
         community_id,
         community_context,
         community_level,
-        callbacks,
-        cache,
-        model_config,
+        model,
         extraction_prompt,
         max_report_length,
     )
@@ -126,21 +120,11 @@ async def run_extractor(
     community: str | int,
     input: str,
     level: int,
-    callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    model_config: LanguageModelConfig,
+    model: ChatModel,
     extraction_prompt: str,
     max_report_length: int,
 ) -> CommunityReport | None:
     """Run the graph intelligence entity extraction strategy."""
-    model = ModelManager().get_or_create_chat_model(
-        name="community_reporting",
-        model_type=model_config.type,
-        config=model_config,
-        callbacks=callbacks,
-        cache=cache,
-    )
-
     extractor = CommunityReportsExtractor(
         model,
         extraction_prompt=extraction_prompt,
