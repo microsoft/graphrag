@@ -19,8 +19,9 @@ from graphrag.config.embeddings import (
     relationship_description_embedding,
     text_unit_text_embedding,
 )
-from graphrag.config.get_embedding_settings import get_embedding_settings
+from graphrag.config.get_vector_store_settings import get_vector_store_settings
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -67,7 +68,9 @@ async def run_workflow(
             "community_reports", context.output_storage
         )
 
-    text_embed = get_embedding_settings(config)
+    vector_store_config = get_vector_store_settings(config)
+
+    model_config = config.get_language_model_config(config.embed_text.model_id)
 
     output = await generate_text_embeddings(
         documents=documents,
@@ -77,7 +80,10 @@ async def run_workflow(
         community_reports=community_reports,
         callbacks=context.callbacks,
         cache=context.cache,
-        text_embed_config=text_embed,
+        model_config=model_config,
+        batch_size=config.embed_text.batch_size,
+        batch_max_tokens=config.embed_text.batch_max_tokens,
+        vector_store_config=vector_store_config,
         embedded_fields=embedded_fields,
     )
 
@@ -101,7 +107,10 @@ async def generate_text_embeddings(
     community_reports: pd.DataFrame | None,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
-    text_embed_config: dict,
+    model_config: LanguageModelConfig,
+    batch_size: int,
+    batch_max_tokens: int,
+    vector_store_config: dict,
     embedded_fields: list[str],
 ) -> dict[str, pd.DataFrame]:
     """All the steps to generate all embeddings."""
@@ -165,7 +174,10 @@ async def generate_text_embeddings(
                 name=field,
                 callbacks=callbacks,
                 cache=cache,
-                text_embed_config=text_embed_config,
+                model_config=model_config,
+                vector_store_config=vector_store_config,
+                batch_size=batch_size,
+                batch_max_tokens=batch_max_tokens,
                 **embedding_param_map[field],
             )
     return outputs
@@ -177,16 +189,22 @@ async def _run_embeddings(
     embed_column: str,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
-    text_embed_config: dict,
+    model_config: LanguageModelConfig,
+    batch_size: int,
+    batch_max_tokens: int,
+    vector_store_config: dict,
 ) -> pd.DataFrame:
     """All the steps to generate single embedding."""
     data["embedding"] = await embed_text(
         input=data,
         callbacks=callbacks,
         cache=cache,
+        model_config=model_config,
         embed_column=embed_column,
         embedding_name=name,
-        strategy=text_embed_config["strategy"],
+        batch_size=batch_size,
+        batch_max_tokens=batch_max_tokens,
+        vector_store_config=vector_store_config,
     )
 
     return data.loc[:, ["id", "embedding"]]

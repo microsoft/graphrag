@@ -80,17 +80,6 @@ def test_token_text_splitter(mock_tokenizer, mock_split_text):
     mock_split_text.assert_called_once_with(text=text, tokenizer=mocked_tokenizer)
 
 
-@mock.patch("tiktoken.encoding_for_model", side_effect=KeyError)
-@mock.patch("tiktoken.get_encoding")
-def test_model_name_exception(mock_get_encoding, mock_encoding_for_model):
-    mock_get_encoding.return_value = mock.MagicMock()
-
-    TokenTextSplitter(model_name="mock_model", encoding_name="mock_encoding")
-
-    mock_get_encoding.assert_called_once_with("mock_encoding")
-    mock_encoding_for_model.assert_called_once_with("mock_model")
-
-
 def test_split_single_text_on_tokens():
     text = "This is a test text, meaning to be taken seriously by this test only."
     mocked_tokenizer = MockTokenizer()

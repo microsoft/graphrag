@@ -12,6 +12,7 @@ from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
+from graphrag.config.models.embed_text_config import EmbedTextConfig
 from graphrag.config.models.extract_claims_config import ExtractClaimsConfig
 from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import (
@@ -30,7 +31,6 @@ from graphrag.config.models.storage_config import StorageConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
-from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.config.models.vector_store_config import VectorStoreConfig
 
 FAKE_API_KEY = "NOT_AN_API_KEY"
@@ -181,12 +181,11 @@ def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
 
 
 def assert_text_embedding_configs(
-    actual: TextEmbeddingConfig, expected: TextEmbeddingConfig
+    actual: EmbedTextConfig, expected: EmbedTextConfig
 ) -> None:
     assert actual.batch_size == expected.batch_size
     assert actual.batch_max_tokens == expected.batch_max_tokens
     assert actual.names == expected.names
-    assert actual.strategy == expected.strategy
     assert actual.model_id == expected.model_id
     assert actual.vector_store_id == expected.vector_store_id
 

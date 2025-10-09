@@ -13,8 +13,8 @@ from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input.factory import create_input
-from graphrag.index.operations.embed_text.strategies.openai import (
-    run as run_embed_text,
+from graphrag.index.operations.embed_text.run_embed_text import (
+    run_embed_text,
 )
 from graphrag.index.workflows.create_base_text_units import create_base_text_units
 from graphrag.prompt_tune.defaults import (
@@ -90,12 +90,9 @@ async def load_docs_in_chunks(
             sampled_text_chunks,
             callbacks=NoopWorkflowCallbacks(),
             cache=NoopPipelineCache(),
-            args={
-                "llm": embeddings_llm_settings.model_dump(),
-                "num_threads": embeddings_llm_settings.concurrent_requests,
-                "batch_size": config.embed_text.batch_size,
-                "batch_max_tokens": config.embed_text.batch_max_tokens,
-            },
+            model_config=embeddings_llm_settings,
+            batch_size=config.embed_text.batch_size,
+            batch_max_tokens=config.embed_text.batch_max_tokens,
         )
         embeddings = np.array(embedding_results.embeddings)
         chunks_df = _sample_chunks_from_embeddings(chunks_df, embeddings, k=k)

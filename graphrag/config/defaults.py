@@ -162,10 +162,9 @@ class DriftSearchDefaults:
 class EmbedTextDefaults:
     """Default values for embedding text."""
 
-    model: str = "text-embedding-3-small"
+    model_id: str = DEFAULT_EMBEDDING_MODEL_ID
     batch_size: int = 16
     batch_max_tokens: int = 8191
-    model_id: str = DEFAULT_EMBEDDING_MODEL_ID
     names: list[str] = field(default_factory=lambda: default_embeddings)
     strategy: None = None
     vector_store_id: str = DEFAULT_VECTOR_STORE_ID

@@ -19,6 +19,7 @@ from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
+from graphrag.config.models.embed_text_config import EmbedTextConfig
 from graphrag.config.models.extract_claims_config import ExtractClaimsConfig
 from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
@@ -33,7 +34,6 @@ from graphrag.config.models.storage_config import StorageConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
-from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.config.models.vector_store_config import VectorStoreConfig
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter_factory import (
     RateLimiterFactory,
@@ -249,9 +249,9 @@ class GraphRagConfig(BaseModel):
     )
     """List of workflows to run, in execution order."""
 
-    embed_text: TextEmbeddingConfig = Field(
+    embed_text: EmbedTextConfig = Field(
         description="Text embedding configuration.",
-        default=TextEmbeddingConfig(),
+        default=EmbedTextConfig(),
     )
     """Text embedding configuration."""
 
