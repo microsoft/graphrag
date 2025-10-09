@@ -4,7 +4,7 @@
 """Base classes for vector stores."""
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
@@ -18,11 +18,7 @@ class VectorStoreDocument:
     id: str | int
     """unique id for the document"""
 
-    text: str | None
     vector: list[float] | None
-
-    attributes: dict[str, Any] = field(default_factory=dict)
-    """store any additional metadata, e.g. title, date ranges, etc"""
 
 
 @dataclass
@@ -54,9 +50,7 @@ class BaseVectorStore(ABC):
 
         self.index_name = vector_store_schema_config.index_name
         self.id_field = vector_store_schema_config.id_field
-        self.text_field = vector_store_schema_config.text_field
         self.vector_field = vector_store_schema_config.vector_field
-        self.attributes_field = vector_store_schema_config.attributes_field
         self.vector_size = vector_store_schema_config.vector_size
 
     @abstractmethod

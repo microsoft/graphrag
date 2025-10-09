@@ -3,7 +3,6 @@
 
 """A package containing the CosmosDB vector store implementation."""
 
-import json
 from typing import Any
 
 from azure.cosmos import ContainerProxy, CosmosClient, DatabaseProxy
@@ -171,8 +170,6 @@ class CosmosDBVectorStore(BaseVectorStore):
                 doc_json = {
                     self.id_field: doc.id,
                     self.vector_field: doc.vector,
-                    self.text_field: doc.text,
-                    self.attributes_field: json.dumps(doc.attributes),
                 }
                 print("Storing document in CosmosDB:")  # noqa: T201
                 print(doc_json)  # noqa: T201
@@ -187,7 +184,7 @@ class CosmosDBVectorStore(BaseVectorStore):
             raise ValueError(msg)
 
         try:
-            query = f"SELECT TOP {k} c.{self.id_field}, c.{self.text_field}, c.{self.vector_field}, c.{self.attributes_field}, VectorDistance(c.{self.vector_field}, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.{self.vector_field}, @embedding)"  # noqa: S608
+            query = f"SELECT TOP {k} c.{self.id_field}, c.{self.vector_field}, VectorDistance(c.{self.vector_field}, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.{self.vector_field}, @embedding)"  # noqa: S608
             query_params = [{"name": "@embedding", "value": query_embedding}]
             items = list(
                 self._container_client.query_items(
@@ -199,7 +196,7 @@ class CosmosDBVectorStore(BaseVectorStore):
         except (CosmosHttpResponseError, ValueError):
             # Currently, the CosmosDB emulator does not support the VectorDistance function.
             # For emulator or test environments - fetch all items and calculate distance locally
-            query = f"SELECT c.{self.id_field}, c.{self.text_field}, c.{self.vector_field}, c.{self.attributes_field} FROM c"  # noqa: S608
+            query = f"SELECT c.{self.id_field}, c.{self.vector_field} FROM c"  # noqa: S608
             items = list(
                 self._container_client.query_items(
                     query=query,
@@ -231,9 +228,7 @@ class CosmosDBVectorStore(BaseVectorStore):
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
                     id=item.get(self.id_field, ""),
-                    text=item.get(self.text_field, ""),
                     vector=item.get(self.vector_field, []),
-                    attributes=(json.loads(item.get(self.attributes_field, "{}"))),
                 ),
                 score=item.get("SimilarityScore", 0.0),
             )
@@ -261,8 +256,6 @@ class CosmosDBVectorStore(BaseVectorStore):
         return VectorStoreDocument(
             id=item.get(self.id_field, ""),
             vector=item.get(self.vector_field, []),
-            text=item.get(self.text_field, ""),
-            attributes=(json.loads(item.get(self.attributes_field, "{}"))),
         )
 
     def clear(self) -> None:

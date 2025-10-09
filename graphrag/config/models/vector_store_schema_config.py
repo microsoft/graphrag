@@ -30,16 +30,6 @@ class VectorStoreSchemaConfig(BaseModel):
         default="vector",
     )
 
-    text_field: str = Field(
-        description="The text field to use.",
-        default="text",
-    )
-
-    attributes_field: str = Field(
-        description="The attributes field to use.",
-        default="attributes",
-    )
-
     vector_size: int = Field(
         description="The vector size to use.",
         default=DEFAULT_VECTOR_SIZE,
@@ -52,8 +42,6 @@ class VectorStoreSchemaConfig(BaseModel):
         for field in [
             self.id_field,
             self.vector_field,
-            self.text_field,
-            self.attributes_field,
         ]:
             if not is_valid_field_name(field):
                 msg = f"Unsafe or invalid field name: {field}"
