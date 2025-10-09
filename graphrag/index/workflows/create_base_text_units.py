@@ -56,8 +56,8 @@ def create_base_text_units(
     overlap: int,
     encoding_model: str,
     strategy: ChunkStrategyType,
-    prepend_metadata: bool = False,
-    chunk_size_includes_metadata: bool = False,
+    prepend_metadata: bool,
+    chunk_size_includes_metadata: bool,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     documents.sort_values(by=["id"], ascending=[True], inplace=True)

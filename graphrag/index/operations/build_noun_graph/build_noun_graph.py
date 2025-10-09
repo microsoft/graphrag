@@ -8,7 +8,6 @@ from itertools import combinations
 import numpy as np
 import pandas as pd
 
-from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.build_noun_graph.np_extractors.base import (
@@ -23,9 +22,9 @@ async def build_noun_graph(
     text_unit_df: pd.DataFrame,
     text_analyzer: BaseNounPhraseExtractor,
     normalize_edge_weights: bool,
-    num_threads: int = 4,
-    async_mode: AsyncType = AsyncType.Threaded,
-    cache: PipelineCache | None = None,
+    num_threads: int,
+    async_mode: AsyncType,
+    cache: PipelineCache,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Build a noun graph from text units."""
     text_units = text_unit_df.loc[:, ["id", "text"]]
@@ -43,9 +42,9 @@ async def build_noun_graph(
 async def _extract_nodes(
     text_unit_df: pd.DataFrame,
     text_analyzer: BaseNounPhraseExtractor,
-    num_threads: int = 4,
-    async_mode: AsyncType = AsyncType.Threaded,
-    cache: PipelineCache | None = None,
+    num_threads: int,
+    async_mode: AsyncType,
+    cache: PipelineCache,
 ) -> pd.DataFrame:
     """
     Extract initial nodes and edges from text units.
@@ -53,7 +52,6 @@ async def _extract_nodes(
     Input: text unit df with schema [id, text, document_id]
     Returns a dataframe with schema [id, title, frequency, text_unit_ids].
     """
-    cache = cache or NoopPipelineCache()
     cache = cache.child("extract_noun_phrases")
 
     async def extract(row):

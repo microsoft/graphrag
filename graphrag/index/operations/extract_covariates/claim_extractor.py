@@ -84,7 +84,7 @@ class ClaimExtractor:
         for doc_index, text in enumerate(texts):
             document_id = f"d{doc_index}"
             try:
-                claims = await self._process_document(prompt_args, text, doc_index)
+                claims = await self._process_document(prompt_args, text)
                 all_claims += [
                     self._clean_claim(c, document_id, resolved_entities) for c in claims
                 ]
@@ -117,9 +117,7 @@ class ClaimExtractor:
         claim["subject_id"] = subject
         return claim
 
-    async def _process_document(
-        self, prompt_args: dict, doc, doc_index: int
-    ) -> list[dict]:
+    async def _process_document(self, prompt_args: dict, doc) -> list[dict]:
         response = await self._model.achat(
             self._extraction_prompt.format(**{
                 INPUT_TEXT_KEY: doc,
@@ -156,11 +154,9 @@ class ClaimExtractor:
                 if response.output.content != "Y":
                     break
 
-        return self._parse_claim_tuples(results, prompt_args)
+        return self._parse_claim_tuples(results)
 
-    def _parse_claim_tuples(
-        self, claims: str, prompt_variables: dict
-    ) -> list[dict[str, Any]]:
+    def _parse_claim_tuples(self, claims: str) -> list[dict[str, Any]]:
         """Parse claim tuples."""
 
         def pull_field(index: int, fields: list[str]) -> str | None:

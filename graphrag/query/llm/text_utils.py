@@ -11,7 +11,6 @@ from itertools import islice
 
 from json_repair import repair_json
 
-import graphrag.config.defaults as defs
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
 
@@ -36,7 +35,7 @@ def batched(iterable: Iterator, n: int):
 def chunk_text(text: str, max_tokens: int, tokenizer: Tokenizer | None = None):
     """Chunk text by token length."""
     if tokenizer is None:
-        tokenizer = get_tokenizer(encoding_model=defs.ENCODING_MODEL)
+        tokenizer = get_tokenizer()
     tokens = tokenizer.encode(text)  # type: ignore
     chunk_iterator = batched(iter(tokens), max_tokens)
     yield from (tokenizer.decode(list(chunk)) for chunk in chunk_iterator)
