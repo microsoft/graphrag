@@ -125,7 +125,11 @@ def create_communities(
 
     # join it all up and add some new fields
     final_communities = all_grouped.merge(entity_ids, on="community", how="inner")
-    final_communities["id"] = [str(uuid4()) for _ in range(len(final_communities))]
+
+    # Generate id if there is no id
+    if "id" not in final_communities.columns or final_communities["id"].isna().all():
+        final_communities["id"] = [str(uuid4()) for _ in range(len(final_communities))]
+
     final_communities["human_readable_id"] = final_communities["community"]
     final_communities["title"] = "Community " + final_communities["community"].astype(
         str

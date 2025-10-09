@@ -34,9 +34,12 @@ def finalize_relationships(
 
     final_relationships.reset_index(inplace=True)
     final_relationships["human_readable_id"] = final_relationships.index
-    final_relationships["id"] = final_relationships["human_readable_id"].apply(
-        lambda _x: str(uuid4())
-    )
+
+    # Generate id if there is no id
+    if "id" not in final_relationships.columns or final_relationships["id"].isna().all():
+        final_relationships["id"] = final_relationships["human_readable_id"].apply(
+            lambda _x: str(uuid4())
+        )
 
     return final_relationships.loc[
         :,

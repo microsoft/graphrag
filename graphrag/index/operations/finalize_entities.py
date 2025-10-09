@@ -22,6 +22,9 @@ def finalize_entities(
     layout_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform final entities."""
+    # # Remove the default column degree, x and y for Postgres storage compatibility. And below entities.merge method
+    # # will add them back with calculated values.
+    entities = entities.drop(columns=["degree", "x", "y"], errors="ignore")
     graph = create_graph(relationships, edge_attr=["weight"])
     graph_embeddings = None
     if embed_config is not None and embed_config.enabled:
@@ -45,9 +48,12 @@ def finalize_entities(
     final_entities["degree"] = final_entities["degree"].fillna(0).astype(int)
     final_entities.reset_index(inplace=True)
     final_entities["human_readable_id"] = final_entities.index
-    final_entities["id"] = final_entities["human_readable_id"].apply(
-        lambda _x: str(uuid4())
-    )
+    
+    # Generate id if id is empty
+    if "id" not in final_entities.columns or final_entities["id"].isna().all():
+        final_entities["id"] = final_entities["human_readable_id"].apply(
+            lambda _x: str(uuid4())
+        )
     return final_entities.loc[
         :,
         ENTITIES_FINAL_COLUMNS,
