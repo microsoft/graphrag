@@ -9,15 +9,12 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.text_splitting.text_splitting import TokenTextSplitter
 from graphrag.index.utils.is_null import is_null
-from graphrag.language_model.manager import ModelManager
 from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.logger.progress import ProgressTicker, progress_ticker
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -32,24 +29,19 @@ class TextEmbeddingResult:
 async def run_embed_text(
     input: list[str],
     callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    model_config: LanguageModelConfig,
+    model: EmbeddingModel,
+    tokenizer: Tokenizer,
     batch_size: int,
     batch_max_tokens: int,
+    num_threads: int,
 ) -> TextEmbeddingResult:
     """Run the Claim extraction chain."""
     if is_null(input):
         return TextEmbeddingResult(embeddings=None)
 
-    splitter = _get_splitter(model_config, batch_max_tokens)
-    model = ModelManager().get_or_create_embedding_model(
-        name="text_embedding",
-        model_type=model_config.type,
-        config=model_config,
-        callbacks=callbacks,
-        cache=cache,
-    )
-    semaphore: asyncio.Semaphore = asyncio.Semaphore(model_config.concurrent_requests)
+    splitter = _get_splitter(tokenizer, batch_max_tokens)
+
+    semaphore: asyncio.Semaphore = asyncio.Semaphore(num_threads)
 
     # Break up the input texts. The sizes here indicate how many snippets are in each input text
     texts, input_sizes = _prepare_embed_texts(input, splitter)
@@ -80,11 +72,9 @@ async def run_embed_text(
     return TextEmbeddingResult(embeddings=embeddings)
 
 
-def _get_splitter(
-    config: LanguageModelConfig, batch_max_tokens: int
-) -> TokenTextSplitter:
+def _get_splitter(tokenizer: Tokenizer, batch_max_tokens: int) -> TokenTextSplitter:
     return TokenTextSplitter(
-        tokenizer=get_tokenizer(model_config=config),
+        tokenizer=tokenizer,
         chunk_size=batch_max_tokens,
     )
 

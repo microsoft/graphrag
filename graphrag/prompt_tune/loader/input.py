@@ -17,12 +17,14 @@ from graphrag.index.operations.embed_text.run_embed_text import (
     run_embed_text,
 )
 from graphrag.index.workflows.create_base_text_units import create_base_text_units
+from graphrag.language_model.manager import ModelManager
 from graphrag.prompt_tune.defaults import (
     LIMIT,
     N_SUBSET_MAX,
     K,
 )
 from graphrag.prompt_tune.types import DocSelectionType
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.utils.api import create_storage_from_config
 
 
@@ -53,6 +55,14 @@ async def load_docs_in_chunks(
     embeddings_llm_settings = config.get_language_model_config(
         config.embed_text.model_id
     )
+    model = ModelManager().get_or_create_embedding_model(
+        name="text_embedding",
+        model_type=embeddings_llm_settings.type,
+        config=embeddings_llm_settings,
+        callbacks=NoopWorkflowCallbacks(),
+        cache=NoopPipelineCache(),
+    )
+    tokenizer = get_tokenizer(embeddings_llm_settings)
     input_storage = create_storage_from_config(config.input.storage)
     dataset = await create_input(config.input, input_storage)
     chunk_config = config.chunks
@@ -89,10 +99,11 @@ async def load_docs_in_chunks(
         embedding_results = await run_embed_text(
             sampled_text_chunks,
             callbacks=NoopWorkflowCallbacks(),
-            cache=NoopPipelineCache(),
-            model_config=embeddings_llm_settings,
+            model=model,
+            tokenizer=tokenizer,
             batch_size=config.embed_text.batch_size,
             batch_max_tokens=config.embed_text.batch_max_tokens,
+            num_threads=embeddings_llm_settings.concurrent_requests,
         )
         embeddings = np.array(embedding_results.embeddings)
         chunks_df = _sample_chunks_from_embeddings(chunks_df, embeddings, k=k)

@@ -8,12 +8,12 @@ import logging
 import numpy as np
 import pandas as pd
 
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.embeddings import create_index_name
-from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.index.operations.embed_text.run_embed_text import run_embed_text
+from graphrag.language_model.protocol.base import EmbeddingModel
+from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument
 from graphrag.vector_stores.factory import VectorStoreFactory
 
@@ -23,12 +23,13 @@ logger = logging.getLogger(__name__)
 async def embed_text(
     input: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    model_config: LanguageModelConfig,
+    model: EmbeddingModel,
+    tokenizer: Tokenizer,
     embed_column: str,
     embedding_name: str,
     batch_size: int,
     batch_max_tokens: int,
+    num_threads: int,
     vector_store_config: dict,
     id_column: str = "id",
     title_column: str | None = None,
@@ -45,13 +46,14 @@ async def embed_text(
         return await _text_embed_with_vector_store(
             input=input,
             callbacks=callbacks,
-            cache=cache,
-            model_config=model_config,
+            model=model,
+            tokenizer=tokenizer,
             embed_column=embed_column,
             vector_store=vector_store,
             vector_store_config=vector_store_workflow_config,
             batch_size=batch_size,
             batch_max_tokens=batch_max_tokens,
+            num_threads=num_threads,
             id_column=id_column,
             title_column=title_column,
         )
@@ -59,26 +61,28 @@ async def embed_text(
     return await _text_embed_in_memory(
         input=input,
         callbacks=callbacks,
-        cache=cache,
-        model_config=model_config,
+        model=model,
+        tokenizer=tokenizer,
         embed_column=embed_column,
         batch_size=batch_size,
         batch_max_tokens=batch_max_tokens,
+        num_threads=num_threads,
     )
 
 
 async def _text_embed_in_memory(
     input: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    model_config: LanguageModelConfig,
+    model: EmbeddingModel,
+    tokenizer: Tokenizer,
     embed_column: str,
     batch_size: int,
     batch_max_tokens: int,
+    num_threads: int,
 ):
     texts: list[str] = input[embed_column].tolist()
     result = await run_embed_text(
-        texts, callbacks, cache, model_config, batch_size, batch_max_tokens
+        texts, callbacks, model, tokenizer, batch_size, batch_max_tokens, num_threads
     )
 
     return result.embeddings
@@ -87,13 +91,14 @@ async def _text_embed_in_memory(
 async def _text_embed_with_vector_store(
     input: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    model_config: LanguageModelConfig,
+    model: EmbeddingModel,
+    tokenizer: Tokenizer,
     embed_column: str,
     vector_store: BaseVectorStore,
     vector_store_config: dict,
     batch_size: int,
     batch_max_tokens: int,
+    num_threads: int,
     id_column: str,
     title_column: str | None = None,
 ):
@@ -139,7 +144,13 @@ async def _text_embed_with_vector_store(
         titles: list[str] = batch[title].tolist()
         ids: list[str] = batch[id_column].tolist()
         result = await run_embed_text(
-            texts, callbacks, cache, model_config, batch_size, batch_max_tokens
+            texts,
+            callbacks,
+            model,
+            tokenizer,
+            batch_size,
+            batch_max_tokens,
+            num_threads,
         )
         if result.embeddings:
             embeddings = [
