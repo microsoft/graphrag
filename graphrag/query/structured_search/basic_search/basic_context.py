@@ -38,7 +38,6 @@ class BasicSearchContext(BasicContextBuilder):
         self.text_units = text_units
         self.text_unit_embeddings = text_unit_embeddings
         self.embedding_vectorstore_key = embedding_vectorstore_key
-        self.text_id_map = self._map_ids()
 
     def build_context(
         self,
@@ -48,7 +47,7 @@ class BasicSearchContext(BasicContextBuilder):
         max_context_tokens: int = 12_000,
         context_name: str = "Sources",
         column_delimiter: str = "|",
-        text_id_col: str = "source_id",
+        text_id_col: str = "id",
         text_col: str = "text",
         **kwargs,
     ) -> ContextBuilderResult:
@@ -63,7 +62,7 @@ class BasicSearchContext(BasicContextBuilder):
             text_unit_ids = {t.document.id for t in related_texts}
             text_units_filtered = []
             text_units_filtered = [
-                {text_id_col: t.id, text_col: t.text}
+                {text_id_col: t.short_id, text_col: t.text}
                 for t in self.text_units or []
                 if t.id in text_unit_ids
             ]
@@ -102,13 +101,5 @@ class BasicSearchContext(BasicContextBuilder):
 
         return ContextBuilderResult(
             context_chunks=final_text,
-            context_records={context_name: final_text_df},
+            context_records={context_name.lower(): final_text_df},
         )
-
-    def _map_ids(self) -> dict[str, str]:
-        """Map id to short id in the text units."""
-        id_map = {}
-        text_units = self.text_units or []
-        for unit in text_units:
-            id_map[unit.id] = unit.short_id
-        return id_map

@@ -27,7 +27,7 @@ For example:
 
 "Person X is the owner of Company Y and subject to many allegations of wrongdoing [Data: Sources (2, 7, 64, 46, 34, +more)]. He is also CEO of company X [Data: Sources (1, 3)]"
 
-where 1, 2, 3, 7, 34, 46, and 64 represent the source id taken from the "source_id" column in the provided tables.
+where 1, 2, 3, 7, 34, 46, and 64 represent the source id taken from the "id" column in the provided tables.
 
 Do not include information where the supporting evidence for it is not provided.
 
@@ -60,7 +60,7 @@ For example:
 
 "Person X is the owner of Company Y and subject to many allegations of wrongdoing [Data: Sources (2, 7, 64, 46, 34, +more)]. He is also CEO of company X [Data: Sources (1, 3)]"
 
-where 1, 2, 3, 7, 34, 46, and 64 represent the source id taken from the "source_id" column in the provided tables.
+where 1, 2, 3, 7, 34, 46, and 64 represent the source id taken from the "id" column in the provided tables.
 
 Do not include information where the supporting evidence for it is not provided.
 
