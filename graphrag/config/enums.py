@@ -84,13 +84,9 @@ class ModelType(str, Enum):
     """LLMType enum class definition."""
 
     # Embeddings
-    OpenAIEmbedding = "openai_embedding"
-    AzureOpenAIEmbedding = "azure_openai_embedding"
     Embedding = "embedding"
 
     # Chat Completion
-    OpenAIChat = "openai_chat"
-    AzureOpenAIChat = "azure_openai_chat"
     Chat = "chat"
 
     # Debug

@@ -137,29 +137,17 @@ def _create_completions(
     """
     completion, acompletion = _create_base_completions(model_config)
 
-    # TODO: For v2.x release, rpm/tpm can be int or str (auto) for backwards compatibility with fnllm.
-    # LiteLLM does not support "auto", so we have to check those values here.
-    # For v3 release, force rpm/tpm to be int and remove the type checks below
-    # and just check if rate_limit_strategy is enabled.
-    if model_config.rate_limit_strategy is not None:
-        rpm = (
-            model_config.requests_per_minute
-            if type(model_config.requests_per_minute) is int
-            else None
+    if model_config.rate_limit_strategy is not None and (
+        model_config.requests_per_minute is not None
+        or model_config.tokens_per_minute is not None
+    ):
+        completion, acompletion = with_rate_limiter(
+            sync_fn=completion,
+            async_fn=acompletion,
+            model_config=model_config,
+            rpm=model_config.requests_per_minute,
+            tpm=model_config.tokens_per_minute,
         )
-        tpm = (
-            model_config.tokens_per_minute
-            if type(model_config.tokens_per_minute) is int
-            else None
-        )
-        if rpm is not None or tpm is not None:
-            completion, acompletion = with_rate_limiter(
-                sync_fn=completion,
-                async_fn=acompletion,
-                model_config=model_config,
-                rpm=rpm,
-                tpm=tpm,
-            )
 
     if model_config.retry_strategy != "none":
         completion, acompletion = with_retries(

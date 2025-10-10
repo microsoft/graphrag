@@ -24,7 +24,8 @@ from tests.unit.config.utils import (
 def test_missing_openai_required_api_key() -> None:
     model_config_missing_api_key = {
         defs.DEFAULT_CHAT_MODEL_ID: {
-            "type": ModelType.OpenAIChat,
+            "type": ModelType.Chat,
+            "model_provider": "openai",
             "model": defs.DEFAULT_CHAT_MODEL,
         },
         defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
@@ -36,7 +37,7 @@ def test_missing_openai_required_api_key() -> None:
 
     # API Key required for OpenAIEmbedding
     model_config_missing_api_key[defs.DEFAULT_CHAT_MODEL_ID]["type"] = (
-        ModelType.OpenAIEmbedding
+        ModelType.Embedding
     )
     with pytest.raises(ValidationError):
         create_graphrag_config({"models": model_config_missing_api_key})
@@ -45,7 +46,8 @@ def test_missing_openai_required_api_key() -> None:
 def test_missing_azure_api_key() -> None:
     model_config_missing_api_key = {
         defs.DEFAULT_CHAT_MODEL_ID: {
-            "type": ModelType.AzureOpenAIChat,
+            "type": ModelType.Chat,
+            "model_provider": "azure",
             "auth_type": AuthType.APIKey,
             "model": defs.DEFAULT_CHAT_MODEL,
             "api_base": "some_api_base",
@@ -69,7 +71,8 @@ def test_conflicting_auth_type() -> None:
     model_config_invalid_auth_type = {
         defs.DEFAULT_CHAT_MODEL_ID: {
             "auth_type": AuthType.AzureManagedIdentity,
-            "type": ModelType.OpenAIChat,
+            "type": ModelType.Chat,
+            "model_provider": "openai",
             "model": defs.DEFAULT_CHAT_MODEL,
         },
         defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
@@ -82,7 +85,8 @@ def test_conflicting_auth_type() -> None:
 def test_conflicting_azure_api_key() -> None:
     model_config_conflicting_api_key = {
         defs.DEFAULT_CHAT_MODEL_ID: {
-            "type": ModelType.AzureOpenAIChat,
+            "type": ModelType.Chat,
+            "model_provider": "azure",
             "auth_type": AuthType.AzureManagedIdentity,
             "model": defs.DEFAULT_CHAT_MODEL,
             "api_base": "some_api_base",
@@ -98,7 +102,8 @@ def test_conflicting_azure_api_key() -> None:
 
 
 base_azure_model_config = {
-    "type": ModelType.AzureOpenAIChat,
+    "type": ModelType.Chat,
+    "model_provider": "azure",
     "auth_type": AuthType.AzureManagedIdentity,
     "model": defs.DEFAULT_CHAT_MODEL,
     "api_base": "some_api_base",

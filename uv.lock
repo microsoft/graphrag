@@ -95,15 +95,6 @@ wheels = [
 ]
 
 [[package]]
-name = "aiolimiter"
-version = "1.2.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f1/23/b52debf471f7a1e42e362d959a3982bdcb4fe13a5d46e63d28868807a79c/aiolimiter-1.2.1.tar.gz", hash = "sha256:e02a37ea1a855d9e832252a105420ad4d15011505512a1a1d814647451b5cca9", size = 7185 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f3/ba/df6e8e1045aebc4778d19b8a3a9bc1808adb1619ba94ca354d9ba17d86c3/aiolimiter-1.2.1-py3-none-any.whl", hash = "sha256:d3f249e9059a20badcb56b61601a83556133655c11d1eb3dd3e04ff069e5f3c7", size = 6711 },
-]
-
-[[package]]
 name = "aiosignal"
 version = "1.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -945,32 +936,6 @@ wheels = [
 ]
 
 [[package]]
-name = "fnllm"
-version = "0.4.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "aiolimiter" },
-    { name = "httpx" },
-    { name = "json-repair" },
-    { name = "pydantic" },
-    { name = "tenacity" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/33/84/bc3d02134a46dd267afbed66a47dc281b252bd8171c94ad22bcc8f924f8b/fnllm-0.4.1.tar.gz", hash = "sha256:80a7450693691bf0832e12a2d70420647bfea35a43cb91c4a9cb5e2f39172b50", size = 93566 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ac/6a/04db92a7e8d9cf9b73d3c29c38e16d5728069ec1be06a4723f74579499fa/fnllm-0.4.1-py3-none-any.whl", hash = "sha256:22f1b3316a90f29fde94bfe651e0e4963ff68cddb438035ef7c2161e39789ccf", size = 79273 },
-]
-
-[package.optional-dependencies]
-azure = [
-    { name = "azure-identity" },
-    { name = "azure-storage-blob" },
-]
-openai = [
-    { name = "openai" },
-    { name = "tiktoken" },
-]
-
-[[package]]
 name = "fqdn"
 version = "1.5.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1081,7 +1046,6 @@ dependencies = [
     { name = "azure-storage-blob" },
     { name = "devtools" },
     { name = "environs" },
-    { name = "fnllm", extra = ["azure", "openai"] },
     { name = "future" },
     { name = "graspologic-native" },
     { name = "json-repair" },
@@ -1139,7 +1103,6 @@ requires-dist = [
     { name = "azure-storage-blob", specifier = ">=12.24.0" },
     { name = "devtools", specifier = ">=0.12.2" },
     { name = "environs", specifier = ">=11.0.0" },
-    { name = "fnllm", extras = ["azure", "openai"], specifier = ">=0.4.1" },
     { name = "future", specifier = ">=1.0.0" },
     { name = "graspologic-native", specifier = ">=1.2.5" },
     { name = "json-repair", specifier = ">=0.30.3" },
@@ -3862,15 +3825,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/28/e3/55dcc2cfbc3ca9c29519eb6884dd1415ecb53b0e934862d3559ddcb7e20b/stack_data-0.6.3.tar.gz", hash = "sha256:836a778de4fec4dcd1dcd89ed8abff8a221f58308462e1c4aa2a3cf30148f0b9", size = 44707 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f1/7b/ce1eafaf1a76852e2ec9b22edecf1daa58175c090266e9f6c64afcd81d91/stack_data-0.6.3-py3-none-any.whl", hash = "sha256:d5558e0c25a4cb0853cddad3d77da9891a08cb85dd9f9f91b9f8cd66e511e695", size = 24521 },
-]
-
-[[package]]
-name = "tenacity"
-version = "9.1.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/0a/d4/2b0cd0fe285e14b36db076e78c93766ff1d529d70408bd1d2a5a84f1d929/tenacity-9.1.2.tar.gz", hash = "sha256:1169d376c297e7de388d18b4481760d478b0e99a777cad3a9c86e556f4b697cb", size = 48036 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e5/30/643397144bfbfec6f6ef821f36f33e57d35946c44a2352d3c9f0ae847619/tenacity-9.1.2-py3-none-any.whl", hash = "sha256:f77bf36710d8b73a50b2dd155c97b870017ad21afe6ab300326b0371b3b05138", size = 28248 },
 ]
 
 [[package]]

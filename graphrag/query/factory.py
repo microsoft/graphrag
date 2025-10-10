@@ -12,7 +12,7 @@ from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
 from graphrag.language_model.manager import ModelManager
-from graphrag.language_model.providers.fnllm.utils import (
+from graphrag.language_model.util import (
     get_openai_model_parameters_from_config,
 )
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
