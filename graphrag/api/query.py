@@ -294,14 +294,11 @@ def local_search_streaming(
     """
     init_loggers(config=config, verbose=verbose, filename="query.log")
 
-    vector_store_args = {}
-    for index, store in config.vector_store.items():
-        vector_store_args[index] = store.model_dump()
-    msg = f"Vector Store Args: {redact(vector_store_args)}"
+    msg = f"Vector Store Args: {redact(config.vector_store.model_dump())}"
     logger.debug(msg)
 
     description_embedding_store = get_embedding_store(
-        config_args=vector_store_args,
+        store=config.vector_store.model_dump(),
         embedding_name=entity_description_embedding,
     )
 
@@ -422,19 +419,16 @@ def drift_search_streaming(
     """
     init_loggers(config=config, verbose=verbose, filename="query.log")
 
-    vector_store_args = {}
-    for index, store in config.vector_store.items():
-        vector_store_args[index] = store.model_dump()
-    msg = f"Vector Store Args: {redact(vector_store_args)}"
+    msg = f"Vector Store Args: {redact(config.vector_store.model_dump())}"
     logger.debug(msg)
 
     description_embedding_store = get_embedding_store(
-        config_args=vector_store_args,
+        store=config.vector_store.model_dump(),
         embedding_name=entity_description_embedding,
     )
 
     full_content_embedding_store = get_embedding_store(
-        config_args=vector_store_args,
+        store=config.vector_store.model_dump(),
         embedding_name=community_full_content_embedding,
     )
 
@@ -533,14 +527,11 @@ def basic_search_streaming(
     """
     init_loggers(config=config, verbose=verbose, filename="query.log")
 
-    vector_store_args = {}
-    for index, store in config.vector_store.items():
-        vector_store_args[index] = store.model_dump()
-    msg = f"Vector Store Args: {redact(vector_store_args)}"
+    msg = f"Vector Store Args: {redact(config.vector_store.model_dump())}"
     logger.debug(msg)
 
     embedding_store = get_embedding_store(
-        config_args=vector_store_args,
+        store=config.vector_store.model_dump(),
         embedding_name=text_unit_text_embedding,
     )
 

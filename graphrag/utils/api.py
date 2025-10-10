@@ -4,6 +4,7 @@
 """API functions for the GraphRAG module."""
 
 from pathlib import Path
+from typing import Any
 
 from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
@@ -20,11 +21,10 @@ from graphrag.vector_stores.factory import VectorStoreFactory
 
 
 def get_embedding_store(
-    config_args: dict[str, dict],
+    store: dict[str, Any],
     embedding_name: str,
 ) -> BaseVectorStore:
     """Get the embedding description store."""
-    store = next(iter(config_args.values()))
     vector_store_type = store["type"]
     index_name = create_index_name(
         store.get("container_name", "default"), embedding_name

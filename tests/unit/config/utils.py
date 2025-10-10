@@ -105,23 +105,18 @@ def assert_language_model_configs(
 
 
 def assert_vector_store_configs(
-    actual: dict[str, VectorStoreConfig],
-    expected: dict[str, VectorStoreConfig],
+    actual: VectorStoreConfig,
+    expected: VectorStoreConfig,
 ):
     assert type(actual) is type(expected)
-    assert len(actual) == len(expected)
-    for (index_a, store_a), (index_e, store_e) in zip(
-        actual.items(), expected.items(), strict=True
-    ):
-        assert index_a == index_e
-        assert store_a.type == store_e.type
-        assert store_a.db_uri == store_e.db_uri
-        assert store_a.url == store_e.url
-        assert store_a.api_key == store_e.api_key
-        assert store_a.audience == store_e.audience
-        assert store_a.container_name == store_e.container_name
-        assert store_a.overwrite == store_e.overwrite
-        assert store_a.database_name == store_e.database_name
+    assert actual.type == expected.type
+    assert actual.db_uri == expected.db_uri
+    assert actual.url == expected.url
+    assert actual.api_key == expected.api_key
+    assert actual.audience == expected.audience
+    assert actual.container_name == expected.container_name
+    assert actual.overwrite == expected.overwrite
+    assert actual.database_name == expected.database_name
 
 
 def assert_reporting_configs(
@@ -187,7 +182,6 @@ def assert_text_embedding_configs(
     assert actual.batch_max_tokens == expected.batch_max_tokens
     assert actual.names == expected.names
     assert actual.model_id == expected.model_id
-    assert actual.vector_store_id == expected.vector_store_id
 
 
 def assert_chunking_configs(actual: ChunkingConfig, expected: ChunkingConfig) -> None:

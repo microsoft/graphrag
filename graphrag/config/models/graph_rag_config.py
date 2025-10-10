@@ -3,7 +3,6 @@
 
 """Parameterization settings for the default configuration."""
 
-from dataclasses import asdict
 from pathlib import Path
 
 from devtools import pformat
@@ -234,12 +233,8 @@ class GraphRagConfig(BaseModel):
                 (Path(self.root_dir) / self.reporting.base_dir).resolve()
             )
 
-    vector_store: dict[str, VectorStoreConfig] = Field(
-        description="The vector store configuration.",
-        default_factory=lambda: {
-            k: VectorStoreConfig(**asdict(v))
-            for k, v in graphrag_config_defaults.vector_store.items()
-        },
+    vector_store: VectorStoreConfig = Field(
+        description="The vector store configuration.", default=VectorStoreConfig()
     )
     """The vector store configuration."""
 
@@ -327,12 +322,12 @@ class GraphRagConfig(BaseModel):
 
     def _validate_vector_store_db_uri(self) -> None:
         """Validate the vector store configuration."""
-        for store in self.vector_store.values():
-            if store.type == VectorStoreType.LanceDB:
-                if not store.db_uri or store.db_uri.strip == "":
-                    msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
-                    raise ValueError(msg)
-                store.db_uri = str((Path(self.root_dir) / store.db_uri).resolve())
+        store = self.vector_store
+        if store.type == VectorStoreType.LanceDB:
+            if not store.db_uri or store.db_uri.strip == "":
+                msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
+                raise ValueError(msg)
+            store.db_uri = str((Path(self.root_dir) / store.db_uri).resolve())
 
     def _validate_factories(self) -> None:
         """Validate the factories used in the configuration."""
@@ -362,30 +357,6 @@ class GraphRagConfig(BaseModel):
             raise ValueError(err_msg)
 
         return self.models[model_id]
-
-    def get_vector_store_config(self, vector_store_id: str) -> VectorStoreConfig:
-        """Get a vector store configuration by ID.
-
-        Parameters
-        ----------
-        vector_store_id : str
-            The ID of the vector store to get. Should match an ID in the vector_store list.
-
-        Returns
-        -------
-        VectorStoreConfig
-            The vector store configuration if found.
-
-        Raises
-        ------
-        ValueError
-            If the vector store ID is not found in the configuration.
-        """
-        if vector_store_id not in self.vector_store:
-            err_msg = f"Vector Store ID {vector_store_id} not found in configuration. Please rerun `graphrag init` and set the vector store configuration."
-            raise ValueError(err_msg)
-
-        return self.vector_store[vector_store_id]
 
     @model_validator(mode="after")
     def _validate_model(self):

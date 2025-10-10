@@ -11,9 +11,7 @@ def get_vector_store_settings(
     vector_store_params: dict | None = None,
 ) -> dict:
     """Transform GraphRAG config into settings for workflows."""
-    vector_store_settings = settings.get_vector_store_config(
-        settings.embed_text.vector_store_id
-    ).model_dump()
+    vector_store_settings = settings.vector_store.model_dump()
 
     #
     # If we get to this point, settings.vector_store is defined, and there's a specific setting for this embedding.
