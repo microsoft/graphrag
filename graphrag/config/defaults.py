@@ -60,6 +60,7 @@ DEFAULT_VECTOR_STORE_ID = "default_vector_store"
 ENCODING_MODEL = "o200k_base"
 COGNITIVE_SERVICES_AUDIENCE = "https://cognitiveservices.azure.com/.default"
 
+DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 DEFAULT_RETRY_SERVICES: dict[str, Callable[..., Retry]] = {
     "native": NativeRetry,
@@ -125,7 +126,6 @@ class CommunityReportDefaults:
     text_prompt: None = None
     max_length: int = 2000
     max_input_length: int = 8000
-    strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
 
 
@@ -162,10 +162,9 @@ class DriftSearchDefaults:
 class EmbedTextDefaults:
     """Default values for embedding text."""
 
-    model: str = "text-embedding-3-small"
+    model_id: str = DEFAULT_EMBEDDING_MODEL_ID
     batch_size: int = 16
     batch_max_tokens: int = 8191
-    model_id: str = DEFAULT_EMBEDDING_MODEL_ID
     names: list[str] = field(default_factory=lambda: default_embeddings)
     strategy: None = None
     vector_store_id: str = DEFAULT_VECTOR_STORE_ID

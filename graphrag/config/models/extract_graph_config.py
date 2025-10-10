@@ -3,12 +3,20 @@
 
 """Parameterization settings for the default configuration."""
 
+from dataclasses import dataclass
 from pathlib import Path
 
 from pydantic import BaseModel, Field
 
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.prompts.index.extract_graph import GRAPH_EXTRACTION_PROMPT
+
+
+@dataclass
+class ExtractGraphPrompts:
+    """Graph extraction prompt templates."""
+
+    extraction_prompt: str
 
 
 class ExtractGraphConfig(BaseModel):
@@ -30,26 +38,11 @@ class ExtractGraphConfig(BaseModel):
         description="The maximum number of entity gleanings to use.",
         default=graphrag_config_defaults.extract_graph.max_gleanings,
     )
-    strategy: dict | None = Field(
-        description="Override the default entity extraction strategy",
-        default=graphrag_config_defaults.extract_graph.strategy,
-    )
 
-    def resolved_strategy(
-        self, root_dir: str, model_config: LanguageModelConfig
-    ) -> dict:
-        """Get the resolved entity extraction strategy."""
-        from graphrag.index.operations.extract_graph.typing import (
-            ExtractEntityStrategyType,
-        )
-
-        return self.strategy or {
-            "type": ExtractEntityStrategyType.graph_intelligence,
-            "llm": model_config.model_dump(),
-            "extraction_prompt": (Path(root_dir) / self.prompt).read_text(
-                encoding="utf-8"
-            )
+    def resolved_prompts(self, root_dir: str) -> ExtractGraphPrompts:
+        """Get the resolved graph extraction prompts."""
+        return ExtractGraphPrompts(
+            extraction_prompt=(Path(root_dir) / self.prompt).read_text(encoding="utf-8")
             if self.prompt
-            else None,
-            "max_gleanings": self.max_gleanings,
-        }
+            else GRAPH_EXTRACTION_PROMPT,
+        )

@@ -8,12 +8,9 @@ import logging
 import pandas as pd
 
 import graphrag.data_model.schemas as schemas
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.operations.finalize_community_reports import (
     finalize_community_reports,
 )
@@ -29,7 +26,10 @@ from graphrag.index.operations.summarize_communities.summarize_communities impor
 )
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
+from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.utils.storage import (
     load_table_from_storage,
     storage_has_table,
@@ -54,14 +54,18 @@ async def run_workflow(
     ):
         claims = await load_table_from_storage("covariates", context.output_storage)
 
-    community_reports_llm_settings = config.get_language_model_config(
-        config.community_reports.model_id
+    model_config = config.get_language_model_config(config.community_reports.model_id)
+    prompts = config.community_reports.resolved_prompts(config.root_dir)
+
+    model = ModelManager().get_or_create_chat_model(
+        name="community_reporting",
+        model_type=model_config.type,
+        config=model_config,
+        callbacks=context.callbacks,
+        cache=context.cache,
     )
-    async_mode = community_reports_llm_settings.async_mode
-    num_threads = community_reports_llm_settings.concurrent_requests
-    summarization_strategy = config.community_reports.resolved_strategy(
-        config.root_dir, community_reports_llm_settings
-    )
+
+    tokenizer = get_tokenizer(model_config)
 
     output = await create_community_reports(
         edges_input=edges,
@@ -69,10 +73,13 @@ async def run_workflow(
         communities=communities,
         claims_input=claims,
         callbacks=context.callbacks,
-        cache=context.cache,
-        summarization_strategy=summarization_strategy,
-        async_mode=async_mode,
-        num_threads=num_threads,
+        model=model,
+        tokenizer=tokenizer,
+        prompt=prompts.graph_prompt,
+        max_input_length=config.community_reports.max_input_length,
+        max_report_length=config.community_reports.max_length,
+        num_threads=model_config.concurrent_requests,
+        async_type=model_config.async_mode,
     )
 
     await write_table_to_storage(output, "community_reports", context.output_storage)
@@ -87,10 +94,13 @@ async def create_community_reports(
     communities: pd.DataFrame,
     claims_input: pd.DataFrame | None,
     callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    summarization_strategy: dict,
-    async_mode: AsyncType = AsyncType.AsyncIO,
-    num_threads: int = 4,
+    model: ChatModel,
+    tokenizer: Tokenizer,
+    prompt: str,
+    max_input_length: int,
+    max_report_length: int,
+    num_threads: int,
+    async_type: AsyncType,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
     nodes = explode_communities(communities, entities)
@@ -101,15 +111,6 @@ async def create_community_reports(
     claims = None
     if claims_input is not None:
         claims = _prep_claims(claims_input)
-
-    summarization_strategy["extraction_prompt"] = summarization_strategy["graph_prompt"]
-
-    model_config = LanguageModelConfig(**summarization_strategy["llm"])
-    tokenizer = get_tokenizer(model_config)
-
-    max_input_length = summarization_strategy.get(
-        "max_input_length", graphrag_config_defaults.community_reports.max_input_length
-    )
 
     local_contexts = build_local_context(
         nodes,
@@ -126,12 +127,13 @@ async def create_community_reports(
         local_contexts,
         build_level_context,
         callbacks,
-        cache,
-        summarization_strategy,
+        model=model,
+        prompt=prompt,
         tokenizer=tokenizer,
         max_input_length=max_input_length,
-        async_mode=async_mode,
+        max_report_length=max_report_length,
         num_threads=num_threads,
+        async_type=async_type,
     )
 
     return finalize_community_reports(community_reports, communities)

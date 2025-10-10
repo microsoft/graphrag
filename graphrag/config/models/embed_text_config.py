@@ -6,10 +6,9 @@
 from pydantic import BaseModel, Field
 
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
-class TextEmbeddingConfig(BaseModel):
+class EmbedTextConfig(BaseModel):
     """Configuration section for text embeddings."""
 
     model_id: str = Field(
@@ -32,21 +31,3 @@ class TextEmbeddingConfig(BaseModel):
         description="The specific embeddings to perform.",
         default=graphrag_config_defaults.embed_text.names,
     )
-    strategy: dict | None = Field(
-        description="The override strategy to use.",
-        default=graphrag_config_defaults.embed_text.strategy,
-    )
-
-    def resolved_strategy(self, model_config: LanguageModelConfig) -> dict:
-        """Get the resolved text embedding strategy."""
-        from graphrag.index.operations.embed_text.embed_text import (
-            TextEmbedStrategyType,
-        )
-
-        return self.strategy or {
-            "type": TextEmbedStrategyType.openai,
-            "llm": model_config.model_dump(),
-            "num_threads": model_config.concurrent_requests,
-            "batch_size": self.batch_size,
-            "batch_max_tokens": self.batch_max_tokens,
-        }

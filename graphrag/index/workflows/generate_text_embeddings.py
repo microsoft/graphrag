@@ -7,7 +7,6 @@ import logging
 
 import pandas as pd
 
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.embeddings import (
     community_full_content_embedding,
@@ -19,11 +18,15 @@ from graphrag.config.embeddings import (
     relationship_description_embedding,
     text_unit_text_embedding,
 )
-from graphrag.config.get_embedding_settings import get_embedding_settings
+from graphrag.config.get_vector_store_settings import get_vector_store_settings
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
+from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import EmbeddingModel
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.utils.storage import (
     load_table_from_storage,
     write_table_to_storage,
@@ -67,7 +70,19 @@ async def run_workflow(
             "community_reports", context.output_storage
         )
 
-    text_embed = get_embedding_settings(config)
+    vector_store_config = get_vector_store_settings(config)
+
+    model_config = config.get_language_model_config(config.embed_text.model_id)
+
+    model = ModelManager().get_or_create_embedding_model(
+        name="text_embedding",
+        model_type=model_config.type,
+        config=model_config,
+        callbacks=context.callbacks,
+        cache=context.cache,
+    )
+
+    tokenizer = get_tokenizer(model_config)
 
     output = await generate_text_embeddings(
         documents=documents,
@@ -76,8 +91,12 @@ async def run_workflow(
         entities=entities,
         community_reports=community_reports,
         callbacks=context.callbacks,
-        cache=context.cache,
-        text_embed_config=text_embed,
+        model=model,
+        tokenizer=tokenizer,
+        batch_size=config.embed_text.batch_size,
+        batch_max_tokens=config.embed_text.batch_max_tokens,
+        num_threads=model_config.concurrent_requests,
+        vector_store_config=vector_store_config,
         embedded_fields=embedded_fields,
     )
 
@@ -100,8 +119,12 @@ async def generate_text_embeddings(
     entities: pd.DataFrame | None,
     community_reports: pd.DataFrame | None,
     callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    text_embed_config: dict,
+    model: EmbeddingModel,
+    tokenizer: Tokenizer,
+    batch_size: int,
+    batch_max_tokens: int,
+    num_threads: int,
+    vector_store_config: dict,
     embedded_fields: list[str],
 ) -> dict[str, pd.DataFrame]:
     """All the steps to generate all embeddings."""
@@ -164,8 +187,12 @@ async def generate_text_embeddings(
             outputs[field] = await _run_embeddings(
                 name=field,
                 callbacks=callbacks,
-                cache=cache,
-                text_embed_config=text_embed_config,
+                model=model,
+                tokenizer=tokenizer,
+                vector_store_config=vector_store_config,
+                batch_size=batch_size,
+                batch_max_tokens=batch_max_tokens,
+                num_threads=num_threads,
                 **embedding_param_map[field],
             )
     return outputs
@@ -176,17 +203,25 @@ async def _run_embeddings(
     data: pd.DataFrame,
     embed_column: str,
     callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    text_embed_config: dict,
+    model: EmbeddingModel,
+    tokenizer: Tokenizer,
+    batch_size: int,
+    batch_max_tokens: int,
+    num_threads: int,
+    vector_store_config: dict,
 ) -> pd.DataFrame:
     """All the steps to generate single embedding."""
     data["embedding"] = await embed_text(
         input=data,
         callbacks=callbacks,
-        cache=cache,
+        model=model,
+        tokenizer=tokenizer,
         embed_column=embed_column,
         embedding_name=name,
-        strategy=text_embed_config["strategy"],
+        batch_size=batch_size,
+        batch_max_tokens=batch_max_tokens,
+        num_threads=num_threads,
+        vector_store_config=vector_store_config,
     )
 
     return data.loc[:, ["id", "embedding"]]

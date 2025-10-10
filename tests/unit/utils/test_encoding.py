@@ -8,7 +8,9 @@ def test_encode_basic():
     tokenizer = get_tokenizer()
     result = tokenizer.encode("abc def")
 
-    assert result == [13997, 711], "Encoding failed to return expected tokens"
+    assert result == [26682, 1056], (
+        f"Encoding failed to return expected tokens, sent {result}"
+    )
 
 
 def test_num_tokens_empty_input():

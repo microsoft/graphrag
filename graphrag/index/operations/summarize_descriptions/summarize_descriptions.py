@@ -5,16 +5,17 @@
 
 import asyncio
 import logging
-from typing import Any
 
 import pandas as pd
 
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.index.operations.summarize_descriptions.typing import (
-    SummarizationStrategy,
-    SummarizeStrategyType,
+from graphrag.index.operations.summarize_descriptions.description_summary_extractor import (
+    SummarizeExtractor,
 )
+from graphrag.index.operations.summarize_descriptions.typing import (
+    SummarizedDescriptionResult,
+)
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.logger.progress import ProgressTicker, progress_ticker
 
 logger = logging.getLogger(__name__)
@@ -24,17 +25,13 @@ async def summarize_descriptions(
     entities_df: pd.DataFrame,
     relationships_df: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    cache: PipelineCache,
-    strategy: dict[str, Any] | None = None,
-    num_threads: int = 4,
+    model: ChatModel,
+    max_summary_length: int,
+    max_input_tokens: int,
+    prompt: str,
+    num_threads: int,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Summarize entity and relationship descriptions from an entity graph, using a language model."""
-    logger.debug("summarize_descriptions strategy=%s", strategy)
-    strategy = strategy or {}
-    strategy_exec = load_strategy(
-        strategy.get("type", SummarizeStrategyType.graph_intelligence)
-    )
-    strategy_config = {**strategy}
 
     async def get_summarized(
         nodes: pd.DataFrame, edges: pd.DataFrame, semaphore: asyncio.Semaphore
@@ -99,7 +96,14 @@ async def summarize_descriptions(
         semaphore: asyncio.Semaphore,
     ):
         async with semaphore:
-            results = await strategy_exec(id, descriptions, cache, strategy_config)
+            results = await run_summarize_descriptions(
+                id,
+                descriptions,
+                model,
+                max_summary_length,
+                max_input_tokens,
+                prompt,
+            )
             ticker(1)
         return results
 
@@ -108,15 +112,26 @@ async def summarize_descriptions(
     return await get_summarized(entities_df, relationships_df, semaphore)
 
 
-def load_strategy(strategy_type: SummarizeStrategyType) -> SummarizationStrategy:
-    """Load strategy method definition."""
-    match strategy_type:
-        case SummarizeStrategyType.graph_intelligence:
-            from graphrag.index.operations.summarize_descriptions.graph_intelligence_strategy import (
-                run_graph_intelligence,
-            )
+async def run_summarize_descriptions(
+    id: str | tuple[str, str],
+    descriptions: list[str],
+    model: ChatModel,
+    max_summary_length: int,
+    max_input_tokens: int,
+    prompt: str,
+) -> SummarizedDescriptionResult:
+    """Run the graph intelligence entity extraction strategy."""
+    extractor = SummarizeExtractor(
+        model=model,
+        summarization_prompt=prompt,
+        on_error=lambda e, stack, details: logger.error(
+            "Entity Extraction Error",
+            exc_info=e,
+            extra={"stack": stack, "details": details},
+        ),
+        max_summary_length=max_summary_length,
+        max_input_tokens=max_input_tokens,
+    )
 
-            return run_graph_intelligence
-        case _:
-            msg = f"Unknown strategy: {strategy_type}"
-            raise ValueError(msg)
+    result = await extractor(id=id, descriptions=descriptions)
+    return SummarizedDescriptionResult(id=result.id, description=result.description)
