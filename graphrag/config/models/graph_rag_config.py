@@ -178,23 +178,6 @@ class GraphRagConfig(BaseModel):
                 (Path(self.root_dir) / self.output.base_dir).resolve()
             )
 
-    outputs: dict[str, StorageConfig] | None = Field(
-        description="A list of output configurations used for multi-index query.",
-        default=graphrag_config_defaults.outputs,
-    )
-
-    def _validate_multi_output_base_dirs(self) -> None:
-        """Validate the outputs dict base directories."""
-        if self.outputs:
-            for output in self.outputs.values():
-                if output.type == defs.StorageType.file:
-                    if output.base_dir.strip() == "":
-                        msg = "Output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
-                        raise ValueError(msg)
-                    output.base_dir = str(
-                        (Path(self.root_dir) / output.base_dir).resolve()
-                    )
-
     update_index_output: StorageConfig = Field(
         description="The output configuration for the updated index.",
         default=StorageConfig(
@@ -367,7 +350,6 @@ class GraphRagConfig(BaseModel):
         self._validate_input_base_dir()
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
-        self._validate_multi_output_base_dirs()
         self._validate_update_index_output_base_dir()
         self._validate_vector_store_db_uri()
         self._validate_factories()

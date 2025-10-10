@@ -365,14 +365,6 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
     assert_reporting_configs(actual.reporting, expected.reporting)
     assert_output_configs(actual.output, expected.output)
 
-    if expected.outputs is not None:
-        assert actual.outputs is not None
-        assert len(actual.outputs) == len(expected.outputs)
-        for a, e in zip(actual.outputs.keys(), expected.outputs.keys(), strict=True):
-            assert_output_configs(actual.outputs[a], expected.outputs[e])
-    else:
-        assert actual.outputs is None
-
     assert_update_output_configs(
         actual.update_index_output, expected.update_index_output
     )

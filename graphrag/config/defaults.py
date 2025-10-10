@@ -415,7 +415,6 @@ class GraphRagConfigDefaults:
     reporting: ReportingDefaults = field(default_factory=ReportingDefaults)
     storage: StorageDefaults = field(default_factory=StorageDefaults)
     output: OutputDefaults = field(default_factory=OutputDefaults)
-    outputs: None = None
     update_index_output: UpdateIndexOutputDefaults = field(
         default_factory=UpdateIndexOutputDefaults
     )
