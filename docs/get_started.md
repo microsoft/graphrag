@@ -60,11 +60,13 @@ If running in OpenAI mode, you only need to update the value of `GRAPHRAG_API_KE
 In addition to setting your API key, Azure OpenAI users should set the variables below in the settings.yaml file. To find the appropriate sections, just search for the `models:` root configuration; you should see two sections, one for the default chat endpoint and one for the default embeddings endpoint. Here is an example of what to add to the chat model config:
 
 ```yaml
-type: azure_openai_chat # Or azure_openai_embedding for embeddings
+type: chat
+model_provider: azure
 api_base: https://<instance>.openai.azure.com
 api_version: 2024-02-15-preview # You can customize this for other versions
-deployment_name: <azure_model_deployment_name>
 ```
+
+Most people tend to name their deployments the same as their model - if yours are different, add the `deployment_name` as well.
 
 #### Using Managed Auth on Azure
 To use managed auth, edit the auth_type in your model config and *remove* the api_key line:

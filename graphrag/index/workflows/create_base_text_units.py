@@ -13,10 +13,10 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.chunking_config import ChunkStrategyType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.chunk_text.chunk_text import chunk_text
-from graphrag.index.operations.chunk_text.strategies import get_encoding_fn
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ def create_base_text_units(
     """All the steps to transform base text_units."""
     documents.sort_values(by=["id"], ascending=[True], inplace=True)
 
-    encode, _ = get_encoding_fn(encoding_model)
+    tokenizer = get_tokenizer(encoding_model=encoding_model)
 
     def chunker(row: pd.Series) -> Any:
         line_delimiter = ".\n"
@@ -80,7 +80,7 @@ def create_base_text_units(
                 )
 
             if chunk_size_includes_metadata:
-                metadata_tokens = len(encode(metadata_str))
+                metadata_tokens = len(tokenizer.encode(metadata_str))
                 if metadata_tokens >= size:
                     message = "Metadata tokens exceeds the maximum tokens per chunk. Please increase the tokens per chunk."
                     raise ValueError(message)
@@ -135,7 +135,9 @@ def create_base_text_units(
         lambda row: gen_sha512_hash(row, ["text"]), axis=1
     )
     # get a final token measurement
-    text_units["n_tokens"] = text_units["text"].apply(lambda x: len(encode(x)))
+    text_units["n_tokens"] = text_units["text"].apply(
+        lambda x: len(tokenizer.encode(x))
+    )
 
     return cast(
         "pd.DataFrame", text_units[text_units["text"].notna()].reset_index(drop=True)

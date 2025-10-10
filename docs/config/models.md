@@ -6,9 +6,7 @@ This page contains information on selecting a model to use and options to supply
 
 GraphRAG was built and tested using OpenAI models, so this is the default model set we support. This is not intended to be a limiter or statement of quality or fitness for your use case, only that it's the set we are most familiar with for prompting, tuning, and debugging.
 
-GraphRAG also utilizes a language model wrapper library used by several projects within our team, called fnllm. fnllm provides two important functions for GraphRAG: rate limiting configuration to help us maximize throughput for large indexing jobs, and robust caching of API calls to minimize consumption on repeated indexes for testing, experimentation, or incremental ingest. fnllm uses the OpenAI Python SDK under the covers, so OpenAI-compliant endpoints are a base requirement out-of-the-box.
-
-Starting with version 2.6.0, GraphRAG supports using [LiteLLM](https://docs.litellm.ai/) instead of fnllm for calling language models. LiteLLM provides support for 100+ models though it is important to note that when choosing a model it must support returning [structured outputs](https://openai.com/index/introducing-structured-outputs-in-the-api/) adhering to a [JSON schema](https://docs.litellm.ai/docs/completion/json_mode). 
+Starting with version 2.6.0, GraphRAG supports using [LiteLLM](https://docs.litellm.ai/) for calling language models. LiteLLM provides support for 100+ models though it is important to note that when choosing a model it must support returning [structured outputs](https://openai.com/index/introducing-structured-outputs-in-the-api/) adhering to a [JSON schema](https://docs.litellm.ai/docs/completion/json_mode). 
 
 Example using LiteLLm as the language model tool for GraphRAG:
 
@@ -54,13 +52,15 @@ Example config with asymmetric model use:
 models:
   extraction_chat_model:
     api_key: ${GRAPHRAG_API_KEY}
-    type: openai_chat
+    type: chat
+    model_provider: openai
     auth_type: api_key
     model: gpt-4o
     model_supports_json: true
   query_chat_model:
     api_key: ${GRAPHRAG_API_KEY}
-    type: openai_chat
+    type: chat
+    model_provider: openai
     auth_type: api_key
     model: o1
     model_supports_json: true
@@ -98,7 +98,6 @@ Many users have used platforms such as [ollama](https://ollama.com/) and [LiteLL
 As of GraphRAG 2.0.0, we support model injection through the use of a standard chat and embedding Protocol and an accompanying ModelFactory that you can use to register your model implementation. This is not supported with the CLI, so you'll need to use GraphRAG as a library.
 
 - Our Protocol is [defined here](https://github.com/microsoft/graphrag/blob/main/graphrag/language_model/protocol/base.py)
-- Our base implementation, which wraps fnllm, [is here](https://github.com/microsoft/graphrag/blob/main/graphrag/language_model/providers/fnllm/models.py)
 - We have a simple mock implementation in our tests that you can [reference here](https://github.com/microsoft/graphrag/blob/main/tests/mock_provider.py)
 
 Once you have a model implementation, you need to register it with our ModelFactory:

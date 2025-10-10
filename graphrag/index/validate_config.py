@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def validate_config_names(parameters: GraphRagConfig) -> None:
     """Validate config file for model deployment name typos, by running a quick test message for each."""
     for id, config in parameters.models.items():
-        if config.type in ["chat", "azure_openai", "openai"]:
+        if config.type == "chat":
             llm = ModelManager().register_chat(
                 name="test-llm",
                 model_type=config.type,
@@ -34,7 +34,7 @@ def validate_config_names(parameters: GraphRagConfig) -> None:
                 logger.error(f"LLM configuration error detected.\n{e}")  # noqa
                 print(f"Failed to validate language model ({id}) params", e)  # noqa: T201
                 sys.exit(1)
-        elif config.type in ["embedding", "azure_openai_embedding", "openai_embedding"]:
+        elif config.type == "embedding":
             embed_llm = ModelManager().register_embedding(
                 name="test-embed-llm",
                 model_type=config.type,

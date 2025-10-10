@@ -12,7 +12,7 @@ from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.language_model.protocol.base import ChatModel
-from graphrag.language_model.providers.fnllm.utils import (
+from graphrag.language_model.util import (
     get_openai_model_parameters_from_dict,
 )
 from graphrag.query.context_builder.conversation_history import ConversationHistory
