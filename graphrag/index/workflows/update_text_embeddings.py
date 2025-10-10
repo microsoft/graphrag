@@ -5,7 +5,6 @@
 
 import logging
 
-from graphrag.config.get_vector_store_settings import get_vector_store_settings
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.utils import get_update_storages
 from graphrag.index.typing.context import PipelineRunContext
@@ -37,7 +36,6 @@ async def run_workflow(
     ]
 
     embedded_fields = config.embed_text.names
-    vector_store_config = get_vector_store_settings(config)
 
     model_config = config.get_language_model_config(config.embed_text.model_id)
 
@@ -63,7 +61,7 @@ async def run_workflow(
         batch_size=config.embed_text.batch_size,
         batch_max_tokens=config.embed_text.batch_max_tokens,
         num_threads=model_config.concurrent_requests,
-        vector_store_config=vector_store_config,
+        vector_store_config=config.vector_store,
         embedded_fields=embedded_fields,
     )
     if config.snapshots.embeddings:
