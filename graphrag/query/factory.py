@@ -251,8 +251,8 @@ def get_basic_search_engine(
     text_units: list[TextUnit],
     text_unit_embeddings: BaseVectorStore,
     config: GraphRagConfig,
+    response_type: str,
     system_prompt: str | None = None,
-    response_type: str = "multiple paragraphs",
     callbacks: list[QueryCallbacks] | None = None,
 ) -> BasicSearch:
     """Create a basic search engine based on data + configuration."""

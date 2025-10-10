@@ -298,6 +298,7 @@ def run_basic_search(
     config_filepath: Path | None,
     data_dir: Path | None,
     root_dir: Path,
+    response_type: str,
     streaming: bool,
     query: str,
     verbose: bool,
@@ -337,6 +338,7 @@ def run_basic_search(
             async for stream_chunk in api.basic_search_streaming(
                 config=config,
                 text_units=text_units,
+                response_type=response_type,
                 query=query,
                 callbacks=[callbacks],
                 verbose=verbose,
@@ -353,6 +355,7 @@ def run_basic_search(
         api.basic_search(
             config=config,
             text_units=text_units,
+            response_type=response_type,
             query=query,
             verbose=verbose,
         )

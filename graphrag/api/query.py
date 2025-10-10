@@ -460,6 +460,7 @@ def drift_search_streaming(
 async def basic_search(
     config: GraphRagConfig,
     text_units: pd.DataFrame,
+    response_type: str,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
     verbose: bool = False,
@@ -497,6 +498,7 @@ async def basic_search(
     async for chunk in basic_search_streaming(
         config=config,
         text_units=text_units,
+        response_type=response_type,
         query=query,
         callbacks=callbacks,
     ):
@@ -509,6 +511,7 @@ async def basic_search(
 def basic_search_streaming(
     config: GraphRagConfig,
     text_units: pd.DataFrame,
+    response_type: str,
     query: str,
     callbacks: list[QueryCallbacks] | None = None,
     verbose: bool = False,
@@ -542,6 +545,7 @@ def basic_search_streaming(
         config=config,
         text_units=read_indexer_text_units(text_units),
         text_unit_embeddings=embedding_store,
+        response_type=response_type,
         system_prompt=prompt,
         callbacks=callbacks,
     )

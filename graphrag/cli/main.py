@@ -537,6 +537,7 @@ def _query_cli(
                 config_filepath=config,
                 data_dir=data,
                 root_dir=root,
+                response_type=response_type,
                 streaming=streaming,
                 query=query,
                 verbose=verbose,
