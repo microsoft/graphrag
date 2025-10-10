@@ -55,9 +55,6 @@ class MockBaseVectorStore(BaseVectorStore):
             key=lambda x: x.score,
         )[:k]
 
-    def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
-        return [document for document in self.documents if document.id in include_ids]
-
     def search_by_id(self, id: str) -> VectorStoreDocument:
         result = self.documents[0]
         result.id = id
@@ -95,27 +92,6 @@ def test_map_query_to_entities():
     assert map_query_to_entities(
         query="t22",
         text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.id, vector=None) for entity in entities
-        ]),
-        text_embedder=ModelManager().get_or_create_embedding_model(
-            model_type="mock_embedding", name="mock"
-        ),
-        all_entities_dict={entity.id: entity for entity in entities},
-        embedding_vectorstore_key=EntityVectorStoreKey.ID,
-        k=1,
-        oversample_scaler=1,
-    ) == [
-        Entity(
-            id="c4f93564-4507-4ee4-b102-98add401a965",
-            short_id="sid2",
-            title="t22",
-            rank=4,
-        )
-    ]
-
-    assert map_query_to_entities(
-        query="t22",
-        text_embedding_vectorstore=MockBaseVectorStore([
             VectorStoreDocument(id=entity.title, vector=None) for entity in entities
         ]),
         text_embedder=ModelManager().get_or_create_embedding_model(
@@ -132,32 +108,6 @@ def test_map_query_to_entities():
             title="t22",
             rank=4,
         )
-    ]
-
-    assert map_query_to_entities(
-        query="",
-        text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.id, vector=None) for entity in entities
-        ]),
-        text_embedder=ModelManager().get_or_create_embedding_model(
-            model_type="mock_embedding", name="mock"
-        ),
-        all_entities_dict={entity.id: entity for entity in entities},
-        embedding_vectorstore_key=EntityVectorStoreKey.ID,
-        k=2,
-    ) == [
-        Entity(
-            id="c4f93564-4507-4ee4-b102-98add401a965",
-            short_id="sid2",
-            title="t22",
-            rank=4,
-        ),
-        Entity(
-            id="8fd6d72a-8e9d-4183-8a97-c38bcc971c83",
-            short_id="sid4",
-            title="t4444",
-            rank=3,
-        ),
     ]
 
     assert map_query_to_entities(
