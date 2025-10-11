@@ -15,10 +15,6 @@ class EmbedTextConfig(BaseModel):
         description="The model ID to use for text embeddings.",
         default=graphrag_config_defaults.embed_text.model_id,
     )
-    vector_store_id: str = Field(
-        description="The vector store ID to use for text embeddings.",
-        default=graphrag_config_defaults.embed_text.vector_store_id,
-    )
     batch_size: int = Field(
         description="The batch size to use.",
         default=graphrag_config_defaults.embed_text.batch_size,

@@ -75,16 +75,14 @@ reporting:
   base_dir: "{graphrag_config_defaults.reporting.base_dir}"
 
 vector_store:
-  {defs.DEFAULT_VECTOR_STORE_ID}:
-    type: {vector_store_defaults.type}
-    db_uri: {vector_store_defaults.db_uri}
-    container_name: {vector_store_defaults.container_name}
+  type: {vector_store_defaults.type}
+  db_uri: {vector_store_defaults.db_uri}
+  container_name: {vector_store_defaults.container_name}
 
 ### Workflow settings ###
 
 embed_text:
   model_id: {graphrag_config_defaults.embed_text.model_id}
-  vector_store_id: {graphrag_config_defaults.embed_text.vector_store_id}
 
 extract_graph:
   model_id: {graphrag_config_defaults.extract_graph.model_id}

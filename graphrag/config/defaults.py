@@ -55,8 +55,6 @@ DEFAULT_EMBEDDING_MODEL_AUTH_TYPE = AuthType.APIKey
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-large"
 DEFAULT_MODEL_PROVIDER = "openai"
 
-DEFAULT_VECTOR_STORE_ID = "default_vector_store"
-
 ENCODING_MODEL = "o200k_base"
 COGNITIVE_SERVICES_AUDIENCE = "https://cognitiveservices.azure.com/.default"
 
@@ -167,7 +165,6 @@ class EmbedTextDefaults:
     batch_max_tokens: int = 8191
     names: list[str] = field(default_factory=lambda: default_embeddings)
     strategy: None = None
-    vector_store_id: str = DEFAULT_VECTOR_STORE_ID
 
 
 @dataclass
@@ -418,7 +415,6 @@ class GraphRagConfigDefaults:
     reporting: ReportingDefaults = field(default_factory=ReportingDefaults)
     storage: StorageDefaults = field(default_factory=StorageDefaults)
     output: OutputDefaults = field(default_factory=OutputDefaults)
-    outputs: None = None
     update_index_output: UpdateIndexOutputDefaults = field(
         default_factory=UpdateIndexOutputDefaults
     )
@@ -444,8 +440,8 @@ class GraphRagConfigDefaults:
     global_search: GlobalSearchDefaults = field(default_factory=GlobalSearchDefaults)
     drift_search: DriftSearchDefaults = field(default_factory=DriftSearchDefaults)
     basic_search: BasicSearchDefaults = field(default_factory=BasicSearchDefaults)
-    vector_store: dict[str, VectorStoreDefaults] = field(
-        default_factory=lambda: {DEFAULT_VECTOR_STORE_ID: VectorStoreDefaults()}
+    vector_store: VectorStoreDefaults = field(
+        default_factory=lambda: VectorStoreDefaults()
     )
     workflows: None = None
 

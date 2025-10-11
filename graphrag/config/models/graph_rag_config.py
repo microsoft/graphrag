@@ -3,7 +3,6 @@
 
 """Parameterization settings for the default configuration."""
 
-from dataclasses import asdict
 from pathlib import Path
 
 from devtools import pformat
@@ -179,23 +178,6 @@ class GraphRagConfig(BaseModel):
                 (Path(self.root_dir) / self.output.base_dir).resolve()
             )
 
-    outputs: dict[str, StorageConfig] | None = Field(
-        description="A list of output configurations used for multi-index query.",
-        default=graphrag_config_defaults.outputs,
-    )
-
-    def _validate_multi_output_base_dirs(self) -> None:
-        """Validate the outputs dict base directories."""
-        if self.outputs:
-            for output in self.outputs.values():
-                if output.type == defs.StorageType.file:
-                    if output.base_dir.strip() == "":
-                        msg = "Output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
-                        raise ValueError(msg)
-                    output.base_dir = str(
-                        (Path(self.root_dir) / output.base_dir).resolve()
-                    )
-
     update_index_output: StorageConfig = Field(
         description="The output configuration for the updated index.",
         default=StorageConfig(
@@ -234,12 +216,8 @@ class GraphRagConfig(BaseModel):
                 (Path(self.root_dir) / self.reporting.base_dir).resolve()
             )
 
-    vector_store: dict[str, VectorStoreConfig] = Field(
-        description="The vector store configuration.",
-        default_factory=lambda: {
-            k: VectorStoreConfig(**asdict(v))
-            for k, v in graphrag_config_defaults.vector_store.items()
-        },
+    vector_store: VectorStoreConfig = Field(
+        description="The vector store configuration.", default=VectorStoreConfig()
     )
     """The vector store configuration."""
 
@@ -327,12 +305,12 @@ class GraphRagConfig(BaseModel):
 
     def _validate_vector_store_db_uri(self) -> None:
         """Validate the vector store configuration."""
-        for store in self.vector_store.values():
-            if store.type == VectorStoreType.LanceDB:
-                if not store.db_uri or store.db_uri.strip == "":
-                    msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
-                    raise ValueError(msg)
-                store.db_uri = str((Path(self.root_dir) / store.db_uri).resolve())
+        store = self.vector_store
+        if store.type == VectorStoreType.LanceDB:
+            if not store.db_uri or store.db_uri.strip == "":
+                msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
+                raise ValueError(msg)
+            store.db_uri = str((Path(self.root_dir) / store.db_uri).resolve())
 
     def _validate_factories(self) -> None:
         """Validate the factories used in the configuration."""
@@ -363,30 +341,6 @@ class GraphRagConfig(BaseModel):
 
         return self.models[model_id]
 
-    def get_vector_store_config(self, vector_store_id: str) -> VectorStoreConfig:
-        """Get a vector store configuration by ID.
-
-        Parameters
-        ----------
-        vector_store_id : str
-            The ID of the vector store to get. Should match an ID in the vector_store list.
-
-        Returns
-        -------
-        VectorStoreConfig
-            The vector store configuration if found.
-
-        Raises
-        ------
-        ValueError
-            If the vector store ID is not found in the configuration.
-        """
-        if vector_store_id not in self.vector_store:
-            err_msg = f"Vector Store ID {vector_store_id} not found in configuration. Please rerun `graphrag init` and set the vector store configuration."
-            raise ValueError(err_msg)
-
-        return self.vector_store[vector_store_id]
-
     @model_validator(mode="after")
     def _validate_model(self):
         """Validate the model configuration."""
@@ -396,7 +350,6 @@ class GraphRagConfig(BaseModel):
         self._validate_input_base_dir()
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
-        self._validate_multi_output_base_dirs()
         self._validate_update_index_output_base_dir()
         self._validate_vector_store_db_uri()
         self._validate_factories()
