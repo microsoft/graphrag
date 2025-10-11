@@ -40,9 +40,7 @@ async def embed_text(
         vector_store: BaseVectorStore = _create_vector_store(
             vector_store_config, index_name, embedding_name
         )
-        vector_store_workflow_config = vector_store_config.get(
-            embedding_name, vector_store_config
-        )
+
         return await _text_embed_with_vector_store(
             input=input,
             callbacks=callbacks,
@@ -50,7 +48,6 @@ async def embed_text(
             tokenizer=tokenizer,
             embed_column=embed_column,
             vector_store=vector_store,
-            vector_store_config=vector_store_workflow_config,
             batch_size=batch_size,
             batch_max_tokens=batch_max_tokens,
             num_threads=num_threads,
@@ -95,7 +92,6 @@ async def _text_embed_with_vector_store(
     tokenizer: Tokenizer,
     embed_column: str,
     vector_store: BaseVectorStore,
-    vector_store_config: dict,
     batch_size: int,
     batch_max_tokens: int,
     num_threads: int,
@@ -103,9 +99,6 @@ async def _text_embed_with_vector_store(
     title_column: str | None = None,
 ):
     # Get vector-storage configuration
-
-    overwrite: bool = vector_store_config.get("overwrite", True)
-
     if embed_column not in input.columns:
         msg = f"Column {embed_column} not found in input dataframe with columns {input.columns}"
         raise ValueError(msg)
@@ -168,7 +161,7 @@ async def _text_embed_with_vector_store(
             )
             documents.append(document)
 
-        vector_store.load_documents(documents, overwrite and i == 0)
+        vector_store.load_documents(documents)
         starting_index += len(documents)
         i += 1
 

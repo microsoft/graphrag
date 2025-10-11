@@ -120,7 +120,6 @@ def assert_vector_store_configs(
         assert store_a.api_key == store_e.api_key
         assert store_a.audience == store_e.audience
         assert store_a.container_name == store_e.container_name
-        assert store_a.overwrite == store_e.overwrite
         assert store_a.database_name == store_e.database_name
 
 
