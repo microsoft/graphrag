@@ -93,7 +93,7 @@ async def embed_text(
             )
             documents.append(document)
 
-        vector_store.load_documents(documents, True)
+        vector_store.load_documents(documents)
         starting_index += len(documents)
         i += 1
 

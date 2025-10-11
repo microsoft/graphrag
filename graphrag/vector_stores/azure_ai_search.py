@@ -74,57 +74,54 @@ class AzureAISearchVectorStore(BaseVectorStore):
             not_supported_error = "Azure AI Search expects `url`."
             raise ValueError(not_supported_error)
 
-    def load_documents(
-        self, documents: list[VectorStoreDocument], overwrite: bool = True
-    ) -> None:
+    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
         """Load documents into an Azure AI Search index."""
-        if overwrite:
-            if (
-                self.index_name is not None
-                and self.index_name in self.index_client.list_index_names()
-            ):
-                self.index_client.delete_index(self.index_name)
+        if (
+            self.index_name is not None
+            and self.index_name in self.index_client.list_index_names()
+        ):
+            self.index_client.delete_index(self.index_name)
 
-            # Configure vector search profile
-            vector_search = VectorSearch(
-                algorithms=[
-                    HnswAlgorithmConfiguration(
-                        name="HnswAlg",
-                        parameters=HnswParameters(
-                            metric=VectorSearchAlgorithmMetric.COSINE
-                        ),
-                    )
-                ],
-                profiles=[
-                    VectorSearchProfile(
-                        name=self.vector_search_profile_name,
-                        algorithm_configuration_name="HnswAlg",
-                    )
-                ],
-            )
-            # Configure the index
-            index = SearchIndex(
-                name=self.index_name if self.index_name else "",
-                fields=[
-                    SimpleField(
-                        name=self.id_field,
-                        type=SearchFieldDataType.String,
-                        key=True,
+        # Configure vector search profile
+        vector_search = VectorSearch(
+            algorithms=[
+                HnswAlgorithmConfiguration(
+                    name="HnswAlg",
+                    parameters=HnswParameters(
+                        metric=VectorSearchAlgorithmMetric.COSINE
                     ),
-                    SearchField(
-                        name=self.vector_field,
-                        type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                        searchable=True,
-                        hidden=False,  # DRIFT needs to return the vector for client-side similarity
-                        vector_search_dimensions=self.vector_size,
-                        vector_search_profile_name=self.vector_search_profile_name,
-                    ),
-                ],
-                vector_search=vector_search,
-            )
-            self.index_client.create_or_update_index(
-                index,
-            )
+                )
+            ],
+            profiles=[
+                VectorSearchProfile(
+                    name=self.vector_search_profile_name,
+                    algorithm_configuration_name="HnswAlg",
+                )
+            ],
+        )
+        # Configure the index
+        index = SearchIndex(
+            name=self.index_name if self.index_name else "",
+            fields=[
+                SimpleField(
+                    name=self.id_field,
+                    type=SearchFieldDataType.String,
+                    key=True,
+                ),
+                SearchField(
+                    name=self.vector_field,
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                    searchable=True,
+                    hidden=False,  # DRIFT needs to return the vector for client-side similarity
+                    vector_search_dimensions=self.vector_size,
+                    vector_search_profile_name=self.vector_search_profile_name,
+                ),
+            ],
+            vector_search=vector_search,
+        )
+        self.index_client.create_or_update_index(
+            index,
+        )
 
         batch = [
             {
