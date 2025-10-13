@@ -58,7 +58,7 @@ async def run_workflow(
     prompts = config.community_reports.resolved_prompts(config.root_dir)
 
     model = ModelManager().get_or_create_chat_model(
-        name="community_reporting",
+        name=config.community_reports.model_instance_name,
         model_type=model_config.type,
         config=model_config,
         callbacks=context.callbacks,

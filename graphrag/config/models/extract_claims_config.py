@@ -30,6 +30,10 @@ class ExtractClaimsConfig(BaseModel):
         description="The model ID to use for claim extraction.",
         default=graphrag_config_defaults.extract_claims.model_id,
     )
+    model_instance_name: str = Field(
+        description="The model singleton instance name. This primarily affects the cache storage partitioning.",
+        default=graphrag_config_defaults.extract_claims.model_instance_name,
+    )
     prompt: str | None = Field(
         description="The claim extraction prompt to use.",
         default=graphrag_config_defaults.extract_claims.prompt,

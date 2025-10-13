@@ -30,6 +30,10 @@ class CommunityReportsConfig(BaseModel):
         description="The model ID to use for community reports.",
         default=graphrag_config_defaults.community_reports.model_id,
     )
+    model_instance_name: str = Field(
+        description="The model singleton instance name. This primarily affects the cache storage partitioning.",
+        default=graphrag_config_defaults.community_reports.model_instance_name,
+    )
     graph_prompt: str | None = Field(
         description="The community report extraction prompt to use for graph-based summarization.",
         default=graphrag_config_defaults.community_reports.graph_prompt,

@@ -38,7 +38,7 @@ async def run_workflow(
         model_config = config.get_language_model_config(config.extract_claims.model_id)
 
         model = ModelManager().get_or_create_chat_model(
-            name="extract_claims",
+            name=config.extract_claims.model_instance_name,
             model_type=model_config.type,
             config=model_config,
             callbacks=context.callbacks,

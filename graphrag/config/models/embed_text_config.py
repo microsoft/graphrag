@@ -15,6 +15,10 @@ class EmbedTextConfig(BaseModel):
         description="The model ID to use for text embeddings.",
         default=graphrag_config_defaults.embed_text.model_id,
     )
+    model_instance_name: str = Field(
+        description="The model singleton instance name. This primarily affects the cache storage partitioning.",
+        default=graphrag_config_defaults.embed_text.model_instance_name,
+    )
     batch_size: int = Field(
         description="The batch size to use.",
         default=graphrag_config_defaults.embed_text.batch_size,

@@ -47,7 +47,7 @@ async def run_workflow(
 
     model_config = config.get_language_model_config(config.community_reports.model_id)
     model = ModelManager().get_or_create_chat_model(
-        name="community_reporting",
+        name=config.community_reports.model_instance_name,
         model_type=model_config.type,
         config=model_config,
         callbacks=context.callbacks,

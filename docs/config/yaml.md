@@ -201,7 +201,7 @@ Supported embeddings names are:
 #### Fields
 
 - `model_id` **str** - Name of the model definition to use for text embedding.
-- `vector_store_id` **str** - Name of vector store definition to write to.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "text_embedding". This primarily affects the cache storage partitioning.
 - `batch_size` **int** - The maximum batch size to use.
 - `batch_max_tokens` **int** - The maximum batch # of tokens.
 - `names` **list[str]** - List of the embeddings names to run (must be in supported list).
@@ -213,6 +213,7 @@ Tune the language model-based graph extraction process.
 #### Fields
 
 - `model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "extract_graph". This primarily affects the cache storage partitioning.
 - `prompt` **str** - The prompt file to use.
 - `entity_types` **list[str]** - The entity types to identify.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
@@ -222,6 +223,7 @@ Tune the language model-based graph extraction process.
 #### Fields
 
 - `model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "summarize_descriptions". This primarily affects the cache storage partitioning.
 - `prompt` **str** - The prompt file to use.
 - `max_length` **int** - The maximum number of output tokens per summarization.
 - `max_input_length` **int** - The maximum number of tokens to collect for summarization (this will limit how many descriptions you send to be summarized for a given entity or relationship).
@@ -275,6 +277,7 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 
 - `enabled` **bool** - Whether to enable claim extraction. Off by default, because claim prompts really need user tuning.
 - `model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "extract_claims". This primarily affects the cache storage partitioning.
 - `prompt` **str** - The prompt file to use.
 - `description` **str** - Describes the types of claims we want to extract.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
@@ -284,6 +287,7 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 #### Fields
 
 - `model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "community_reporting". This primarily affects the cache storage partitioning.
 - `prompt` **str** - The prompt file to use.
 - `max_length` **int** - The maximum number of output tokens per report.
 - `max_input_length` **int** - The maximum number of input tokens to use when generating reports.
