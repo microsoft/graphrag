@@ -11,7 +11,7 @@ For example:
 GRAPHRAG_API_KEY=some_api_key
 
 # settings.yml
-llm: 
+default_chat_model: 
   api_key: ${GRAPHRAG_API_KEY}
 ```
 
@@ -44,12 +44,12 @@ models:
 - `api_key` **str** - The OpenAI API key to use.
 - `auth_type` **api_key|azure_managed_identity** - Indicate how you want to authenticate requests.
 - `type` **chat**|**embedding**|mock_chat|mock_embeddings** - The type of LLM to use.
-- `model_provider` **str|None** - The model provider to use, e.g., openai, azure, anthropic, etc. Required when `type == chat|embedding`. When `type == chat|embedding`, [LiteLLM](https://docs.litellm.ai/) is used under the hood which has support for calling 100+ models. [View LiteLLm basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`). [View Language Model Selection](models.md) for more details and examples on using LiteLLM.
+- `model_provider` **str|None** - The model provider to use, e.g., openai, azure, anthropic, etc. [LiteLLM](https://docs.litellm.ai/) is used under the hood which has support for calling 100+ models. [View LiteLLm basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`). [View Language Model Selection](models.md) for more details and examples on using LiteLLM.
 - `model` **str** - The model name.
 - `encoding_model` **str** - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset).
 - `api_base` **str** - The API base url to use.
 - `api_version` **str** - The API version.
-- `deployment_name` **str** - The deployment name to use (Azure).
+- `deployment_name` **str** - The deployment name to use if your model is hosted on Azure. Note that if your deployment name on Azure matches the model name, this is unnecessary.
 - `organization` **str** - The client organization.
 - `proxy` **str** - The proxy URL to use.
 - `audience` **str** - (Azure OpenAI only) The URI of the target Azure resource/service for which a managed identity token is requested. Used if `api_key` is not defined. Default=`https://cognitiveservices.azure.com/.default`
@@ -57,7 +57,7 @@ models:
 - `request_timeout` **float** - The per-request timeout.
 - `tokens_per_minute` **int** - Set a leaky-bucket throttle on tokens-per-minute.
 - `requests_per_minute` **int** - Set a leaky-bucket throttle on requests-per-minute.
-- `retry_strategy` **str** - Retry strategy to use, "native" is the default and uses the strategy built into the OpenAI SDK. Other allowable values include "exponential_backoff", "random_wait", and "incremental_wait".
+- `retry_strategy` **str** - Retry strategy to use, "exponential_backoff" is the default. Other allowable values include "native", "random_wait", and "incremental_wait".
 - `max_retries` **int** - The maximum number of retries to use.
 - `max_retry_wait` **float** - The maximum backoff time.
 - `concurrent_requests` **int** The number of open requests to allow at once.
