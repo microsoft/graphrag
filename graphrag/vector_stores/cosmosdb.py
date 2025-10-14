@@ -149,7 +149,7 @@ class CosmosDBVectorStore(BaseVectorStore):
         ]
         return self._container_name in existing_container_names
 
-    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
+    def create_index(self) -> None:
         """Load documents into CosmosDB."""
         # Create a CosmosDB container on overwrite
         self._delete_container()
@@ -159,6 +159,8 @@ class CosmosDBVectorStore(BaseVectorStore):
             msg = "Container client is not initialized."
             raise ValueError(msg)
 
+    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
+        """Load documents into CosmosDB."""
         # Upload documents to CosmosDB
         for doc in documents:
             if doc.vector is not None:

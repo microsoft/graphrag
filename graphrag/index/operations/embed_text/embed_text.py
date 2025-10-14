@@ -44,27 +44,21 @@ async def embed_text(
         msg = f"Column {id_column} not found in input dataframe with columns {input.columns}"
         raise ValueError(msg)
 
-    total_rows = 0
-    for row in input[embed_column]:
-        if isinstance(row, list):
-            total_rows += len(row)
-        else:
-            total_rows += 1
+    vector_store.create_index()
 
-    i = 0
-    starting_index = 0
+    index = 0
 
     all_results = []
 
     num_total_batches = (input.shape[0] + batch_size - 1) // batch_size
-    while batch_size * i < input.shape[0]:
+    while batch_size * index < input.shape[0]:
         logger.info(
             "uploading text embeddings batch %d/%d of size %d to vector store",
-            i + 1,
+            index + 1,
             num_total_batches,
             batch_size,
         )
-        batch = input.iloc[batch_size * i : batch_size * (i + 1)]
+        batch = input.iloc[batch_size * index : batch_size * (index + 1)]
         texts: list[str] = batch[embed_column].tolist()
         ids: list[str] = batch[id_column].tolist()
         result = await run_embed_text(
@@ -94,7 +88,6 @@ async def embed_text(
             documents.append(document)
 
         vector_store.load_documents(documents)
-        starting_index += len(documents)
-        i += 1
+        index += 1
 
     return all_results

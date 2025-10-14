@@ -74,7 +74,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
             not_supported_error = "Azure AI Search expects `url`."
             raise ValueError(not_supported_error)
 
-    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
+    def create_index(self) -> None:
         """Load documents into an Azure AI Search index."""
         if (
             self.index_name is not None
@@ -123,6 +123,8 @@ class AzureAISearchVectorStore(BaseVectorStore):
             index,
         )
 
+    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
+        """Load documents into an Azure AI Search index."""
         batch = [
             {
                 self.id_field: doc.id,

@@ -35,8 +35,33 @@ class LanceDBVectorStore(BaseVectorStore):
         if self.index_name and self.index_name in self.db_connection.table_names():
             self.document_collection = self.db_connection.open_table(self.index_name)
 
+    def create_index(self) -> None:
+        """Create index."""
+        dummy_vector = np.zeros(self.vector_size, dtype=np.float32)
+        flat_array = pa.array(dummy_vector, type=pa.float32())
+        vector_column = pa.FixedSizeListArray.from_arrays(flat_array, self.vector_size)
+
+        data = pa.table({
+            self.id_field: pa.array(["__DUMMY__"], type=pa.string()),
+            self.vector_field: vector_column,
+        })
+
+        self.document_collection = self.db_connection.create_table(
+            self.index_name if self.index_name else "",
+            data=data,
+            mode="overwrite",
+            schema=data.schema,
+        )
+
+        # Step 5: Create index now that schema exists
+        self.document_collection.create_index(
+            vector_column_name=self.vector_field, index_type="IVF_FLAT"
+        )
+
     def load_documents(self, documents: list[VectorStoreDocument]) -> None:
         """Load documents into vector storage."""
+        self.document_collection.delete(f"{self.id_field} = '__DUMMY__'")
+
         # Step 1: Prepare data columns manually
         ids = []
         vectors = []
@@ -66,23 +91,13 @@ class LanceDBVectorStore(BaseVectorStore):
                 self.vector_field: vector_column,
             })
 
-        # NOTE: If modifying the next section of code, ensure that the schema remains the same.
-        #       The pyarrow format of the 'vector' field may change if the order of operations is changed
-        #       and will break vector search.
-        if data:
-            self.document_collection = self.db_connection.create_table(
-                self.index_name if self.index_name else "",
-                data=data,
-                mode="overwrite",
-                schema=data.schema,
-            )
-        else:
-            self.document_collection = self.db_connection.create_table(
-                self.index_name if self.index_name else "", mode="overwrite"
-            )
-        self.document_collection.create_index(
-            vector_column_name=self.vector_field, index_type="IVF_FLAT"
-        )
+            if data:
+                self.document_collection = self.db_connection.create_table(
+                    self.index_name if self.index_name else "",
+                    data=data,
+                    mode="overwrite",
+                    schema=data.schema,
+                )
 
     def similarity_search_by_vector(
         self, query_embedding: list[float] | np.ndarray, k: int = 10
