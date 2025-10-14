@@ -36,7 +36,7 @@ This is a summary of changes:
 - Most workflows had an undocumented `strategy` config dict that allowed fine tuning of internal settings. These fine tunings are never used and had associated complexity, so we removed it.
 - Vector store configuration now allows custom schema per embedded field. This overrides the need for the `container_name` prefix, which caused confusion anyway. Now, the default container name will simply be the embedded field name - if you need something custom, add the `embeddings_schema` block and populate as needed.
 - We previously supported the ability to embed any text field in the data model. However, we only ever use text_unit_text, entity_description, and community_full_content, so all others have been removed.
-- Removed the `umap` and `embed_graph` blocks which were only used to add x/y fields to the entities. This fixed a long-standing dependency issue with graspologic. If you need x/y positions, see the [vizualization guide](https://microsoft.github.io/graphrag/visualization_guide/) for using gephi.
+- Removed the `umap` and `embed_graph` blocks which were only used to add x/y fields to the entities. This fixed a long-standing dependency issue with graspologic. If you need x/y positions, see the [visualization guide](https://microsoft.github.io/graphrag/visualization_guide/) for using gephi.
 - Removed file filtering from input document loading. This was essentially unused.
 - Removed the groupby ability for text chunking. This was intended to allow short documents to be grouped before chunking, but is never used and added a bunch of complexity to the chunking process.
 
