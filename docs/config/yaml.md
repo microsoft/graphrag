@@ -11,7 +11,7 @@ For example:
 GRAPHRAG_API_KEY=some_api_key
 
 # settings.yml
-llm: 
+default_chat_model: 
   api_key: ${GRAPHRAG_API_KEY}
 ```
 
@@ -44,12 +44,12 @@ models:
 - `api_key` **str** - The OpenAI API key to use.
 - `auth_type` **api_key|azure_managed_identity** - Indicate how you want to authenticate requests.
 - `type` **chat**|**embedding**|mock_chat|mock_embeddings** - The type of LLM to use.
-- `model_provider` **str|None** - The model provider to use, e.g., openai, azure, anthropic, etc. Required when `type == chat|embedding`. When `type == chat|embedding`, [LiteLLM](https://docs.litellm.ai/) is used under the hood which has support for calling 100+ models. [View LiteLLm basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`). [View Language Model Selection](models.md) for more details and examples on using LiteLLM.
+- `model_provider` **str|None** - The model provider to use, e.g., openai, azure, anthropic, etc. [LiteLLM](https://docs.litellm.ai/) is used under the hood which has support for calling 100+ models. [View LiteLLm basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`). [View Language Model Selection](models.md) for more details and examples on using LiteLLM.
 - `model` **str** - The model name.
 - `encoding_model` **str** - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset).
 - `api_base` **str** - The API base url to use.
 - `api_version` **str** - The API version.
-- `deployment_name` **str** - The deployment name to use (Azure).
+- `deployment_name` **str** - The deployment name to use if your model is hosted on Azure. Note that if your deployment name on Azure matches the model name, this is unnecessary.
 - `organization` **str** - The client organization.
 - `proxy` **str** - The proxy URL to use.
 - `audience` **str** - (Azure OpenAI only) The URI of the target Azure resource/service for which a managed identity token is requested. Used if `api_key` is not defined. Default=`https://cognitiveservices.azure.com/.default`
@@ -57,7 +57,7 @@ models:
 - `request_timeout` **float** - The per-request timeout.
 - `tokens_per_minute` **int** - Set a leaky-bucket throttle on tokens-per-minute.
 - `requests_per_minute` **int** - Set a leaky-bucket throttle on requests-per-minute.
-- `retry_strategy` **str** - Retry strategy to use, "native" is the default and uses the strategy built into the OpenAI SDK. Other allowable values include "exponential_backoff", "random_wait", and "incremental_wait".
+- `retry_strategy` **str** - Retry strategy to use, "exponential_backoff" is the default. Other allowable values include "native", "random_wait", and "incremental_wait".
 - `max_retries` **int** - The maximum number of retries to use.
 - `max_retry_wait` **float** - The maximum backoff time.
 - `concurrent_requests` **int** The number of open requests to allow at once.
@@ -201,7 +201,7 @@ Supported embeddings names are:
 #### Fields
 
 - `model_id` **str** - Name of the model definition to use for text embedding.
-- `vector_store_id` **str** - Name of vector store definition to write to.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "text_embedding". This primarily affects the cache storage partitioning.
 - `batch_size` **int** - The maximum batch size to use.
 - `batch_max_tokens` **int** - The maximum batch # of tokens.
 - `names` **list[str]** - List of the embeddings names to run (must be in supported list).
@@ -213,6 +213,7 @@ Tune the language model-based graph extraction process.
 #### Fields
 
 - `model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "extract_graph". This primarily affects the cache storage partitioning.
 - `prompt` **str** - The prompt file to use.
 - `entity_types` **list[str]** - The entity types to identify.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
@@ -222,6 +223,7 @@ Tune the language model-based graph extraction process.
 #### Fields
 
 - `model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "summarize_descriptions". This primarily affects the cache storage partitioning.
 - `prompt` **str** - The prompt file to use.
 - `max_length` **int** - The maximum number of output tokens per summarization.
 - `max_input_length` **int** - The maximum number of tokens to collect for summarization (this will limit how many descriptions you send to be summarized for a given entity or relationship).
@@ -275,6 +277,7 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 
 - `enabled` **bool** - Whether to enable claim extraction. Off by default, because claim prompts really need user tuning.
 - `model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "extract_claims". This primarily affects the cache storage partitioning.
 - `prompt` **str** - The prompt file to use.
 - `description` **str** - Describes the types of claims we want to extract.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
@@ -284,6 +287,7 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 #### Fields
 
 - `model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "community_reporting". This primarily affects the cache storage partitioning.
 - `prompt` **str** - The prompt file to use.
 - `max_length` **int** - The maximum number of output tokens per report.
 - `max_input_length` **int** - The maximum number of input tokens to use when generating reports.

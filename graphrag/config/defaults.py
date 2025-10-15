@@ -125,6 +125,7 @@ class CommunityReportDefaults:
     max_length: int = 2000
     max_input_length: int = 8000
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    model_instance_name: str = "community_reporting"
 
 
 @dataclass
@@ -161,6 +162,7 @@ class EmbedTextDefaults:
     """Default values for embedding text."""
 
     model_id: str = DEFAULT_EMBEDDING_MODEL_ID
+    model_instance_name: str = "text_embedding"
     batch_size: int = 16
     batch_max_tokens: int = 8191
     names: list[str] = field(default_factory=lambda: default_embeddings)
@@ -179,6 +181,7 @@ class ExtractClaimsDefaults:
     max_gleanings: int = 1
     strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    model_instance_name: str = "extract_claims"
 
 
 @dataclass
@@ -192,6 +195,7 @@ class ExtractGraphDefaults:
     max_gleanings: int = 1
     strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    model_instance_name: str = "extract_graph"
 
 
 @dataclass
@@ -382,6 +386,7 @@ class SummarizeDescriptionsDefaults:
     max_input_tokens: int = 4_000
     strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
+    model_instance_name: str = "summarize_descriptions"
 
 
 @dataclass

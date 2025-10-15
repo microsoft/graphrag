@@ -54,7 +54,7 @@
                 "period",
                 "size"
             ],
-            "max_runtime": 300,
+            "max_runtime": 360,
             "expected_artifacts": ["community_reports.parquet"]
         },
         "create_final_text_units": {

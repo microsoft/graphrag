@@ -31,9 +31,9 @@ To use LiteLLM one must
 - Set `type` to either `chat` or `embedding`.
 - Provide a `model_provider`, e.g., `openai`, `azure`, `gemini`, etc.
 - Set the `model` to a one supported by the `model_provider`'s API.
-- Provide a `deployment_name` if using `azure` as the `model_provider`.
+- Provide a `deployment_name` if using `azure` as the `model_provider` if your deployment name differs from the model name.
 
-See [Detailed Configuration](yaml.md) for more details on configuration. [View LiteLLm basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`).
+See [Detailed Configuration](yaml.md) for more details on configuration. [View LiteLLM basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`).
 
 ## Model Selection Considerations
 
