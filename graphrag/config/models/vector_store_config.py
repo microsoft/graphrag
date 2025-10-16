@@ -82,11 +82,6 @@ class VectorStoreConfig(BaseModel):
         default=vector_store_defaults.database_name,
     )
 
-    overwrite: bool = Field(
-        description="Overwrite the existing data.",
-        default=vector_store_defaults.overwrite,
-    )
-
     embeddings_schema: dict[str, VectorStoreSchemaConfig] = {}
 
     def _validate_embeddings_schema(self) -> None:

@@ -64,6 +64,7 @@ class TestLanceDBVectorStore:
                 )
             )
             vector_store.connect(db_uri=temp_dir)
+            vector_store.create_index()
             vector_store.load_documents(sample_documents[:2])
 
             if vector_store.index_name:
@@ -83,7 +84,8 @@ class TestLanceDBVectorStore:
             assert isinstance(results[0].score, float)
 
             # Test append mode
-            vector_store.load_documents([sample_documents[2]], overwrite=False)
+            vector_store.create_index()
+            vector_store.load_documents([sample_documents[2]])
             result = vector_store.search_by_id("3")
             assert result.id == "3"
 
@@ -121,6 +123,7 @@ class TestLanceDBVectorStore:
                 id="tmp",
                 vector=[0.1, 0.2, 0.3, 0.4, 0.5],
             )
+            vector_store.create_index()
             vector_store.load_documents([sample_doc])
             vector_store.db_connection.open_table(
                 vector_store.index_name if vector_store.index_name else ""
@@ -137,7 +140,8 @@ class TestLanceDBVectorStore:
                 id="1",
                 vector=[0.1, 0.2, 0.3, 0.4, 0.5],
             )
-            vector_store.load_documents([doc], overwrite=False)
+            vector_store.create_index()
+            vector_store.load_documents([doc])
 
             result = vector_store.search_by_id("1")
             assert result.id == "1"
@@ -157,7 +161,7 @@ class TestLanceDBVectorStore:
             )
 
             vector_store.connect(db_uri=temp_dir)
-
+            vector_store.create_index()
             vector_store.load_documents(sample_documents_categories)
 
             # Filter to include only documents about animals
@@ -186,6 +190,7 @@ class TestLanceDBVectorStore:
                 ),
             )
             vector_store.connect(db_uri=temp_dir)
+            vector_store.create_index()
             vector_store.load_documents(sample_documents[:2])
 
             if vector_store.index_name:
@@ -205,7 +210,8 @@ class TestLanceDBVectorStore:
             assert isinstance(results[0].score, float)
 
             # Test append mode
-            vector_store.load_documents([sample_documents[2]], overwrite=False)
+            vector_store.create_index()
+            vector_store.load_documents([sample_documents[2]])
             result = vector_store.search_by_id("3")
             assert result.id == "3"
 

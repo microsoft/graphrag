@@ -115,7 +115,6 @@ def assert_vector_store_configs(
     assert actual.api_key == expected.api_key
     assert actual.audience == expected.audience
     assert actual.container_name == expected.container_name
-    assert actual.overwrite == expected.overwrite
     assert actual.database_name == expected.database_name
 
 
