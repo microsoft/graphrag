@@ -31,7 +31,7 @@ def test_create_blob_storage():
         "base_dir": "testbasedir",
         "container_name": "testcontainer",
     }
-    storage = StorageFactory.create_storage(StorageType.blob.value, kwargs)
+    storage = StorageFactory().create(StorageType.blob.value, kwargs)
     assert isinstance(storage, BlobPipelineStorage)
 
 
@@ -46,19 +46,19 @@ def test_create_cosmosdb_storage():
         "base_dir": "testdatabase",
         "container_name": "testcontainer",
     }
-    storage = StorageFactory.create_storage(StorageType.cosmosdb.value, kwargs)
+    storage = StorageFactory().create(StorageType.cosmosdb.value, kwargs)
     assert isinstance(storage, CosmosDBPipelineStorage)
 
 
-def test_create_file_storage():
+def test_create_file():
     kwargs = {"type": "file", "base_dir": "/tmp/teststorage"}
-    storage = StorageFactory.create_storage(StorageType.file.value, kwargs)
+    storage = StorageFactory().create(StorageType.file.value, kwargs)
     assert isinstance(storage, FilePipelineStorage)
 
 
 def test_create_memory_storage():
     kwargs = {}  # MemoryPipelineStorage doesn't accept any constructor parameters
-    storage = StorageFactory.create_storage(StorageType.memory.value, kwargs)
+    storage = StorageFactory().create(StorageType.memory.value, kwargs)
     assert isinstance(storage, MemoryPipelineStorage)
 
 
@@ -74,8 +74,8 @@ def test_register_and_create_custom_storage():
     instance.initialized = True
     custom_storage_class.return_value = instance
 
-    StorageFactory.register("custom", lambda **kwargs: custom_storage_class(**kwargs))
-    storage = StorageFactory.create_storage("custom", {})
+    StorageFactory().register("custom", lambda **kwargs: custom_storage_class(**kwargs))
+    storage = StorageFactory().create("custom", {})
 
     assert custom_storage_class.called
     assert storage is instance
@@ -83,22 +83,20 @@ def test_register_and_create_custom_storage():
     assert storage.initialized is True  # type: ignore # Attribute only exists on our mock
 
     # Check if it's in the list of registered storage types
-    assert "custom" in StorageFactory.get_storage_types()
-    assert StorageFactory.is_supported_type("custom")
+    assert "custom" in StorageFactory()
 
 
 def test_get_storage_types():
-    storage_types = StorageFactory.get_storage_types()
     # Check that built-in types are registered
-    assert StorageType.file.value in storage_types
-    assert StorageType.memory.value in storage_types
-    assert StorageType.blob.value in storage_types
-    assert StorageType.cosmosdb.value in storage_types
+    assert StorageType.file.value in StorageFactory()
+    assert StorageType.memory.value in StorageFactory()
+    assert StorageType.blob.value in StorageFactory()
+    assert StorageType.cosmosdb.value in StorageFactory()
 
 
 def test_create_unknown_storage():
     with pytest.raises(ValueError, match="Unknown storage type: unknown"):
-        StorageFactory.create_storage("unknown", {})
+        StorageFactory().create("unknown")
 
 
 def test_register_class_directly_works():
@@ -148,12 +146,11 @@ def test_register_class_directly_works():
             return "2024-01-01 00:00:00 +0000"
 
     # StorageFactory allows registering classes directly (no TypeError)
-    StorageFactory.register("custom_class", CustomStorage)
+    StorageFactory().register("custom_class", CustomStorage)
 
     # Verify it was registered
-    assert "custom_class" in StorageFactory.get_storage_types()
-    assert StorageFactory.is_supported_type("custom_class")
+    assert "custom_class" in StorageFactory()
 
     # Test creating an instance
-    storage = StorageFactory.create_storage("custom_class", {})
+    storage = StorageFactory().create("custom_class")
     assert isinstance(storage, CustomStorage)
