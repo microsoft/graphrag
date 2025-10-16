@@ -131,7 +131,10 @@ def test_register_class_directly_works():
         def connect(self, **kwargs):
             pass
 
-        def load_documents(self, documents, overwrite=True):
+        def create_index(self, **kwargs):
+            pass
+
+        def load_documents(self, documents):
             pass
 
         def similarity_search_by_vector(self, query_embedding, k=10, **kwargs):
