@@ -15,7 +15,7 @@ from graphrag.config.errors import (
     AzureApiVersionMissingError,
     ConflictingSettingsError,
 )
-from graphrag.language_model.factory import ModelFactory
+from graphrag.language_model.factory import ChatModelFactory, EmbeddingModelFactory
 
 logger = logging.getLogger(__name__)
 
@@ -91,8 +91,11 @@ class LanguageModelConfig(BaseModel):
             If the model name is not recognized.
         """
         # Type should be contained by the registered models
-        if not ModelFactory.is_supported_model(self.type):
-            msg = f"Model type {self.type} is not recognized, must be one of {ModelFactory.get_chat_models() + ModelFactory.get_embedding_models()}."
+        if (
+            self.type not in ChatModelFactory()
+            and self.type not in EmbeddingModelFactory()
+        ):
+            msg = f"Model type {self.type} is not recognized, must be one of {ChatModelFactory().keys() + EmbeddingModelFactory().keys()}."
             raise KeyError(msg)
 
     model_provider: str | None = Field(
