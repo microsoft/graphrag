@@ -25,6 +25,7 @@ class RandomWaitRetry(Retry):
         max_retries: int = 5,
         **kwargs: Any,
     ):
+        super().__init__(**kwargs)
         if max_retries <= 0:
             msg = "max_retries must be greater than 0."
             raise ValueError(msg)
@@ -39,21 +40,25 @@ class RandomWaitRetry(Retry):
     def retry(self, func: Callable[..., Any], **kwargs: Any) -> Any:
         """Retry a synchronous function."""
         retries = 0
-        while True:
-            try:
-                return func(**kwargs)
-            except Exception as e:
-                if retries >= self._max_retries:
+        try:
+            while True:
+                try:
+                    result = func(**kwargs)
+                    return result
+                except Exception as e:
+                    if retries >= self._max_retries:
+                        logger.exception(
+                            f"RandomWaitRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        )
+                        raise
+                    retries += 1
+                    delay = random.uniform(0, self._max_retry_wait)  # noqa: S311
                     logger.exception(
-                        f"RandomWaitRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        f"RandomWaitRetry: Request failed, retrying after random delay, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                     )
-                    raise
-                retries += 1
-                delay = random.uniform(0, self._max_retry_wait)  # noqa: S311
-                logger.exception(
-                    f"RandomWaitRetry: Request failed, retrying after random delay, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
-                )
-                time.sleep(delay)
+                    time.sleep(delay)
+        finally:
+            self._record_retries(retries)
 
     async def aretry(
         self,
@@ -62,18 +67,22 @@ class RandomWaitRetry(Retry):
     ) -> Any:
         """Retry an asynchronous function."""
         retries = 0
-        while True:
-            try:
-                return await func(**kwargs)
-            except Exception as e:
-                if retries >= self._max_retries:
+        try:
+            while True:
+                try:
+                    result = await func(**kwargs)
+                    return result
+                except Exception as e:
+                    if retries >= self._max_retries:
+                        logger.exception(
+                            f"RandomWaitRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        )
+                        raise
+                    retries += 1
+                    delay = random.uniform(0, self._max_retry_wait)  # noqa: S311
                     logger.exception(
-                        f"RandomWaitRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        f"RandomWaitRetry: Request failed, retrying after random delay, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                     )
-                    raise
-                retries += 1
-                delay = random.uniform(0, self._max_retry_wait)  # noqa: S311
-                logger.exception(
-                    f"RandomWaitRetry: Request failed, retrying after random delay, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
-                )
-                await asyncio.sleep(delay)
+                    await asyncio.sleep(delay)
+        finally:
+            self._record_retries(retries)

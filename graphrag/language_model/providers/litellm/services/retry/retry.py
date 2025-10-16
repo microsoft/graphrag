@@ -9,12 +9,41 @@ from typing import Any
 
 
 class Retry(ABC):
-    """LiteLLM Retry Abstract Base Class."""
+    """LiteLLM Retry Abstract Base Class.
 
-    @abstractmethod
+    Added lightweight pipeline context support to allow retry implementations
+    to record retry counts.
+    """
+
     def __init__(self, /, **kwargs: Any):
-        msg = "Retry subclasses must implement the __init__ method."
-        raise NotImplementedError(msg)
+        self._pipeline_context: Any | None = None
+
+    def set_pipeline_context(self, context: Any) -> None:
+        """Inject pipeline context (optional).
+
+        The context is expected to expose a `record_llm_retries(int)` method. If it does not, retry tracking
+        is silently skipped.
+        """
+        self._pipeline_context = context
+
+    def _record_retries(self, retry_count: int) -> None:
+        """Record retry attempts to pipeline context (if available).
+
+        This is a protected method intended for use by subclasses in their
+        finally blocks to ensure retry counts are recorded regardless of
+        success or failure.
+
+        Args
+        ----
+            retry_count: Number of retry attempts performed.
+
+        """
+        if self._pipeline_context is not None and retry_count > 0:
+            try:
+                self._pipeline_context.record_llm_retries(retry_count)
+            except AttributeError:
+                # Context doesn't support retry tracking, skip silently
+                pass
 
     @abstractmethod
     def retry(self, func: Callable[..., Any], **kwargs: Any) -> Any:

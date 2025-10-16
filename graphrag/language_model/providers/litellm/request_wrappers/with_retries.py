@@ -22,7 +22,7 @@ def with_retries(
     sync_fn: LitellmRequestFunc,
     async_fn: AsyncLitellmRequestFunc,
     model_config: "LanguageModelConfig",
-) -> tuple[LitellmRequestFunc, AsyncLitellmRequestFunc]:
+) -> tuple[LitellmRequestFunc, AsyncLitellmRequestFunc, Any]:
     """
     Wrap the synchronous and asynchronous request functions with retries.
 
@@ -51,4 +51,4 @@ def with_retries(
     ) -> Any:
         return await retry_service.aretry(func=async_fn, **kwargs)
 
-    return (_wrapped_with_retries, _wrapped_with_retries_async)
+    return (_wrapped_with_retries, _wrapped_with_retries_async, retry_service)

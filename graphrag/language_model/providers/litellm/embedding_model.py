@@ -101,7 +101,7 @@ def _create_embeddings(
     model_config: "LanguageModelConfig",
     cache: "PipelineCache | None",
     cache_key_prefix: str,
-) -> tuple[FixedModelEmbedding, AFixedModelEmbedding]:
+) -> tuple[FixedModelEmbedding, AFixedModelEmbedding, Any | None]:
     """Wrap the base litellm embedding function with the model configuration and additional features.
 
     Wrap the base litellm embedding function with instance variables based on the model configuration.
@@ -147,8 +147,9 @@ def _create_embeddings(
                 tpm=tpm,
             )
 
+    retry_service: Any | None = None
     if model_config.retry_strategy != "none":
-        embedding, aembedding = with_retries(
+        embedding, aembedding, retry_service = with_retries(
             sync_fn=embedding,
             async_fn=aembedding,
             model_config=model_config,
@@ -169,7 +170,7 @@ def _create_embeddings(
         async_fn=aembedding,
     )
 
-    return (embedding, aembedding)
+    return (embedding, aembedding, retry_service)
 
 
 class LitellmEmbeddingModel:
@@ -185,9 +186,22 @@ class LitellmEmbeddingModel:
         self.name = name
         self.config = config
         self.cache = cache.child(self.name) if cache else None
-        self.embedding, self.aembedding = _create_embeddings(
-            config, self.cache, "embeddings"
-        )
+        (
+            self.embedding,
+            self.aembedding,
+            self._retry_service,
+        ) = _create_embeddings(config, self.cache, "embeddings")
+        self._pipeline_context: Any = None  # For LLM usage tracking
+
+    def set_pipeline_context(self, context: Any) -> None:
+        """Set the pipeline context for LLM usage tracking."""
+        self._pipeline_context = context
+        # Propagate into retry service if available
+        try:
+            if self._retry_service is not None:
+                getattr(self._retry_service, "set_pipeline_context")(context)
+        except AttributeError:
+            pass
 
     def _get_kwargs(self, **kwargs: Any) -> dict[str, Any]:
         """Get model arguments supported by litellm."""
@@ -218,6 +232,16 @@ class LitellmEmbeddingModel:
         new_kwargs = self._get_kwargs(**kwargs)
         response = await self.aembedding(input=text_list, **new_kwargs)
 
+        # Record LLM usage if pipeline context is available
+        if self._pipeline_context is not None and hasattr(response, "usage"):
+            usage = getattr(response, "usage", None)
+            if usage:
+                self._pipeline_context.record_llm_usage(
+                    llm_calls=1,
+                    prompt_tokens=getattr(usage, "prompt_tokens", 0),
+                    completion_tokens=0,  # embeddings don't have completion tokens
+                )
+
         return [emb.get("embedding", []) for emb in response.data]
 
     async def aembed(self, text: str, **kwargs: Any) -> list[float]:
@@ -234,6 +258,16 @@ class LitellmEmbeddingModel:
         """
         new_kwargs = self._get_kwargs(**kwargs)
         response = await self.aembedding(input=[text], **new_kwargs)
+
+        # Record LLM usage if pipeline context is available
+        if self._pipeline_context is not None and hasattr(response, "usage"):
+            usage = getattr(response, "usage", None)
+            if usage:
+                self._pipeline_context.record_llm_usage(
+                    llm_calls=1,
+                    prompt_tokens=getattr(usage, "prompt_tokens", 0),
+                    completion_tokens=0,  # embeddings don't have completion tokens
+                )
 
         return (
             response.data[0].get("embedding", [])

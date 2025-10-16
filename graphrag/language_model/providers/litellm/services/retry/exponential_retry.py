@@ -26,6 +26,7 @@ class ExponentialRetry(Retry):
         jitter: bool = True,
         **kwargs: Any,
     ):
+        super().__init__(**kwargs)
         if max_retries <= 0:
             msg = "max_retries must be greater than 0."
             raise ValueError(msg)
@@ -42,21 +43,25 @@ class ExponentialRetry(Retry):
         """Retry a synchronous function."""
         retries = 0
         delay = 1.0  # Initial delay in seconds
-        while True:
-            try:
-                return func(**kwargs)
-            except Exception as e:
-                if retries >= self._max_retries:
+        try:
+            while True:
+                try:
+                    result = func(**kwargs)
+                    return result
+                except Exception as e:
+                    if retries >= self._max_retries:
+                        logger.exception(
+                            f"ExponentialRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        )
+                        raise
+                    retries += 1
+                    delay *= self._base_delay
                     logger.exception(
-                        f"ExponentialRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        f"ExponentialRetry: Request failed, retrying, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                     )
-                    raise
-                retries += 1
-                delay *= self._base_delay
-                logger.exception(
-                    f"ExponentialRetry: Request failed, retrying, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
-                )
-                time.sleep(delay + (self._jitter * random.uniform(0, 1)))  # noqa: S311
+                    time.sleep(delay + (self._jitter * random.uniform(0, 1)))  # noqa: S311
+        finally:
+            self._record_retries(retries)
 
     async def aretry(
         self,
@@ -66,18 +71,22 @@ class ExponentialRetry(Retry):
         """Retry an asynchronous function."""
         retries = 0
         delay = 1.0  # Initial delay in seconds
-        while True:
-            try:
-                return await func(**kwargs)
-            except Exception as e:
-                if retries >= self._max_retries:
+        try:
+            while True:
+                try:
+                    result = await func(**kwargs)
+                    return result
+                except Exception as e:
+                    if retries >= self._max_retries:
+                        logger.exception(
+                            f"ExponentialRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        )
+                        raise
+                    retries += 1
+                    delay *= self._base_delay
                     logger.exception(
-                        f"ExponentialRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        f"ExponentialRetry: Request failed, retrying, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                     )
-                    raise
-                retries += 1
-                delay *= self._base_delay
-                logger.exception(
-                    f"ExponentialRetry: Request failed, retrying, retries={retries}, delay={delay}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
-                )
-                await asyncio.sleep(delay + (self._jitter * random.uniform(0, 1)))  # noqa: S311
+                    await asyncio.sleep(delay + (self._jitter * random.uniform(0, 1)))  # noqa: S311
+        finally:
+            self._record_retries(retries)
