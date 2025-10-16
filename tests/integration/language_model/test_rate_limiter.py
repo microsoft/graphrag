@@ -16,7 +16,7 @@ from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limite
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter_factory import (
     RateLimiterFactory,
 )
-from tests.unit.litellm_services.utils import (
+from tests.integration.language_model.utils import (
     assert_max_num_values_per_period,
     assert_stagger,
     bin_time_intervals,
