@@ -17,6 +17,4 @@ class RateLimiterFactory(Factory[RateLimiter]):
 rate_limiter_factory = RateLimiterFactory()
 
 for service_name, service_cls in DEFAULT_RATE_LIMITER_SERVICES.items():
-    rate_limiter_factory.register(
-        strategy=service_name, service_initializer=service_cls
-    )
+    rate_limiter_factory.register(service_name, service_cls)

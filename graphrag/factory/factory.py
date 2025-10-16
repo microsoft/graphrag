@@ -34,7 +34,7 @@ class Factory(ABC, Generic[T]):
         """Get a list of registered strategy names."""
         return list(self._services.keys())
 
-    def register(self, *, strategy: str, service_initializer: Callable[..., T]) -> None:
+    def register(self, strategy: str, service_initializer: Callable[..., T]) -> None:
         """
         Register a new service.
 
@@ -45,14 +45,14 @@ class Factory(ABC, Generic[T]):
         """
         self._services[strategy] = service_initializer
 
-    def create(self, *, strategy: str, **kwargs: Any) -> T:
+    def create(self, strategy: str, init_args: dict[str, Any] | None = None) -> T:
         """
         Create a service instance based on the strategy.
 
         Args
         ----
             strategy: The name of the strategy.
-            **kwargs: Additional arguments to pass to the service initializer.
+            init_args: Dict of keyword arguments to pass to the service initializer.
 
         Returns
         -------
@@ -65,4 +65,4 @@ class Factory(ABC, Generic[T]):
         if strategy not in self._services:
             msg = f"Strategy '{strategy}' is not registered."
             raise ValueError(msg)
-        return self._services[strategy](**kwargs)
+        return self._services[strategy](**(init_args or {}))

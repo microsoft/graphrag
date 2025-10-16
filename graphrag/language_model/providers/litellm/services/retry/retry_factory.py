@@ -15,4 +15,4 @@ class RetryFactory(Factory[Retry]):
 retry_factory = RetryFactory()
 
 for service_name, service_cls in DEFAULT_RETRY_SERVICES.items():
-    retry_factory.register(strategy=service_name, service_initializer=service_cls)
+    retry_factory.register(service_name, service_cls)
