@@ -197,11 +197,8 @@ class LitellmEmbeddingModel:
         """Set the pipeline context for LLM usage tracking."""
         self._pipeline_context = context
         # Propagate into retry service if available
-        try:
-            if self._retry_service is not None:
-                getattr(self._retry_service, "set_pipeline_context")(context)
-        except AttributeError:
-            pass
+        if self._retry_service is not None:
+            self._retry_service.set_pipeline_context(context)
 
     def _get_kwargs(self, **kwargs: Any) -> dict[str, Any]:
         """Get model arguments supported by litellm."""

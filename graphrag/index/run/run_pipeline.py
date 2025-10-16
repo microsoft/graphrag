@@ -119,10 +119,10 @@ async def _run_pipeline(
             last_workflow = name
             # Set current workflow for LLM usage tracking
             context.current_workflow = name
-            
+
             # Inject pipeline context for LLM usage tracking
             inject_llm_context(context)
-            
+
             context.callbacks.workflow_start(name, None)
             work_time = time.time()
             result = await workflow_function(config, context)
@@ -131,21 +131,24 @@ async def _run_pipeline(
                 workflow=name, result=result.result, state=context.state, errors=None
             )
             context.stats.workflows[name] = {"overall": time.time() - work_time}
-            
+
             # Log LLM usage for this workflow if available
             if name in context.stats.llm_usage_by_workflow:
                 usage = context.stats.llm_usage_by_workflow[name]
                 retry_part = (
-                    f", {usage['retries']} retries" if usage.get("retries", 0) > 0 else ""
+                    f", {usage['retries']} retries"
+                    if usage.get("retries", 0) > 0
+                    else ""
                 )
                 logger.info(
-                    f"Workflow {name} LLM usage: "
-                    f"{usage['llm_calls']} calls, "
-                    f"{usage['prompt_tokens']} prompt tokens, "
-                    f"{usage['completion_tokens']} completion tokens"
-                    f"{retry_part}"
+                    "Workflow %s LLM usage: %d calls, %d prompt tokens, %d completion tokens%s",
+                    name,
+                    usage["llm_calls"],
+                    usage["prompt_tokens"],
+                    usage["completion_tokens"],
+                    retry_part,
                 )
-            
+
             if result.stop:
                 logger.info("Halting pipeline at workflow request")
                 break
@@ -154,7 +157,7 @@ async def _run_pipeline(
         context.current_workflow = None
         context.stats.total_runtime = time.time() - start_time
         logger.info("Indexing pipeline complete.")
-        
+
         # Log total LLM usage
         if context.stats.total_llm_calls > 0:
             retry_part = (
@@ -163,13 +166,13 @@ async def _run_pipeline(
                 else ""
             )
             logger.info(
-                f"Total LLM usage: "
-                f"{context.stats.total_llm_calls} calls, "
-                f"{context.stats.total_prompt_tokens} prompt tokens, "
-                f"{context.stats.total_completion_tokens} completion tokens"
-                f"{retry_part}"
+                "Total LLM usage: %d calls, %d prompt tokens, %d completion tokens%s",
+                context.stats.total_llm_calls,
+                context.stats.total_prompt_tokens,
+                context.stats.total_completion_tokens,
+                retry_part,
             )
-        
+
         await _dump_json(context)
 
     except Exception as e:

@@ -31,7 +31,7 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     logger.info("Workflow started: extract_graph")
-    
+
     text_units = await load_table_from_storage("text_units", context.output_storage)
 
     extract_graph_llm_settings = config.get_language_model_config(

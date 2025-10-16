@@ -43,15 +43,9 @@ class ModelManager:
         self._pipeline_context = context
         # Update existing models that support context injection
         for model in self.chat_models.values():
-            try:
-                getattr(model, "set_pipeline_context")(context)
-            except AttributeError:
-                pass
+            model.set_pipeline_context(context)
         for model in self.embedding_models.values():
-            try:
-                getattr(model, "set_pipeline_context")(context)
-            except AttributeError:
-                pass
+            model.set_pipeline_context(context)
 
     @classmethod
     def get_instance(cls) -> ModelManager:
@@ -73,10 +67,7 @@ class ModelManager:
         model = ModelFactory.create_chat_model(model_type, **chat_kwargs)
         # Inject pipeline context if available
         if self._pipeline_context:
-            try:
-                getattr(model, "set_pipeline_context")(self._pipeline_context)
-            except AttributeError:
-                pass  # Model doesn't support context injection
+            model.set_pipeline_context(self._pipeline_context)
         self.chat_models[name] = model
         return self.chat_models[name]
 
@@ -95,10 +86,7 @@ class ModelManager:
         model = ModelFactory.create_embedding_model(model_type, **embedding_kwargs)
         # Inject pipeline context if available
         if self._pipeline_context:
-            try:
-                getattr(model, "set_pipeline_context")(self._pipeline_context)
-            except AttributeError:
-                pass  # Model doesn't support context injection
+            model.set_pipeline_context(self._pipeline_context)
         self.embedding_models[name] = model
         return self.embedding_models[name]
 

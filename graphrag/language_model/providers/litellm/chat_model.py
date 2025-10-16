@@ -233,11 +233,8 @@ class LitellmChatModel:
         """Set the pipeline context for LLM usage tracking."""
         self._pipeline_context = context
         # Propagate into retry service if available
-        try:
-            if self._retry_service is not None:
-                getattr(self._retry_service, "set_pipeline_context")(context)
-        except AttributeError:
-            pass
+        if self._retry_service is not None:
+            self._retry_service.set_pipeline_context(context)
 
     def _get_kwargs(self, **kwargs: Any) -> dict[str, Any]:
         """Get model arguments supported by litellm."""
@@ -372,7 +369,9 @@ class LitellmChatModel:
 
             tokenizer = get_tokenizer(model_config=self.config)
             # Calculate prompt text
-            prompt_text = "\n".join([f"{msg['role']}: {msg['content']}" for msg in messages])
+            prompt_text = "\n".join([
+                f"{msg['role']}: {msg['content']}" for msg in messages
+            ])
             prompt_tokens = len(tokenizer.encode(prompt_text))
             completion_tokens = len(tokenizer.encode(full_content))
 

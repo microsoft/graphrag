@@ -24,6 +24,10 @@ class EmbeddingModel(Protocol):
     config: LanguageModelConfig
     """Passthrough of the config used to create the model instance."""
 
+    def set_pipeline_context(self, context: Any) -> None:
+        """Set pipeline context for LLM usage tracking (optional)."""
+        ...
+
     async def aembed_batch(
         self, text_list: list[str], **kwargs: Any
     ) -> list[list[float]]:
@@ -93,6 +97,10 @@ class ChatModel(Protocol):
 
     config: LanguageModelConfig
     """Passthrough of the config used to create the model instance."""
+
+    def set_pipeline_context(self, context: Any) -> None:
+        """Set pipeline context for LLM usage tracking (optional)."""
+        ...
 
     async def achat(
         self, prompt: str, history: list | None = None, **kwargs: Any

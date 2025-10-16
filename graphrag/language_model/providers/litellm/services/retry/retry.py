@@ -39,11 +39,7 @@ class Retry(ABC):
 
         """
         if self._pipeline_context is not None and retry_count > 0:
-            try:
-                self._pipeline_context.record_llm_retries(retry_count)
-            except AttributeError:
-                # Context doesn't support retry tracking, skip silently
-                pass
+            self._pipeline_context.record_llm_retries(retry_count)
 
     @abstractmethod
     def retry(self, func: Callable[..., Any], **kwargs: Any) -> Any:

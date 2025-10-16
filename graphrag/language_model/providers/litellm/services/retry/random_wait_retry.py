@@ -43,8 +43,7 @@ class RandomWaitRetry(Retry):
         try:
             while True:
                 try:
-                    result = func(**kwargs)
-                    return result
+                    return func(**kwargs)
                 except Exception as e:
                     if retries >= self._max_retries:
                         logger.exception(
@@ -70,8 +69,7 @@ class RandomWaitRetry(Retry):
         try:
             while True:
                 try:
-                    result = await func(**kwargs)
-                    return result
+                    return await func(**kwargs)
                 except Exception as e:
                     if retries >= self._max_retries:
                         logger.exception(
