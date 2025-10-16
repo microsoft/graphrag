@@ -3,7 +3,6 @@
 
 """Common default configuration values."""
 
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import ClassVar
@@ -24,25 +23,6 @@ from graphrag.config.enums import (
 from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
     EN_STOP_WORDS,
 )
-from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter import (
-    RateLimiter,
-)
-from graphrag.language_model.providers.litellm.services.rate_limiter.static_rate_limiter import (
-    StaticRateLimiter,
-)
-from graphrag.language_model.providers.litellm.services.retry.exponential_retry import (
-    ExponentialRetry,
-)
-from graphrag.language_model.providers.litellm.services.retry.incremental_wait_retry import (
-    IncrementalWaitRetry,
-)
-from graphrag.language_model.providers.litellm.services.retry.native_wait_retry import (
-    NativeRetry,
-)
-from graphrag.language_model.providers.litellm.services.retry.random_wait_retry import (
-    RandomWaitRetry,
-)
-from graphrag.language_model.providers.litellm.services.retry.retry import Retry
 
 DEFAULT_OUTPUT_BASE_DIR = "output"
 DEFAULT_CHAT_MODEL_ID = "default_chat_model"
@@ -59,17 +39,6 @@ ENCODING_MODEL = "o200k_base"
 COGNITIVE_SERVICES_AUDIENCE = "https://cognitiveservices.azure.com/.default"
 
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
-
-DEFAULT_RETRY_SERVICES: dict[str, Callable[..., Retry]] = {
-    "native": NativeRetry,
-    "exponential_backoff": ExponentialRetry,
-    "random_wait": RandomWaitRetry,
-    "incremental_wait": IncrementalWaitRetry,
-}
-
-DEFAULT_RATE_LIMITER_SERVICES: dict[str, Callable[..., RateLimiter]] = {
-    "static": StaticRateLimiter,
-}
 
 
 @dataclass

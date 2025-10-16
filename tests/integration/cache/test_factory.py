@@ -79,7 +79,7 @@ def test_register_and_create_custom_cache():
 
     CacheFactory().register(
         strategy="custom",
-        service_initializer=lambda **kwargs: custom_cache_class(**kwargs),
+        initializer=lambda **kwargs: custom_cache_class(**kwargs),
     )
     cache = CacheFactory().create(strategy="custom")
 

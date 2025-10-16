@@ -34,16 +34,16 @@ class Factory(ABC, Generic[T]):
         """Get a list of registered strategy names."""
         return list(self._services.keys())
 
-    def register(self, strategy: str, service_initializer: Callable[..., T]) -> None:
+    def register(self, strategy: str, initializer: Callable[..., T]) -> None:
         """
         Register a new service.
 
         Args
         ----
             strategy: The name of the strategy.
-            service_initializer: A callable that creates an instance of T.
+            initializer: A callable that creates an instance of T.
         """
-        self._services[strategy] = service_initializer
+        self._services[strategy] = initializer
 
     def create(self, strategy: str, init_args: dict[str, Any] | None = None) -> T:
         """
