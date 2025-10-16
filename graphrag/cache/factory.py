@@ -5,23 +5,18 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
-
 from graphrag.cache.json_pipeline_cache import JsonPipelineCache
 from graphrag.cache.memory_pipeline_cache import InMemoryCache
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.config.enums import CacheType
+from graphrag.factory.factory import Factory
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
-if TYPE_CHECKING:
-    from collections.abc import Callable
 
-    from graphrag.cache.pipeline_cache import PipelineCache
-
-
-class CacheFactory:
+class CacheFactory(Factory[PipelineCache]):
     """A factory class for cache implementations.
 
     Includes a method for users to register a custom cache implementation.
@@ -29,51 +24,6 @@ class CacheFactory:
     Configuration arguments are passed to each cache implementation as kwargs
     for individual enforcement of required/optional arguments.
     """
-
-    _registry: ClassVar[dict[str, Callable[..., PipelineCache]]] = {}
-
-    @classmethod
-    def register(cls, cache_type: str, creator: Callable[..., PipelineCache]) -> None:
-        """Register a custom cache implementation.
-
-        Args:
-            cache_type: The type identifier for the cache.
-            creator: A class or callable that creates an instance of PipelineCache.
-        """
-        cls._registry[cache_type] = creator
-
-    @classmethod
-    def create_cache(cls, cache_type: str, kwargs: dict) -> PipelineCache:
-        """Create a cache object from the provided type.
-
-        Args:
-            cache_type: The type of cache to create.
-            root_dir: The root directory for file-based caches.
-            kwargs: Additional keyword arguments for the cache constructor.
-
-        Returns
-        -------
-            A PipelineCache instance.
-
-        Raises
-        ------
-            ValueError: If the cache type is not registered.
-        """
-        if cache_type not in cls._registry:
-            msg = f"Unknown cache type: {cache_type}"
-            raise ValueError(msg)
-
-        return cls._registry[cache_type](**kwargs)
-
-    @classmethod
-    def get_cache_types(cls) -> list[str]:
-        """Get the registered cache implementations."""
-        return list(cls._registry.keys())
-
-    @classmethod
-    def is_supported_type(cls, cache_type: str) -> bool:
-        """Check if the given cache type is supported."""
-        return cache_type in cls._registry
 
 
 # --- register built-in cache implementations ---
@@ -108,8 +58,9 @@ def create_memory_cache(**kwargs) -> PipelineCache:
 
 
 # --- register built-in cache implementations ---
-CacheFactory.register(CacheType.none.value, create_noop_cache)
-CacheFactory.register(CacheType.memory.value, create_memory_cache)
-CacheFactory.register(CacheType.file.value, create_file_cache)
-CacheFactory.register(CacheType.blob.value, create_blob_cache)
-CacheFactory.register(CacheType.cosmosdb.value, create_cosmosdb_cache)
+cache_factory = CacheFactory()
+cache_factory.register(CacheType.none.value, create_noop_cache)
+cache_factory.register(CacheType.memory.value, create_memory_cache)
+cache_factory.register(CacheType.file.value, create_file_cache)
+cache_factory.register(CacheType.blob.value, create_blob_cache)
+cache_factory.register(CacheType.cosmosdb.value, create_cosmosdb_cache)

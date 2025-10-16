@@ -116,10 +116,10 @@ def create_storage_from_config(output: StorageConfig) -> PipelineStorage:
 def create_cache_from_config(cache: CacheConfig, root_dir: str) -> PipelineCache:
     """Create a cache object from the config."""
     cache_config = cache.model_dump()
-    kwargs = {**cache_config, "root_dir": root_dir}
-    return CacheFactory().create_cache(
-        cache_type=cache_config["type"],
-        kwargs=kwargs,
+    args = {**cache_config, "root_dir": root_dir}
+    return CacheFactory().create(
+        strategy=cache_config["type"],
+        init_args=args,
     )
 
 

@@ -41,7 +41,6 @@ async def run_workflow(
     )
 
     if config.snapshots.graphml:
-        # todo: extract graphs at each level, and add in meta like descriptions
         graph = create_graph(final_relationships, edge_attr=["weight"])
 
         await snapshot_graphml(
