@@ -27,7 +27,7 @@ def test_create_blob_logger():
         "base_dir": "testbasedir",
         "container_name": "testcontainer",
     }
-    logger = LoggerFactory.create_logger(ReportingType.blob.value, kwargs)
+    logger = LoggerFactory().create(ReportingType.blob.value, kwargs)
     assert isinstance(logger, BlobWorkflowLogger)
 
 
@@ -40,8 +40,8 @@ def test_register_and_create_custom_logger():
     instance.initialized = True
     custom_logger_class.return_value = instance
 
-    LoggerFactory.register("custom", lambda **kwargs: custom_logger_class(**kwargs))
-    logger = LoggerFactory.create_logger("custom", {})
+    LoggerFactory().register("custom", lambda **kwargs: custom_logger_class(**kwargs))
+    logger = LoggerFactory().create("custom")
 
     assert custom_logger_class.called
     assert logger is instance
@@ -49,17 +49,15 @@ def test_register_and_create_custom_logger():
     assert logger.initialized is True  # type: ignore # Attribute only exists on our mock
 
     # Check if it's in the list of registered logger types
-    assert "custom" in LoggerFactory.get_logger_types()
-    assert LoggerFactory.is_supported_type("custom")
+    assert "custom" in LoggerFactory()
 
 
 def test_get_logger_types():
-    logger_types = LoggerFactory.get_logger_types()
     # Check that built-in types are registered
-    assert ReportingType.file.value in logger_types
-    assert ReportingType.blob.value in logger_types
+    assert ReportingType.file.value in LoggerFactory()
+    assert ReportingType.blob.value in LoggerFactory()
 
 
 def test_create_unknown_logger():
     with pytest.raises(ValueError, match="Unknown reporting type: unknown"):
-        LoggerFactory.create_logger("unknown", {})
+        LoggerFactory().create("unknown")
