@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Add comprehensive LLM usage tracking (tokens, calls, retries) for indexing stage with per-workflow breakdown"
+}
