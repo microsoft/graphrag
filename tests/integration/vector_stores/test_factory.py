@@ -131,9 +131,6 @@ def test_register_class_directly_works():
         def similarity_search_by_text(self, text, text_embedder, k=10, **kwargs):
             return []
 
-        def filter_by_id(self, include_ids):
-            return {}
-
         def search_by_id(self, id):
             from graphrag.vector_stores.base import VectorStoreDocument
 
