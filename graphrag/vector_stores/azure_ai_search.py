@@ -22,7 +22,6 @@ from azure.search.documents.indexes.models import (
 )
 from azure.search.documents.models import VectorizedQuery
 
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.data_model.types import TextEmbedder
 from graphrag.vector_stores.base import (
     BaseVectorStore,
@@ -35,13 +34,6 @@ class AzureAISearchVectorStore(BaseVectorStore):
     """Azure AI Search vector storage implementation."""
 
     index_client: SearchIndexClient
-
-    def __init__(
-        self, vector_store_schema_config: VectorStoreSchemaConfig, **kwargs: Any
-    ) -> None:
-        super().__init__(
-            vector_store_schema_config=vector_store_schema_config, **kwargs
-        )
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to AI search vector storage."""

@@ -236,8 +236,6 @@ def _create_vector_store(
     index_name: str,
     embedding_name: str | None = None,
 ) -> BaseVectorStore:
-    vector_store_type: str = str(vector_store_config.type)
-
     embeddings_schema: dict[str, VectorStoreSchemaConfig] = (
         vector_store_config.embeddings_schema
     )
@@ -259,10 +257,10 @@ def _create_vector_store(
         single_embedding_config.index_name = index_name
 
     args = vector_store_config.model_dump()
-    vector_store = VectorStoreFactory().create_vector_store(
-        vector_store_schema_config=single_embedding_config,
-        vector_store_type=vector_store_type,
-        **args,
+    args["vector_store_schema_config"] = single_embedding_config
+    vector_store = VectorStoreFactory().create(
+        vector_store_config.type,
+        args,
     )
 
     vector_store.connect(**args)

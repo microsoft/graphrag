@@ -10,7 +10,6 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
 
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.data_model.types import TextEmbedder
 from graphrag.vector_stores.base import (
     BaseVectorStore,
@@ -25,13 +24,6 @@ class CosmosDBVectorStore(BaseVectorStore):
     _cosmos_client: CosmosClient
     _database_client: DatabaseProxy
     _container_client: ContainerProxy
-
-    def __init__(
-        self, vector_store_schema_config: VectorStoreSchemaConfig, **kwargs: Any
-    ) -> None:
-        super().__init__(
-            vector_store_schema_config=vector_store_schema_config, **kwargs
-        )
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to CosmosDB vector storage."""

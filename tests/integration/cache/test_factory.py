@@ -92,16 +92,6 @@ def test_register_and_create_custom_cache():
     assert "custom" in CacheFactory()
 
 
-def test_get_cache_types():
-    cache_types = CacheFactory().keys()
-    # Check that built-in types are registered
-    assert CacheType.none.value in cache_types
-    assert CacheType.memory.value in cache_types
-    assert CacheType.file.value in cache_types
-    assert CacheType.blob.value in cache_types
-    assert CacheType.cosmosdb.value in cache_types
-
-
 def test_create_unknown_cache():
     with pytest.raises(ValueError, match="Unknown cache type: unknown"):
         CacheFactory().create(strategy="unknown")

@@ -49,10 +49,9 @@ def get_embedding_store(
     if embedding_config.index_name is None:
         embedding_config.index_name = index_name
 
-    embedding_store = VectorStoreFactory().create_vector_store(
-        vector_store_type=vector_store_type,
-        vector_store_schema_config=embedding_config,
-        **store,
+    embedding_store = VectorStoreFactory().create(
+        vector_store_type,
+        {**store, "vector_store_schema_config": embedding_config},
     )
     embedding_store.connect(**store)
 

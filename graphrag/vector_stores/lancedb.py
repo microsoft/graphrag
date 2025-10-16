@@ -9,7 +9,6 @@ import lancedb
 import numpy as np
 import pyarrow as pa
 
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.data_model.types import TextEmbedder
 from graphrag.vector_stores.base import (
     BaseVectorStore,
@@ -20,13 +19,6 @@ from graphrag.vector_stores.base import (
 
 class LanceDBVectorStore(BaseVectorStore):
     """LanceDB vector storage implementation."""
-
-    def __init__(
-        self, vector_store_schema_config: VectorStoreSchemaConfig, **kwargs: Any
-    ) -> None:
-        super().__init__(
-            vector_store_schema_config=vector_store_schema_config, **kwargs
-        )
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to the vector storage."""
