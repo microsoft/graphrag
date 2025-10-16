@@ -120,6 +120,7 @@ class TestAzureAISearchVectorStore:
             "vector": [0.1, 0.2, 0.3, 0.4, 0.5],
         }
 
+        vector_store.create_index()
         vector_store.load_documents(sample_documents)
         assert mock_index_client.create_or_update_index.called
         assert mock_search_client.upload_documents.called
@@ -188,6 +189,7 @@ class TestAzureAISearchVectorStore:
             vector_store_custom.vector_field: [0.1, 0.2, 0.3, 0.4, 0.5],
         }
 
+        vector_store_custom.create_index()
         vector_store_custom.load_documents(sample_documents)
         assert mock_index_client.create_or_update_index.called
         assert mock_search_client.upload_documents.called

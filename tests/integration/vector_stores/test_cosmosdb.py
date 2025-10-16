@@ -44,6 +44,8 @@ def test_vector_store_operations():
                 vector=[0.2, 0.3, 0.4, 0.5, 0.6],
             ),
         ]
+
+        vector_store.create_index()
         vector_store.load_documents(docs)
 
         doc = vector_store.search_by_id("doc1")
@@ -84,6 +86,7 @@ def test_clear():
             vector=[0.1, 0.2, 0.3, 0.4, 0.5],
         )
 
+        vector_store.create_index()
         vector_store.load_documents([doc])
         result = vector_store.search_by_id("test")
         assert result.id == "test"
@@ -122,6 +125,8 @@ def test_vector_store_customization():
                 vector=[0.2, 0.3, 0.4, 0.5, 0.6],
             ),
         ]
+
+        vector_store.create_index()
         vector_store.load_documents(docs)
 
         doc = vector_store.search_by_id("doc1")

@@ -58,9 +58,11 @@ class BaseVectorStore(ABC):
         """Connect to vector storage."""
 
     @abstractmethod
-    def load_documents(
-        self, documents: list[VectorStoreDocument], overwrite: bool = True
-    ) -> None:
+    def create_index(self) -> None:
+        """Create index."""
+
+    @abstractmethod
+    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
         """Load documents into the vector-store."""
 
     @abstractmethod

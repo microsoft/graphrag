@@ -28,9 +28,10 @@ class MockBaseVectorStore(BaseVectorStore):
     def connect(self, **kwargs: Any) -> None:
         raise NotImplementedError
 
-    def load_documents(
-        self, documents: list[VectorStoreDocument], overwrite: bool = True
-    ) -> None:
+    def create_index(self) -> None:
+        raise NotImplementedError
+
+    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
         raise NotImplementedError
 
     def similarity_search_by_vector(
