@@ -1,6 +1,7 @@
 {
     "input_path": "./tests/fixtures/text",
     "input_file_type": "text",
+    "index_method": "fast",
     "workflow_config": {
         "load_input_documents": {
             "max_runtime": 30
@@ -14,11 +15,7 @@
         "finalize_graph": {
             "row_range": [
                 10,
-                200
-            ],
-            "nan_allowed_columns": [
-                "x",
-                "y"
+                300
             ],
             "max_runtime": 30,
             "expected_artifacts": [
