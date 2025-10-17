@@ -8,27 +8,28 @@ from io import BytesIO
 
 import pandas as pd
 
-from graphrag.config.models.input_config import InputConfig
-from graphrag.index.input.util import load_files, process_data_columns
-from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.index.input.input_reader import InputReader
+from graphrag.index.input.util import process_data_columns
 
 logger = logging.getLogger(__name__)
 
 
-async def load_csv(
-    config: InputConfig,
-    storage: PipelineStorage,
-) -> pd.DataFrame:
-    """Load csv inputs from a directory."""
-    logger.info("Loading csv files from %s", config.storage.base_dir)
+class CSVFileReader(InputReader):
+    """Reader implementation for csv files."""
 
-    async def load_file(path: str) -> pd.DataFrame:
-        buffer = BytesIO(await storage.get(path, as_bytes=True))
-        data = pd.read_csv(buffer, encoding=config.encoding)
-        data = process_data_columns(data, config, path)
-        creation_date = await storage.get_creation_date(path)
+    async def read_file(self, path: str) -> pd.DataFrame:
+        """Read a csv file into a DataFrame of documents.
+
+        Args:
+            - path - The path to read the file from.
+
+        Returns
+        -------
+            - output - DataFrame with a row for each document in the file.
+        """
+        buffer = BytesIO(await self._storage.get(path, as_bytes=True))
+        data = pd.read_csv(buffer, encoding=self._config.encoding)
+        data = process_data_columns(data, self._config, path)
+        creation_date = await self._storage.get_creation_date(path)
         data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
-
         return data
-
-    return await load_files(load_file, config, storage)

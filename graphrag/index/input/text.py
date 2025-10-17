@@ -8,26 +8,28 @@ from pathlib import Path
 
 import pandas as pd
 
-from graphrag.config.models.input_config import InputConfig
-from graphrag.index.input.util import load_files
+from graphrag.index.input.input_reader import InputReader
 from graphrag.index.utils.hashing import gen_sha512_hash
-from graphrag.storage.pipeline_storage import PipelineStorage
 
 logger = logging.getLogger(__name__)
 
 
-async def load_text(
-    config: InputConfig,
-    storage: PipelineStorage,
-) -> pd.DataFrame:
-    """Load text inputs from a directory."""
+class TextFileReader(InputReader):
+    """Reader implementation for text files."""
 
-    async def load_file(path: str) -> pd.DataFrame:
-        text = await storage.get(path, encoding=config.encoding)
+    async def read_file(self, path: str) -> pd.DataFrame:
+        """Read a text file into a DataFrame of documents.
+
+        Args:
+            - path - The path to read the file from.
+
+        Returns
+        -------
+            - output - DataFrame with a row for each document in the file.
+        """
+        text = await self._storage.get(path, encoding=self._config.encoding)
         new_item = {"text": text}
         new_item["id"] = gen_sha512_hash(new_item, new_item.keys())
         new_item["title"] = str(Path(path).name)
-        new_item["creation_date"] = await storage.get_creation_date(path)
+        new_item["creation_date"] = await self._storage.get_creation_date(path)
         return pd.DataFrame([new_item])
-
-    return await load_files(load_file, config, storage)

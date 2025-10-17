@@ -8,30 +8,32 @@ import logging
 
 import pandas as pd
 
-from graphrag.config.models.input_config import InputConfig
-from graphrag.index.input.util import load_files, process_data_columns
-from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.index.input.input_reader import InputReader
+from graphrag.index.input.util import process_data_columns
 
 logger = logging.getLogger(__name__)
 
 
-async def load_json(
-    config: InputConfig,
-    storage: PipelineStorage,
-) -> pd.DataFrame:
-    """Load json inputs from a directory."""
-    logger.info("Loading json files from %s", config.storage.base_dir)
+class JSONFileReader(InputReader):
+    """Reader implementation for json files."""
 
-    async def load_file(path: str) -> pd.DataFrame:
-        text = await storage.get(path, encoding=config.encoding)
+    async def read_file(self, path: str) -> pd.DataFrame:
+        """Read a JSON file into a DataFrame of documents.
+
+        Args:
+            - path - The path to read the file from.
+
+        Returns
+        -------
+            - output - DataFrame with a row for each document in the file.
+        """
+        text = await self._storage.get(path, encoding=self._config.encoding)
         as_json = json.loads(text)
         # json file could just be a single object, or an array of objects
         rows = as_json if isinstance(as_json, list) else [as_json]
         data = pd.DataFrame(rows)
-        data = process_data_columns(data, config, path)
-        creation_date = await storage.get_creation_date(path)
+        data = process_data_columns(data, self._config, path)
+        creation_date = await self._storage.get_creation_date(path)
         data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
 
         return data
-
-    return await load_files(load_file, config, storage)
