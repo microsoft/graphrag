@@ -32,9 +32,6 @@ vector_store:
     api_key: ${AZURE_AI_SEARCH_API_KEY}
     container_name: "simple_text_ci"
 
-extract_claims:
-  enabled: true
-
 community_reports:
   prompt: "prompts/community_report.txt"
   max_length: 2000
