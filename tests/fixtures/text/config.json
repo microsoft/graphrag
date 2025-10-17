@@ -9,8 +9,11 @@
         "create_base_text_units": {
             "max_runtime": 30
         },
-        "extract_graph": {
-            "max_runtime": 500
+        "extract_graph_nlp": {
+            "max_runtime": 30
+        },
+        "prune_graph": {
+            "max_runtime": 30
         },
         "finalize_graph": {
             "row_range": [
