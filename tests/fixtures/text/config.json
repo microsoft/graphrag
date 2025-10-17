@@ -26,23 +26,6 @@
                 "relationships.parquet"
             ]
         },
-        "extract_covariates": {
-            "row_range": [
-                10,
-                100
-            ],
-            "nan_allowed_columns": [
-                "type",
-                "description",
-                "object_id",
-                "status",
-                "start_date",
-                "end_date",
-                "source_text"
-            ],
-            "max_runtime": 360,
-            "expected_artifacts": ["covariates.parquet"]
-        },
         "create_communities": {
             "row_range": [
                 1,
