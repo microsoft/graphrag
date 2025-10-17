@@ -48,7 +48,7 @@
             "max_runtime": 30,
             "expected_artifacts": ["communities.parquet"]
         },
-        "create_community_reports": {
+        "create_community_reports_text": {
             "row_range": [
                 1,
                 30
