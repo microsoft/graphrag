@@ -93,7 +93,7 @@ def test_register_and_create_custom_cache():
 
 
 def test_create_unknown_cache():
-    with pytest.raises(ValueError, match="Unknown cache type: unknown"):
+    with pytest.raises(ValueError, match="Strategy 'unknown' is not registered\\."):
         CacheFactory().create(strategy="unknown")
 
 

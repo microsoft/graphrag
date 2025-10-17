@@ -95,7 +95,7 @@ def test_get_storage_types():
 
 
 def test_create_unknown_storage():
-    with pytest.raises(ValueError, match="Unknown storage type: unknown"):
+    with pytest.raises(ValueError, match="Strategy 'unknown' is not registered\\."):
         StorageFactory().create("unknown")
 
 

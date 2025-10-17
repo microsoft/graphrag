@@ -94,7 +94,7 @@ def test_register_and_create_custom_vector_store():
 
 
 def test_create_unknown_vector_store():
-    with pytest.raises(ValueError, match="Unknown vector store type: unknown"):
+    with pytest.raises(ValueError, match="Strategy 'unknown' is not registered\\."):
         VectorStoreFactory().create("unknown")
 
 
