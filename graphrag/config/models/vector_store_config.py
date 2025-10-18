@@ -72,9 +72,9 @@ class VectorStoreConfig(BaseModel):
         default=vector_store_defaults.audience,
     )
 
-    container_name: str = Field(
-        description="The container name to use.",
-        default=vector_store_defaults.container_name,
+    prefix: str | None = Field(
+        description="The prefix to use.",
+        default=vector_store_defaults.prefix,
     )
 
     database_name: str | None = Field(

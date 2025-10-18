@@ -29,9 +29,7 @@ default_embeddings: list[str] = [
 ]
 
 
-def create_index_name(
-    container_name: str, embedding_name: str, validate: bool = True
-) -> str:
+def create_index_name(prefix: str, embedding_name: str, validate: bool = True) -> str:
     """
     Create a index name for the embedding store.
 
@@ -45,4 +43,7 @@ def create_index_name(
     if validate and embedding_name not in all_embeddings:
         msg = f"Invalid embedding name: {embedding_name}"
         raise KeyError(msg)
-    return f"{container_name}-{embedding_name}".replace(".", "-")
+
+    if prefix:
+        return f"{prefix}-{embedding_name}".replace(".", "-")
+    return embedding_name.replace(".", "-")
