@@ -21,8 +21,5 @@ class EmbeddingModelFactory(Factory[EmbeddingModel]):
 
 
 # --- Register default implementations ---
-ChatModelFactory().register(ModelType.Chat, lambda **kwargs: LitellmChatModel(**kwargs))
-
-EmbeddingModelFactory().register(
-    ModelType.Embedding, lambda **kwargs: LitellmEmbeddingModel(**kwargs)
-)
+ChatModelFactory().register(ModelType.Chat, LitellmChatModel)
+EmbeddingModelFactory().register(ModelType.Embedding, LitellmEmbeddingModel)
