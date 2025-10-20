@@ -72,9 +72,9 @@ class VectorStoreConfig(BaseModel):
         default=vector_store_defaults.audience,
     )
 
-    prefix: str | None = Field(
-        description="The prefix to use.",
-        default=vector_store_defaults.prefix,
+    index_prefix: str | None = Field(
+        description="The index prefix to use.",
+        default=vector_store_defaults.index_prefix,
     )
 
     database_name: str | None = Field(

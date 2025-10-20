@@ -77,7 +77,7 @@ reporting:
 vector_store:
   type: {vector_store_defaults.type}
   db_uri: {vector_store_defaults.db_uri}
-  prefix: {vector_store_defaults.prefix}
+  index_prefix: {vector_store_defaults.index_prefix}
 
 ### Workflow settings ###
 

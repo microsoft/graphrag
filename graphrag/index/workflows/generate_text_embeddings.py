@@ -255,9 +255,9 @@ def _create_vector_store(
         else:
             single_embedding_config = raw_config
 
-    if single_embedding_config.index_name is not None and vector_store_config.prefix:
+    if single_embedding_config.index_name is not None and vector_store_config.index_prefix:
         single_embedding_config.index_name = (
-            f"{vector_store_config.prefix}-{single_embedding_config.index_name}"
+            f"{vector_store_config.index_prefix}-{single_embedding_config.index_name}"
         )
 
     if single_embedding_config.index_name is None:
@@ -275,9 +275,9 @@ def _create_vector_store(
 
 
 def _get_index_name(vector_store_config: VectorStoreConfig, embedding_name: str) -> str:
-    prefix = vector_store_config.prefix or ""
-    index_name = create_index_name(prefix, embedding_name)
+    index_prefix = vector_store_config.index_prefix or ""
+    index_name = create_index_name(index_prefix, embedding_name)
 
-    msg = f"using vector store {vector_store_config.type} with prefix {prefix} for embedding {embedding_name}: {index_name}"
+    msg = f"using vector store {vector_store_config.type} with index prefix {index_prefix} for embedding {embedding_name}: {index_name}"
     logger.info(msg)
     return index_name
