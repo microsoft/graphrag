@@ -104,8 +104,10 @@ class GraphRagConfig(BaseModel):
 
                 _ = retry_factory.create(
                     strategy=model.retry_strategy,
-                    max_retries=model.max_retries,
-                    max_retry_wait=model.max_retry_wait,
+                    init_args={
+                        "max_retries": model.max_retries,
+                        "max_retry_wait": model.max_retry_wait,
+                    },
                 )
 
     def _validate_rate_limiter_services(self) -> None:
@@ -130,7 +132,8 @@ class GraphRagConfig(BaseModel):
                 )
                 if rpm is not None or tpm is not None:
                     _ = rate_limiter_factory.create(
-                        strategy=model.rate_limit_strategy, rpm=rpm, tpm=tpm
+                        strategy=model.rate_limit_strategy,
+                        init_args={"rpm": rpm, "tpm": tpm},
                     )
 
     input: InputConfig = Field(

@@ -55,7 +55,7 @@ def with_rate_limiter(
         raise ValueError(msg)
 
     rate_limiter_service = rate_limiter_factory.create(
-        strategy=model_config.rate_limit_strategy, rpm=rpm, tpm=tpm
+        strategy=model_config.rate_limit_strategy, init_args={"rpm": rpm, "tpm": tpm}
     )
 
     max_tokens = model_config.max_completion_tokens or model_config.max_tokens or 0

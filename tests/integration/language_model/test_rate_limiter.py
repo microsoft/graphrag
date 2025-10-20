@@ -16,7 +16,7 @@ from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limite
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter_factory import (
     RateLimiterFactory,
 )
-from tests.unit.litellm_services.utils import (
+from tests.integration.language_model.utils import (
     assert_max_num_values_per_period,
     assert_stagger,
     bin_time_intervals,
@@ -51,7 +51,7 @@ def test_rate_limiter_validation():
 
     # Valid parameters
     rate_limiter = rate_limiter_factory.create(
-        strategy="static", rpm=60, tpm=10000, period_in_seconds=60
+        strategy="static", init_args={"rpm": 60, "tpm": 10000, "period_in_seconds": 60}
     )
     assert rate_limiter is not None
 
@@ -60,7 +60,9 @@ def test_rate_limiter_validation():
         ValueError,
         match=r"Strategy 'invalid_strategy' is not registered.",
     ):
-        rate_limiter_factory.create(strategy="invalid_strategy", rpm=60, tpm=10000)
+        rate_limiter_factory.create(
+            strategy="invalid_strategy", init_args={"rpm": 60, "tpm": 10000}
+        )
 
     # Both rpm and tpm are None
     with pytest.raises(
@@ -74,26 +76,29 @@ def test_rate_limiter_validation():
         ValueError,
         match=r"RPM and TPM must be either None \(disabled\) or positive integers.",
     ):
-        rate_limiter_factory.create(strategy="static", rpm=-10)
+        rate_limiter_factory.create(strategy="static", init_args={"rpm": -10})
 
     # Invalid tpm
     with pytest.raises(
         ValueError,
         match=r"RPM and TPM must be either None \(disabled\) or positive integers.",
     ):
-        rate_limiter_factory.create(strategy="static", tpm=-10)
+        rate_limiter_factory.create(strategy="static", init_args={"tpm": -10})
 
     # Invalid period_in_seconds
     with pytest.raises(
         ValueError, match=r"Period in seconds must be a positive integer."
     ):
-        rate_limiter_factory.create(strategy="static", rpm=10, period_in_seconds=-10)
+        rate_limiter_factory.create(
+            strategy="static", init_args={"rpm": 10, "period_in_seconds": -10}
+        )
 
 
 def test_rpm():
     """Test that the rate limiter enforces RPM limits."""
     rate_limiter = rate_limiter_factory.create(
-        strategy="static", rpm=_rpm, period_in_seconds=_period_in_seconds
+        strategy="static",
+        init_args={"rpm": _rpm, "period_in_seconds": _period_in_seconds},
     )
 
     time_values: list[float] = []
@@ -121,7 +126,8 @@ def test_rpm():
 def test_tpm():
     """Test that the rate limiter enforces TPM limits."""
     rate_limiter = rate_limiter_factory.create(
-        strategy="static", tpm=_tpm, period_in_seconds=_period_in_seconds
+        strategy="static",
+        init_args={"tpm": _tpm, "period_in_seconds": _period_in_seconds},
     )
 
     time_values: list[float] = []
@@ -154,7 +160,8 @@ def test_token_in_request_exceeds_tpm():
     In this case, the request should still be allowed to proceed but may take up its own rate limit bin.
     """
     rate_limiter = rate_limiter_factory.create(
-        strategy="static", tpm=_tpm, period_in_seconds=_period_in_seconds
+        strategy="static",
+        init_args={"tpm": _tpm, "period_in_seconds": _period_in_seconds},
     )
 
     time_values: list[float] = []
@@ -178,7 +185,8 @@ def test_token_in_request_exceeds_tpm():
 def test_rpm_and_tpm_with_rpm_as_limiting_factor():
     """Test that the rate limiter enforces RPM and TPM limits."""
     rate_limiter = rate_limiter_factory.create(
-        strategy="static", rpm=_rpm, tpm=_tpm, period_in_seconds=_period_in_seconds
+        strategy="static",
+        init_args={"rpm": _rpm, "tpm": _tpm, "period_in_seconds": _period_in_seconds},
     )
 
     time_values: list[float] = []
@@ -207,7 +215,8 @@ def test_rpm_and_tpm_with_rpm_as_limiting_factor():
 def test_rpm_and_tpm_with_tpm_as_limiting_factor():
     """Test that the rate limiter enforces TPM limits."""
     rate_limiter = rate_limiter_factory.create(
-        strategy="static", rpm=_rpm, tpm=_tpm, period_in_seconds=_period_in_seconds
+        strategy="static",
+        init_args={"rpm": _rpm, "tpm": _tpm, "period_in_seconds": _period_in_seconds},
     )
 
     time_values: list[float] = []
@@ -251,7 +260,8 @@ def _run_rate_limiter(
 def test_rpm_threaded():
     """Test that the rate limiter enforces RPM limits in a threaded environment."""
     rate_limiter = rate_limiter_factory.create(
-        strategy="static", rpm=_rpm, tpm=_tpm, period_in_seconds=_period_in_seconds
+        strategy="static",
+        init_args={"rpm": _rpm, "tpm": _tpm, "period_in_seconds": _period_in_seconds},
     )
 
     input_queue: Queue[int | None] = Queue()
@@ -311,7 +321,8 @@ def test_rpm_threaded():
 def test_tpm_threaded():
     """Test that the rate limiter enforces TPM limits in a threaded environment."""
     rate_limiter = rate_limiter_factory.create(
-        strategy="static", rpm=_rpm, tpm=_tpm, period_in_seconds=_period_in_seconds
+        strategy="static",
+        init_args={"rpm": _rpm, "tpm": _tpm, "period_in_seconds": _period_in_seconds},
     )
 
     input_queue: Queue[int | None] = Queue()

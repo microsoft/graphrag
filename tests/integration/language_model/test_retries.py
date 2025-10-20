@@ -57,8 +57,10 @@ def test_retries(
     """
     retry_service = retry_factory.create(
         strategy=strategy,
-        max_retries=max_retries,
-        max_retry_wait=max_retry_wait,
+        init_args={
+            "max_retries": max_retries,
+            "max_retry_wait": max_retry_wait,
+        },
     )
 
     retries = 0
@@ -124,8 +126,10 @@ async def test_retries_async(
     """
     retry_service = retry_factory.create(
         strategy=strategy,
-        max_retries=max_retries,
-        max_retry_wait=max_retry_wait,
+        init_args={
+            "max_retries": max_retries,
+            "max_retry_wait": max_retry_wait,
+        },
     )
 
     retries = 0

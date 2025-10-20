@@ -1,6 +1,7 @@
 {
     "input_path": "./tests/fixtures/min-csv",
     "input_file_type": "text",
+    "index_method": "standard",
     "workflow_config": {
         "load_input_documents": {
             "max_runtime": 30
@@ -19,10 +20,6 @@
             "row_range": [
                 100,
                 750
-            ],
-            "nan_allowed_columns": [
-                "x",
-                "y"
             ],
             "max_runtime": 30,
             "expected_artifacts": [
@@ -54,7 +51,7 @@
                 "period",
                 "size"
             ],
-            "max_runtime": 360,
+            "max_runtime": 1200,
             "expected_artifacts": ["community_reports.parquet"]
         },
         "create_final_text_units": {

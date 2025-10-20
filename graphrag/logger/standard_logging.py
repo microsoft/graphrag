@@ -79,5 +79,5 @@ def init_loggers(
     config_dict = reporting_config.model_dump()
     args = {**config_dict, "root_dir": config.root_dir, "filename": filename}
 
-    handler = LoggerFactory.create_logger(reporting_config.type, args)
+    handler = LoggerFactory().create(reporting_config.type, args)
     logger.addHandler(handler)

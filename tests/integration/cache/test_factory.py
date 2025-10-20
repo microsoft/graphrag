@@ -2,7 +2,7 @@
 # Licensed under the MIT License
 """CacheFactory Tests.
 
-These tests will test the CacheFactory class and the creation of each cache type that is natively supported.
+These tests will test the CacheFactory() class and the creation of each cache type that is natively supported.
 """
 
 import sys
@@ -23,30 +23,30 @@ WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://127.0.0.1:8081/;A
 
 
 def test_create_noop_cache():
-    kwargs = {}
-    cache = CacheFactory.create_cache(CacheType.none.value, kwargs)
+    cache = CacheFactory().create(strategy=CacheType.none.value)
     assert isinstance(cache, NoopPipelineCache)
 
 
 def test_create_memory_cache():
-    kwargs = {}
-    cache = CacheFactory.create_cache(CacheType.memory.value, kwargs)
+    cache = CacheFactory().create(strategy=CacheType.memory.value)
     assert isinstance(cache, InMemoryCache)
 
 
 def test_create_file_cache():
-    kwargs = {"root_dir": "/tmp", "base_dir": "testcache"}
-    cache = CacheFactory.create_cache(CacheType.file.value, kwargs)
+    cache = CacheFactory().create(
+        strategy=CacheType.file.value,
+        init_args={"root_dir": "/tmp", "base_dir": "testcache"},
+    )
     assert isinstance(cache, JsonPipelineCache)
 
 
 def test_create_blob_cache():
-    kwargs = {
+    init_args = {
         "connection_string": WELL_KNOWN_BLOB_STORAGE_KEY,
         "container_name": "testcontainer",
         "base_dir": "testcache",
     }
-    cache = CacheFactory.create_cache(CacheType.blob.value, kwargs)
+    cache = CacheFactory().create(strategy=CacheType.blob.value, init_args=init_args)
     assert isinstance(cache, JsonPipelineCache)
 
 
@@ -55,12 +55,14 @@ def test_create_blob_cache():
     reason="cosmosdb emulator is only available on windows runners at this time",
 )
 def test_create_cosmosdb_cache():
-    kwargs = {
+    init_args = {
         "connection_string": WELL_KNOWN_COSMOS_CONNECTION_STRING,
         "base_dir": "testdatabase",
         "container_name": "testcontainer",
     }
-    cache = CacheFactory.create_cache(CacheType.cosmosdb.value, kwargs)
+    cache = CacheFactory().create(
+        strategy=CacheType.cosmosdb.value, init_args=init_args
+    )
     assert isinstance(cache, JsonPipelineCache)
 
 
@@ -75,8 +77,11 @@ def test_register_and_create_custom_cache():
     instance.initialized = True
     custom_cache_class.return_value = instance
 
-    CacheFactory.register("custom", lambda **kwargs: custom_cache_class(**kwargs))
-    cache = CacheFactory.create_cache("custom", {})
+    CacheFactory().register(
+        strategy="custom",
+        initializer=lambda **kwargs: custom_cache_class(**kwargs),
+    )
+    cache = CacheFactory().create(strategy="custom")
 
     assert custom_cache_class.called
     assert cache is instance
@@ -84,47 +89,34 @@ def test_register_and_create_custom_cache():
     assert cache.initialized is True  # type: ignore # Attribute only exists on our mock
 
     # Check if it's in the list of registered cache types
-    assert "custom" in CacheFactory.get_cache_types()
-    assert CacheFactory.is_supported_type("custom")
-
-
-def test_get_cache_types():
-    cache_types = CacheFactory.get_cache_types()
-    # Check that built-in types are registered
-    assert CacheType.none.value in cache_types
-    assert CacheType.memory.value in cache_types
-    assert CacheType.file.value in cache_types
-    assert CacheType.blob.value in cache_types
-    assert CacheType.cosmosdb.value in cache_types
+    assert "custom" in CacheFactory()
 
 
 def test_create_unknown_cache():
-    with pytest.raises(ValueError, match="Unknown cache type: unknown"):
-        CacheFactory.create_cache("unknown", {})
+    with pytest.raises(ValueError, match="Strategy 'unknown' is not registered\\."):
+        CacheFactory().create(strategy="unknown")
 
 
 def test_is_supported_type():
     # Test built-in types
-    assert CacheFactory.is_supported_type(CacheType.none.value)
-    assert CacheFactory.is_supported_type(CacheType.memory.value)
-    assert CacheFactory.is_supported_type(CacheType.file.value)
-    assert CacheFactory.is_supported_type(CacheType.blob.value)
-    assert CacheFactory.is_supported_type(CacheType.cosmosdb.value)
+    assert CacheType.none.value in CacheFactory()
+    assert CacheType.memory.value in CacheFactory()
+    assert CacheType.file.value in CacheFactory()
+    assert CacheType.blob.value in CacheFactory()
+    assert CacheType.cosmosdb.value in CacheFactory()
 
     # Test unknown type
-    assert not CacheFactory.is_supported_type("unknown")
+    assert "unknown" not in CacheFactory()
 
 
 def test_enum_and_string_compatibility():
     """Test that both enum and string types work for cache creation."""
-    kwargs = {}
-
     # Test with enum
-    cache_enum = CacheFactory.create_cache(CacheType.memory, kwargs)
+    cache_enum = CacheFactory().create(strategy=CacheType.memory)
     assert isinstance(cache_enum, InMemoryCache)
 
     # Test with string
-    cache_str = CacheFactory.create_cache("memory", kwargs)
+    cache_str = CacheFactory().create(strategy="memory")
     assert isinstance(cache_str, InMemoryCache)
 
     # Both should create the same type
@@ -132,7 +124,7 @@ def test_enum_and_string_compatibility():
 
 
 def test_register_class_directly_works():
-    """Test that registering a class directly works (CacheFactory allows this)."""
+    """Test that registering a class directly works (CacheFactory() allows this)."""
     from graphrag.cache.pipeline_cache import PipelineCache
 
     class CustomCache(PipelineCache):
@@ -157,13 +149,12 @@ def test_register_class_directly_works():
         def child(self, name: str):
             return self
 
-    # CacheFactory allows registering classes directly (no TypeError)
-    CacheFactory.register("custom_class", CustomCache)
+    # CacheFactory() allows registering classes directly (no TypeError)
+    CacheFactory().register("custom_class", CustomCache)
 
     # Verify it was registered
-    assert "custom_class" in CacheFactory.get_cache_types()
-    assert CacheFactory.is_supported_type("custom_class")
+    assert "custom_class" in CacheFactory()
 
     # Test creating an instance
-    cache = CacheFactory.create_cache("custom_class", {})
+    cache = CacheFactory().create(strategy="custom_class")
     assert isinstance(cache, CustomCache)

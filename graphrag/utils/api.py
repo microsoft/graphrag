@@ -49,10 +49,9 @@ def get_embedding_store(
     if embedding_config.index_name is None:
         embedding_config.index_name = index_name
 
-    embedding_store = VectorStoreFactory().create_vector_store(
-        vector_store_type=vector_store_type,
-        vector_store_schema_config=embedding_config,
-        **store,
+    embedding_store = VectorStoreFactory().create(
+        vector_store_type,
+        {**store, "vector_store_schema_config": embedding_config},
     )
     embedding_store.connect(**store)
 
@@ -107,19 +106,19 @@ def load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
 def create_storage_from_config(output: StorageConfig) -> PipelineStorage:
     """Create a storage object from the config."""
     storage_config = output.model_dump()
-    return StorageFactory().create_storage(
-        storage_type=storage_config["type"],
-        kwargs=storage_config,
+    return StorageFactory().create(
+        storage_config["type"],
+        storage_config,
     )
 
 
 def create_cache_from_config(cache: CacheConfig, root_dir: str) -> PipelineCache:
     """Create a cache object from the config."""
     cache_config = cache.model_dump()
-    kwargs = {**cache_config, "root_dir": root_dir}
-    return CacheFactory().create_cache(
-        cache_type=cache_config["type"],
-        kwargs=kwargs,
+    args = {**cache_config, "root_dir": root_dir}
+    return CacheFactory().create(
+        strategy=cache_config["type"],
+        init_args=args,
     )
 
 

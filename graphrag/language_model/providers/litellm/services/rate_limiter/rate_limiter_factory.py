@@ -3,10 +3,12 @@
 
 """LiteLLM Rate Limiter Factory."""
 
-from graphrag.config.defaults import DEFAULT_RATE_LIMITER_SERVICES
 from graphrag.factory.factory import Factory
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter import (
     RateLimiter,
+)
+from graphrag.language_model.providers.litellm.services.rate_limiter.static_rate_limiter import (
+    StaticRateLimiter,
 )
 
 
@@ -15,8 +17,4 @@ class RateLimiterFactory(Factory[RateLimiter]):
 
 
 rate_limiter_factory = RateLimiterFactory()
-
-for service_name, service_cls in DEFAULT_RATE_LIMITER_SERVICES.items():
-    rate_limiter_factory.register(
-        strategy=service_name, service_initializer=service_cls
-    )
+rate_limiter_factory.register("static", StaticRateLimiter)

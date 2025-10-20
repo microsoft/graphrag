@@ -95,12 +95,12 @@ Many users have used platforms such as [ollama](https://ollama.com/) and [LiteLL
 
 ### Model Protocol
 
-As of GraphRAG 2.0.0, we support model injection through the use of a standard chat and embedding Protocol and an accompanying ModelFactory that you can use to register your model implementation. This is not supported with the CLI, so you'll need to use GraphRAG as a library.
+As of GraphRAG 2.0.0, we support model injection through the use of a standard chat and embedding Protocol and an accompanying factories that you can use to register your model implementation. This is not supported with the CLI, so you'll need to use GraphRAG as a library.
 
 - Our Protocol is [defined here](https://github.com/microsoft/graphrag/blob/main/graphrag/language_model/protocol/base.py)
 - We have a simple mock implementation in our tests that you can [reference here](https://github.com/microsoft/graphrag/blob/main/tests/mock_provider.py)
 
-Once you have a model implementation, you need to register it with our ModelFactory:
+Once you have a model implementation, you need to register it with our ChatModelFactory or EmbeddingModelFactory:
 
 ```python
 class MyCustomModel:
@@ -108,7 +108,7 @@ class MyCustomModel:
     # implementation
 
 # elsewhere...
-ModelFactory.register_chat("my-custom-chat-model", lambda **kwargs: MyCustomModel(**kwargs))
+ChatModelFactory.register("my-custom-chat-model", lambda **kwargs: MyCustomModel(**kwargs))
 ```
 
 Then in your config you can reference the type name you used:

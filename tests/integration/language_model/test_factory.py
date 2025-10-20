@@ -9,7 +9,7 @@ These tests will test the LLMFactory class and the creation of custom and provid
 from collections.abc import AsyncGenerator, Generator
 from typing import Any
 
-from graphrag.language_model.factory import ModelFactory
+from graphrag.language_model.factory import ChatModelFactory, EmbeddingModelFactory
 from graphrag.language_model.manager import ModelManager
 from graphrag.language_model.response.base import (
     BaseModelOutput,
@@ -48,7 +48,7 @@ async def test_create_custom_chat_model():
             self, prompt: str, history: list | None = None, **kwargs: Any
         ) -> Generator[str, None]: ...
 
-    ModelFactory.register_chat("custom_chat", CustomChatModel)
+    ChatModelFactory().register("custom_chat", CustomChatModel)
     model = ModelManager().get_or_create_chat_model("custom", "custom_chat")
     assert isinstance(model, CustomChatModel)
     response = await model.achat("prompt")
@@ -81,7 +81,7 @@ async def test_create_custom_embedding_llm():
         def embed_batch(self, text_list: list[str], **kwargs) -> list[list[float]]:
             return [[1.0]]
 
-    ModelFactory.register_embedding("custom_embedding", CustomEmbeddingModel)
+    EmbeddingModelFactory().register("custom_embedding", CustomEmbeddingModel)
     llm = ModelManager().get_or_create_embedding_model("custom", "custom_embedding")
     assert isinstance(llm, CustomEmbeddingModel)
     response = await llm.aembed("text")

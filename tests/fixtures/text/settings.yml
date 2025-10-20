@@ -8,8 +8,8 @@ models:
     api_version: "2025-04-01-preview"
     model: gpt-4.1
     retry_strategy: exponential_backoff
-    tokens_per_minute: null
-    requests_per_minute: null
+    tokens_per_minute: 250_000
+    requests_per_minute: 250
     model_supports_json: true
     concurrent_requests: 25
   default_embedding_model:
@@ -21,8 +21,8 @@ models:
     api_version: "2025-04-01-preview"
     model: text-embedding-3-large
     retry_strategy: exponential_backoff
-    tokens_per_minute: null
-    requests_per_minute: null
+    tokens_per_minute: 250_000
+    requests_per_minute: 250
     concurrent_requests: 25
 
 vector_store:
@@ -31,9 +31,6 @@ vector_store:
     url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
     api_key: ${AZURE_AI_SEARCH_API_KEY}
     container_name: "simple_text_ci"
-
-extract_claims:
-  enabled: true
 
 community_reports:
   prompt: "prompts/community_report.txt"

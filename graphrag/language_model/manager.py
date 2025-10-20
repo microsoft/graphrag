@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 from typing_extensions import Self
 
-from graphrag.language_model.factory import ModelFactory
+from graphrag.language_model.factory import ChatModelFactory, EmbeddingModelFactory
 
 if TYPE_CHECKING:
     from graphrag.language_model.protocol.base import ChatModel, EmbeddingModel
@@ -54,9 +54,7 @@ class ModelManager:
             **chat_kwargs: Additional parameters for instantiation.
         """
         chat_kwargs["name"] = name
-        self.chat_models[name] = ModelFactory.create_chat_model(
-            model_type, **chat_kwargs
-        )
+        self.chat_models[name] = ChatModelFactory().create(model_type, chat_kwargs)
         return self.chat_models[name]
 
     def register_embedding(
@@ -71,8 +69,8 @@ class ModelManager:
             **embedding_kwargs: Additional parameters for instantiation.
         """
         embedding_kwargs["name"] = name
-        self.embedding_models[name] = ModelFactory.create_embedding_model(
-            model_type, **embedding_kwargs
+        self.embedding_models[name] = EmbeddingModelFactory().create(
+            model_type, embedding_kwargs
         )
         return self.embedding_models[name]
 

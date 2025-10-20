@@ -3,8 +3,19 @@
 
 """LiteLLM Retry Factory."""
 
-from graphrag.config.defaults import DEFAULT_RETRY_SERVICES
 from graphrag.factory.factory import Factory
+from graphrag.language_model.providers.litellm.services.retry.exponential_retry import (
+    ExponentialRetry,
+)
+from graphrag.language_model.providers.litellm.services.retry.incremental_wait_retry import (
+    IncrementalWaitRetry,
+)
+from graphrag.language_model.providers.litellm.services.retry.native_wait_retry import (
+    NativeRetry,
+)
+from graphrag.language_model.providers.litellm.services.retry.random_wait_retry import (
+    RandomWaitRetry,
+)
 from graphrag.language_model.providers.litellm.services.retry.retry import Retry
 
 
@@ -14,5 +25,7 @@ class RetryFactory(Factory[Retry]):
 
 retry_factory = RetryFactory()
 
-for service_name, service_cls in DEFAULT_RETRY_SERVICES.items():
-    retry_factory.register(strategy=service_name, service_initializer=service_cls)
+retry_factory.register("native", NativeRetry)
+retry_factory.register("exponential_backoff", ExponentialRetry)
+retry_factory.register("random_wait", RandomWaitRetry)
+retry_factory.register("incremental_wait", IncrementalWaitRetry)
