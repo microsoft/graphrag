@@ -29,7 +29,9 @@ default_embeddings: list[str] = [
 ]
 
 
-def create_index_name(index_prefix: str, embedding_name: str, validate: bool = True) -> str:
+def create_index_name(
+    index_prefix: str, embedding_name: str, validate: bool = True
+) -> str:
     """
     Create a index name for the embedding store.
 
