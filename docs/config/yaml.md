@@ -171,9 +171,45 @@ Where to put all vectors for the system. Configured for lancedb by default. This
 - `url` **str** (only for AI Search) - AI Search endpoint
 - `api_key` **str** (optional - only for AI Search) - The AI Search api key to use.
 - `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
-- `container_name` **str** - The name of a vector container. This stores all indexes (tables) for a given dataset ingest. Default=`default`
+- `index_prefix` **str** - (optional) A prefix for the indexes you will create for embeddings. This stores all indexes (tables) for a given dataset ingest.
 - `database_name` **str** - (cosmosdb only) Name of the database.
-- `overwrite` **bool** (only used at index creation time) - Overwrite collection if it exist. Default=`True`
+- `embeddings_schema` **list[dict[str, str]]** (optional) - Enables customization for each of your embeddings. 
+  - `<supported_embedding>`: 
+    - `index_name` **str**: (optional) - Name for the specific embedding index table.
+    - `id_field` **str**: (optional) - Field name to be used as id. Default=`id`
+    - `vector_field` **str**: (optional) - Field name to be used as vector. Default=`vector`
+    - `vector_size` **int**: (optional) - Vector size for the embeddings. Default=`3072`
+
+The supported embeddings are:
+
+- `text_unit.text`
+- `document.text`
+- `entity.title`
+- `entity.description`
+- `relationship.description`
+- `community.title`
+- `community.summary`
+- `community.full_content`
+
+For example:
+
+```yaml
+vector_store:
+  type: lancedb
+  db_uri: output/lancedb
+  container_name: christmas-carol
+  index_prefix: "christmas-carol"
+  embeddings_schema:
+    text_unit.text:
+      index_name: "text-unit-embeddings"
+      id_field: "id_custom"
+      vector_field: "vector_custom"
+      vector_size: 3072
+    entity.description:
+      id_field: "id_custom"
+
+```
+  
 
 ## Workflow Configurations
 

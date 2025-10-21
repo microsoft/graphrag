@@ -77,7 +77,6 @@ reporting:
 vector_store:
   type: {vector_store_defaults.type}
   db_uri: {vector_store_defaults.db_uri}
-  container_name: {vector_store_defaults.container_name}
 
 ### Workflow settings ###
 

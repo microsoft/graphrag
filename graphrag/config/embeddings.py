@@ -30,13 +30,13 @@ default_embeddings: list[str] = [
 
 
 def create_index_name(
-    container_name: str, embedding_name: str, validate: bool = True
+    index_prefix: str, embedding_name: str, validate: bool = True
 ) -> str:
     """
     Create a index name for the embedding store.
 
     Within any given vector store, we can have multiple sets of embeddings organized into projects.
-    The `container` param is used for this partitioning, and is added as a prefix to the index name for differentiation.
+    The `container` param is used for this partitioning, and is added as a index_prefix to the index name for differentiation.
 
     The embedding name is fixed, with the available list defined in graphrag.index.config.embeddings
 
@@ -45,4 +45,7 @@ def create_index_name(
     if validate and embedding_name not in all_embeddings:
         msg = f"Invalid embedding name: {embedding_name}"
         raise KeyError(msg)
-    return f"{container_name}-{embedding_name}".replace(".", "-")
+
+    if index_prefix:
+        return f"{index_prefix}-{embedding_name}".replace(".", "-")
+    return embedding_name.replace(".", "-")
