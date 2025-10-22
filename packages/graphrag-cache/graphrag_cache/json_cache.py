@@ -8,21 +8,21 @@ from typing import Any
 
 from graphrag_storage import Storage
 
-from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag_cache.cache import Cache
 
 
-class JsonPipelineCache(PipelineCache):
+class JsonCache(Cache):
     """File pipeline cache class definition."""
 
     _storage: Storage
     _encoding: str
 
-    def __init__(self, storage: Storage, encoding="utf-8"):
+    def __init__(self, storage: Storage, encoding="utf-8", **kwargs: Any) -> None:
         """Init method definition."""
         self._storage = storage
         self._encoding = encoding
 
-    async def get(self, key: str) -> str | None:
+    async def get(self, key: str) -> Any | None:
         """Get method definition."""
         if await self.has(key):
             try:
@@ -61,6 +61,6 @@ class JsonPipelineCache(PipelineCache):
         """Clear method definition."""
         await self._storage.clear()
 
-    def child(self, name: str) -> "JsonPipelineCache":
+    def child(self, name: str) -> "Cache":
         """Child method definition."""
-        return JsonPipelineCache(self._storage.child(name), encoding=self._encoding)
+        return JsonCache(self._storage.child(name), encoding=self._encoding)

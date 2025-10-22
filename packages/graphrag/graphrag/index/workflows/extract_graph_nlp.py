@@ -6,8 +6,8 @@
 import logging
 
 import pandas as pd
+from graphrag_cache import Cache
 
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.build_noun_graph.build_noun_graph import build_noun_graph
@@ -59,7 +59,7 @@ async def run_workflow(
 
 async def extract_graph_nlp(
     text_units: pd.DataFrame,
-    cache: PipelineCache,
+    cache: Cache,
     text_analyzer: BaseNounPhraseExtractor,
     normalize_edge_weights: bool,
     num_threads: int,

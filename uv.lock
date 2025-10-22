@@ -10,6 +10,7 @@ resolution-markers = [
 [manifest]
 members = [
     "graphrag",
+    "graphrag-cache",
     "graphrag-common",
     "graphrag-monorepo",
     "graphrag-storage",
@@ -1042,6 +1043,7 @@ dependencies = [
     { name = "azure-storage-blob" },
     { name = "devtools" },
     { name = "environs" },
+    { name = "graphrag-cache" },
     { name = "graphrag-common" },
     { name = "graphrag-storage" },
     { name = "graspologic-native" },
@@ -1074,6 +1076,7 @@ requires-dist = [
     { name = "azure-storage-blob", specifier = ">=12.24.0" },
     { name = "devtools", specifier = ">=0.12.2" },
     { name = "environs", specifier = ">=11.0.0" },
+    { name = "graphrag-cache", editable = "packages/graphrag-cache" },
     { name = "graphrag-common", editable = "packages/graphrag-common" },
     { name = "graphrag-storage", editable = "packages/graphrag-storage" },
     { name = "graspologic-native", specifier = ">=1.2.5" },
@@ -1093,6 +1096,21 @@ requires-dist = [
     { name = "tqdm", specifier = ">=4.67.1" },
     { name = "typer", specifier = ">=0.16.0" },
     { name = "typing-extensions", specifier = ">=4.12.2" },
+]
+
+[[package]]
+name = "graphrag-cache"
+version = "2.7.0"
+source = { editable = "packages/graphrag-cache" }
+dependencies = [
+    { name = "graphrag-common" },
+    { name = "graphrag-storage" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "graphrag-common", editable = "packages/graphrag-common" },
+    { name = "graphrag-storage", editable = "packages/graphrag-storage" },
 ]
 
 [[package]]

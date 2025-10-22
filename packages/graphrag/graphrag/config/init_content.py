@@ -66,9 +66,12 @@ output:
   type: {graphrag_config_defaults.output.type} # or blob, cosmosdb
   base_dir: "{graphrag_config_defaults.output.base_dir}"
     
+cache_storage:
+  type: {graphrag_config_defaults.cache_storage.type} # [file, blob, cosmosdb]
+  base_dir: "{graphrag_config_defaults.cache_storage.base_dir}"
+
 cache:
-  type: {graphrag_config_defaults.cache.type.value} # [file, blob, cosmosdb]
-  base_dir: "{graphrag_config_defaults.cache.base_dir}"
+  type: {graphrag_config_defaults.cache.type} # [json, memory, noop]
 
 reporting:
   type: {graphrag_config_defaults.reporting.type.value} # [file, blob]

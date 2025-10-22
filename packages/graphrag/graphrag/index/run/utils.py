@@ -3,11 +3,11 @@
 
 """Utility functions for the GraphRAG run module."""
 
+from graphrag_cache import Cache
+from graphrag_cache.memory_cache import MemoryCache
 from graphrag_storage import Storage, create_storage
 from graphrag_storage.memory_storage import MemoryStorage
 
-from graphrag.cache.memory_pipeline_cache import InMemoryCache
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks_manager import WorkflowCallbacksManager
@@ -21,7 +21,7 @@ def create_run_context(
     input_storage: Storage | None = None,
     output_storage: Storage | None = None,
     previous_storage: Storage | None = None,
-    cache: PipelineCache | None = None,
+    cache: Cache | None = None,
     callbacks: WorkflowCallbacks | None = None,
     stats: PipelineRunStats | None = None,
     state: PipelineState | None = None,
@@ -31,7 +31,7 @@ def create_run_context(
         input_storage=input_storage or MemoryStorage(),
         output_storage=output_storage or MemoryStorage(),
         previous_storage=previous_storage or MemoryStorage(),
-        cache=cache or InMemoryCache(),
+        cache=cache or MemoryCache(),
         callbacks=callbacks or NoopWorkflowCallbacks(),
         stats=stats or PipelineRunStats(),
         state=state or {},

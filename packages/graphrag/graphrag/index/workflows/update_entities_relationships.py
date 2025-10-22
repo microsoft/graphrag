@@ -6,9 +6,9 @@
 import logging
 
 import pandas as pd
+from graphrag_cache import Cache
 from graphrag_storage import Storage
 
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.utils import get_update_storages
@@ -59,7 +59,7 @@ async def _update_entities_and_relationships(
     delta_storage: Storage,
     output_storage: Storage,
     config: GraphRagConfig,
-    cache: PipelineCache,
+    cache: Cache,
     callbacks: WorkflowCallbacks,
 ) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     """Update Final Entities  and Relationships output."""

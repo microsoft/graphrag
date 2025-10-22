@@ -8,9 +8,9 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from graphrag_cache.noop_cache import NoopCache
 from graphrag_storage import create_storage
 
-from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input.factory import InputReaderFactory
@@ -60,7 +60,7 @@ async def load_docs_in_chunks(
         model_type=embeddings_llm_settings.type,
         config=embeddings_llm_settings,
         callbacks=NoopWorkflowCallbacks(),
-        cache=NoopPipelineCache(),
+        cache=NoopCache(),
     )
     tokenizer = get_tokenizer(embeddings_llm_settings)
     input_storage = create_storage(config.input.storage)

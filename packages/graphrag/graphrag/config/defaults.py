@@ -7,13 +7,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import ClassVar
 
+from graphrag_cache import CacheType
 from graphrag_storage import StorageType
 
 from graphrag.config.embeddings import default_embeddings
 from graphrag.config.enums import (
     AsyncType,
     AuthType,
-    CacheType,
     ChunkStrategyType,
     InputFileType,
     ModelType,
@@ -27,6 +27,7 @@ from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import 
 
 DEFAULT_INPUT_BASE_DIR = "input"
 DEFAULT_OUTPUT_BASE_DIR = "output"
+DEFAULT_CACHE_BASE_DIR = "cache"
 DEFAULT_UPDATE_OUTPUT_BASE_DIR = "update_output"
 DEFAULT_CHAT_MODEL_ID = "default_chat_model"
 DEFAULT_CHAT_MODEL_TYPE = ModelType.Chat
@@ -59,12 +60,9 @@ class BasicSearchDefaults:
 class CacheDefaults:
     """Default values for cache."""
 
-    type: ClassVar[CacheType] = CacheType.file
-    base_dir: str = "cache"
-    connection_string: None = None
-    container_name: None = None
-    storage_account_blob_url: None = None
-    cosmosdb_account_url: None = None
+    type: CacheType = CacheType.Json
+    encoding: str | None = None
+    name: str | None = None
 
 
 @dataclass
@@ -241,6 +239,13 @@ class StorageDefaults:
 
 
 @dataclass
+class CacheStorageDefaults(StorageDefaults):
+    """Default values for cache storage."""
+
+    base_dir: str | None = DEFAULT_CACHE_BASE_DIR
+
+
+@dataclass
 class InputStorageDefaults(StorageDefaults):
     """Default values for input storage."""
 
@@ -396,6 +401,7 @@ class GraphRagConfigDefaults:
         default_factory=UpdateIndexOutputDefaults
     )
     cache: CacheDefaults = field(default_factory=CacheDefaults)
+    cache_storage: CacheStorageDefaults = field(default_factory=CacheStorageDefaults)
     input: InputDefaults = field(default_factory=InputDefaults)
     embed_text: EmbedTextDefaults = field(default_factory=EmbedTextDefaults)
     chunks: ChunksDefaults = field(default_factory=ChunksDefaults)
