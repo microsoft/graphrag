@@ -67,7 +67,7 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
-          uv sync
+          uv sync --all-packages
           uv pip install gensim
 
       - name: Notebook Test
