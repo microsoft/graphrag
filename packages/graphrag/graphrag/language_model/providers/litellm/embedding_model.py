@@ -33,7 +33,8 @@ from graphrag.language_model.providers.litellm.types import (
 )
 
 if TYPE_CHECKING:
-    from graphrag.cache.pipeline_cache import PipelineCache
+    from graphrag_cache import Cache
+
     from graphrag.config.models.language_model_config import LanguageModelConfig
 
 litellm.suppress_debug_info = True
@@ -99,7 +100,7 @@ def _create_base_embeddings(
 
 def _create_embeddings(
     model_config: "LanguageModelConfig",
-    cache: "PipelineCache | None",
+    cache: "Cache | None",
     cache_key_prefix: str,
 ) -> tuple[FixedModelEmbedding, AFixedModelEmbedding]:
     """Wrap the base litellm embedding function with the model configuration and additional features.
@@ -167,7 +168,7 @@ class LitellmEmbeddingModel:
         self,
         name: str,
         config: "LanguageModelConfig",
-        cache: "PipelineCache | None" = None,
+        cache: "Cache | None" = None,
         **kwargs: Any,
     ):
         self.name = name

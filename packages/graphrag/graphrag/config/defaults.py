@@ -7,17 +7,18 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import ClassVar
 
+from graphrag_cache import CacheType
+from graphrag_storage import StorageType
+
 from graphrag.config.embeddings import default_embeddings
 from graphrag.config.enums import (
     AsyncType,
     AuthType,
-    CacheType,
     ChunkStrategyType,
     InputFileType,
     ModelType,
     NounPhraseExtractorType,
     ReportingType,
-    StorageType,
     VectorStoreType,
 )
 from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
@@ -58,12 +59,9 @@ class BasicSearchDefaults:
 class CacheDefaults:
     """Default values for cache."""
 
-    type: ClassVar[CacheType] = CacheType.file
-    base_dir: str = "cache"
-    connection_string: None = None
-    container_name: None = None
-    storage_account_blob_url: None = None
-    cosmosdb_account_url: None = None
+    type: CacheType = CacheType.Json
+    encoding: str | None = None
+    name: str | None = None
 
 
 @dataclass
@@ -230,12 +228,13 @@ class GlobalSearchDefaults:
 class StorageDefaults:
     """Default values for storage."""
 
-    type: ClassVar[StorageType] = StorageType.file
+    type: str = StorageType.File
+    encoding: str | None = None
     base_dir: str | None = None
-    connection_string: None = None
-    container_name: None = None
-    storage_account_blob_url: None = None
-    cosmosdb_account_url: None = None
+    azure_connection_string: None = None
+    azure_container_name: None = None
+    azure_storage_account_blob_url: None = None
+    azure_cosmosdb_account_url: None = None
 
 
 @dataclass

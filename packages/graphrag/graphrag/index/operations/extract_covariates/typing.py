@@ -7,7 +7,8 @@ from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass
 from typing import Any
 
-from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag_cache import Cache
+
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 
 
@@ -42,7 +43,7 @@ CovariateExtractStrategy = Callable[
         list[str],
         dict[str, str],
         WorkflowCallbacks,
-        PipelineCache,
+        Cache,
         dict[str, Any],
     ],
     Awaitable[CovariateExtractionResult],

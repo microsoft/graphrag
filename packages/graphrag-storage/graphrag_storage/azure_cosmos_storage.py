@@ -16,17 +16,17 @@ from azure.cosmos import ContainerProxy, CosmosClient, DatabaseProxy
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
-
 from graphrag.logger.progress import Progress
-from graphrag.storage.pipeline_storage import (
-    PipelineStorage,
+
+from graphrag_storage.storage import (
+    Storage,
     get_timestamp_formatted_with_local_tz,
 )
 
 logger = logging.getLogger(__name__)
 
 
-class CosmosDBPipelineStorage(PipelineStorage):
+class AzureCosmosStorage(Storage):
     """The CosmosDB-Storage Implementation."""
 
     _cosmos_client: CosmosClient
@@ -39,41 +39,47 @@ class CosmosDBPipelineStorage(PipelineStorage):
     _encoding: str
     _no_id_prefixes: list[str]
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        database_name: str,
+        container_name: str,
+        connection_string: str | None = None,
+        account_url: str | None = None,
+        encoding: str = "utf-8",
+        **kwargs: Any,
+    ) -> None:
         """Create a CosmosDB storage instance."""
         logger.info("Creating cosmosdb storage")
-        cosmosdb_account_url = kwargs.get("cosmosdb_account_url")
-        connection_string = kwargs.get("connection_string")
-        database_name = kwargs["base_dir"]
-        container_name = kwargs["container_name"]
-        if not database_name:
-            msg = "No base_dir provided for database name"
+        database_name = database_name
+        if database_name is None:
+            msg = "CosmosDB Storage requires a base_dir to be specified. This is used as the database name."
+            logger.error(msg)
             raise ValueError(msg)
-        if connection_string is None and cosmosdb_account_url is None:
-            msg = "connection_string or cosmosdb_account_url is required."
+
+        if connection_string is not None and account_url is not None:
+            msg = "CosmosDB Storage requires either a connection_string or cosmosdb_account_url to be specified, not both."
+            logger.error(msg)
             raise ValueError(msg)
 
         if connection_string:
             self._cosmos_client = CosmosClient.from_connection_string(connection_string)
-        else:
-            if cosmosdb_account_url is None:
-                msg = (
-                    "Either connection_string or cosmosdb_account_url must be provided."
-                )
-                raise ValueError(msg)
+        elif account_url:
             self._cosmos_client = CosmosClient(
-                url=cosmosdb_account_url,
+                url=account_url,
                 credential=DefaultAzureCredential(),
             )
-        self._encoding = kwargs.get("encoding", "utf-8")
+        else:
+            msg = "CosmosDB Storage requires either a connection_string or cosmosdb_account_url to be specified."
+            logger.error(msg)
+            raise ValueError(msg)
+
+        self._encoding = encoding
         self._database_name = database_name
         self._connection_string = connection_string
-        self._cosmosdb_account_url = cosmosdb_account_url
+        self._cosmosdb_account_url = account_url
         self._container_name = container_name
         self._cosmosdb_account_name = (
-            cosmosdb_account_url.split("//")[1].split(".")[0]
-            if cosmosdb_account_url
-            else None
+            account_url.split("//")[1].split(".")[0] if account_url else None
         )
         self._no_id_prefixes = []
         logger.debug(
@@ -307,7 +313,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         msg = "CosmosDB storage does yet not support listing keys."
         raise NotImplementedError(msg)
 
-    def child(self, name: str | None) -> PipelineStorage:
+    def child(self, name: str | None) -> "Storage":
         """Create a child storage instance."""
         return self
 

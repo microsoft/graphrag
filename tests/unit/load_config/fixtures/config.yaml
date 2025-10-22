@@ -1,0 +1,10 @@
+name: test_name
+value: 100
+nested:
+  nested_str: nested_value
+  nested_int: 42
+nested_list:
+  - nested_str: list_value_1
+    nested_int: 7
+  - nested_str: list_value_2
+    nested_int: 8

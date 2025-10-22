@@ -12,6 +12,8 @@ from dataclasses import asdict
 from typing import Any
 
 import pandas as pd
+from graphrag_cache import create_cache
+from graphrag_storage import Storage, create_storage
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -19,8 +21,6 @@ from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.pipeline import Pipeline
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
-from graphrag.storage.pipeline_storage import PipelineStorage
-from graphrag.utils.api import create_cache_from_config, create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -35,9 +35,9 @@ async def run_pipeline(
     input_documents: pd.DataFrame | None = None,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
-    input_storage = create_storage_from_config(config.input.storage)
-    output_storage = create_storage_from_config(config.output)
-    cache = create_cache_from_config(config.cache)
+    input_storage = create_storage(config.input.storage)
+    output_storage = create_storage(config.output)
+    cache = create_cache(config.cache, storage=output_storage)
 
     # load existing state in case any workflows are stateful
     state_json = await output_storage.get("context.json")
@@ -49,7 +49,7 @@ async def run_pipeline(
     if is_update_run:
         logger.info("Running incremental indexing.")
 
-        update_storage = create_storage_from_config(config.update_index_output)
+        update_storage = create_storage(config.update_index_output)
         # we use this to store the new subset index, and will merge its content with the previous index
         update_timestamp = time.strftime("%Y%m%d-%H%M%S")
         timestamped_storage = update_storage.child(update_timestamp)
@@ -156,8 +156,8 @@ async def _dump_json(context: PipelineRunContext) -> None:
 
 
 async def _copy_previous_output(
-    storage: PipelineStorage,
-    copy_storage: PipelineStorage,
+    storage: Storage,
+    copy_storage: Storage,
 ):
     for file in storage.find(re.compile(r"\.parquet$")):
         base_name = file[0].replace(".parquet", "")

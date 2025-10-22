@@ -1,20 +1,20 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'InMemoryCache' model."""
+"""MemoryCache implementation."""
 
 from typing import Any
 
-from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag_cache.cache import Cache
 
 
-class InMemoryCache(PipelineCache):
+class MemoryCache(Cache):
     """In memory cache class definition."""
 
     _cache: dict[str, Any]
     _name: str
 
-    def __init__(self, name: str | None = None):
+    def __init__(self, name: str | None = None, **kwargs: Any) -> None:
         """Init method definition."""
         self._cache = {}
         self._name = name or ""
@@ -69,9 +69,9 @@ class InMemoryCache(PipelineCache):
         """Clear the storage."""
         self._cache.clear()
 
-    def child(self, name: str) -> PipelineCache:
+    def child(self, name: str) -> "Cache":
         """Create a sub cache with the given name."""
-        return InMemoryCache(name)
+        return MemoryCache(name)
 
     def _create_cache_key(self, key: str) -> str:
         """Create a cache key for the given key."""

@@ -15,7 +15,8 @@ from graphrag.language_model.providers.litellm.types import (
 )
 
 if TYPE_CHECKING:
-    from graphrag.cache.pipeline_cache import PipelineCache
+    from graphrag_cache import Cache
+
     from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
@@ -24,7 +25,7 @@ def with_cache(
     sync_fn: LitellmRequestFunc,
     async_fn: AsyncLitellmRequestFunc,
     model_config: "LanguageModelConfig",
-    cache: "PipelineCache",
+    cache: "Cache",
     request_type: Literal["chat", "embedding"],
     cache_key_prefix: str,
 ) -> tuple[LitellmRequestFunc, AsyncLitellmRequestFunc]:

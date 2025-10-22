@@ -54,6 +54,8 @@ members = ["packages/*"]
 
 [tool.uv.sources]
 graphrag-common = { workspace = true }
+graphrag-storage = { workspace = true }
+graphrag-cache = { workspace = true }
 
 # Keep poethepoet for task management to minimize changes
 [tool.poe.tasks]
@@ -69,6 +71,8 @@ _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
 # Add more update toml tasks as packages are added
 _semversioner_update_graphrag_toml_version = "update-toml update --file packages/graphrag/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
 _semversioner_update_graphrag_common_toml_version = "update-toml update --file packages/graphrag-common/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_storage_toml_version = "update-toml update --file packages/graphrag-storage/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_cache_toml_version = "update-toml update --file packages/graphrag-cache/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
 _semversioner_update_workspace_dependency_versions = "python -m scripts.update_workspace_dependency_versions"
 semversioner_add = "semversioner add-change"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
@@ -103,6 +107,8 @@ sequence = [
     # Add more update toml tasks as packages are added
     '_semversioner_update_graphrag_toml_version',
     '_semversioner_update_graphrag_common_toml_version',
+    '_semversioner_update_graphrag_storage_toml_version',
+    '_semversioner_update_graphrag_cache_toml_version',
     '_semversioner_update_workspace_dependency_versions',
     '_sync',
 ]
@@ -220,6 +226,7 @@ convention = "numpy"
 include = [
     "packages/graphrag/graphrag", 
     "packages/graphrag-common/graphrag_common", 
+    "packages/graphrag-storage/graphrag_storage", 
     "tests"
 ]
 exclude = ["**/node_modules", "**/__pycache__"]

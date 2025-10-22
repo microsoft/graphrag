@@ -7,8 +7,8 @@ from itertools import combinations
 
 import numpy as np
 import pandas as pd
+from graphrag_cache import Cache
 
-from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.build_noun_graph.np_extractors.base import (
     BaseNounPhraseExtractor,
@@ -24,7 +24,7 @@ async def build_noun_graph(
     normalize_edge_weights: bool,
     num_threads: int,
     async_mode: AsyncType,
-    cache: PipelineCache,
+    cache: Cache,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Build a noun graph from text units."""
     text_units = text_unit_df.loc[:, ["id", "text"]]
@@ -44,7 +44,7 @@ async def _extract_nodes(
     text_analyzer: BaseNounPhraseExtractor,
     num_threads: int,
     async_mode: AsyncType,
-    cache: PipelineCache,
+    cache: Cache,
 ) -> pd.DataFrame:
     """
     Extract initial nodes and edges from text units.
