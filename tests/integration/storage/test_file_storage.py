@@ -7,17 +7,15 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from graphrag.storage.file_pipeline_storage import (
-    FilePipelineStorage,
+from graphrag_storage.file_storage import (
+    FileStorage,
 )
 
 __dirname__ = os.path.dirname(__file__)
 
 
 async def test_find():
-    storage = FilePipelineStorage(
-        base_dir="tests/fixtures/text/input",
-    )
+    storage = FileStorage(base_dir="tests/fixtures/text/input")
     items = list(storage.find(file_pattern=re.compile(r".*\.txt$")))
     assert items == [str(Path("dulce.txt"))]
     output = await storage.get("dulce.txt")
@@ -32,7 +30,7 @@ async def test_find():
 
 
 async def test_get_creation_date():
-    storage = FilePipelineStorage(
+    storage = FileStorage(
         base_dir="tests/fixtures/text/input",
     )
 
@@ -45,7 +43,7 @@ async def test_get_creation_date():
 
 
 async def test_child():
-    storage = FilePipelineStorage()
+    storage = FileStorage()
     storage = storage.child("tests/fixtures/text/input")
     items = list(storage.find(re.compile(r".*\.txt$")))
     assert items == [str(Path("dulce.txt"))]

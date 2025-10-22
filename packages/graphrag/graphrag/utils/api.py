@@ -6,14 +6,13 @@
 from pathlib import Path
 from typing import Any
 
+from graphrag_storage import Storage, StorageConfig, create_storage
+
 from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.config.embeddings import create_index_name
 from graphrag.config.models.cache_config import CacheConfig
-from graphrag.config.models.storage_config import StorageConfig
 from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
-from graphrag.storage.factory import StorageFactory
-from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.vector_stores.base import (
     BaseVectorStore,
 )
@@ -101,12 +100,10 @@ def load_search_prompt(prompt_config: str | None) -> str | None:
     return None
 
 
-def create_storage_from_config(output: StorageConfig) -> PipelineStorage:
+def create_storage_from_config(output: StorageConfig) -> Storage:
     """Create a storage object from the config."""
-    storage_config = output.model_dump()
-    return StorageFactory().create(
-        storage_config["type"],
-        storage_config,
+    return create_storage(
+        output,
     )
 
 

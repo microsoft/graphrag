@@ -1,17 +1,21 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'PipelineStorage' model."""
+"""Abstract base class for storage."""
 
 import re
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from datetime import datetime
 from typing import Any
 
 
-class PipelineStorage(metaclass=ABCMeta):
-    """Provide a storage interface for the pipeline. This is where the pipeline will store its output data."""
+class Storage(ABC):
+    """Provide a storage interface."""
+
+    @abstractmethod
+    def __init__(self, **kwargs: Any) -> None:
+        """Create a storage instance."""
 
     @abstractmethod
     def find(
@@ -69,7 +73,7 @@ class PipelineStorage(metaclass=ABCMeta):
         """Clear the storage."""
 
     @abstractmethod
-    def child(self, name: str | None) -> "PipelineStorage":
+    def child(self, name: str | None) -> "Storage":
         """Create a child storage instance."""
 
     @abstractmethod

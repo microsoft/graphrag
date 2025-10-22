@@ -5,14 +5,14 @@
 import re
 from datetime import datetime
 
-from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag_storage.azure_blob_storage import AzureBlobStorage
 
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_BLOB_STORAGE_KEY = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;"
 
 
 async def test_find():
-    storage = BlobPipelineStorage(
+    storage = AzureBlobStorage(
         connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
         container_name="testfind",
     )
@@ -42,7 +42,7 @@ async def test_find():
 
 
 async def test_dotprefix():
-    storage = BlobPipelineStorage(
+    storage = AzureBlobStorage(
         connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
         container_name="testfind",
         path_prefix=".",
@@ -56,7 +56,7 @@ async def test_dotprefix():
 
 
 async def test_get_creation_date():
-    storage = BlobPipelineStorage(
+    storage = AzureBlobStorage(
         connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
         container_name="testfind",
         path_prefix=".",
@@ -74,7 +74,7 @@ async def test_get_creation_date():
 
 
 async def test_child():
-    parent = BlobPipelineStorage(
+    parent = AzureBlobStorage(
         connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
         container_name="testchild",
     )

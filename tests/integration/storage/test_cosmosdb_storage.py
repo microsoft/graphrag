@@ -8,7 +8,7 @@ import sys
 from datetime import datetime
 
 import pytest
-from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
+from graphrag_storage.azure_cosmos_storage import AzureCosmosStorage
 
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
@@ -21,7 +21,7 @@ if not sys.platform.startswith("win"):
 
 
 async def test_find():
-    storage = CosmosDBPipelineStorage(
+    storage = AzureCosmosStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
         base_dir="testfind",
         container_name="testfindcontainer",
@@ -64,20 +64,20 @@ async def test_find():
 
 
 async def test_child():
-    storage = CosmosDBPipelineStorage(
+    storage = AzureCosmosStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
         base_dir="testchild",
         container_name="testchildcontainer",
     )
     try:
         child_storage = storage.child("child")
-        assert type(child_storage) is CosmosDBPipelineStorage
+        assert type(child_storage) is AzureCosmosStorage
     finally:
         await storage.clear()
 
 
 async def test_clear():
-    storage = CosmosDBPipelineStorage(
+    storage = AzureCosmosStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
         base_dir="testclear",
         container_name="testclearcontainer",
@@ -107,7 +107,7 @@ async def test_clear():
 
 
 async def test_get_creation_date():
-    storage = CosmosDBPipelineStorage(
+    storage = AzureCosmosStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
         base_dir="testclear",
         container_name="testclearcontainer",

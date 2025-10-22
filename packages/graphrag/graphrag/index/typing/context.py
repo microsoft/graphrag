@@ -10,7 +10,7 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.typing.state import PipelineState
 from graphrag.index.typing.stats import PipelineRunStats
-from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag_storage import Storage
 
 
 @dataclass
@@ -18,11 +18,11 @@ class PipelineRunContext:
     """Provides the context for the current pipeline run."""
 
     stats: PipelineRunStats
-    input_storage: PipelineStorage
+    input_storage: Storage
     "Storage for input documents."
-    output_storage: PipelineStorage
+    output_storage: Storage
     "Long-term storage for pipeline verbs to use. Items written here will be written to the storage provider."
-    previous_storage: PipelineStorage
+    previous_storage: Storage
     "Storage for previous pipeline run when running in update mode."
     cache: PipelineCache
     "Cache instance for reading previous LLM responses."

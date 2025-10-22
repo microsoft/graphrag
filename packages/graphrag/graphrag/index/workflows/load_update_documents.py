@@ -6,6 +6,7 @@
 import logging
 
 import pandas as pd
+from graphrag_storage import Storage
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input.factory import InputReaderFactory
@@ -13,7 +14,6 @@ from graphrag.index.input.input_reader import InputReader
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.update.incremental_index import get_delta_docs
-from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ async def run_workflow(
 
 async def load_update_documents(
     input_reader: InputReader,
-    previous_storage: PipelineStorage,
+    previous_storage: Storage,
 ) -> pd.DataFrame:
     """Load and parse update-only input documents into a standard format."""
     input_documents = await input_reader.read_files()

@@ -17,7 +17,7 @@ import pytest
 from graphrag.query.context_builder.community_context import (
     NO_COMMUNITY_RECORDS_WARNING,
 )
-from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag_storage.azure_blob_storage import AzureBlobStorage
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,7 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
     input_base_dir = azure.get("input_base_dir")
 
     root = Path(input_path)
-    input_storage = BlobPipelineStorage(
+    input_storage = AzureBlobStorage(
         connection_string=WELL_KNOWN_AZURITE_CONNECTION_STRING,
         container_name=input_container,
     )

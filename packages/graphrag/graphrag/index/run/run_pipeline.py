@@ -12,6 +12,7 @@ from dataclasses import asdict
 from typing import Any
 
 import pandas as pd
+from graphrag_storage import Storage
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -19,7 +20,6 @@ from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.pipeline import Pipeline
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
-from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.api import create_cache_from_config, create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
@@ -156,8 +156,8 @@ async def _dump_json(context: PipelineRunContext) -> None:
 
 
 async def _copy_previous_output(
-    storage: PipelineStorage,
-    copy_storage: PipelineStorage,
+    storage: Storage,
+    copy_storage: Storage,
 ):
     for file in storage.find(re.compile(r"\.parquet$")):
         base_name = file[0].replace(".parquet", "")

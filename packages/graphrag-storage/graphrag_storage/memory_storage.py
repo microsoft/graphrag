@@ -1,24 +1,24 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'InMemoryStorage' model."""
+"""In-memory storage implementation."""
 
 from typing import TYPE_CHECKING, Any
 
-from graphrag.storage.file_pipeline_storage import FilePipelineStorage
+from graphrag_storage.file_storage import FileStorage
 
 if TYPE_CHECKING:
-    from graphrag.storage.pipeline_storage import PipelineStorage
+    from graphrag_storage.storage import Storage
 
 
-class MemoryPipelineStorage(FilePipelineStorage):
+class MemoryStorage(FileStorage):
     """In memory storage class definition."""
 
     _storage: dict[str, Any]
 
-    def __init__(self):
+    def __init__(self, **kwargs: Any) -> None:
         """Init method definition."""
-        super().__init__()
+        super().__init__(**kwargs)
         self._storage = {}
 
     async def get(
@@ -69,9 +69,9 @@ class MemoryPipelineStorage(FilePipelineStorage):
         """Clear the storage."""
         self._storage.clear()
 
-    def child(self, name: str | None) -> "PipelineStorage":
+    def child(self, name: str | None) -> "Storage":
         """Create a child storage instance."""
-        return MemoryPipelineStorage()
+        return MemoryStorage()
 
     def keys(self) -> list[str]:
         """Return the keys in the storage."""

@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""File-based Storage implementation of PipelineStorage."""
+"""File-based Storage implementation of Storage."""
 
 import logging
 import os
@@ -16,26 +16,33 @@ import aiofiles
 from aiofiles.os import remove
 from aiofiles.ospath import exists
 
-from graphrag.storage.pipeline_storage import (
-    PipelineStorage,
+from graphrag_storage.storage import (
+    Storage,
     get_timestamp_formatted_with_local_tz,
 )
 
 logger = logging.getLogger(__name__)
 
 
-class FilePipelineStorage(PipelineStorage):
+class FileStorage(Storage):
     """File storage class definition."""
 
-    _base_dir: str
+    _base_dir: Path
     _encoding: str
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(
+        self, base_dir: str | None = "", encoding: str = "utf-8", **kwargs: Any
+    ) -> None:
         """Create a file based storage."""
-        self._base_dir = kwargs.get("base_dir", "")
-        self._encoding = kwargs.get("encoding", "utf-8")
+        if base_dir is None:
+            msg = "FileStorage requires a base_dir to be specified."
+            logger.error(msg)
+            raise ValueError(msg)
+
+        self._base_dir = Path(base_dir).resolve()
+        self._encoding = encoding
         logger.info("Creating file storage at [%s]", self._base_dir)
-        Path(self._base_dir).mkdir(parents=True, exist_ok=True)
+        self._base_dir.mkdir(parents=True, exist_ok=True)
 
     def find(
         self,
@@ -45,7 +52,7 @@ class FilePipelineStorage(PipelineStorage):
         logger.info(
             "Search [%s] for files matching [%s]", self._base_dir, file_pattern.pattern
         )
-        all_files = list(Path(self._base_dir).rglob("**/*"))
+        all_files = list(self._base_dir.rglob("**/*"))
         logger.debug("All files and folders: %s", [file.name for file in all_files])
         num_loaded = 0
         num_total = len(all_files)
@@ -53,7 +60,7 @@ class FilePipelineStorage(PipelineStorage):
         for file in all_files:
             match = file_pattern.search(f"{file}")
             if match:
-                filename = f"{file}".replace(str(Path(self._base_dir)), "", 1)
+                filename = f"{file}".replace(str(self._base_dir), "", 1)
                 if filename.startswith(os.sep):
                     filename = filename[1:]
                 yield filename
@@ -71,7 +78,7 @@ class FilePipelineStorage(PipelineStorage):
         self, key: str, as_bytes: bool | None = False, encoding: str | None = None
     ) -> Any:
         """Get method definition."""
-        file_path = join_path(self._base_dir, key)
+        file_path = _join_path(self._base_dir, key)
 
         if await self.has(key):
             return await self._read_file(file_path, as_bytes, encoding)
@@ -101,7 +108,7 @@ class FilePipelineStorage(PipelineStorage):
         write_type = "wb" if is_bytes else "w"
         encoding = None if is_bytes else encoding or self._encoding
         async with aiofiles.open(
-            join_path(self._base_dir, key),
+            _join_path(self._base_dir, key),
             cast("Any", write_type),
             encoding=encoding,
         ) as f:
@@ -109,35 +116,35 @@ class FilePipelineStorage(PipelineStorage):
 
     async def has(self, key: str) -> bool:
         """Has method definition."""
-        return await exists(join_path(self._base_dir, key))
+        return await exists(_join_path(self._base_dir, key))
 
     async def delete(self, key: str) -> None:
         """Delete method definition."""
         if await self.has(key):
-            await remove(join_path(self._base_dir, key))
+            await remove(_join_path(self._base_dir, key))
 
     async def clear(self) -> None:
         """Clear method definition."""
-        for file in Path(self._base_dir).glob("*"):
+        for file in self._base_dir.glob("*"):
             if file.is_dir():
                 shutil.rmtree(file)
             else:
                 file.unlink()
 
-    def child(self, name: str | None) -> "PipelineStorage":
+    def child(self, name: str | None) -> "Storage":
         """Create a child storage instance."""
         if name is None:
             return self
-        child_path = str(Path(self._base_dir) / Path(name))
-        return FilePipelineStorage(base_dir=child_path, encoding=self._encoding)
+        child_path = str(self._base_dir / name)
+        return FileStorage(base_dir=child_path, encoding=self._encoding)
 
     def keys(self) -> list[str]:
         """Return the keys in the storage."""
-        return [item.name for item in Path(self._base_dir).iterdir() if item.is_file()]
+        return [item.name for item in self._base_dir.iterdir() if item.is_file()]
 
     async def get_creation_date(self, key: str) -> str:
         """Get the creation date of a file."""
-        file_path = Path(join_path(self._base_dir, key))
+        file_path = _join_path(self._base_dir, key)
 
         creation_timestamp = file_path.stat().st_ctime
         creation_time_utc = datetime.fromtimestamp(creation_timestamp, tz=timezone.utc)
@@ -145,6 +152,6 @@ class FilePipelineStorage(PipelineStorage):
         return get_timestamp_formatted_with_local_tz(creation_time_utc)
 
 
-def join_path(file_path: str, file_name: str) -> Path:
+def _join_path(file_path: Path, file_name: str) -> Path:
     """Join a path and a file. Independent of the OS."""
-    return Path(file_path) / Path(file_name).parent / Path(file_name).name
+    return (file_path / Path(file_name).parent / Path(file_name).name).resolve()

@@ -3,9 +3,9 @@
 
 from graphrag.config.enums import InputFileType
 from graphrag.config.models.input_config import InputConfig
-from graphrag.config.models.storage_config import StorageConfig
 from graphrag.index.input.factory import InputReaderFactory
 from graphrag.utils.api import create_storage_from_config
+from graphrag_storage import StorageConfig
 
 
 async def test_csv_loader_one_file():
