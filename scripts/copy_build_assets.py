@@ -10,7 +10,7 @@ from pathlib import Path
 def copy_build_assets():
     """Copy root build assets to package build directories so files are included in pypi distributions."""
     root_dir = Path(__file__).parent.parent
-    build_assets = ["README.md", "LICENSE"]
+    build_assets = ["LICENSE"]
 
     for package_dir in root_dir.glob("packages/*"):
         if package_dir.is_dir():
@@ -19,7 +19,6 @@ def copy_build_assets():
                 dest = package_dir / asset
                 if src.exists():
                     shutil.copy(src, dest)
-                    print(f"Copied {asset} to {package_dir}")
 
 
 if __name__ == "__main__":

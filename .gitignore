@@ -60,5 +60,4 @@ docsite/
 .ipynb_checkpoints/
 
 # Root build assets
-packages/*/README.md
 packages/*/LICENSE
