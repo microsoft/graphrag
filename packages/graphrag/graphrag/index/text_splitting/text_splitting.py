@@ -9,9 +9,9 @@ from collections.abc import Callable
 from typing import cast
 
 import pandas as pd
+from graphrag_llm.tokenizer import Tokenizer
 
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]

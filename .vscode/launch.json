@@ -21,10 +21,10 @@
 			"module": "graphrag",
 			"args": [
 				"query",
+                "${input:query}",
 				"--root", 
 				"${input:root_folder}",
-				"--method", "${input:query_method}",
-				"--query", "${input:query}"
+				"--method", "${input:query_method}"
 			]
 		},
 		{

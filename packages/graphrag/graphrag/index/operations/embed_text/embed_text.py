@@ -4,15 +4,18 @@
 """A module containing embed_text method definition."""
 
 import logging
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+from graphrag_llm.tokenizer import Tokenizer
 from graphrag_vectors import VectorStore, VectorStoreDocument
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.operations.embed_text.run_embed_text import run_embed_text
-from graphrag.language_model.protocol.base import EmbeddingModel
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.embedding import LLMEmbedding
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +23,7 @@ logger = logging.getLogger(__name__)
 async def embed_text(
     input: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    model: EmbeddingModel,
+    model: "LLMEmbedding",
     tokenizer: Tokenizer,
     embed_column: str,
     batch_size: int,

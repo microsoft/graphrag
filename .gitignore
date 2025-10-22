@@ -22,6 +22,8 @@ output/lancedb
 venv/
 .conda
 .tmp
+packages/graphrag-llm/notebooks/metrics
+packages/graphrag-llm/notebooks/cache
 
 .env
 build.zip

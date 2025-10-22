@@ -3,20 +3,26 @@
 
 """Generate a community reporter role for community summarization."""
 
-from graphrag.language_model.protocol.base import ChatModel
+from typing import TYPE_CHECKING
+
+from graphrag_llm.utils import gather_completion_response_async
+
 from graphrag.prompt_tune.prompt.community_reporter_role import (
     GENERATE_COMMUNITY_REPORTER_ROLE_PROMPT,
 )
 
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
+
 
 async def generate_community_reporter_role(
-    model: ChatModel, domain: str, persona: str, docs: str | list[str]
+    model: "LLMCompletion", domain: str, persona: str, docs: str | list[str]
 ) -> str:
     """Generate an LLM persona to use for GraphRAG prompts.
 
     Parameters
     ----------
-    - llm (CompletionLLM): The LLM to use for generation
+    - model (LLMCompletion): The LLM to use for generation
     - domain (str): The domain to generate a persona for
     - persona (str): The persona to generate a role for
     - docs (str | list[str]): The domain to generate a persona for
@@ -30,6 +36,6 @@ async def generate_community_reporter_role(
         domain=domain, persona=persona, input_text=docs_str
     )
 
-    response = await model.achat(domain_prompt)
+    response = await model.completion_async(messages=domain_prompt)
 
-    return str(response.output.content)
+    return await gather_completion_response_async(response)

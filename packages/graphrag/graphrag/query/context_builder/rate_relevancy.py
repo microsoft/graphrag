@@ -6,14 +6,20 @@
 import asyncio
 import logging
 from contextlib import nullcontext
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
+from graphrag_llm.tokenizer import Tokenizer
+from graphrag_llm.utils import (
+    CompletionMessagesBuilder,
+    gather_completion_response_async,
+)
 
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
 from graphrag.query.llm.text_utils import try_parse_json_object
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +27,7 @@ logger = logging.getLogger(__name__)
 async def rate_relevancy(
     query: str,
     description: str,
-    model: ChatModel,
+    model: "LLMCompletion",
     tokenizer: Tokenizer,
     rate_query: str = RATE_QUERY,
     num_repeats: int = 1,
@@ -42,18 +48,21 @@ async def rate_relevancy(
         semaphore: asyncio.Semaphore to limit the number of concurrent LLM calls (default: None)
     """
     llm_calls, prompt_tokens, output_tokens, ratings = 0, 0, 0, []
-    messages = [
-        {
-            "role": "system",
-            "content": rate_query.format(description=description, question=query),
-        },
-    ]
+
+    messages_builder = (
+        CompletionMessagesBuilder()
+        .add_system_message(rate_query.format(description=description, question=query))
+        .add_user_message(query)
+    )
+
     for _ in range(num_repeats):
         async with semaphore if semaphore is not None else nullcontext():
-            model_response = await model.achat(
-                prompt=query, history=messages, model_parameters=model_params, json=True
+            model_response = await model.completion_async(
+                messages=messages_builder.build(),
+                response_format_json_object=True,
+                **model_params,
             )
-            response = model_response.output.content
+            response = await gather_completion_response_async(model_response)
         try:
             _, parsed_response = try_parse_json_object(response)
             ratings.append(parsed_response["rating"])
@@ -63,7 +72,7 @@ async def rate_relevancy(
             logger.warning("Error parsing json response, defaulting to rating 1")
             ratings.append(1)
         llm_calls += 1
-        prompt_tokens += tokenizer.num_tokens(messages[0]["content"])
+        prompt_tokens += tokenizer.num_prompt_tokens(messages_builder.build())
         output_tokens += tokenizer.num_tokens(response)
     # select the decision with the most votes
     options, counts = np.unique(ratings, return_counts=True)

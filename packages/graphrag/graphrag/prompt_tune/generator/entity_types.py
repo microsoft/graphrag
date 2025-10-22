@@ -3,14 +3,23 @@
 
 """Entity type generation module for fine-tuning."""
 
+from typing import TYPE_CHECKING
+
+from graphrag_llm.utils import (
+    CompletionMessagesBuilder,
+    gather_completion_response_async,
+)
 from pydantic import BaseModel
 
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompt_tune.defaults import DEFAULT_TASK
 from graphrag.prompt_tune.prompt.entity_types import (
     ENTITY_TYPE_GENERATION_JSON_PROMPT,
     ENTITY_TYPE_GENERATION_PROMPT,
 )
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
 
 
 class EntityTypesResponse(BaseModel):
@@ -20,7 +29,7 @@ class EntityTypesResponse(BaseModel):
 
 
 async def generate_entity_types(
-    model: ChatModel,
+    model: "LLMCompletion",
     domain: str,
     persona: str,
     docs: str | list[str],
@@ -43,17 +52,22 @@ async def generate_entity_types(
         else ENTITY_TYPE_GENERATION_PROMPT
     ).format(task=formatted_task, input_text=docs_str)
 
-    history = [{"role": "system", "content": persona}]
+    messages = (
+        CompletionMessagesBuilder()
+        .add_system_message(persona)
+        .add_user_message(entity_types_prompt)
+        .build()
+    )
 
     if json_mode:
-        response = await model.achat(
-            entity_types_prompt,
-            history=history,
-            json=json_mode,
-            json_model=EntityTypesResponse,
-        )
-        parsed_model = response.parsed_response
+        response: LLMCompletionResponse[
+            EntityTypesResponse
+        ] = await model.completion_async(
+            messages=messages,
+            response_format=EntityTypesResponse,
+        )  # type: ignore
+        parsed_model = response.formatted_response
         return parsed_model.entity_types if parsed_model else []
 
-    response = await model.achat(entity_types_prompt, history=history, json=json_mode)
-    return str(response.output.content)
+    non_json_response = await model.completion_async(messages=messages)
+    return str(await gather_completion_response_async(non_json_response))

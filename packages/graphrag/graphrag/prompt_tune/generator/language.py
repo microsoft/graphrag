@@ -3,16 +3,22 @@
 
 """Language detection for GraphRAG prompts."""
 
-from graphrag.language_model.protocol.base import ChatModel
+from typing import TYPE_CHECKING
+
+from graphrag_llm.utils import gather_completion_response_async
+
 from graphrag.prompt_tune.prompt.language import DETECT_LANGUAGE_PROMPT
 
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
-async def detect_language(model: ChatModel, docs: str | list[str]) -> str:
+
+async def detect_language(model: "LLMCompletion", docs: str | list[str]) -> str:
     """Detect input language to use for GraphRAG prompts.
 
     Parameters
     ----------
-    - llm (CompletionLLM): The LLM to use for generation
+    - model (LLMCompletion): The LLM to use for generation
     - docs (str | list[str]): The docs to detect language from
 
     Returns
@@ -22,6 +28,6 @@ async def detect_language(model: ChatModel, docs: str | list[str]) -> str:
     docs_str = " ".join(docs) if isinstance(docs, list) else docs
     language_prompt = DETECT_LANGUAGE_PROMPT.format(input_text=docs_str)
 
-    response = await model.achat(language_prompt)
+    response = await model.completion_async(messages=language_prompt)
 
-    return str(response.output.content)
+    return await gather_completion_response_async(response)

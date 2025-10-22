@@ -5,8 +5,10 @@
 
 import logging
 from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 import pandas as pd
+from graphrag_llm.tokenizer import Tokenizer
 
 import graphrag.data_model.schemas as schemas
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
@@ -24,9 +26,10 @@ from graphrag.index.operations.summarize_communities.utils import (
     get_levels,
 )
 from graphrag.index.utils.derive_from_rows import derive_from_rows
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.logger.progress import progress_ticker
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +40,7 @@ async def summarize_communities(
     local_contexts,
     level_context_builder: Callable,
     callbacks: WorkflowCallbacks,
-    model: ChatModel,
+    model: "LLMCompletion",
     prompt: str,
     tokenizer: Tokenizer,
     max_input_length: int,
@@ -98,7 +101,7 @@ async def summarize_communities(
 
 async def _generate_report(
     runner: CommunityReportsStrategy,
-    model: ChatModel,
+    model: "LLMCompletion",
     extraction_prompt: str,
     community_id: int,
     community_level: int,
@@ -120,7 +123,7 @@ async def run_extractor(
     community: str | int,
     input: str,
     level: int,
-    model: ChatModel,
+    model: "LLMCompletion",
     extraction_prompt: str,
     max_report_length: int,
 ) -> CommunityReport | None:

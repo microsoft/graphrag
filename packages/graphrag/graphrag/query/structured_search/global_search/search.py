@@ -7,14 +7,18 @@ import asyncio
 import json
 import logging
 import time
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, AsyncIterator
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
+from graphrag_llm.tokenizer import Tokenizer
+from graphrag_llm.utils import (
+    CompletionMessagesBuilder,
+    gather_completion_response_async,
+)
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.query.global_search_knowledge_system_prompt import (
     GENERAL_KNOWLEDGE_INSTRUCTION,
 )
@@ -31,7 +35,10 @@ from graphrag.query.context_builder.conversation_history import (
 )
 from graphrag.query.llm.text_utils import try_parse_json_object
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionChunk
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +57,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
 
     def __init__(
         self,
-        model: ChatModel,
+        model: "LLMCompletion",
         context_builder: GlobalContextBuilder,
         tokenizer: Tokenizer | None = None,
         map_system_prompt: str | None = None,
@@ -87,7 +94,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         self.map_llm_params = map_llm_params if map_llm_params else {}
         self.reduce_llm_params = reduce_llm_params if reduce_llm_params else {}
         if json_mode:
-            self.map_llm_params["response_format"] = {"type": "json_object"}
+            self.map_llm_params["response_format_json_object"] = True
         else:
             # remove response_format key if json_mode is False
             self.map_llm_params.pop("response_format", None)
@@ -220,17 +227,20 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             search_prompt = self.map_system_prompt.format(
                 context_data=context_data, max_length=max_length
             )
-            search_messages = [
-                {"role": "system", "content": search_prompt},
-            ]
+
+            messages_builder = (
+                CompletionMessagesBuilder()
+                .add_system_message(search_prompt)
+                .add_user_message(query)
+            )
+
             async with self.semaphore:
-                model_response = await self.model.achat(
-                    prompt=query,
-                    history=search_messages,
-                    model_parameters=llm_kwargs,
-                    json=True,
+                model_response = await self.model.completion_async(
+                    messages=messages_builder.build(),
+                    response_format_json_object=True,
+                    **llm_kwargs,
                 )
-                search_response = model_response.output.content
+                search_response = await gather_completion_response_async(model_response)
                 logger.debug("Map response: %s", search_response)
             try:
                 # parse search response json
@@ -376,20 +386,28 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             )
             if self.allow_general_knowledge:
                 search_prompt += "\n" + self.general_knowledge_inclusion_prompt
-            search_messages = [
-                {"role": "system", "content": search_prompt},
-                {"role": "user", "content": query},
-            ]
+
+            messages_builder = (
+                CompletionMessagesBuilder()
+                .add_system_message(search_prompt)
+                .add_user_message(query)
+            )
 
             search_response = ""
-            async for chunk_response in self.model.achat_stream(
-                prompt=query,
-                history=search_messages,
-                model_parameters=llm_kwargs,
-            ):
-                search_response += chunk_response
+
+            response_search: AsyncIterator[
+                LLMCompletionChunk
+            ] = await self.model.completion_async(
+                messages=messages_builder.build(),
+                stream=True,
+                **llm_kwargs,
+            )  # type: ignore
+
+            async for chunk in response_search:
+                response_text = chunk.choices[0].delta.content or ""
+                search_response += response_text
                 for callback in self.callbacks:
-                    callback.on_llm_new_token(chunk_response)
+                    callback.on_llm_new_token(response_text)
 
             return SearchResult(
                 response=search_response,
@@ -481,15 +499,23 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         )
         if self.allow_general_knowledge:
             search_prompt += "\n" + self.general_knowledge_inclusion_prompt
-        search_messages = [
-            {"role": "system", "content": search_prompt},
-        ]
 
-        async for chunk_response in self.model.achat_stream(
-            prompt=query,
-            history=search_messages,
-            **llm_kwargs,
-        ):
+        messages_builder = (
+            CompletionMessagesBuilder()
+            .add_system_message(search_prompt)
+            .add_user_message(query)
+        )
+
+        response_search: AsyncIterator[
+            LLMCompletionChunk
+        ] = await self.model.completion_async(
+            messages=messages_builder.build(),
+            stream=True,
+            **llm_kwargs.get("model_parameters", {}),
+        )  # type: ignore
+
+        async for chunk in response_search:
+            response_text = chunk.choices[0].delta.content or ""
             for callback in self.callbacks:
-                callback.on_llm_new_token(chunk_response)
-            yield chunk_response
+                callback.on_llm_new_token(response_text)
+            yield response_text

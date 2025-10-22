@@ -4,15 +4,14 @@
 from graphrag.config.embeddings import (
     all_embeddings,
 )
-from graphrag.config.enums import ModelType
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.workflows.generate_text_embeddings import (
     run_workflow,
 )
 from graphrag.utils.storage import load_table_from_storage
 
+from tests.unit.config.utils import get_default_graphrag_config
+
 from .util import (
-    DEFAULT_MODEL_CONFIG,
     create_test_context,
 )
 
@@ -28,9 +27,12 @@ async def test_generate_text_embeddings():
         ]
     )
 
-    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
-    llm_settings = config.get_language_model_config(config.embed_text.model_id)
-    llm_settings.type = ModelType.MockEmbedding
+    config = get_default_graphrag_config()
+    llm_settings = config.get_embedding_model_config(
+        config.embed_text.embedding_model_id
+    )
+    llm_settings.type = "mock"
+    llm_settings.mock_responses = [1.0] * 3072
 
     config.embed_text.names = list(all_embeddings)
     config.snapshots.embeddings = True

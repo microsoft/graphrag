@@ -6,11 +6,11 @@
 from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator
 from dataclasses import dataclass
-from typing import Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import pandas as pd
+from graphrag_llm.tokenizer import Tokenizer
 
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.builders import (
     BasicContextBuilder,
     DRIFTContextBuilder,
@@ -20,8 +20,9 @@ from graphrag.query.context_builder.builders import (
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 
 @dataclass
@@ -57,7 +58,7 @@ class BaseSearch(ABC, Generic[T]):
 
     def __init__(
         self,
-        model: ChatModel,
+        model: "LLMCompletion",
         context_builder: T,
         tokenizer: Tokenizer | None = None,
         model_params: dict[str, Any] | None = None,
@@ -65,7 +66,7 @@ class BaseSearch(ABC, Generic[T]):
     ):
         self.model = model
         self.context_builder = context_builder
-        self.tokenizer = tokenizer or get_tokenizer()
+        self.tokenizer = tokenizer or model.tokenizer
         self.model_params = model_params or {}
         self.context_builder_params = context_builder_params or {}
 

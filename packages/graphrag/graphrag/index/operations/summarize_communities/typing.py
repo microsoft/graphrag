@@ -4,11 +4,12 @@
 """A module containing 'Finding' and 'CommunityReport' models."""
 
 from collections.abc import Awaitable, Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from typing_extensions import TypedDict
 
-from graphrag.language_model.protocol.base import ChatModel
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 RowContext = dict[str, Any]
 Claim = dict[str, Any]
@@ -40,7 +41,7 @@ CommunityReportsStrategy = Callable[
         str | int,
         str,
         int,
-        ChatModel,
+        "LLMCompletion",
         str,
         int,
     ],

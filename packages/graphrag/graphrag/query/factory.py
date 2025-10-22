@@ -3,6 +3,8 @@
 
 """Query Factory methods to support CLI."""
 
+from graphrag_llm.completion import create_completion
+from graphrag_llm.embedding import create_embedding
 from graphrag_vectors import VectorStore
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
@@ -13,10 +15,6 @@ from graphrag.data_model.covariate import Covariate
 from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
-from graphrag.language_model.manager import ModelManager
-from graphrag.language_model.util import (
-    get_openai_model_parameters_from_config,
-)
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.structured_search.basic_search.basic_context import (
     BasicSearchContext,
@@ -34,7 +32,6 @@ from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )
 from graphrag.query.structured_search.local_search.search import LocalSearch
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 
 def get_local_search_engine(
@@ -50,29 +47,23 @@ def get_local_search_engine(
     callbacks: list[QueryCallbacks] | None = None,
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
-    model_settings = config.get_language_model_config(config.local_search.chat_model_id)
-
-    chat_model = ModelManager().get_or_create_chat_model(
-        name="local_search_chat",
-        model_type=model_settings.type,
-        config=model_settings,
+    model_settings = config.get_completion_model_config(
+        config.local_search.completion_model_id
     )
 
-    embedding_settings = config.get_language_model_config(
+    chat_model = create_completion(model_settings)
+
+    embedding_settings = config.get_embedding_model_config(
         config.local_search.embedding_model_id
     )
 
-    embedding_model = ModelManager().get_or_create_embedding_model(
-        name="local_search_embedding",
-        model_type=embedding_settings.type,
-        config=embedding_settings,
-    )
+    embedding_model = create_embedding(embedding_settings)
 
-    tokenizer = get_tokenizer(model_config=model_settings)
+    tokenizer = chat_model.tokenizer
 
     ls_config = config.local_search
 
-    model_params = get_openai_model_parameters_from_config(model_settings)
+    model_params = model_settings.call_args
 
     return LocalSearch(
         model=chat_model,
@@ -122,20 +113,16 @@ def get_global_search_engine(
     callbacks: list[QueryCallbacks] | None = None,
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
-    model_settings = config.get_language_model_config(
-        config.global_search.chat_model_id
+    model_settings = config.get_completion_model_config(
+        config.global_search.completion_model_id
     )
 
-    model = ModelManager().get_or_create_chat_model(
-        name="global_search",
-        model_type=model_settings.type,
-        config=model_settings,
-    )
+    model = create_completion(model_settings)
 
-    model_params = get_openai_model_parameters_from_config(model_settings)
+    model_params = model_settings.call_args
 
     # Here we get encoding based on specified encoding name
-    tokenizer = get_tokenizer(model_config=model_settings)
+    tokenizer = model.tokenizer
     gs_config = config.global_search
 
     dynamic_community_selection_kwargs = {}
@@ -148,7 +135,7 @@ def get_global_search_engine(
             "keep_parent": gs_config.dynamic_search_keep_parent,
             "num_repeats": gs_config.dynamic_search_num_repeats,
             "use_summary": gs_config.dynamic_search_use_summary,
-            "concurrent_coroutines": model_settings.concurrent_requests,
+            "concurrent_coroutines": config.concurrent_requests,
             "threshold": gs_config.dynamic_search_threshold,
             "max_level": gs_config.dynamic_search_max_level,
             "model_params": {**model_params},
@@ -187,7 +174,7 @@ def get_global_search_engine(
             "max_context_tokens": gs_config.max_context_tokens,
             "context_name": "Reports",
         },
-        concurrent_coroutines=model_settings.concurrent_requests,
+        concurrent_coroutines=config.concurrent_requests,
         response_type=response_type,
         callbacks=callbacks,
     )
@@ -206,27 +193,19 @@ def get_drift_search_engine(
     callbacks: list[QueryCallbacks] | None = None,
 ) -> DRIFTSearch:
     """Create a local search engine based on data + configuration."""
-    chat_model_settings = config.get_language_model_config(
-        config.drift_search.chat_model_id
+    chat_model_settings = config.get_completion_model_config(
+        config.drift_search.completion_model_id
     )
 
-    chat_model = ModelManager().get_or_create_chat_model(
-        name="drift_search_chat",
-        model_type=chat_model_settings.type,
-        config=chat_model_settings,
-    )
+    chat_model = create_completion(chat_model_settings)
 
-    embedding_model_settings = config.get_language_model_config(
+    embedding_model_settings = config.get_embedding_model_config(
         config.drift_search.embedding_model_id
     )
 
-    embedding_model = ModelManager().get_or_create_embedding_model(
-        name="drift_search_embedding",
-        model_type=embedding_model_settings.type,
-        config=embedding_model_settings,
-    )
+    embedding_model = create_embedding(embedding_model_settings)
 
-    tokenizer = get_tokenizer(model_config=chat_model_settings)
+    tokenizer = chat_model.tokenizer
 
     return DRIFTSearch(
         model=chat_model,
@@ -257,31 +236,23 @@ def get_basic_search_engine(
     callbacks: list[QueryCallbacks] | None = None,
 ) -> BasicSearch:
     """Create a basic search engine based on data + configuration."""
-    chat_model_settings = config.get_language_model_config(
-        config.basic_search.chat_model_id
+    chat_model_settings = config.get_completion_model_config(
+        config.basic_search.completion_model_id
     )
 
-    chat_model = ModelManager().get_or_create_chat_model(
-        name="basic_search_chat",
-        model_type=chat_model_settings.type,
-        config=chat_model_settings,
-    )
+    chat_model = create_completion(chat_model_settings)
 
-    embedding_model_settings = config.get_language_model_config(
+    embedding_model_settings = config.get_embedding_model_config(
         config.basic_search.embedding_model_id
     )
 
-    embedding_model = ModelManager().get_or_create_embedding_model(
-        name="basic_search_embedding",
-        model_type=embedding_model_settings.type,
-        config=embedding_model_settings,
-    )
+    embedding_model = create_embedding(embedding_model_settings)
 
-    tokenizer = get_tokenizer(model_config=chat_model_settings)
+    tokenizer = chat_model.tokenizer
 
     bs_config = config.basic_search
 
-    model_params = get_openai_model_parameters_from_config(chat_model_settings)
+    model_params = chat_model_settings.call_args
 
     return BasicSearch(
         model=chat_model,

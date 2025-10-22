@@ -2,7 +2,6 @@
 # Licensed under the MIT License
 
 
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.schemas import COMMUNITY_REPORTS_FINAL_COLUMNS
 from graphrag.index.operations.summarize_communities.community_reports_extractor import (
     CommunityReportResponse,
@@ -13,8 +12,9 @@ from graphrag.index.workflows.create_community_reports import (
 )
 from graphrag.utils.storage import load_table_from_storage
 
+from tests.unit.config.utils import get_default_graphrag_config
+
 from .util import (
-    DEFAULT_MODEL_CONFIG,
     compare_outputs,
     create_test_context,
     load_test_table,
@@ -34,7 +34,7 @@ MOCK_RESPONSES = [
                 summary="<insight_2_summary>", explanation="<insight_2_explanation"
             ),
         ],
-    )
+    ).model_dump_json()
 ]
 
 
@@ -50,9 +50,9 @@ async def test_create_community_reports():
         ]
     )
 
-    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
-    config.models["default_chat_model"].type = "mock_chat"
-    config.models["default_chat_model"].responses = MOCK_RESPONSES  # type: ignore
+    config = get_default_graphrag_config()
+    config.completion_models["default_completion_model"].type = "mock"
+    config.completion_models["default_completion_model"].mock_responses = MOCK_RESPONSES  # type: ignore
 
     await run_workflow(config, context)
 

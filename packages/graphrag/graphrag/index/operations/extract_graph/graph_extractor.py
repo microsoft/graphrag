@@ -6,17 +6,23 @@
 import logging
 import re
 import traceback
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
+from graphrag_llm.utils import (
+    CompletionMessagesBuilder,
+    gather_completion_response_async,
+)
 
 from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.index.utils.string import clean_str
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_graph import (
     CONTINUE_PROMPT,
     LOOP_PROMPT,
 )
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 INPUT_TEXT_KEY = "input_text"
 RECORD_DELIMITER_KEY = "record_delimiter"
@@ -32,14 +38,14 @@ logger = logging.getLogger(__name__)
 class GraphExtractor:
     """Unipartite graph extractor class definition."""
 
-    _model: ChatModel
+    _model: "LLMCompletion"
     _extraction_prompt: str
     _max_gleanings: int
     _on_error: ErrorHandlerFn
 
     def __init__(
         self,
-        model: ChatModel,
+        model: "LLMCompletion",
         prompt: str,
         max_gleanings: int,
         on_error: ErrorHandlerFn | None = None,
@@ -77,35 +83,40 @@ class GraphExtractor:
         )
 
     async def _process_document(self, text: str, entity_types: list[str]) -> str:
-        response = await self._model.achat(
+        messages_builder = CompletionMessagesBuilder().add_user_message(
             self._extraction_prompt.format(**{
                 INPUT_TEXT_KEY: text,
                 ENTITY_TYPES_KEY: ",".join(entity_types),
-            }),
+            })
         )
-        results = response.output.content or ""
+
+        response = await self._model.completion_async(
+            messages=messages_builder.build(),
+        )
+        results = await gather_completion_response_async(response)
+        messages_builder.add_assistant_message(results)
 
         # if gleanings are specified, enter a loop to extract more entities
         # there are two exit criteria: (a) we hit the configured max, (b) the model says there are no more entities
         if self._max_gleanings > 0:
             for i in range(self._max_gleanings):
-                response = await self._model.achat(
-                    CONTINUE_PROMPT,
-                    name=f"extract-continuation-{i}",
-                    history=response.history,
+                messages_builder.add_user_message(CONTINUE_PROMPT)
+                response = await self._model.completion_async(
+                    messages=messages_builder.build(),
                 )
-                results += response.output.content or ""
+                response_text = await gather_completion_response_async(response)
+                messages_builder.add_assistant_message(response_text)
+                results += response_text
 
                 # if this is the final glean, don't bother updating the continuation flag
                 if i >= self._max_gleanings - 1:
                     break
 
-                response = await self._model.achat(
-                    LOOP_PROMPT,
-                    name=f"extract-loopcheck-{i}",
-                    history=response.history,
+                messages_builder.add_user_message(LOOP_PROMPT)
+                response = await self._model.completion_async(
+                    messages=messages_builder.build(),
                 )
-                if response.output.content != "Y":
+                if await gather_completion_response_async(response) != "Y":
                     break
 
         return results

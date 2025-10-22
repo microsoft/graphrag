@@ -1,17 +1,17 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.enums import ModelType
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.schemas import COVARIATES_FINAL_COLUMNS
 from graphrag.index.workflows.extract_covariates import (
     run_workflow,
 )
 from graphrag.utils.storage import load_table_from_storage
+from graphrag_llm.config import LLMProviderType
 from pandas.testing import assert_series_equal
 
+from tests.unit.config.utils import get_default_graphrag_config
+
 from .util import (
-    DEFAULT_MODEL_CONFIG,
     create_test_context,
     load_test_table,
 )
@@ -30,12 +30,14 @@ async def test_extract_covariates():
         storage=["text_units"],
     )
 
-    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
+    config = get_default_graphrag_config()
     config.extract_claims.enabled = True
     config.extract_claims.description = "description"
-    llm_settings = config.get_language_model_config(config.extract_claims.model_id)
-    llm_settings.type = ModelType.MockChat
-    llm_settings.responses = MOCK_LLM_RESPONSES  # type: ignore
+    llm_settings = config.get_completion_model_config(
+        config.extract_claims.completion_model_id
+    )
+    llm_settings.type = LLMProviderType.MockLLM
+    llm_settings.mock_responses = MOCK_LLM_RESPONSES  # type: ignore
 
     await run_workflow(config, context)
 

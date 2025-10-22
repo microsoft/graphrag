@@ -1,18 +1,36 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 import subprocess
+from dataclasses import dataclass
 from pathlib import Path
 
 import nbformat
 import pytest
 
-NOTEBOOKS_PATH = Path("examples_notebooks")
-EXCLUDED_PATH = NOTEBOOKS_PATH / "community_contrib"
+
+@dataclass
+class NotebookDetails:
+    dir: Path
+    excluded_filenames: list[str]
+
+
+NOTEBOOKS: list[NotebookDetails] = [
+    NotebookDetails(
+        dir=Path("packages/graphrag-llm/notebooks"),
+        excluded_filenames=[],
+    ),
+    # Was in previous test but not actually pointing at a notebooks location
+    # NotebookDetails(
+    #     dir=Path("examples_notebooks"),  # noqa: ERA001
+    #     excluded_filenames=["community_contrib"],  # noqa: ERA001
+    # ),
+]
 
 notebooks_list = [
-    notebook
-    for notebook in NOTEBOOKS_PATH.rglob("*.ipynb")
-    if EXCLUDED_PATH not in notebook.parents
+    nb
+    for details in NOTEBOOKS
+    for nb in details.dir.rglob("*.ipynb")
+    if nb.stem not in details.excluded_filenames
 ]
 
 
@@ -21,6 +39,8 @@ def _notebook_run(filepath: Path):
     :returns execution errors
     """
     args = [
+        "uv",
+        "run",
         "jupyter",
         "nbconvert",
         "--to",
@@ -29,7 +49,7 @@ def _notebook_run(filepath: Path):
         "-y",
         "--no-prompt",
         "--stdout",
-        str(filepath.absolute().resolve()),
+        str(filepath.resolve()),
     ]
     notebook = subprocess.check_output(args)
     nb = nbformat.reads(notebook, nbformat.current_nbformat)
@@ -41,6 +61,18 @@ def _notebook_run(filepath: Path):
         for output in cell["outputs"]
         if output.output_type == "error"
     ]
+
+
+def clear_cache():
+    cache_dir = Path("packages/graphrag-llm/notebooks/cache")
+    if cache_dir.exists():
+        for file in cache_dir.iterdir():
+            if file.is_file():
+                file.unlink()
+        cache_dir.rmdir()
+
+
+clear_cache()
 
 
 @pytest.mark.parametrize("notebook_path", notebooks_list)

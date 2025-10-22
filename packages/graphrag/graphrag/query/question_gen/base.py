@@ -5,15 +5,17 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from graphrag.language_model.protocol.base import ChatModel
+from graphrag_llm.tokenizer import Tokenizer
+
 from graphrag.query.context_builder.builders import (
     GlobalContextBuilder,
     LocalContextBuilder,
 )
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 
 @dataclass
@@ -32,7 +34,7 @@ class BaseQuestionGen(ABC):
 
     def __init__(
         self,
-        model: ChatModel,
+        model: "LLMCompletion",
         context_builder: GlobalContextBuilder | LocalContextBuilder,
         tokenizer: Tokenizer | None = None,
         model_params: dict[str, Any] | None = None,
@@ -40,7 +42,7 @@ class BaseQuestionGen(ABC):
     ):
         self.model = model
         self.context_builder = context_builder
-        self.tokenizer = tokenizer or get_tokenizer(model.config)
+        self.tokenizer = tokenizer or model.tokenizer
         self.model_params = model_params or {}
         self.context_builder_params = context_builder_params or {}
 

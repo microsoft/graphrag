@@ -4,16 +4,26 @@
 from typing import Any
 
 from graphrag.data_model.entity import Entity
-from graphrag.language_model.manager import ModelManager
 from graphrag.query.context_builder.entity_extraction import (
     EntityVectorStoreKey,
     map_query_to_entities,
 )
+from graphrag_llm.config import LLMProviderType, ModelConfig
+from graphrag_llm.embedding import create_embedding
 from graphrag_vectors import (
     TextEmbedder,
     VectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
+)
+
+embedding_model = create_embedding(
+    ModelConfig(
+        type=LLMProviderType.MockLLM,
+        model_provider="openai",
+        model="text-embedding-3-small",
+        mock_responses=[1.0, 1.0, 1.0],
+    )
 )
 
 
@@ -92,9 +102,7 @@ def test_map_query_to_entities():
         text_embedding_vectorstore=MockVectorStore([
             VectorStoreDocument(id=entity.title, vector=None) for entity in entities
         ]),
-        text_embedder=ModelManager().get_or_create_embedding_model(
-            model_type="mock_embedding", name="mock"
-        ),
+        text_embedder=embedding_model,
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.TITLE,
         k=1,
@@ -113,9 +121,7 @@ def test_map_query_to_entities():
         text_embedding_vectorstore=MockVectorStore([
             VectorStoreDocument(id=entity.id, vector=None) for entity in entities
         ]),
-        text_embedder=ModelManager().get_or_create_embedding_model(
-            model_type="mock_embedding", name="mock"
-        ),
+        text_embedder=embedding_model,
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.TITLE,
         k=2,

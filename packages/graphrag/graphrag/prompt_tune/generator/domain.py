@@ -3,16 +3,22 @@
 
 """Domain generation for GraphRAG prompts."""
 
-from graphrag.language_model.protocol.base import ChatModel
+from typing import TYPE_CHECKING
+
+from graphrag_llm.utils import gather_completion_response_async
+
 from graphrag.prompt_tune.prompt.domain import GENERATE_DOMAIN_PROMPT
 
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
-async def generate_domain(model: ChatModel, docs: str | list[str]) -> str:
+
+async def generate_domain(model: "LLMCompletion", docs: str | list[str]) -> str:
     """Generate an LLM persona to use for GraphRAG prompts.
 
     Parameters
     ----------
-    - llm (CompletionLLM): The LLM to use for generation
+    - model (LLMCompletion): The LLM to use for generation
     - docs (str | list[str]): The domain to generate a persona for
 
     Returns
@@ -22,6 +28,6 @@ async def generate_domain(model: ChatModel, docs: str | list[str]) -> str:
     docs_str = " ".join(docs) if isinstance(docs, list) else docs
     domain_prompt = GENERATE_DOMAIN_PROMPT.format(input_text=docs_str)
 
-    response = await model.achat(domain_prompt)
+    response = await model.completion_async(messages=domain_prompt)
 
-    return str(response.output.content)
+    return await gather_completion_response_async(response)

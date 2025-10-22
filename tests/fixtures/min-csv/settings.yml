@@ -1,37 +1,32 @@
-models:
-  default_chat_model:
-    azure_auth_type: api_key
-    type: chat
+completion_models:
+  default_completion_model:
     model_provider: azure
     api_key: ${GRAPHRAG_API_KEY}
     api_base: ${GRAPHRAG_API_BASE}
     api_version: "2025-04-01-preview"
     model: gpt-4.1
-    retry_strategy: exponential_backoff
-    rate_limit_strategy: static
-    tokens_per_minute: 250_000
-    requests_per_minute: 250
-    model_supports_json: true
-    concurrent_requests: 25
+    azure_deployment_name: gpt-4.1
+    rate_limit:
+      type: sliding_window
+      tokens_per_period: 250_000
+      requests_per_period: 250
+embedding_models:
   default_embedding_model:
-    azure_auth_type: api_key
-    type: embedding
     model_provider: azure
     api_key: ${GRAPHRAG_API_KEY}
     api_base: ${GRAPHRAG_API_BASE}
     api_version: "2025-04-01-preview"
     model: text-embedding-3-large
-    retry_strategy: exponential_backoff
-    rate_limit_strategy: static
-    tokens_per_minute: 250_000
-    requests_per_minute: 250
-    concurrent_requests: 25
+    azure_deployment_name: text-embedding-3-large
+    rate_limit:
+      type: sliding_window
+      tokens_per_period: 250_000
+      requests_per_period: 250
 
 vector_store:
-  default_vector_store:
-    type: "lancedb"
-    db_uri: "./tests/fixtures/min-csv/lancedb"
-    container_name: "lancedb_ci"
+  type: "lancedb"
+  db_uri: "./tests/fixtures/min-csv/lancedb"
+  overwrite: True
 
 input:
   type: csv

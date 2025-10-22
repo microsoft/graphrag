@@ -15,9 +15,9 @@ class LocalSearchConfig(BaseModel):
         description="The local search prompt to use.",
         default=graphrag_config_defaults.local_search.prompt,
     )
-    chat_model_id: str = Field(
+    completion_model_id: str = Field(
         description="The model ID to use for local search.",
-        default=graphrag_config_defaults.local_search.chat_model_id,
+        default=graphrag_config_defaults.local_search.completion_model_id,
     )
     embedding_model_id: str = Field(
         description="The model ID to use for text embeddings.",

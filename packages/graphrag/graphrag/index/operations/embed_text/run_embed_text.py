@@ -6,15 +6,19 @@
 import asyncio
 import logging
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import numpy as np
 from graphrag_chunking.token_chunker import split_text_on_tokens
+from graphrag_llm.tokenizer import Tokenizer
+from graphrag_llm.utils import gather_embeddings
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.utils.is_null import is_null
-from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.logger.progress import ProgressTicker, progress_ticker
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.embedding import LLMEmbedding
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +33,7 @@ class TextEmbeddingResult:
 async def run_embed_text(
     input: list[str],
     callbacks: WorkflowCallbacks,
-    model: EmbeddingModel,
+    model: "LLMEmbedding",
     tokenizer: Tokenizer,
     batch_size: int,
     batch_max_tokens: int,
@@ -71,14 +75,16 @@ async def run_embed_text(
 
 
 async def _execute(
-    model: EmbeddingModel,
+    model: "LLMEmbedding",
     chunks: list[list[str]],
     tick: ProgressTicker,
     semaphore: asyncio.Semaphore,
 ) -> list[list[float]]:
     async def embed(chunk: list[str]):
         async with semaphore:
-            chunk_embeddings = await model.aembed_batch(chunk)
+            chunk_embeddings = gather_embeddings(
+                await model.embedding_async(input=chunk)
+            )
             result = np.array(chunk_embeddings)
             tick(1)
         return result

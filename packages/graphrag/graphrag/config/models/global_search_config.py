@@ -19,9 +19,9 @@ class GlobalSearchConfig(BaseModel):
         description="The global search reducer to use.",
         default=graphrag_config_defaults.global_search.reduce_prompt,
     )
-    chat_model_id: str = Field(
+    completion_model_id: str = Field(
         description="The model ID to use for global search.",
-        default=graphrag_config_defaults.global_search.chat_model_id,
+        default=graphrag_config_defaults.global_search.completion_model_id,
     )
     knowledge_prompt: str | None = Field(
         description="The global search general prompt to use.",

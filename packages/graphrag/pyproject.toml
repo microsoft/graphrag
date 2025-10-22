@@ -42,6 +42,7 @@ dependencies = [
     "graphrag-cache==2.7.0",
     "graphrag-common==2.7.0",
     "graphrag-input==2.7.0",
+    "graphrag-llm==2.7.0",
     "graphrag-storage==2.7.0",
     "graphrag-vectors==2.7.0",
     "graspologic-native~=1.2",

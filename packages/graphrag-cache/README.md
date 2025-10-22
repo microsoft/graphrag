@@ -5,12 +5,15 @@
 ```python
 import asyncio
 from graphrag_storage import StorageConfig, create_storage, StorageType
-from graphrag_cache import CacheConfig, create_cache, CacheType
+from graphrag_cache import CacheConfig, create_cache, CacheType, create_cache_key
 
 async def run():
+    cache = create_cache()
+
+    # The above is equivalent to the following:
     cache = create_cache(
         CacheConfig(
-            type=CacheType.Json
+            type=CacheType.Json,
             storage=StorageConfig(
                 type=StorageType.File,
                 base_dir="cache"
@@ -20,6 +23,14 @@ async def run():
 
     await cache.set("my_key", {"some": "object to cache"})
     print(await cache.get("my_key"))
+
+    # create cache key from data dict.
+    cache_key = create_cache_key({
+        "some_arg": "some_value",
+        "something_else": 5
+    })
+    await cache.set(cache_key, {"some": "object to cache"})
+    print(await cache.get(cache_key))
 
 if __name__ == "__main__":
     asyncio.run(run())

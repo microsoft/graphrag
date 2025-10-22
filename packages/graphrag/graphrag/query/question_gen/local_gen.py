@@ -5,10 +5,12 @@
 
 import logging
 import time
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
+
+from graphrag_llm.tokenizer import Tokenizer
+from graphrag_llm.utils import CompletionMessagesBuilder
 
 from graphrag.callbacks.llm_callbacks import BaseLLMCallback
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.query.question_gen_system_prompt import QUESTION_SYSTEM_PROMPT
 from graphrag.query.context_builder.builders import (
     ContextBuilderResult,
@@ -18,7 +20,12 @@ from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
 from graphrag.query.question_gen.base import BaseQuestionGen, QuestionResult
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
+
+    from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionChunk
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +35,7 @@ class LocalQuestionGen(BaseQuestionGen):
 
     def __init__(
         self,
-        model: ChatModel,
+        model: "LLMCompletion",
         context_builder: LocalContextBuilder,
         tokenizer: Tokenizer | None = None,
         system_prompt: str = QUESTION_SYSTEM_PROMPT,
@@ -94,19 +101,28 @@ class LocalQuestionGen(BaseQuestionGen):
             system_prompt = self.system_prompt.format(
                 context_data=context_data, question_count=question_count
             )
-            question_messages = [
-                {"role": "system", "content": system_prompt},
-            ]
+
+            messages_builder = (
+                CompletionMessagesBuilder()
+                .add_system_message(system_prompt)
+                .add_user_message(question_text)
+            )
 
             response = ""
-            async for chunk in self.model.achat_stream(
-                prompt=question_text,
-                history=question_messages,
-                model_parameters=self.model_params,
-            ):
-                response += chunk
+
+            response_stream: AsyncIterator[
+                LLMCompletionChunk
+            ] = await self.model.completion_async(
+                messages=messages_builder.build(),
+                stream=True,
+                **self.model_params,
+            )  # type: ignore
+
+            async for chunk in response_stream:
+                response_text = chunk.choices[0].delta.content or ""
+                response += response_text
                 for callback in self.callbacks:
-                    callback.on_llm_new_token(chunk)
+                    callback.on_llm_new_token(response_text)
 
             return QuestionResult(
                 response=response.split("\n"),
@@ -176,20 +192,28 @@ class LocalQuestionGen(BaseQuestionGen):
             system_prompt = self.system_prompt.format(
                 context_data=context_data, question_count=question_count
             )
-            question_messages = [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": question_text},
-            ]
+
+            messages_builder = (
+                CompletionMessagesBuilder()
+                .add_system_message(system_prompt)
+                .add_user_message(question_text)
+            )
 
             response = ""
-            async for chunk in self.model.achat_stream(
-                prompt=question_text,
-                history=question_messages,
-                model_parameters=self.model_params,
-            ):
-                response += chunk
+
+            response_stream: AsyncIterator[
+                LLMCompletionChunk
+            ] = await self.model.completion_async(
+                messages=messages_builder.build(),
+                stream=True,
+                **self.model_params,
+            )  # type: ignore
+
+            async for chunk in response_stream:
+                response_text = chunk.choices[0].delta.content or ""
+                response += response_text
                 for callback in self.callbacks:
-                    callback.on_llm_new_token(chunk)
+                    callback.on_llm_new_token(response_text)
 
             return QuestionResult(
                 response=response.split("\n"),

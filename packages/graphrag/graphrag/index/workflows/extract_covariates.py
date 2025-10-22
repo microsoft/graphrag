@@ -4,10 +4,13 @@
 """A module containing run_workflow method definition."""
 
 import logging
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 import pandas as pd
+from graphrag_llm.completion import create_completion
 
+from graphrag.cache.cache_key_creator import cache_key_creator
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.defaults import DEFAULT_ENTITY_TYPES
 from graphrag.config.enums import AsyncType
@@ -18,9 +21,10 @@ from graphrag.index.operations.extract_covariates.extract_covariates import (
 )
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.language_model.manager import ModelManager
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 logger = logging.getLogger(__name__)
 
@@ -35,14 +39,14 @@ async def run_workflow(
     if config.extract_claims.enabled:
         text_units = await load_table_from_storage("text_units", context.output_storage)
 
-        model_config = config.get_language_model_config(config.extract_claims.model_id)
+        model_config = config.get_completion_model_config(
+            config.extract_claims.completion_model_id
+        )
 
-        model = ModelManager().get_or_create_chat_model(
-            name=config.extract_claims.model_instance_name,
-            model_type=model_config.type,
-            config=model_config,
-            callbacks=context.callbacks,
-            cache=context.cache,
+        model = create_completion(
+            model_config,
+            cache=context.cache.child(config.extract_claims.model_instance_name),
+            cache_key_creator=cache_key_creator,
         )
 
         prompts = config.extract_claims.resolved_prompts()
@@ -56,8 +60,8 @@ async def run_workflow(
             claim_description=config.extract_claims.description,
             prompt=prompts.extraction_prompt,
             entity_types=DEFAULT_ENTITY_TYPES,
-            num_threads=model_config.concurrent_requests,
-            async_type=model_config.async_mode,
+            num_threads=config.concurrent_requests,
+            async_type=config.async_mode,
         )
 
         await write_table_to_storage(output, "covariates", context.output_storage)
@@ -69,7 +73,7 @@ async def run_workflow(
 async def extract_covariates(
     text_units: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    model: ChatModel,
+    model: "LLMCompletion",
     covariate_type: str,
     max_gleanings: int,
     claim_description: str,

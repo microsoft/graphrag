@@ -44,6 +44,7 @@ dev = [
     "ruff~=0.8",
     "semversioner~=2.0",
     "update-toml~=0.2",
+    "pytest-xdist[psutil]~=3.8.0",
 ]
 
 [tool.uv]
@@ -59,6 +60,7 @@ graphrag-input = { workspace = true }
 graphrag-storage = { workspace = true }
 graphrag-cache = { workspace = true }
 graphrag-vectors = { workspace = true }
+graphrag-llm = { workspace = true }
 
 # Keep poethepoet for task management to minimize changes
 [tool.poe.tasks]
@@ -79,6 +81,7 @@ _semversioner_update_graphrag_storage_toml_version = "update-toml update --file 
 _semversioner_update_graphrag_cache_toml_version = "update-toml update --file packages/graphrag-cache/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
 _semversioner_update_graphrag_input_toml_version = "update-toml update --file packages/graphrag-input/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
 _semversioner_update_graphrag_vectors_toml_version = "update-toml update --file packages/graphrag-vectors/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_llm_toml_version = "update-toml update --file packages/graphrag-llm/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
 _semversioner_update_workspace_dependency_versions = "python -m scripts.update_workspace_dependency_versions"
 semversioner_add = "semversioner add-change"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
@@ -89,7 +92,7 @@ _test_all = "coverage run -m pytest ./tests"
 test_unit = "pytest ./tests/unit"
 test_integration = "pytest ./tests/integration"
 test_smoke = "pytest ./tests/smoke"
-test_notebook = "pytest ./tests/notebook"
+test_notebook = "pytest -n auto ./tests/notebook"
 test_verbs = "pytest ./tests/verbs"
 index = "python -m graphrag index"
 update = "python -m graphrag update"
@@ -117,6 +120,8 @@ sequence = [
     '_semversioner_update_graphrag_input_toml_version',
     '_semversioner_update_graphrag_storage_toml_version',
     '_semversioner_update_graphrag_cache_toml_version',
+    "_semversioner_update_graphrag_vectors_toml_version",
+    '_semversioner_update_graphrag_llm_toml_version',
     '_semversioner_update_workspace_dependency_versions',
     '_sync',
 ]
@@ -235,6 +240,8 @@ include = [
     "packages/graphrag/graphrag", 
     "packages/graphrag-common/graphrag_common", 
     "packages/graphrag-storage/graphrag_storage", 
+    "packages/graphrag-cache/graphrag_cache",
+    "packages/graphrag-llm/graphrag_llm",
     "tests"
 ]
 exclude = ["**/node_modules", "**/__pycache__"]
