@@ -7,7 +7,6 @@ import os
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
 from graphrag.vector_stores.base import VectorStoreDocument

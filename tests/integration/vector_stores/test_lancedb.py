@@ -8,7 +8,6 @@ import tempfile
 
 import numpy as np
 import pytest
-
 from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.vector_stores.base import VectorStoreDocument
 from graphrag.vector_stores.lancedb import LanceDBVectorStore

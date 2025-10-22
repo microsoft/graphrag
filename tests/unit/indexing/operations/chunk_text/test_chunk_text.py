@@ -7,7 +7,6 @@ from unittest.mock import ANY, Mock
 
 import pandas as pd
 import pytest
-
 from graphrag.config.enums import ChunkStrategyType
 from graphrag.index.operations.chunk_text.chunk_text import (
     _get_num_total,

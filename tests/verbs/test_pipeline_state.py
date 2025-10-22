@@ -9,6 +9,7 @@ from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.workflows.factory import PipelineFactory
+
 from tests.verbs.util import DEFAULT_MODEL_CONFIG
 
 

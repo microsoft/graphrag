@@ -1,8 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from pandas.testing import assert_series_equal
-
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import ModelType
 from graphrag.data_model.schemas import COVARIATES_FINAL_COLUMNS
@@ -10,6 +8,7 @@ from graphrag.index.workflows.extract_covariates import (
     run_workflow,
 )
 from graphrag.utils.storage import load_table_from_storage
+from pandas.testing import assert_series_equal
 
 from .util import (
     DEFAULT_MODEL_CONFIG,

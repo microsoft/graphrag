@@ -2,7 +2,6 @@
 # Licensed under the MIT License
 
 import pytest
-
 from graphrag.config.embeddings import create_index_name
 
 

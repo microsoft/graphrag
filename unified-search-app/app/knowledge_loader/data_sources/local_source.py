@@ -8,10 +8,9 @@ import os
 from pathlib import Path
 
 import pandas as pd
-from knowledge_loader.data_sources.typing import Datasource
-
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from knowledge_loader.data_sources.typing import Datasource
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("azure").setLevel(logging.WARNING)

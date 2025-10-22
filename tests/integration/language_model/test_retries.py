@@ -6,7 +6,6 @@
 import time
 
 import pytest
-
 from graphrag.language_model.providers.litellm.services.retry.retry_factory import (
     RetryFactory,
 )

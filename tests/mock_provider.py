@@ -6,8 +6,6 @@
 from collections.abc import AsyncGenerator, Generator
 from typing import Any
 
-from pydantic import BaseModel
-
 from graphrag.config.enums import ModelType
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.language_model.response.base import (
@@ -15,6 +13,7 @@ from graphrag.language_model.response.base import (
     BaseModelResponse,
     ModelResponse,
 )
+from pydantic import BaseModel
 
 
 class MockChatLLM:

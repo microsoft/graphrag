@@ -6,7 +6,6 @@ from unittest.mock import MagicMock
 
 import pytest
 import tiktoken
-
 from graphrag.index.text_splitting.text_splitting import (
     NoopTextSplitter,
     TokenChunkerOptions,

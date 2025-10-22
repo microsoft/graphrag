@@ -14,7 +14,6 @@ from unittest import mock
 
 import pandas as pd
 import pytest
-
 from graphrag.query.context_builder.community_context import (
     NO_COMMUNITY_RECORDS_WARNING,
 )

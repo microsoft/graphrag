@@ -6,7 +6,6 @@ These tests will test the VectorStoreFactory class and the creation of each vect
 """
 
 import pytest
-
 from graphrag.config.enums import VectorStoreType
 from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore

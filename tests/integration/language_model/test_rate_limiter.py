@@ -9,13 +9,13 @@ from math import ceil
 from queue import Queue
 
 import pytest
-
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter import (
     RateLimiter,
 )
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter_factory import (
     RateLimiterFactory,
 )
+
 from tests.integration.language_model.utils import (
     assert_max_num_values_per_period,
     assert_stagger,

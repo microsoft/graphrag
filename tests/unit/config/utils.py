@@ -3,8 +3,6 @@
 
 from dataclasses import asdict
 
-from pydantic import BaseModel
-
 import graphrag.config.defaults as defs
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
@@ -32,6 +30,7 @@ from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
 from graphrag.config.models.vector_store_config import VectorStoreConfig
+from pydantic import BaseModel
 
 FAKE_API_KEY = "NOT_AN_API_KEY"
 
