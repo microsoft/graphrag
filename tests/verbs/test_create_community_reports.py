@@ -2,7 +2,7 @@
 # Licensed under the MIT License
 
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.schemas import COMMUNITY_REPORTS_FINAL_COLUMNS
 from graphrag.index.operations.summarize_communities.community_reports_extractor import (
     CommunityReportResponse,
@@ -50,7 +50,7 @@ async def test_create_community_reports():
         ]
     )
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
     config.models["default_chat_model"].type = "mock_chat"
     config.models["default_chat_model"].responses = MOCK_RESPONSES  # type: ignore
 

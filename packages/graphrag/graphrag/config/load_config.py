@@ -3,16 +3,11 @@
 
 """Default method for loading config."""
 
-import json
-import os
 from pathlib import Path
-from string import Template
 from typing import Any
 
-import yaml
-from dotenv import load_dotenv
+import graphrag_common.config as graphrag_config
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 _default_config_files = ["settings.yaml", "settings.yml", "settings.json"]
@@ -46,41 +41,6 @@ def _search_for_config_in_root_dir(root: str | Path) -> Path | None:
     return None
 
 
-def _parse_env_variables(text: str) -> str:
-    """Parse environment variables in the configuration text.
-
-    Parameters
-    ----------
-    text : str
-        The configuration text.
-
-    Returns
-    -------
-    str
-        The configuration text with environment variables parsed.
-
-    Raises
-    ------
-    KeyError
-        If an environment variable is not found.
-    """
-    return Template(text).substitute(os.environ)
-
-
-def _load_dotenv(config_path: Path | str) -> None:
-    """Load the .env file if it exists in the same directory as the config file.
-
-    Parameters
-    ----------
-    config_path : Path | str
-        The path to the config file.
-    """
-    config_path = Path(config_path)
-    dotenv_path = config_path.parent / ".env"
-    if dotenv_path.exists():
-        load_dotenv(dotenv_path)
-
-
 def _get_config_path(root_dir: Path, config_filepath: Path | None) -> Path:
     """Get the configuration file path.
 
@@ -112,37 +72,6 @@ def _get_config_path(root_dir: Path, config_filepath: Path | None) -> Path:
     return config_path
 
 
-def _apply_overrides(data: dict[str, Any], overrides: dict[str, Any]) -> None:
-    """Apply the overrides to the raw configuration."""
-    for key, value in overrides.items():
-        keys = key.split(".")
-        target = data
-        current_path = keys[0]
-        for k in keys[:-1]:
-            current_path += f".{k}"
-            target_obj = target.get(k, {})
-            if not isinstance(target_obj, dict):
-                msg = f"Cannot override non-dict value: data[{current_path}] is not a dict."
-                raise TypeError(msg)
-            target[k] = target_obj
-            target = target[k]
-        target[keys[-1]] = value
-
-
-def _parse(file_extension: str, contents: str) -> dict[str, Any]:
-    """Parse configuration."""
-    match file_extension:
-        case ".yaml" | ".yml":
-            return yaml.safe_load(contents)
-        case ".json":
-            return json.loads(contents)
-        case _:
-            msg = (
-                f"Unable to parse config. Unsupported file extension: {file_extension}"
-            )
-            raise ValueError(msg)
-
-
 def load_config(
     root_dir: Path,
     config_filepath: Path | None = None,
@@ -170,22 +99,17 @@ def load_config(
     ------
     FileNotFoundError
         If the config file is not found.
-    ValueError
-        If the config file extension is not supported.
-    TypeError
-        If applying cli overrides to the config fails.
-    KeyError
-        If config file references a non-existent environment variable.
+    ConfigParsingError
+        If there was an error parsing the config file or its environment variables.
     ValidationError
         If there are pydantic validation errors when instantiating the config.
     """
-    root = root_dir.resolve()
-    config_path = _get_config_path(root, config_filepath)
-    _load_dotenv(config_path)
-    config_extension = config_path.suffix
-    config_text = config_path.read_text(encoding="utf-8")
-    config_text = _parse_env_variables(config_text)
-    config_data = _parse(config_extension, config_text)
-    if cli_overrides:
-        _apply_overrides(config_data, cli_overrides)
-    return create_graphrag_config(config_data, root_dir=str(root))
+    config_path = _get_config_path(root_dir, config_filepath)
+    dotenv_path = config_path.parent / ".env"
+    dotenv_path = dotenv_path if dotenv_path.is_file() else None
+    return graphrag_config.load_config(
+        config_initializer=GraphRagConfig,
+        config_path=config_path,
+        overrides=cli_overrides,
+        dot_env_path=dotenv_path,
+    )

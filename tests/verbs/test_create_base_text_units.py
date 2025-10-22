@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.workflows.create_base_text_units import run_workflow
 from graphrag.utils.storage import load_table_from_storage
 
@@ -19,7 +19,7 @@ async def test_create_base_text_units():
 
     context = await create_test_context()
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
 
     await run_workflow(config, context)
 
@@ -33,7 +33,7 @@ async def test_create_base_text_units_metadata():
 
     context = await create_test_context()
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
     config.input.metadata = ["title"]
     config.chunks.prepend_metadata = True
 
@@ -50,7 +50,7 @@ async def test_create_base_text_units_metadata_included_in_chunk():
 
     context = await create_test_context()
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config = GraphRagConfig({"models": DEFAULT_MODEL_CONFIG})  # type: ignore
     config.input.metadata = ["title"]
     config.chunks.prepend_metadata = True
     config.chunks.chunk_size_includes_metadata = True

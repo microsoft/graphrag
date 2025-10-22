@@ -1,8 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import ModelType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.schemas import COVARIATES_FINAL_COLUMNS
 from graphrag.index.workflows.extract_covariates import (
     run_workflow,
@@ -30,7 +30,7 @@ async def test_extract_covariates():
         storage=["text_units"],
     )
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
     config.extract_claims.enabled = True
     config.extract_claims.description = "description"
     llm_settings = config.get_language_model_config(config.extract_claims.model_id)

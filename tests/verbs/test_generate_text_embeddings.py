@@ -1,11 +1,11 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.embeddings import (
     all_embeddings,
 )
 from graphrag.config.enums import ModelType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.workflows.generate_text_embeddings import (
     run_workflow,
 )
@@ -28,7 +28,7 @@ async def test_generate_text_embeddings():
         ]
     )
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
     llm_settings = config.get_language_model_config(config.embed_text.model_id)
     llm_settings.type = ModelType.MockEmbedding
 

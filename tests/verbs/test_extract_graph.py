@@ -1,8 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import ModelType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.workflows.extract_graph import (
     run_workflow,
 )
@@ -43,12 +43,12 @@ async def test_extract_graph():
     extraction_model = DEFAULT_CHAT_MODEL_CONFIG.copy()
     extraction_model["type"] = ModelType.MockChat
     extraction_model["responses"] = MOCK_LLM_ENTITY_RESPONSES  # type: ignore
-    config = create_graphrag_config({
-        "models": {
+    config = GraphRagConfig(
+        models={
             "default_chat_model": extraction_model,
             "default_embedding_model": DEFAULT_EMBEDDING_MODEL_CONFIG,
-        }
-    })
+        }  # type: ignore
+    )
 
     summarize_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id

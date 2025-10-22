@@ -5,6 +5,7 @@
 
 import logging
 from pathlib import Path
+from typing import Any
 
 import graphrag.api as api
 from graphrag.config.load_config import load_config
@@ -59,7 +60,14 @@ async def prompt_tune(
     - min_examples_required: The minimum number of examples required for entity extraction prompts.
     """
     root_path = Path(root).resolve()
-    graph_config = load_config(root_path, config)
+    cli_overrides: dict[str, Any] = {
+        "root_dir": str(root_path),
+    }
+    graph_config = load_config(
+        root_dir=root_path,
+        config_filepath=config,
+        cli_overrides=cli_overrides,
+    )
 
     # override chunking config in the configuration
     if chunk_size != graph_config.chunks.size:

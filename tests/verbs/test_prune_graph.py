@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.index.workflows.prune_graph import (
     run_workflow,
@@ -19,7 +19,7 @@ async def test_prune_graph():
         storage=["entities", "relationships"],
     )
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
     config.prune_graph = PruneGraphConfig(
         min_node_freq=4, min_node_degree=0, min_edge_weight_pct=0
     )

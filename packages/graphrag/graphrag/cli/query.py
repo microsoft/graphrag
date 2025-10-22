@@ -37,10 +37,16 @@ def run_global_search(
     Loads index files required for global search and calls the Query API.
     """
     root = root_dir.resolve()
-    cli_overrides = {}
+    cli_overrides: dict[str, Any] = {
+        "root_dir": str(root),
+    }
     if data_dir:
-        cli_overrides["output.base_dir"] = str(data_dir)
-    config = load_config(root, config_filepath, cli_overrides)
+        cli_overrides["output"] = {"base_dir": str(data_dir)}
+    config = load_config(
+        root_dir=root,
+        config_filepath=config_filepath,
+        cli_overrides=cli_overrides,
+    )
 
     dataframe_dict = _resolve_output_files(
         config=config,
@@ -122,10 +128,16 @@ def run_local_search(
     Loads index files required for local search and calls the Query API.
     """
     root = root_dir.resolve()
-    cli_overrides = {}
+    cli_overrides: dict[str, Any] = {
+        "root_dir": str(root),
+    }
     if data_dir:
-        cli_overrides["output.base_dir"] = str(data_dir)
-    config = load_config(root, config_filepath, cli_overrides)
+        cli_overrides["output"] = {"base_dir": str(data_dir)}
+    config = load_config(
+        root_dir=root,
+        config_filepath=config_filepath,
+        cli_overrides=cli_overrides,
+    )
 
     dataframe_dict = _resolve_output_files(
         config=config,
@@ -218,10 +230,16 @@ def run_drift_search(
     Loads index files required for local search and calls the Query API.
     """
     root = root_dir.resolve()
-    cli_overrides = {}
+    cli_overrides: dict[str, Any] = {
+        "root_dir": str(root),
+    }
     if data_dir:
-        cli_overrides["output.base_dir"] = str(data_dir)
-    config = load_config(root, config_filepath, cli_overrides)
+        cli_overrides["output"] = {"base_dir": str(data_dir)}
+    config = load_config(
+        root_dir=root,
+        config_filepath=config_filepath,
+        cli_overrides=cli_overrides,
+    )
 
     dataframe_dict = _resolve_output_files(
         config=config,
@@ -308,10 +326,16 @@ def run_basic_search(
     Loads index files required for basic search and calls the Query API.
     """
     root = root_dir.resolve()
-    cli_overrides = {}
+    cli_overrides: dict[str, Any] = {
+        "root_dir": str(root),
+    }
     if data_dir:
-        cli_overrides["output.base_dir"] = str(data_dir)
-    config = load_config(root, config_filepath, cli_overrides)
+        cli_overrides["output"] = {"base_dir": str(data_dir)}
+    config = load_config(
+        root_dir=root,
+        config_filepath=config_filepath,
+        cli_overrides=cli_overrides,
+    )
 
     dataframe_dict = _resolve_output_files(
         config=config,
