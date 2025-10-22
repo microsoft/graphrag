@@ -208,7 +208,7 @@ def _create_vector_store(
         and vector_store_config.index_prefix
     ):
         single_embedding_config.index_name = (
-            f"{vector_store_config.index_prefix}-{single_embedding_config.index_name}"
+            f"{vector_store_config.index_prefix}_{single_embedding_config.index_name}"
         )
 
     if single_embedding_config.index_name is None:
