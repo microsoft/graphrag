@@ -37,5 +37,5 @@ def create_index_name(
         raise KeyError(msg)
 
     if index_prefix:
-        return f"{index_prefix}_{embedding_name}".replace(".", "-")
-    return embedding_name.replace(".", "_")
+        return f"{index_prefix}_{embedding_name}"
+    return embedding_name
