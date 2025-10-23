@@ -1,7 +1,7 @@
 """OpenTelemetry integration for LazyGraphRAG."""
 
 from .setup import setup_telemetry, shutdown_telemetry, get_tracer, get_meter
-from .decorators import trace_operation
+from .decorators import add_trace
 from .config import TelemetryConfig, is_telemetry_disabled
 from .logging_integration import (
     setup_trace_logging,
@@ -18,7 +18,7 @@ __all__ = [
     "shutdown_telemetry", 
     "get_tracer",
     "get_meter",
-    "trace_operation", 
+    "add_trace", 
     "TelemetryConfig",
     "is_telemetry_disabled",
     "setup_trace_logging",

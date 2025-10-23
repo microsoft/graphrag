@@ -79,7 +79,7 @@ export OTEL_TRACE_SAMPLE_RATE="1.0"  # Sample 100% of traces
 export OTEL_DEPLOYMENT_ENVIRONMENT="production"
 
 # Disable telemetry completely (if needed)
-export LAZY_GRAPHRAG_DISABLE_TELEMETRY="false"
+export GRAPHRAG_DISABLE_TELEMETRY="false"
 ```
 
 ### Programmatic Configuration
@@ -105,7 +105,7 @@ setup_telemetry(config)
 The following operations are automatically traced:
 
 1. **API Operations**
-   - `build_index()` - Complete indexing pipeline with `@trace_operation` decorator
+   - `build_index()` - Complete indexing pipeline with `@trace` decorator
    - Query processing operations
 
 2. **Workflow Operations**
@@ -134,7 +134,7 @@ Add tracing to your own functions:
 
 ```python
 from graphrag.telemetry.decorators import (
-    trace_operation,
+    trace,
     trace_workflow,
     trace_vector_store_operation,
     trace_llm_operation,
@@ -142,7 +142,7 @@ from graphrag.telemetry.decorators import (
     trace_retrieval_operation
 )
 
-@trace_operation("my_custom_function")
+@add_trace("my_custom_function")
 async def my_function():
     """This function will be traced."""
     pass
@@ -260,7 +260,7 @@ The telemetry system automatically protects sensitive data:
 Completely disable telemetry:
 
 ```bash
-export LAZY_GRAPHRAG_DISABLE_TELEMETRY="true"
+export GRAPHRAG_DISABLE_TELEMETRY="true"
 ```
 
 Or disable specific features:
@@ -286,7 +286,7 @@ export OTEL_ENABLE_METRICS="false"
 
 3. **High overhead**
    - Reduce sampling rate: `export OTEL_TRACE_SAMPLE_RATE="0.1"`
-   - Disable if not needed: `export LAZY_GRAPHRAG_DISABLE_TELEMETRY="true"`
+   - Disable if not needed: `export GRAPHRAG_DISABLE_TELEMETRY="true"`
 
 ### Debug Mode
 

@@ -8,8 +8,12 @@ from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.tokenizer.litellm_tokenizer import LitellmTokenizer
 from graphrag.tokenizer.tiktoken_tokenizer import TiktokenTokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
+from graphrag.telemetry.decorators import add_trace
 
-
+@add_trace(
+    operation_name="tokenizer.get_tokenizer",
+    attributes={"component": "tokenizer"},
+)
 def get_tokenizer(
     model_config: LanguageModelConfig | None = None,
     encoding_model: str = ENCODING_MODEL,

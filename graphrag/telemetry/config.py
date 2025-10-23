@@ -49,4 +49,4 @@ class TelemetryConfig:
 
 def is_telemetry_disabled() -> bool:
     """Check if telemetry is disabled via environment variable."""
-    return os.getenv("LAZY_GRAPHRAG_DISABLE_TELEMETRY", "true").lower() == "true"
+    return os.getenv("GRAPHRAG_DISABLE_TELEMETRY", "true").lower() == "true"

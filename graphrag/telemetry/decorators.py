@@ -3,7 +3,7 @@
 import functools
 import inspect
 import logging
-from typing import Any, Callable, Dict, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, Optional, TypeVar
 
 from opentelemetry import trace
 from opentelemetry.trace import Status, StatusCode
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 F = TypeVar('F', bound=Callable[..., Any])
 
-def trace_operation(
+def add_trace(
     operation_name: Optional[str] = None,
     attributes: Optional[Dict[str, Any]] = None,
     record_exception: bool = True,
@@ -135,7 +135,7 @@ def trace_workflow(workflow_name: str) -> Callable[[F], F]:
     Returns:
         Decorated function with workflow-specific tracing.
     """
-    return trace_operation(
+    return add_trace(
         operation_name=f"workflow.{workflow_name}",
         attributes={
             "component": "workflow",
@@ -153,7 +153,7 @@ def trace_vector_store_operation(operation_type: str) -> Callable[[F], F]:
     Returns:
         Decorated function with vector store-specific tracing.
     """
-    return trace_operation(
+    return add_trace(
         operation_name=f"vector_store.{operation_type}",
         attributes={
             "component": "vector_store",
@@ -177,7 +177,7 @@ def trace_llm_operation(model_name: Optional[str] = None, operation_name: Option
     if model_name:
         attributes["llm.model"] = model_name
     
-    return trace_operation(
+    return add_trace(
         operation_name=operation_name,
         attributes=attributes,
     )
@@ -192,7 +192,7 @@ def trace_search_operation(operation_type: str) -> Callable[[F], F]:
     Returns:
         Decorated function with search-specific tracing.
     """
-    return trace_operation(
+    return add_trace(
         operation_name=f"search.{operation_type}",
         attributes={
             "component": "search",
@@ -210,7 +210,7 @@ def trace_retrieval_operation(operation_type: str) -> Callable[[F], F]:
     Returns:
         Decorated function with retrieval-specific tracing.
     """
-    return trace_operation(
+    return add_trace(
         operation_name=f"retrieval.{operation_type}",
         attributes={
             "component": "retrieval",
