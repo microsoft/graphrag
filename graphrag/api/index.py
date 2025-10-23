@@ -22,10 +22,18 @@ from graphrag.index.run.utils import create_callback_chain
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.index.workflows.factory import PipelineFactory
 from graphrag.logger.standard_logging import init_loggers
+from graphrag.telemetry.decorators import trace_operation
 
 logger = logging.getLogger(__name__)
 
 
+@trace_operation(
+    operation_name="build_index",
+    attributes={
+        "component": "indexing",
+        "operation": "build_index",
+    }
+)
 async def build_index(
     config: GraphRagConfig,
     method: IndexingMethod | str = IndexingMethod.Standard,

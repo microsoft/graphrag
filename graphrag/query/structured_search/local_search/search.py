@@ -18,6 +18,7 @@ from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
+from graphrag.telemetry.decorators import trace_search_operation
 from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
@@ -48,6 +49,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         self.callbacks = callbacks or []
         self.response_type = response_type
 
+    @trace_search_operation("local_search")
     async def search(
         self,
         query: str,

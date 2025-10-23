@@ -31,6 +31,7 @@ from graphrag.query.context_builder.conversation_history import (
 )
 from graphrag.query.llm.text_utils import try_parse_json_object
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
+from graphrag.telemetry.decorators import trace_search_operation
 from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
@@ -132,6 +133,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         ):
             yield response
 
+    @trace_search_operation("global_search")
     async def search(
         self,
         query: str,
