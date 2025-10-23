@@ -197,7 +197,6 @@ For example:
 vector_store:
   type: lancedb
   db_uri: output/lancedb
-  container_name: christmas-carol
   index_prefix: "christmas-carol"
   embeddings_schema:
     text_unit.text:
