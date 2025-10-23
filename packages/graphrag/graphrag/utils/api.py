@@ -26,9 +26,7 @@ def get_embedding_store(
 ) -> BaseVectorStore:
     """Get the embedding description store."""
     vector_store_type = store["type"]
-    index_name = create_index_name(
-        store.get("container_name", "default"), embedding_name
-    )
+    index_name = create_index_name(store.get("index_prefix", ""), embedding_name)
 
     embeddings_schema: dict[str, VectorStoreSchemaConfig] = store.get(
         "embeddings_schema", {}
