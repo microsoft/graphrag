@@ -8,8 +8,9 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
+from graphrag_factory import Factory
+
 from graphrag.config.enums import ReportingType
-from graphrag.factory.factory import Factory
 
 LOG_FORMAT = "%(asctime)s.%(msecs)04d - %(levelname)s - %(name)s - %(message)s"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"

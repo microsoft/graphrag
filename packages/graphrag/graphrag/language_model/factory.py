@@ -3,8 +3,9 @@
 
 """A package containing a factory for supported llm types."""
 
+from graphrag_factory import Factory
+
 from graphrag.config.enums import ModelType
-from graphrag.factory.factory import Factory
 from graphrag.language_model.protocol.base import ChatModel, EmbeddingModel
 from graphrag.language_model.providers.litellm.chat_model import LitellmChatModel
 from graphrag.language_model.providers.litellm.embedding_model import (

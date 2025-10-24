@@ -5,9 +5,11 @@
 
 from abc import ABC
 from collections.abc import Callable
-from typing import Any, ClassVar, Generic, TypeVar
+from typing import Any, ClassVar, Generic, Literal, TypeVar
 
 T = TypeVar("T", covariant=True)
+
+ServiceScope = Literal["singleton", "transient"]
 
 
 class Factory(ABC, Generic[T]):
@@ -23,18 +25,26 @@ class Factory(ABC, Generic[T]):
 
     def __init__(self):
         if not hasattr(self, "_initialized"):
-            self._services: dict[str, Callable[..., T]] = {}
+            self._service_initializers: dict[
+                str, tuple[ServiceScope, Callable[..., T]]
+            ] = {}
+            self._initialized_services: dict[str, T] = {}
             self._initialized = True
 
     def __contains__(self, strategy: str) -> bool:
         """Check if a strategy is registered."""
-        return strategy in self._services
+        return strategy in self._service_initializers
 
     def keys(self) -> list[str]:
         """Get a list of registered strategy names."""
-        return list(self._services.keys())
+        return list(self._service_initializers.keys())
 
-    def register(self, strategy: str, initializer: Callable[..., T]) -> None:
+    def register(
+        self,
+        strategy: str,
+        initializer: Callable[..., T],
+        scope: ServiceScope = "transient",
+    ) -> None:
         """
         Register a new service.
 
@@ -42,8 +52,9 @@ class Factory(ABC, Generic[T]):
         ----
             strategy: The name of the strategy.
             initializer: A callable that creates an instance of T.
+            scope: The service scope, either 'singleton' or 'transient'.
         """
-        self._services[strategy] = initializer
+        self._service_initializers[strategy] = (scope, initializer)
 
     def create(self, strategy: str, init_args: dict[str, Any] | None = None) -> T:
         """
@@ -62,7 +73,16 @@ class Factory(ABC, Generic[T]):
         ------
             ValueError: If the strategy is not registered.
         """
-        if strategy not in self._services:
+        if strategy not in self._service_initializers:
             msg = f"Strategy '{strategy}' is not registered."
             raise ValueError(msg)
-        return self._services[strategy](**(init_args or {}))
+
+        scope, service_initializer = self._service_initializers[strategy]
+        if scope == "singleton":
+            if strategy not in self._initialized_services:
+                self._initialized_services[strategy] = service_initializer(
+                    **(init_args or {})
+                )
+            return self._initialized_services[strategy]
+
+        return service_initializer(**(init_args or {}))

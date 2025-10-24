@@ -3,7 +3,8 @@
 
 """LiteLLM Rate Limiter Factory."""
 
-from graphrag.factory.factory import Factory
+from graphrag_factory import Factory
+
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter import (
     RateLimiter,
 )

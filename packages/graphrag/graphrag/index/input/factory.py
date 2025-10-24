@@ -5,8 +5,9 @@
 
 import logging
 
+from graphrag_factory import Factory
+
 from graphrag.config.enums import InputFileType
-from graphrag.factory.factory import Factory
 from graphrag.index.input.csv import CSVFileReader
 from graphrag.index.input.input_reader import InputReader
 from graphrag.index.input.json import JSONFileReader

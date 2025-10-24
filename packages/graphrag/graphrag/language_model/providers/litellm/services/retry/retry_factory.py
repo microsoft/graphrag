@@ -3,7 +3,8 @@
 
 """LiteLLM Retry Factory."""
 
-from graphrag.factory.factory import Factory
+from graphrag_factory import Factory
+
 from graphrag.language_model.providers.litellm.services.retry.exponential_retry import (
     ExponentialRetry,
 )

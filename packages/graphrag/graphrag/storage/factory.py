@@ -5,8 +5,9 @@
 
 from __future__ import annotations
 
+from graphrag_factory import Factory
+
 from graphrag.config.enums import StorageType
-from graphrag.factory.factory import Factory
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage

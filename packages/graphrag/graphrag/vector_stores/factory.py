@@ -5,8 +5,9 @@
 
 from __future__ import annotations
 
+from graphrag_factory import Factory
+
 from graphrag.config.enums import VectorStoreType
-from graphrag.factory.factory import Factory
 from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
 from graphrag.vector_stores.base import BaseVectorStore
 from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
