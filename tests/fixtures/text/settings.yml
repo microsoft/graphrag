@@ -9,8 +9,8 @@ models:
     model: gpt-4.1
     retry_strategy: exponential_backoff
     rate_limit_strategy: static
-    tokens_per_minute: 500_000
-    requests_per_minute: 500
+    tokens_per_minute: 250_000
+    requests_per_minute: 250
     model_supports_json: true
     concurrent_requests: 25
   default_embedding_model:
@@ -23,8 +23,8 @@ models:
     model: text-embedding-3-large
     retry_strategy: exponential_backoff
     rate_limit_strategy: static
-    tokens_per_minute: 500_000
-    requests_per_minute: 500
+    tokens_per_minute: 250_000
+    requests_per_minute: 250
     concurrent_requests: 25
 
 vector_store:
