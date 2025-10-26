@@ -3,10 +3,11 @@ using System.Linq;
 using System.Text;
 using GraphRag.Config;
 using GraphRag.Tokenization;
+using Microsoft.ML.Tokenizers;
 
 namespace GraphRag.Chunking;
 
-public sealed class MarkdownTextChunker(ITokenizerProvider tokenizerProvider) : ITextChunker
+public sealed class MarkdownTextChunker : ITextChunker
 {
     public IReadOnlyList<TextChunk> Chunk(IReadOnlyList<ChunkSlice> slices, ChunkingConfig config)
     {
@@ -18,7 +19,7 @@ public sealed class MarkdownTextChunker(ITokenizerProvider tokenizerProvider) : 
             return Array.Empty<TextChunk>();
         }
 
-        var tokenizer = tokenizerProvider.GetTokenizer(config.EncodingModel);
+        var tokenizer = TokenizerRegistry.GetTokenizer(config.EncodingModel);
         var options = new MarkdownChunkerOptions
         {
             MaxTokensPerChunk = Math.Max(MinChunkSize, config.Size),
@@ -32,7 +33,7 @@ public sealed class MarkdownTextChunker(ITokenizerProvider tokenizerProvider) : 
             var fragments = Split(slice.Text, options, tokenizer);
             foreach (var fragment in fragments)
             {
-                var tokens = tokenizer.Encode(fragment);
+                var tokens = tokenizer.EncodeToIds(fragment);
                 if (tokens.Count == 0)
                 {
                     continue;
@@ -45,7 +46,7 @@ public sealed class MarkdownTextChunker(ITokenizerProvider tokenizerProvider) : 
         return results;
     }
 
-    private List<string> Split(string text, MarkdownChunkerOptions options, ITextTokenizer tokenizer)
+    private List<string> Split(string text, MarkdownChunkerOptions options, Tokenizer tokenizer)
     {
         text = NormalizeNewlines(text);
         var firstChunkDone = false;
@@ -60,7 +61,7 @@ public sealed class MarkdownTextChunker(ITokenizerProvider tokenizerProvider) : 
 
             for (var index = 1; index < rawChunks.Count; index++)
             {
-                var previousTokens = tokenizer.Encode(rawChunks[index - 1]);
+                var previousTokens = tokenizer.EncodeToIds(rawChunks[index - 1]);
                 var overlapTokens = previousTokens.Skip(Math.Max(0, previousTokens.Count - options.Overlap)).ToArray();
                 var overlapText = tokenizer.Decode(overlapTokens);
                 newChunks.Add(string.Concat(overlapText, rawChunks[index]));
@@ -77,7 +78,7 @@ public sealed class MarkdownTextChunker(ITokenizerProvider tokenizerProvider) : 
         int maxChunk1Size,
         int maxChunkNSize,
         SeparatorType separatorType,
-        ITextTokenizer tokenizer,
+        Tokenizer tokenizer,
         ref bool firstChunkDone)
     {
         if (string.IsNullOrWhiteSpace(text))
@@ -110,7 +111,7 @@ public sealed class MarkdownTextChunker(ITokenizerProvider tokenizerProvider) : 
         int maxChunk1Size,
         int maxChunkNSize,
         SeparatorType separatorType,
-        ITextTokenizer tokenizer,
+        Tokenizer tokenizer,
         ref bool firstChunkDone)
     {
         if (fragments.Count == 0)

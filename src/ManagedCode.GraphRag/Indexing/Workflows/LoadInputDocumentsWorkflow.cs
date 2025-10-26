@@ -15,6 +15,7 @@ using GraphRag.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic.FileIO;
+using GraphRag.Constants;
 
 namespace GraphRag.Indexing.Workflows;
 
@@ -32,7 +33,7 @@ internal static class LoadInputDocumentsWorkflow
             context.Stats.NumDocuments = documents.Count;
             logger?.LogInformation("Final number of documents loaded: {Count}", documents.Count);
 
-            await context.OutputStorage.WriteTableAsync("documents", documents, cancellationToken).ConfigureAwait(false);
+            await context.OutputStorage.WriteTableAsync(PipelineTableNames.Documents, documents, cancellationToken).ConfigureAwait(false);
             return new WorkflowResult(documents);
         };
     }
@@ -162,7 +163,7 @@ internal static class LoadInputDocumentsWorkflow
         }
 
         var hashComponents = values.Select(kvp => new KeyValuePair<string, object?>(kvp.Key, kvp.Value)).ToList();
-        hashComponents.Add(new KeyValuePair<string, object?>("text", text));
+        hashComponents.Add(new KeyValuePair<string, object?>(HashFieldNames.Text, text));
         var id = Hashing.GenerateSha512Hash(hashComponents);
 
         return new DocumentRecord
@@ -198,27 +199,10 @@ internal static class LoadInputDocumentsWorkflow
                     continue;
                 }
 
-                using var document = JsonDocument.Parse(jsonText);
-                if (document.RootElement.ValueKind == JsonValueKind.Array)
+                var parsed = TryParseJsonDocument(jsonText, match, inputConfig, documents, logger);
+                if (!parsed)
                 {
-                    foreach (var element in document.RootElement.EnumerateArray())
-                    {
-                        AppendJsonDocument(documents, element, match, inputConfig);
-                    }
-                }
-                else if (document.RootElement.ValueKind == JsonValueKind.Object)
-                {
-                    AppendJsonDocument(documents, document.RootElement, match, inputConfig);
-                }
-                else
-                {
-                    // Attempt to parse as JSON Lines
-                    var lines = jsonText.Split(['\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                    foreach (var line in lines)
-                    {
-                        using var lineDoc = JsonDocument.Parse(line);
-                        AppendJsonDocument(documents, lineDoc.RootElement, match, inputConfig);
-                    }
+                    AppendJsonLines(documents, jsonText, match, inputConfig, logger);
                 }
             }
             catch (Exception ex)
@@ -229,6 +213,68 @@ internal static class LoadInputDocumentsWorkflow
 
         logger?.LogInformation("Loaded {Count} JSON documents", documents.Count);
         return documents;
+    }
+
+    private static bool TryParseJsonDocument(
+        string jsonText,
+        PipelineStorageItem item,
+        InputConfig config,
+        ICollection<DocumentRecord> accumulator,
+        ILogger? logger)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(jsonText);
+            if (document.RootElement.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var element in document.RootElement.EnumerateArray())
+                {
+                    AppendJsonDocument(accumulator, element, item, config);
+                }
+
+                return true;
+            }
+
+            if (document.RootElement.ValueKind == JsonValueKind.Object)
+            {
+                AppendJsonDocument(accumulator, document.RootElement, item, config);
+                return true;
+            }
+
+            return false;
+        }
+        catch (JsonException ex)
+        {
+            logger?.LogDebug(ex, "Failed to parse JSON document {Path} as object/array, falling back to JSON Lines.", item.Path);
+            return false;
+        }
+    }
+
+    private static void AppendJsonLines(
+        ICollection<DocumentRecord> accumulator,
+        string jsonText,
+        PipelineStorageItem item,
+        InputConfig config,
+        ILogger? logger)
+    {
+        var lines = jsonText.Split(['\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        foreach (var line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                continue;
+            }
+
+            try
+            {
+                using var lineDoc = JsonDocument.Parse(line);
+                AppendJsonDocument(accumulator, lineDoc.RootElement, item, config);
+            }
+            catch (JsonException ex)
+            {
+                logger?.LogDebug(ex, "Skipping malformed JSON line in {Path}.", item.Path);
+            }
+        }
     }
 
     private static void AppendJsonDocument(
@@ -260,7 +306,7 @@ internal static class LoadInputDocumentsWorkflow
         }
 
         var hashComponents = values.Select(kvp => new KeyValuePair<string, object?>(kvp.Key, kvp.Value)).ToList();
-        hashComponents.Add(new KeyValuePair<string, object?>("text", text));
+        hashComponents.Add(new KeyValuePair<string, object?>(HashFieldNames.Text, text));
         var id = Hashing.GenerateSha512Hash(hashComponents);
 
         accumulator.Add(new DocumentRecord
@@ -320,8 +366,8 @@ internal static class LoadInputDocumentsWorkflow
 
                 var hashComponents = new List<KeyValuePair<string, object?>>
                 {
-                    new("path", match.Path),
-                    new("text", text)
+                    new(HashFieldNames.Path, match.Path),
+                    new(HashFieldNames.Text, text)
                 };
 
                 foreach (var kvp in metadata)

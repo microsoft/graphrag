@@ -9,6 +9,7 @@ using GraphRag.Logging;
 using GraphRag.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using GraphRag.Tokenization;
+using GraphRag.Constants;
 using GraphRag.Storage;
 
 namespace GraphRag.Indexing.Workflows;
@@ -21,14 +22,13 @@ internal static class CreateBaseTextUnitsWorkflow
     {
         return async (config, context, cancellationToken) =>
         {
-            var documents = await context.OutputStorage.LoadTableAsync<DocumentRecord>("documents", cancellationToken).ConfigureAwait(false);
+            var documents = await context.OutputStorage.LoadTableAsync<DocumentRecord>(PipelineTableNames.Documents, cancellationToken).ConfigureAwait(false);
             context.Stats.NumDocuments = documents.Count;
 
             var textUnits = new List<TextUnitRecord>();
             var callbacks = context.Callbacks;
             var chunkingConfig = config.Chunks;
             var chunkerResolver = context.Services.GetRequiredService<IChunkerResolver>();
-            var tokenizerProvider = context.Services.GetRequiredService<ITokenizerProvider>();
             var chunker = chunkerResolver.Resolve(chunkingConfig.Strategy);
 
             foreach (var document in documents)
@@ -39,7 +39,7 @@ internal static class CreateBaseTextUnitsWorkflow
                     ? FormatMetadata(document.Metadata)
                     : null;
 
-                var tokenizer = tokenizerProvider.GetTokenizer(chunkingConfig.EncodingModel);
+                var tokenizer = TokenizerRegistry.GetTokenizer(chunkingConfig.EncodingModel);
                 var metadataTokens = metadataPrefix is null ? 0 : tokenizer.CountTokens(metadataPrefix);
                 var chunkConfig = CreateEffectiveConfig(chunkingConfig, metadataTokens);
 
@@ -49,7 +49,7 @@ internal static class CreateBaseTextUnitsWorkflow
                 foreach (var chunk in chunks)
                 {
                     var text = metadataPrefix is null ? chunk.Text : metadataPrefix + chunk.Text;
-                    var id = Hashing.GenerateSha512Hash(("document", document.Id), ("text", text));
+                    var id = Hashing.GenerateSha512Hash((HashFieldNames.Document, document.Id), (HashFieldNames.Text, text));
                     textUnits.Add(new TextUnitRecord
                     {
                         Id = id,
@@ -69,7 +69,7 @@ internal static class CreateBaseTextUnitsWorkflow
                 .Where(unit => !string.IsNullOrWhiteSpace(unit.Text))
                 .ToArray();
 
-            await context.OutputStorage.WriteTableAsync("text_units", filtered, cancellationToken).ConfigureAwait(false);
+            await context.OutputStorage.WriteTableAsync(PipelineTableNames.TextUnits, filtered, cancellationToken).ConfigureAwait(false);
 
             return new WorkflowResult(filtered);
         };

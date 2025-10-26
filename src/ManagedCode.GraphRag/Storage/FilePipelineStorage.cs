@@ -44,17 +44,20 @@ public sealed class FilePipelineStorage : IPipelineStorage
             cancellationToken.ThrowIfCancellationRequested();
 
             var relativePath = Path.GetRelativePath(_root, file).Replace('\\', '/');
-            if (!pattern.IsMatch(relativePath))
+            var match = pattern.Match(relativePath);
+            if (!match.Success)
             {
                 continue;
             }
 
-            if (fileFilter is not null && fileFilter.Count > 0 && !MatchesFilter(relativePath, fileFilter))
+            var metadata = ExtractMetadata(pattern, match);
+
+            if (fileFilter is not null && fileFilter.Count > 0 && !MatchesFilter(metadata, fileFilter))
             {
                 continue;
             }
 
-            yield return new PipelineStorageItem(relativePath, new Dictionary<string, object?>(), File.GetCreationTimeUtc(file));
+            yield return new PipelineStorageItem(relativePath, metadata, File.GetCreationTimeUtc(file));
 
             if (maxCount.HasValue && ++count >= maxCount.Value)
             {
@@ -157,11 +160,44 @@ public sealed class FilePipelineStorage : IPipelineStorage
         return Path.GetFullPath(Path.Combine(_root, path));
     }
 
-    private static bool MatchesFilter(string path, IReadOnlyDictionary<string, object?> filter)
+    private static Dictionary<string, object?> ExtractMetadata(Regex pattern, Match match)
+    {
+        var metadata = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        foreach (var groupName in pattern.GetGroupNames())
+        {
+            if (string.Equals(groupName, "0", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            var group = match.Groups[groupName];
+            if (group.Success)
+            {
+                metadata[groupName] = group.Value;
+            }
+        }
+
+        return metadata;
+    }
+
+    private static bool MatchesFilter(IReadOnlyDictionary<string, object?> metadata, IReadOnlyDictionary<string, object?> filter)
     {
         foreach (var kvp in filter)
         {
-            if (!path.Contains(kvp.Value?.ToString() ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+            if (!metadata.TryGetValue(kvp.Key, out var value) || value is null)
+            {
+                return false;
+            }
+
+            var candidate = value.ToString() ?? string.Empty;
+            var pattern = kvp.Value?.ToString();
+
+            if (string.IsNullOrEmpty(pattern))
+            {
+                continue;
+            }
+
+            if (!Regex.IsMatch(candidate, pattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
             {
                 return false;
             }

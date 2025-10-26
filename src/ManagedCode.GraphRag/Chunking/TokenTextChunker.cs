@@ -5,7 +5,7 @@ using GraphRag.Tokenization;
 
 namespace GraphRag.Chunking;
 
-public sealed class TokenTextChunker(ITokenizerProvider tokenizerProvider) : ITextChunker
+public sealed class TokenTextChunker : ITextChunker
 {
     public IReadOnlyList<TextChunk> Chunk(IReadOnlyList<ChunkSlice> slices, ChunkingConfig config)
     {
@@ -17,12 +17,12 @@ public sealed class TokenTextChunker(ITokenizerProvider tokenizerProvider) : ITe
             return Array.Empty<TextChunk>();
         }
 
-        var tokenizer = tokenizerProvider.GetTokenizer(config.EncodingModel);
+        var tokenizer = TokenizerRegistry.GetTokenizer(config.EncodingModel);
         var flattened = new List<(int SliceIndex, int Token)>();
         for (var index = 0; index < slices.Count; index++)
         {
             var slice = slices[index];
-            var encoded = tokenizer.Encode(slice.Text);
+            var encoded = tokenizer.EncodeToIds(slice.Text);
             foreach (var token in encoded)
             {
                 flattened.Add((index, token));

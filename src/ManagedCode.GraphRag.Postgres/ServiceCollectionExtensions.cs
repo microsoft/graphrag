@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
         {
             var opts = sp.GetRequiredKeyedService<PostgresGraphStoreOptions>(serviceKey);
             var logger = sp.GetRequiredService<ILogger<PostgresGraphStore>>();
-            return new PostgresGraphStore(opts.ConnectionString, opts.GraphName, logger);
+            return new PostgresGraphStore(opts, logger);
         });
         services.AddKeyedSingleton<IGraphStore>(key, (sp, serviceKey) => sp.GetRequiredKeyedService<PostgresGraphStore>(serviceKey));
 
@@ -40,4 +40,6 @@ public sealed class PostgresGraphStoreOptions
     public string ConnectionString { get; set; } = string.Empty;
 
     public string GraphName { get; set; } = "graphrag";
+
+    public bool AutoCreateIndexes { get; set; } = true;
 }

@@ -5,7 +5,6 @@ using GraphRag.Chunking;
 using GraphRag.Indexing;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Indexing.Workflows;
-using GraphRag.Tokenization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphRag;
@@ -14,7 +13,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddGraphRag(this IServiceCollection services, Action<PipelineStepRegistryBuilder>? configure = null)
     {
-        services.AddSingleton<ITokenizerProvider, TiktokenTokenizerProvider>();
         services.AddSingleton<TokenTextChunker>();
         services.AddSingleton<MarkdownTextChunker>();
         services.AddSingleton<IChunkerResolver, ChunkerResolver>();

@@ -12,6 +12,7 @@ using GraphRag.Indexing.Workflows;
 using GraphRag.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using GraphRag.Constants;
 
 namespace ManagedCode.GraphRag.Tests.Workflows;
 
@@ -23,7 +24,7 @@ public sealed class CreateFinalDocumentsWorkflowTests
         var services = new ServiceCollection().AddGraphRag().BuildServiceProvider();
         var outputStorage = new MemoryPipelineStorage();
 
-        await outputStorage.WriteTableAsync("documents", new[]
+        await outputStorage.WriteTableAsync(PipelineTableNames.Documents, new[]
         {
             new DocumentRecord
             {
@@ -34,7 +35,7 @@ public sealed class CreateFinalDocumentsWorkflowTests
             }
         });
 
-        await outputStorage.WriteTableAsync("text_units", new[]
+        await outputStorage.WriteTableAsync(PipelineTableNames.TextUnits, new[]
         {
             new TextUnitRecord
             {
@@ -61,7 +62,7 @@ public sealed class CreateFinalDocumentsWorkflowTests
         var workflow = CreateFinalDocumentsWorkflow.Create();
         await workflow(new GraphRagConfig(), context, CancellationToken.None);
 
-        var documents = await outputStorage.LoadTableAsync<DocumentRecord>("documents");
+        var documents = await outputStorage.LoadTableAsync<DocumentRecord>(PipelineTableNames.Documents);
         Assert.Single(documents);
         Assert.Contains("chunk-1", documents[0].TextUnitIds);
         Assert.Equal(0, documents[0].HumanReadableId);

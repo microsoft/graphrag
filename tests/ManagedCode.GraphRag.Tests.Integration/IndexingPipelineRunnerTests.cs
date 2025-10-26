@@ -8,6 +8,8 @@ using GraphRag.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;
+using GraphRag.Constants;
+using GraphRag.Indexing.Workflows;
 
 namespace ManagedCode.GraphRag.Tests.Integration;
 
@@ -46,16 +48,16 @@ public sealed class IndexingPipelineRunnerTests
             {
                 Size = 100,
                 Overlap = 20,
-                EncodingModel = "o200k_base"
+                EncodingModel = TokenizerDefaults.DefaultEncoding
             }
         };
 
         var results = await runner.RunAsync(config);
 
         Assert.NotEmpty(results);
-        Assert.Contains(results, result => result.Workflow == "create_final_documents");
+        Assert.Contains(results, result => result.Workflow == CreateFinalDocumentsWorkflow.Name);
 
-        var documentsPath = Path.Combine(outputDir, "documents.json");
+        var documentsPath = Path.Combine(outputDir, PipelineTableNames.Documents + ".json");
         Assert.True(File.Exists(documentsPath));
 
         using var documentStream = File.OpenRead(documentsPath);
@@ -63,7 +65,7 @@ public sealed class IndexingPipelineRunnerTests
         Assert.True(documents.ValueKind == JsonValueKind.Array);
         Assert.Equal(1, documents.GetArrayLength());
 
-        var textUnitsPath = Path.Combine(outputDir, "text_units.json");
+        var textUnitsPath = Path.Combine(outputDir, PipelineTableNames.TextUnits + ".json");
         Assert.True(File.Exists(textUnitsPath));
     }
 

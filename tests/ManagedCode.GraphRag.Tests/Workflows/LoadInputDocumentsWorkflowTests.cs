@@ -15,6 +15,7 @@ using GraphRag.Indexing.Workflows;
 using GraphRag.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using GraphRag.Constants;
 
 namespace ManagedCode.GraphRag.Tests.Workflows;
 
@@ -53,7 +54,7 @@ public sealed class LoadInputDocumentsWorkflowTests
         var workflow = LoadInputDocumentsWorkflow.Create();
         await workflow(config, context, CancellationToken.None);
 
-        var documents = await outputStorage.LoadTableAsync<DocumentRecord>("documents");
+        var documents = await outputStorage.LoadTableAsync<DocumentRecord>(PipelineTableNames.Documents);
         Assert.Equal(2, documents.Count);
         Assert.All(documents, document => Assert.False(string.IsNullOrWhiteSpace(document.Id)));
     }
@@ -93,7 +94,7 @@ public sealed class LoadInputDocumentsWorkflowTests
         var workflow = LoadInputDocumentsWorkflow.Create();
         await workflow(config, context, CancellationToken.None);
 
-        var documents = await outputStorage.LoadTableAsync<DocumentRecord>("documents");
+        var documents = await outputStorage.LoadTableAsync<DocumentRecord>(PipelineTableNames.Documents);
         Assert.Equal(2, documents.Count);
         Assert.Contains(documents, doc => doc.Title == "Intro" && doc.Metadata?["category"]?.ToString() == "news");
     }
@@ -137,8 +138,48 @@ public sealed class LoadInputDocumentsWorkflowTests
         var workflow = LoadInputDocumentsWorkflow.Create();
         await workflow(config, context, CancellationToken.None);
 
-        var documents = await outputStorage.LoadTableAsync<DocumentRecord>("documents");
+        var documents = await outputStorage.LoadTableAsync<DocumentRecord>(PipelineTableNames.Documents);
         Assert.Equal(2, documents.Count);
         Assert.Contains(documents, doc => doc.Title == "Follow-up" && doc.Metadata?["category"]?.ToString() == "updates");
+    }
+
+    [Fact]
+    public async Task RunWorkflow_ParsesJsonLinesFallback()
+    {
+        var services = new ServiceCollection().AddGraphRag().BuildServiceProvider();
+        var inputStorage = new MemoryPipelineStorage();
+        const string jsonLines = "{\"id\":\"1\",\"title\":\"Line One\",\"text\":\"Alpha body\"}\n{\"id\":\"2\",\"title\":\"Line Two\",\"text\":\"Beta body\"}\n";
+        await inputStorage.SetAsync("docs/sample.jsonl", new MemoryStream(Encoding.UTF8.GetBytes(jsonLines)));
+
+        var outputStorage = new MemoryPipelineStorage();
+        var context = new PipelineRunContext(
+            inputStorage,
+            outputStorage,
+            new MemoryPipelineStorage(),
+            new InMemoryPipelineCache(),
+            NoopWorkflowCallbacks.Instance,
+            new PipelineRunStats(),
+            new PipelineState(),
+            services);
+
+        var config = new GraphRagConfig
+        {
+            Input = new InputConfig
+            {
+                Storage = new StorageConfig { Type = StorageType.Memory },
+                FileType = InputFileType.Json,
+                FilePattern = ".*\\.jsonl$",
+                TextColumn = "text",
+                TitleColumn = "title"
+            }
+        };
+
+        var workflow = LoadInputDocumentsWorkflow.Create();
+        await workflow(config, context, CancellationToken.None);
+
+        var documents = await outputStorage.LoadTableAsync<DocumentRecord>(PipelineTableNames.Documents);
+        Assert.Equal(2, documents.Count);
+        Assert.Contains(documents, doc => doc.Text.Contains("Alpha", StringComparison.Ordinal));
+        Assert.Contains(documents, doc => doc.Text.Contains("Beta", StringComparison.Ordinal));
     }
 }

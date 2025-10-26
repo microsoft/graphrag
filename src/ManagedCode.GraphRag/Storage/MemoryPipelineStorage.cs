@@ -40,12 +40,19 @@ public sealed class MemoryPipelineStorage : IPipelineStorage
             }
 
             var relativeKey = GetRelativeKey(kvp.Key);
-            if (!pattern.IsMatch(relativeKey))
+            var match = pattern.Match(relativeKey);
+            if (!match.Success)
             {
                 continue;
             }
 
-            yield return new PipelineStorageItem(relativeKey, kvp.Value.Metadata, kvp.Value.CreatedAt);
+            var metadata = MergeMetadata(kvp.Value.Metadata, pattern, match);
+            if (fileFilter is not null && fileFilter.Count > 0 && !MatchesFilter(metadata, fileFilter))
+            {
+                continue;
+            }
+
+            yield return new PipelineStorageItem(relativeKey, metadata, kvp.Value.CreatedAt);
 
             if (maxCount.HasValue && ++count >= maxCount.Value)
             {
@@ -170,6 +177,55 @@ public sealed class MemoryPipelineStorage : IPipelineStorage
         }
 
         return string.Concat(_prefix, "/", key);
+    }
+
+    private static Dictionary<string, object?> MergeMetadata(IReadOnlyDictionary<string, object?> existing, Regex pattern, Match match)
+    {
+        var metadata = existing.Count > 0
+            ? new Dictionary<string, object?>(existing, StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var groupName in pattern.GetGroupNames())
+        {
+            if (string.Equals(groupName, "0", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            var group = match.Groups[groupName];
+            if (group.Success)
+            {
+                metadata[groupName] = group.Value;
+            }
+        }
+
+        return metadata;
+    }
+
+    private static bool MatchesFilter(IReadOnlyDictionary<string, object?> metadata, IReadOnlyDictionary<string, object?> filter)
+    {
+        foreach (var kvp in filter)
+        {
+            if (!metadata.TryGetValue(kvp.Key, out var value) || value is null)
+            {
+                return false;
+            }
+
+            var candidate = value.ToString() ?? string.Empty;
+            var pattern = kvp.Value?.ToString();
+
+            if (string.IsNullOrEmpty(pattern))
+            {
+                continue;
+            }
+
+            if (!Regex.IsMatch(candidate, pattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private sealed record StorageEntry(byte[] Data, DateTimeOffset CreatedAt, IReadOnlyDictionary<string, object?> Metadata);
