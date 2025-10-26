@@ -1,13 +1,15 @@
-namespace GraphRag.Pipelines;
+using System.Collections.Generic;
+
+namespace GraphRag.Indexing.Runtime;
 
 /// <summary>
 /// Builds pipelines that mirror the original Python workflow factory.
 /// </summary>
 public interface IPipelineFactory
 {
-    IPipeline BuildIndexingPipeline(IndexingPipelineDescriptor descriptor);
+    WorkflowPipeline BuildIndexingPipeline(IndexingPipelineDescriptor descriptor);
 
-    IPipeline BuildQueryPipeline(QueryPipelineDescriptor descriptor);
+    WorkflowPipeline BuildQueryPipeline(QueryPipelineDescriptor descriptor);
 }
 
 public sealed record IndexingPipelineDescriptor(string Name, IReadOnlyList<string> Steps);

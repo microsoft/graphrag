@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 using GraphRag.Graphs;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,19 @@ public static class ServiceCollectionExtensions
         configure(options);
 
         services.AddKeyedSingleton<CosmosGraphStoreOptions>(key, (_, _) => options);
-        services.AddKeyedSingleton<CosmosClient>(key, (_, _) => new CosmosClient(options.ConnectionString));
+        services.AddKeyedSingleton<CosmosClient>(key, (_, _) =>
+        {
+            var serializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web)
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            var cosmosOptions = new CosmosClientOptions
+            {
+                Serializer = new SystemTextJsonCosmosSerializer(serializerOptions)
+            };
+
+            return new CosmosClient(options.ConnectionString, cosmosOptions);
+        });
         services.AddKeyedSingleton<CosmosGraphStore>(key, (sp, serviceKey) =>
         {
             var client = sp.GetRequiredKeyedService<CosmosClient>(serviceKey);

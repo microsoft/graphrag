@@ -1,10 +1,8 @@
-using System.Threading;
-using System.Threading.Tasks;
-
-using GraphRag.Pipelines;
+using System;
+using GraphRag.Indexing.Runtime;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace GraphRag.Core;
+namespace GraphRag.Indexing;
 
 /// <summary>
 /// Fluent helper to register pipeline steps backed by keyed delegates.
@@ -18,12 +16,12 @@ public sealed class PipelineStepRegistryBuilder
         _services = services;
     }
 
-    public PipelineStepRegistryBuilder AddStep(string name, Func<PipelineContext, CancellationToken, ValueTask> handler)
+    public PipelineStepRegistryBuilder AddStep(string name, WorkflowDelegate handler)
     {
         ArgumentException.ThrowIfNullOrEmpty(name);
         ArgumentNullException.ThrowIfNull(handler);
 
-        _services.AddKeyedSingleton<Func<PipelineContext, CancellationToken, ValueTask>>(name, (_, _) => handler);
+        _services.AddKeyedSingleton<WorkflowDelegate>(name, (_, _) => handler);
         return this;
     }
 }

@@ -9,6 +9,8 @@
     <Project Path="src/ManagedCode.GraphRag.Neo4j/ManagedCode.GraphRag.Neo4j.csproj" />
     <Project Path="src/ManagedCode.GraphRag.Postgres/ManagedCode.GraphRag.Postgres.csproj" />
     <Project Path="src/ManagedCode.GraphRag/ManagedCode.GraphRag.csproj" />
-    <Project Path="tests/GraphRag.Tests.Integration/GraphRag.Tests.Integration.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests\ManagedCode.GraphRag.Tests.Integration\ManagedCode.GraphRag.Tests.Integration.csproj" />
   </Folder>
 </Solution>

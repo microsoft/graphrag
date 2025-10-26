@@ -10,9 +10,11 @@
   <ItemGroup>
     <ProjectReference Include="../ManagedCode.GraphRag/ManagedCode.GraphRag.csproj" />
   </ItemGroup>
+  <PropertyGroup>
+    <AzureCosmosDisableNewtonsoftJsonCheck>true</AzureCosmosDisableNewtonsoftJsonCheck>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Cosmos" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 </Project>

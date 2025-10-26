@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Aspire.Hosting;
-using GraphRag.Core;
+using GraphRag;
 using GraphRag.Graphs;
+using GraphRag.Indexing.Runtime;
 using GraphRag.Storage.Cosmos;
 using GraphRag.Storage.Neo4j;
 using GraphRag.Storage.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace GraphRag.Tests.Integration;
+namespace ManagedCode.GraphRag.Tests.Integration;
 
 public static class GraphRagAspireAppHost
 {
@@ -18,18 +19,18 @@ public static class GraphRagAspireAppHost
             .WithEndpoint(targetPort: 7687, port: 7687, scheme: "bolt", name: "bolt", env: "NEO4J_BOLT_URI", isProxied: false)
             .WithEnvironment("NEO4J_AUTH", "neo4j/test");
 
-        builder.AddContainer("postgres", "postgres", tag: "16-alpine")
+        builder.AddContainer("postgres-age", "apache/age")
             .WithEnvironment("POSTGRES_USER", "postgres")
             .WithEnvironment("POSTGRES_PASSWORD", "postgres")
             .WithEnvironment("POSTGRES_DB", "graphrag")
-            .WithEndpoint(targetPort: 5432, port: 5432, scheme: "tcp", name: "postgres", isProxied: false);
+            .WithEndpoint(targetPort: 5432, port: 5455, scheme: "tcp", name: "age", isProxied: false);
 
         var cosmosConnectionString = Environment.GetEnvironmentVariable("COSMOS_EMULATOR_CONNECTION_STRING");
         var includeCosmos = !string.IsNullOrWhiteSpace(cosmosConnectionString);
 
         builder.Services.AddGraphRagCore(steps =>
         {
-            steps.AddStep("neo4j-seed", async (context, token) =>
+            steps.AddStep("neo4j-seed", async (config, context, token) =>
             {
                 var graph = context.Services.GetRequiredKeyedService<IGraphStore>("neo4j");
                 await graph.InitializeAsync(token);
@@ -43,9 +44,10 @@ public static class GraphRagAspireAppHost
                 }
 
                 context.Items["neo4j:relationship-count"] = relationships.Count;
+                return new WorkflowResult(null);
             });
 
-            steps.AddStep("postgres-seed", async (context, token) =>
+            steps.AddStep("postgres-seed", async (config, context, token) =>
             {
                 var graph = context.Services.GetRequiredKeyedService<IGraphStore>("postgres");
                 await graph.InitializeAsync(token);
@@ -59,11 +61,12 @@ public static class GraphRagAspireAppHost
                 }
 
                 context.Items["postgres:relationship-count"] = relationships.Count;
+                return new WorkflowResult(null);
             });
 
             if (includeCosmos)
             {
-                steps.AddStep("cosmos-seed", async (context, token) =>
+                steps.AddStep("cosmos-seed", async (config, context, token) =>
                 {
                     var graph = context.Services.GetRequiredKeyedService<IGraphStore>("cosmos");
                     await graph.InitializeAsync(token);
@@ -77,6 +80,7 @@ public static class GraphRagAspireAppHost
                     }
 
                     context.Items["cosmos:relationship-count"] = relationships.Count;
+                    return new WorkflowResult(null);
                 });
             }
         });
@@ -90,7 +94,8 @@ public static class GraphRagAspireAppHost
 
         builder.Services.AddPostgresGraphStore("postgres", options =>
         {
-            options.ConnectionString = "Host=localhost;Port=5432;Username=postgres;Password=postgres;Database=graphrag";
+            options.ConnectionString = "Host=localhost;Port=5455;Username=postgres;Password=postgres;Database=graphrag";
+            options.GraphName = "graphrag";
         });
 
         if (includeCosmos)
