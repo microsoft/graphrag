@@ -15,5 +15,7 @@ public sealed record DocumentRecord
 
     public IDictionary<string, object?>? Metadata { get; init; }
 
+    public int? HumanReadableId { get; init; }
+
     public IReadOnlyList<string> TextUnitIds { get; init; } = Array.Empty<string>();
 }

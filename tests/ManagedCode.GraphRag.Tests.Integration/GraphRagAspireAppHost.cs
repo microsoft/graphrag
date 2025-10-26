@@ -28,7 +28,7 @@ public static class GraphRagAspireAppHost
         var cosmosConnectionString = Environment.GetEnvironmentVariable("COSMOS_EMULATOR_CONNECTION_STRING");
         var includeCosmos = !string.IsNullOrWhiteSpace(cosmosConnectionString);
 
-        builder.Services.AddGraphRagCore(steps =>
+        builder.Services.AddGraphRag(steps =>
         {
             steps.AddStep("neo4j-seed", async (config, context, token) =>
             {

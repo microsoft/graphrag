@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
 using GraphRag.Graphs;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace GraphRag.Storage.Postgres;
 
-public sealed class PostgresGraphStore : IGraphStore
+public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 {
     private readonly string _connectionString;
     private readonly string _graphName;
@@ -50,8 +51,14 @@ END $$;";
         ArgumentException.ThrowIfNullOrWhiteSpace(label);
         ArgumentNullException.ThrowIfNull(properties);
 
-        var cypher = BuildNodeUpsertCypher(id, label, properties);
-        await ExecuteCypherAsync(cypher, cancellationToken).ConfigureAwait(false);
+        var query = $"MERGE (n:{EscapeLabel(label)} {{ id: $node_id }}) SET n += $props RETURN n";
+        var parameters = new Dictionary<string, object?>
+        {
+            ["node_id"] = id,
+            ["props"] = ConvertProperties(properties)
+        };
+
+        await ExecuteCypherAsync(query, parameters, cancellationToken).ConfigureAwait(false);
         _logger.LogDebug("Upserted node {Id} ({Label}) into graph {GraphName}.", id, label, _graphName);
     }
 
@@ -62,8 +69,15 @@ END $$;";
         ArgumentException.ThrowIfNullOrWhiteSpace(type);
         ArgumentNullException.ThrowIfNull(properties);
 
-        var cypher = BuildRelationshipUpsertCypher(sourceId, targetId, type, properties);
-        await ExecuteCypherAsync(cypher, cancellationToken).ConfigureAwait(false);
+        var query = $"MATCH (source {{ id: $source_id }}), (target {{ id: $target_id }}) MERGE (source)-[rel:{EscapeLabel(type)}]->(target) SET rel += $props RETURN rel";
+        var parameters = new Dictionary<string, object?>
+        {
+            ["source_id"] = sourceId,
+            ["target_id"] = targetId,
+            ["props"] = ConvertProperties(properties)
+        };
+
+        await ExecuteCypherAsync(query, parameters, cancellationToken).ConfigureAwait(false);
         _logger.LogDebug("Upserted relationship {Source}-[{Type}]->{Target} in graph {GraphName}.", sourceId, type, targetId, _graphName);
     }
 
@@ -76,17 +90,25 @@ END $$;";
         {
             await using var connection = await OpenConnectionAsync(token).ConfigureAwait(false);
             await using var command = connection.CreateCommand();
-            command.CommandText = $@"
+            command.CommandText = @"
 SELECT 
     source_id::text,
     target_id::text,
     edge_type::text,
     edge_props::text
-FROM cypher('{_graphName}', $$
-    MATCH (source {{ id: '{EscapeString(nodeId)}' }})-[rel]->(target)
+FROM cypher(@graph_name, $$
+    MATCH (source { id: $node_id })-[rel]->(target)
     RETURN source.id AS source_id, target.id AS target_id, type(rel) AS edge_type, properties(rel) AS edge_props
-$$) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype);
+$$, @params) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype);
 ";
+            command.Parameters.AddWithValue("graph_name", _graphName);
+            command.Parameters.Add(new NpgsqlParameter("params", NpgsqlDbType.Jsonb)
+            {
+                Value = JsonSerializer.Serialize(new Dictionary<string, object?>
+                {
+                    ["node_id"] = nodeId
+                })
+            });
 
             await using var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false);
             while (await reader.ReadAsync(token).ConfigureAwait(false))
@@ -102,11 +124,20 @@ $$) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype)
         }
     }
 
-    private async Task ExecuteCypherAsync(string statement, CancellationToken cancellationToken)
+    protected virtual async Task ExecuteCypherAsync(string query, IReadOnlyDictionary<string, object?> parameters, CancellationToken cancellationToken)
     {
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
-        command.CommandText = statement;
+        command.CommandText = @"
+SELECT *
+FROM cypher(@graph_name, @query, @params) AS (result agtype);
+";
+        command.Parameters.AddWithValue("graph_name", _graphName);
+        command.Parameters.AddWithValue("query", query);
+        command.Parameters.Add(new NpgsqlParameter("params", NpgsqlDbType.Jsonb)
+        {
+            Value = JsonSerializer.Serialize(parameters)
+        });
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
@@ -131,74 +162,6 @@ $$) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype)
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private string BuildNodeUpsertCypher(string id, string label, IReadOnlyDictionary<string, object?> properties)
-    {
-        var builder = new StringBuilder();
-        builder.AppendLine($"SELECT * FROM cypher('{_graphName}', $$");
-        builder.Append("    MERGE (n:");
-        builder.Append(EscapeLabel(label));
-        builder.Append(" { id: '");
-        builder.Append(EscapeString(id));
-        builder.Append("' })");
-
-        var setClause = BuildSetClause("n", properties, excludeId: true);
-        if (!string.IsNullOrEmpty(setClause))
-        {
-            builder.AppendLine();
-            builder.Append("    ");
-            builder.Append(setClause);
-        }
-
-        builder.AppendLine();
-        builder.AppendLine("RETURN n");
-        builder.Append("$$) AS (n agtype);");
-        return builder.ToString();
-    }
-
-    private string BuildRelationshipUpsertCypher(string sourceId, string targetId, string type, IReadOnlyDictionary<string, object?> properties)
-    {
-        var builder = new StringBuilder();
-        builder.AppendLine($"SELECT * FROM cypher('{_graphName}', $$");
-        builder.AppendLine($"    MATCH (source {{ id: '{EscapeString(sourceId)}' }}), (target {{ id: '{EscapeString(targetId)}' }})");
-        builder.Append("    MERGE (source)-[rel:");
-        builder.Append(EscapeLabel(type));
-        builder.Append("]->(target)");
-
-        var setClause = BuildSetClause("rel", properties, excludeId: false);
-        if (!string.IsNullOrEmpty(setClause))
-        {
-            builder.AppendLine();
-            builder.Append("    ");
-            builder.Append(setClause);
-        }
-
-        builder.AppendLine();
-        builder.AppendLine("RETURN rel");
-        builder.Append("$$) AS (rel agtype);");
-        return builder.ToString();
-    }
-
-    private static string BuildSetClause(string alias, IReadOnlyDictionary<string, object?> properties, bool excludeId)
-    {
-        var assignments = new List<string>();
-        foreach (var (key, value) in properties)
-        {
-            if (value is null)
-            {
-                continue;
-            }
-
-            if (excludeId && string.Equals(key, "id", StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
-            assignments.Add($"{EscapePropertyKey(key)}: {FormatValue(value)}");
-        }
-
-        return assignments.Count == 0 ? string.Empty : $"SET {alias} += {{{string.Join(", ", assignments)}}}";
-    }
-
     private static string EscapeLabel(string label)
     {
         if (string.IsNullOrWhiteSpace(label))
@@ -217,88 +180,60 @@ $$) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype)
         return label;
     }
 
-    private static string EscapePropertyKey(string key)
+    private static IDictionary<string, object?> ConvertProperties(IReadOnlyDictionary<string, object?> properties)
     {
-        if (string.IsNullOrWhiteSpace(key))
-        {
-            throw new ArgumentException("Property key cannot be null or whitespace.", nameof(key));
-        }
-
-        foreach (var ch in key)
-        {
-            if (!char.IsLetterOrDigit(ch) && ch != '_')
-            {
-                throw new ArgumentException($"Invalid character '{ch}' in property key '{key}'.", nameof(key));
-            }
-        }
-
-        return key;
-    }
-
-    private static string EscapeString(string value) => value.Replace("'", "''", StringComparison.Ordinal);
-
-    private static string FormatValue(object value) => value switch
-    {
-        null => "null",
-        string s => $"'{EscapeString(s)}'",
-        bool b => b ? "true" : "false",
-        int or long or short or byte => Convert.ToString(value, CultureInfo.InvariantCulture)!,
-        float f => f.ToString(CultureInfo.InvariantCulture),
-        double d => d.ToString(CultureInfo.InvariantCulture),
-        decimal dec => dec.ToString(CultureInfo.InvariantCulture),
-        Guid guid => $"'{guid:D}'",
-        DateTime dt => $"'{dt.ToUniversalTime():O}'",
-        DateTimeOffset dto => $"'{dto.ToUniversalTime():O}'",
-        _ => $"'{EscapeString(value.ToString() ?? string.Empty)}'"
-    };
-
-    private static Dictionary<string, object?> ParseProperties(string json)
-    {
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
-        }
-
-        using var document = JsonDocument.Parse(json);
-        if (document.RootElement.ValueKind != JsonValueKind.Object)
-        {
-            return new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
-        }
-
         var result = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
-        foreach (var property in document.RootElement.EnumerateObject())
+
+        foreach (var (key, value) in properties)
         {
-            result[property.Name] = ConvertJsonElement(property.Value);
+            if (value is null || string.Equals(key, "id", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            result[key] = value switch
+            {
+                string s => s,
+                int or long or short or byte => Convert.ToInt64(value, CultureInfo.InvariantCulture),
+                float or double or decimal => Convert.ToDouble(value, CultureInfo.InvariantCulture),
+                bool b => b,
+                DateTime dt => dt.ToUniversalTime(),
+                IEnumerable<string> list => list.ToArray(),
+                _ => value.ToString()
+            };
         }
 
         return result;
     }
 
-    private static object? ConvertJsonElement(JsonElement element) => element.ValueKind switch
+    private static string NormalizeAgTypeText(string value) => value.Trim('"');
+
+    private static IReadOnlyDictionary<string, object?> ParseProperties(string json)
     {
-        JsonValueKind.Null => null,
-        JsonValueKind.String => element.GetString(),
-        JsonValueKind.Number when element.TryGetInt64(out var longValue) => longValue,
-        JsonValueKind.Number => element.GetDouble(),
-        JsonValueKind.True => true,
-        JsonValueKind.False => false,
-        JsonValueKind.Array => element.EnumerateArray().Select(ConvertJsonElement).ToArray(),
-        JsonValueKind.Object => element.EnumerateObject().ToDictionary(prop => prop.Name, prop => ConvertJsonElement(prop.Value), StringComparer.OrdinalIgnoreCase),
-        _ => null
-    };
-
-    private static string NormalizeAgTypeText(string value)
-    {
-        if (string.IsNullOrEmpty(value))
+        try
         {
-            return value;
-        }
+            using var document = JsonDocument.Parse(json);
+            var result = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+            foreach (var property in document.RootElement.EnumerateObject())
+            {
+                result[property.Name] = property.Value.ValueKind switch
+                {
+                    JsonValueKind.String => property.Value.GetString(),
+                    JsonValueKind.Number => property.Value.TryGetInt64(out var i64) ? i64 : property.Value.GetDouble(),
+                    JsonValueKind.True => true,
+                    JsonValueKind.False => false,
+                    JsonValueKind.Null => null,
+                    _ => property.Value.GetRawText()
+                };
+            }
 
-        if (value.Length >= 2 && ((value[0] == '"' && value[^1] == '"') || (value[0] == '\'' && value[^1] == '\'')))
+            return result;
+        }
+        catch
         {
-            return value[1..^1];
+            return new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         }
-
-        return value;
     }
+
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

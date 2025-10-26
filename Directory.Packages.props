@@ -2,8 +2,10 @@
   <ItemGroup>
     <PackageVersion Include="Aspire.Hosting" Version="8.0.0-preview.5.24201.12" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="8.0.0-preview.5.24201.12" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.54.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.ML.Tokenizers" Version="1.0.2" />
     <PackageVersion Include="Microsoft.ML.Tokenizers.Data.O200kBase" Version="1.0.2" />

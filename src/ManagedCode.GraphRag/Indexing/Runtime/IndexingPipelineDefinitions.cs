@@ -6,6 +6,8 @@ public static class IndexingPipelineDefinitions
 {
     public static IndexingPipelineDescriptor Standard { get; } = new("standard", new[]
     {
-        CreateBaseTextUnitsWorkflow.Name
+        LoadInputDocumentsWorkflow.Name,
+        CreateBaseTextUnitsWorkflow.Name,
+        CreateFinalDocumentsWorkflow.Name
     });
 }
