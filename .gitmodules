@@ -1,0 +1,3 @@
+[submodule "submodules/graphrag-python"]
+	path = submodules/graphrag-python
+	url = https://github.com/microsoft/graphrag

@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>GraphRag.Abstractions</AssemblyName>
+    <RootNamespace>GraphRag</RootNamespace>
+  </PropertyGroup>
+</Project>

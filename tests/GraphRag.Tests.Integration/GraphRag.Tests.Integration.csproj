@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>GraphRag.Tests.Integration</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.Testing" />
+    <ProjectReference Include="../../src/GraphRag.Core/GraphRag.Core.csproj" />
+    <ProjectReference Include="../../src/GraphRag.Storage.Cosmos/GraphRag.Storage.Cosmos.csproj" />
+    <ProjectReference Include="../../src/GraphRag.Storage.Neo4j/GraphRag.Storage.Neo4j.csproj" />
+    <ProjectReference Include="../../src/GraphRag.Storage.Postgres/GraphRag.Storage.Postgres.csproj" />
+    <PackageReference Include="Aspire.Hosting" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+</Project>
