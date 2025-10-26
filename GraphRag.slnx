@@ -1,25 +1,14 @@
-{
-  "solution": {
-    "version": 1,
-    "projects": [
-      {
-        "path": "src/GraphRag.Abstractions/GraphRag.Abstractions.csproj"
-      },
-      {
-        "path": "src/GraphRag.Core/GraphRag.Core.csproj"
-      },
-      {
-        "path": "src/GraphRag.Storage.Cosmos/GraphRag.Storage.Cosmos.csproj"
-      },
-      {
-        "path": "src/GraphRag.Storage.Neo4j/GraphRag.Storage.Neo4j.csproj"
-      },
-      {
-        "path": "src/GraphRag.Storage.Postgres/GraphRag.Storage.Postgres.csproj"
-      },
-      {
-        "path": "tests/GraphRag.Tests.Integration/GraphRag.Tests.Integration.csproj"
-      }
-    ]
-  }
-}
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/ManagedCode.GraphRag.CosmosDb/ManagedCode.GraphRag.CosmosDb.csproj" />
+    <Project Path="src/ManagedCode.GraphRag.Neo4j/ManagedCode.GraphRag.Neo4j.csproj" />
+    <Project Path="src/ManagedCode.GraphRag.Postgres/ManagedCode.GraphRag.Postgres.csproj" />
+    <Project Path="src/ManagedCode.GraphRag/ManagedCode.GraphRag.csproj" />
+    <Project Path="tests/GraphRag.Tests.Integration/GraphRag.Tests.Integration.csproj" />
+  </Folder>
+</Solution>

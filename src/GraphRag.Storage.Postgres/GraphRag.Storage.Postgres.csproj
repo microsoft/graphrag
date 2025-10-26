@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="../GraphRag.Abstractions/GraphRag.Abstractions.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Npgsql" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-  </ItemGroup>
-</Project>

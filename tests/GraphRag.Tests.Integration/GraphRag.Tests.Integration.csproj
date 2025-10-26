@@ -6,10 +6,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.Testing" />
-    <ProjectReference Include="../../src/GraphRag.Core/GraphRag.Core.csproj" />
-    <ProjectReference Include="../../src/GraphRag.Storage.Cosmos/GraphRag.Storage.Cosmos.csproj" />
-    <ProjectReference Include="../../src/GraphRag.Storage.Neo4j/GraphRag.Storage.Neo4j.csproj" />
-    <ProjectReference Include="../../src/GraphRag.Storage.Postgres/GraphRag.Storage.Postgres.csproj" />
+    <ProjectReference Include="../../src/ManagedCode.GraphRag/ManagedCode.GraphRag.csproj" />
+    <ProjectReference Include="../../src/ManagedCode.GraphRag.CosmosDb/ManagedCode.GraphRag.CosmosDb.csproj" />
+    <ProjectReference Include="../../src/ManagedCode.GraphRag.Neo4j/ManagedCode.GraphRag.Neo4j.csproj" />
+    <ProjectReference Include="../../src/ManagedCode.GraphRag.Postgres/ManagedCode.GraphRag.Postgres.csproj" />
     <PackageReference Include="Aspire.Hosting" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />

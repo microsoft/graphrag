@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--NuGet-->
+  <PropertyGroup>
+    <Title>ManagedCode.GraphRag.CosmosDb</Title>
+    <PackageId>ManagedCode.GraphRag.CosmosDb</PackageId>
+    <Description>Azure Cosmos DB adapter for ManagedCode GraphRag library</Description>
+    <PackageTags>managedcode, graphrag, cosmos, cosmosdb, azure, database</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../ManagedCode.GraphRag/ManagedCode.GraphRag.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Cosmos" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+</Project>

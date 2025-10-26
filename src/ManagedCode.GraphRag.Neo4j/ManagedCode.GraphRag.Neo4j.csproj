@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--NuGet-->
+  <PropertyGroup>
+    <Title>ManagedCode.GraphRag.Neo4j</Title>
+    <PackageId>ManagedCode.GraphRag.Neo4j</PackageId>
+    <Description>Neo4j adapter for ManagedCode GraphRag library</Description>
+    <PackageTags>managedcode, graphrag, neo4j, graph, database</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../ManagedCode.GraphRag/ManagedCode.GraphRag.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Neo4j.Driver" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+</Project>

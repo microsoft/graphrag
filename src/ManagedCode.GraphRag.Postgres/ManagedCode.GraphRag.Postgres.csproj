@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--NuGet-->
+  <PropertyGroup>
+    <Title>ManagedCode.GraphRag.Postgres</Title>
+    <PackageId>ManagedCode.GraphRag.Postgres</PackageId>
+    <Description>PostgreSQL adapter for ManagedCode GraphRag library</Description>
+    <PackageTags>managedcode, graphrag, postgres, postgresql, database</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../ManagedCode.GraphRag/ManagedCode.GraphRag.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+</Project>

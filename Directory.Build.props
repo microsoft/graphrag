@@ -1,17 +1,50 @@
 <Project>
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <LangVersion>preview</LangVersion>
+    <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+      <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
+
+    <!--NuGet-->
+    <PropertyGroup>
+        <Authors>ManagedCode</Authors>
+        <Copyright>Copyright © 2021-$([System.DateTime]::Now.ToString(`yyyy`)) ManagedCode SAS</Copyright>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <RepositoryType>Github</RepositoryType>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+        <PackageIcon>logo.png</PackageIcon>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+
+        <RepositoryUrl>https://github.com/managedcode/graphrag</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/managedcode/graphrag</PackageProjectUrl>
+        <Product>Managed Code GraphRag</Product>
+        <Version>0.0.1</Version>
+        <PackageVersion>0.0.1</PackageVersion>
+
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="$(SolutionDir)\logo.png" Pack="true" Visible="false" PackagePath="\"/>
+        <None Include="$(SolutionDir)\README.md" Pack="true" Visible="false" PackagePath="\"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="DotNet.ReproducibleBuilds">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+    
   <ItemGroup>
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
   </ItemGroup>
-  <PropertyGroup>
-    <Deterministic>true</Deterministic>
-    <RepositoryUrl>https://github.com/microsoft/graphrag</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-  </PropertyGroup>
+
 </Project>
