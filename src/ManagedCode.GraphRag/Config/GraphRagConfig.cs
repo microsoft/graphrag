@@ -58,6 +58,8 @@ public sealed class GraphRagConfig
 
     public SnapshotsConfig Snapshots { get; set; } = new();
 
+    public Dictionary<string, object?> Extensions { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
     public LanguageModelConfig GetLanguageModelConfig(string modelId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(modelId);

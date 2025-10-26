@@ -17,7 +17,7 @@ public sealed class PostgresGraphStoreTests
     [Fact]
     public async Task UpsertNodeAsync_UsesParameterPayload()
     {
-        var store = new TestPostgresGraphStore();
+        var store = new FakePostgresGraphStore();
 
         var properties = new Dictionary<string, object?>
         {
@@ -39,7 +39,7 @@ public sealed class PostgresGraphStoreTests
     [Fact]
     public async Task UpsertRelationshipAsync_UsesParameterPayload()
     {
-        var store = new TestPostgresGraphStore();
+        var store = new FakePostgresGraphStore();
 
         var properties = new Dictionary<string, object?>
         {
@@ -60,7 +60,7 @@ public sealed class PostgresGraphStoreTests
     [Fact]
     public async Task UpsertNodeAsync_NormalizesNestedPropertyValues()
     {
-        var store = new TestPostgresGraphStore();
+        var store = new FakePostgresGraphStore();
         var properties = new Dictionary<string, object?>
         {
             ["intValue"] = 1,
@@ -103,7 +103,7 @@ public sealed class PostgresGraphStoreTests
     [Fact]
     public async Task UpsertNodeAsync_CreatesDefaultIndexesOnce()
     {
-        var store = new TestPostgresGraphStore();
+        var store = new FakePostgresGraphStore();
 
         await store.UpsertNodeAsync("node-1", "Person", new Dictionary<string, object?>());
         await store.UpsertNodeAsync("node-2", "Person", new Dictionary<string, object?>());
@@ -116,7 +116,7 @@ public sealed class PostgresGraphStoreTests
     [Fact]
     public async Task UpsertRelationshipAsync_CreatesEdgeIndexes()
     {
-        var store = new TestPostgresGraphStore();
+        var store = new FakePostgresGraphStore();
 
         await store.UpsertRelationshipAsync("src", "dst", "KNOWS", new Dictionary<string, object?>());
 
@@ -127,7 +127,7 @@ public sealed class PostgresGraphStoreTests
     [Fact]
     public async Task EnsurePropertyKeyIndexAsync_BuildsTargetedIndex()
     {
-        var store = new TestPostgresGraphStore();
+        var store = new FakePostgresGraphStore();
 
         await store.EnsurePropertyKeyIndexAsync("Person", "Email", isEdge: false);
 
@@ -135,9 +135,22 @@ public sealed class PostgresGraphStoreTests
     }
 
     [Fact]
+    public async Task UpsertNodeAsync_UsesConfiguredPropertyIndexes()
+    {
+        var store = new FakePostgresGraphStore(options =>
+        {
+            options.VertexPropertyIndexes["Person"] = new[] { "Email" };
+        });
+
+        await store.UpsertNodeAsync("node-3", "Person", new Dictionary<string, object?>(), CancellationToken.None);
+
+        Assert.Contains(store.ExecutedIndexCommands, cmd => cmd.Contains("idx_graph_vertex_person_prop_email", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
     public async Task ExplainAsync_WrapsQueryWithExplain()
     {
-        var store = new TestPostgresGraphStore();
+        var store = new FakePostgresGraphStore(explainPlan: new[] { "Seq Scan" });
         var plan = await store.ExplainAsync("MATCH (n:Person) RETURN n", new Dictionary<string, object?> { ["limit"] = 10 });
 
         Assert.NotEmpty(plan);
@@ -146,46 +159,4 @@ public sealed class PostgresGraphStoreTests
         Assert.Contains("limit", explainInvocation.Parameters, StringComparison.Ordinal);
     }
 
-    private sealed class TestPostgresGraphStore : PostgresGraphStore
-    {
-        public string? CapturedQuery { get; private set; }
-        public IReadOnlyDictionary<string, object?>? CapturedParameters { get; private set; }
-        public List<string> ExecutedIndexCommands { get; } = new();
-        public List<(string Query, string Parameters)> CapturedExplainInvocations { get; } = new();
-
-        public TestPostgresGraphStore()
-            : base(new PostgresGraphStoreOptions
-            {
-                ConnectionString = "Host=localhost;Username=test;Password=test;Database=test",
-                GraphName = "graph",
-                AutoCreateIndexes = true
-            }, NullLogger<PostgresGraphStore>.Instance)
-        {
-        }
-
-        protected override Task ExecuteCypherAsync(string query, IReadOnlyDictionary<string, object?> parameters, CancellationToken cancellationToken)
-        {
-            CapturedQuery = query;
-            CapturedParameters = parameters;
-            return Task.CompletedTask;
-        }
-
-        protected override Task<string?> ResolveLabelRelationAsync(string label, bool isEdge, CancellationToken cancellationToken)
-        {
-            var relation = isEdge ? $"\"graph\".\"edge_{label.ToLowerInvariant()}\"" : $"\"graph\".\"vertex_{label.ToLowerInvariant()}\"";
-            return Task.FromResult<string?>(relation);
-        }
-
-        protected override Task ExecuteIndexCommandsAsync(IEnumerable<string> commands, CancellationToken cancellationToken)
-        {
-            ExecutedIndexCommands.AddRange(commands);
-            return Task.CompletedTask;
-        }
-
-        protected override Task<IReadOnlyList<string>> ExecuteExplainAsync(string explainQuery, string parameterJson, CancellationToken cancellationToken)
-        {
-            CapturedExplainInvocations.Add((explainQuery, parameterJson));
-            return Task.FromResult<IReadOnlyList<string>>(new[] { "Seq Scan" });
-        }
-    }
 }

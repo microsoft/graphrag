@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using GraphRag.Config;
 using GraphRag.Graphs;
 using GraphRag.Storage.Postgres;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,5 +46,42 @@ public sealed class ServiceCollectionExtensionsTests
         var graphStore = provider.GetRequiredService<IGraphStore>();
 
         Assert.Same(store, graphStore);
+    }
+
+    [Fact]
+    public async Task AddPostgresGraphStores_RegistersFromConfig()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ILogger<PostgresGraphStore>>(_ => NullLogger<PostgresGraphStore>.Instance);
+
+        var config = new GraphRagConfig();
+        var graphs = config.GetPostgresGraphStores();
+        graphs["primary"] = new PostgresGraphStoreConfig
+        {
+            ConnectionString = "Host=localhost",
+            GraphName = "graph",
+            AutoCreateIndexes = false,
+            MakeDefault = true,
+            VertexPropertyIndexes = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Person"] = new[] { "Email", "Name" }
+            },
+            EdgePropertyIndexes = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["KNOWS"] = new[] { "Since" }
+            }
+        };
+
+        services.AddPostgresGraphStores(config);
+
+        await using var provider = services.BuildServiceProvider();
+
+        var options = provider.GetRequiredKeyedService<PostgresGraphStoreOptions>("primary");
+        Assert.False(options.AutoCreateIndexes);
+        Assert.Contains("Person", options.VertexPropertyIndexes.Keys);
+        Assert.Contains("KNOWS", options.EdgePropertyIndexes.Keys);
+
+        var defaultStore = provider.GetRequiredService<IGraphStore>();
+        Assert.NotNull(defaultStore);
     }
 }

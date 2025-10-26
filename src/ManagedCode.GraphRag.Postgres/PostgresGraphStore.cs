@@ -22,6 +22,8 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
     private readonly ILogger<PostgresGraphStore> _logger;
     private readonly ConcurrentDictionary<string, bool> _indexedLabels = new(StringComparer.OrdinalIgnoreCase);
     private readonly ConcurrentDictionary<string, bool> _propertyIndexes = new(StringComparer.OrdinalIgnoreCase);
+    private readonly IReadOnlyDictionary<string, string[]> _vertexPropertyIndexConfig;
+    private readonly IReadOnlyDictionary<string, string[]> _edgePropertyIndexConfig;
 
     public PostgresGraphStore(string connectionString, string graphName, ILogger<PostgresGraphStore> logger)
         : this(new PostgresGraphStoreOptions
@@ -40,6 +42,8 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
         _graphName = options.GraphName ?? throw new ArgumentNullException(nameof(options.GraphName));
         _autoCreateIndexes = options.AutoCreateIndexes;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _vertexPropertyIndexConfig = NormalizeIndexMap(options.VertexPropertyIndexes);
+        _edgePropertyIndexConfig = NormalizeIndexMap(options.EdgePropertyIndexes);
     }
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -102,7 +106,22 @@ END $$;";
         _logger.LogDebug("Upserted relationship {Source}-[{Type}]->{Target} in graph {GraphName}.", sourceId, type, targetId, _graphName);
     }
 
-    public async Task EnsurePropertyKeyIndexAsync(string label, string propertyKey, bool isEdge, CancellationToken cancellationToken = default)
+    public Task EnsurePropertyKeyIndexAsync(string label, string propertyKey, bool isEdge, CancellationToken cancellationToken = default)
+    {
+        return EnsurePropertyKeyIndexInternalAsync(label, propertyKey, isEdge, relation: null, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<string>> ExplainAsync(string cypherQuery, IReadOnlyDictionary<string, object?>? parameters = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(cypherQuery);
+
+        var explainQuery = $"EXPLAIN\n{cypherQuery}";
+        var parameterJson = SerializeParameters(parameters);
+
+        return await ExecuteExplainAsync(explainQuery, parameterJson, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task EnsurePropertyKeyIndexInternalAsync(string label, string propertyKey, bool isEdge, string? relation, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(label);
         ArgumentException.ThrowIfNullOrWhiteSpace(propertyKey);
@@ -113,7 +132,7 @@ END $$;";
             return;
         }
 
-        var relation = await ResolveLabelRelationAsync(label, isEdge, cancellationToken).ConfigureAwait(false);
+        relation ??= await ResolveLabelRelationAsync(label, isEdge, cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(relation))
         {
             _propertyIndexes.TryRemove(cacheKey, out _);
@@ -127,16 +146,6 @@ END $$;";
 
         await ExecuteIndexCommandsAsync(new[] { command }, cancellationToken).ConfigureAwait(false);
         _logger.LogInformation("Ensured targeted index {Index} on {Relation} for property {Property}.", indexName, relation, propertyKey);
-    }
-
-    public async Task<IReadOnlyList<string>> ExplainAsync(string cypherQuery, IReadOnlyDictionary<string, object?>? parameters = null, CancellationToken cancellationToken = default)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(cypherQuery);
-
-        var explainQuery = $"EXPLAIN\n{cypherQuery}";
-        var parameterJson = SerializeParameters(parameters);
-
-        return await ExecuteExplainAsync(explainQuery, parameterJson, cancellationToken).ConfigureAwait(false);
     }
 
     public IAsyncEnumerable<GraphRelationship> GetOutgoingRelationshipsAsync(string sourceId, CancellationToken cancellationToken = default)
@@ -347,13 +356,27 @@ FROM cypher(@graph_name, @query, @params) AS (result agtype);
         }
 
         var commands = BuildDefaultIndexCommands(relation, isEdge).ToArray();
-        if (commands.Length == 0)
+        if (commands.Length > 0)
+        {
+            await ExecuteIndexCommandsAsync(commands, cancellationToken).ConfigureAwait(false);
+            _logger.LogInformation("Ensured AGE default indexes on {Relation} ({LabelType}).", relation, isEdge ? "edge" : "vertex");
+        }
+
+        await EnsureConfiguredPropertyIndexesAsync(label, relation, isEdge, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task EnsureConfiguredPropertyIndexesAsync(string label, string relation, bool isEdge, CancellationToken cancellationToken)
+    {
+        var propertyMap = isEdge ? _edgePropertyIndexConfig : _vertexPropertyIndexConfig;
+        if (!propertyMap.TryGetValue(label, out var properties) || properties.Length == 0)
         {
             return;
         }
 
-        await ExecuteIndexCommandsAsync(commands, cancellationToken).ConfigureAwait(false);
-        _logger.LogInformation("Ensured AGE default indexes on {Relation} ({LabelType}).", relation, isEdge ? "edge" : "vertex");
+        foreach (var property in properties)
+        {
+            await EnsurePropertyKeyIndexInternalAsync(label, property, isEdge, relation, cancellationToken).ConfigureAwait(false);
+        }
     }
 
     protected virtual async Task<string?> ResolveLabelRelationAsync(string label, bool isEdge, CancellationToken cancellationToken)
@@ -428,6 +451,37 @@ FROM cypher(@graph_name, @query, @params) AS (plan text);";
         }
 
         return commands;
+    }
+
+    private static IReadOnlyDictionary<string, string[]> NormalizeIndexMap(Dictionary<string, string[]>? source)
+    {
+        if (source is null || source.Count == 0)
+        {
+            return new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        var result = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (label, properties) in source)
+        {
+            if (string.IsNullOrWhiteSpace(label) || properties is null)
+            {
+                continue;
+            }
+
+            var cleaned = properties
+                .Where(static p => !string.IsNullOrWhiteSpace(p))
+                .Select(static p => p!.Trim())
+                .Where(static p => p.Length > 0)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            if (cleaned.Length > 0)
+            {
+                result[label] = cleaned;
+            }
+        }
+
+        return result;
     }
 
     private static string BuildIndexName(string relation, string suffix)

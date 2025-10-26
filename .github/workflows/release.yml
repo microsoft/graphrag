@@ -1,0 +1,230 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  SOLUTION_FILE: GraphRag.slnx
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Extract version from Directory.Build.props
+      id: version
+      run: |
+        VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" Directory.Build.props)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Version from Directory.Build.props: $VERSION"
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.SOLUTION_FILE }}
+
+    - name: Build
+      run: dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test ${{ env.SOLUTION_FILE }} --configuration Release --no-build --verbosity normal
+
+    - name: Pack NuGet packages
+      run: dotnet pack ${{ env.SOLUTION_FILE }} --configuration Release --no-build --output ./artifacts
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages
+        path: ./artifacts/*.nupkg
+        retention-days: 5
+
+  publish-nuget:
+    name: Publish to NuGet
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    outputs:
+      published: ${{ steps.publish.outputs.published }}
+      version: ${{ needs.build.outputs.version }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v5
+      with:
+        name: nuget-packages
+        path: ./artifacts
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Publish to NuGet
+      id: publish
+      continue-on-error: true
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: |
+        set +e
+        OUTPUT=""
+        PUBLISHED=false
+
+        for package in ./artifacts/*.nupkg; do
+          echo "Publishing $package..."
+          RESULT=$(dotnet nuget push "$package" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate 2>&1)
+          EXIT_CODE=$?
+          echo "$RESULT"
+          OUTPUT="$OUTPUT$RESULT"
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "Successfully published $package"
+            PUBLISHED=true
+          elif echo "$RESULT" | grep -q "already exists"; then
+            echo "Package already exists, skipping..."
+          else
+            echo "Failed to publish $package"
+            exit 1
+          fi
+        done
+
+        if [ "$PUBLISHED" = true ] || echo "$OUTPUT" | grep -q "Your package was pushed"; then
+          echo "published=true" >> $GITHUB_OUTPUT
+          echo "At least one package was successfully published"
+        else
+          echo "published=false" >> $GITHUB_OUTPUT
+          echo "No new packages were published (all already exist)"
+        fi
+
+  create-release:
+    name: Create GitHub Release and Tag
+    needs: publish-nuget
+    runs-on: ubuntu-latest
+    if: needs.publish-nuget.outputs.published == 'true'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v5
+      with:
+        name: nuget-packages
+        path: ./artifacts
+
+    - name: Create and push tag
+      id: create_tag
+      run: |
+        VERSION="${{ needs.publish-nuget.outputs.version }}"
+        TAG="v$VERSION"
+
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+        if git rev-parse "$TAG" >/dev/null 2>&1; then
+          echo "Tag $TAG already exists"
+          echo "tag_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "Creating tag $TAG"
+          git tag -a "$TAG" -m "Release $VERSION"
+          git push origin "$TAG"
+          echo "tag_exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Get previous tag
+      id: prev_tag
+      run: |
+        CURRENT_TAG="v${{ needs.publish-nuget.outputs.version }}"
+        PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -A1 "^$CURRENT_TAG$" | tail -n1 || echo "")
+        if [ "$PREVIOUS_TAG" = "$CURRENT_TAG" ] || [ -z "$PREVIOUS_TAG" ]; then
+          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -v "^$CURRENT_TAG$" | head -n1 || echo "")
+        fi
+        echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+        echo "Current tag: $CURRENT_TAG"
+        echo "Previous tag: $PREVIOUS_TAG"
+
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        VERSION="${{ needs.publish-nuget.outputs.version }}"
+        CURRENT_TAG="v$VERSION"
+        PREVIOUS_TAG="${{ steps.prev_tag.outputs.previous_tag }}"
+
+        echo "# Release $VERSION" > release_notes.md
+        echo "" >> release_notes.md
+        echo "Released on $(date +'%Y-%m-%d')" >> release_notes.md
+        echo "" >> release_notes.md
+
+        if [ -n "$PREVIOUS_TAG" ]; then
+          echo "## 📋 Changes since $PREVIOUS_TAG" >> release_notes.md
+          echo "" >> release_notes.md
+
+          echo "### ✨ Features" >> release_notes.md
+          git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD --grep="^feat" --grep="^feature" >> release_notes.md || true
+          echo "" >> release_notes.md
+
+          echo "### 🐛 Bug Fixes" >> release_notes.md
+          git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD --grep="^fix" --grep="^bugfix" >> release_notes.md || true
+          echo "" >> release_notes.md
+
+          echo "### 📚 Documentation" >> release_notes.md
+          git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD --grep="^docs" --grep="^doc" >> release_notes.md || true
+          echo "" >> release_notes.md
+
+          echo "### 🔧 Other Changes" >> release_notes.md
+          git log --pretty=format:"- %s (%h)" $PREVIOUS_TAG..HEAD --invert-grep --grep="^feat" --grep="^feature" --grep="^fix" --grep="^bugfix" --grep="^docs" --grep="^doc" >> release_notes.md || true
+          echo "" >> release_notes.md
+        else
+          echo "## 🎉 Initial Release" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "### Recent Changes" >> release_notes.md
+          git log --pretty=format:"- %s (%h)" --max-count=20 >> release_notes.md
+          echo "" >> release_notes.md
+        fi
+
+        echo "" >> release_notes.md
+        echo "## 📦 NuGet Packages" >> release_notes.md
+        echo "" >> release_notes.md
+        for package in ./artifacts/*.nupkg; do
+          PACKAGE_NAME=$(basename "$package" .nupkg)
+          BASE_NAME=$(echo "$PACKAGE_NAME" | sed "s/\.$VERSION//")
+          echo "- [$BASE_NAME v$VERSION](https://www.nuget.org/packages/$BASE_NAME/$VERSION)" >> release_notes.md
+        done
+
+        echo "" >> release_notes.md
+        echo "---" >> release_notes.md
+        echo "*This release was automatically created by GitHub Actions*" >> release_notes.md
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ needs.publish-nuget.outputs.version }}
+        name: v${{ needs.publish-nuget.outputs.version }}
+        body_path: release_notes.md
+        draft: false
+        prerelease: false
+        files: ./artifacts/*.nupkg
+        token: ${{ secrets.GITHUB_TOKEN }}
