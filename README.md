@@ -1,30 +1,137 @@
 # GraphRAG for .NET
 
-This repository hosts the in-progress C#/.NET 9 migration of Microsoft's GraphRAG project. The original
-Python implementation is still available as a git submodule under `submodules/graphrag-python` for
-reference while the port matures.
+GraphRAG for .NET is a ground-up port of Microsoft’s original GraphRAG Python reference implementation to the modern .NET 9 stack.  
+Our goal is API parity with the Python pipeline while embracing native .NET idioms (dependency injection, logging abstractions, async I/O, etc.).  
+The upstream Python code remains available in `submodules/graphrag-python` for side-by-side reference during the migration.
 
-## Repository layout
+---
 
-- `GraphRag.slnx` – experimental solution definition referencing every project in the workspace.
-- `Directory.Build.props` / `Directory.Packages.props` – centralised build settings and pinned NuGet package versions.
-- `src/GraphRag.Abstractions` – shared interfaces for pipelines, storage, vector indexes, and graph databases.
-- `src/GraphRag.Core` – the pipeline builder, service registration helpers, and DI primitives.
-- `src/GraphRag.Storage.*` – concrete adapters for Neo4j, Azure Cosmos DB, and PostgreSQL-backed graph storage.
-- `tests/GraphRag.Tests.Integration` – Aspire-powered integration tests that exercise the real datastores via xUnit.
-- `.github/workflows/dotnet-integration.yml` – GitHub Actions workflow that runs the integration tests on both Linux and Windows agents.
+## Repository Structure
+
+```
+graphrag/
+├── GraphRag.slnx                          # Single solution covering every project
+├── Directory.Build.props / Directory.Packages.props
+├── src/
+│   ├── ManagedCode.GraphRag               # Core pipeline orchestration & abstractions
+│   ├── ManagedCode.GraphRag.CosmosDb      # Azure Cosmos DB graph adapter
+│   ├── ManagedCode.GraphRag.Neo4j         # Neo4j adapter & bolt client integration
+│   └── ManagedCode.GraphRag.Postgres      # Apache AGE/PostgreSQL graph store adapter
+├── tests/
+│   └── ManagedCode.GraphRag.Tests
+│       ├── Integration/                   # Live container-backed scenarios (Testcontainers)
+│       └── … unit-level suites
+└── submodules/
+    └── graphrag-python                    # Original Python implementation (read-only reference)
+```
+
+### Key Components
+
+- **ManagedCode.GraphRag**  
+  Hosts the pipelines, workflow execution model, and shared contracts such as `IGraphStore`, `IPipelineCache`, etc.
+
+- **ManagedCode.GraphRag.Neo4j / .Postgres / .CosmosDb**  
+  Concrete graph-store adapters that satisfy the core abstractions. Each hides the backend-specific SDK plumbing and exposes `.AddXGraphStore(...)` DI helpers.
+
+- **ManagedCode.GraphRag.Tests**  
+  Our only test project.  
+  Unit tests ensure helper APIs behave deterministically.  
+  The `Integration/` folder spins up real infrastructure (Neo4j, Apache AGE/PostgreSQL, optional Cosmos) via Testcontainers—no fakes or mocks.
+
+---
 
 ## Prerequisites
 
-- .NET SDK 9.0 preview or newer (the workflow and development container install it via `dotnet-install`).
-- Docker Desktop or another container runtime so Aspire can launch Neo4j and PostgreSQL for the tests.
-- (Optional) Azure Cosmos DB Emulator running locally with the `COSMOS_EMULATOR_CONNECTION_STRING` environment
-  variable populated in order to run the Cosmos integration test.
+| Requirement | Notes |
+|-------------|-------|
+| [.NET SDK 9.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) | The solution targets `net9.0`; install previews where necessary. |
+| Docker Desktop / compatible container runtime | Required for Testcontainers-backed integration tests (Neo4j & Apache AGE/PostgreSQL). |
+| (Optional) Azure Cosmos DB Emulator | Set `COSMOS_EMULATOR_CONNECTION_STRING` to enable Cosmos tests; they are skipped when the env var is absent. |
 
-## Running the tests locally
+---
 
-```bash
-dotnet test tests/GraphRag.Tests.Integration/GraphRag.Tests.Integration.csproj --logger "console;verbosity=normal"
-```
+## Getting Started
 
-When the Cosmos emulator is available the test suite will automatically seed it and assert the stored relationship count.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/<your-org>/graphrag.git
+   cd graphrag
+   git submodule update --init --recursive
+   ```
+
+2. **Restore & build**
+   ```bash
+   dotnet build GraphRag.slnx
+   ```
+   > Repository rule: always build the solution before running tests.
+
+3. **Run the full test suite**
+   ```bash
+   dotnet test GraphRag.slnx --logger "console;verbosity=minimal"
+   ```
+   This command will:
+   - Restore packages
+   - Launch Neo4j and Apache AGE/PostgreSQL containers via Testcontainers
+   - Execute unit + integration tests from `ManagedCode.GraphRag.Tests`
+   - Tear down containers automatically when finished
+
+4. **Limit to a specific integration area (optional)**
+   ```bash
+   dotnet test tests/ManagedCode.GraphRag.Tests/ManagedCode.GraphRag.Tests.csproj \
+       --filter "FullyQualifiedName~PostgresGraphStoreIntegrationTests" \
+       --logger "console;verbosity=normal"
+   ```
+
+---
+
+## Integration Testing Strategy
+
+- **No fakes.** We removed the legacy fake Postgres store. Every graph operation in tests uses real services orchestrated by Testcontainers.  
+- **Security coverage.** `Integration/PostgresGraphStoreIntegrationTests.cs` includes payloads that mimic SQL/Cypher injection attempts to ensure values remain literals and labels/types are strictly validated.  
+- **Cross-backend validation.** `Integration/GraphStoreIntegrationTests.cs` exercises Postgres, Neo4j, and Cosmos (when available) through the shared `IGraphStore` abstraction.  
+- **Workflow smoke tests.** Pipelines (e.g., `IndexingPipelineRunnerTests`) and finalization steps run end-to-end with the fixture-provisioned infrastructure.
+
+---
+
+## Local Cosmos Testing
+
+1. Install and start the [Azure Cosmos DB Emulator](https://learn.microsoft.com/azure/cosmos-db/local-emulator).
+2. Export the connection string:
+   ```bash
+   export COSMOS_EMULATOR_CONNECTION_STRING="AccountEndpoint=https://localhost:8081/;AccountKey=…;"
+   ```
+3. Rerun `dotnet test`; Cosmos scenarios will seed databases & verify relationships without additional setup.
+
+---
+
+## Development Tips
+
+- **Solution layout.** Use `GraphRag.slnx` in Visual Studio/VS Code/Rider for a complete workspace view.
+- **Formatting / analyzers.** Run `dotnet format GraphRag.slnx` before committing to satisfy the repo analyzers.
+- **Coding conventions.** 
+  - `nullable` and implicit usings are enabled; keep annotations accurate.
+  - Async methods should follow the `Async` suffix convention.
+  - Prefer DI helpers in `ManagedCode.GraphRag` when wiring new services.
+- **Graph adapters.** Implement additional backends by conforming to `IGraphStore` and registering via `IServiceCollection`.
+
+---
+
+## Contributing
+
+1. Fork and clone the repo.
+2. Create a feature branch from `main`.
+3. Follow the repository rules (build before testing; integration tests must use real containers).
+4. Submit a PR referencing any related issues. Include `dotnet test GraphRag.slnx` output in the PR body.
+
+See `CONTRIBUTING.md` for coding standards and PR expectations.
+
+---
+
+## License & Credits
+
+- Licensed under the [MIT License](LICENSE).
+- Original Python implementation © Microsoft; see the `graphrag-python` submodule for upstream documentation and examples.
+
+---
+
+Have questions or found a bug? Open an issue or start a discussion—we’re actively evolving the .NET port and welcome feedback. 🚀
