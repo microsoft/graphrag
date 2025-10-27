@@ -74,7 +74,7 @@ class Factory(ABC, Generic[T]):
             ValueError: If the strategy is not registered.
         """
         if strategy not in self._service_initializers:
-            msg = f"Strategy '{strategy}' is not registered."
+            msg = f"Strategy '{strategy}' is not registered. Registered strategies are: {', '.join(list(self._service_initializers.keys()))}"
             raise ValueError(msg)
 
         scope, service_initializer = self._service_initializers[strategy]
