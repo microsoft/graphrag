@@ -163,6 +163,78 @@ public sealed class PostgresGraphStoreIntegrationTests
         Assert.All(relationships, rel => Assert.Equal("KNOWS", rel.Type));
     }
 
+    [Fact]
+    public async Task UpsertNode_WithInjectionPayload_TreatsValueAsLiteral()
+    {
+        var store = _fixture.Services.GetRequiredKeyedService<PostgresGraphStore>("postgres");
+        await store.InitializeAsync();
+
+        var sentinelId = $"sentinel-{Guid.NewGuid():N}";
+        await store.UpsertNodeAsync(sentinelId, "Sentinel", new Dictionary<string, object?>());
+
+        var maliciousValue = "\" }) MATCH (victim) DETACH DELETE victim //";
+        var nodeId = $"inj-{Guid.NewGuid():N}";
+        await store.UpsertNodeAsync(nodeId, "Person", new Dictionary<string, object?> { ["bio"] = maliciousValue });
+
+        var payload = await GetNodePropertiesAsync(_fixture.PostgresConnectionString, nodeId);
+        Assert.Equal(maliciousValue, payload.GetProperty("bio").GetString());
+        Assert.True(await NodeExistsAsync(_fixture.PostgresConnectionString, sentinelId));
+    }
+
+    [Fact]
+    public async Task UpsertRelationship_WithInjectionPayload_TreatsValueAsLiteral()
+    {
+        var store = _fixture.Services.GetRequiredKeyedService<PostgresGraphStore>("postgres");
+        await store.InitializeAsync();
+
+        var sourceId = $"src-{Guid.NewGuid():N}";
+        var targetId = $"dst-{Guid.NewGuid():N}";
+        await store.UpsertNodeAsync(sourceId, "Account", new Dictionary<string, object?>());
+        await store.UpsertNodeAsync(targetId, "Account", new Dictionary<string, object?>());
+
+        var malicious = "0.99 }) MATCH (m) DETACH DELETE m //";
+        await store.UpsertRelationshipAsync(sourceId, targetId, "TRANSFERRED", new Dictionary<string, object?> { ["weight"] = malicious, ["f"] = false });
+
+        var relationships = new List<GraphRelationship>();
+        await foreach (var relationship in store.GetOutgoingRelationshipsAsync(sourceId))
+        {
+            relationships.Add(relationship);
+        }
+
+        var stored = Assert.Single(relationships);
+        Assert.Equal(malicious, stored.Properties["weight"]);
+        Assert.Equal(false, stored.Properties["f"]);
+        Assert.True(await NodeExistsAsync(_fixture.PostgresConnectionString, targetId));
+    }
+
+    [Theory]
+    [InlineData("Person; DETACH DELETE n")]
+    [InlineData("Person)) MATCH (m) DETACH DELETE m //")]
+    [InlineData("Pers on")]
+    public async Task UpsertNode_WithInvalidLabel_ThrowsArgumentException(string label)
+    {
+        var store = _fixture.Services.GetRequiredKeyedService<PostgresGraphStore>("postgres");
+        await store.InitializeAsync();
+
+        var ex = await Assert.ThrowsAsync<ArgumentException>(() => store.UpsertNodeAsync($"bad-{Guid.NewGuid():N}", label, new Dictionary<string, object?>()));
+        Assert.Contains("Label", ex.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Theory]
+    [InlineData("REL; MATCH (n) DETACH DELETE n")]
+    [InlineData("REL) RETURN * //")]
+    public async Task UpsertRelationship_WithInvalidType_ThrowsArgumentException(string type)
+    {
+        var store = _fixture.Services.GetRequiredKeyedService<PostgresGraphStore>("postgres");
+        await store.InitializeAsync();
+
+        await store.UpsertNodeAsync("node-a", "Account", new Dictionary<string, object?>());
+        await store.UpsertNodeAsync("node-b", "Account", new Dictionary<string, object?>());
+
+        var ex = await Assert.ThrowsAsync<ArgumentException>(() => store.UpsertRelationshipAsync("node-a", "node-b", type, new Dictionary<string, object?>()));
+        Assert.Contains("Invalid character", ex.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static async Task<JsonElement> GetNodePropertiesAsync(string connectionString, string nodeId)
     {
         await using var connection = new NpgsqlConnection(connectionString);
@@ -195,5 +267,29 @@ $$ MATCH (n { id: $node_id }) RETURN properties(n) AS props $$::cstring,
         await using var command = connection.CreateCommand();
         command.CommandText = sql;
         await command.ExecuteNonQueryAsync();
+    }
+
+    private static async Task<bool> NodeExistsAsync(string connectionString, string nodeId)
+    {
+        await using var connection = new NpgsqlConnection(connectionString);
+        await connection.OpenAsync();
+
+        await ExecuteSqlAsync(connection, "LOAD 'age';");
+        await ExecuteSqlAsync(connection, @"SET search_path = ag_catalog, ""$user"", public;");
+
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+@"SELECT COUNT(*) 
+FROM ag_catalog.cypher('graphrag'::name,
+$$ MATCH (n { id: $node_id }) RETURN n $$::cstring,
+@params::ag_catalog.agtype) AS (n ag_catalog.agtype);";
+        command.Parameters.Add(new NpgsqlParameter("params", NpgsqlDbType.Unknown)
+        {
+            DataTypeName = "ag_catalog.agtype",
+            Value = JsonSerializer.Serialize(new Dictionary<string, object?> { ["node_id"] = nodeId })
+        });
+
+        var count = Convert.ToInt64(await command.ExecuteScalarAsync(), CultureInfo.InvariantCulture);
+        return count > 0;
     }
 }
