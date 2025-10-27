@@ -12,6 +12,5 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/ManagedCode.GraphRag.Tests/ManagedCode.GraphRag.Tests.csproj" />
-    <Project Path="tests\ManagedCode.GraphRag.Tests.Integration\ManagedCode.GraphRag.Tests.Integration.csproj" />
   </Folder>
 </Solution>

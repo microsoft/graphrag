@@ -5,18 +5,28 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Testcontainers.Neo4j" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src/ManagedCode.GraphRag\ManagedCode.GraphRag.csproj" />
-    <ProjectReference Include="..\..\src/ManagedCode.GraphRag.Postgres\ManagedCode.GraphRag.Postgres.csproj" />
+    <ProjectReference Include="..\..\src\ManagedCode.GraphRag\ManagedCode.GraphRag.csproj" />
+    <ProjectReference Include="..\..\src\ManagedCode.GraphRag.CosmosDb\ManagedCode.GraphRag.CosmosDb.csproj" />
+    <ProjectReference Include="..\..\src\ManagedCode.GraphRag.Neo4j\ManagedCode.GraphRag.Neo4j.csproj" />
+    <ProjectReference Include="..\..\src\ManagedCode.GraphRag.Postgres\ManagedCode.GraphRag.Postgres.csproj" />
   </ItemGroup>
 
   <ItemGroup>

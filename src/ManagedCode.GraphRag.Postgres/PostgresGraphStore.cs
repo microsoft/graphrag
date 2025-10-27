@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 {
     private readonly string _connectionString;
     private readonly string _graphName;
+    private readonly string _graphNameLiteral;
     private readonly bool _autoCreateIndexes;
     private readonly ILogger<PostgresGraphStore> _logger;
     private readonly ConcurrentDictionary<string, bool> _indexedLabels = new(StringComparer.OrdinalIgnoreCase);
@@ -40,6 +42,7 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 
         _connectionString = options.ConnectionString ?? throw new ArgumentNullException(nameof(options.ConnectionString));
         _graphName = options.GraphName ?? throw new ArgumentNullException(nameof(options.GraphName));
+        _graphNameLiteral = BuildGraphNameLiteral(_graphName);
         _autoCreateIndexes = options.AutoCreateIndexes;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _vertexPropertyIndexConfig = NormalizeIndexMap(options.VertexPropertyIndexes);
@@ -54,16 +57,20 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
         await ExecuteNonQueryAsync(connection, "CREATE EXTENSION IF NOT EXISTS age;", cancellationToken);
         await ApplySessionConfigurationAsync(connection, cancellationToken);
 
-        await using var ensureGraph = connection.CreateCommand();
-        ensureGraph.CommandText = @"
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM ag_catalog.ag_graph WHERE name = @graphName) THEN
-        PERFORM ag_catalog.create_graph(@graphName);
-    END IF;
-END $$;";
-        ensureGraph.Parameters.AddWithValue("graphName", _graphName);
-        await ensureGraph.ExecuteNonQueryAsync(cancellationToken);
+        await using (var existsCommand = connection.CreateCommand())
+        {
+            existsCommand.CommandText = "SELECT 1 FROM ag_catalog.ag_graph WHERE name = @graphName LIMIT 1;";
+            existsCommand.Parameters.AddWithValue("graphName", _graphName);
+            var exists = await existsCommand.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+
+            if (exists is null)
+            {
+                await using var createGraph = connection.CreateCommand();
+                createGraph.CommandText = "SELECT ag_catalog.create_graph(@graphName);";
+                createGraph.Parameters.AddWithValue("graphName", _graphName);
+                await createGraph.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+        }
 
         _logger.LogInformation("Apache AGE graph {GraphName} initialised.", _graphName);
     }
@@ -74,12 +81,27 @@ END $$;";
         ArgumentException.ThrowIfNullOrWhiteSpace(label);
         ArgumentNullException.ThrowIfNull(properties);
 
-        var query = $"MERGE (n:{EscapeLabel(label)} {{ id: ${CypherParameterNames.NodeId} }}) SET n += ${CypherParameterNames.Properties} RETURN n";
         var parameters = new Dictionary<string, object?>
         {
-            [CypherParameterNames.NodeId] = id,
-            [CypherParameterNames.Properties] = ConvertProperties(properties)
+            [CypherParameterNames.NodeId] = id
         };
+
+        var propertyAssignments = BuildPropertyAssignments("n", ConvertProperties(properties), parameters, "node_prop");
+
+        var queryBuilder = new StringBuilder();
+        queryBuilder.Append($"MERGE (n:{EscapeLabel(label)} {{ id: ${CypherParameterNames.NodeId} }})");
+
+        if (propertyAssignments.Count > 0)
+        {
+            queryBuilder.AppendLine();
+            queryBuilder.Append("SET ");
+            queryBuilder.Append(string.Join(", ", propertyAssignments));
+        }
+
+        queryBuilder.AppendLine();
+        queryBuilder.Append("RETURN n");
+
+        var query = queryBuilder.ToString();
 
         await EnsureLabelIndexesAsync(label, isEdge: false, cancellationToken).ConfigureAwait(false);
         await ExecuteCypherAsync(query, parameters, cancellationToken).ConfigureAwait(false);
@@ -93,13 +115,30 @@ END $$;";
         ArgumentException.ThrowIfNullOrWhiteSpace(type);
         ArgumentNullException.ThrowIfNull(properties);
 
-        var query = $"MATCH (source {{ id: ${CypherParameterNames.SourceId} }}), (target {{ id: ${CypherParameterNames.TargetId} }}) MERGE (source)-[rel:{EscapeLabel(type)}]->(target) SET rel += ${CypherParameterNames.Properties} RETURN rel";
         var parameters = new Dictionary<string, object?>
         {
             [CypherParameterNames.SourceId] = sourceId,
-            [CypherParameterNames.TargetId] = targetId,
-            [CypherParameterNames.Properties] = ConvertProperties(properties)
+            [CypherParameterNames.TargetId] = targetId
         };
+
+        var propertyAssignments = BuildPropertyAssignments("rel", ConvertProperties(properties), parameters, "rel_prop");
+
+        var queryBuilder = new StringBuilder();
+        queryBuilder.Append($"MATCH (source {{ id: ${CypherParameterNames.SourceId} }}), (target {{ id: ${CypherParameterNames.TargetId} }})");
+        queryBuilder.AppendLine();
+        queryBuilder.Append($"MERGE (source)-[rel:{EscapeLabel(type)}]->(target)");
+
+        if (propertyAssignments.Count > 0)
+        {
+            queryBuilder.AppendLine();
+            queryBuilder.Append("SET ");
+            queryBuilder.Append(string.Join(", ", propertyAssignments));
+        }
+
+        queryBuilder.AppendLine();
+        queryBuilder.Append("RETURN rel");
+
+        var query = queryBuilder.ToString();
 
         await EnsureLabelIndexesAsync(type, isEdge: true, cancellationToken).ConfigureAwait(false);
         await ExecuteCypherAsync(query, parameters, cancellationToken).ConfigureAwait(false);
@@ -157,25 +196,21 @@ END $$;";
         {
             await using var connection = await OpenConnectionAsync(token).ConfigureAwait(false);
             await using var command = connection.CreateCommand();
-            command.CommandText = @"
-SELECT 
-    source_id::text,
-    target_id::text,
-    edge_type::text,
-    edge_props::text
-FROM cypher(@graph_name, $$
-    MATCH (source { id: $node_id })-[rel]->(target)
-    RETURN source.id AS source_id, target.id AS target_id, type(rel) AS edge_type, properties(rel) AS edge_props
-$$, @params) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype);
-";
-            command.Parameters.AddWithValue(CypherParameterNames.GraphName, _graphName);
-            command.Parameters.Add(new NpgsqlParameter(CypherParameterNames.Parameters, NpgsqlDbType.Jsonb)
+            command.CommandText = string.Concat(
+                "SELECT ",
+                "\n    source_id::text,",
+                "\n    target_id::text,",
+                "\n    edge_type::text,",
+                "\n    edge_props::text",
+                "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", $$",
+                "\n    MATCH (source { id: $node_id })-[rel]->(target)",
+                "\n    RETURN source.id AS source_id, target.id AS target_id, type(rel) AS edge_type, properties(rel) AS edge_props",
+                "\n$$, @params::ag_catalog.agtype) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype);");
+            var payload = JsonSerializer.Serialize(new Dictionary<string, object?>
             {
-                Value = JsonSerializer.Serialize(new Dictionary<string, object?>
-                {
-                    [CypherParameterNames.NodeId] = nodeId
-                })
+                [CypherParameterNames.NodeId] = nodeId
             });
+            command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, payload));
 
             await using var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false);
             while (await reader.ReadAsync(token).ConfigureAwait(false))
@@ -195,16 +230,11 @@ $$, @params) AS (source_id agtype, target_id agtype, edge_type agtype, edge_prop
     {
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
-        command.CommandText = @"
-SELECT *
-FROM cypher(@graph_name, @query, @params) AS (result agtype);
-";
-        command.Parameters.AddWithValue(CypherParameterNames.GraphName, _graphName);
-        command.Parameters.AddWithValue(CypherParameterNames.Query, query);
-        command.Parameters.Add(new NpgsqlParameter(CypherParameterNames.Parameters, NpgsqlDbType.Jsonb)
-        {
-            Value = SerializeParameters(parameters)
-        });
+        var queryLiteral = WrapInDollarQuotes(query);
+        command.CommandText = string.Concat(
+            "SELECT *",
+            "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", ", queryLiteral, "::cstring, @params::ag_catalog.agtype) AS (result agtype);");
+        command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, SerializeParameters(parameters)));
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
@@ -416,15 +446,11 @@ LIMIT 1;";
     {
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
-        command.CommandText = @"
-SELECT plan
-FROM cypher(@graph_name, @query, @params) AS (plan text);";
-        command.Parameters.AddWithValue(CypherParameterNames.GraphName, _graphName);
-        command.Parameters.AddWithValue(CypherParameterNames.Query, explainQuery);
-        command.Parameters.Add(new NpgsqlParameter(CypherParameterNames.Parameters, NpgsqlDbType.Jsonb)
-        {
-            Value = parameterJson
-        });
+        var explainLiteral = WrapInDollarQuotes(explainQuery);
+        command.CommandText = string.Concat(
+            "SELECT plan",
+            "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", ", explainLiteral, "::cstring, @params::ag_catalog.agtype) AS (plan text);");
+        command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, parameterJson));
 
         var plan = new List<string>();
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
@@ -434,6 +460,97 @@ FROM cypher(@graph_name, @query, @params) AS (plan text);";
         }
 
         return plan;
+    }
+
+    private static string BuildGraphNameLiteral(string graphName)
+    {
+        if (string.IsNullOrWhiteSpace(graphName))
+        {
+            throw new ArgumentException("Graph name cannot be null or whitespace.", nameof(graphName));
+        }
+
+        foreach (var ch in graphName)
+        {
+            if (!char.IsLetterOrDigit(ch) && ch != '_')
+            {
+                throw new ArgumentException($"Invalid character '{ch}' in graph name '{graphName}'.", nameof(graphName));
+            }
+        }
+
+        return $"'{graphName}'::name";
+    }
+
+    private static NpgsqlParameter CreateAgTypeParameter(string name, string jsonPayload)
+    {
+        if (jsonPayload is null)
+        {
+            throw new ArgumentNullException(nameof(jsonPayload));
+        }
+
+        return new NpgsqlParameter(name, NpgsqlDbType.Unknown)
+        {
+            DataTypeName = "ag_catalog.agtype",
+            Value = jsonPayload
+        };
+    }
+
+    private static IReadOnlyList<string> BuildPropertyAssignments(string alias, IDictionary<string, object?> properties, IDictionary<string, object?> parameters, string parameterPrefix)
+    {
+        if (properties.Count == 0)
+        {
+            return Array.Empty<string>();
+        }
+
+        var assignments = new List<string>(properties.Count);
+        var usedParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (key, value) in properties)
+        {
+            var escapedProperty = EscapePropertyName(key);
+            var parameterName = $"{parameterPrefix}_{escapedProperty}";
+
+            var suffix = 0;
+            while (!usedParameterNames.Add(parameterName) || parameters.ContainsKey(parameterName))
+            {
+                parameterName = $"{parameterPrefix}_{escapedProperty}_{++suffix}";
+            }
+
+            parameters[parameterName] = value;
+            assignments.Add($"{alias}.{escapedProperty} = ${parameterName}");
+        }
+
+        return assignments;
+    }
+
+    private static string EscapePropertyName(string propertyName)
+    {
+        if (string.IsNullOrWhiteSpace(propertyName))
+        {
+            throw new ArgumentException("Property name cannot be null or whitespace.", nameof(propertyName));
+        }
+
+        foreach (var ch in propertyName)
+        {
+            if (!char.IsLetterOrDigit(ch) && ch != '_')
+            {
+                throw new ArgumentException($"Invalid character '{ch}' in property name '{propertyName}'.", nameof(propertyName));
+            }
+        }
+
+        return propertyName;
+    }
+
+    private static string WrapInDollarQuotes(string value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+
+        var delimiter = "$graphrag$";
+        while (value.Contains(delimiter, StringComparison.Ordinal))
+        {
+            delimiter = $"${Guid.NewGuid():N}$";
+        }
+
+        return $"{delimiter}{value}{delimiter}";
     }
 
     private static IEnumerable<string> BuildDefaultIndexCommands(string relation, bool isEdge)

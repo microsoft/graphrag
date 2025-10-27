@@ -1,5 +1,20 @@
 # Repository Guidelines
 
+# Rules to follow
+- Always run `dotnet build GraphRag.slnx` (or the relevant project) before executing any `dotnet test` command.
+- Default to the latest available versions (e.g., Apache AGE `latest`) when selecting dependencies, per user request ("тобі треба latest").
+- Do not create or rely on fake database stores (e.g., `FakePostgresGraphStore`); all tests must use real connectors/backing services.
+
+# Conversations
+any resulting updates to agents.md should go under the section "## Rules to follow"
+When you see a convincing argument from me on how to solve or do something. add a summary for this in agents.md. so you learn what I want over time.
+If I say any of the following point, you do this: add the context to agents.md, and associate this with a specific type of task.
+if I say "never do x" in some way.
+if I say "always do x" in some way.
+if I say "the process is x" in some way.
+If I tell you to remember something, you do the same, update
+
+
 ## Project Structure & Module Organization
 GraphRag for .NET lives under `src/`. The core pipeline orchestration, abstractions, and DI helpers live in `src/ManagedCode.GraphRag`, while datastore adapters sit in sibling projects (`ManagedCode.GraphRag.CosmosDb`, `ManagedCode.GraphRag.Neo4j`, `ManagedCode.GraphRag.Postgres`). Integration scenarios are covered in `tests/GraphRag.Tests.Integration`, which references all runtime projects and spins up backing services through Aspire. Use `GraphRag.slnx` to load the whole workspace in Visual Studio or `dotnet` commands. The original Python reference implementation remains under `submodules/graphrag-python`—treat it as read-only parity documentation unless a migration task explicitly targets it.
 
