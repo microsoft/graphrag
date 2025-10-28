@@ -6,6 +6,8 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.AI" Version="9.10.1" />
+    <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="9.10.1" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.10" />
     <PackageVersion Include="Microsoft.ML.Tokenizers" Version="1.0.2" />
     <PackageVersion Include="Microsoft.ML.Tokenizers.Data.O200kBase" Version="1.0.2" />
