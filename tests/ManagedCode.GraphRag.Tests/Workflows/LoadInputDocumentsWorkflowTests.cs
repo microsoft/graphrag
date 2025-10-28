@@ -13,9 +13,11 @@ using GraphRag.Data;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Indexing.Workflows;
 using GraphRag.Storage;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using GraphRag.Constants;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 
 namespace ManagedCode.GraphRag.Tests.Workflows;
 
@@ -24,7 +26,10 @@ public sealed class LoadInputDocumentsWorkflowTests
     [Fact]
     public async Task RunWorkflow_LoadsTextFiles()
     {
-        var services = new ServiceCollection().AddGraphRag().BuildServiceProvider();
+        var services = new ServiceCollection()
+            .AddSingleton<IChatClient>(new TestChatClientFactory().CreateClient())
+            .AddGraphRag()
+            .BuildServiceProvider();
         var inputStorage = new MemoryPipelineStorage();
         await inputStorage.SetAsync("doc1.txt", new MemoryStream(Encoding.UTF8.GetBytes("First document")));
         await inputStorage.SetAsync("doc2.txt", new MemoryStream(Encoding.UTF8.GetBytes("Second document")));
@@ -62,7 +67,10 @@ public sealed class LoadInputDocumentsWorkflowTests
     [Fact]
     public async Task RunWorkflow_LoadsCsvFiles()
     {
-        var services = new ServiceCollection().AddGraphRag().BuildServiceProvider();
+        var services = new ServiceCollection()
+            .AddSingleton<IChatClient>(new TestChatClientFactory().CreateClient())
+            .AddGraphRag()
+            .BuildServiceProvider();
         var inputStorage = new MemoryPipelineStorage();
         const string csv = "id,title,text,category\n1,Intro,Hello world,news\n2,Detail,Second line,updates\n";
         await inputStorage.SetAsync("docs/sample.csv", new MemoryStream(Encoding.UTF8.GetBytes(csv)));
@@ -102,7 +110,10 @@ public sealed class LoadInputDocumentsWorkflowTests
     [Fact]
     public async Task RunWorkflow_LoadsJsonFiles()
     {
-        var services = new ServiceCollection().AddGraphRag().BuildServiceProvider();
+        var services = new ServiceCollection()
+            .AddSingleton<IChatClient>(new TestChatClientFactory().CreateClient())
+            .AddGraphRag()
+            .BuildServiceProvider();
         var inputStorage = new MemoryPipelineStorage();
         var jsonArray = JsonSerializer.Serialize(new[]
         {
@@ -146,7 +157,10 @@ public sealed class LoadInputDocumentsWorkflowTests
     [Fact]
     public async Task RunWorkflow_ParsesJsonLinesFallback()
     {
-        var services = new ServiceCollection().AddGraphRag().BuildServiceProvider();
+        var services = new ServiceCollection()
+            .AddSingleton<IChatClient>(new TestChatClientFactory().CreateClient())
+            .AddGraphRag()
+            .BuildServiceProvider();
         var inputStorage = new MemoryPipelineStorage();
         const string jsonLines = "{\"id\":\"1\",\"title\":\"Line One\",\"text\":\"Alpha body\"}\n{\"id\":\"2\",\"title\":\"Line Two\",\"text\":\"Beta body\"}\n";
         await inputStorage.SetAsync("docs/sample.jsonl", new MemoryStream(Encoding.UTF8.GetBytes(jsonLines)));

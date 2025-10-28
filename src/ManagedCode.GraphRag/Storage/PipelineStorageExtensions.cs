@@ -1,7 +1,4 @@
-using System.IO;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace GraphRag.Storage;
 
@@ -15,11 +12,7 @@ public static class PipelineStorageExtensions
 
     public static async Task<IReadOnlyList<T>> LoadTableAsync<T>(this IPipelineStorage storage, string name, CancellationToken cancellationToken = default)
     {
-        var stream = await storage.GetAsync(ToFileName(name), asBytes: true, cancellationToken: cancellationToken).ConfigureAwait(false);
-        if (stream is null)
-        {
-            throw new FileNotFoundException($"Table '{name}' not found in pipeline storage.");
-        }
+        var stream = await storage.GetAsync(ToFileName(name), asBytes: true, cancellationToken: cancellationToken).ConfigureAwait(false) ?? throw new FileNotFoundException($"Table '{name}' not found in pipeline storage.");
 
         await using (stream.ConfigureAwait(false))
         {

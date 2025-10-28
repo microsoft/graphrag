@@ -7,6 +7,7 @@ using GraphRag.Indexing.Runtime;
 using GraphRag.Storage.Cosmos;
 using GraphRag.Storage.Neo4j;
 using GraphRag.Storage.Postgres;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -15,6 +16,7 @@ using Npgsql;
 using Testcontainers.Neo4j;
 using Testcontainers.PostgreSql;
 using Xunit;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 
 namespace ManagedCode.GraphRag.Tests.Integration;
 
@@ -68,63 +70,63 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
         services.AddSingleton<IConfiguration>(configuration);
         services.AddLogging();
         services.AddOptions();
+        services.AddSingleton<IChatClient>(new TestChatClientFactory().CreateClient());
 
-        services.AddGraphRag(steps =>
+        services.AddGraphRag();
+
+        services.AddKeyedSingleton<WorkflowDelegate>("neo4j-seed", static (_, _) => async (config, context, token) =>
         {
-            steps.AddStep("neo4j-seed", async (config, context, token) =>
+            var graph = context.Services.GetRequiredKeyedService<IGraphStore>("neo4j");
+            await graph.InitializeAsync(token).ConfigureAwait(false);
+            await graph.UpsertNodeAsync("alice", "Person", new Dictionary<string, object?> { ["name"] = "Alice" }, token).ConfigureAwait(false);
+            await graph.UpsertNodeAsync("bob", "Person", new Dictionary<string, object?> { ["name"] = "Bob" }, token).ConfigureAwait(false);
+            await graph.UpsertRelationshipAsync("alice", "bob", "KNOWS", new Dictionary<string, object?> { ["since"] = 2024 }, token).ConfigureAwait(false);
+            var relationships = new List<GraphRelationship>();
+            await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("alice", token).ConfigureAwait(false))
             {
-                var graph = context.Services.GetRequiredKeyedService<IGraphStore>("neo4j");
-                await graph.InitializeAsync(token).ConfigureAwait(false);
-                await graph.UpsertNodeAsync("alice", "Person", new Dictionary<string, object?> { ["name"] = "Alice" }, token).ConfigureAwait(false);
-                await graph.UpsertNodeAsync("bob", "Person", new Dictionary<string, object?> { ["name"] = "Bob" }, token).ConfigureAwait(false);
-                await graph.UpsertRelationshipAsync("alice", "bob", "KNOWS", new Dictionary<string, object?> { ["since"] = 2024 }, token).ConfigureAwait(false);
-                var relationships = new List<GraphRelationship>();
-                await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("alice", token).ConfigureAwait(false))
-                {
-                    relationships.Add(relationship);
-                }
-
-                context.Items["neo4j:relationship-count"] = relationships.Count;
-                return new WorkflowResult(null);
-            });
-
-            steps.AddStep("postgres-seed", async (config, context, token) =>
-            {
-                var graph = context.Services.GetRequiredKeyedService<IGraphStore>("postgres");
-                await graph.InitializeAsync(token).ConfigureAwait(false);
-                await graph.UpsertNodeAsync("chapter-1", "Chapter", new Dictionary<string, object?> { ["title"] = "Origins" }, token).ConfigureAwait(false);
-                await graph.UpsertNodeAsync("chapter-2", "Chapter", new Dictionary<string, object?> { ["title"] = "Discovery" }, token).ConfigureAwait(false);
-                await graph.UpsertRelationshipAsync("chapter-1", "chapter-2", "LEADS_TO", new Dictionary<string, object?> { ["weight"] = 0.9 }, token).ConfigureAwait(false);
-                var relationships = new List<GraphRelationship>();
-                await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("chapter-1", token).ConfigureAwait(false))
-                {
-                    relationships.Add(relationship);
-                }
-
-                context.Items["postgres:relationship-count"] = relationships.Count;
-                return new WorkflowResult(null);
-            });
-
-            if (includeCosmos)
-            {
-                steps.AddStep("cosmos-seed", async (config, context, token) =>
-                {
-                    var graph = context.Services.GetRequiredKeyedService<IGraphStore>("cosmos");
-                    await graph.InitializeAsync(token).ConfigureAwait(false);
-                    await graph.UpsertNodeAsync("c1", "Content", new Dictionary<string, object?> { ["title"] = "Doc" }, token).ConfigureAwait(false);
-                    await graph.UpsertNodeAsync("c2", "Content", new Dictionary<string, object?> { ["title"] = "Attachment" }, token).ConfigureAwait(false);
-                    await graph.UpsertRelationshipAsync("c1", "c2", "EMBEDS", new Dictionary<string, object?> { ["score"] = 0.42 }, token).ConfigureAwait(false);
-                    var relationships = new List<GraphRelationship>();
-                    await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("c1", token).ConfigureAwait(false))
-                    {
-                        relationships.Add(relationship);
-                    }
-
-                    context.Items["cosmos:relationship-count"] = relationships.Count;
-                    return new WorkflowResult(null);
-                });
+                relationships.Add(relationship);
             }
+
+            context.Items["neo4j:relationship-count"] = relationships.Count;
+            return new WorkflowResult(null);
         });
+
+        services.AddKeyedSingleton<WorkflowDelegate>("postgres-seed", static (_, _) => async (config, context, token) =>
+        {
+            var graph = context.Services.GetRequiredKeyedService<IGraphStore>("postgres");
+            await graph.InitializeAsync(token).ConfigureAwait(false);
+            await graph.UpsertNodeAsync("chapter-1", "Chapter", new Dictionary<string, object?> { ["title"] = "Origins" }, token).ConfigureAwait(false);
+            await graph.UpsertNodeAsync("chapter-2", "Chapter", new Dictionary<string, object?> { ["title"] = "Discovery" }, token).ConfigureAwait(false);
+            await graph.UpsertRelationshipAsync("chapter-1", "chapter-2", "LEADS_TO", new Dictionary<string, object?> { ["weight"] = 0.9 }, token).ConfigureAwait(false);
+            var relationships = new List<GraphRelationship>();
+            await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("chapter-1", token).ConfigureAwait(false))
+            {
+                relationships.Add(relationship);
+            }
+
+            context.Items["postgres:relationship-count"] = relationships.Count;
+            return new WorkflowResult(null);
+        });
+
+        if (includeCosmos)
+        {
+            services.AddKeyedSingleton<WorkflowDelegate>("cosmos-seed", static (_, _) => async (config, context, token) =>
+            {
+                var graph = context.Services.GetRequiredKeyedService<IGraphStore>("cosmos");
+                await graph.InitializeAsync(token).ConfigureAwait(false);
+                await graph.UpsertNodeAsync("c1", "Content", new Dictionary<string, object?> { ["title"] = "Doc" }, token).ConfigureAwait(false);
+                await graph.UpsertNodeAsync("c2", "Content", new Dictionary<string, object?> { ["title"] = "Attachment" }, token).ConfigureAwait(false);
+                await graph.UpsertRelationshipAsync("c1", "c2", "EMBEDS", new Dictionary<string, object?> { ["score"] = 0.42 }, token).ConfigureAwait(false);
+                var relationships = new List<GraphRelationship>();
+                await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("c1", token).ConfigureAwait(false))
+                {
+                    relationships.Add(relationship);
+                }
+
+                context.Items["cosmos:relationship-count"] = relationships.Count;
+                return new WorkflowResult(null);
+            });
+        }
 
         services.AddNeo4jGraphStore("neo4j", options =>
         {

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace GraphRag.Storage.Postgres;
 
 public sealed class PostgresGraphStoreConfig
@@ -16,5 +13,5 @@ public sealed class PostgresGraphStoreConfig
     public Dictionary<string, string[]> EdgePropertyIndexes { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     public bool MakeDefault { get; set; }
-        = false;
+
 }

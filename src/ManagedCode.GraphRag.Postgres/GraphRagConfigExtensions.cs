@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using GraphRag.Config;
 
 namespace GraphRag.Storage.Postgres;

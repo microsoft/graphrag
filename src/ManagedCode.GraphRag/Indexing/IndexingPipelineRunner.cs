@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using GraphRag.Cache;
 using GraphRag.Callbacks;
 using GraphRag.Config;
@@ -10,18 +6,11 @@ using GraphRag.Storage;
 
 namespace GraphRag.Indexing;
 
-public sealed class IndexingPipelineRunner
+public sealed class IndexingPipelineRunner(IServiceProvider services, IPipelineFactory pipelineFactory, PipelineExecutor executor)
 {
-    private readonly IServiceProvider _services;
-    private readonly IPipelineFactory _pipelineFactory;
-    private readonly PipelineExecutor _executor;
-
-    public IndexingPipelineRunner(IServiceProvider services, IPipelineFactory pipelineFactory, PipelineExecutor executor)
-    {
-        _services = services ?? throw new ArgumentNullException(nameof(services));
-        _pipelineFactory = pipelineFactory ?? throw new ArgumentNullException(nameof(pipelineFactory));
-        _executor = executor ?? throw new ArgumentNullException(nameof(executor));
-    }
+    private readonly IServiceProvider _services = services ?? throw new ArgumentNullException(nameof(services));
+    private readonly IPipelineFactory _pipelineFactory = pipelineFactory ?? throw new ArgumentNullException(nameof(pipelineFactory));
+    private readonly PipelineExecutor _executor = executor ?? throw new ArgumentNullException(nameof(executor));
 
     public async Task<IReadOnlyList<PipelineRunResult>> RunAsync(GraphRagConfig config, CancellationToken cancellationToken = default)
     {

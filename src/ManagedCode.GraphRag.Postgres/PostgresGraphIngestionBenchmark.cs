@@ -1,24 +1,12 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace GraphRag.Storage.Postgres;
 
-public sealed class PostgresGraphIngestionBenchmark
+public sealed class PostgresGraphIngestionBenchmark(PostgresGraphStore graphStore, ILogger<PostgresGraphIngestionBenchmark> logger)
 {
-    private readonly PostgresGraphStore _graphStore;
-    private readonly ILogger<PostgresGraphIngestionBenchmark> _logger;
-
-    public PostgresGraphIngestionBenchmark(PostgresGraphStore graphStore, ILogger<PostgresGraphIngestionBenchmark> logger)
-    {
-        _graphStore = graphStore ?? throw new ArgumentNullException(nameof(graphStore));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly PostgresGraphStore _graphStore = graphStore ?? throw new ArgumentNullException(nameof(graphStore));
+    private readonly ILogger<PostgresGraphIngestionBenchmark> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<PostgresIngestionBenchmarkResult> RunAsync(Stream csvStream, PostgresIngestionBenchmarkOptions options, CancellationToken cancellationToken = default)
     {
@@ -31,7 +19,7 @@ public sealed class PostgresGraphIngestionBenchmark
         }
 
         using var reader = new StreamReader(csvStream, leaveOpen: true);
-        var headerLine = await reader.ReadLineAsync().ConfigureAwait(false);
+        var headerLine = await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrWhiteSpace(headerLine))
         {
             return new PostgresIngestionBenchmarkResult(0, 0, TimeSpan.Zero, options.EnsurePropertyIndexes);
@@ -63,7 +51,7 @@ public sealed class PostgresGraphIngestionBenchmark
         var relationshipsWritten = 0;
 
         string? line;
-        while ((line = await reader.ReadLineAsync().ConfigureAwait(false)) is not null)
+        while ((line = await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false)) is not null)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (string.IsNullOrWhiteSpace(line))

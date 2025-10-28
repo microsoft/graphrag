@@ -1,5 +1,3 @@
-using System;
-
 namespace GraphRag.Storage.Postgres;
 
 public sealed record PostgresIngestionBenchmarkResult(

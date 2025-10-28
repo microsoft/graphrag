@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -10,10 +7,7 @@ public static class Hashing
 {
     public static string GenerateSha512Hash(IEnumerable<KeyValuePair<string, object?>> fields)
     {
-        if (fields is null)
-        {
-            throw new ArgumentNullException(nameof(fields));
-        }
+        ArgumentNullException.ThrowIfNull(fields);
 
         var builder = new StringBuilder();
         foreach (var field in fields)

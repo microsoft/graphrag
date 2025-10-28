@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using GraphRag.Config;
 
 namespace GraphRag.Chunking;

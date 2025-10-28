@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Logging;
 

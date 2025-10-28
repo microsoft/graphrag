@@ -1,9 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
@@ -482,10 +479,7 @@ LIMIT 1;";
 
     private static NpgsqlParameter CreateAgTypeParameter(string name, string jsonPayload)
     {
-        if (jsonPayload is null)
-        {
-            throw new ArgumentNullException(nameof(jsonPayload));
-        }
+        ArgumentNullException.ThrowIfNull(jsonPayload);
 
         return new NpgsqlParameter(name, NpgsqlDbType.Unknown)
         {

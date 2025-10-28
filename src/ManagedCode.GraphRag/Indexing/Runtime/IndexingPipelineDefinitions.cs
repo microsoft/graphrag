@@ -8,6 +8,8 @@ public static class IndexingPipelineDefinitions
     {
         LoadInputDocumentsWorkflow.Name,
         CreateBaseTextUnitsWorkflow.Name,
+        ExtractGraphWorkflow.Name,
+        CommunitySummariesWorkflow.Name,
         CreateFinalDocumentsWorkflow.Name
     });
 }

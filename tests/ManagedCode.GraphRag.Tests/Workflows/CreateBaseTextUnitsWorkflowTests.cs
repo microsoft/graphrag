@@ -13,8 +13,10 @@ using GraphRag.Indexing.Runtime;
 using GraphRag.Indexing.Workflows;
 using GraphRag.Logging;
 using GraphRag.Storage;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 
 namespace ManagedCode.GraphRag.Tests.Workflows;
 
@@ -23,7 +25,10 @@ public sealed class CreateBaseTextUnitsWorkflowTests
     [Fact]
     public async Task RunWorkflow_PrependsMetadata_WhenConfigured()
     {
-        var services = new ServiceCollection().AddGraphRag().BuildServiceProvider();
+        var services = new ServiceCollection()
+            .AddSingleton<IChatClient>(new TestChatClientFactory().CreateClient())
+            .AddGraphRag()
+            .BuildServiceProvider();
         var outputStorage = new MemoryPipelineStorage();
         await outputStorage.WriteTableAsync(PipelineTableNames.Documents, new[]
         {
@@ -75,7 +80,10 @@ public sealed class CreateBaseTextUnitsWorkflowTests
     [Fact]
     public async Task RunWorkflow_ThrowsWhenMetadataExceedsChunkBudget()
     {
-        var services = new ServiceCollection().AddGraphRag().BuildServiceProvider();
+        var services = new ServiceCollection()
+            .AddSingleton<IChatClient>(new TestChatClientFactory().CreateClient())
+            .AddGraphRag()
+            .BuildServiceProvider();
         var outputStorage = new MemoryPipelineStorage();
         await outputStorage.WriteTableAsync(PipelineTableNames.Documents, new[]
         {
@@ -123,7 +131,10 @@ public sealed class CreateBaseTextUnitsWorkflowTests
     [Fact]
     public async Task RunWorkflow_GeneratesStableTextUnitIds()
     {
-        var services = new ServiceCollection().AddGraphRag().BuildServiceProvider();
+        var services = new ServiceCollection()
+            .AddSingleton<IChatClient>(new TestChatClientFactory().CreateClient())
+            .AddGraphRag()
+            .BuildServiceProvider();
         var outputStorage = new MemoryPipelineStorage();
         await outputStorage.WriteTableAsync(PipelineTableNames.Documents, new[]
         {

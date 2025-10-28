@@ -10,10 +10,12 @@ public sealed record RelationshipRecord(
     int HumanReadableId,
     string Source,
     string Target,
+    string Type,
     string? Description,
     double Weight,
     int CombinedDegree,
-    ImmutableArray<string> TextUnitIds);
+    ImmutableArray<string> TextUnitIds,
+    bool Bidirectional);
 
 /// <summary>
 /// Represents the minimal information required to seed relationship processing.
@@ -23,4 +25,9 @@ public sealed record RelationshipSeed(
     string Target,
     string? Description,
     double Weight,
-    IReadOnlyList<string> TextUnitIds);
+    IReadOnlyList<string> TextUnitIds)
+{
+    public string Type { get; init; } = "related_to";
+
+    public bool Bidirectional { get; init; }
+}

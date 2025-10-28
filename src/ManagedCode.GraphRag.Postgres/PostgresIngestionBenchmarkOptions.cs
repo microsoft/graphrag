@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace GraphRag.Storage.Postgres;
 
 public sealed class PostgresIngestionBenchmarkOptions

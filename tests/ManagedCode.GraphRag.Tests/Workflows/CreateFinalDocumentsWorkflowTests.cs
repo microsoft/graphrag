@@ -10,9 +10,11 @@ using GraphRag.Data;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Indexing.Workflows;
 using GraphRag.Storage;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using GraphRag.Constants;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 
 namespace ManagedCode.GraphRag.Tests.Workflows;
 
@@ -21,7 +23,10 @@ public sealed class CreateFinalDocumentsWorkflowTests
     [Fact]
     public async Task RunWorkflow_AssignsTextUnitIds()
     {
-        var services = new ServiceCollection().AddGraphRag().BuildServiceProvider();
+        var services = new ServiceCollection()
+            .AddSingleton<IChatClient>(new TestChatClientFactory().CreateClient())
+            .AddGraphRag()
+            .BuildServiceProvider();
         var outputStorage = new MemoryPipelineStorage();
 
         await outputStorage.WriteTableAsync(PipelineTableNames.Documents, new[]

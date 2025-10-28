@@ -65,10 +65,12 @@ public static class GraphFinalizer
                     HumanReadableId: index,
                     Source: seed.Source,
                     Target: seed.Target,
+                    Type: seed.Type,
                     Description: seed.Description,
                     Weight: seed.Weight,
                     CombinedDegree: combinedDegree,
-                    TextUnitIds: seed.TextUnitIds.ToImmutableArray());
+                    TextUnitIds: seed.TextUnitIds.ToImmutableArray(),
+                    Bidirectional: seed.Bidirectional);
             })
             .ToList();
 
@@ -84,18 +86,19 @@ public static class GraphFinalizer
 
         foreach (var relationship in relationships)
         {
-            if (!degrees.ContainsKey(relationship.Source))
+            if (!degrees.TryGetValue(relationship.Source, out var sourceDegree))
             {
-                degrees[relationship.Source] = 0;
+                sourceDegree = 0;
             }
 
-            if (!degrees.ContainsKey(relationship.Target))
+            degrees[relationship.Source] = sourceDegree + 1;
+
+            if (!degrees.TryGetValue(relationship.Target, out var targetDegree))
             {
-                degrees[relationship.Target] = 0;
+                targetDegree = 0;
             }
 
-            degrees[relationship.Source]++;
-            degrees[relationship.Target]++;
+            degrees[relationship.Target] = targetDegree + 1;
         }
 
         return degrees;

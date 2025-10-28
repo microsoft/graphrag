@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace GraphRag.Config;
 
 public sealed class TextEmbeddingConfig

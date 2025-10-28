@@ -13,5 +13,5 @@ public sealed class VectorStoreSchemaConfig
     public int VectorSize { get; set; } = 1536;
 
     public string? IndexName { get; set; }
-        = null;
+
 }

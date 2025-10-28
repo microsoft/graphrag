@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using GraphRag.Config;
@@ -9,14 +8,9 @@ namespace GraphRag.Indexing.Runtime;
 /// <summary>
 /// Executes workflow pipelines, mirroring the semantics of the Python runner.
 /// </summary>
-public sealed class PipelineExecutor
+public sealed class PipelineExecutor(ILogger<PipelineExecutor> logger)
 {
-    private readonly ILogger<PipelineExecutor> _logger;
-
-    public PipelineExecutor(ILogger<PipelineExecutor> logger)
-    {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly ILogger<PipelineExecutor> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async IAsyncEnumerable<PipelineRunResult> ExecuteAsync(
         WorkflowPipeline pipeline,

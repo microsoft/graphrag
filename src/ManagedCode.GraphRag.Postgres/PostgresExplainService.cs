@@ -1,23 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace GraphRag.Storage.Postgres;
 
-public sealed class PostgresExplainService
+public sealed class PostgresExplainService(PostgresGraphStore graphStore, ILogger<PostgresExplainService> logger)
 {
-    private readonly PostgresGraphStore _graphStore;
-    private readonly ILogger<PostgresExplainService> _logger;
-
-    public PostgresExplainService(PostgresGraphStore graphStore, ILogger<PostgresExplainService> logger)
-    {
-        _graphStore = graphStore ?? throw new ArgumentNullException(nameof(graphStore));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly PostgresGraphStore _graphStore = graphStore ?? throw new ArgumentNullException(nameof(graphStore));
+    private readonly ILogger<PostgresExplainService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<string> GetFormattedPlanAsync(string cypherQuery, IReadOnlyDictionary<string, object?>? parameters = null, CancellationToken cancellationToken = default)
     {

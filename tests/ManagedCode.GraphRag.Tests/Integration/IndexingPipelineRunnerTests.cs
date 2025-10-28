@@ -5,11 +5,13 @@ using GraphRag;
 using GraphRag.Config;
 using GraphRag.Indexing;
 using GraphRag.Storage;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;
 using GraphRag.Constants;
 using GraphRag.Indexing.Workflows;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 
 namespace ManagedCode.GraphRag.Tests.Integration;
 
@@ -28,6 +30,7 @@ public sealed class IndexingPipelineRunnerTests
 
         var services = new ServiceCollection()
             .AddLogging()
+            .AddSingleton<IChatClient>(new TestChatClientFactory().CreateClient())
             .AddGraphRag()
             .BuildServiceProvider();
 

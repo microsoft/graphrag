@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace GraphRag.Config;
 
 public sealed class LanguageModelConfig
@@ -52,7 +50,7 @@ public sealed class LanguageModelConfig
 
     public int? MaxTokens { get; set; }
 
-    public double Temperature { get; set; } = 0;
+    public double Temperature { get; set; }
 
     public int? MaxCompletionTokens { get; set; }
 
@@ -62,7 +60,7 @@ public sealed class LanguageModelConfig
 
     public int N { get; set; } = 1;
 
-    public double FrequencyPenalty { get; set; } = 0;
+    public double FrequencyPenalty { get; set; }
 
-    public double PresencePenalty { get; set; } = 0;
+    public double PresencePenalty { get; set; }
 }
