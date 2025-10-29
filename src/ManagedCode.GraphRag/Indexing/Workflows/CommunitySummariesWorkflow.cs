@@ -45,10 +45,30 @@ internal static class CommunitySummariesWorkflow
                 relationships = Array.Empty<RelationshipRecord>();
             }
 
+            IReadOnlyList<CommunityRecord> communities;
+            if (await context.OutputStorage.TableExistsAsync(PipelineTableNames.Communities, cancellationToken).ConfigureAwait(false))
+            {
+                communities = await context.OutputStorage
+                    .LoadTableAsync<CommunityRecord>(PipelineTableNames.Communities, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            else
+            {
+                communities = CommunityBuilder.Build(entities, relationships, config.ClusterGraph);
+            }
+
+            if (communities.Count == 0)
+            {
+                await context.OutputStorage
+                    .WriteTableAsync(PipelineTableNames.CommunityReports, Array.Empty<CommunityReportRecord>(), cancellationToken)
+                    .ConfigureAwait(false);
+                return new WorkflowResult(Array.Empty<CommunityReportRecord>());
+            }
+
+            var entityLookup = entities.ToDictionary(entity => entity.Id, StringComparer.OrdinalIgnoreCase);
             var logger = context.Services.GetService<ILoggerFactory>()?.CreateLogger(typeof(CommunitySummariesWorkflow));
             var reportsConfig = config.CommunityReports ?? new CommunityReportsConfig();
             var chatClient = ResolveChatClient(context.Services, reportsConfig.ModelId, logger);
-            var communities = DetectCommunities(entities, relationships);
             var reports = new List<CommunityReportRecord>(communities.Count);
 
             for (var index = 0; index < communities.Count; index++)
@@ -56,6 +76,17 @@ internal static class CommunitySummariesWorkflow
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var community = communities[index];
+                var members = community.EntityIds
+                    .Select(id => entityLookup.TryGetValue(id, out var entity) ? entity : null)
+                    .Where(static entity => entity is not null)
+                    .Cast<EntityRecord>()
+                    .ToArray();
+
+                if (members.Length == 0)
+                {
+                    continue;
+                }
+
                 var summary = string.Empty;
 
                 try
@@ -63,7 +94,7 @@ internal static class CommunitySummariesWorkflow
                     summary = await GenerateCommunitySummaryAsync(
                         chatClient,
                         GraphRagPromptLibrary.CommunitySummarySystemPrompt,
-                        GraphRagPromptLibrary.BuildCommunitySummaryUserPrompt(community, reportsConfig.MaxLength),
+                        GraphRagPromptLibrary.BuildCommunitySummaryUserPrompt(members, reportsConfig.MaxLength),
                         cancellationToken).ConfigureAwait(false);
                 }
                 catch (Exception ex)
@@ -73,14 +104,14 @@ internal static class CommunitySummariesWorkflow
 
                 if (string.IsNullOrWhiteSpace(summary))
                 {
-                    summary = BuildFallbackSummary(community);
+                    summary = BuildFallbackSummary(members);
                 }
 
                 var keywords = ExtractKeywords(summary);
                 reports.Add(new CommunityReportRecord(
-                    CommunityId: $"community_{index + 1}",
+                    CommunityId: $"community_{community.CommunityId}",
                     Level: 0,
-                    EntityTitles: community.Select(static e => e.Title).ToArray(),
+                    EntityTitles: members.Select(static e => e.Title).ToArray(),
                     Summary: summary.Trim(),
                     Keywords: keywords));
             }
@@ -92,80 +123,6 @@ internal static class CommunitySummariesWorkflow
             context.Items["community_reports:count"] = reports.Count;
             return new WorkflowResult(reports);
         };
-    }
-
-    private static List<IReadOnlyList<EntityRecord>> DetectCommunities(
-        IReadOnlyList<EntityRecord> entities,
-        IReadOnlyList<RelationshipRecord> relationships)
-    {
-        var adjacency = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
-        foreach (var entity in entities)
-        {
-            adjacency.TryAdd(entity.Title, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
-        }
-
-        foreach (var relationship in relationships)
-        {
-            if (!adjacency.TryGetValue(relationship.Source, out var sourceNeighbors))
-            {
-                sourceNeighbors = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                adjacency[relationship.Source] = sourceNeighbors;
-            }
-
-            if (!adjacency.TryGetValue(relationship.Target, out var targetNeighbors))
-            {
-                targetNeighbors = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                adjacency[relationship.Target] = targetNeighbors;
-            }
-
-            sourceNeighbors.Add(relationship.Target);
-            targetNeighbors.Add(relationship.Source);
-        }
-
-        var entityLookup = entities.ToDictionary(entity => entity.Title, StringComparer.OrdinalIgnoreCase);
-        var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var communities = new List<IReadOnlyList<EntityRecord>>();
-
-        foreach (var entity in entities)
-        {
-            if (!visited.Add(entity.Title))
-            {
-                continue;
-            }
-
-            var queue = new Queue<string>();
-            queue.Enqueue(entity.Title);
-
-            var members = new List<EntityRecord>();
-
-            while (queue.Count > 0)
-            {
-                var current = queue.Dequeue();
-                if (!entityLookup.TryGetValue(current, out var record))
-                {
-                    continue;
-                }
-
-                members.Add(record);
-
-                if (!adjacency.TryGetValue(current, out var neighbors))
-                {
-                    continue;
-                }
-
-                foreach (var neighbor in neighbors)
-                {
-                    if (visited.Add(neighbor))
-                    {
-                        queue.Enqueue(neighbor);
-                    }
-                }
-            }
-
-            communities.Add(members);
-        }
-
-        return communities;
     }
 
     private static IReadOnlyList<string> ExtractKeywords(string summary)

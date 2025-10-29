@@ -50,6 +50,8 @@ public sealed class GraphRagConfig
 
     public SummarizeDescriptionsConfig SummarizeDescriptions { get; set; } = new();
 
+    public ClusterGraphConfig ClusterGraph { get; set; } = new();
+
     public CommunityReportsConfig CommunityReports { get; set; } = new();
 
     public SnapshotsConfig Snapshots { get; set; } = new();

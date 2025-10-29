@@ -54,8 +54,13 @@ public sealed class CommunitySummariesWorkflowTests
             state: new PipelineState(),
             services: services);
 
+        var config = new GraphRagConfig();
+
+        var createCommunities = CreateCommunitiesWorkflow.Create();
+        await createCommunities(config, context, CancellationToken.None);
+
         var workflow = CommunitySummariesWorkflow.Create();
-        await workflow(new GraphRagConfig(), context, CancellationToken.None);
+        await workflow(config, context, CancellationToken.None);
 
         var reports = await outputStorage.LoadTableAsync<CommunityReportRecord>(PipelineTableNames.CommunityReports);
         var report = Assert.Single(reports);
