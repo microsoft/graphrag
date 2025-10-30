@@ -2,10 +2,11 @@ namespace GraphRag.Config;
 
 public sealed class ExtractGraphConfig
 {
-    public string ModelId { get; set; } = "default_chat_model";
+    public string? ModelId { get; set; }
+
+    public string? SystemPrompt { get; set; }
 
     public string? Prompt { get; set; }
-        = "prompts/index/extract_graph.txt";
 
     public List<string> EntityTypes { get; set; } = new() { "person", "organization", "location" };
 

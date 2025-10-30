@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
 using GraphRag.Indexing.Runtime;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Runtime;
 

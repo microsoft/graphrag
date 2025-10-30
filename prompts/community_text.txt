@@ -1,0 +1,6 @@
+Summarise the key theme that connects the following entities in no more than {{max_length}} characters. Focus on what unites them and why the group matters. Avoid bullet lists.
+
+Entities:
+{{entities}}
+
+Provide a single paragraph answer.

@@ -20,6 +20,9 @@ internal static class ExtractGraphWorkflow
 
     private static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
 
+    private const string EntityCountKey = "extract_graph:entity_count";
+    private const string RelationshipCountKey = "extract_graph:relationship_count";
+
     public static WorkflowDelegate Create()
     {
         return async (config, context, cancellationToken) =>
@@ -42,6 +45,14 @@ internal static class ExtractGraphWorkflow
             var relationshipAggregator = new RelationshipAggregator();
 
             var chatClient = ResolveChatClient(context.Services, extractionConfig.ModelId, logger);
+            var promptLoader = PromptTemplateLoader.Create(config);
+            var systemPrompt = promptLoader.ResolveOrDefault(
+                PromptTemplateKeys.ExtractGraphSystem,
+                extractionConfig.SystemPrompt,
+                GraphRagPromptLibrary.ExtractGraphSystemPrompt);
+            var userPromptTemplate = promptLoader.ResolveOptional(
+                PromptTemplateKeys.ExtractGraphUser,
+                extractionConfig.Prompt);
 
             foreach (var unit in textUnits)
             {
@@ -56,8 +67,11 @@ internal static class ExtractGraphWorkflow
                 {
                     var extraction = await GenerateExtractionAsync(
                         chatClient,
-                        GraphRagPromptLibrary.ExtractGraphSystemPrompt,
-                        GraphRagPromptLibrary.BuildExtractGraphUserPrompt(unit.Text, Math.Max(1, allowedTypes.Count + 5)),
+                        systemPrompt,
+                        GraphRagPromptLibrary.BuildExtractGraphUserPrompt(
+                            unit.Text,
+                            Math.Max(1, allowedTypes.Count + 5),
+                            userPromptTemplate),
                         logger,
                         cancellationToken).ConfigureAwait(false);
 
@@ -94,8 +108,8 @@ internal static class ExtractGraphWorkflow
                 .WriteTableAsync(PipelineTableNames.Relationships, finalization.Relationships, cancellationToken)
                 .ConfigureAwait(false);
 
-            context.Items["extract_graph:entity_count"] = finalization.Entities.Count;
-            context.Items["extract_graph:relationship_count"] = finalization.Relationships.Count;
+            context.Items[EntityCountKey] = finalization.Entities.Count;
+            context.Items[RelationshipCountKey] = finalization.Relationships.Count;
 
             return new WorkflowResult(finalization.Entities);
         };

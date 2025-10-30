@@ -1,9 +1,7 @@
-using System.Linq;
 using GraphRag.Chunking;
 using GraphRag.Config;
 using GraphRag.Constants;
 using GraphRag.Tokenization;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Chunking;
 
@@ -73,7 +71,8 @@ public sealed class MarkdownTextChunkerTests
 
         var tokenizer = TokenizerRegistry.GetTokenizer(config.EncodingModel);
         var firstTokens = tokenizer.EncodeToIds(chunks[0].Text);
-        var secondTokens = tokenizer.EncodeToIds(chunks[1].Text);
+
+        _ = tokenizer.EncodeToIds(chunks[1].Text);
         var overlapTokens = firstTokens.Skip(Math.Max(0, firstTokens.Count - config.Overlap)).ToArray();
         Assert.True(overlapTokens.Length > 0);
         var overlapText = tokenizer.Decode(overlapTokens).TrimStart();

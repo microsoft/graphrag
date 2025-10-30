@@ -1,9 +1,6 @@
-using System;
-using System.Linq;
 using GraphRag.Entities;
 using GraphRag.Finalization;
 using GraphRag.Relationships;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Finalization;
 

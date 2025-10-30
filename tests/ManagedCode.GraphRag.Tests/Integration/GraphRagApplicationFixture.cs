@@ -1,22 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
+using DotNet.Testcontainers.Builders;
 using GraphRag;
 using GraphRag.Graphs;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Storage.Cosmos;
 using GraphRag.Storage.Neo4j;
 using GraphRag.Storage.Postgres;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using DotNet.Testcontainers.Builders;
 using Npgsql;
 using Testcontainers.Neo4j;
 using Testcontainers.PostgreSql;
-using Xunit;
-using ManagedCode.GraphRag.Tests.Infrastructure;
 
 namespace ManagedCode.GraphRag.Tests.Integration;
 
@@ -36,31 +31,42 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        _neo4jContainer = new Neo4jBuilder()
-            .WithImage("neo4j:5.23.0-community")
-            .WithEnvironment("NEO4J_ACCEPT_LICENSE_AGREEMENT", "yes")
-            .WithEnvironment("NEO4J_PLUGINS", "[\"apoc\"]")
-            .WithEnvironment("NEO4J_dbms_default__listen__address", "0.0.0.0")
-            .WithEnvironment("NEO4J_dbms_default__advertised__address", "localhost")
-            .WithEnvironment("NEO4J_AUTH", $"neo4j/{Neo4jPassword}")
-            .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(7687))
-            .Build();
+        var skipContainers = string.Equals(
+            Environment.GetEnvironmentVariable("GRAPHRAG_SKIP_TESTCONTAINERS"),
+            "1",
+            StringComparison.OrdinalIgnoreCase);
 
-        _postgresContainer = new PostgreSqlBuilder()
-            .WithImage("apache/age:latest")
-            .WithDatabase(PostgresDatabase)
-            .WithUsername("postgres")
-            .WithPassword(PostgresPassword)
-            .WithCleanUp(true)
-            .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(5432))
-            .Build();
+        Uri? boltEndpoint = null;
+        string? postgresConnection = null;
 
-        await Task.WhenAll(_neo4jContainer.StartAsync(), _postgresContainer.StartAsync()).ConfigureAwait(false);
+        if (!skipContainers)
+        {
+            _neo4jContainer = new Neo4jBuilder()
+                .WithImage("neo4j:5.23.0-community")
+                .WithEnvironment("NEO4J_ACCEPT_LICENSE_AGREEMENT", "yes")
+                .WithEnvironment("NEO4J_PLUGINS", "[\"apoc\"]")
+                .WithEnvironment("NEO4J_dbms_default__listen__address", "0.0.0.0")
+                .WithEnvironment("NEO4J_dbms_default__advertised__address", "localhost")
+                .WithEnvironment("NEO4J_AUTH", $"neo4j/{Neo4jPassword}")
+                .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(7687))
+                .Build();
 
-        await EnsurePostgresDatabaseAsync().ConfigureAwait(false);
+            _postgresContainer = new PostgreSqlBuilder()
+                .WithImage("apache/age:latest")
+                .WithDatabase(PostgresDatabase)
+                .WithUsername("postgres")
+                .WithPassword(PostgresPassword)
+                .WithCleanUp(true)
+                .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(5432))
+                .Build();
 
-        var boltEndpoint = new Uri(_neo4jContainer.GetConnectionString(), UriKind.Absolute);
-        var postgresConnection = _postgresContainer.GetConnectionString();
+            await Task.WhenAll(_neo4jContainer.StartAsync(), _postgresContainer.StartAsync()).ConfigureAwait(false);
+            await EnsurePostgresDatabaseAsync().ConfigureAwait(false);
+
+            boltEndpoint = new Uri(_neo4jContainer.GetConnectionString(), UriKind.Absolute);
+            postgresConnection = _postgresContainer.GetConnectionString();
+        }
+
         var cosmosConnectionString = Environment.GetEnvironmentVariable("COSMOS_EMULATOR_CONNECTION_STRING");
         var includeCosmos = !string.IsNullOrWhiteSpace(cosmosConnectionString);
 
@@ -74,39 +80,55 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
 
         services.AddGraphRag();
 
-        services.AddKeyedSingleton<WorkflowDelegate>("neo4j-seed", static (_, _) => async (config, context, token) =>
+        if (!skipContainers && boltEndpoint is not null && postgresConnection is not null)
         {
-            var graph = context.Services.GetRequiredKeyedService<IGraphStore>("neo4j");
-            await graph.InitializeAsync(token).ConfigureAwait(false);
-            await graph.UpsertNodeAsync("alice", "Person", new Dictionary<string, object?> { ["name"] = "Alice" }, token).ConfigureAwait(false);
-            await graph.UpsertNodeAsync("bob", "Person", new Dictionary<string, object?> { ["name"] = "Bob" }, token).ConfigureAwait(false);
-            await graph.UpsertRelationshipAsync("alice", "bob", "KNOWS", new Dictionary<string, object?> { ["since"] = 2024 }, token).ConfigureAwait(false);
-            var relationships = new List<GraphRelationship>();
-            await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("alice", token).ConfigureAwait(false))
+            services.AddKeyedSingleton<WorkflowDelegate>("neo4j-seed", static (_, _) => async (config, context, token) =>
             {
-                relationships.Add(relationship);
-            }
+                var graph = context.Services.GetRequiredKeyedService<IGraphStore>("neo4j");
+                await graph.InitializeAsync(token).ConfigureAwait(false);
+                await graph.UpsertNodeAsync("alice", "Person", new Dictionary<string, object?> { ["name"] = "Alice" }, token).ConfigureAwait(false);
+                await graph.UpsertNodeAsync("bob", "Person", new Dictionary<string, object?> { ["name"] = "Bob" }, token).ConfigureAwait(false);
+                await graph.UpsertRelationshipAsync("alice", "bob", "KNOWS", new Dictionary<string, object?> { ["since"] = 2024 }, token).ConfigureAwait(false);
+                var relationships = new List<GraphRelationship>();
+                await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("alice", token).ConfigureAwait(false))
+                {
+                    relationships.Add(relationship);
+                }
 
-            context.Items["neo4j:relationship-count"] = relationships.Count;
-            return new WorkflowResult(null);
-        });
+                context.Items["neo4j:relationship-count"] = relationships.Count;
+                return new WorkflowResult(null);
+            });
 
-        services.AddKeyedSingleton<WorkflowDelegate>("postgres-seed", static (_, _) => async (config, context, token) =>
-        {
-            var graph = context.Services.GetRequiredKeyedService<IGraphStore>("postgres");
-            await graph.InitializeAsync(token).ConfigureAwait(false);
-            await graph.UpsertNodeAsync("chapter-1", "Chapter", new Dictionary<string, object?> { ["title"] = "Origins" }, token).ConfigureAwait(false);
-            await graph.UpsertNodeAsync("chapter-2", "Chapter", new Dictionary<string, object?> { ["title"] = "Discovery" }, token).ConfigureAwait(false);
-            await graph.UpsertRelationshipAsync("chapter-1", "chapter-2", "LEADS_TO", new Dictionary<string, object?> { ["weight"] = 0.9 }, token).ConfigureAwait(false);
-            var relationships = new List<GraphRelationship>();
-            await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("chapter-1", token).ConfigureAwait(false))
+            services.AddKeyedSingleton<WorkflowDelegate>("postgres-seed", static (_, _) => async (config, context, token) =>
             {
-                relationships.Add(relationship);
-            }
+                var graph = context.Services.GetRequiredKeyedService<IGraphStore>("postgres");
+                await graph.InitializeAsync(token).ConfigureAwait(false);
+                await graph.UpsertNodeAsync("chapter-1", "Chapter", new Dictionary<string, object?> { ["title"] = "Origins" }, token).ConfigureAwait(false);
+                await graph.UpsertNodeAsync("chapter-2", "Chapter", new Dictionary<string, object?> { ["title"] = "Discovery" }, token).ConfigureAwait(false);
+                await graph.UpsertRelationshipAsync("chapter-1", "chapter-2", "LEADS_TO", new Dictionary<string, object?> { ["weight"] = 0.9 }, token).ConfigureAwait(false);
+                var relationships = new List<GraphRelationship>();
+                await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("chapter-1", token).ConfigureAwait(false))
+                {
+                    relationships.Add(relationship);
+                }
 
-            context.Items["postgres:relationship-count"] = relationships.Count;
-            return new WorkflowResult(null);
-        });
+                context.Items["postgres:relationship-count"] = relationships.Count;
+                return new WorkflowResult(null);
+            });
+
+            services.AddNeo4jGraphStore("neo4j", options =>
+            {
+                options.Uri = boltEndpoint.ToString();
+                options.Username = "neo4j";
+                options.Password = Neo4jPassword;
+            }, makeDefault: true);
+
+            services.AddPostgresGraphStore("postgres", options =>
+            {
+                options.ConnectionString = postgresConnection!;
+                options.GraphName = "graphrag";
+            });
+        }
 
         if (includeCosmos)
         {
@@ -127,19 +149,6 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
                 return new WorkflowResult(null);
             });
         }
-
-        services.AddNeo4jGraphStore("neo4j", options =>
-        {
-            options.Uri = boltEndpoint.ToString();
-            options.Username = "neo4j";
-            options.Password = Neo4jPassword;
-        }, makeDefault: true);
-
-        services.AddPostgresGraphStore("postgres", options =>
-        {
-            options.ConnectionString = postgresConnection;
-            options.GraphName = "graphrag";
-        });
 
         if (includeCosmos)
         {

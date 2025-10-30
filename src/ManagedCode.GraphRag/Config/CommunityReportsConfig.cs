@@ -2,13 +2,11 @@ namespace GraphRag.Config;
 
 public sealed class CommunityReportsConfig
 {
-    public string ModelId { get; set; } = "default_chat_model";
+    public string? ModelId { get; set; }
 
     public string? GraphPrompt { get; set; }
-        = "prompts/community_graph.txt";
 
     public string? TextPrompt { get; set; }
-        = "prompts/community_text.txt";
 
     public int MaxLength { get; set; } = 2000;
 

@@ -2,7 +2,7 @@ namespace GraphRag.Config;
 
 public sealed class TextEmbeddingConfig
 {
-    public string ModelId { get; set; } = "default_embedding_model";
+    public string? ModelId { get; set; }
 
     public string VectorStoreId { get; set; } = "default_vector_store";
 

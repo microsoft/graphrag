@@ -7,15 +7,7 @@ public sealed class GraphRagConfig
 {
     public string RootDir { get; set; } = Directory.GetCurrentDirectory();
 
-    public Dictionary<string, LanguageModelConfig> Models { get; set; } = new(StringComparer.OrdinalIgnoreCase)
-    {
-        ["default_chat_model"] = new LanguageModelConfig(),
-        ["default_embedding_model"] = new LanguageModelConfig
-        {
-            Type = ModelType.Embedding,
-            Model = "text-embedding-3-small"
-        }
-    };
+    public HashSet<string> Models { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     public InputConfig Input { get; set; } = new();
 
@@ -31,8 +23,6 @@ public sealed class GraphRagConfig
         BaseDir = "output/update",
         Type = StorageType.File
     };
-
-    public CacheConfig Cache { get; set; } = new();
 
     public ReportingConfig Reporting { get; set; } = new();
 
@@ -50,22 +40,15 @@ public sealed class GraphRagConfig
 
     public SummarizeDescriptionsConfig SummarizeDescriptions { get; set; } = new();
 
+    public ClusterGraphConfig ClusterGraph { get; set; } = new();
+
     public CommunityReportsConfig CommunityReports { get; set; } = new();
+
+    public PromptTuningConfig PromptTuning { get; set; } = new();
 
     public SnapshotsConfig Snapshots { get; set; } = new();
 
     public Dictionary<string, object?> Extensions { get; set; } = new(StringComparer.OrdinalIgnoreCase);
-
-    public LanguageModelConfig GetLanguageModelConfig(string modelId)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(modelId);
-        if (!Models.TryGetValue(modelId, out var config))
-        {
-            throw new KeyNotFoundException($"Model ID '{modelId}' not found in configuration.");
-        }
-
-        return config;
-    }
 
     public VectorStoreConfig GetVectorStoreConfig(string vectorStoreId)
     {

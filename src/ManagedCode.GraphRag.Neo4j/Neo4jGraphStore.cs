@@ -1,29 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 using GraphRag.Graphs;
 using Microsoft.Extensions.Logging;
 using Neo4j.Driver;
 
 namespace GraphRag.Storage.Neo4j;
 
-public sealed class Neo4jGraphStore : IGraphStore, IAsyncDisposable
+public sealed class Neo4jGraphStore(IDriver driver, ILogger<Neo4jGraphStore> logger) : IGraphStore, IAsyncDisposable
 {
-    private readonly IDriver _driver;
-    private readonly ILogger<Neo4jGraphStore> _logger;
+    private readonly IDriver _driver = driver ?? throw new ArgumentNullException(nameof(driver));
+    private readonly ILogger<Neo4jGraphStore> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public Neo4jGraphStore(string uri, string username, string password, ILogger<Neo4jGraphStore> logger)
         : this(GraphDatabase.Driver(uri, AuthTokens.Basic(username, password)), logger)
     {
-    }
-
-    public Neo4jGraphStore(IDriver driver, ILogger<Neo4jGraphStore> logger)
-    {
-        _driver = driver ?? throw new ArgumentNullException(nameof(driver));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -64,7 +53,7 @@ SET r += $props";
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceId);
         cancellationToken.ThrowIfCancellationRequested();
-        return Fetch();
+        return Fetch(cancellationToken);
 
         async IAsyncEnumerable<GraphRelationship> Fetch([EnumeratorCancellation] CancellationToken token = default)
         {

@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddKeyedSingleton<WorkflowDelegate>(Indexing.Workflows.LoadInputDocumentsWorkflow.Name, static (_, _) => Indexing.Workflows.LoadInputDocumentsWorkflow.Create());
         services.AddKeyedSingleton<WorkflowDelegate>(Indexing.Workflows.CreateBaseTextUnitsWorkflow.Name, static (_, _) => Indexing.Workflows.CreateBaseTextUnitsWorkflow.Create());
         services.AddKeyedSingleton<WorkflowDelegate>(Indexing.Workflows.ExtractGraphWorkflow.Name, static (_, _) => Indexing.Workflows.ExtractGraphWorkflow.Create());
+        services.AddKeyedSingleton<WorkflowDelegate>(Indexing.Workflows.CreateCommunitiesWorkflow.Name, static (_, _) => Indexing.Workflows.CreateCommunitiesWorkflow.Create());
         services.AddKeyedSingleton<WorkflowDelegate>(Indexing.Workflows.CommunitySummariesWorkflow.Name, static (_, _) => Indexing.Workflows.CommunitySummariesWorkflow.Create());
         services.AddKeyedSingleton<WorkflowDelegate>(Indexing.Workflows.CreateFinalDocumentsWorkflow.Name, static (_, _) => Indexing.Workflows.CreateFinalDocumentsWorkflow.Create());
 

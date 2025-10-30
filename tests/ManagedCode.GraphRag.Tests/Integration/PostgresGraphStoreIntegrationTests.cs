@@ -1,30 +1,19 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using GraphRag.Graphs;
 using GraphRag.Storage.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 using NpgsqlTypes;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Integration;
 
 [Collection(nameof(GraphRagApplicationCollection))]
-public sealed class PostgresGraphStoreIntegrationTests
+public sealed class PostgresGraphStoreIntegrationTests(GraphRagApplicationFixture fixture)
 {
-    private readonly GraphRagApplicationFixture _fixture;
-
-    public PostgresGraphStoreIntegrationTests(GraphRagApplicationFixture fixture)
-    {
-        _fixture = fixture;
-    }
+    private readonly GraphRagApplicationFixture _fixture = fixture;
 
     [Fact]
     public async Task UpsertNode_NormalizesNestedProperties()

@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using GraphRag.Relationships;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Relationships;
 

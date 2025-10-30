@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-using GraphRag.Cache;
 using GraphRag.Callbacks;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Storage;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Runtime;
 
@@ -16,7 +14,7 @@ public sealed class PipelineContextFactoryTests
         var input = new MemoryPipelineStorage();
         var output = new MemoryPipelineStorage();
         var previous = new MemoryPipelineStorage();
-        var cache = new InMemoryPipelineCache();
+        var cache = new StubPipelineCache();
         var callbacks = WorkflowCallbacksManagerFactory();
         var stats = new PipelineRunStats();
         var state = new PipelineState();
@@ -34,7 +32,7 @@ public sealed class PipelineContextFactoryTests
         var context = PipelineContextFactory.Create();
 
         Assert.IsType<MemoryPipelineStorage>(context.InputStorage);
-        Assert.IsType<InMemoryPipelineCache>(context.Cache);
+        Assert.Null(context.Cache);
         Assert.NotNull(context.Services);
     }
 

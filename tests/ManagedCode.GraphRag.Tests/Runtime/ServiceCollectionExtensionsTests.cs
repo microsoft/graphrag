@@ -1,13 +1,11 @@
-using System.Threading.Tasks;
 using GraphRag;
 using GraphRag.Chunking;
 using GraphRag.Indexing.Runtime;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Xunit;
-using ManagedCode.GraphRag.Tests.Infrastructure;
 
 namespace ManagedCode.GraphRag.Tests.Runtime;
 

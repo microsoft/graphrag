@@ -1,14 +1,5 @@
 namespace GraphRag.Config;
 
-public enum CacheType
-{
-    File,
-    Memory,
-    None,
-    Blob,
-    CosmosDb
-}
-
 public enum InputFileType
 {
     Csv,
@@ -35,30 +26,6 @@ public enum ReportingType
 {
     File,
     Blob
-}
-
-public enum ModelType
-{
-    OpenAiEmbedding,
-    AzureOpenAiEmbedding,
-    Embedding,
-    OpenAiChat,
-    AzureOpenAiChat,
-    Chat,
-    MockChat,
-    MockEmbedding
-}
-
-public enum AuthType
-{
-    ApiKey,
-    AzureManagedIdentity
-}
-
-public enum AsyncType
-{
-    AsyncIo,
-    Threaded
 }
 
 public enum ChunkStrategyType

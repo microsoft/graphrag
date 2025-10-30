@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using GraphRag.Entities;
 
@@ -22,8 +23,15 @@ You are an investigative analyst. Produce concise, neutral summaries that descri
 Highlight how they relate, why the cluster matters, and any notable signals the reader should know. Do not invent facts.
 """;
 
-    internal static string BuildExtractGraphUserPrompt(string textUnit, int maxEntities)
+    internal static string BuildExtractGraphUserPrompt(string textUnit, int maxEntities, string? template = null)
     {
+        if (!string.IsNullOrWhiteSpace(template))
+        {
+            return template
+                .Replace("{{max_entities}}", maxEntities.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal)
+                .Replace("{{text}}", textUnit, StringComparison.Ordinal);
+        }
+
         return @$"Extract up to {maxEntities} of the most important entities and their relationships from the following text.
 
 Text (between <BEGIN_TEXT> and <END_TEXT> markers):
@@ -54,8 +62,17 @@ Respond with JSON matching this schema:
 }}";
     }
 
-    internal static string BuildCommunitySummaryUserPrompt(IReadOnlyList<EntityRecord> community, int maxLength)
+    internal static string BuildCommunitySummaryUserPrompt(IReadOnlyList<EntityRecord> community, int maxLength, string? template = null)
     {
+        var entityLines = BuildEntityLines(community);
+
+        if (!string.IsNullOrWhiteSpace(template))
+        {
+            return template
+                .Replace("{{max_length}}", maxLength.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal)
+                .Replace("{{entities}}", entityLines, StringComparison.Ordinal);
+        }
+
         var builder = new StringBuilder();
         builder.Append("Summarise the key theme that connects the following entities in no more than ");
         builder.Append(maxLength);
@@ -63,6 +80,15 @@ Respond with JSON matching this schema:
         builder.AppendLine();
         builder.AppendLine("Entities:");
 
+        builder.AppendLine(entityLines);
+        builder.AppendLine();
+        builder.AppendLine("Provide a single paragraph answer.");
+        return builder.ToString();
+    }
+
+    private static string BuildEntityLines(IEnumerable<EntityRecord> community)
+    {
+        var builder = new StringBuilder();
         foreach (var entity in community)
         {
             builder.Append("- ");
@@ -76,8 +102,6 @@ Respond with JSON matching this schema:
             builder.AppendLine();
         }
 
-        builder.AppendLine();
-        builder.AppendLine("Provide a single paragraph answer.");
-        return builder.ToString();
+        return builder.ToString().TrimEnd();
     }
 }
