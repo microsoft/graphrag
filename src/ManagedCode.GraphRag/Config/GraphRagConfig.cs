@@ -54,6 +54,8 @@ public sealed class GraphRagConfig
 
     public CommunityReportsConfig CommunityReports { get; set; } = new();
 
+    public PromptTuningConfig PromptTuning { get; set; } = new();
+
     public SnapshotsConfig Snapshots { get; set; } = new();
 
     public Dictionary<string, object?> Extensions { get; set; } = new(StringComparer.OrdinalIgnoreCase);

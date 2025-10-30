@@ -1,0 +1,28 @@
+Extract up to {{max_entities}} of the most important entities and their relationships from the following text.
+
+Text (between <BEGIN_TEXT> and <END_TEXT> markers):
+<BEGIN_TEXT>
+{{text}}
+<END_TEXT>
+
+Respond with JSON matching this schema:
+{
+  "entities": [
+    {
+      "title": "string",
+      "type": "person | organization | location | product | event | concept | technology | date | other",
+      "description": "short description",
+      "confidence": 0.0 - 1.0
+    }
+  ],
+  "relationships": [
+    {
+      "source": "entity title",
+      "target": "entity title",
+      "type": "relationship_type",
+      "description": "short description",
+      "weight": 0.0 - 1.0,
+      "bidirectional": true | false
+    }
+  ]
+}

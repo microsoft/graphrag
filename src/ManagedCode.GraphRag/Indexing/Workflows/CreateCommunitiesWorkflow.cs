@@ -11,6 +11,7 @@ namespace GraphRag.Indexing.Workflows;
 internal static class CreateCommunitiesWorkflow
 {
     public const string Name = "create_communities";
+    private const string CommunityCountKey = "create_communities:count";
 
     public static WorkflowDelegate Create()
     {
@@ -47,7 +48,7 @@ internal static class CreateCommunitiesWorkflow
                 .WriteTableAsync(PipelineTableNames.Communities, communities, cancellationToken)
                 .ConfigureAwait(false);
 
-            context.Items["create_communities:count"] = communities.Count;
+            context.Items[CommunityCountKey] = communities.Count;
             return new WorkflowResult(communities);
         };
     }

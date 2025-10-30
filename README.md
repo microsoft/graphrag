@@ -86,10 +86,22 @@ graphrag/
 
 ## Integration Testing Strategy
 
-- **No fakes.** We removed the legacy fake Postgres store. Every graph operation in tests uses real services orchestrated by Testcontainers.  
-- **Security coverage.** `Integration/PostgresGraphStoreIntegrationTests.cs` includes payloads that mimic SQL/Cypher injection attempts to ensure values remain literals and labels/types are strictly validated.  
-- **Cross-backend validation.** `Integration/GraphStoreIntegrationTests.cs` exercises Postgres, Neo4j, and Cosmos (when available) through the shared `IGraphStore` abstraction.  
+- **No fakes.** We removed the legacy fake Postgres store. Every graph operation in tests uses real services orchestrated by Testcontainers.
+- **Security coverage.** `Integration/PostgresGraphStoreIntegrationTests.cs` includes payloads that mimic SQL/Cypher injection attempts to ensure values remain literals and labels/types are strictly validated.
+- **Cross-backend validation.** `Integration/GraphStoreIntegrationTests.cs` exercises Postgres, Neo4j, and Cosmos (when available) through the shared `IGraphStore` abstraction.
 - **Workflow smoke tests.** Pipelines (e.g., `IndexingPipelineRunnerTests`) and finalization steps run end-to-end with the fixture-provisioned infrastructure.
+
+---
+
+## Indexing, Querying, and Prompt Tuning Alignment
+
+The .NET port mirrors the [GraphRAG indexing architecture](https://microsoft.github.io/graphrag/index/overview/) and its query workflows so downstream applications retain parity with the Python reference implementation.
+
+- **Indexing overview.** Workflows such as `extract_graph`, `create_communities`, and `community_summaries` map 1:1 to the [default data flow](https://microsoft.github.io/graphrag/index/default_dataflow/) and persist the same tables (`text_units`, `entities`, `relationships`, `communities`, `community_reports`, `covariates`). The new prompt template loader honours manual or auto-tuned prompts before falling back to the stock templates in `prompts/`.
+- **Query capabilities.** The query pipeline retains global search, local search, drift search, and question generation semantics described in the [GraphRAG query overview](https://microsoft.github.io/graphrag/query/overview/). Each orchestrator continues to assemble context from the indexed tables so you can reference [global](https://microsoft.github.io/graphrag/query/global_search/) or [local](https://microsoft.github.io/graphrag/query/local_search/) narratives interchangeably.
+- **Prompt tuning.** GraphRAG’s [manual](https://microsoft.github.io/graphrag/prompt_tuning/manual_prompt_tuning/) and [auto](https://microsoft.github.io/graphrag/prompt_tuning/auto_prompt_tuning/) strategies are surfaced through `GraphRagConfig.PromptTuning`. Store custom templates under `prompts/` or point `PromptTuning.Manual.Directory`/`PromptTuning.Auto.Directory` at your tuning outputs. Files follow the stage keys documented in `docs/indexing-and-query.md` (for example, `index/community_reports/system.txt` overrides the community summary system prompt). Templates can use placeholders such as `{{max_length}}`, `{{max_entities}}`, and `{{entities}}`.
+
+See [`docs/indexing-and-query.md`](docs/indexing-and-query.md) for a deeper mapping between the .NET workflows and the research publications underpinning GraphRAG.
 
 ---
 

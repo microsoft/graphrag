@@ -48,10 +48,7 @@ internal static class CommunityBuilder
             while (queue.Count > 0)
             {
                 var current = queue.Dequeue();
-                if (!component.Contains(current))
-                {
-                    component.Add(current);
-                }
+                component.Add(current);
 
                 if (!adjacency.TryGetValue(current, out var neighbors) || neighbors.Count == 0)
                 {

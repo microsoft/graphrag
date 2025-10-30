@@ -16,6 +16,7 @@ namespace GraphRag.Indexing.Workflows;
 internal static class CommunitySummariesWorkflow
 {
     public const string Name = "community_summaries";
+    private const string CommunityReportsCountKey = "community_reports:count";
 
     public static WorkflowDelegate Create()
     {
@@ -54,7 +55,7 @@ internal static class CommunitySummariesWorkflow
             }
             else
             {
-                communities = CommunityBuilder.Build(entities, relationships, config.ClusterGraph);
+                communities = DetectCommunities(entities, relationships, config.ClusterGraph);
             }
 
             if (communities.Count == 0)
@@ -69,6 +70,14 @@ internal static class CommunitySummariesWorkflow
             var logger = context.Services.GetService<ILoggerFactory>()?.CreateLogger(typeof(CommunitySummariesWorkflow));
             var reportsConfig = config.CommunityReports ?? new CommunityReportsConfig();
             var chatClient = ResolveChatClient(context.Services, reportsConfig.ModelId, logger);
+            var promptLoader = PromptTemplateLoader.Create(config);
+            var systemPrompt = promptLoader.ResolveOrDefault(
+                PromptTemplateKeys.CommunitySummarySystem,
+                reportsConfig.GraphPrompt,
+                GraphRagPromptLibrary.CommunitySummarySystemPrompt);
+            var userTemplate = promptLoader.ResolveOptional(
+                PromptTemplateKeys.CommunitySummaryUser,
+                reportsConfig.TextPrompt);
             var reports = new List<CommunityReportRecord>(communities.Count);
 
             for (var index = 0; index < communities.Count; index++)
@@ -93,8 +102,11 @@ internal static class CommunitySummariesWorkflow
                 {
                     summary = await GenerateCommunitySummaryAsync(
                         chatClient,
-                        GraphRagPromptLibrary.CommunitySummarySystemPrompt,
-                        GraphRagPromptLibrary.BuildCommunitySummaryUserPrompt(members, reportsConfig.MaxLength),
+                        systemPrompt,
+                        GraphRagPromptLibrary.BuildCommunitySummaryUserPrompt(
+                            members,
+                            reportsConfig.MaxLength,
+                            userTemplate),
                         cancellationToken).ConfigureAwait(false);
                 }
                 catch (Exception ex)
@@ -120,9 +132,17 @@ internal static class CommunitySummariesWorkflow
                 .WriteTableAsync(PipelineTableNames.CommunityReports, reports, cancellationToken)
                 .ConfigureAwait(false);
 
-            context.Items["community_reports:count"] = reports.Count;
+            context.Items[CommunityReportsCountKey] = reports.Count;
             return new WorkflowResult(reports);
         };
+    }
+
+    private static IReadOnlyList<CommunityRecord> DetectCommunities(
+        IReadOnlyList<EntityRecord> entities,
+        IReadOnlyList<RelationshipRecord> relationships,
+        ClusterGraphConfig? clusterConfig)
+    {
+        return CommunityBuilder.Build(entities, relationships, clusterConfig);
     }
 
     private static IReadOnlyList<string> ExtractKeywords(string summary)
