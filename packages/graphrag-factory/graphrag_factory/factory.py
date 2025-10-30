@@ -5,11 +5,20 @@
 
 from abc import ABC
 from collections.abc import Callable
+from dataclasses import dataclass
 from typing import Any, ClassVar, Generic, Literal, TypeVar
 
 T = TypeVar("T", covariant=True)
 
 ServiceScope = Literal["singleton", "transient"]
+
+
+@dataclass
+class _ServiceDescriptor(Generic[T]):
+    """Descriptor for a service."""
+
+    scope: ServiceScope
+    initializer: Callable[..., T]
 
 
 class Factory(ABC, Generic[T]):
@@ -25,9 +34,7 @@ class Factory(ABC, Generic[T]):
 
     def __init__(self):
         if not hasattr(self, "_initialized"):
-            self._service_initializers: dict[
-                str, tuple[ServiceScope, Callable[..., T]]
-            ] = {}
+            self._service_initializers: dict[str, _ServiceDescriptor[T]] = {}
             self._initialized_services: dict[str, T] = {}
             self._initialized = True
 
@@ -54,7 +61,7 @@ class Factory(ABC, Generic[T]):
             initializer: A callable that creates an instance of T.
             scope: The service scope, either 'singleton' or 'transient'.
         """
-        self._service_initializers[strategy] = (scope, initializer)
+        self._service_initializers[strategy] = _ServiceDescriptor(scope, initializer)
 
     def create(self, strategy: str, init_args: dict[str, Any] | None = None) -> T:
         """
@@ -77,12 +84,12 @@ class Factory(ABC, Generic[T]):
             msg = f"Strategy '{strategy}' is not registered. Registered strategies are: {', '.join(list(self._service_initializers.keys()))}"
             raise ValueError(msg)
 
-        scope, service_initializer = self._service_initializers[strategy]
-        if scope == "singleton":
+        service_descriptor = self._service_initializers[strategy]
+        if service_descriptor.scope == "singleton":
             if strategy not in self._initialized_services:
-                self._initialized_services[strategy] = service_initializer(
+                self._initialized_services[strategy] = service_descriptor.initializer(
                     **(init_args or {})
                 )
             return self._initialized_services[strategy]
 
-        return service_initializer(**(init_args or {}))
+        return service_descriptor.initializer(**(init_args or {}))
