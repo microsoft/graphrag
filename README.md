@@ -90,12 +90,16 @@ graphrag/
 - **Security coverage.** `Integration/PostgresGraphStoreIntegrationTests.cs` includes payloads that mimic SQL/Cypher injection attempts to ensure values remain literals and labels/types are strictly validated.
 - **Cross-backend validation.** `Integration/GraphStoreIntegrationTests.cs` exercises Postgres, Neo4j, and Cosmos (when available) through the shared `IGraphStore` abstraction.
 - **Workflow smoke tests.** Pipelines (e.g., `IndexingPipelineRunnerTests`) and finalization steps run end-to-end with the fixture-provisioned infrastructure.
+- **Prompt precedence.** `Integration/CommunitySummariesIntegrationTests.cs` proves manual prompt overrides win over auto-tuned assets while still falling back to auto templates when manual text is absent.
+- **Callback and stats instrumentation.** `Runtime/PipelineExecutorTests.cs` now asserts that pipeline callbacks fire and runtime statistics are captured even when workflows fail early, so custom telemetry remains reliable.
 
 ---
 
 ## Pipeline Cache
 
-GraphRag exposes the `IPipelineCache` abstraction. To use the built-in in-memory cache, register it alongside the standard ASP.NET Core services:
+Pipelines exchange state through the `IPipelineCache` abstraction. Every workflow step receives the same cache instance via `PipelineRunContext`, so it can reuse expensive results (LLM calls, chunk expansions, graph lookups) that were produced earlier in the run instead of recomputing them. The cache also keeps optional debug payloads per entry so you can persist trace metadata alongside the main value.
+
+To use the built-in in-memory cache, register it alongside the standard ASP.NET Core services:
 
 ```csharp
 using GraphRag.Cache;
@@ -105,6 +109,10 @@ builder.Services.AddSingleton<IPipelineCache, MemoryPipelineCache>();
 ```
 
 Prefer a different backend? Implement `IPipelineCache` yourself and register it through DI—the pipeline will pick up your custom cache automatically.
+
+- **Per-scope isolation.** `MemoryPipelineCache.CreateChild("stage")` scopes keys by prefix (`parent:stage:key`). Calling `ClearAsync` on the parent removes every nested key, so multi-step workflows do not leak data between stages.
+- **Debug traces.** The cache stores optional debug payloads per entry; `DeleteAsync` and `ClearAsync` always clear these traces, preventing the diagnostic dictionary from growing unbounded.
+- **Lifecycle guidance.** Create the root cache once per pipeline run (the default context factory does this for you) and spawn children inside individual workflows when you need an isolated namespace.
 
 ---
 
