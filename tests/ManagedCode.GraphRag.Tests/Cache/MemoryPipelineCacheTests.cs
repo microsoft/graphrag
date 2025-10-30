@@ -42,4 +42,20 @@ public sealed class MemoryPipelineCacheTests
         Assert.False(await parent.HasAsync("value"));
         Assert.Equal("child", await child.GetAsync("value"));
     }
+
+    [Fact]
+    public async Task ClearAsync_RemovesChildEntries()
+    {
+        var memoryCache = new MemoryCache(new MemoryCacheOptions());
+        var parent = new MemoryPipelineCache(memoryCache);
+        var child = parent.CreateChild("child");
+
+        await parent.SetAsync("parentValue", "parent");
+        await child.SetAsync("childValue", "child");
+
+        await parent.ClearAsync();
+
+        Assert.False(await parent.HasAsync("parentValue"));
+        Assert.False(await child.HasAsync("childValue"));
+    }
 }

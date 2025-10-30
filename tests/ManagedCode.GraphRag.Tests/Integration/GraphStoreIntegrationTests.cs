@@ -56,6 +56,7 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
     }
 
     [Fact]
+    [Trait("Category", "Cosmos")]
     public async Task CosmosGraphStore_RoundTrips_WhenEmulatorAvailable()
     {
         var cosmosStore = fixture.Services.GetKeyedService<IGraphStore>("cosmos");

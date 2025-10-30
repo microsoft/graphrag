@@ -71,8 +71,15 @@ public sealed class MemoryPipelineCache : IPipelineCache
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        var scopePrefix = string.Concat(_scope, ":");
+
         foreach (var cacheKey in _keys.Keys)
         {
+            if (!cacheKey.StartsWith(scopePrefix, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
             _memoryCache.Remove(cacheKey);
             _keys.TryRemove(cacheKey, out _);
         }
@@ -84,7 +91,7 @@ public sealed class MemoryPipelineCache : IPipelineCache
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         var childScope = string.Concat(_scope, ":", name);
-        return new MemoryPipelineCache(_memoryCache, childScope, new ConcurrentDictionary<string, byte>());
+        return new MemoryPipelineCache(_memoryCache, childScope, _keys);
     }
 
     private string GetCacheKey(string key)

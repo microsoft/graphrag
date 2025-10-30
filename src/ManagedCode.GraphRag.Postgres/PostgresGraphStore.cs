@@ -37,8 +37,20 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        _connectionString = options.ConnectionString ?? throw new ArgumentNullException(nameof(options.ConnectionString));
-        _graphName = options.GraphName ?? throw new ArgumentNullException(nameof(options.GraphName));
+        var connectionString = options.ConnectionString;
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new ArgumentException("ConnectionString cannot be null or whitespace.", nameof(options));
+        }
+
+        var graphName = options.GraphName;
+        if (string.IsNullOrWhiteSpace(graphName))
+        {
+            throw new ArgumentException("GraphName cannot be null or whitespace.", nameof(options));
+        }
+
+        _connectionString = connectionString;
+        _graphName = graphName;
         _graphNameLiteral = BuildGraphNameLiteral(_graphName);
         _autoCreateIndexes = options.AutoCreateIndexes;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -86,7 +98,11 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
         var propertyAssignments = BuildPropertyAssignments("n", ConvertProperties(properties), parameters, "node_prop");
 
         var queryBuilder = new StringBuilder();
-        queryBuilder.Append($"MERGE (n:{EscapeLabel(label)} {{ id: ${CypherParameterNames.NodeId} }})");
+        queryBuilder.Append("MERGE (n:");
+        queryBuilder.Append(EscapeLabel(label));
+        queryBuilder.Append(" { id: $");
+        queryBuilder.Append(CypherParameterNames.NodeId);
+        queryBuilder.Append(" })");
 
         if (propertyAssignments.Count > 0)
         {
@@ -121,9 +137,15 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
         var propertyAssignments = BuildPropertyAssignments("rel", ConvertProperties(properties), parameters, "rel_prop");
 
         var queryBuilder = new StringBuilder();
-        queryBuilder.Append($"MATCH (source {{ id: ${CypherParameterNames.SourceId} }}), (target {{ id: ${CypherParameterNames.TargetId} }})");
+        queryBuilder.Append("MATCH (source { id: $");
+        queryBuilder.Append(CypherParameterNames.SourceId);
+        queryBuilder.Append(" }), (target { id: $");
+        queryBuilder.Append(CypherParameterNames.TargetId);
+        queryBuilder.Append(" })");
         queryBuilder.AppendLine();
-        queryBuilder.Append($"MERGE (source)-[rel:{EscapeLabel(type)}]->(target)");
+        queryBuilder.Append("MERGE (source)-[rel:");
+        queryBuilder.Append(EscapeLabel(type));
+        queryBuilder.Append("]->(target)");
 
         if (propertyAssignments.Count > 0)
         {
