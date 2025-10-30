@@ -2,11 +2,11 @@ namespace GraphRag.Config;
 
 public sealed class SummarizeDescriptionsConfig
 {
-    public string ModelId { get; set; } = "default_chat_model";
+    public string? ModelId { get; set; }
 
-    public string? Prompt { get; set; } = "prompts/index/summarize_entities.txt";
+    public string? Prompt { get; set; }
 
-    public string? RelationshipPrompt { get; set; } = "prompts/index/summarize_relationships.txt";
+    public string? RelationshipPrompt { get; set; }
 
     public int MaxLength { get; set; } = 400;
 

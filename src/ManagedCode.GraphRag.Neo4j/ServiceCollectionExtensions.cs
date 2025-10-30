@@ -1,4 +1,3 @@
-using System;
 using GraphRag.Graphs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

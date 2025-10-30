@@ -1,6 +1,5 @@
 using GraphRag.Constants;
 using GraphRag.Tokenization;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Tokenization;
 

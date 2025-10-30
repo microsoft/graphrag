@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace ManagedCode.GraphRag.Tests.Integration;
 
 [CollectionDefinition(nameof(GraphRagApplicationCollection))]

@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using GraphRag;
-using GraphRag.Cache;
 using GraphRag.Callbacks;
 using GraphRag.Config;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Storage;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Runtime;
 
@@ -24,7 +18,7 @@ public sealed class PipelineExecutorTests
             new MemoryPipelineStorage(),
             new MemoryPipelineStorage(),
             new MemoryPipelineStorage(),
-            new InMemoryPipelineCache(),
+            new StubPipelineCache(),
             NoopWorkflowCallbacks.Instance,
             new PipelineRunStats(),
             new PipelineState(),
@@ -59,7 +53,7 @@ public sealed class PipelineExecutorTests
             new MemoryPipelineStorage(),
             new MemoryPipelineStorage(),
             new MemoryPipelineStorage(),
-            new InMemoryPipelineCache(),
+            new StubPipelineCache(),
             NoopWorkflowCallbacks.Instance,
             new PipelineRunStats(),
             new PipelineState(),

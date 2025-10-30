@@ -1,8 +1,5 @@
 using System.Collections.Immutable;
-using System.Threading;
-using System.Threading.Tasks;
 using GraphRag;
-using GraphRag.Cache;
 using GraphRag.Callbacks;
 using GraphRag.Community;
 using GraphRag.Config;
@@ -12,8 +9,8 @@ using GraphRag.Indexing.Runtime;
 using GraphRag.Indexing.Workflows;
 using GraphRag.Relationships;
 using GraphRag.Storage;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Workflows;
 
@@ -41,7 +38,7 @@ public sealed class CreateCommunitiesWorkflowTests
             inputStorage: new MemoryPipelineStorage(),
             outputStorage: outputStorage,
             previousStorage: new MemoryPipelineStorage(),
-            cache: new InMemoryPipelineCache(),
+            cache: new StubPipelineCache(),
             callbacks: NoopWorkflowCallbacks.Instance,
             stats: new PipelineRunStats(),
             state: new PipelineState(),

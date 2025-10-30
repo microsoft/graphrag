@@ -1,9 +1,7 @@
-using System.Linq;
 using GraphRag.Chunking;
 using GraphRag.Config;
 using GraphRag.Constants;
 using GraphRag.Tokenization;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Chunking;
 

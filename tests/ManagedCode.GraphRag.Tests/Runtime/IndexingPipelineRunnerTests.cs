@@ -1,12 +1,9 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using GraphRag.Config;
 using GraphRag.Indexing;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Runtime;
 
@@ -48,14 +45,9 @@ public sealed class IndexingPipelineRunnerTests
         Assert.IsType<MemoryPipelineStorage>(capturedContexts[0].InputStorage);
     }
 
-    private sealed class StubPipelineFactory : IPipelineFactory
+    private sealed class StubPipelineFactory(WorkflowDelegate step) : IPipelineFactory
     {
-        private readonly WorkflowDelegate _step;
-
-        public StubPipelineFactory(WorkflowDelegate step)
-        {
-            _step = step;
-        }
+        private readonly WorkflowDelegate _step = step;
 
         public WorkflowPipeline BuildIndexingPipeline(IndexingPipelineDescriptor descriptor)
         {

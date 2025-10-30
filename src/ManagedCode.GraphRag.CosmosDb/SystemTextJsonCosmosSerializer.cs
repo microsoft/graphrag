@@ -1,11 +1,9 @@
-using System.IO;
-using System.Text;
 using System.Text.Json;
 using Microsoft.Azure.Cosmos;
 
 namespace GraphRag.Storage.Cosmos;
 
-internal sealed class SystemTextJsonCosmosSerializer : CosmosSerializer
+internal sealed class SystemTextJsonCosmosSerializer(JsonSerializerOptions? options = null) : CosmosSerializer
 {
     private static readonly JsonSerializerOptions DefaultOptions = new(JsonSerializerDefaults.Web)
     {
@@ -13,19 +11,11 @@ internal sealed class SystemTextJsonCosmosSerializer : CosmosSerializer
         WriteIndented = false
     };
 
-    private readonly JsonSerializerOptions _options;
-
-    public SystemTextJsonCosmosSerializer(JsonSerializerOptions? options = null)
-    {
-        _options = options ?? DefaultOptions;
-    }
+    private readonly JsonSerializerOptions _options = options ?? DefaultOptions;
 
     public override T FromStream<T>(Stream stream)
     {
-        if (stream is null)
-        {
-            throw new ArgumentNullException(nameof(stream));
-        }
+        ArgumentNullException.ThrowIfNull(stream);
 
         if (typeof(T) == typeof(Stream))
         {

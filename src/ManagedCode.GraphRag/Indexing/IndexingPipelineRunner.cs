@@ -3,6 +3,7 @@ using GraphRag.Callbacks;
 using GraphRag.Config;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Storage;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphRag.Indexing;
 
@@ -22,7 +23,7 @@ public sealed class IndexingPipelineRunner(IServiceProvider services, IPipelineF
         var inputStorage = PipelineStorageFactory.Create(config.Input.Storage);
         var outputStorage = PipelineStorageFactory.Create(config.Output);
         var previousStorage = PipelineStorageFactory.Create(config.UpdateIndexOutput);
-        var cache = new InMemoryPipelineCache();
+        var cache = _services.GetService<IPipelineCache>();
         var callbacks = NoopWorkflowCallbacks.Instance;
         var stats = new PipelineRunStats();
         var state = new PipelineState();

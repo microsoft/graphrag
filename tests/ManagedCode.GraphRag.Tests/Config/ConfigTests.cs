@@ -1,5 +1,4 @@
 using GraphRag.Config;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Config;
 
@@ -24,24 +23,6 @@ public sealed class ConfigTests
         Assert.Equal("container", config.ContainerName);
         Assert.Equal("https://example.com", config.StorageAccountBlobUrl);
         Assert.Equal("https://cosmos.com", config.CosmosDbAccountUrl);
-    }
-
-    [Fact]
-    public void CacheConfig_AllowsCustomValues()
-    {
-        var config = new CacheConfig
-        {
-            Type = CacheType.Memory,
-            BaseDir = "cache",
-            ConnectionString = "conn",
-            ContainerName = "container",
-            StorageAccountBlobUrl = "https://blob",
-            CosmosDbAccountUrl = "https://cosmos"
-        };
-
-        Assert.Equal(CacheType.Memory, config.Type);
-        Assert.Equal("cache", config.BaseDir);
-        Assert.Equal("conn", config.ConnectionString);
     }
 
     [Fact]
@@ -93,5 +74,13 @@ public sealed class ConfigTests
         Assert.Equal("vec", config.VectorField);
         Assert.Equal(42, config.VectorSize);
         Assert.Equal("index", config.IndexName);
+    }
+
+    [Fact]
+    public void GraphRagConfig_InitializesEmptyModelSet()
+    {
+        var config = new GraphRagConfig();
+
+        Assert.Empty(config.Models);
     }
 }

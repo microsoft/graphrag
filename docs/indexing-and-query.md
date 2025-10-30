@@ -13,6 +13,37 @@ GraphRAG for .NET keeps feature parity with the Python reference project describ
 - **Storage schema.** Tables share the column layout described under [index outputs](https://microsoft.github.io/graphrag/index/outputs/). The new strongly-typed records (`CommunityRecord`, `CovariateRecord`, etc.) mirror the JSON representation used by the Python implementation.
 - **Cluster configuration.** `GraphRagConfig.ClusterGraph` exposes the same knobs as the Python `cluster_graph` settings, enabling largest-component filtering and deterministic seeding.
 
+## Language Model Registration
+
+Workflows resolve language models from the DI container via [Microsoft.Extensions.AI](https://learn.microsoft.com/dotnet/ai/overview). Register keyed services for every `ModelId` you plan to reference:
+
+```csharp
+using Azure;
+using Azure.AI.OpenAI;
+using GraphRag.Config;
+using Microsoft.Extensions.AI;
+
+var openAi = new OpenAIClient(new Uri(endpoint), new AzureKeyCredential(key));
+const string chatModelId = "chat_model";
+const string embeddingModelId = "embedding_model";
+
+services.AddKeyedSingleton<IChatClient>(chatModelId, _ => openAi.GetChatClient(chatDeployment));
+services.AddKeyedSingleton<IEmbeddingGenerator<string, Embedding>>(embeddingModelId, _ => openAi.GetEmbeddingClient(embeddingDeployment));
+```
+
+Configure retries, rate limits, and logging when you construct the concrete clients. `GraphRagConfig.Models` simply records the set of registered keys so configuration overrides can validate references.
+
+## Pipeline Cache
+
+`IPipelineCache` is intentionally infrastructure-neutral. To mirror ASP.NET Core's in-memory behaviour, register the built-in cache services alongside the provided adapter:
+
+```csharp
+services.AddMemoryCache();
+services.AddSingleton<IPipelineCache, MemoryPipelineCache>();
+```
+
+Need Redis or something else? Implement `IPipelineCache` yourself and register it through DI; the pipeline will automatically consume your custom cache.
+
 ## Query Capabilities
 
 The query layer ports the orchestrators documented in the [GraphRAG query overview](https://microsoft.github.io/graphrag/query/overview/):
@@ -34,6 +65,7 @@ Manual and auto prompt tuning are both available without code changes:
 2. **Auto tuning** integrates the outputs documented in [auto prompt tuning](https://microsoft.github.io/graphrag/prompt_tuning/auto_prompt_tuning/).
    - Point `GraphRagConfig.PromptTuning.Auto.Directory` at the folder containing the generated prompts and set `Enabled = true`.
    - The runtime prefers explicit paths from workflow configs, then manual overrides, then auto-tuned files, and finally the built-in defaults in `prompts/`.
+3. **Inline overrides** can be injected directly from code: set `ExtractGraphConfig.SystemPrompt`, `ExtractGraphConfig.Prompt`, or the equivalent properties to either a multi-line string or a value prefixed with `inline:`. Inline values bypass template file lookups and are used as-is.
 
 ### Stage Keys and Placeholders
 
@@ -51,7 +83,7 @@ Placeholders are replaced at runtime with values drawn from workflow configurati
 - `{{max_length}}` → `CommunityReportsConfig.MaxLength`
 - `{{entities}}` → bullet list of entity titles and descriptions
 
-If a template is omitted, the runtime falls back to the built-in prompts stored under `prompts/` and bundled with the repository.
+If a template is omitted, the runtime falls back to the built-in prompts defined in `GraphRagPromptLibrary`.
 
 ## Integration Tests
 

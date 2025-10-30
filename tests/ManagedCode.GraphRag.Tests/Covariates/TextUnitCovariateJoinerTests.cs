@@ -1,7 +1,5 @@
-using System.Linq;
 using GraphRag.Covariates;
 using GraphRag.Data;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Covariates;
 

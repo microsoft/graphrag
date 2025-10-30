@@ -11,7 +11,7 @@ public sealed class PipelineRunContext(
     IPipelineStorage inputStorage,
     IPipelineStorage outputStorage,
     IPipelineStorage previousStorage,
-    IPipelineCache cache,
+    IPipelineCache? cache,
     IWorkflowCallbacks callbacks,
     PipelineRunStats stats,
     PipelineState state,
@@ -24,7 +24,7 @@ public sealed class PipelineRunContext(
 
     public IPipelineStorage PreviousStorage { get; } = previousStorage ?? throw new ArgumentNullException(nameof(previousStorage));
 
-    public IPipelineCache Cache { get; } = cache ?? throw new ArgumentNullException(nameof(cache));
+    public IPipelineCache? Cache { get; } = cache;
 
     public IWorkflowCallbacks Callbacks { get; } = callbacks ?? throw new ArgumentNullException(nameof(callbacks));
 

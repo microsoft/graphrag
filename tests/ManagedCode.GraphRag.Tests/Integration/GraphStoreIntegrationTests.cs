@@ -1,7 +1,5 @@
-using System.Linq;
 using GraphRag.Graphs;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Integration;
 

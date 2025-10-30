@@ -1,20 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using GraphRag;
-using GraphRag.Cache;
 using GraphRag.Callbacks;
 using GraphRag.Config;
+using GraphRag.Constants;
 using GraphRag.Data;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Indexing.Workflows;
 using GraphRag.Storage;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using GraphRag.Constants;
-using ManagedCode.GraphRag.Tests.Infrastructure;
 
 namespace ManagedCode.GraphRag.Tests.Workflows;
 
@@ -58,7 +52,7 @@ public sealed class CreateFinalDocumentsWorkflowTests
             inputStorage: new MemoryPipelineStorage(),
             outputStorage: outputStorage,
             previousStorage: new MemoryPipelineStorage(),
-            cache: new InMemoryPipelineCache(),
+            cache: new StubPipelineCache(),
             callbacks: NoopWorkflowCallbacks.Instance,
             stats: new PipelineRunStats(),
             state: new PipelineState(),

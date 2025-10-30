@@ -1,9 +1,12 @@
 # Repository Guidelines
 
-# Rules to follow
+## Rules to follow
 - Always run `dotnet build GraphRag.slnx` (or the relevant project) before executing any `dotnet test` command.
 - Default to the latest available versions (e.g., Apache AGE `latest`) when selecting dependencies, per user request ("тобі треба latest").
 - Do not create or rely on fake database stores (e.g., `FakePostgresGraphStore`); all tests must use real connectors/backing services.
+- Keep default prompts in static C# classes; do not rely on prompt files under `prompts/` for built-in templates.
+- Register language models through Microsoft.Extensions.AI keyed services; avoid bespoke `LanguageModelConfig` providers.
+- Always run `dotnet format GraphRag.slnx` before finishing work.
 
 # Conversations
 any resulting updates to agents.md should go under the section "## Rules to follow"

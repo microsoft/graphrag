@@ -1,12 +1,9 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using GraphRag.Config;
 using GraphRag.Graphs;
 using GraphRag.Storage.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Storage.Postgres;
 

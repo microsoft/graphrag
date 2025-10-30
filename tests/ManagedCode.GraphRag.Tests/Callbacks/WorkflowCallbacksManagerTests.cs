@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using GraphRag.Callbacks;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Logging;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Callbacks;
 

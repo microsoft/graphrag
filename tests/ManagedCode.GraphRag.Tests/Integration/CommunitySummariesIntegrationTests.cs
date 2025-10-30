@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using GraphRag;
-using GraphRag.Cache;
 using GraphRag.Callbacks;
 using GraphRag.Community;
 using GraphRag.Config;
@@ -19,7 +12,6 @@ using GraphRag.Storage;
 using ManagedCode.GraphRag.Tests.Infrastructure;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Integration;
 
@@ -103,7 +95,7 @@ public sealed class CommunitySummariesIntegrationTests : IDisposable
             inputStorage: new FilePipelineStorage(inputDir),
             outputStorage: outputStorage,
             previousStorage: new FilePipelineStorage(previousDir),
-            cache: new InMemoryPipelineCache(),
+            cache: new StubPipelineCache(),
             callbacks: NoopWorkflowCallbacks.Instance,
             stats: new PipelineRunStats(),
             state: new PipelineState(),

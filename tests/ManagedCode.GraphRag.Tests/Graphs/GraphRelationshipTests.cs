@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using GraphRag.Graphs;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.Graphs;
 

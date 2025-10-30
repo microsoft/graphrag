@@ -1,9 +1,6 @@
-using System;
-using System.IO;
 using GraphRag.Config;
 using GraphRag.Constants;
 using GraphRag.LanguageModels;
-using Xunit;
 
 namespace ManagedCode.GraphRag.Tests.LanguageModels;
 
@@ -83,6 +80,29 @@ public sealed class PromptTemplateLoaderTests : IDisposable
         var prompt = loader.ResolveOrDefault(PromptTemplateKeys.ExtractGraphSystem, null, "fallback");
 
         Assert.Equal("auto system", prompt);
+    }
+
+    [Fact]
+    public void ResolveOrDefault_AllowsInlinePromptWithPrefix()
+    {
+        var config = new GraphRagConfig();
+        var loader = PromptTemplateLoader.Create(config);
+
+        var prompt = loader.ResolveOrDefault(PromptTemplateKeys.ExtractGraphSystem, "inline:custom text", "fallback");
+
+        Assert.Equal("custom text", prompt);
+    }
+
+    [Fact]
+    public void ResolveOrDefault_AllowsInlinePromptWithNewlines()
+    {
+        var config = new GraphRagConfig();
+        var loader = PromptTemplateLoader.Create(config);
+
+        var inline = "line1\nline2";
+        var prompt = loader.ResolveOrDefault(PromptTemplateKeys.ExtractGraphUser, inline, "fallback");
+
+        Assert.Equal(inline, prompt);
     }
 
     public void Dispose()

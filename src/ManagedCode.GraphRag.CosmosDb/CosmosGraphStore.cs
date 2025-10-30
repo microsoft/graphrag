@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 using GraphRag.Graphs;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
@@ -11,22 +6,13 @@ using Microsoft.Extensions.Logging;
 
 namespace GraphRag.Storage.Cosmos;
 
-public sealed class CosmosGraphStore : IGraphStore
+public sealed class CosmosGraphStore(CosmosClient client, string databaseId, string nodesContainerId, string edgesContainerId, ILogger<CosmosGraphStore> logger) : IGraphStore
 {
-    private readonly CosmosClient _client;
-    private readonly string _databaseId;
-    private readonly string _nodesContainerId;
-    private readonly string _edgesContainerId;
-    private readonly ILogger<CosmosGraphStore> _logger;
-
-    public CosmosGraphStore(CosmosClient client, string databaseId, string nodesContainerId, string edgesContainerId, ILogger<CosmosGraphStore> logger)
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-        _databaseId = databaseId ?? throw new ArgumentNullException(nameof(databaseId));
-        _nodesContainerId = nodesContainerId ?? throw new ArgumentNullException(nameof(nodesContainerId));
-        _edgesContainerId = edgesContainerId ?? throw new ArgumentNullException(nameof(edgesContainerId));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly CosmosClient _client = client ?? throw new ArgumentNullException(nameof(client));
+    private readonly string _databaseId = databaseId ?? throw new ArgumentNullException(nameof(databaseId));
+    private readonly string _nodesContainerId = nodesContainerId ?? throw new ArgumentNullException(nameof(nodesContainerId));
+    private readonly string _edgesContainerId = edgesContainerId ?? throw new ArgumentNullException(nameof(edgesContainerId));
+    private readonly ILogger<CosmosGraphStore> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
@@ -60,7 +46,7 @@ public sealed class CosmosGraphStore : IGraphStore
     public IAsyncEnumerable<GraphRelationship> GetOutgoingRelationshipsAsync(string sourceId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceId);
-        return Fetch();
+        return Fetch(cancellationToken);
 
         async IAsyncEnumerable<GraphRelationship> Fetch([EnumeratorCancellation] CancellationToken token = default)
         {

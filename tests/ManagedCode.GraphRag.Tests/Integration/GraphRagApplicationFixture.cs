@@ -1,22 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
+using DotNet.Testcontainers.Builders;
 using GraphRag;
 using GraphRag.Graphs;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Storage.Cosmos;
 using GraphRag.Storage.Neo4j;
 using GraphRag.Storage.Postgres;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using DotNet.Testcontainers.Builders;
 using Npgsql;
 using Testcontainers.Neo4j;
 using Testcontainers.PostgreSql;
-using Xunit;
-using ManagedCode.GraphRag.Tests.Infrastructure;
 
 namespace ManagedCode.GraphRag.Tests.Integration;
 

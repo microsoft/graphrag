@@ -10,7 +10,7 @@ public sealed class ChunkingConfig
 
     public ChunkStrategyType Strategy { get; set; } = ChunkStrategyType.Tokens;
 
-    public string EncodingModel { get; set; } = "cl100k_base";
+    public string EncodingModel { get; set; } = GraphRag.Constants.TokenizerDefaults.DefaultEncoding;
 
     public bool PrependMetadata { get; set; }
 

@@ -22,7 +22,7 @@ public static class PipelineContextFactory
             inputStorage ?? new MemoryPipelineStorage(),
             outputStorage ?? new MemoryPipelineStorage(),
             previousStorage ?? new MemoryPipelineStorage(),
-            cache ?? new InMemoryPipelineCache(),
+            cache,
             callbacks ?? NoopWorkflowCallbacks.Instance,
             stats ?? new PipelineRunStats(),
             state ?? new PipelineState(),

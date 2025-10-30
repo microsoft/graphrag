@@ -64,6 +64,15 @@ internal sealed class PromptTemplateLoader
             return value;
         }
 
+        if (!string.IsNullOrWhiteSpace(explicitPath))
+        {
+            var inline = ExtractInlinePrompt(explicitPath);
+            if (!string.IsNullOrWhiteSpace(inline))
+            {
+                return inline;
+            }
+        }
+
         return null;
     }
 
@@ -144,5 +153,19 @@ internal sealed class PromptTemplateLoader
         var relative = stageKey.Replace('/', Path.DirectorySeparatorChar);
         var candidate = Path.Combine(directory, relative);
         return Path.HasExtension(candidate) ? candidate : candidate + ".txt";
+    }
+
+    private static readonly char[] InlineSeparators = new[] { '\r', '\n' };
+
+    private static string? ExtractInlinePrompt(string candidate)
+    {
+        if (candidate.StartsWith("inline:", StringComparison.OrdinalIgnoreCase))
+        {
+            return candidate[7..].TrimStart();
+        }
+
+        return candidate.IndexOfAny(InlineSeparators) >= 0
+            ? candidate
+            : null;
     }
 }

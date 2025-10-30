@@ -1,23 +1,16 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using GraphRag;
-using GraphRag.Cache;
 using GraphRag.Callbacks;
 using GraphRag.Config;
+using GraphRag.Constants;
 using GraphRag.Data;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Indexing.Workflows;
 using GraphRag.Storage;
+using ManagedCode.GraphRag.Tests.Infrastructure;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using GraphRag.Constants;
-using ManagedCode.GraphRag.Tests.Infrastructure;
 
 namespace ManagedCode.GraphRag.Tests.Workflows;
 
@@ -39,7 +32,7 @@ public sealed class LoadInputDocumentsWorkflowTests
             inputStorage,
             outputStorage,
             previousStorage: new MemoryPipelineStorage(),
-            cache: new InMemoryPipelineCache(),
+            cache: new StubPipelineCache(),
             callbacks: NoopWorkflowCallbacks.Instance,
             stats: new PipelineRunStats(),
             state: new PipelineState(),
@@ -80,7 +73,7 @@ public sealed class LoadInputDocumentsWorkflowTests
             inputStorage,
             outputStorage,
             new MemoryPipelineStorage(),
-            new InMemoryPipelineCache(),
+            new StubPipelineCache(),
             NoopWorkflowCallbacks.Instance,
             new PipelineRunStats(),
             new PipelineState(),
@@ -127,7 +120,7 @@ public sealed class LoadInputDocumentsWorkflowTests
             inputStorage,
             outputStorage,
             new MemoryPipelineStorage(),
-            new InMemoryPipelineCache(),
+            new StubPipelineCache(),
             NoopWorkflowCallbacks.Instance,
             new PipelineRunStats(),
             new PipelineState(),
@@ -170,7 +163,7 @@ public sealed class LoadInputDocumentsWorkflowTests
             inputStorage,
             outputStorage,
             new MemoryPipelineStorage(),
-            new InMemoryPipelineCache(),
+            new StubPipelineCache(),
             NoopWorkflowCallbacks.Instance,
             new PipelineRunStats(),
             new PipelineState(),
