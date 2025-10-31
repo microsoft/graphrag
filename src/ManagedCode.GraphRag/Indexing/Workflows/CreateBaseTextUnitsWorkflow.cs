@@ -24,7 +24,12 @@ internal static class CreateBaseTextUnitsWorkflow
 
             var textUnits = new List<TextUnitRecord>();
             var callbacks = context.Callbacks;
-            var chunkingConfig = config.Chunks;
+            var heuristicConfig = config.Heuristics ?? new HeuristicMaintenanceConfig();
+            var chunkingConfig = CloneChunkingConfig(config.Chunks);
+            if (heuristicConfig.MinimumChunkOverlap > 0 && chunkingConfig.Overlap < heuristicConfig.MinimumChunkOverlap)
+            {
+                chunkingConfig.Overlap = heuristicConfig.MinimumChunkOverlap;
+            }
             var chunkerResolver = context.Services.GetRequiredService<IChunkerResolver>();
             var chunker = chunkerResolver.Resolve(chunkingConfig.Strategy);
 
@@ -95,6 +100,22 @@ internal static class CreateBaseTextUnitsWorkflow
         }
 
         return builder.ToString();
+    }
+
+    private static ChunkingConfig CloneChunkingConfig(ChunkingConfig source)
+    {
+        return new ChunkingConfig
+        {
+            Size = source.Size,
+            Overlap = source.Overlap,
+            EncodingModel = source.EncodingModel,
+            Strategy = source.Strategy,
+            PrependMetadata = source.PrependMetadata,
+            ChunkSizeIncludesMetadata = source.ChunkSizeIncludesMetadata,
+            GroupByColumns = source.GroupByColumns is { Count: > 0 }
+                ? new List<string>(source.GroupByColumns)
+                : new List<string>()
+        };
     }
 
     private static ChunkingConfig CreateEffectiveConfig(ChunkingConfig original, int metadataTokens)
