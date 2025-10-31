@@ -21,7 +21,6 @@ from dotenv import load_dotenv
 load_dotenv()  # Load environment variables from .env file if present
 import os, grpc
 USE_ZIPKIN = os.getenv("USE_ZIPKIN", "false")
-EXTENSION_ARM_ID = os.getenv("EXTENSION_ARM_ID", "")
 
 from .config import TelemetryConfig
 
@@ -47,7 +46,7 @@ def setup_telemetry(config: Optional[TelemetryConfig] = None) -> None:
     
     # Create resource with service information
     resource = Resource.create({
-        "microsoft.resourceId": EXTENSION_ARM_ID,
+        "microsoft.resourceId": config.microsoft_resource_id,
         "service.name": config.service_name,
         "service.version": config.service_version,
         "service.namespace": config.service_namespace,

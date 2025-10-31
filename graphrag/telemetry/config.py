@@ -5,21 +5,23 @@ from dataclasses import dataclass
 from dotenv import load_dotenv
 load_dotenv()  # Load environment variables from .env file if present
 OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT", "http://localhost:9411/api/v2/spans")
+EXTENSION_ARM_ID = os.getenv("EXTENSION_ARM_ID", "")
+
 @dataclass
 class TelemetryConfig:
     """Configuration for OpenTelemetry telemetry."""
     
     # Telemetry control
     telemetry_disabled: bool = False
-    
     # Service information
     service_name: str = "graphrag"
     service_version: str = "1.0.0"
     service_namespace: str = "microsoft.research"
-
+    microsoft_resource_id: str = ""
+    cloud_role_instance: str = "graphrag-instance"
+    cloud_role: str = "graphrag-service"
     # observability configuration
     obs_endpoint: str = OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-    
     # Tracing configuration
     enable_tracing: bool = True
     enable_metrics: bool = True
@@ -35,6 +37,9 @@ class TelemetryConfig:
     def from_env(cls) -> "TelemetryConfig":
         """Create configuration from environment variables."""
         return cls(
+            microsoft_resource_id=os.getenv("EXTENSION_ARM_ID", ""),
+            cloud_role_instance=os.getenv("OTEL_CLOUD_ROLE_INSTANCE", "graphrag-instance"),
+            cloud_role=os.getenv("OTEL_CLOUD_ROLE", "graphrag-service"),
             service_name=os.getenv("OTEL_SERVICE_NAME", "graphrag"),
             service_version=os.getenv("OTEL_SERVICE_VERSION", "1.0.0"),
             service_namespace=os.getenv("OTEL_SERVICE_NAMESPACE", "microsoft.research"),
