@@ -1,7 +1,7 @@
 namespace GraphRag.Config;
 
 /// <summary>
-/// Represents heuristic controls that fine-tune ingestion and graph maintenance behaviour.
+/// Represents heuristic controls that fine-tune ingestion and graph maintenance behavior.
 /// The defaults mirror the semantics implemented in the GraphRag.Net demo service where
 /// ingestion aggressively deduplicates, trims by token budgets, and repairs sparse graphs.
 /// </summary>

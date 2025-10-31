@@ -7,6 +7,7 @@
 - Keep default prompts in static C# classes; do not rely on prompt files under `prompts/` for built-in templates.
 - Register language models through Microsoft.Extensions.AI keyed services; avoid bespoke `LanguageModelConfig` providers.
 - Always run `dotnet format GraphRag.slnx` before finishing work.
+- Always run `dotnet test GraphRag.slnx` before finishing work, after building.
 
 # Conversations
 any resulting updates to agents.md should go under the section "## Rules to follow"

@@ -44,6 +44,10 @@ internal static class TextUnitHeuristicProcessor
         {
             return await DeduplicateAsync(filtered, generator, heuristics, cancellationToken).ConfigureAwait(false);
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             logger?.LogWarning(ex, "Failed to execute semantic deduplication heuristics. Retaining filtered text units only.");
@@ -198,17 +202,9 @@ internal static class TextUnitHeuristicProcessor
     private static List<string> DeduplicatePreservingOrder(IEnumerable<string> source)
     {
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var result = new List<string>();
-
-        foreach (var item in source)
-        {
-            if (seen.Add(item))
-            {
-                result.Add(item);
-            }
-        }
-
-        return result;
+        return source
+            .Where(seen.Add)
+            .ToList();
     }
 
     private static IEmbeddingGenerator<string, Embedding<float>>? ResolveEmbeddingGenerator(
@@ -248,7 +244,8 @@ internal static class TextUnitHeuristicProcessor
         public void Update(TextUnitRecord incoming)
         {
             var mergedDocuments = MergeLists(Record.DocumentIds, incoming.DocumentIds);
-            var tokenCount = Math.Min(Record.TokenCount, incoming.TokenCount);
+            // Sum token counts so merged records reflect their combined budget.
+            var tokenCount = (int)Math.Min((long)Record.TokenCount + incoming.TokenCount, int.MaxValue);
 
             Record = Record with
             {
@@ -259,26 +256,11 @@ internal static class TextUnitHeuristicProcessor
 
         private static string[] MergeLists(IReadOnlyList<string> first, IReadOnlyList<string> second)
         {
-            var merged = new List<string>(first.Count + second.Count);
             var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (var item in first)
-            {
-                if (seen.Add(item))
-                {
-                    merged.Add(item);
-                }
-            }
-
-            foreach (var item in second)
-            {
-                if (seen.Add(item))
-                {
-                    merged.Add(item);
-                }
-            }
-
-            return merged.ToArray();
+            return first
+                .Concat(second)
+                .Where(seen.Add)
+                .ToArray();
         }
     }
 }

@@ -181,12 +181,9 @@ internal static class CommunityBuilder
                     .OrderBy(_ => random.Next())
                     .ToList();
 
-                foreach (var neighbor in orderedNeighbors)
+                foreach (var neighbor in orderedNeighbors.Where(visited.Add))
                 {
-                    if (visited.Add(neighbor))
-                    {
-                        queue.Enqueue(neighbor);
-                    }
+                    queue.Enqueue(neighbor);
                 }
             }
 

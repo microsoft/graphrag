@@ -229,12 +229,9 @@ internal static class GraphExtractionHeuristics
             _count++;
             _description = SelectDescription(_description, seed.Description);
 
-            foreach (var textUnit in seed.TextUnitIds)
+            foreach (var textUnit in seed.TextUnitIds.Where(static id => !string.IsNullOrWhiteSpace(id)))
             {
-                if (!string.IsNullOrWhiteSpace(textUnit))
-                {
-                    _textUnits.Add(textUnit);
-                }
+                _textUnits.Add(textUnit);
             }
         }
 
@@ -279,6 +276,7 @@ internal static class GraphExtractionHeuristics
                 return incoming;
             }
 
+            // Prefer shorter descriptions to keep summaries concise and token efficient.
             return incoming.Length < existing.Length ? incoming : existing;
         }
     }

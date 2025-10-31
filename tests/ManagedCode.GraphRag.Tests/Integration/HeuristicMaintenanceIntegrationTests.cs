@@ -126,7 +126,7 @@ public sealed class HeuristicMaintenanceIntegrationTests : IDisposable
         Assert.Equal(2, merged.DocumentIds.Count);
         Assert.Contains("doc-1", merged.DocumentIds, StringComparer.OrdinalIgnoreCase);
         Assert.Contains("doc-2", merged.DocumentIds, StringComparer.OrdinalIgnoreCase);
-        Assert.Equal(35, merged.TokenCount);
+        Assert.Equal(75, merged.TokenCount);
 
         var survivor = Assert.Single(processed, unit => unit.Id == "b");
         Assert.Single(survivor.DocumentIds);
