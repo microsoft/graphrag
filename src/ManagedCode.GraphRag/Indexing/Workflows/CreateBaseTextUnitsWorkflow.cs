@@ -25,6 +25,11 @@ internal static class CreateBaseTextUnitsWorkflow
             var textUnits = new List<TextUnitRecord>();
             var callbacks = context.Callbacks;
             var chunkingConfig = config.Chunks;
+            var heuristicConfig = config.Heuristics ?? new HeuristicMaintenanceConfig();
+            if (heuristicConfig.MinimumChunkOverlap > 0 && chunkingConfig.Overlap < heuristicConfig.MinimumChunkOverlap)
+            {
+                chunkingConfig.Overlap = heuristicConfig.MinimumChunkOverlap;
+            }
             var chunkerResolver = context.Services.GetRequiredService<IChunkerResolver>();
             var chunker = chunkerResolver.Resolve(chunkingConfig.Strategy);
 

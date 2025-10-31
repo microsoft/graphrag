@@ -63,3 +63,9 @@ public enum ModularityMetric
     Lcc,
     WeightedComponents
 }
+
+public enum CommunityDetectionAlgorithm
+{
+    FastLabelPropagation,
+    ConnectedComponents
+}

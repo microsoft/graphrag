@@ -4,6 +4,7 @@ using GraphRag.Constants;
 using GraphRag.Data;
 using GraphRag.Entities;
 using GraphRag.Finalization;
+using GraphRag.Indexing.Heuristics;
 using GraphRag.Indexing.Runtime;
 using GraphRag.LanguageModels;
 using GraphRag.Relationships;
@@ -99,7 +100,18 @@ internal static class ExtractGraphWorkflow
                 }
             }
 
-            var finalization = GraphFinalizer.Finalize(entityAggregator.ToSeeds(), relationshipAggregator.ToSeeds());
+            var entitySeeds = entityAggregator.ToSeeds().ToList();
+            var relationshipSeeds = relationshipAggregator.ToSeeds().ToList();
+
+            var heuristics = config.Heuristics ?? new HeuristicMaintenanceConfig();
+            if ((heuristics.EnhanceRelationships && relationshipSeeds.Count > 0) || heuristics.LinkOrphanEntities)
+            {
+                var adjusted = GraphExtractionHeuristics.Apply(entitySeeds, relationshipSeeds, textUnits, heuristics, logger);
+                entitySeeds = adjusted.Entities.ToList();
+                relationshipSeeds = adjusted.Relationships.ToList();
+            }
+
+            var finalization = GraphFinalizer.Finalize(entitySeeds, relationshipSeeds);
 
             await context.OutputStorage
                 .WriteTableAsync(PipelineTableNames.Entities, finalization.Entities, cancellationToken)

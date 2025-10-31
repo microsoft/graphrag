@@ -23,53 +23,12 @@ internal static class CommunityBuilder
             return Array.Empty<CommunityRecord>();
         }
 
-        var adjacency = BuildAdjacency(entities, relationships);
         var titleLookup = entities.ToDictionary(entity => entity.Title, StringComparer.OrdinalIgnoreCase);
-        var random = new Random(config.Seed);
-
-        var orderedTitles = titleLookup.Keys
-            .OrderBy(_ => random.Next())
-            .ToList();
-
-        var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var components = new List<List<string>>();
-
-        foreach (var title in orderedTitles)
+        var components = config.Algorithm switch
         {
-            if (!visited.Add(title))
-            {
-                continue;
-            }
-
-            var component = new List<string>();
-            var queue = new Queue<string>();
-            queue.Enqueue(title);
-
-            while (queue.Count > 0)
-            {
-                var current = queue.Dequeue();
-                component.Add(current);
-
-                if (!adjacency.TryGetValue(current, out var neighbors) || neighbors.Count == 0)
-                {
-                    continue;
-                }
-
-                var orderedNeighbors = neighbors
-                    .OrderBy(_ => random.Next())
-                    .ToList();
-
-                foreach (var neighbor in orderedNeighbors)
-                {
-                    if (visited.Add(neighbor))
-                    {
-                        queue.Enqueue(neighbor);
-                    }
-                }
-            }
-
-            components.Add(component);
-        }
+            CommunityDetectionAlgorithm.FastLabelPropagation => BuildUsingLabelPropagation(entities, relationships, config),
+            _ => BuildUsingConnectedComponents(entities, relationships, config)
+        };
 
         if (config.UseLargestConnectedComponent && components.Count > 0)
         {
@@ -181,6 +140,93 @@ internal static class CommunityBuilder
         }
 
         return communityRecords;
+    }
+
+    private static List<List<string>> BuildUsingConnectedComponents(
+        IReadOnlyList<EntityRecord> entities,
+        IReadOnlyList<RelationshipRecord> relationships,
+        ClusterGraphConfig config)
+    {
+        var adjacency = BuildAdjacency(entities, relationships);
+        var random = new Random(config.Seed);
+        var orderedTitles = adjacency.Keys
+            .OrderBy(_ => random.Next())
+            .ToList();
+
+        var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var components = new List<List<string>>();
+
+        foreach (var title in orderedTitles)
+        {
+            if (!visited.Add(title))
+            {
+                continue;
+            }
+
+            var component = new List<string>();
+            var queue = new Queue<string>();
+            queue.Enqueue(title);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                component.Add(current);
+
+                if (!adjacency.TryGetValue(current, out var neighbors) || neighbors.Count == 0)
+                {
+                    continue;
+                }
+
+                var orderedNeighbors = neighbors
+                    .OrderBy(_ => random.Next())
+                    .ToList();
+
+                foreach (var neighbor in orderedNeighbors)
+                {
+                    if (visited.Add(neighbor))
+                    {
+                        queue.Enqueue(neighbor);
+                    }
+                }
+            }
+
+            components.Add(component);
+        }
+
+        return components;
+    }
+
+    private static List<List<string>> BuildUsingLabelPropagation(
+        IReadOnlyList<EntityRecord> entities,
+        IReadOnlyList<RelationshipRecord> relationships,
+        ClusterGraphConfig config)
+    {
+        var assignments = FastLabelPropagationCommunityDetector.AssignLabels(entities, relationships, config);
+        if (assignments.Count == 0)
+        {
+            return new List<List<string>>();
+        }
+
+        var groups = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var pair in assignments)
+        {
+            if (!groups.TryGetValue(pair.Value, out var members))
+            {
+                members = new List<string>();
+                groups[pair.Value] = members;
+            }
+
+            members.Add(pair.Key);
+        }
+
+        return groups.Values
+            .Select(list => list
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(title => title, StringComparer.OrdinalIgnoreCase)
+                .ToList())
+            .Where(list => list.Count > 0)
+            .ToList();
     }
 
     private static Dictionary<string, HashSet<string>> BuildAdjacency(

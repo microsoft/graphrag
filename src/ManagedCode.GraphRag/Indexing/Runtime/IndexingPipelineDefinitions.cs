@@ -8,6 +8,7 @@ public static class IndexingPipelineDefinitions
     {
         LoadInputDocumentsWorkflow.Name,
         CreateBaseTextUnitsWorkflow.Name,
+        HeuristicMaintenanceWorkflow.Name,
         ExtractGraphWorkflow.Name,
         CreateCommunitiesWorkflow.Name,
         CommunitySummariesWorkflow.Name,

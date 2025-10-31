@@ -42,6 +42,8 @@ public sealed class GraphRagConfig
 
     public ClusterGraphConfig ClusterGraph { get; set; } = new();
 
+    public HeuristicMaintenanceConfig Heuristics { get; set; } = new();
+
     public CommunityReportsConfig CommunityReports { get; set; } = new();
 
     public PromptTuningConfig PromptTuning { get; set; } = new();
