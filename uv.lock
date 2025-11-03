@@ -10,7 +10,7 @@ resolution-markers = [
 [manifest]
 members = [
     "graphrag",
-    "graphrag-factory",
+    "graphrag-common",
     "graphrag-monorepo",
 ]
 
@@ -1041,7 +1041,7 @@ dependencies = [
     { name = "azure-storage-blob" },
     { name = "devtools" },
     { name = "environs" },
-    { name = "graphrag-factory" },
+    { name = "graphrag-common" },
     { name = "graspologic-native" },
     { name = "json-repair" },
     { name = "lancedb" },
@@ -1074,7 +1074,7 @@ requires-dist = [
     { name = "azure-storage-blob", specifier = ">=12.24.0" },
     { name = "devtools", specifier = ">=0.12.2" },
     { name = "environs", specifier = ">=11.0.0" },
-    { name = "graphrag-factory", editable = "packages/graphrag-factory" },
+    { name = "graphrag-common", editable = "packages/graphrag-common" },
     { name = "graspologic-native", specifier = ">=1.2.5" },
     { name = "json-repair", specifier = ">=0.30.3" },
     { name = "lancedb", specifier = ">=0.17.0" },
@@ -1097,9 +1097,9 @@ requires-dist = [
 ]
 
 [[package]]
-name = "graphrag-factory"
+name = "graphrag-common"
 version = "2.7.0"
-source = { editable = "packages/graphrag-factory" }
+source = { editable = "packages/graphrag-common" }
 
 [[package]]
 name = "graphrag-monorepo"

@@ -1,9 +1,11 @@
-# GraphRAG Factory
+# GraphRAG Common
+
+## Factory module
 
 ```python
 from abc import ABC, abstractmethod
 
-from graphrag_factory import Factory
+from graphrag_common.factory import Factory
 
 class SampleABC(ABC):
 

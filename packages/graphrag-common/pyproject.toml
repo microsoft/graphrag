@@ -1,7 +1,7 @@
 [project]
-name = "graphrag-factory"
+name = "graphrag-common"
 version = "2.7.0"
-description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
+description = "Common utilities and types for GraphRAG"
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
     {name = "Andrés Morales Esquivel", email = "andresmor@microsoft.com"},

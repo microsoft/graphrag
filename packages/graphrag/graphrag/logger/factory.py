@@ -8,7 +8,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from graphrag_factory import Factory
+from graphrag_common.factory import Factory
 
 from graphrag.config.enums import ReportingType
 

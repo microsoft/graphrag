@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from graphrag_factory import Factory
+from graphrag_common.factory import Factory
 
 from graphrag.cache.json_pipeline_cache import JsonPipelineCache
 from graphrag.cache.memory_pipeline_cache import InMemoryCache
