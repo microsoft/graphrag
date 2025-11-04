@@ -32,7 +32,9 @@ async def test_find():
 
 
 async def test_get_creation_date():
-    storage = FilePipelineStorage()
+    storage = FilePipelineStorage(
+        base_dir="tests/fixtures/text/input",
+    )
 
     creation_date = await storage.get_creation_date(
         "dulce.txt"
