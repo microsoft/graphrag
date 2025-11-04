@@ -15,12 +15,10 @@ __dirname__ = os.path.dirname(__file__)
 
 
 async def test_find():
-    storage = FilePipelineStorage()
-    items = list(
-        storage.find(
-            base_dir="tests/fixtures/text/input", file_pattern=re.compile(r".*\.txt$")
-        )
+    storage = FilePipelineStorage(
+        base_dir="tests/fixtures/text/input",
     )
+    items = list(storage.find(file_pattern=re.compile(r".*\.txt$")))
     assert items == [str(Path("tests/fixtures/text/input/dulce.txt"))]
     output = await storage.get("tests/fixtures/text/input/dulce.txt")
     assert len(output) > 0

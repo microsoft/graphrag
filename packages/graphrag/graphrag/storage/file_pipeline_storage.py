@@ -40,15 +40,13 @@ class FilePipelineStorage(PipelineStorage):
     def find(
         self,
         file_pattern: re.Pattern[str],
-        base_dir: str | None = None,
         max_count=-1,
     ) -> Iterator[str]:
         """Find files in the storage using a file pattern."""
-        search_path = Path(self._base_dir) / (base_dir or "")
         logger.info(
-            "Search [%s] for files matching [%s]", search_path, file_pattern.pattern
+            "Search [%s] for files matching [%s]", self._base_dir, file_pattern.pattern
         )
-        all_files = list(search_path.rglob("**/*"))
+        all_files = list(Path(self._base_dir).rglob("**/*"))
         logger.debug("All files and folders: %s", [file.name for file in all_files])
         num_loaded = 0
         num_total = len(all_files)

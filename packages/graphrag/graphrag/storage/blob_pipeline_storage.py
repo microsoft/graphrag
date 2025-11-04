@@ -98,13 +98,11 @@ class BlobPipelineStorage(PipelineStorage):
     def find(
         self,
         file_pattern: re.Pattern[str],
-        base_dir: str | None = None,
         max_count=-1,
     ) -> Iterator[str]:
         """Find blobs in a container using a file pattern.
 
         Params:
-            base_dir: The name of the base container.
             file_pattern: The file pattern to use.
             max_count: The maximum number of blobs to return. If -1, all blobs are returned.
 
@@ -112,18 +110,16 @@ class BlobPipelineStorage(PipelineStorage):
         -------
                 An iterator of blob names and their corresponding regex matches.
         """
-        base_dir = base_dir or self._base_dir
-
         logger.info(
             "Search container [%s] in base_dir [%s] for files matching [%s]",
             self._container_name,
-            base_dir,
+            self._base_dir,
             file_pattern.pattern,
         )
 
         def _blobname(blob_name: str) -> str:
-            if base_dir and blob_name.startswith(base_dir):
-                blob_name = blob_name.replace(base_dir, "", 1)
+            if self._base_dir and blob_name.startswith(self._base_dir):
+                blob_name = blob_name.replace(self._base_dir, "", 1)
             if blob_name.startswith("/"):
                 blob_name = blob_name[1:]
             return blob_name
@@ -132,7 +128,7 @@ class BlobPipelineStorage(PipelineStorage):
             container_client = self._blob_service_client.get_container_client(
                 self._container_name
             )
-            all_blobs = list(container_client.list_blobs(base_dir))
+            all_blobs = list(container_client.list_blobs(self._base_dir))
             logger.debug("All blobs: %s", [blob.name for blob in all_blobs])
             num_loaded = 0
             num_total = len(list(all_blobs))
@@ -155,7 +151,7 @@ class BlobPipelineStorage(PipelineStorage):
         except Exception:  # noqa: BLE001
             logger.warning(
                 "Error finding blobs: base_dir=%s, file_pattern=%s",
-                base_dir,
+                self._base_dir,
                 file_pattern,
             )
 
