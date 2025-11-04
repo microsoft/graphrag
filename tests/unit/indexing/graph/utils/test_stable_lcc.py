@@ -3,7 +3,6 @@
 import unittest
 
 import networkx as nx
-
 from graphrag.index.utils.stable_lcc import stable_largest_connected_component
 
 

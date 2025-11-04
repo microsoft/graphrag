@@ -8,7 +8,6 @@ These tests will test the CacheFactory() class and the creation of each cache ty
 import sys
 
 import pytest
-
 from graphrag.cache.factory import CacheFactory
 from graphrag.cache.json_pipeline_cache import JsonPipelineCache
 from graphrag.cache.memory_pipeline_cache import InMemoryCache

@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 
 import pytest
-
 from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
 
 # cspell:disable-next-line well-known-key

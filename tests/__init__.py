@@ -7,6 +7,7 @@
 # Register MOCK providers
 from graphrag.config.enums import ModelType
 from graphrag.language_model.factory import ChatModelFactory, EmbeddingModelFactory
+
 from tests.mock_provider import MockChatLLM, MockEmbeddingLLM
 
 ChatModelFactory().register(ModelType.MockChat, lambda **kwargs: MockChatLLM(**kwargs))

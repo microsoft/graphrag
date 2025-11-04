@@ -72,12 +72,12 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
-          uv sync
+          uv sync --all-packages
           uv pip install gensim
 
       - name: Build
         run: |
-          uv build
+          uv build --all-packages
 
       - name: Install and start Azurite
         shell: bash

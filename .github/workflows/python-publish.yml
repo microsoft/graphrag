@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/graphrag
     permissions:
       id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
 
@@ -35,18 +34,14 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: uv sync
+        run: uv sync --all-packages
 
       - name: Export Publication Version
         run: echo "version=$(uv version --short)" >> $GITHUB_OUTPUT
 
       - name: Build Distributable
         shell: bash
-        run: uv build
+        run: uv run poe build
 
       - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: dist
-          skip-existing: true
-          verbose: true
+        run: uv publish

@@ -8,7 +8,6 @@ These tests will test the StorageFactory class and the creation of each storage 
 import sys
 
 import pytest
-
 from graphrag.config.enums import StorageType
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage

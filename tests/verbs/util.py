@@ -1,13 +1,12 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-import pandas as pd
-from pandas.testing import assert_series_equal
-
 import graphrag.config.defaults as defs
+import pandas as pd
 from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+from pandas.testing import assert_series_equal
 
 pd.set_option("display.max_columns", None)
 

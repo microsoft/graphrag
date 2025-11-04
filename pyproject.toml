@@ -1,7 +1,7 @@
 [project]
-name = "graphrag"
-# Maintainers: do not change the version here manually, use ./scripts/release.sh
-version = "2.7.0"
+name = "graphrag-monorepo"
+classifiers = ["Private :: Do Not Upload"]
+version = "0.0.0"
 description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
@@ -21,44 +21,7 @@ authors = [
     {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
     {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
 ]
-license = "MIT"
-readme = "README.md"
 requires-python = ">=3.10,<3.13"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-]
-
-dependencies = [
-    "aiofiles>=24.1.0",
-    "azure-cosmos>=4.9.0",
-    "azure-identity>=1.19.0",
-    "azure-search-documents>=11.5.2",
-    "azure-storage-blob>=12.24.0",
-    "devtools>=0.12.2",
-    "environs>=11.0.0",
-    "graspologic-native>=1.2.5",
-    "json-repair>=0.30.3",
-    "lancedb>=0.17.0",
-    "litellm>=1.77.1",
-    "networkx>=3.4.2",
-    "nltk==3.9.1",
-    "numpy>=1.25.2",
-    "openai>=1.68.0",
-    "pandas>=2.2.3",
-    "pyarrow>=17.0.0",
-    "pydantic>=2.10.3",
-    "python-dotenv>=1.0.1",
-    "pyyaml>=6.0.2",
-    "spacy>=3.8.4",
-    "textblob>=0.18.0.post0",
-    "tiktoken>=0.11.0",
-    "tqdm>=4.67.1",
-    "typing-extensions>=4.12.2",
-    "typer>=0.16.0",
-]
 
 [dependency-groups]
 dev = [
@@ -83,19 +46,14 @@ dev = [
     "update-toml>=0.2.1",
 ]
 
-[project.scripts]
-graphrag = "graphrag.cli.main:app"
+[tool.uv]
+package = false
 
-[project.urls]
-Source = "https://github.com/microsoft/graphrag"
+[tool.uv.workspace]
+members = ["packages/*"]
 
-[build-system]
-requires = ["setuptools>=64", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-include = ["graphrag*"]
-exclude = ["examples_notebooks*", "tests*"]
+[tool.uv.sources]
+graphrag-common = { workspace = true }
 
 # Keep poethepoet for task management to minimize changes
 [tool.poe.tasks]
@@ -105,9 +63,13 @@ _ruff_check = 'ruff check .'
 _pyright = "pyright"
 _convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/local_search.ipynb'
 _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
+_copy_build_assets = "python -m scripts.copy_build_assets"
 _semversioner_release = "semversioner release"
 _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
-_semversioner_update_toml_version = "update-toml update --path project.version --value $(uv run semversioner current-version)"
+# Add more update toml tasks as packages are added
+_semversioner_update_graphrag_toml_version = "update-toml update --file packages/graphrag/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_common_toml_version = "update-toml update --file packages/graphrag-common/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_workspace_dependency_versions = "python -m scripts.update_workspace_dependency_versions"
 semversioner_add = "semversioner add-change"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check'
@@ -128,12 +90,21 @@ prompt_tune = "python -m graphrag prompt-tune"
 test_only = "pytest -s -k"
 serve_docs = "mkdocs serve"
 build_docs = "mkdocs build"
+_build_packages = "uv build --all-packages"
+_sync = "uv sync"
+
+[[tool.poe.tasks.build]]
+sequence = ['_copy_build_assets', '_build_packages']
 
 [[tool.poe.tasks.release]]
 sequence = [
     '_semversioner_release',
     '_semversioner_changelog',
-    '_semversioner_update_toml_version',
+    # Add more update toml tasks as packages are added
+    '_semversioner_update_graphrag_toml_version',
+    '_semversioner_update_graphrag_common_toml_version',
+    '_semversioner_update_workspace_dependency_versions',
+    '_sync',
 ]
 ignore_fail = 'return_non_zero'
 
@@ -246,7 +217,7 @@ convention = "numpy"
 
 # https://github.com/microsoft/pyright/blob/9f81564a4685ff5c55edd3959f9b39030f590b2f/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
-include = ["graphrag", "tests"]
+include = ["packages/graphrag/graphrag", "packages/graphrag-common/graphrag_common", "tests"]
 exclude = ["**/node_modules", "**/__pycache__"]
 
 [tool.pytest.ini_options]

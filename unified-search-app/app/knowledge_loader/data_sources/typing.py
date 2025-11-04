@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from enum import Enum
 
 import pandas as pd
-
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 

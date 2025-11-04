@@ -7,6 +7,7 @@ from graphrag.index.operations.extract_graph.typing import (
     Document,
 )
 from graphrag.prompts.index.extract_graph import GRAPH_EXTRACTION_PROMPT
+
 from tests.unit.indexing.verbs.helpers.mock_llm import create_mock_llm
 
 

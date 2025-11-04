@@ -8,6 +8,7 @@ import tempfile
 from pathlib import Path
 
 from graphrag.logger.standard_logging import DEFAULT_LOG_FILENAME, init_loggers
+
 from tests.unit.config.utils import get_default_graphrag_config
 
 

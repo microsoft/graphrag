@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: uv sync
+        run: uv sync --all-packages
   
       - name: mkdocs build
         shell: bash

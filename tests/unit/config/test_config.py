@@ -5,13 +5,13 @@ import os
 from pathlib import Path
 from unittest import mock
 
-import pytest
-from pydantic import ValidationError
-
 import graphrag.config.defaults as defs
+import pytest
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import AuthType, ModelType
 from graphrag.config.load_config import load_config
+from pydantic import ValidationError
+
 from tests.unit.config.utils import (
     DEFAULT_EMBEDDING_MODEL_CONFIG,
     DEFAULT_MODEL_CONFIG,

@@ -8,7 +8,6 @@ These tests will test the LoggerFactory class and the creation of each reporting
 import logging
 
 import pytest
-
 from graphrag.config.enums import ReportingType
 from graphrag.logger.blob_workflow_logger import BlobWorkflowLogger
 from graphrag.logger.factory import LoggerFactory

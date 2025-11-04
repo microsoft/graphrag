@@ -1,9 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
-from pydantic import BaseModel
-
 from graphrag.language_model.manager import ModelManager
 from graphrag.language_model.protocol.base import ChatModel
+from pydantic import BaseModel
 
 
 def create_mock_llm(responses: list[str | BaseModel], name: str = "mock") -> ChatModel:
