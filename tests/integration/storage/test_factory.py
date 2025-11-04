@@ -113,7 +113,6 @@ def test_register_class_directly_works():
         def find(
             self,
             file_pattern: re.Pattern[str],
-            max_count=-1,
         ) -> Iterator[str]:
             return iter([])
 

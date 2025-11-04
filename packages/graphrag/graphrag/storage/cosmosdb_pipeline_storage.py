@@ -120,13 +120,11 @@ class CosmosDBPipelineStorage(PipelineStorage):
     def find(
         self,
         file_pattern: re.Pattern[str],
-        max_count=-1,
     ) -> Iterator[str]:
         """Find documents in a Cosmos DB container using a file pattern regex.
 
         Params:
             file_pattern: The file pattern to use.
-            max_count: The maximum number of documents to return. If -1, all documents are returned.
 
         Returns
         -------
@@ -164,8 +162,6 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 if match:
                     yield item["id"]
                     num_loaded += 1
-                    if max_count > 0 and num_loaded >= max_count:
-                        break
                 else:
                     num_filtered += 1
 

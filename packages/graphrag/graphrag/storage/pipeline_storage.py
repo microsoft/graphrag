@@ -17,7 +17,6 @@ class PipelineStorage(metaclass=ABCMeta):
     def find(
         self,
         file_pattern: re.Pattern[str],
-        max_count=-1,
     ) -> Iterator[str]:
         """Find files in the storage using a file pattern."""
 

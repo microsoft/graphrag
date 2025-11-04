@@ -98,13 +98,11 @@ class BlobPipelineStorage(PipelineStorage):
     def find(
         self,
         file_pattern: re.Pattern[str],
-        max_count=-1,
     ) -> Iterator[str]:
         """Find blobs in a container using a file pattern.
 
         Params:
             file_pattern: The file pattern to use.
-            max_count: The maximum number of blobs to return. If -1, all blobs are returned.
 
         Returns
         -------
@@ -138,8 +136,6 @@ class BlobPipelineStorage(PipelineStorage):
                 if match:
                     yield _blobname(blob.name)
                     num_loaded += 1
-                    if max_count > 0 and num_loaded >= max_count:
-                        break
                 else:
                     num_filtered += 1
             logger.debug(

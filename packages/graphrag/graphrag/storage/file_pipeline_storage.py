@@ -40,7 +40,6 @@ class FilePipelineStorage(PipelineStorage):
     def find(
         self,
         file_pattern: re.Pattern[str],
-        max_count=-1,
     ) -> Iterator[str]:
         """Find files in the storage using a file pattern."""
         logger.info(
@@ -59,8 +58,6 @@ class FilePipelineStorage(PipelineStorage):
                     filename = filename[1:]
                 yield filename
                 num_loaded += 1
-                if max_count > 0 and num_loaded >= max_count:
-                    break
             else:
                 num_filtered += 1
         logger.debug(
