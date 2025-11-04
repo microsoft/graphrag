@@ -50,7 +50,7 @@ async def test_create_base_text_units_metadata_included_in_chunk():
 
     context = await create_test_context()
 
-    config = GraphRagConfig({"models": DEFAULT_MODEL_CONFIG})  # type: ignore
+    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
     config.input.metadata = ["title"]
     config.chunks.prepend_metadata = True
     config.chunks.chunk_size_includes_metadata = True
