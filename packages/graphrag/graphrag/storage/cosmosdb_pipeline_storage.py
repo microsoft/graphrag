@@ -77,7 +77,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         )
         self._no_id_prefixes = []
         logger.debug(
-            "creating cosmosdb storage with account: %s and database: %s and container: %s",
+            "Creating cosmosdb storage with account [%s] and database [%s] and container [%s]",
             self._cosmosdb_account_name,
             self._database_name,
             self._container_name,
@@ -136,7 +136,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         """
         base_dir = base_dir or ""
         logger.info(
-            "search container %s for documents matching %s",
+            "Search container [%s] for documents matching [%s]",
             self._container_name,
             file_pattern.pattern,
         )
@@ -156,6 +156,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     enable_cross_partition_query=True,
                 )
             )
+            logger.debug("All items: %s", [item["id"] for item in items])
             num_loaded = 0
             num_total = len(items)
             if num_total == 0:
@@ -171,15 +172,15 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 else:
                     num_filtered += 1
 
-                progress_status = _create_progress_status(
-                    num_loaded, num_filtered, num_total
-                )
-                logger.debug(
-                    "Progress: %s (%d/%d completed)",
-                    progress_status.description,
-                    progress_status.completed_items,
-                    progress_status.total_items,
-                )
+            progress_status = _create_progress_status(
+                num_loaded, num_filtered, num_total
+            )
+            logger.debug(
+                "Progress: %s (%d/%d completed)",
+                progress_status.description,
+                progress_status.completed_items,
+                progress_status.total_items,
+            )
         except Exception:  # noqa: BLE001
             logger.warning(
                 "An error occurred while searching for documents in Cosmos DB."

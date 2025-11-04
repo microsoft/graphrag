@@ -229,7 +229,7 @@ class StorageDefaults:
     """Default values for storage."""
 
     type: ClassVar[StorageType] = StorageType.file
-    base_dir: str = DEFAULT_OUTPUT_BASE_DIR
+    base_dir: str | None = None
     connection_string: None = None
     container_name: None = None
     storage_account_blob_url: None = None
@@ -240,7 +240,7 @@ class StorageDefaults:
 class InputStorageDefaults(StorageDefaults):
     """Default values for input storage."""
 
-    base_dir: str = "input"
+    base_dir: str | None = "input"
 
 
 @dataclass
@@ -310,7 +310,7 @@ class LocalSearchDefaults:
 class OutputDefaults(StorageDefaults):
     """Default values for output."""
 
-    base_dir: str = DEFAULT_OUTPUT_BASE_DIR
+    base_dir: str | None = DEFAULT_OUTPUT_BASE_DIR
 
 
 @dataclass
@@ -362,7 +362,7 @@ class SummarizeDescriptionsDefaults:
 class UpdateIndexOutputDefaults(StorageDefaults):
     """Default values for update index output."""
 
-    base_dir: str = "update_output"
+    base_dir: str | None = "update_output"
 
 
 @dataclass

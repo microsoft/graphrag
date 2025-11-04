@@ -152,7 +152,7 @@ class GraphRagConfig(BaseModel):
     def _validate_input_base_dir(self) -> None:
         """Validate the input base directory."""
         if self.input.storage.type == defs.StorageType.file:
-            if self.input.storage.base_dir.strip() == "":
+            if not self.input.storage.base_dir:
                 msg = "input storage base directory is required for file input storage. Please rerun `graphrag init` and set the input storage configuration."
                 raise ValueError(msg)
             self.input.storage.base_dir = str(
@@ -167,14 +167,16 @@ class GraphRagConfig(BaseModel):
 
     output: StorageConfig = Field(
         description="The output configuration.",
-        default=StorageConfig(),
+        default=StorageConfig(
+            base_dir=graphrag_config_defaults.output.base_dir,
+        ),
     )
     """The output configuration."""
 
     def _validate_output_base_dir(self) -> None:
         """Validate the output base directory."""
         if self.output.type == defs.StorageType.file:
-            if self.output.base_dir.strip() == "":
+            if not self.output.base_dir:
                 msg = "output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
                 raise ValueError(msg)
             self.output.base_dir = str(
@@ -192,7 +194,7 @@ class GraphRagConfig(BaseModel):
     def _validate_update_index_output_base_dir(self) -> None:
         """Validate the update index output base directory."""
         if self.update_index_output.type == defs.StorageType.file:
-            if self.update_index_output.base_dir.strip() == "":
+            if not self.update_index_output.base_dir:
                 msg = "update_index_output base directory is required for file output. Please rerun `graphrag init` and set the update_index_output configuration."
                 raise ValueError(msg)
             self.update_index_output.base_dir = str(
