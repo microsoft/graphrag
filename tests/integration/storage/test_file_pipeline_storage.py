@@ -36,9 +36,7 @@ async def test_get_creation_date():
         base_dir="tests/fixtures/text/input",
     )
 
-    creation_date = await storage.get_creation_date(
-        "dulce.txt"
-    )
+    creation_date = await storage.get_creation_date("dulce.txt")
 
     datetime_format = "%Y-%m-%d %H:%M:%S %z"
     parsed_datetime = datetime.strptime(creation_date, datetime_format).astimezone()
