@@ -19,8 +19,8 @@ async def test_find():
         base_dir="tests/fixtures/text/input",
     )
     items = list(storage.find(file_pattern=re.compile(r".*\.txt$")))
-    assert items == [str(Path("tests/fixtures/text/input/dulce.txt"))]
-    output = await storage.get("tests/fixtures/text/input/dulce.txt")
+    assert items == [str(Path("dulce.txt"))]
+    output = await storage.get("dulce.txt")
     assert len(output) > 0
 
     await storage.set("test.txt", "Hello, World!", encoding="utf-8")
@@ -35,7 +35,7 @@ async def test_get_creation_date():
     storage = FilePipelineStorage()
 
     creation_date = await storage.get_creation_date(
-        "tests/fixtures/text/input/dulce.txt"
+        "dulce.txt"
     )
 
     datetime_format = "%Y-%m-%d %H:%M:%S %z"
