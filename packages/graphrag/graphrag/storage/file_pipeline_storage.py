@@ -53,7 +53,7 @@ class FilePipelineStorage(PipelineStorage):
         for file in all_files:
             match = file_pattern.search(f"{file}")
             if match:
-                filename = f"{file}".replace(self._base_dir, "", 1)
+                filename = f"{file}".replace(str(Path(self._base_dir)), "", 1)
                 if filename.startswith(os.sep):
                     filename = filename[1:]
                 yield filename
