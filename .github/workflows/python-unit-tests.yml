@@ -1,4 +1,4 @@
-name: Python CI
+name: Python Unit Tests
 on:
   push:
     branches:
@@ -32,7 +32,7 @@ jobs:
     if: github.event.pull_request.draft == false
     strategy:
       matrix:
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.12"]
         os: [ubuntu-latest, windows-latest]
       fail-fast: false # Continue running all jobs even if one fails
     env:
@@ -68,14 +68,6 @@ jobs:
         shell: bash
         run: |
           uv sync --all-packages
-
-      - name: Check
-        run: |
-          uv run poe check
-
-      - name: Build
-        run: |
-          uv build --all-packages
 
       - name: Unit Test
         run: |
