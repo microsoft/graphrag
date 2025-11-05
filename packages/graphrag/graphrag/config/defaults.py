@@ -24,7 +24,9 @@ from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import 
     EN_STOP_WORDS,
 )
 
+DEFAULT_INPUT_BASE_DIR = "input"
 DEFAULT_OUTPUT_BASE_DIR = "output"
+DEFAULT_UPDATE_OUTPUT_BASE_DIR = "update_output"
 DEFAULT_CHAT_MODEL_ID = "default_chat_model"
 DEFAULT_CHAT_MODEL_TYPE = ModelType.Chat
 DEFAULT_CHAT_MODEL_AUTH_TYPE = AuthType.APIKey
@@ -229,7 +231,7 @@ class StorageDefaults:
     """Default values for storage."""
 
     type: ClassVar[StorageType] = StorageType.file
-    base_dir: str = DEFAULT_OUTPUT_BASE_DIR
+    base_dir: str | None = None
     connection_string: None = None
     container_name: None = None
     storage_account_blob_url: None = None
@@ -240,7 +242,7 @@ class StorageDefaults:
 class InputStorageDefaults(StorageDefaults):
     """Default values for input storage."""
 
-    base_dir: str = "input"
+    base_dir: str | None = DEFAULT_INPUT_BASE_DIR
 
 
 @dataclass
@@ -310,7 +312,7 @@ class LocalSearchDefaults:
 class OutputDefaults(StorageDefaults):
     """Default values for output."""
 
-    base_dir: str = DEFAULT_OUTPUT_BASE_DIR
+    base_dir: str | None = DEFAULT_OUTPUT_BASE_DIR
 
 
 @dataclass
@@ -362,7 +364,7 @@ class SummarizeDescriptionsDefaults:
 class UpdateIndexOutputDefaults(StorageDefaults):
     """Default values for update index output."""
 
-    base_dir: str = "update_output"
+    base_dir: str | None = DEFAULT_UPDATE_OUTPUT_BASE_DIR
 
 
 @dataclass

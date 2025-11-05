@@ -18,7 +18,7 @@ class StorageConfig(BaseModel):
         description="The storage type to use.",
         default=graphrag_config_defaults.storage.type,
     )
-    base_dir: str = Field(
+    base_dir: str | None = Field(
         description="The base directory for the output.",
         default=graphrag_config_defaults.storage.base_dir,
     )
