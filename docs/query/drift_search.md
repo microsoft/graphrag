@@ -21,7 +21,7 @@ DRIFT Search introduces a new approach to local search queries by including comm
 
 Below are the key parameters of the [DRIFTSearch class](https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/drift_search/search.py):
 
-- `llm`: OpenAI model object to be used for response generation
+* `model`: Language model chat completion object to be used for response generation
 - `context_builder`: [context builder](https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/drift_context.py) object to be used for preparing context data from community reports and query information
 - `config`: model to define the DRIFT Search hyperparameters. [DRIFT Config model](https://github.com/microsoft/graphrag/blob/main/graphrag/config/models/drift_search_config.py)
 - `tokenizer`: token encoder for tracking the budget for the algorithm.

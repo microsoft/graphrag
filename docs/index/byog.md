@@ -16,8 +16,6 @@ The approach described here will be to run a custom GraphRAG workflow pipeline t
 
 See the full entities [table schema](./outputs.md#entities). For graph summarization purposes, you only need id, title, description, and the list of text_unit_ids.
 
-The additional properties are used for optional graph visualization purposes.
-
 ### Relationships
 
 See the full relationships [table schema](./outputs.md#relationships). For graph summarization purposes, you only need id, source, target, description, weight, and the list of text_unit_ids.

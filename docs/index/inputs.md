@@ -18,15 +18,15 @@ Also see the [outputs](outputs.md) documentation for the final documents table s
 
 ## Bring-your-own DataFrame
 
-As of version 2.6.0, GraphRAG's [indexing API method](https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py) allows you to pass in your own pandas DataFrame and bypass all of the input loading/parsing described in the next section. This is convenient if you have content in a format or storage location we don't support out-of-the-box. __You must ensure that your input DataFrame conforms to the schema described above.__ All of the chunking behavior described later will proceed exactly the same.
+GraphRAG's [indexing API method](https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py) allows you to pass in your own pandas DataFrame and bypass all of the input loading/parsing described in the next section. This is convenient if you have content in a format or storage location we don't support out-of-the-box. _You must ensure that your input DataFrame conforms to the schema described above._ All of the chunking behavior described later will proceed exactly the same.
 
 ## Custom File Handling
 
-As of version 3.0.0, we have migrated to using an injectable InputReader provider class. This means you can implement any input file handling you want in a class that extends InputReader and register it with the InputReaderFactory. See the [architecture page](https://microsoft.github.io/graphrag/index/architecture/) for more info on our standard provider pattern.
+We use an injectable InputReader provider class. This means you can implement any input file handling you want in a class that extends InputReader and register it with the InputReaderFactory. See the [architecture page](https://microsoft.github.io/graphrag/index/architecture/) for more info on our standard provider pattern.
 
 ## Formats
 
-We support three file formats out-of-the-box. This covers the overwhelming majority of use cases we have encountered. If you have a different format, we recommend writing a script to convert to one of these, which are widely used and supported by many tools and libraries.
+We support three file formats out-of-the-box. This covers the overwhelming majority of use cases we have encountered. If you have a different format, we recommend either implementing your own InputReader or writing a script to convert to one of these, which are widely used and supported by many tools and libraries.
 
 ### Plain Text
 
@@ -44,7 +44,7 @@ JSON files (typically ending in a .json extension) contain [structured objects](
 
 ## Metadata
 
-With the structured file formats (CSV and JSON) you can configure any number of columns to be added to a persisted `metadata` field in the DataFrame. This is configured by supplying a list of columns name to collect. If this is configured, the output `metadata` column will have a dict containing a key for each column, and the value of the column for that document. This metadata can optionally be used later in the GraphRAG pipeline.
+With the structured file formats (CSV and JSON) you can configure any number of columns to be added to a persisted `metadata` field in the DataFrame. This is configured by supplying a list of column names to collect. If this is configured, the output `metadata` column will have a dict containing a key for each column, and the value of the column for that document. This metadata can optionally be used later in the GraphRAG pipeline.
 
 ### Example
 
@@ -72,7 +72,7 @@ Documents DataFrame
 
 ## Chunking and Metadata
 
-As described on the [default dataflow](default_dataflow.md#phase-1-compose-textunits) page, documents are *chunked* into smaller "text units" for processing. This is done because document content size often exceeds the available context window for a given language model. There are a handful of settings you can adjust for this chunking, the most relevant being the `chunk_size` and `overlap`. We now also support a metadata processing scheme that can improve indexing results for some use cases. We will describe this feature in detail here.
+As described on the [default dataflow](default_dataflow.md#phase-1-compose-textunits) page, documents are *chunked* into smaller "text units" for processing. This is done because document content size often exceeds the available context window for a given language model. There are a handful of settings you can adjust for this chunking, the most relevant being the `chunk_size` and `overlap`. We also support a metadata processing scheme that can improve indexing results for some use cases. We will describe this feature in detail here.
 
 Imagine the following scenario: you are indexing a collection of news articles. Each article text starts with a headline and author, and then proceeds with the content. When documents are chunked, they are split evenly according to your configured chunk size. In other words, the first *n* tokens are read into a text unit, and then the next *n*, until the end of the content. This means that front matter at the beginning of the document (such as the headline and author in this example) *is not copied to each chunk*. It only exists in the first chunk. When we later retrieve those chunks for summarization, they may therefore be missing shared information about the source document that should always be provided to the model. We have configuration options to copy repeated content into each text unit to address this issue.
 
@@ -89,7 +89,7 @@ Next, the `chunks` block needs to instruct the chunker how to handle this metada
 
 ### Examples
 
-The following are several examples to help illustrate how chunking config and metadate prepending works for each file format. Note that we are using word count here as "tokens" for the illustration, but language model tokens are [not equivalent to words](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).
+The following are several examples to help illustrate how chunking config and metadata prepending works for each file format. Note that we are using word count here as "tokens" for the illustration, but language model tokens are [not equivalent to words](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).
 
 #### Text files
 
