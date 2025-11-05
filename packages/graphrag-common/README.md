@@ -88,7 +88,7 @@ config = load_config(
     config_initializer=Config,
     config_path="config.yaml",
     overrides={
-        "name": "some name"
+        "name": "some name",
         "logging": {
             "filename": "my_logs.txt"
         }
