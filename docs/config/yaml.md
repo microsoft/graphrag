@@ -173,7 +173,7 @@ Where to put all vectors for the system. Configured for lancedb by default. This
 - `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
 - `index_prefix` **str** - (optional) A prefix for the indexes you will create for embeddings. This stores all indexes (tables) for a given dataset ingest.
 - `database_name` **str** - (cosmosdb only) Name of the database.
-- `embeddings_schema` **dict[str, str]** (optional) - Enables customization for each of your embeddings. 
+- `embeddings_schema` **dict[str, dict[str, str]]** (optional) - Enables customization for each of your embeddings. 
   - `<supported_embedding>`: 
     - `index_name` **str**: (optional) - Name for the specific embedding index table.
     - `id_field` **str**: (optional) - Field name to be used as id. Default=`id`
