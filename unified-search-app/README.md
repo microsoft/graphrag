@@ -39,8 +39,8 @@ Unified Search supports multiple GraphRAG indexes by using a directory listing f
 For example, if you have a folder of GraphRAG indexes called "projects" and inside that you ran the Getting Started instructions, your listing.json in the projects folder could look like:
 ```json
 [{
-    "key": "ragtest-demo",
-    "path": "ragtest",
+    "key": "christmas-demo",
+    "path": "christmas",
     "name": "A Christmas Carol",
     "description": "Getting Started index of the novel A Christmas Carol",
     "community_level": 2
