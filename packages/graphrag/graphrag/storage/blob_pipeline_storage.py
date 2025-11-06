@@ -25,7 +25,7 @@ class BlobPipelineStorage(PipelineStorage):
 
     _connection_string: str | None
     _container_name: str
-    _path_prefix: str
+    _base_dir: str | None
     _encoding: str
     _storage_account_blob_url: str | None
 
@@ -33,7 +33,7 @@ class BlobPipelineStorage(PipelineStorage):
         """Create a new BlobStorage instance."""
         connection_string = kwargs.get("connection_string")
         storage_account_blob_url = kwargs.get("storage_account_blob_url")
-        path_prefix = kwargs.get("base_dir")
+        base_dir = kwargs.get("base_dir")
         container_name = kwargs["container_name"]
         if container_name is None:
             msg = "No container name provided for blob storage."
@@ -42,7 +42,9 @@ class BlobPipelineStorage(PipelineStorage):
             msg = "No storage account blob url provided for blob storage."
             raise ValueError(msg)
 
-        logger.info("Creating blob storage at %s", container_name)
+        logger.info(
+            "Creating blob storage at [%s] and base_dir [%s]", container_name, base_dir
+        )
         if connection_string:
             self._blob_service_client = BlobServiceClient.from_connection_string(
                 connection_string
@@ -59,17 +61,12 @@ class BlobPipelineStorage(PipelineStorage):
         self._encoding = kwargs.get("encoding", "utf-8")
         self._container_name = container_name
         self._connection_string = connection_string
-        self._path_prefix = path_prefix or ""
+        self._base_dir = base_dir
         self._storage_account_blob_url = storage_account_blob_url
         self._storage_account_name = (
             storage_account_blob_url.split("//")[1].split(".")[0]
             if storage_account_blob_url
             else None
-        )
-        logger.debug(
-            "creating blob storage at container=%s, path=%s",
-            self._container_name,
-            self._path_prefix,
         )
         self._create_container()
 
@@ -82,6 +79,7 @@ class BlobPipelineStorage(PipelineStorage):
                 for container in self._blob_service_client.list_containers()
             ]
             if container_name not in container_names:
+                logger.debug("Creating new container [%s]", container_name)
                 self._blob_service_client.create_container(container_name)
 
     def _delete_container(self) -> None:
@@ -100,31 +98,26 @@ class BlobPipelineStorage(PipelineStorage):
     def find(
         self,
         file_pattern: re.Pattern[str],
-        base_dir: str | None = None,
-        max_count=-1,
     ) -> Iterator[str]:
         """Find blobs in a container using a file pattern.
 
         Params:
-            base_dir: The name of the base container.
             file_pattern: The file pattern to use.
-            max_count: The maximum number of blobs to return. If -1, all blobs are returned.
 
         Returns
         -------
                 An iterator of blob names and their corresponding regex matches.
         """
-        base_dir = base_dir or ""
-
         logger.info(
-            "search container %s for files matching %s",
+            "Search container [%s] in base_dir [%s] for files matching [%s]",
             self._container_name,
+            self._base_dir,
             file_pattern.pattern,
         )
 
         def _blobname(blob_name: str) -> str:
-            if blob_name.startswith(self._path_prefix):
-                blob_name = blob_name.replace(self._path_prefix, "", 1)
+            if self._base_dir and blob_name.startswith(self._base_dir):
+                blob_name = blob_name.replace(self._base_dir, "", 1)
             if blob_name.startswith("/"):
                 blob_name = blob_name[1:]
             return blob_name
@@ -133,37 +126,35 @@ class BlobPipelineStorage(PipelineStorage):
             container_client = self._blob_service_client.get_container_client(
                 self._container_name
             )
-            all_blobs = list(container_client.list_blobs())
-
+            all_blobs = list(container_client.list_blobs(self._base_dir))
+            logger.debug("All blobs: %s", [blob.name for blob in all_blobs])
             num_loaded = 0
             num_total = len(list(all_blobs))
             num_filtered = 0
             for blob in all_blobs:
                 match = file_pattern.search(blob.name)
-                if match and blob.name.startswith(base_dir):
+                if match:
                     yield _blobname(blob.name)
                     num_loaded += 1
-                    if max_count > 0 and num_loaded >= max_count:
-                        break
                 else:
                     num_filtered += 1
-                logger.debug(
-                    "Blobs loaded: %d, filtered: %d, total: %d",
-                    num_loaded,
-                    num_filtered,
-                    num_total,
-                )
+            logger.debug(
+                "Blobs loaded: %d, filtered: %d, total: %d",
+                num_loaded,
+                num_filtered,
+                num_total,
+            )
         except Exception:  # noqa: BLE001
             logger.warning(
                 "Error finding blobs: base_dir=%s, file_pattern=%s",
-                base_dir,
+                self._base_dir,
                 file_pattern,
             )
 
     async def get(
         self, key: str, as_bytes: bool | None = False, encoding: str | None = None
     ) -> Any:
-        """Get a value from the cache."""
+        """Get a value from the blob."""
         try:
             key = self._keyname(key)
             container_client = self._blob_service_client.get_container_client(
@@ -181,7 +172,7 @@ class BlobPipelineStorage(PipelineStorage):
             return blob_data
 
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
-        """Set a value in the cache."""
+        """Set a value in the blob."""
         try:
             key = self._keyname(key)
             container_client = self._blob_service_client.get_container_client(
@@ -196,46 +187,8 @@ class BlobPipelineStorage(PipelineStorage):
         except Exception:
             logger.exception("Error setting key %s: %s", key)
 
-    def _set_df_json(self, key: str, dataframe: Any) -> None:
-        """Set a json dataframe."""
-        if self._connection_string is None and self._storage_account_name:
-            dataframe.to_json(
-                self._abfs_url(key),
-                storage_options={
-                    "account_name": self._storage_account_name,
-                    "credential": DefaultAzureCredential(),
-                },
-                orient="records",
-                lines=True,
-                force_ascii=False,
-            )
-        else:
-            dataframe.to_json(
-                self._abfs_url(key),
-                storage_options={"connection_string": self._connection_string},
-                orient="records",
-                lines=True,
-                force_ascii=False,
-            )
-
-    def _set_df_parquet(self, key: str, dataframe: Any) -> None:
-        """Set a parquet dataframe."""
-        if self._connection_string is None and self._storage_account_name:
-            dataframe.to_parquet(
-                self._abfs_url(key),
-                storage_options={
-                    "account_name": self._storage_account_name,
-                    "credential": DefaultAzureCredential(),
-                },
-            )
-        else:
-            dataframe.to_parquet(
-                self._abfs_url(key),
-                storage_options={"connection_string": self._connection_string},
-            )
-
     async def has(self, key: str) -> bool:
-        """Check if a key exists in the cache."""
+        """Check if a key exists in the blob."""
         key = self._keyname(key)
         container_client = self._blob_service_client.get_container_client(
             self._container_name
@@ -244,7 +197,7 @@ class BlobPipelineStorage(PipelineStorage):
         return blob_client.exists()
 
     async def delete(self, key: str) -> None:
-        """Delete a key from the cache."""
+        """Delete a key from the blob."""
         key = self._keyname(key)
         container_client = self._blob_service_client.get_container_client(
             self._container_name
@@ -259,7 +212,7 @@ class BlobPipelineStorage(PipelineStorage):
         """Create a child storage instance."""
         if name is None:
             return self
-        path = str(Path(self._path_prefix) / name)
+        path = str(Path(self._base_dir) / name) if self._base_dir else name
         return BlobPipelineStorage(
             connection_string=self._connection_string,
             container_name=self._container_name,
@@ -275,15 +228,10 @@ class BlobPipelineStorage(PipelineStorage):
 
     def _keyname(self, key: str) -> str:
         """Get the key name."""
-        return str(Path(self._path_prefix) / key)
-
-    def _abfs_url(self, key: str) -> str:
-        """Get the ABFS URL."""
-        path = str(Path(self._container_name) / self._path_prefix / key)
-        return f"abfs://{path}"
+        return str(Path(self._base_dir) / key) if self._base_dir else key
 
     async def get_creation_date(self, key: str) -> str:
-        """Get a value from the cache."""
+        """Get creation date for the blob."""
         try:
             key = self._keyname(key)
             container_client = self._blob_service_client.get_container_client(

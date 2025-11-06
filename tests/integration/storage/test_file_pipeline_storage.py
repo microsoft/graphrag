@@ -15,14 +15,12 @@ __dirname__ = os.path.dirname(__file__)
 
 
 async def test_find():
-    storage = FilePipelineStorage()
-    items = list(
-        storage.find(
-            base_dir="tests/fixtures/text/input", file_pattern=re.compile(r".*\.txt$")
-        )
+    storage = FilePipelineStorage(
+        base_dir="tests/fixtures/text/input",
     )
-    assert items == [str(Path("tests/fixtures/text/input/dulce.txt"))]
-    output = await storage.get("tests/fixtures/text/input/dulce.txt")
+    items = list(storage.find(file_pattern=re.compile(r".*\.txt$")))
+    assert items == [str(Path("dulce.txt"))]
+    output = await storage.get("dulce.txt")
     assert len(output) > 0
 
     await storage.set("test.txt", "Hello, World!", encoding="utf-8")
@@ -34,11 +32,11 @@ async def test_find():
 
 
 async def test_get_creation_date():
-    storage = FilePipelineStorage()
-
-    creation_date = await storage.get_creation_date(
-        "tests/fixtures/text/input/dulce.txt"
+    storage = FilePipelineStorage(
+        base_dir="tests/fixtures/text/input",
     )
+
+    creation_date = await storage.get_creation_date("dulce.txt")
 
     datetime_format = "%Y-%m-%d %H:%M:%S %z"
     parsed_datetime = datetime.strptime(creation_date, datetime_format).astimezone()
