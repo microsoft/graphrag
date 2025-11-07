@@ -6,12 +6,7 @@
 
 [Python 3.10-3.12](https://www.python.org/downloads/)
 
-To get started with the GraphRAG system, you have a few options:
-
-👉 [Install from pypi](https://pypi.org/project/graphrag/). <br/>
-👉 [Use it from source](developing.md)<br/>
-
-The following is a simple end-to-end example for using the GraphRAG system, using the install from pypi option.
+The following is a simple end-to-end example for using GraphRAG on the command line after installing from [pypi](https://pypi.org/project/graphrag/).
 
 It shows how to use the system to index some text, and then use the indexed data to answer questions about the documents.
 
@@ -75,7 +70,7 @@ You will also need to login with [az login](https://learn.microsoft.com/en-us/cl
 
 ## Running the Indexing pipeline
 
-Finally we'll run the pipeline!
+Now we're ready to run the pipeline!
 
 ```sh
 graphrag index
@@ -83,8 +78,7 @@ graphrag index
 
 ![pipeline executing from the CLI](img/pipeline-running.png)
 
-This process will take some time to run. This depends on the size of your input data, what model you're using, and the text chunk size being used (these can be configured in your `settings.yaml` file).
-Once the pipeline is complete, you should see a new folder called `./output` with a series of parquet files.
+This process will usually take a few minutes to run. Once the pipeline is complete, you should see a new folder called `./output` with a series of parquet files.
 
 # Using the Query Engine
 

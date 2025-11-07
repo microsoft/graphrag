@@ -6,9 +6,9 @@ This page contains information on selecting a model to use and options to supply
 
 GraphRAG was built and tested using OpenAI models, so this is the default model set we support. This is not intended to be a limiter or statement of quality or fitness for your use case, only that it's the set we are most familiar with for prompting, tuning, and debugging.
 
-Starting with version 2.6.0, GraphRAG supports using [LiteLLM](https://docs.litellm.ai/) for calling language models. LiteLLM provides support for 100+ models though it is important to note that when choosing a model it must support returning [structured outputs](https://openai.com/index/introducing-structured-outputs-in-the-api/) adhering to a [JSON schema](https://docs.litellm.ai/docs/completion/json_mode). 
+GraphRAG uses [LiteLLM](https://docs.litellm.ai/) for calling language models. LiteLLM provides support for 100+ models though it is important to note that when choosing a model it must support returning [structured outputs](https://openai.com/index/introducing-structured-outputs-in-the-api/) adhering to a [JSON schema](https://docs.litellm.ai/docs/completion/json_mode). 
 
-Example using LiteLLm as the language model tool for GraphRAG:
+Example using LiteLLM as the language model manager for GraphRAG:
 
 ```yaml
 models:
@@ -37,7 +37,7 @@ See [Detailed Configuration](yaml.md) for more details on configuration. [View L
 
 ## Model Selection Considerations
 
-GraphRAG has been most thoroughly tested with the gpt-4 series of models from OpenAI, including gpt-4 gpt-4-turbo, gpt-4o, and gpt-4o-mini. Our [arXiv paper](https://arxiv.org/abs/2404.16130), for example, performed quality evaluation using gpt-4-turbo. As stated above, non-OpenAI models are now supported with GraphRAG 2.6.0 and onwards through the use of LiteLLM but the suite of gpt-4 series of models from OpenAI remain the most tested and supported suite of models for GraphRAG.
+GraphRAG has been most thoroughly tested with the gpt-4 series of models from OpenAI, including gpt-4 gpt-4-turbo, gpt-4o, and gpt-4o-mini. Our [arXiv paper](https://arxiv.org/abs/2404.16130), for example, performed quality evaluation using gpt-4-turbo. As stated above, non-OpenAI models are supported through the use of LiteLLM but the suite of gpt-4 series of models from OpenAI remain the most tested and supported suite of models for GraphRAG – in other words, these are the models we know best and can help resolve issues with.
 
 Versions of GraphRAG before 2.2.0 made extensive use of `max_tokens` and `logit_bias` to control generated response length or content. The introduction of the o-series of models added new, non-compatible parameters because these models include a reasoning component that has different consumption patterns and response generation attributes than non-reasoning models. GraphRAG 2.2.0 now supports these models, but there are important differences that need to be understood before you switch.
 
@@ -85,9 +85,9 @@ global_search:
 
 Another option would be to avoid using a language model at all for the graph extraction, instead using the `fast` [indexing method](../index/methods.md) that uses NLP for portions of the indexing phase in lieu of LLM APIs.
 
-## Using Non-OpenAI Models
+## Using Custom Models
 
-As shown above, non-OpenAI models may be used via LiteLLM starting with GraphRAG version 2.6.0 but cases may still exist in which some users wish to use models not supported by LiteLLM. There are two approaches one can use to connect to unsupported models:
+LiteLLM supports hundreds of models, but cases may still exist in which some users wish to use models not supported by LiteLLM. There are two approaches one can use to connect to unsupported models:
 
 ### Proxy APIs
 
@@ -95,7 +95,7 @@ Many users have used platforms such as [ollama](https://ollama.com/) and [LiteLL
 
 ### Model Protocol
 
-As of GraphRAG 2.0.0, we support model injection through the use of a standard chat and embedding Protocol and an accompanying factories that you can use to register your model implementation. This is not supported with the CLI, so you'll need to use GraphRAG as a library.
+We support model injection through the use of a standard chat and embedding Protocol and accompanying factories that you can use to register your model implementation. This is not supported with the CLI, so you'll need to use GraphRAG as a library.
 
 - Our Protocol is [defined here](https://github.com/microsoft/graphrag/blob/main/graphrag/language_model/protocol/base.py)
 - We have a simple mock implementation in our tests that you can [reference here](https://github.com/microsoft/graphrag/blob/main/tests/mock_provider.py)
@@ -103,12 +103,12 @@ As of GraphRAG 2.0.0, we support model injection through the use of a standard c
 Once you have a model implementation, you need to register it with our ChatModelFactory or EmbeddingModelFactory:
 
 ```python
-class MyCustomModel:
+class MyCustomChatModel:
     ...
     # implementation
 
 # elsewhere...
-ChatModelFactory.register("my-custom-chat-model", lambda **kwargs: MyCustomModel(**kwargs))
+ChatModelFactory.register("my-custom-chat-model", MyCustomChatModel)
 ```
 
 Then in your config you can reference the type name you used:

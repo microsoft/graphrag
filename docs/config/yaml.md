@@ -21,7 +21,7 @@ default_chat_model:
 
 ### models
 
-This is a dict of model configurations. The dict key is used to reference this configuration elsewhere when a model instance is desired. In this way, you can specify as many different models as you need, and reference them differentially in the workflow steps.
+This is a dict of model configurations. The dict key is used to reference this configuration elsewhere when a model instance is desired. In this way, you can specify as many different models as you need, and reference them independently in the workflow steps.
 
 For example:
 ```yml
@@ -173,7 +173,7 @@ Where to put all vectors for the system. Configured for lancedb by default. This
 - `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
 - `index_prefix` **str** - (optional) A prefix for the indexes you will create for embeddings. This stores all indexes (tables) for a given dataset ingest.
 - `database_name` **str** - (cosmosdb only) Name of the database.
-- `embeddings_schema` **list[dict[str, str]]** (optional) - Enables customization for each of your embeddings. 
+- `embeddings_schema` **dict[str, dict[str, str]]** (optional) - Enables customization for each of your embeddings. 
   - `<supported_embedding>`: 
     - `index_name` **str**: (optional) - Name for the specific embedding index table.
     - `id_field` **str**: (optional) - Field name to be used as id. Default=`id`
@@ -332,7 +332,7 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 #### Fields
 
 - `embeddings` **bool** - Export embeddings snapshots to parquet.
-- `graphml` **bool** - Export graph snapshots to GraphML.
+- `graphml` **bool** - Export graph snapshot to GraphML.
 
 ## Query
 

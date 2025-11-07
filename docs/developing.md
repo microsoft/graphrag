@@ -13,7 +13,7 @@
 
 ```sh
 # install python dependencies
-uv sync
+uv sync --all-packages
 ```
 
 ## Execute the Indexing Engine

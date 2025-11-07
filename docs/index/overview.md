@@ -7,8 +7,7 @@ Indexing Pipelines are configurable. They are composed of workflows, standard an
 - extract entities, relationships and claims from raw text
 - perform community detection in entities
 - generate community summaries and reports at multiple levels of granularity
-- embed entities into a graph vector space
-- embed text chunks into a textual vector space
+- embed text into a vector space
 
 The outputs of the pipeline are stored as Parquet tables by default, and embeddings are written to your configured vector store.
 
