@@ -30,7 +30,6 @@ class CacheFactory(Factory[PipelineCache]):
 # --- register built-in cache implementations ---
 def create_file_cache(**kwargs) -> PipelineCache:
     """Create a file-based cache implementation."""
-    # Create storage with base_dir in kwargs since FilePipelineStorage expects it there
     storage = FilePipelineStorage(**kwargs)
     return JsonPipelineCache(storage)
 

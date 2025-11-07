@@ -204,14 +204,13 @@ class TestIndexer:
             "run",
             "poe",
             "query",
+            query_config["query"],
             "--root",
             root.resolve().as_posix(),
             "--method",
             query_config["method"],
             "--community-level",
             str(query_config.get("community_level", 2)),
-            "--query",
-            query_config["query"],
         ]
 
         logger.info("running command ", " ".join(command))
