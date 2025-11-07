@@ -70,23 +70,29 @@ class Config(BaseModel):
     name: str = Field(description="Name field.")
     logging: Logging = Field(description="Nested model field.")
 
-# Basic
-# By default, ${} env variables in config file will be parsed and replaced
-# can disable by setting parse_env_vars=False
-config = load_config(Config, "path/to/config.[yaml|yml|json]")
+# Basic - by default:
+# - searches for Path.cwd() / settings.[yaml|yml|json] 
+# - sets the CWD to the directory containing the config file.
+#   so if no custom config path is provided than CWD remains unchanged.
+# - loads config_directory/.env file
+# - parses ${env} in the config file
+config = load_config(Config)
 
-# with .env file
+# Custom file location
+config = load_config(Config, "path_to_config_filename_or_directory_containing_settings.[yaml|yml|json]")
+
+# Using a custom file extension with 
+# custom config parser (str) -> dict[str, Any]
 config = load_config(
     config_initializer=Config,
-    config_path="config.yaml",
-    dot_env_path=".env"
+    config_path="config.toml",
+    config_parser=lambda contents: toml.loads(contents) # Needs toml pypi package
 )
 
 # With overrides - provided values override whats in the config file
 # Only overrides what is specified - recursively merges settings.
 config = load_config(
     config_initializer=Config,
-    config_path="config.yaml",
     overrides={
         "name": "some name",
         "logging": {
@@ -95,11 +101,12 @@ config = load_config(
     },
 )
 
-# Set the working directory to the directory of the config file
+# By default, sets CWD to directory containing config file
+# So custom config paths will change the CWD.
 config = load_config(
     config_initializer=Config,
     config_path="some/path/to/config.yaml",
-    set_cwd=True
+    set_cwd=True # default
 )
 
 # now cwd == some/path/to
@@ -107,6 +114,6 @@ assert Path.cwd() == "some/path/to"
 
 # And now throughout the codebase resolving relative paths in config
 # will resolve relative to the config directory
-Path(config.logging.directory) == "some/path/to/output/logging"
+Path(config.logging.directory) == "some/path/to/output/logs"
 
 ```
