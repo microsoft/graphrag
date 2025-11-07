@@ -53,22 +53,6 @@ class GraphRagConfig(BaseModel):
         """Get a string representation."""
         return self.model_dump_json(indent=4)
 
-    root_dir: str = Field(
-        description="The root directory for the configuration.",
-        default=graphrag_config_defaults.root_dir,
-    )
-
-    def _validate_root_dir(self) -> None:
-        """Validate the root directory."""
-        if self.root_dir.strip() == "":
-            self.root_dir = str(Path.cwd())
-
-        root_dir = Path(self.root_dir).resolve()
-        if not root_dir.is_dir():
-            msg = f"Invalid root directory: {self.root_dir} is not a directory."
-            raise FileNotFoundError(msg)
-        self.root_dir = str(root_dir)
-
     models: dict[str, LanguageModelConfig] = Field(
         description="Available language model configurations.",
         default=graphrag_config_defaults.models,
@@ -156,7 +140,7 @@ class GraphRagConfig(BaseModel):
                 msg = "input storage base directory is required for file input storage. Please rerun `graphrag init` and set the input storage configuration."
                 raise ValueError(msg)
             self.input.storage.base_dir = str(
-                (Path(self.root_dir) / self.input.storage.base_dir).resolve()
+                Path(self.input.storage.base_dir).resolve()
             )
 
     chunks: ChunkingConfig = Field(
@@ -179,9 +163,7 @@ class GraphRagConfig(BaseModel):
             if not self.output.base_dir:
                 msg = "output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
                 raise ValueError(msg)
-            self.output.base_dir = str(
-                (Path(self.root_dir) / self.output.base_dir).resolve()
-            )
+            self.output.base_dir = str(Path(self.output.base_dir).resolve())
 
     update_index_output: StorageConfig = Field(
         description="The output configuration for the updated index.",
@@ -198,7 +180,7 @@ class GraphRagConfig(BaseModel):
                 msg = "update_index_output base directory is required for file output. Please rerun `graphrag init` and set the update_index_output configuration."
                 raise ValueError(msg)
             self.update_index_output.base_dir = str(
-                (Path(self.root_dir) / self.update_index_output.base_dir).resolve()
+                Path(self.update_index_output.base_dir).resolve()
             )
 
     cache: CacheConfig = Field(
@@ -217,9 +199,7 @@ class GraphRagConfig(BaseModel):
             if self.reporting.base_dir.strip() == "":
                 msg = "Reporting base directory is required for file reporting. Please rerun `graphrag init` and set the reporting configuration."
                 raise ValueError(msg)
-            self.reporting.base_dir = str(
-                (Path(self.root_dir) / self.reporting.base_dir).resolve()
-            )
+            self.reporting.base_dir = str(Path(self.reporting.base_dir).resolve())
 
     vector_store: VectorStoreConfig = Field(
         description="The vector store configuration.", default=VectorStoreConfig()
@@ -315,7 +295,7 @@ class GraphRagConfig(BaseModel):
             if not store.db_uri or store.db_uri.strip == "":
                 msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
                 raise ValueError(msg)
-            store.db_uri = str((Path(self.root_dir) / store.db_uri).resolve())
+            store.db_uri = str(Path(store.db_uri).resolve())
 
     def _validate_factories(self) -> None:
         """Validate the factories used in the configuration."""
@@ -349,7 +329,6 @@ class GraphRagConfig(BaseModel):
     @model_validator(mode="after")
     def _validate_model(self):
         """Validate the model configuration."""
-        self._validate_root_dir()
         self._validate_models()
         self._validate_input_pattern()
         self._validate_input_base_dir()

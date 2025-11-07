@@ -32,10 +32,9 @@ class LoggerFactory(Factory[logging.Handler]):
 # --- register built-in logger implementations ---
 def create_file_logger(**kwargs) -> logging.Handler:
     """Create a file-based logger."""
-    root_dir = kwargs["root_dir"]
     base_dir = kwargs["base_dir"]
     filename = kwargs["filename"]
-    log_dir = Path(root_dir) / base_dir
+    log_dir = Path(base_dir)
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file_path = log_dir / filename
 

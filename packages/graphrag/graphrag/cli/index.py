@@ -8,7 +8,6 @@ import logging
 import sys
 import warnings
 from pathlib import Path
-from typing import Any
 
 import graphrag.api as api
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
@@ -46,22 +45,11 @@ def index_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    config_filepath: Path | None,
     dry_run: bool,
     skip_validation: bool,
-    output_dir: Path | None,
 ):
     """Run the pipeline with the given config."""
-    cli_overrides: dict[str, Any] = {
-        "root_dir": str(root_dir),
-    }
-    if output_dir:
-        cli_overrides["output"] = {"base_dir": str(output_dir)}
-        cli_overrides["reporting"] = {"base_dir": str(output_dir)}
-        cli_overrides["update_index_output"] = {"base_dir": str(output_dir)}
-    config = load_config(
-        root_dir=root_dir, config_filepath=config_filepath, cli_overrides=cli_overrides
-    )
+    config = load_config(root_dir=root_dir)
     _run_index(
         config=config,
         method=method,
@@ -80,22 +68,11 @@ def update_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    config_filepath: Path | None,
     skip_validation: bool,
-    output_dir: Path | None,
 ):
     """Run the pipeline with the given config."""
-    cli_overrides: dict[str, Any] = {
-        "root_dir": str(root_dir),
-    }
-    if output_dir:
-        cli_overrides["output"] = {"base_dir": str(output_dir)}
-        cli_overrides["reporting"] = {"base_dir": str(output_dir)}
-        cli_overrides["update_index_output"] = {"base_dir": str(output_dir)}
     config = load_config(
         root_dir=root_dir,
-        config_filepath=config_filepath,
-        cli_overrides=cli_overrides,
     )
 
     _run_index(

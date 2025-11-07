@@ -386,7 +386,6 @@ class VectorStoreDefaults:
 class GraphRagConfigDefaults:
     """Default values for GraphRAG."""
 
-    root_dir: str = ""
     models: dict = field(default_factory=dict)
     reporting: ReportingDefaults = field(default_factory=ReportingDefaults)
     storage: StorageDefaults = field(default_factory=StorageDefaults)

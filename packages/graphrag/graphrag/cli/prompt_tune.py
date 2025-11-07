@@ -5,7 +5,6 @@
 
 import logging
 from pathlib import Path
-from typing import Any
 
 import graphrag.api as api
 from graphrag.config.load_config import load_config
@@ -25,7 +24,6 @@ logger = logging.getLogger(__name__)
 
 async def prompt_tune(
     root: Path,
-    config: Path | None,
     domain: str | None,
     verbose: bool,
     selection_method: api.DocSelectionType,
@@ -44,7 +42,6 @@ async def prompt_tune(
 
     Parameters
     ----------
-    - config: The configuration file.
     - root: The root directory.
     - domain: The domain to map the input documents to.
     - verbose: Enable verbose logging.
@@ -59,14 +56,8 @@ async def prompt_tune(
     - k: The number of documents to select when using auto selection method.
     - min_examples_required: The minimum number of examples required for entity extraction prompts.
     """
-    root_path = Path(root).resolve()
-    cli_overrides: dict[str, Any] = {
-        "root_dir": str(root_path),
-    }
     graph_config = load_config(
-        root_dir=root_path,
-        config_filepath=config,
-        cli_overrides=cli_overrides,
+        root_dir=root,
     )
 
     # override chunking config in the configuration

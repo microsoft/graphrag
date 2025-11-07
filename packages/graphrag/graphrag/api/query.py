@@ -167,13 +167,9 @@ def global_search_streaming(
     entities_ = read_indexer_entities(
         entities, communities, community_level=community_level
     )
-    map_prompt = load_search_prompt(config.root_dir, config.global_search.map_prompt)
-    reduce_prompt = load_search_prompt(
-        config.root_dir, config.global_search.reduce_prompt
-    )
-    knowledge_prompt = load_search_prompt(
-        config.root_dir, config.global_search.knowledge_prompt
-    )
+    map_prompt = load_search_prompt(config.global_search.map_prompt)
+    reduce_prompt = load_search_prompt(config.global_search.reduce_prompt)
+    knowledge_prompt = load_search_prompt(config.global_search.knowledge_prompt)
 
     logger.debug("Executing streaming global search query: %s", query)
     search_engine = get_global_search_engine(
@@ -304,7 +300,7 @@ def local_search_streaming(
 
     entities_ = read_indexer_entities(entities, communities, community_level)
     covariates_ = read_indexer_covariates(covariates) if covariates is not None else []
-    prompt = load_search_prompt(config.root_dir, config.local_search.prompt)
+    prompt = load_search_prompt(config.local_search.prompt)
 
     logger.debug("Executing streaming local search query: %s", query)
     search_engine = get_local_search_engine(
@@ -435,10 +431,8 @@ def drift_search_streaming(
     entities_ = read_indexer_entities(entities, communities, community_level)
     reports = read_indexer_reports(community_reports, communities, community_level)
     read_indexer_report_embeddings(reports, full_content_embedding_store)
-    prompt = load_search_prompt(config.root_dir, config.drift_search.prompt)
-    reduce_prompt = load_search_prompt(
-        config.root_dir, config.drift_search.reduce_prompt
-    )
+    prompt = load_search_prompt(config.drift_search.prompt)
+    reduce_prompt = load_search_prompt(config.drift_search.reduce_prompt)
 
     logger.debug("Executing streaming drift search query: %s", query)
     search_engine = get_drift_search_engine(
@@ -538,7 +532,7 @@ def basic_search_streaming(
         embedding_name=text_unit_text_embedding,
     )
 
-    prompt = load_search_prompt(config.root_dir, config.basic_search.prompt)
+    prompt = load_search_prompt(config.basic_search.prompt)
 
     logger.debug("Executing streaming basic search query: %s", query)
     search_engine = get_basic_search_engine(

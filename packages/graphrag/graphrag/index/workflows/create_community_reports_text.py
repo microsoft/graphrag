@@ -56,7 +56,7 @@ async def run_workflow(
 
     tokenizer = get_tokenizer(model_config)
 
-    prompts = config.community_reports.resolved_prompts(config.root_dir)
+    prompts = config.community_reports.resolved_prompts()
 
     output = await create_community_reports_text(
         entities,

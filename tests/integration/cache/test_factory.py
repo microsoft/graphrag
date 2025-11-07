@@ -34,7 +34,7 @@ def test_create_memory_cache():
 def test_create_file_cache():
     cache = CacheFactory().create(
         strategy=CacheType.file.value,
-        init_args={"root_dir": "/tmp", "base_dir": "testcache"},
+        init_args={"base_dir": "/temp/testcache"},
     )
     assert isinstance(cache, JsonPipelineCache)
 

@@ -47,10 +47,10 @@ class ExtractClaimsConfig(BaseModel):
         default=graphrag_config_defaults.extract_claims.max_gleanings,
     )
 
-    def resolved_prompts(self, root_dir: str) -> ClaimExtractionPrompts:
+    def resolved_prompts(self) -> ClaimExtractionPrompts:
         """Get the resolved claim extraction prompts."""
         return ClaimExtractionPrompts(
-            extraction_prompt=(Path(root_dir) / self.prompt).read_text(encoding="utf-8")
+            extraction_prompt=Path(self.prompt).read_text(encoding="utf-8")
             if self.prompt
             else EXTRACT_CLAIMS_PROMPT,
         )

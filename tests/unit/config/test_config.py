@@ -146,28 +146,33 @@ def test_default_config() -> None:
 
 @mock.patch.dict(os.environ, {"CUSTOM_API_KEY": FAKE_API_KEY}, clear=True)
 def test_load_minimal_config() -> None:
-    cwd = Path(__file__).parent
-    root_dir = (cwd / "fixtures" / "minimal_config").resolve()
-    expected = get_default_graphrag_config(str(root_dir))
+    cwd = Path.cwd()
+    root_dir = (Path(__file__).parent / "fixtures" / "minimal_config").resolve()
+    os.chdir(root_dir)
+    expected = get_default_graphrag_config()
 
     actual = load_config(
         root_dir=root_dir,
-        cli_overrides={"root_dir": str(root_dir)},
     )
     assert_graphrag_configs(actual, expected)
+    # Need to reset cwd after test
+    os.chdir(cwd)
 
 
 @mock.patch.dict(os.environ, {"CUSTOM_API_KEY": FAKE_API_KEY}, clear=True)
 def test_load_config_with_cli_overrides() -> None:
-    cwd = Path(__file__).parent
-    root_dir = (cwd / "fixtures" / "minimal_config").resolve()
+    cwd = Path.cwd()
+    root_dir = (Path(__file__).parent / "fixtures" / "minimal_config").resolve()
+    os.chdir(root_dir)
     output_dir = "some_output_dir"
     expected_output_base_dir = root_dir / output_dir
-    expected = get_default_graphrag_config(str(root_dir))
+    expected = get_default_graphrag_config()
     expected.output.base_dir = str(expected_output_base_dir)
 
     actual = load_config(
         root_dir=root_dir,
-        cli_overrides={"root_dir": str(root_dir), "output": {"base_dir": output_dir}},
+        cli_overrides={"output": {"base_dir": output_dir}},
     )
     assert_graphrag_configs(actual, expected)
+    # Need to reset cwd after test
+    os.chdir(cwd)

@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Unit tests for graphrag-config.load_config."""
+"""Config models for load_config unit tests."""
 
 from pydantic import BaseModel, ConfigDict, Field
 

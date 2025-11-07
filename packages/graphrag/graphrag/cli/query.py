@@ -22,7 +22,6 @@ if TYPE_CHECKING:
 
 
 def run_global_search(
-    config_filepath: Path | None,
     data_dir: Path | None,
     root_dir: Path,
     community_level: int | None,
@@ -36,15 +35,11 @@ def run_global_search(
 
     Loads index files required for global search and calls the Query API.
     """
-    root = root_dir.resolve()
-    cli_overrides: dict[str, Any] = {
-        "root_dir": str(root),
-    }
+    cli_overrides: dict[str, Any] = {}
     if data_dir:
         cli_overrides["output"] = {"base_dir": str(data_dir)}
     config = load_config(
-        root_dir=root,
-        config_filepath=config_filepath,
+        root_dir=root_dir,
         cli_overrides=cli_overrides,
     )
 
@@ -114,7 +109,6 @@ def run_global_search(
 
 
 def run_local_search(
-    config_filepath: Path | None,
     data_dir: Path | None,
     root_dir: Path,
     community_level: int,
@@ -127,15 +121,11 @@ def run_local_search(
 
     Loads index files required for local search and calls the Query API.
     """
-    root = root_dir.resolve()
-    cli_overrides: dict[str, Any] = {
-        "root_dir": str(root),
-    }
+    cli_overrides: dict[str, Any] = {}
     if data_dir:
         cli_overrides["output"] = {"base_dir": str(data_dir)}
     config = load_config(
-        root_dir=root,
-        config_filepath=config_filepath,
+        root_dir=root_dir,
         cli_overrides=cli_overrides,
     )
 
@@ -216,7 +206,6 @@ def run_local_search(
 
 
 def run_drift_search(
-    config_filepath: Path | None,
     data_dir: Path | None,
     root_dir: Path,
     community_level: int,
@@ -229,15 +218,11 @@ def run_drift_search(
 
     Loads index files required for local search and calls the Query API.
     """
-    root = root_dir.resolve()
-    cli_overrides: dict[str, Any] = {
-        "root_dir": str(root),
-    }
+    cli_overrides: dict[str, Any] = {}
     if data_dir:
         cli_overrides["output"] = {"base_dir": str(data_dir)}
     config = load_config(
-        root_dir=root,
-        config_filepath=config_filepath,
+        root_dir=root_dir,
         cli_overrides=cli_overrides,
     )
 
@@ -313,7 +298,6 @@ def run_drift_search(
 
 
 def run_basic_search(
-    config_filepath: Path | None,
     data_dir: Path | None,
     root_dir: Path,
     response_type: str,
@@ -325,15 +309,11 @@ def run_basic_search(
 
     Loads index files required for basic search and calls the Query API.
     """
-    root = root_dir.resolve()
-    cli_overrides: dict[str, Any] = {
-        "root_dir": str(root),
-    }
+    cli_overrides: dict[str, Any] = {}
     if data_dir:
         cli_overrides["output"] = {"base_dir": str(data_dir)}
     config = load_config(
-        root_dir=root,
-        config_filepath=config_filepath,
+        root_dir=root_dir,
         cli_overrides=cli_overrides,
     )
 

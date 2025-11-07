@@ -35,11 +35,9 @@ async def run_pipeline(
     input_documents: pd.DataFrame | None = None,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
-    root_dir = config.root_dir
-
     input_storage = create_storage_from_config(config.input.storage)
     output_storage = create_storage_from_config(config.output)
-    cache = create_cache_from_config(config.cache, root_dir)
+    cache = create_cache_from_config(config.cache)
 
     # load existing state in case any workflows are stateful
     state_json = await output_storage.get("context.json")

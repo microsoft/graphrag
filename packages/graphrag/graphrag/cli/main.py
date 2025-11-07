@@ -94,12 +94,13 @@ ROOT_AUTOCOMPLETE = path_autocomplete(
 @app.command("init")
 def _initialize_cli(
     root: Path = typer.Option(
-        Path(),
+        Path.cwd(),
         "--root",
         "-r",
         help="The project root directory.",
         dir_okay=True,
         writable=True,
+        file_okay=False,
         resolve_path=True,
         autocompletion=ROOT_AUTOCOMPLETE,
     ),
@@ -118,23 +119,14 @@ def _initialize_cli(
 
 @app.command("index")
 def _index_cli(
-    config: Path | None = typer.Option(
-        None,
-        "--config",
-        "-c",
-        help="The configuration to use.",
-        exists=True,
-        file_okay=True,
-        readable=True,
-        autocompletion=CONFIG_AUTOCOMPLETE,
-    ),
     root: Path = typer.Option(
-        Path(),
+        Path.cwd(),
         "--root",
         "-r",
         help="The project root directory.",
         exists=True,
         dir_okay=True,
+        file_okay=False,
         writable=True,
         resolve_path=True,
         autocompletion=ROOT_AUTOCOMPLETE,
@@ -174,18 +166,6 @@ def _index_cli(
         "--skip-validation",
         help="Skip any preflight validation. Useful when running no LLM steps.",
     ),
-    output: Path | None = typer.Option(
-        None,
-        "--output",
-        "-o",
-        help=(
-            "Indexing pipeline output directory. "
-            "Overrides output.base_dir in the configuration file."
-        ),
-        dir_okay=True,
-        writable=True,
-        resolve_path=True,
-    ),
 ) -> None:
     """Build a knowledge graph index."""
     from graphrag.cli.index import index_cli
@@ -195,33 +175,22 @@ def _index_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        config_filepath=config,
         dry_run=dry_run,
         skip_validation=skip_validation,
-        output_dir=output,
         method=method,
     )
 
 
 @app.command("update")
 def _update_cli(
-    config: Path | None = typer.Option(
-        None,
-        "--config",
-        "-c",
-        help="The configuration to use.",
-        exists=True,
-        file_okay=True,
-        readable=True,
-        autocompletion=CONFIG_AUTOCOMPLETE,
-    ),
     root: Path = typer.Option(
-        Path(),
+        Path.cwd(),
         "--root",
         "-r",
         help="The project root directory.",
         exists=True,
         dir_okay=True,
+        file_okay=False,
         writable=True,
         resolve_path=True,
         autocompletion=ROOT_AUTOCOMPLETE,
@@ -253,18 +222,6 @@ def _update_cli(
         "--skip-validation",
         help="Skip any preflight validation. Useful when running no LLM steps.",
     ),
-    output: Path | None = typer.Option(
-        None,
-        "--output",
-        "-o",
-        help=(
-            "Indexing pipeline output directory. "
-            "Overrides output.base_dir in the configuration file."
-        ),
-        dir_okay=True,
-        writable=True,
-        resolve_path=True,
-    ),
 ) -> None:
     """
     Update an existing knowledge graph index.
@@ -278,9 +235,7 @@ def _update_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        config_filepath=config,
         skip_validation=skip_validation,
-        output_dir=output,
         method=method,
     )
 
@@ -288,25 +243,16 @@ def _update_cli(
 @app.command("prompt-tune")
 def _prompt_tune_cli(
     root: Path = typer.Option(
-        Path(),
+        Path.cwd(),
         "--root",
         "-r",
         help="The project root directory.",
         exists=True,
         dir_okay=True,
+        file_okay=False,
         writable=True,
         resolve_path=True,
         autocompletion=ROOT_AUTOCOMPLETE,
-    ),
-    config: Path | None = typer.Option(
-        None,
-        "--config",
-        "-c",
-        help="The configuration to use.",
-        exists=True,
-        file_okay=True,
-        readable=True,
-        autocompletion=CONFIG_AUTOCOMPLETE,
     ),
     verbose: bool = typer.Option(
         False,
@@ -392,7 +338,6 @@ def _prompt_tune_cli(
     loop.run_until_complete(
         prompt_tune(
             root=root,
-            config=config,
             domain=domain,
             verbose=verbose,
             selection_method=selection_method,
@@ -412,27 +357,26 @@ def _prompt_tune_cli(
 
 @app.command("query")
 def _query_cli(
+    query: str = typer.Argument(
+        help="The query to execute.",
+    ),
+    root: Path = typer.Option(
+        Path.cwd(),
+        "--root",
+        "-r",
+        help="The project root directory.",
+        exists=True,
+        dir_okay=True,
+        file_okay=False,
+        writable=True,
+        resolve_path=True,
+        autocompletion=ROOT_AUTOCOMPLETE,
+    ),
     method: SearchMethod = typer.Option(
-        ...,
+        SearchMethod.GLOBAL,
         "--method",
         "-m",
         help="The query algorithm to use.",
-    ),
-    query: str = typer.Option(
-        ...,
-        "--query",
-        "-q",
-        help="The query to execute.",
-    ),
-    config: Path | None = typer.Option(
-        None,
-        "--config",
-        "-c",
-        help="The configuration to use.",
-        exists=True,
-        file_okay=True,
-        readable=True,
-        autocompletion=CONFIG_AUTOCOMPLETE,
     ),
     verbose: bool = typer.Option(
         False,
@@ -448,17 +392,6 @@ def _query_cli(
         exists=True,
         dir_okay=True,
         readable=True,
-        resolve_path=True,
-        autocompletion=ROOT_AUTOCOMPLETE,
-    ),
-    root: Path = typer.Option(
-        Path(),
-        "--root",
-        "-r",
-        help="The project root directory.",
-        exists=True,
-        dir_okay=True,
-        writable=True,
         resolve_path=True,
         autocompletion=ROOT_AUTOCOMPLETE,
     ),
@@ -500,7 +433,6 @@ def _query_cli(
     match method:
         case SearchMethod.LOCAL:
             run_local_search(
-                config_filepath=config,
                 data_dir=data,
                 root_dir=root,
                 community_level=community_level,
@@ -511,7 +443,6 @@ def _query_cli(
             )
         case SearchMethod.GLOBAL:
             run_global_search(
-                config_filepath=config,
                 data_dir=data,
                 root_dir=root,
                 community_level=community_level,
@@ -523,7 +454,6 @@ def _query_cli(
             )
         case SearchMethod.DRIFT:
             run_drift_search(
-                config_filepath=config,
                 data_dir=data,
                 root_dir=root,
                 community_level=community_level,
@@ -534,7 +464,6 @@ def _query_cli(
             )
         case SearchMethod.BASIC:
             run_basic_search(
-                config_filepath=config,
                 data_dir=data,
                 root_dir=root,
                 response_type=response_type,
