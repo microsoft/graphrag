@@ -10,13 +10,36 @@ The following is a simple end-to-end example for using GraphRAG on the command l
 
 It shows how to use the system to index some text, and then use the indexed data to answer questions about the documents.
 
-# Install GraphRAG
+## Install GraphRAG
+
+To get started, create a project space and python virtual environment to install `graphrag`.
+
+### Create Project Space
 
 ```bash
-pip install graphrag
+mkdir graphrag_quickstart
+cd graphrag_quickstart
+python -m venv .venv
+```
+### Activate Python Virtual Environment - Unix/MacOS
+
+```bash
+source .venv/bin/activate
 ```
 
-# Running the Indexer
+### Activate Python Virtual Environment - Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+### Install GraphRAG
+
+```bash
+python -m pip install graphrag
+```
+
+### Initialize GraphRAG
 
 To initialize your workspace, first run the `graphrag init` command.
 
@@ -31,7 +54,7 @@ This will create two files, `.env` and `settings.yaml`, and a directory `input`,
   `GRAPHRAG_API_KEY=<API_KEY>`. Replace `<API_KEY>` with your own OpenAI or Azure API key.
 - `settings.yaml` contains the settings for the pipeline. You can modify this file to change the settings for the pipeline.
 
-### Downloading Sample Text
+### Download Sample Text
 
 Get a copy of A Christmas Carol by Charles Dickens from a trusted source:
 
@@ -39,7 +62,7 @@ Get a copy of A Christmas Carol by Charles Dickens from a trusted source:
 curl https://www.gutenberg.org/cache/epub/24022/pg24022.txt -o ./input/book.txt
 ```
 
-## Set Up Your Workspace Variables
+## Set Up Workspace Variables
 
 ### Using OpenAI
 
@@ -52,11 +75,11 @@ In addition to setting your API key, Azure OpenAI users should set the variables
 ```yaml
 type: chat
 model_provider: azure
+model: gpt-4.1
+deployment_name: <AZURE_DEPLOYMENT_NAME>
 api_base: https://<instance>.openai.azure.com
 api_version: 2024-02-15-preview # You can customize this for other versions
 ```
-
-Most people tend to name their deployments the same as their model - if yours are different, add the `deployment_name` as well.
 
 #### Using Managed Auth on Azure
 
@@ -68,9 +91,9 @@ auth_type: azure_managed_identity # Default auth_type is is api_key
 
 You will also need to login with [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli) and select the subscription with your endpoint.
 
-## Running the Indexing pipeline
+## Index
 
-Now we're ready to run the pipeline!
+Now we're ready to index!
 
 ```sh
 graphrag index
@@ -80,7 +103,7 @@ graphrag index
 
 This process will usually take a few minutes to run. Once the pipeline is complete, you should see a new folder called `./output` with a series of parquet files.
 
-# Using the Query Engine
+# Query
 
 Now let's ask some questions using this dataset.
 

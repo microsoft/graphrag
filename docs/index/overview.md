@@ -25,7 +25,7 @@ After you have a config file you can run the pipeline using the CLI or the Pytho
 ### CLI
 
 ```bash
-uv run poe index [path_to_project_root] # default config mode
+uv run poe index --root <data_root> # default config mode
 ```
 
 ### Python API

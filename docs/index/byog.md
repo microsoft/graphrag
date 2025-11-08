@@ -65,4 +65,4 @@ Putting it all together:
 
 - `output`: Create an output folder and put your entities and relationships (and optionally text_units) parquet files in it.
 - Update your config as noted above to only run the workflows subset you need.
-- Run `graphrag index [path_to_project_directory]`
+- Run `graphrag index --root <your_project_root>`
