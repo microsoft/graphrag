@@ -13,6 +13,7 @@ public sealed class ServiceCollectionExtensionsTests
     public async Task AddPostgresGraphStore_RegistersKeyedServices()
     {
         var services = new ServiceCollection();
+        services.AddSingleton<ILoggerFactory>(_ => NullLoggerFactory.Instance);
         services.AddSingleton<ILogger<PostgresGraphStore>>(_ => NullLogger<PostgresGraphStore>.Instance);
 
         services.AddPostgresGraphStore("primary", options =>
@@ -30,6 +31,7 @@ public sealed class ServiceCollectionExtensionsTests
     public async Task AddPostgresGraphStore_CanRegisterDefault()
     {
         var services = new ServiceCollection();
+        services.AddSingleton<ILoggerFactory>(_ => NullLoggerFactory.Instance);
         services.AddSingleton<ILogger<PostgresGraphStore>>(_ => NullLogger<PostgresGraphStore>.Instance);
 
         services.AddPostgresGraphStore("default", options =>
@@ -49,6 +51,7 @@ public sealed class ServiceCollectionExtensionsTests
     public async Task AddPostgresGraphStores_RegistersFromConfig()
     {
         var services = new ServiceCollection();
+        services.AddSingleton<ILoggerFactory>(_ => NullLoggerFactory.Instance);
         services.AddSingleton<ILogger<PostgresGraphStore>>(_ => NullLogger<PostgresGraphStore>.Instance);
 
         var config = new GraphRagConfig();

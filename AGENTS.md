@@ -8,6 +8,7 @@
 - Register language models through Microsoft.Extensions.AI keyed services; avoid bespoke `LanguageModelConfig` providers.
 - Always run `dotnet format GraphRag.slnx` before finishing work.
 - Always run `dotnet test GraphRag.slnx` before finishing work, after building.
+- Avoid per-client connection locks (e.g., `_connectionLock` in `AgeClient`); rely on the smart connection manager for concurrency.
 
 # Conversations
 any resulting updates to agents.md should go under the section "## Rules to follow"

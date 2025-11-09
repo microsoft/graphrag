@@ -69,4 +69,72 @@ public sealed class CosmosGraphStore(CosmosClient client, string databaseId, str
     private sealed record NodeDocument(string Id, string Label, Dictionary<string, object?> Properties);
 
     private sealed record EdgeDocument(string Id, string SourceId, string TargetId, string Type, Dictionary<string, object?> Properties);
+
+    public IAsyncEnumerable<GraphNode> GetNodesAsync(GraphTraversalOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        options?.Validate();
+        return Fetch(options, cancellationToken);
+
+        async IAsyncEnumerable<GraphNode> Fetch(GraphTraversalOptions? traversalOptions, [EnumeratorCancellation] CancellationToken token = default)
+        {
+            var container = _client.GetContainer(_databaseId, _nodesContainerId);
+            IQueryable<NodeDocument> queryable = container.GetItemLinqQueryable<NodeDocument>(allowSynchronousQueryExecution: false);
+            queryable = queryable.OrderBy(node => node.Id);
+
+            if (traversalOptions?.Skip is > 0 and var skip)
+            {
+                queryable = queryable.Skip(skip);
+            }
+
+            if (traversalOptions?.Take is { } take)
+            {
+                queryable = queryable.Take(take);
+            }
+
+            using var iterator = queryable.ToFeedIterator();
+
+            while (iterator.HasMoreResults)
+            {
+                var response = await iterator.ReadNextAsync(token);
+                foreach (var node in response)
+                {
+                    yield return new GraphNode(node.Id, node.Label, node.Properties);
+                }
+            }
+        }
+    }
+
+    public IAsyncEnumerable<GraphRelationship> GetRelationshipsAsync(GraphTraversalOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        options?.Validate();
+        return FetchEdges(options, cancellationToken);
+
+        async IAsyncEnumerable<GraphRelationship> FetchEdges(GraphTraversalOptions? traversalOptions, [EnumeratorCancellation] CancellationToken token = default)
+        {
+            var container = _client.GetContainer(_databaseId, _edgesContainerId);
+            IQueryable<EdgeDocument> queryable = container.GetItemLinqQueryable<EdgeDocument>(allowSynchronousQueryExecution: false);
+            queryable = queryable.OrderBy(edge => edge.SourceId).ThenBy(edge => edge.TargetId);
+
+            if (traversalOptions?.Skip is > 0 and var skip)
+            {
+                queryable = queryable.Skip(skip);
+            }
+
+            if (traversalOptions?.Take is { } take)
+            {
+                queryable = queryable.Take(take);
+            }
+
+            using var iterator = queryable.ToFeedIterator();
+
+            while (iterator.HasMoreResults)
+            {
+                var response = await iterator.ReadNextAsync(token);
+                foreach (var edge in response)
+                {
+                    yield return new GraphRelationship(edge.SourceId, edge.TargetId, edge.Type, edge.Properties);
+                }
+            }
+        }
+    }
 }

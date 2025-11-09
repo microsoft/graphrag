@@ -53,6 +53,23 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
         Assert.Equal(sourceId, match.SourceId);
         Assert.Equal(relationType, match.Type);
         Assert.Equal(providerKey, match.Properties["provider"]);
+
+        var nodeIds = new HashSet<string>();
+        await foreach (var node in graphStore.GetNodesAsync())
+        {
+            nodeIds.Add(node.Id);
+        }
+
+        Assert.Contains(sourceId, nodeIds);
+        Assert.Contains(targetId, nodeIds);
+
+        var edges = new List<GraphRelationship>();
+        await foreach (var edge in graphStore.GetRelationshipsAsync())
+        {
+            edges.Add(edge);
+        }
+
+        Assert.Contains(edges, rel => rel.SourceId == sourceId && rel.TargetId == targetId && rel.Type == relationType);
     }
 
     [Fact]
@@ -81,5 +98,22 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
         }
 
         Assert.Contains(relationships, rel => rel.TargetId == targetId && rel.Type == "REFERENCES");
+
+        var nodeIds = new HashSet<string>();
+        await foreach (var node in cosmosStore.GetNodesAsync())
+        {
+            nodeIds.Add(node.Id);
+        }
+
+        Assert.Contains(sourceId, nodeIds);
+        Assert.Contains(targetId, nodeIds);
+
+        var edges = new List<GraphRelationship>();
+        await foreach (var edge in cosmosStore.GetRelationshipsAsync())
+        {
+            edges.Add(edge);
+        }
+
+        Assert.Contains(edges, rel => rel.SourceId == sourceId && rel.TargetId == targetId && rel.Type == "REFERENCES");
     }
 }

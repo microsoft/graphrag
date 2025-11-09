@@ -205,6 +205,49 @@ dotnet test tests/ManagedCode.GraphRag.Tests/ManagedCode.GraphRag.Tests.csproj \
 
 ---
 
+## Apache AGE / PostgreSQL Setup
+
+GraphRAG ships with a first-class Apache AGE adapter (`ManagedCode.GraphRag.Postgres`). AGE is enabled on top of PostgreSQL, so you only need a standard Postgres instance with the AGE extension installed.
+
+1. **Run an AGE-enabled Postgres instance.** The integration tests use the official container and you can do the same locally:
+   ```bash
+   docker run --rm \
+     -e POSTGRES_USER=postgres \
+     -e POSTGRES_PASSWORD=postgres \
+     -e POSTGRES_DB=graphrag \
+     -p 5432:5432 \
+     apache/age:latest
+   ```
+2. **Provide a connection string.** `AgeConnectionManager` accepts a standard Npgsql-style string (for example `Host=localhost;Port=5432;Username=postgres;Password=postgres;Database=graphrag`). The manager automatically runs `CREATE EXTENSION IF NOT EXISTS age;`, `LOAD 'age';`, and `SET search_path = ag_catalog, "$user", public;` before any query executes.
+3. **Configure the store.** Either bind `PostgresGraphStoreOptions` in code or use configuration. The snippet below shows the JSON shape (environment variables can follow the same hierarchy, e.g. `GraphRag__GraphStores__postgres__ConnectionString`):
+   ```json
+   {
+     "GraphRag": {
+       "GraphStores": {
+         "postgres": {
+           "ConnectionString": "Host=localhost;Port=5432;Username=postgres;Password=postgres;Database=graphrag",
+           "GraphName": "graphrag",
+           "MaxConnections": 40,
+           "MakeDefault": true
+         }
+       }
+     }
+   }
+   ```
+4. **Register through DI.** `services.AddPostgresGraphStore("postgres", configure: ...)` wires up `IAgeConnectionManager`, `IAgeClientFactory`, and `IGraphStore` automatically. `MaxConnections` caps the number of concurrent AGE sessions (the default is 40 so you stay under the container’s `max_connections`).
+
+> **Tip:** `IGraphStore` now exposes `GetNodesAsync` and `GetRelationshipsAsync` in addition to the targeted APIs (`InitializeAsync`, `Upsert*`, `GetOutgoingRelationshipsAsync`). These use the new AGE-powered enumerations so you can inspect or export the full graph without dropping down to concrete implementations.
+
+> **Pagination:** `GetNodesAsync` and `GetRelationshipsAsync` accept an optional `GraphTraversalOptions` object (`new GraphTraversalOptions { Skip = 100, Take = 50 }`) if you want to page through very large graphs. The defaults stream everything, one record at a time, without materialising the entire graph in memory.
+
+---
+
+## Credits
+
+- **pg-age** ([Allison-E/pg-age](https://github.com/Allison-E/pg-age)) — we vendor this Apache AGE client library (see `src/ManagedCode.GraphRag.Postgres/ApacheAge`) so GraphRAG for .NET can rely on a battle-tested connector. Many thanks to Allison and contributors for making AGE on PostgreSQL accessible.
+
+---
+
 ## Additional Documentation & Diagrams
 
 - [`docs/indexing-and-query.md`](docs/indexing-and-query.md) explains how each workflow maps to the GraphRAG research diagrams (default data flow, query orchestrations, prompt tuning strategies) published at [microsoft.github.io/graphrag](https://microsoft.github.io/graphrag/).

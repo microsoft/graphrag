@@ -6,7 +6,9 @@ using System.Text;
 using System.Text.Json;
 using GraphRag.Constants;
 using GraphRag.Graphs;
+using GraphRag.Storage.Postgres.ApacheAge;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -14,7 +16,6 @@ namespace GraphRag.Storage.Postgres;
 
 public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 {
-    private readonly string _connectionString;
     private readonly string _graphName;
     private readonly string _graphNameLiteral;
     private readonly bool _autoCreateIndexes;
@@ -23,17 +24,19 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
     private readonly ConcurrentDictionary<string, bool> _propertyIndexes = new(StringComparer.OrdinalIgnoreCase);
     private readonly IReadOnlyDictionary<string, string[]> _vertexPropertyIndexConfig;
     private readonly IReadOnlyDictionary<string, string[]> _edgePropertyIndexConfig;
+    private readonly IAgeClientFactory _ageClientFactory;
+    private readonly IAgeConnectionManager? _ownedConnectionManager;
 
-    public PostgresGraphStore(string connectionString, string graphName, ILogger<PostgresGraphStore> logger)
+    public PostgresGraphStore(string connectionString, string graphName, ILogger<PostgresGraphStore> logger, ILoggerFactory? loggerFactory = null)
         : this(new PostgresGraphStoreOptions
         {
             ConnectionString = connectionString,
             GraphName = graphName
-        }, logger)
+        }, logger, loggerFactory, null)
     {
     }
 
-    public PostgresGraphStore(PostgresGraphStoreOptions options, ILogger<PostgresGraphStore> logger)
+    public PostgresGraphStore(PostgresGraphStoreOptions options, ILogger<PostgresGraphStore> logger, ILoggerFactory? loggerFactory = null, IAgeClientFactory? ageClientFactory = null)
     {
         ArgumentNullException.ThrowIfNull(options);
 
@@ -49,37 +52,32 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
             throw new ArgumentException("GraphName cannot be null or whitespace.", nameof(options));
         }
 
-        _connectionString = connectionString;
         _graphName = graphName;
         _graphNameLiteral = BuildGraphNameLiteral(_graphName);
         _autoCreateIndexes = options.AutoCreateIndexes;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _vertexPropertyIndexConfig = NormalizeIndexMap(options.VertexPropertyIndexes);
         _edgePropertyIndexConfig = NormalizeIndexMap(options.EdgePropertyIndexes);
+        if (ageClientFactory is not null)
+        {
+            _ageClientFactory = ageClientFactory;
+        }
+        else
+        {
+            var factory = loggerFactory ?? NullLoggerFactory.Instance;
+            var connectionManagerLogger = factory.CreateLogger<AgeConnectionManager>();
+            var connectionManager = new AgeConnectionManager(connectionString, connectionManagerLogger, options.MaxConnections);
+            _ownedConnectionManager = connectionManager;
+            _ageClientFactory = new AgeClientFactory(connectionManager, factory);
+        }
     }
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync(cancellationToken);
-
-        await ExecuteNonQueryAsync(connection, "CREATE EXTENSION IF NOT EXISTS age;", cancellationToken);
-        await ApplySessionConfigurationAsync(connection, cancellationToken);
-
-        await using (var existsCommand = connection.CreateCommand())
-        {
-            existsCommand.CommandText = "SELECT 1 FROM ag_catalog.ag_graph WHERE name = @graphName LIMIT 1;";
-            existsCommand.Parameters.AddWithValue("graphName", _graphName);
-            var exists = await existsCommand.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
-
-            if (exists is null)
-            {
-                await using var createGraph = connection.CreateCommand();
-                createGraph.CommandText = "SELECT ag_catalog.create_graph(@graphName);";
-                createGraph.Parameters.AddWithValue("graphName", _graphName);
-                await createGraph.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-            }
-        }
+        await using var client = _ageClientFactory.CreateClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await client.CreateGraphAsync(_graphName, cancellationToken).ConfigureAwait(false);
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
 
         _logger.LogInformation("Apache AGE graph {GraphName} initialised.", _graphName);
     }
@@ -213,8 +211,10 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 
         async IAsyncEnumerable<GraphRelationship> FetchAsync(string nodeId, [EnumeratorCancellation] CancellationToken token)
         {
-            await using var connection = await OpenConnectionAsync(token).ConfigureAwait(false);
-            await using var command = connection.CreateCommand();
+            await using var client = _ageClientFactory.CreateClient();
+            await client.OpenConnectionAsync(token).ConfigureAwait(false);
+
+            await using var command = client.Connection.CreateCommand();
             command.CommandText = string.Concat(
                 "SELECT ",
                 "\n    source_id::text,",
@@ -242,40 +242,105 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 
                 yield return new GraphRelationship(source, target, relationshipType, properties);
             }
+
+            await client.CloseConnectionAsync(token).ConfigureAwait(false);
+        }
+    }
+
+    public IAsyncEnumerable<GraphRelationship> GetRelationshipsAsync(GraphTraversalOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        options?.Validate();
+        return FetchRelationships(options, cancellationToken);
+
+        async IAsyncEnumerable<GraphRelationship> FetchRelationships(GraphTraversalOptions? traversalOptions, [EnumeratorCancellation] CancellationToken token)
+        {
+            await using var client = _ageClientFactory.CreateClient();
+            await client.OpenConnectionAsync(token).ConfigureAwait(false);
+
+            await using var command = client.Connection.CreateCommand();
+            var pagination = BuildPaginationClause(traversalOptions);
+            command.CommandText = string.Concat(
+                "SELECT ",
+                "\n    source_id::text,",
+                "\n    target_id::text,",
+                "\n    edge_type::text,",
+                "\n    edge_props::text",
+                "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", $$",
+                "\n    MATCH (source)-[rel]->(target)",
+                "\n    RETURN source.id AS source_id, target.id AS target_id, type(rel) AS edge_type, properties(rel) AS edge_props",
+                "\n    ORDER BY source.id, target.id, type(rel)",
+                pagination,
+                "\n$$, @params::ag_catalog.agtype) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype);");
+            command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, SerializeParameters(null)));
+
+            await using var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false);
+            while (await reader.ReadAsync(token).ConfigureAwait(false))
+            {
+                var source = NormalizeAgTypeText(reader.GetString(0));
+                var target = NormalizeAgTypeText(reader.GetString(1));
+                var relationshipType = NormalizeAgTypeText(reader.GetString(2));
+                var propertiesJson = reader.IsDBNull(3) ? "{}" : reader.GetString(3);
+                var properties = ParseProperties(propertiesJson);
+
+                yield return new GraphRelationship(source, target, relationshipType, properties);
+            }
+
+            await client.CloseConnectionAsync(token).ConfigureAwait(false);
+        }
+    }
+
+    public IAsyncEnumerable<GraphNode> GetNodesAsync(GraphTraversalOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        options?.Validate();
+        return FetchNodes(options, cancellationToken);
+
+        async IAsyncEnumerable<GraphNode> FetchNodes(GraphTraversalOptions? traversalOptions, [EnumeratorCancellation] CancellationToken token)
+        {
+            await using var client = _ageClientFactory.CreateClient();
+            await client.OpenConnectionAsync(token).ConfigureAwait(false);
+
+            await using var command = client.Connection.CreateCommand();
+            var pagination = BuildPaginationClause(traversalOptions);
+            command.CommandText = string.Concat(
+                "SELECT ",
+                "\n    node_label::text,",
+                "\n    node_id::text,",
+                "\n    node_props::text",
+                "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", $$",
+                "\n    MATCH (n)",
+                "\n    RETURN head(labels(n)) AS node_label, n.id AS node_id, properties(n) AS node_props",
+                "\n    ORDER BY n.id",
+                pagination,
+                "\n$$, @params::ag_catalog.agtype) AS (node_label agtype, node_id agtype, node_props agtype);");
+            command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, SerializeParameters(null)));
+
+            await using var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false);
+            while (await reader.ReadAsync(token).ConfigureAwait(false))
+            {
+                var label = NormalizeAgTypeText(reader.GetString(0));
+                var id = NormalizeAgTypeText(reader.GetString(1));
+                var propsJson = reader.IsDBNull(2) ? "{}" : reader.GetString(2);
+                var props = ParseProperties(propsJson);
+                yield return new GraphNode(id, label, props);
+            }
+
+            await client.CloseConnectionAsync(token).ConfigureAwait(false);
         }
     }
 
     protected virtual async Task ExecuteCypherAsync(string query, IReadOnlyDictionary<string, object?> parameters, CancellationToken cancellationToken)
     {
-        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var command = connection.CreateCommand();
+        await using var client = _ageClientFactory.CreateClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        await using var command = client.Connection.CreateCommand();
         var queryLiteral = WrapInDollarQuotes(query);
         command.CommandText = string.Concat(
             "SELECT *",
             "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", ", queryLiteral, "::cstring, @params::ag_catalog.agtype) AS (result agtype);");
         command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, SerializeParameters(parameters)));
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    private async Task<NpgsqlConnection> OpenConnectionAsync(CancellationToken cancellationToken)
-    {
-        var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
-        await ApplySessionConfigurationAsync(connection, cancellationToken).ConfigureAwait(false);
-        return connection;
-    }
-
-    private static async Task ApplySessionConfigurationAsync(NpgsqlConnection connection, CancellationToken cancellationToken)
-    {
-        await ExecuteNonQueryAsync(connection, "LOAD 'age';", cancellationToken).ConfigureAwait(false);
-        await ExecuteNonQueryAsync(connection, @"SET search_path = ag_catalog, ""$user"", public;", cancellationToken).ConfigureAwait(false);
-    }
-
-    private static async Task ExecuteNonQueryAsync(NpgsqlConnection connection, string sql, CancellationToken cancellationToken)
-    {
-        await using var command = connection.CreateCommand();
-        command.CommandText = sql;
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private static string EscapeLabel(string label)
@@ -430,7 +495,9 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 
     protected virtual async Task<string?> ResolveLabelRelationAsync(string label, bool isEdge, CancellationToken cancellationToken)
     {
-        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var client = _ageClientFactory.CreateClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = client.Connection.CreateCommand();
         const string sql = @"
 SELECT quote_ident(n.nspname) || '.' || quote_ident(c.relname)
 FROM ag_catalog.ag_label l
@@ -440,31 +507,37 @@ JOIN pg_namespace n ON n.oid = c.relnamespace
 WHERE g.name = @graph_name AND l.name = @label_name AND l.kind = @label_kind
 LIMIT 1;";
 
-        await using var command = connection.CreateCommand();
         command.CommandText = sql;
         command.Parameters.AddWithValue("graph_name", _graphName);
         command.Parameters.AddWithValue("label_name", label);
         command.Parameters.AddWithValue("label_kind", isEdge ? "e" : "v");
 
         var result = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
         return result as string;
     }
 
     protected virtual async Task ExecuteIndexCommandsAsync(IEnumerable<string> commands, CancellationToken cancellationToken)
     {
-        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var client = _ageClientFactory.CreateClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
         foreach (var commandText in commands)
         {
-            await using var command = connection.CreateCommand();
+            await using var command = client.Connection.CreateCommand();
             command.CommandText = commandText;
             await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
+
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
     }
 
     protected virtual async Task<IReadOnlyList<string>> ExecuteExplainAsync(string explainQuery, string parameterJson, CancellationToken cancellationToken)
     {
-        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var command = connection.CreateCommand();
+        await using var client = _ageClientFactory.CreateClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        await using var command = client.Connection.CreateCommand();
         var explainLiteral = WrapInDollarQuotes(explainQuery);
         command.CommandText = string.Concat(
             "SELECT plan",
@@ -478,6 +551,7 @@ LIMIT 1;";
             plan.Add(reader.GetString(0));
         }
 
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
         return plan;
     }
 
@@ -532,7 +606,7 @@ LIMIT 1;";
             }
 
             parameters[parameterName] = value;
-            assignments.Add($"{alias}.{escapedProperty} = ${parameterName}");
+            assignments.Add($"{alias}.`{escapedProperty}` = ${parameterName}");
         }
 
         return assignments;
@@ -669,6 +743,31 @@ LIMIT 1;";
         return JsonSerializer.Serialize(parameters);
     }
 
+    private static string BuildPaginationClause(GraphTraversalOptions? options)
+    {
+        if (options is null)
+        {
+            return string.Empty;
+        }
+
+        var builder = new StringBuilder();
+        if (options.Skip is > 0 and var skip)
+        {
+            builder.AppendLine();
+            builder.Append("    SKIP ");
+            builder.Append(skip);
+        }
+
+        if (options.Take is { } take)
+        {
+            builder.AppendLine();
+            builder.Append("    LIMIT ");
+            builder.Append(take);
+        }
+
+        return builder.ToString();
+    }
+
     private static string NormalizeAgTypeText(string value) => value.Trim('"');
 
     private static IReadOnlyDictionary<string, object?> ParseProperties(string json)
@@ -698,5 +797,11 @@ LIMIT 1;";
         }
     }
 
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+    public async ValueTask DisposeAsync()
+    {
+        if (_ownedConnectionManager is not null)
+        {
+            await _ownedConnectionManager.DisposeAsync().ConfigureAwait(false);
+        }
+    }
 }

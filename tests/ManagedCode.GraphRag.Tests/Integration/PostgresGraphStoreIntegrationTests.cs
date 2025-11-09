@@ -98,6 +98,123 @@ public sealed class PostgresGraphStoreIntegrationTests(GraphRagApplicationFixtur
     }
 
     [Fact]
+    public async Task GetNodesAsync_ReturnsInsertedNodes()
+    {
+        var store = _fixture.Services.GetRequiredKeyedService<IGraphStore>("postgres");
+        await store.InitializeAsync();
+
+        var firstId = $"node-{Guid.NewGuid():N}";
+        var secondId = $"node-{Guid.NewGuid():N}";
+
+        await store.UpsertNodeAsync(firstId, "Entity", new Dictionary<string, object?> { ["name"] = "first" });
+        await store.UpsertNodeAsync(secondId, "Entity", new Dictionary<string, object?> { ["name"] = "second" });
+
+        var nodes = new List<GraphNode>();
+        await foreach (var node in store.GetNodesAsync())
+        {
+            nodes.Add(node);
+        }
+
+        Assert.Contains(nodes, n => n.Id == firstId && n.Properties["name"]?.ToString() == "first");
+        Assert.Contains(nodes, n => n.Id == secondId && n.Properties["name"]?.ToString() == "second");
+    }
+
+    [Fact]
+    public async Task GetRelationshipsAsync_ReturnsInsertedEdges()
+    {
+        var store = _fixture.Services.GetRequiredKeyedService<IGraphStore>("postgres");
+        await store.InitializeAsync();
+
+        var sourceId = $"rel-src-{Guid.NewGuid():N}";
+        var targetId = $"rel-dst-{Guid.NewGuid():N}";
+        await store.UpsertNodeAsync(sourceId, "Person", new Dictionary<string, object?>());
+        await store.UpsertNodeAsync(targetId, "Person", new Dictionary<string, object?>());
+
+        await store.UpsertRelationshipAsync(sourceId, targetId, "COLLABORATES_WITH", new Dictionary<string, object?> { ["project"] = "AGE" });
+
+        var relationships = new List<GraphRelationship>();
+        await foreach (var relationship in store.GetRelationshipsAsync())
+        {
+            relationships.Add(relationship);
+        }
+
+        Assert.Contains(
+            relationships,
+            rel => rel.SourceId == sourceId &&
+                   rel.TargetId == targetId &&
+                   rel.Type == "COLLABORATES_WITH" &&
+                   rel.Properties["project"]?.ToString() == "AGE");
+    }
+
+    [Fact]
+    public async Task GetNodesAsync_RespectsPagination()
+    {
+        var store = _fixture.Services.GetRequiredKeyedService<IGraphStore>("postgres");
+        await store.InitializeAsync();
+
+        var ids = new List<string>();
+        for (var i = 0; i < 5; i++)
+        {
+            var id = $"page-node-{i}-{Guid.NewGuid():N}";
+            ids.Add(id);
+            await store.UpsertNodeAsync(id, "Paginated", new Dictionary<string, object?> { ["seq"] = i });
+        }
+
+        var firstTwo = new List<GraphNode>();
+        await foreach (var node in store.GetNodesAsync(new GraphTraversalOptions { Take = 2 }))
+        {
+            firstTwo.Add(node);
+        }
+
+        Assert.Equal(2, firstTwo.Count);
+
+        var skipTwo = new List<GraphNode>();
+        await foreach (var node in store.GetNodesAsync(new GraphTraversalOptions { Skip = 2, Take = 2 }))
+        {
+            skipTwo.Add(node);
+        }
+
+        Assert.Equal(2, skipTwo.Count);
+        Assert.NotEqual(firstTwo.Select(n => n.Id), skipTwo.Select(n => n.Id));
+    }
+
+    [Fact]
+    public async Task GetRelationshipsAsync_RespectsPagination()
+    {
+        var store = _fixture.Services.GetRequiredKeyedService<IGraphStore>("postgres");
+        await store.InitializeAsync();
+
+        var sourceId = $"pagination-src-{Guid.NewGuid():N}";
+        await store.UpsertNodeAsync(sourceId, "Person", new Dictionary<string, object?>());
+
+        var targets = new List<string>();
+        for (var i = 0; i < 5; i++)
+        {
+            var target = $"pagination-dst-{i}-{Guid.NewGuid():N}";
+            targets.Add(target);
+            await store.UpsertNodeAsync(target, "Person", new Dictionary<string, object?>());
+            await store.UpsertRelationshipAsync(sourceId, target, "KNOWS", new Dictionary<string, object?> { ["order"] = i });
+        }
+
+        var firstThree = new List<GraphRelationship>();
+        await foreach (var rel in store.GetRelationshipsAsync(new GraphTraversalOptions { Take = 3 }))
+        {
+            firstThree.Add(rel);
+        }
+
+        Assert.Equal(3, firstThree.Count);
+
+        var skipThree = new List<GraphRelationship>();
+        await foreach (var rel in store.GetRelationshipsAsync(new GraphTraversalOptions { Skip = 3, Take = 2 }))
+        {
+            skipThree.Add(rel);
+        }
+
+        Assert.Equal(2, skipThree.Count);
+        Assert.NotEqual(firstThree.Select(r => r.TargetId), skipThree.Select(r => r.TargetId));
+    }
+
+    [Fact]
     public async Task ExplainService_ReturnsPlanOutput()
     {
         var store = _fixture.Services.GetRequiredKeyedService<PostgresGraphStore>("postgres");

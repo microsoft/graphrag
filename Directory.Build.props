@@ -25,8 +25,8 @@
         <RepositoryUrl>https://github.com/managedcode/graphrag</RepositoryUrl>
         <PackageProjectUrl>https://github.com/managedcode/graphrag</PackageProjectUrl>
         <Product>Managed Code GraphRag</Product>
-        <Version>0.0.4</Version>
-        <PackageVersion>0.0.4</PackageVersion>
+        <Version>0.0.5</Version>
+        <PackageVersion>0.0.5</PackageVersion>
 
     </PropertyGroup>
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">

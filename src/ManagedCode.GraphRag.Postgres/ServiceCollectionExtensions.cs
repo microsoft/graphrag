@@ -1,5 +1,6 @@
 using GraphRag.Config;
 using GraphRag.Graphs;
+using GraphRag.Storage.Postgres.ApacheAge;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -17,11 +18,28 @@ public static class ServiceCollectionExtensions
         configure(options);
 
         services.AddKeyedSingleton<PostgresGraphStoreOptions>(key, (_, _) => options);
+        services.AddKeyedSingleton<IAgeConnectionManager>(key, (sp, serviceKey) =>
+        {
+            var opts = sp.GetRequiredKeyedService<PostgresGraphStoreOptions>(serviceKey);
+            var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
+            var logger = loggerFactory.CreateLogger<AgeConnectionManager>();
+            return new AgeConnectionManager(opts.ConnectionString, logger, opts.MaxConnections);
+        });
+
+        services.AddKeyedSingleton<IAgeClientFactory>(key, (sp, serviceKey) =>
+        {
+            var connectionManager = sp.GetRequiredKeyedService<IAgeConnectionManager>(serviceKey);
+            var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
+            return new AgeClientFactory(connectionManager, loggerFactory);
+        });
+
         services.AddKeyedSingleton<PostgresGraphStore>(key, (sp, serviceKey) =>
         {
             var opts = sp.GetRequiredKeyedService<PostgresGraphStoreOptions>(serviceKey);
             var logger = sp.GetRequiredService<ILogger<PostgresGraphStore>>();
-            return new PostgresGraphStore(opts, logger);
+            var loggerFactory = sp.GetService<ILoggerFactory>();
+            var ageClientFactory = sp.GetRequiredKeyedService<IAgeClientFactory>(serviceKey);
+            return new PostgresGraphStore(opts, logger, loggerFactory, ageClientFactory);
         });
         services.AddKeyedSingleton<IGraphStore>(key, (sp, serviceKey) => sp.GetRequiredKeyedService<PostgresGraphStore>(serviceKey));
         services.AddKeyedSingleton<PostgresExplainService>(key, (sp, serviceKey) =>
@@ -119,4 +137,6 @@ public sealed class PostgresGraphStoreOptions
     public Dictionary<string, string[]> VertexPropertyIndexes { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     public Dictionary<string, string[]> EdgePropertyIndexes { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+    public int MaxConnections { get; set; } = 40;
 }

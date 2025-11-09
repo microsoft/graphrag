@@ -77,6 +77,88 @@ SET r += $props";
         }
     }
 
+    public IAsyncEnumerable<GraphRelationship> GetRelationshipsAsync(GraphTraversalOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        options?.Validate();
+        cancellationToken.ThrowIfCancellationRequested();
+        return FetchAll(options, cancellationToken);
+
+        async IAsyncEnumerable<GraphRelationship> FetchAll(GraphTraversalOptions? traversalOptions, [EnumeratorCancellation] CancellationToken token = default)
+        {
+            await using var session = _driver.AsyncSession();
+            var parameters = new Dictionary<string, object>();
+            var pagination = BuildNeo4jPaginationClause(traversalOptions, parameters, orderBy: "source.id, target.id, type(rel)");
+            var cursor = await session.RunAsync(
+                @"MATCH (source)-[rel]->(target)
+                  RETURN source.id AS SourceId, target.id AS TargetId, type(rel) AS Type, properties(rel) AS Properties" + pagination,
+                parameters);
+
+            while (await cursor.FetchAsync())
+            {
+                token.ThrowIfCancellationRequested();
+                var record = cursor.Current;
+                var properties = record["Properties"].As<IDictionary<string, object?>>();
+                yield return new GraphRelationship(
+                    record["SourceId"].As<string>(),
+                    record["TargetId"].As<string>(),
+                    record["Type"].As<string>(),
+                    properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+            }
+        }
+    }
+
+    public IAsyncEnumerable<GraphNode> GetNodesAsync(GraphTraversalOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        options?.Validate();
+        cancellationToken.ThrowIfCancellationRequested();
+        return FetchNodes(options, cancellationToken);
+
+        async IAsyncEnumerable<GraphNode> FetchNodes(GraphTraversalOptions? traversalOptions, [EnumeratorCancellation] CancellationToken token = default)
+        {
+            await using var session = _driver.AsyncSession();
+            var parameters = new Dictionary<string, object>();
+            var pagination = BuildNeo4jPaginationClause(traversalOptions, parameters, orderBy: "n.id");
+            var cursor = await session.RunAsync(
+                @"MATCH (n)
+                  RETURN head(labels(n)) AS Label, n.id AS Id, properties(n) AS Properties" + pagination,
+                parameters);
+
+            while (await cursor.FetchAsync())
+            {
+                token.ThrowIfCancellationRequested();
+                var record = cursor.Current;
+                var properties = record["Properties"].As<IDictionary<string, object?>>();
+                yield return new GraphNode(
+                    record["Id"].As<string>(),
+                    record["Label"].As<string>(),
+                    properties.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+            }
+        }
+    }
+
+    private static string BuildNeo4jPaginationClause(GraphTraversalOptions? options, IDictionary<string, object> parameters, string orderBy)
+    {
+        var clause = $" ORDER BY {orderBy}";
+        if (options is null)
+        {
+            return clause;
+        }
+
+        if (options.Skip is > 0 and var skip)
+        {
+            parameters["skip"] = skip;
+            clause += " SKIP $skip";
+        }
+
+        if (options.Take is { } take)
+        {
+            parameters["limit"] = take;
+            clause += " LIMIT $limit";
+        }
+
+        return clause;
+    }
+
     private static string EscapeLabel(string value)
     {
         if (value.Any(ch => !char.IsLetterOrDigit(ch) && ch != '_' && ch != ':'))
