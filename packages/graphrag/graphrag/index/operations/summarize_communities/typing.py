@@ -10,9 +10,7 @@ from typing_extensions import TypedDict
 
 from graphrag.language_model.protocol.base import ChatModel
 
-ExtractedEntity = dict[str, Any]
 RowContext = dict[str, Any]
-EntityTypes = list[str]
 Claim = dict[str, Any]
 
 

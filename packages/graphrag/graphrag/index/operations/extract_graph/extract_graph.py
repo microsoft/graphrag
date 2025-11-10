@@ -5,17 +5,11 @@
 
 import logging
 
-import networkx as nx
 import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.extract_graph.graph_extractor import GraphExtractor
-from graphrag.index.operations.extract_graph.typing import (
-    Document,
-    EntityExtractionResult,
-    EntityTypes,
-)
 from graphrag.index.utils.derive_from_rows import derive_from_rows
 from graphrag.language_model.protocol.base import ChatModel
 
@@ -42,14 +36,15 @@ async def extract_graph(
         text = row[text_column]
         id = row[id_column]
         result = await run_extract_graph(
-            [Document(text=text, id=id)],
-            entity_types,
-            model,
-            prompt,
-            max_gleanings,
+            text=text,
+            source_id=id,
+            entity_types=entity_types,
+            model=model,
+            prompt=prompt,
+            max_gleanings=max_gleanings,
         )
         num_started += 1
-        return [result.entities, result.relationships, result.graph]
+        return result
 
     results = await derive_from_rows(
         text_units,
@@ -64,8 +59,8 @@ async def extract_graph(
     relationship_dfs = []
     for result in results:
         if result:
-            entity_dfs.append(pd.DataFrame(result[0]))
-            relationship_dfs.append(pd.DataFrame(result[1]))
+            entity_dfs.append(result[0])
+            relationship_dfs.append(result[1])
 
     entities = _merge_entities(entity_dfs)
     relationships = _merge_relationships(relationship_dfs)
@@ -74,12 +69,13 @@ async def extract_graph(
 
 
 async def run_extract_graph(
-    docs: list[Document],
-    entity_types: EntityTypes,
+    text: str,
+    source_id: str,
+    entity_types: list[str],
     model: ChatModel,
     prompt: str,
     max_gleanings: int,
-) -> EntityExtractionResult:
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Run the graph intelligence entity extraction strategy."""
     extractor = GraphExtractor(
         model=model,
@@ -89,36 +85,15 @@ async def run_extract_graph(
             "Entity Extraction Error", exc_info=e, extra={"stack": s, "details": d}
         ),
     )
-    text_list = [doc.text.strip() for doc in docs]
+    text = text.strip()
 
-    results = await extractor(
-        list(text_list),
+    entities_df, relationships_df = await extractor(
+        text,
         entity_types=entity_types,
+        source_id=source_id,
     )
 
-    graph = results.output
-    # Map the "source_id" back to the "id" field
-    for _, node in graph.nodes(data=True):  # type: ignore
-        if node is not None:
-            node["source_id"] = ",".join(
-                docs[int(id)].id for id in node["source_id"].split(",")
-            )
-
-    for _, _, edge in graph.edges(data=True):  # type: ignore
-        if edge is not None:
-            edge["source_id"] = ",".join(
-                docs[int(id)].id for id in edge["source_id"].split(",")
-            )
-
-    entities = [
-        ({"title": item[0], **(item[1] or {})})
-        for item in graph.nodes(data=True)
-        if item is not None
-    ]
-
-    relationships = nx.to_pandas_edgelist(graph)
-
-    return EntityExtractionResult(entities, relationships, graph)
+    return (entities_df, relationships_df)
 
 
 def _merge_entities(entity_dfs) -> pd.DataFrame:
