@@ -49,3 +49,71 @@ assert single1 is single2
 assert single1.get_value() == "singleton"
 assert single2.get_value() == "singleton"
 ```
+
+## Config module
+
+```python
+from pydantic import BaseModel, Field
+from graphrag_common.config import load_config
+
+from pathlib import Path
+
+class Logging(BaseModel):
+    """Test nested model."""
+
+    directory: str = Field(default="output/logs")
+    filename: str = Field(default="logs.txt")
+
+class Config(BaseModel):
+    """Test configuration model."""
+
+    name: str = Field(description="Name field.")
+    logging: Logging = Field(description="Nested model field.")
+
+# Basic - by default:
+# - searches for Path.cwd() / settings.[yaml|yml|json] 
+# - sets the CWD to the directory containing the config file.
+#   so if no custom config path is provided than CWD remains unchanged.
+# - loads config_directory/.env file
+# - parses ${env} in the config file
+config = load_config(Config)
+
+# Custom file location
+config = load_config(Config, "path_to_config_filename_or_directory_containing_settings.[yaml|yml|json]")
+
+# Using a custom file extension with 
+# custom config parser (str) -> dict[str, Any]
+config = load_config(
+    config_initializer=Config,
+    config_path="config.toml",
+    config_parser=lambda contents: toml.loads(contents) # Needs toml pypi package
+)
+
+# With overrides - provided values override whats in the config file
+# Only overrides what is specified - recursively merges settings.
+config = load_config(
+    config_initializer=Config,
+    overrides={
+        "name": "some name",
+        "logging": {
+            "filename": "my_logs.txt"
+        }
+    },
+)
+
+# By default, sets CWD to directory containing config file
+# So custom config paths will change the CWD.
+config = load_config(
+    config_initializer=Config,
+    config_path="some/path/to/config.yaml",
+    set_cwd=True # default
+)
+
+# now cwd == some/path/to
+assert Path.cwd() == "some/path/to"
+
+# And now throughout the codebase resolving relative paths in config
+# will resolve relative to the config directory
+Path(config.logging.directory) == "some/path/to/output/logs"
+
+```

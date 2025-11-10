@@ -6,6 +6,7 @@
 import logging
 from pathlib import Path
 
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.init_content import INIT_DOTENV, INIT_YAML
 from graphrag.prompts.index.community_report import (
     COMMUNITY_REPORT_PROMPT,
@@ -51,26 +52,27 @@ def initialize_project_at(path: Path, force: bool) -> None:
         If the project already exists and force is False.
     """
     logger.info("Initializing project at %s", path)
-    root = Path(path)
-    if not root.exists():
-        root.mkdir(parents=True, exist_ok=True)
+    root = Path(path).resolve()
+    root.mkdir(parents=True, exist_ok=True)
 
     settings_yaml = root / "settings.yaml"
     if settings_yaml.exists() and not force:
         msg = f"Project already initialized at {root}"
         raise ValueError(msg)
 
-    with settings_yaml.open("wb") as file:
-        file.write(INIT_YAML.encode(encoding="utf-8", errors="strict"))
+    input_path = (
+        root / (graphrag_config_defaults.input.storage.base_dir or "input")
+    ).resolve()
+    input_path.mkdir(parents=True, exist_ok=True)
+
+    settings_yaml.write_text(INIT_YAML, encoding="utf-8", errors="strict")
 
     dotenv = root / ".env"
     if not dotenv.exists() or force:
-        with dotenv.open("wb") as file:
-            file.write(INIT_DOTENV.encode(encoding="utf-8", errors="strict"))
+        dotenv.write_text(INIT_DOTENV, encoding="utf-8", errors="strict")
 
     prompts_dir = root / "prompts"
-    if not prompts_dir.exists():
-        prompts_dir.mkdir(parents=True, exist_ok=True)
+    prompts_dir.mkdir(parents=True, exist_ok=True)
 
     prompts = {
         "extract_graph": GRAPH_EXTRACTION_PROMPT,
@@ -91,5 +93,4 @@ def initialize_project_at(path: Path, force: bool) -> None:
     for name, content in prompts.items():
         prompt_file = prompts_dir / f"{name}.txt"
         if not prompt_file.exists() or force:
-            with prompt_file.open("wb") as file:
-                file.write(content.encode(encoding="utf-8", errors="strict"))
+            prompt_file.write_text(content, encoding="utf-8", errors="strict")

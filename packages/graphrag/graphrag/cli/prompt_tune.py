@@ -24,7 +24,6 @@ logger = logging.getLogger(__name__)
 
 async def prompt_tune(
     root: Path,
-    config: Path | None,
     domain: str | None,
     verbose: bool,
     selection_method: api.DocSelectionType,
@@ -43,7 +42,6 @@ async def prompt_tune(
 
     Parameters
     ----------
-    - config: The configuration file.
     - root: The root directory.
     - domain: The domain to map the input documents to.
     - verbose: Enable verbose logging.
@@ -58,8 +56,9 @@ async def prompt_tune(
     - k: The number of documents to select when using auto selection method.
     - min_examples_required: The minimum number of examples required for entity extraction prompts.
     """
-    root_path = Path(root).resolve()
-    graph_config = load_config(root_path, config)
+    graph_config = load_config(
+        root_dir=root,
+    )
 
     # override chunking config in the configuration
     if chunk_size != graph_config.chunks.size:

@@ -87,7 +87,7 @@ def reformat_context_data(context_data: dict) -> dict:
     return final_format
 
 
-def load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
+def load_search_prompt(prompt_config: str | None) -> str | None:
     """
     Load the search prompt from disk if configured.
 
@@ -95,7 +95,7 @@ def load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
 
     """
     if prompt_config:
-        prompt_file = Path(root_dir) / prompt_config
+        prompt_file = Path(prompt_config).resolve()
         if prompt_file.exists():
             return prompt_file.read_bytes().decode(encoding="utf-8")
     return None
@@ -110,13 +110,12 @@ def create_storage_from_config(output: StorageConfig) -> PipelineStorage:
     )
 
 
-def create_cache_from_config(cache: CacheConfig, root_dir: str) -> PipelineCache:
+def create_cache_from_config(cache: CacheConfig) -> PipelineCache:
     """Create a cache object from the config."""
     cache_config = cache.model_dump()
-    args = {**cache_config, "root_dir": root_dir}
     return CacheFactory().create(
         strategy=cache_config["type"],
-        init_args=args,
+        init_args=cache_config,
     )
 
 

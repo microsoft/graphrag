@@ -45,18 +45,11 @@ def index_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    config_filepath: Path | None,
     dry_run: bool,
     skip_validation: bool,
-    output_dir: Path | None,
 ):
     """Run the pipeline with the given config."""
-    cli_overrides = {}
-    if output_dir:
-        cli_overrides["output.base_dir"] = str(output_dir)
-        cli_overrides["reporting.base_dir"] = str(output_dir)
-        cli_overrides["update_index_output.base_dir"] = str(output_dir)
-    config = load_config(root_dir, config_filepath, cli_overrides)
+    config = load_config(root_dir=root_dir)
     _run_index(
         config=config,
         method=method,
@@ -75,18 +68,12 @@ def update_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    config_filepath: Path | None,
     skip_validation: bool,
-    output_dir: Path | None,
 ):
     """Run the pipeline with the given config."""
-    cli_overrides = {}
-    if output_dir:
-        cli_overrides["output.base_dir"] = str(output_dir)
-        cli_overrides["reporting.base_dir"] = str(output_dir)
-        cli_overrides["update_index_output.base_dir"] = str(output_dir)
-
-    config = load_config(root_dir, config_filepath, cli_overrides)
+    config = load_config(
+        root_dir=root_dir,
+    )
 
     _run_index(
         config=config,

@@ -81,7 +81,7 @@ async def _update_entities_and_relationships(
     summarization_model_config = config.get_language_model_config(
         config.summarize_descriptions.model_id
     )
-    prompts = config.summarize_descriptions.resolved_prompts(config.root_dir)
+    prompts = config.summarize_descriptions.resolved_prompts()
     model = ModelManager().get_or_create_chat_model(
         name="summarize_descriptions",
         model_type=summarization_model_config.type,

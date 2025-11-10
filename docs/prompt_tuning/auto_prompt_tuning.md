@@ -20,16 +20,14 @@ Before running auto tuning, ensure you have already initialized your workspace w
 You can run the main script from the command line with various options:
 
 ```bash
-graphrag prompt-tune [--root ROOT] [--config CONFIG] [--domain DOMAIN]  [--selection-method METHOD] [--limit LIMIT] [--language LANGUAGE] \
+graphrag prompt-tune [--root ROOT] [--domain DOMAIN]  [--selection-method METHOD] [--limit LIMIT] [--language LANGUAGE] \
 [--max-tokens MAX_TOKENS] [--chunk-size CHUNK_SIZE] [--n-subset-max N_SUBSET_MAX] [--k K] \
 [--min-examples-required MIN_EXAMPLES_REQUIRED] [--discover-entity-types] [--output OUTPUT]
 ```
 
 ## Command-Line Options
 
-- `--config` (required): The path to the configuration file. This is required to load the data and model settings.
-
-- `--root` (optional): The data project root directory, including the config files (YML, JSON, or .env). Defaults to the current directory.
+- `--root` (optional): Path to the project directory that contains the config file (settings.yaml). Defaults to the current directory.
 
 - `--domain` (optional): The domain related to your input data, such as 'space science', 'microbiology', or 'environmental news'. If left empty, the domain will be inferred from the input data.
 
@@ -56,7 +54,7 @@ graphrag prompt-tune [--root ROOT] [--config CONFIG] [--domain DOMAIN]  [--selec
 ## Example Usage
 
 ```bash
-python -m graphrag prompt-tune --root /path/to/project --config /path/to/settings.yaml --domain "environmental news" \
+python -m graphrag prompt-tune --root /path/to/project --domain "environmental news" \
 --selection-method random --limit 10 --language English --max-tokens 2048 --chunk-size 256 --min-examples-required 3 \
 --no-discover-entity-types --output /path/to/output
 ```
@@ -64,7 +62,7 @@ python -m graphrag prompt-tune --root /path/to/project --config /path/to/setting
 or, with minimal configuration (suggested):
 
 ```bash
-python -m graphrag prompt-tune --root /path/to/project --config /path/to/settings.yaml --no-discover-entity-types
+python -m graphrag prompt-tune --root /path/to/project --no-discover-entity-types
 ```
 
 ## Document Selection Methods

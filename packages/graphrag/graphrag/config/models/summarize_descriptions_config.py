@@ -43,10 +43,10 @@ class SummarizeDescriptionsConfig(BaseModel):
         default=graphrag_config_defaults.summarize_descriptions.max_input_tokens,
     )
 
-    def resolved_prompts(self, root_dir: str) -> SummarizeDescriptionsPrompts:
+    def resolved_prompts(self) -> SummarizeDescriptionsPrompts:
         """Get the resolved description summarization prompts."""
         return SummarizeDescriptionsPrompts(
-            summarize_prompt=(Path(root_dir) / self.prompt).read_text(encoding="utf-8")
+            summarize_prompt=Path(self.prompt).read_text(encoding="utf-8")
             if self.prompt
             else SUMMARIZE_PROMPT,
         )

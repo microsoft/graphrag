@@ -51,15 +51,13 @@ class CommunityReportsConfig(BaseModel):
         default=graphrag_config_defaults.community_reports.max_input_length,
     )
 
-    def resolved_prompts(self, root_dir: str) -> CommunityReportPrompts:
+    def resolved_prompts(self) -> CommunityReportPrompts:
         """Get the resolved community report extraction prompts."""
         return CommunityReportPrompts(
-            graph_prompt=(Path(root_dir) / self.graph_prompt).read_text(
-                encoding="utf-8"
-            )
+            graph_prompt=Path(self.graph_prompt).read_text(encoding="utf-8")
             if self.graph_prompt
             else COMMUNITY_REPORT_PROMPT,
-            text_prompt=(Path(root_dir) / self.text_prompt).read_text(encoding="utf-8")
+            text_prompt=Path(self.text_prompt).read_text(encoding="utf-8")
             if self.text_prompt
             else COMMUNITY_REPORT_TEXT_PROMPT,
         )

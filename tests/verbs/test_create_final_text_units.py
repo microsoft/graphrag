@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.schemas import TEXT_UNITS_FINAL_COLUMNS
 from graphrag.index.workflows.create_final_text_units import (
     run_workflow,
@@ -28,7 +28,7 @@ async def test_create_final_text_units():
         ],
     )
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
     config.extract_claims.enabled = True
 
     await run_workflow(config, context)

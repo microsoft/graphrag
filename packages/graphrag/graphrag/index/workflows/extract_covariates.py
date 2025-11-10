@@ -45,7 +45,7 @@ async def run_workflow(
             cache=context.cache,
         )
 
-        prompts = config.extract_claims.resolved_prompts(config.root_dir)
+        prompts = config.extract_claims.resolved_prompts()
 
         output = await extract_covariates(
             text_units=text_units,

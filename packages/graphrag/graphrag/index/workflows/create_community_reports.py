@@ -55,7 +55,7 @@ async def run_workflow(
         claims = await load_table_from_storage("covariates", context.output_storage)
 
     model_config = config.get_language_model_config(config.community_reports.model_id)
-    prompts = config.community_reports.resolved_prompts(config.root_dir)
+    prompts = config.community_reports.resolved_prompts()
 
     model = ModelManager().get_or_create_chat_model(
         name=config.community_reports.model_instance_name,

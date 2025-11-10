@@ -36,7 +36,7 @@ async def run_workflow(
     extraction_model_config = config.get_language_model_config(
         config.extract_graph.model_id
     )
-    extraction_prompts = config.extract_graph.resolved_prompts(config.root_dir)
+    extraction_prompts = config.extract_graph.resolved_prompts()
     extraction_model = ModelManager().get_or_create_chat_model(
         name=config.extract_graph.model_instance_name,
         model_type=extraction_model_config.type,
@@ -47,9 +47,7 @@ async def run_workflow(
     summarization_model_config = config.get_language_model_config(
         config.summarize_descriptions.model_id
     )
-    summarization_prompts = config.summarize_descriptions.resolved_prompts(
-        config.root_dir
-    )
+    summarization_prompts = config.summarize_descriptions.resolved_prompts()
     summarization_model = ModelManager().get_or_create_chat_model(
         name=config.summarize_descriptions.model_instance_name,
         model_type=summarization_model_config.type,

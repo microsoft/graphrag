@@ -54,11 +54,10 @@ DEFAULT_MODEL_CONFIG = {
 }
 
 
-def get_default_graphrag_config(root_dir: str | None = None) -> GraphRagConfig:
+def get_default_graphrag_config() -> GraphRagConfig:
     return GraphRagConfig(**{
         **asdict(defs.graphrag_config_defaults),
         "models": DEFAULT_MODEL_CONFIG,
-        **({"root_dir": root_dir} if root_dir else {}),
     })
 
 
@@ -350,8 +349,6 @@ def assert_basic_search_configs(
 
 
 def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) -> None:
-    assert actual.root_dir == expected.root_dir
-
     a_keys = sorted(actual.models.keys())
     e_keys = sorted(expected.models.keys())
     assert len(a_keys) == len(e_keys)

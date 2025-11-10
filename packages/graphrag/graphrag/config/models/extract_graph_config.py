@@ -43,10 +43,10 @@ class ExtractGraphConfig(BaseModel):
         default=graphrag_config_defaults.extract_graph.max_gleanings,
     )
 
-    def resolved_prompts(self, root_dir: str) -> ExtractGraphPrompts:
+    def resolved_prompts(self) -> ExtractGraphPrompts:
         """Get the resolved graph extraction prompts."""
         return ExtractGraphPrompts(
-            extraction_prompt=(Path(root_dir) / self.prompt).read_text(encoding="utf-8")
+            extraction_prompt=Path(self.prompt).read_text(encoding="utf-8")
             if self.prompt
             else GRAPH_EXTRACTION_PROMPT,
         )
