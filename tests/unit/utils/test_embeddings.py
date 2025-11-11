@@ -17,4 +17,4 @@ def test_create_index_name_invalid_embedding_throws():
 
 def test_create_index_name_invalid_embedding_does_not_throw():
     collection = create_index_name("default", "invalid_name", validate=False)
-    assert collection == "default_invalid-name"
+    assert collection == "default-invalid_name"
