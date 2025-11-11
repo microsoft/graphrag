@@ -62,7 +62,7 @@ def create_storage(config: StorageConfig) -> Storage:
     storage_strategy = config.type
 
     if storage_strategy not in storage_factory:
-        msg = f"StorageConfig.type '{storage_strategy}' is not registered in the StorageFactory. Registered types: {', '.join(storage_factory.keys())}"
+        msg = f"StorageConfig.type '{storage_strategy}' is not registered in the StorageFactory. Registered types: {', '.join(storage_factory.keys())}."
         raise ValueError(msg)
 
     return storage_factory.create(config.type, config.model_dump())
