@@ -25,3 +25,6 @@ class NoopWorkflowCallbacks(WorkflowCallbacks):
 
     def progress(self, progress: Progress) -> None:
         """Handle when progress occurs."""
+
+    def pipeline_error(self, error: BaseException) -> None:
+        """Execute this callback when an error occurs in the pipeline."""

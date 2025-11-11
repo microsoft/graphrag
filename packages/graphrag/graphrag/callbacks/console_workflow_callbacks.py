@@ -37,6 +37,10 @@ class ConsoleWorkflowCallbacks(NoopWorkflowCallbacks):
         if self._verbose:
             print(instance)
 
+    def pipeline_error(self, error: BaseException) -> None:
+        """Execute this callback when an error occurs in the pipeline."""
+        print(f"Pipeline error: {error}")
+
     def progress(self, progress: Progress) -> None:
         """Handle when progress occurs."""
         complete = progress.completed_items or 0

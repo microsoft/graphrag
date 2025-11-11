@@ -50,3 +50,9 @@ class WorkflowCallbacksManager(WorkflowCallbacks):
         for callback in self._callbacks:
             if hasattr(callback, "progress"):
                 callback.progress(progress)
+
+    def pipeline_error(self, error: BaseException) -> None:
+        """Execute this callback when an error occurs in the pipeline."""
+        for callback in self._callbacks:
+            if hasattr(callback, "pipeline_error"):
+                callback.pipeline_error(error)
