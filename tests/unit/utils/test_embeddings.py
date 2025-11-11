@@ -6,8 +6,8 @@ from graphrag.config.embeddings import create_index_name
 
 
 def test_create_index_name():
-    collection = create_index_name("default", "entity.title")
-    assert collection == "default-entity-title"
+    collection = create_index_name("default", "entity_description")
+    assert collection == "default_entity_description"
 
 
 def test_create_index_name_invalid_embedding_throws():
@@ -16,5 +16,5 @@ def test_create_index_name_invalid_embedding_throws():
 
 
 def test_create_index_name_invalid_embedding_does_not_throw():
-    collection = create_index_name("default", "invalid.name", validate=False)
-    assert collection == "default-invalid-name"
+    collection = create_index_name("default", "invalid_name", validate=False)
+    assert collection == "default_invalid-name"
