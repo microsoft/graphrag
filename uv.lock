@@ -1168,19 +1168,23 @@ name = "graphrag-storage"
 version = "2.7.0"
 source = { editable = "packages/graphrag-storage" }
 dependencies = [
+    { name = "aiofiles" },
     { name = "azure-cosmos" },
     { name = "azure-identity" },
     { name = "azure-storage-blob" },
     { name = "graphrag-common" },
+    { name = "pandas" },
     { name = "pydantic" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "aiofiles", specifier = ">=24.1.0" },
     { name = "azure-cosmos", specifier = ">=4.9.0" },
     { name = "azure-identity", specifier = ">=1.19.0" },
     { name = "azure-storage-blob", specifier = ">=12.24.0" },
     { name = "graphrag-common", editable = "packages/graphrag-common" },
+    { name = "pandas", specifier = ">=2.2.3" },
     { name = "pydantic", specifier = ">=2.10.3" },
 ]
 

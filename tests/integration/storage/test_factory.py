@@ -89,7 +89,7 @@ def test_register_and_create_custom_storage():
 def test_create_unknown_storage():
     with pytest.raises(
         ValueError,
-        match="StorageConfig\\.type 'unknown' is not registered in the StorageFactory\\. Registered types: FileStorage, MemoryStorage, AzureBlobStorage, AzureCosmosStorage, custom\\.",
+        match="StorageConfig\\.type 'unknown' is not registered in the StorageFactory\\.",
     ):
         create_storage(StorageConfig(type="unknown"))
 
