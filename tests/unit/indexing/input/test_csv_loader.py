@@ -4,8 +4,7 @@
 from graphrag.config.enums import InputFileType
 from graphrag.config.models.input_config import InputConfig
 from graphrag.index.input.factory import InputReaderFactory
-from graphrag.utils.api import create_storage_from_config
-from graphrag_storage import StorageConfig
+from graphrag_storage import StorageConfig, create_storage
 
 
 async def test_csv_loader_one_file():
@@ -16,7 +15,7 @@ async def test_csv_loader_one_file():
         file_type=InputFileType.csv,
         file_pattern=".*\\.csv$",
     )
-    storage = create_storage_from_config(config.storage)
+    storage = create_storage(config.storage)
     documents = (
         await InputReaderFactory()
         .create(config.file_type, {"storage": storage, "config": config})
@@ -35,7 +34,7 @@ async def test_csv_loader_one_file_with_title():
         file_pattern=".*\\.csv$",
         title_column="title",
     )
-    storage = create_storage_from_config(config.storage)
+    storage = create_storage(config.storage)
     documents = (
         await InputReaderFactory()
         .create(config.file_type, {"storage": storage, "config": config})
@@ -55,7 +54,7 @@ async def test_csv_loader_one_file_with_metadata():
         title_column="title",
         metadata=["title"],
     )
-    storage = create_storage_from_config(config.storage)
+    storage = create_storage(config.storage)
     documents = (
         await InputReaderFactory()
         .create(config.file_type, {"storage": storage, "config": config})
@@ -74,7 +73,7 @@ async def test_csv_loader_multiple_files():
         file_type=InputFileType.csv,
         file_pattern=".*\\.csv$",
     )
-    storage = create_storage_from_config(config.storage)
+    storage = create_storage(config.storage)
     documents = (
         await InputReaderFactory()
         .create(config.file_type, {"storage": storage, "config": config})

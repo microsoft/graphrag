@@ -3,7 +3,7 @@
 
 """Utility functions for the GraphRAG run module."""
 
-from graphrag_storage import Storage
+from graphrag_storage import Storage, create_storage
 from graphrag_storage.memory_storage import MemoryStorage
 
 from graphrag.cache.memory_pipeline_cache import InMemoryCache
@@ -15,7 +15,6 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.state import PipelineState
 from graphrag.index.typing.stats import PipelineRunStats
-from graphrag.utils.api import create_storage_from_config
 
 
 def create_run_context(
@@ -53,8 +52,8 @@ def get_update_storages(
     config: GraphRagConfig, timestamp: str
 ) -> tuple[Storage, Storage, Storage]:
     """Get storage objects for the update index run."""
-    output_storage = create_storage_from_config(config.output)
-    update_storage = create_storage_from_config(config.update_index_output)
+    output_storage = create_storage(config.output)
+    update_storage = create_storage(config.update_index_output)
     timestamped_storage = update_storage.child(timestamp)
     delta_storage = timestamped_storage.child("delta")
     previous_storage = timestamped_storage.child("previous")

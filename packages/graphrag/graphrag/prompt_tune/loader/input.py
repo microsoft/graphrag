@@ -8,6 +8,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from graphrag_storage import create_storage
 
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
@@ -25,7 +26,6 @@ from graphrag.prompt_tune.defaults import (
 )
 from graphrag.prompt_tune.types import DocSelectionType
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.utils.api import create_storage_from_config
 
 
 def _sample_chunks_from_embeddings(
@@ -63,7 +63,7 @@ async def load_docs_in_chunks(
         cache=NoopPipelineCache(),
     )
     tokenizer = get_tokenizer(embeddings_llm_settings)
-    input_storage = create_storage_from_config(config.input.storage)
+    input_storage = create_storage(config.input.storage)
     input_reader = InputReaderFactory().create(
         config.input.file_type,
         {"storage": input_storage, "config": config.input},

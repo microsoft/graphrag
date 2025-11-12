@@ -22,7 +22,19 @@ class Storage(ABC):
         self,
         file_pattern: re.Pattern[str],
     ) -> Iterator[str]:
-        """Find files in the storage using a file pattern."""
+        """Find files in the storage using a file pattern.
+
+        Args
+        ----
+            - file_pattern: re.Pattern[str]
+                The file pattern to use for finding files.
+
+        Returns
+        -------
+            Iterator[str]:
+                An iterator over the found file keys.
+
+        """
 
     @abstractmethod
     async def get(
@@ -30,42 +42,56 @@ class Storage(ABC):
     ) -> Any:
         """Get the value for the given key.
 
-        Args:
-            - key - The key to get the value for.
-            - as_bytes - Whether or not to return the value as bytes.
+        Args
+        ----
+            - key: str
+                The key to get the value for.
+            - as_bytes: bool | None, optional (default=None)
+                Whether or not to return the value as bytes.
+            - encoding: str | None, optional (default=None)
+                The encoding to use when decoding the value.
 
         Returns
         -------
-            - output - The value for the given key.
+            Any:
+                The value for the given key.
         """
 
     @abstractmethod
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Set the value for the given key.
 
-        Args:
-            - key - The key to set the value for.
-            - value - The value to set.
+        Args
+        ----
+            - key: str
+                The key to set the value for.
+            - value: Any
+                The value to set.
         """
 
     @abstractmethod
     async def has(self, key: str) -> bool:
         """Return True if the given key exists in the storage.
 
-        Args:
-            - key - The key to check for.
+        Args
+        ----
+            - key: str
+                The key to check for.
 
         Returns
         -------
-            - output - True if the key exists in the storage, False otherwise.
+            bool:
+                True if the key exists in the storage, False otherwise.
         """
 
     @abstractmethod
     async def delete(self, key: str) -> None:
         """Delete the given key from the storage.
 
-        Args:
-            - key - The key to delete.
+        Args
+        ----
+            - key: str
+                The key to delete.
         """
 
     @abstractmethod
@@ -74,7 +100,19 @@ class Storage(ABC):
 
     @abstractmethod
     def child(self, name: str | None) -> "Storage":
-        """Create a child storage instance."""
+        """Create a child storage instance.
+
+        Args
+        ----
+            - name: str | None
+                The name of the child storage.
+
+        Returns
+        -------
+            Storage
+                The child storage instance.
+
+        """
 
     @abstractmethod
     def keys(self) -> list[str]:
@@ -84,12 +122,15 @@ class Storage(ABC):
     async def get_creation_date(self, key: str) -> str:
         """Get the creation date for the given key.
 
-        Args:
-            - key - The key to get the creation date for.
+        Args
+        ----
+            - key: str
+                The key to get the creation date for.
 
         Returns
         -------
-            - output - The creation date for the given key.
+            str:
+                The creation date for the given key.
         """
 
 

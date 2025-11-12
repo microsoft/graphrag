@@ -6,8 +6,6 @@
 from pathlib import Path
 from typing import Any
 
-from graphrag_storage import Storage, StorageConfig, create_storage
-
 from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.config.embeddings import create_index_name
@@ -98,13 +96,6 @@ def load_search_prompt(prompt_config: str | None) -> str | None:
         if prompt_file.exists():
             return prompt_file.read_bytes().decode(encoding="utf-8")
     return None
-
-
-def create_storage_from_config(output: StorageConfig) -> Storage:
-    """Create a storage object from the config."""
-    return create_storage(
-        output,
-    )
 
 
 def create_cache_from_config(cache: CacheConfig) -> PipelineCache:
