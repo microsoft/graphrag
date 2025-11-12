@@ -134,15 +134,6 @@ def _run_index(
             verbose=verbose,
         )
     )
-    encountered_errors = any(
-        output.errors and len(output.errors) > 0 for output in outputs
-    )
-
-    if encountered_errors:
-        logger.error(
-            "Errors occurred during the pipeline run, see logs for more details."
-        )
-    else:
-        logger.info("All workflows completed successfully.")
+    encountered_errors = any(output.error is not None for output in outputs)
 
     sys.exit(1 if encountered_errors else 0)

@@ -86,8 +86,9 @@ async def build_index(
         input_documents=input_documents,
     ):
         outputs.append(output)
-        if output.errors and len(output.errors) > 0:
+        if output.error is not None:
             logger.error("Workflow %s completed with errors", output.workflow)
+            workflow_callbacks.pipeline_error(output.error)
         else:
             logger.info("Workflow %s completed successfully", output.workflow)
         logger.debug(str(output.result))

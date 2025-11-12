@@ -119,7 +119,7 @@ async def _run_pipeline(
             result = await workflow_function(config, context)
             context.callbacks.workflow_end(name, result)
             yield PipelineRunResult(
-                workflow=name, result=result.result, state=context.state, errors=None
+                workflow=name, result=result.result, state=context.state, error=None
             )
             context.stats.workflows[name] = {"overall": time.time() - work_time}
             if result.stop:
@@ -133,7 +133,7 @@ async def _run_pipeline(
     except Exception as e:
         logger.exception("error running workflow %s", last_workflow)
         yield PipelineRunResult(
-            workflow=last_workflow, result=None, state=context.state, errors=[e]
+            workflow=last_workflow, result=None, state=context.state, error=e
         )
 
 
