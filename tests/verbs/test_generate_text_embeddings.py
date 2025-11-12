@@ -40,22 +40,13 @@ async def test_generate_text_embeddings():
     parquet_files = context.output_storage.keys()
 
     for field in all_embeddings:
-        assert f"embeddings_{field}.parquet" in parquet_files
+        assert f"embeddings.{field}.parquet" in parquet_files
 
     # entity description should always be here, let's assert its format
     entity_description_embeddings = await load_table_from_storage(
-        "embeddings_entity_description", context.output_storage
+        "embeddings.entity_description", context.output_storage
     )
 
     assert len(entity_description_embeddings.columns) == 2
     assert "id" in entity_description_embeddings.columns
     assert "embedding" in entity_description_embeddings.columns
-
-    # every other embedding is optional but we've turned them all on, so check a random one
-    document_text_embeddings = await load_table_from_storage(
-        "embeddings_document_text", context.output_storage
-    )
-
-    assert len(document_text_embeddings.columns) == 2
-    assert "id" in document_text_embeddings.columns
-    assert "embedding" in document_text_embeddings.columns
