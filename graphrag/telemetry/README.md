@@ -1,6 +1,6 @@
-# OpenTelemetry and Zipkin Integration for LazyGraphRAG
+# OpenTelemetry and Zipkin Integration for GraphRAG
 
-This module provides comprehensive observability for LazyGraphRAG using OpenTelemetry with Zipkin as the tracing backend.
+This module provides comprehensive observability for GraphRAG using OpenTelemetry with Zipkin as the tracing backend.
 
 ## Features
 
@@ -39,13 +39,13 @@ docker run -d -p 9411:9411 openzipkin/zipkin
 
 Zipkin UI will be available at: http://localhost:9411/zipkin
 
-### 3. Use LazyGraphRAG (Automatic Setup)
+### 3. Use GraphRAG (Automatic Setup)
 
-Telemetry is automatically enabled when you import LazyGraphRAG:
+Telemetry is automatically enabled when you import GraphRAG:
 
 ```python
-from lazy_graphrag.api.index import build_index
-from lazy_graphrag.api.query import lazy_search
+from graphrag.api.index import build_index
+from graphrag.api.query import lazy_search
 
 # Telemetry is automatically set up!
 # Your operations will be traced to Zipkin
@@ -85,7 +85,7 @@ export GRAPHRAG_DISABLE_TELEMETRY="false"
 ### Programmatic Configuration
 
 ```python
-from lazy_graphrag.telemetry import TelemetryConfig, setup_telemetry
+from graphrag.telemetry import TelemetryConfig, setup_telemetry
 
 config = TelemetryConfig(
     service_name="my-graphrag-service",
@@ -98,48 +98,17 @@ config = TelemetryConfig(
 setup_telemetry(config)
 ```
 
-## Tracing Coverage
-
-### Automatically Traced Operations
-
-The following operations are automatically traced:
-
-1. **API Operations**
-   - `build_index()` - Complete indexing pipeline with `@trace` decorator
-   - Query processing operations
-
-2. **Workflow Operations**
-   - `create_communities` - Community detection workflow with `@trace_workflow` decorator
-   - `load_input_documents` - Document loading workflow with `@trace_workflow` decorator
-   - Other workflows can be traced by adding `@trace_workflow("workflow_name")` decorator
-
-3. **Search Operations**
-   - `local_search()` - Local search with `@trace_search_operation` decorator
-   - `global_search()` - Global search with `@trace_search_operation` decorator
-   - `drift_search()` - DRIFT search (can be instrumented)
-   - `basic_search()` - Basic search (can be instrumented)
-
-4. **Storage Operations** (via automatic instrumentation)
-   - PostgreSQL operations
-   - HTTP requests to external services
-   - AsyncPG database operations
-
-5. **Vector Store Operations** (via automatic instrumentation)
-   - Milvus vector operations
-   - HTTP client requests
-
 ### Custom Tracing
 
 Add tracing to your own functions:
 
 ```python
 from graphrag.telemetry.decorators import (
-    trace,
+    add_trace,
     trace_workflow,
     trace_vector_store_operation,
     trace_llm_operation,
-    trace_search_operation,
-    trace_retrieval_operation
+    trace_search_operation
 )
 
 @add_trace("my_custom_function")
@@ -165,11 +134,6 @@ async def vector_search():
 @trace_llm_operation("gpt-4")
 async def call_llm():
     """LLM operation tracing."""
-    pass
-
-@trace_retrieval_operation("l1_ranking")
-async def retrieval_operation():
-    """Retrieval operation tracing."""
     pass
 ```
 
@@ -234,7 +198,7 @@ Function arguments are automatically captured as attributes:
 Add custom attributes to traces:
 
 ```python
-from lazy_graphrag.telemetry.setup import get_tracer
+from graphrag.telemetry.setup import get_tracer
 from opentelemetry import trace
 
 tracer = get_tracer(__name__)
@@ -281,7 +245,7 @@ export OTEL_ENABLE_METRICS="false"
 
 2. **Telemetry setup failures**
    - Check logs for warning messages
-   - Telemetry failures don't stop LazyGraphRAG execution
+   - Telemetry failures don't stop GraphRAG execution
    - Verify OpenTelemetry dependencies are installed
 
 3. **High overhead**
@@ -294,7 +258,7 @@ Enable debug logging:
 
 ```python
 import logging
-logging.getLogger("lazy_graphrag.telemetry").setLevel(logging.DEBUG)
+logging.getLogger("graphrag.telemetry").setLevel(logging.DEBUG)
 ```
 
 ### Health Check
@@ -302,7 +266,7 @@ logging.getLogger("lazy_graphrag.telemetry").setLevel(logging.DEBUG)
 Verify telemetry setup:
 
 ```python
-from lazy_graphrag.telemetry.setup import get_tracer
+from graphrag.telemetry.setup import get_tracer
 
 tracer = get_tracer("test")
 with tracer.start_as_current_span("health_check") as span:
@@ -331,8 +295,8 @@ with tracer.start_as_current_span("health_check") as span:
 
 ```python
 import asyncio
-from lazy_graphrag.api.index import build_index
-from lazy_graphrag.config.load_config import load_config
+from graphrag.api.index import build_index
+from graphrag.config.load_config import load_config
 
 async def main():
     # Load config
@@ -370,7 +334,7 @@ span_processor = BatchSpanProcessor(jaeger_exporter)
 Add custom metrics:
 
 ```python
-from lazy_graphrag.telemetry.setup import get_meter
+from graphrag.telemetry.setup import get_meter
 
 meter = get_meter(__name__)
 counter = meter.create_counter("custom_operations")
