@@ -8,7 +8,7 @@ from typing import Any
 
 from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.config.embeddings import create_index_name
+from graphrag.index.operations.embed_text.embed_text import get_index_name
 from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.storage_config import StorageConfig
 from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
@@ -104,10 +104,7 @@ def get_embedding_store(
     index_names = []
     for index, store in config_args.items():
         vector_store_type = store["type"]
-        index_name = create_index_name(
-            store.get("container_name", "default"), embedding_name
-        )
-
+        index_name = get_index_name(store, embedding_name)
         embeddings_schema: dict[str, VectorStoreSchemaConfig] = store.get(
             "embeddings_schema", {}
         )

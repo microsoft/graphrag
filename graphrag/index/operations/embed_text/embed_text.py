@@ -50,7 +50,7 @@ async def embed_text(
     vector_store_config = strategy.get("vector_store")
 
     if vector_store_config:
-        index_name = _get_index_name(vector_store_config, embedding_name)
+        index_name = get_index_name(vector_store_config, embedding_name)
         vector_store: BaseVectorStore = _create_vector_store(
             vector_store_config, index_name, embedding_name
         )
@@ -217,7 +217,12 @@ def _create_vector_store(
     return vector_store
 
 
-def _get_index_name(vector_store_config: dict, embedding_name: str) -> str:
+def get_index_name(vector_store_config: dict, embedding_name: str) -> str:
+    collection_name = vector_store_config.get("collection_name")
+    if collection_name:
+        msg = f"using vector store {vector_store_config.get('type')} with user provided collection_name {collection_name} for embedding {embedding_name}"
+        logger.info(msg)
+        return collection_name
     container_name = vector_store_config.get("container_name", "default")
     index_name = create_index_name(container_name, embedding_name)
 
