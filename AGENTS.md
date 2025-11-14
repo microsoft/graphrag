@@ -9,6 +9,7 @@
 - Always run `dotnet format GraphRag.slnx` before finishing work.
 - Always run `dotnet test GraphRag.slnx` before finishing work, after building.
 - Avoid per-client connection locks (e.g., `_connectionLock` in `AgeClient`); rely on the smart connection manager for concurrency.
+- When initialization logic is required (initialization tasks), add a simple hosted service to perform it and register that hosted service inside the relevant extensions.
 
 # Conversations
 any resulting updates to agents.md should go under the section "## Rules to follow"

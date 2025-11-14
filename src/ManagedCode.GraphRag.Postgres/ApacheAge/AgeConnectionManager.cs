@@ -15,9 +15,7 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
 {
     private readonly NpgsqlDataSource _dataSource;
     private readonly ILogger<AgeConnectionManager> _logger;
-    private readonly SemaphoreSlim _extensionLock = new(1, 1);
-    private readonly SemaphoreSlim _poolSemaphore;
-    private bool _extensionEnsured;
+    private volatile bool _extensionEnsured;
     private bool _disposed;
 
     public AgeConnectionManager(string connectionString, ILogger<AgeConnectionManager>? logger = null, int maxPoolSize = 100)
@@ -35,7 +33,6 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
         };
 
         ConnectionString = connectionBuilder.ConnectionString;
-        _poolSemaphore = new SemaphoreSlim(maxPoolSize, maxPoolSize);
         _dataSource = NpgsqlDataSource.Create(connectionBuilder.ConnectionString);
         _logger = logger ?? NullLogger<AgeConnectionManager>.Instance;
     }
@@ -46,43 +43,28 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
     {
         ThrowIfDisposed();
 
-        await _poolSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-        try
-        {
-            await EnsureExtensionCreatedAsync(cancellationToken).ConfigureAwait(false);
-            var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-            await LoadAgeAsync(connection, cancellationToken).ConfigureAwait(false);
-            await SetSearchPathAsync(connection, cancellationToken).ConfigureAwait(false);
-            return connection;
-        }
-        catch
-        {
-            _poolSemaphore.Release();
-            throw;
-        }
+        await EnsureExtensionCreatedAsync(cancellationToken).ConfigureAwait(false);
+        var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await LoadAgeAsync(connection, cancellationToken).ConfigureAwait(false);
+        await SetSearchPathAsync(connection, cancellationToken).ConfigureAwait(false);
+        return connection;
     }
 
     public async Task ReturnConnectionAsync(NpgsqlConnection connection, CancellationToken cancellationToken = default)
     {
         if (connection is null)
         {
-            _poolSemaphore.Release();
             return;
         }
 
-        try
-        {
-            if (connection.FullState.HasFlag(System.Data.ConnectionState.Open))
-            {
-                await connection.CloseAsync().ConfigureAwait(false);
-            }
+        cancellationToken.ThrowIfCancellationRequested();
 
-            await connection.DisposeAsync().ConfigureAwait(false);
-        }
-        finally
+        if (connection.FullState.HasFlag(System.Data.ConnectionState.Open))
         {
-            _poolSemaphore.Release();
+            await connection.CloseAsync().ConfigureAwait(false);
         }
+
+        await connection.DisposeAsync().ConfigureAwait(false);
     }
 
     public void Dispose()
@@ -93,7 +75,6 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
         }
 
         _dataSource.Dispose();
-        _poolSemaphore.Dispose();
         _disposed = true;
         GC.SuppressFinalize(this);
     }
@@ -106,7 +87,6 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
         }
 
         await _dataSource.DisposeAsync().ConfigureAwait(false);
-        _poolSemaphore.Dispose();
         _disposed = true;
         GC.SuppressFinalize(this);
     }
@@ -118,26 +98,13 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
             return;
         }
 
-        await _extensionLock.WaitAsync(cancellationToken).ConfigureAwait(false);
-        try
-        {
-            if (_extensionEnsured)
-            {
-                return;
-            }
-
-            await using var connection = new NpgsqlConnection(ConnectionString);
-            await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
-            await using var command = connection.CreateCommand();
-            command.CommandText = "CREATE EXTENSION IF NOT EXISTS age;";
-            await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-            _extensionEnsured = true;
-            LogMessages.ExtensionCreated(_logger, ConnectionString);
-        }
-        finally
-        {
-            _extensionLock.Release();
-        }
+        await using var connection = new NpgsqlConnection(ConnectionString);
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = "CREATE EXTENSION IF NOT EXISTS age;";
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        _extensionEnsured = true;
+        LogMessages.ExtensionCreated(_logger, ConnectionString);
     }
 
     private async Task LoadAgeAsync(NpgsqlConnection connection, CancellationToken cancellationToken)
