@@ -109,7 +109,7 @@ def _setup_tracing(config: TelemetryConfig, resource: Resource) -> None:
             exporter = ZipkinExporter(endpoint=config.obs_endpoint)
             logger.info(f"Tracing configured with Zipkin endpoint: {config.obs_endpoint}")
         else:
-            logger.warning("Zipkin exporter not available. Install with: pip install opentelemetry-exporter-zipkin-json")
+            logger.warning("Zipkin exporter not available. Please install with: pip install opentelemetry-exporter-zipkin-json")
             logger.info("Falling back to OTLP exporter")
             credentials, isInSecure = _get_credentials()
             exporter = OTLPSpanExporter(
