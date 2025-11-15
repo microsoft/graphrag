@@ -10,6 +10,8 @@
 - Always run `dotnet test GraphRag.slnx` before finishing work, after building.
 - Avoid per-client connection locks (e.g., `_connectionLock` in `AgeClient`); rely on the smart connection manager for concurrency.
 - When initialization logic is required (initialization tasks), add a simple hosted service to perform it and register that hosted service inside the relevant extensions.
+- Do not expose user-facing knobs for AGE/Postgres connection pool sizing (e.g., `MaxConnections` parameters); rely on EF Core-style connection-string keywords and reasonable defaults inside the connector.
+- Graph store registrations (Postgres, Neo4j, Cosmos) must automatically register a default `IGraphStore`; remove `MakeDefault` toggles/options and rely on the first registration when an unkeyed graph store is requested.
 
 # Conversations
 any resulting updates to agents.md should go under the section "## Rules to follow"

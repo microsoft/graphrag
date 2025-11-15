@@ -76,7 +76,6 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
         services.AddSingleton<IConfiguration>(configuration);
         services.AddLogging();
         services.AddOptions();
-        services.AddSingleton<IChatClient>(new TestChatClientFactory().CreateClient());
 
         services.AddGraphRag();
 
@@ -121,11 +120,11 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
                 options.Uri = boltEndpoint.ToString();
                 options.Username = "neo4j";
                 options.Password = Neo4jPassword;
-            }, makeDefault: true);
+            });
 
             services.AddPostgresGraphStore("postgres", options =>
             {
-                options.ConnectionString = postgresConnection!;
+                options.ConnectionString = ConfigurePostgresConnection(postgresConnection!);
                 options.GraphName = "graphrag";
             });
         }
@@ -163,6 +162,17 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
 
         _serviceProvider = services.BuildServiceProvider();
         _scope = _serviceProvider.CreateAsyncScope();
+    }
+
+    private static string ConfigurePostgresConnection(string connectionString)
+    {
+        var builder = new NpgsqlConnectionStringBuilder(connectionString)
+        {
+            MaxPoolSize = 40,
+            MinPoolSize = 10
+        };
+
+        return builder.ConnectionString;
     }
 
     private async Task EnsurePostgresDatabaseAsync()

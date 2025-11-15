@@ -1,12 +1,13 @@
 using GraphRag.Graphs;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace GraphRag.Storage.Neo4j;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddNeo4jGraphStore(this IServiceCollection services, string key, Action<Neo4jGraphStoreOptions> configure, bool makeDefault = false)
+    public static IServiceCollection AddNeo4jGraphStore(this IServiceCollection services, string key, Action<Neo4jGraphStoreOptions> configure)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
@@ -24,11 +25,8 @@ public static class ServiceCollectionExtensions
         });
         services.AddKeyedSingleton<IGraphStore>(key, (sp, serviceKey) => sp.GetRequiredKeyedService<Neo4jGraphStore>(serviceKey));
 
-        if (makeDefault)
-        {
-            services.AddSingleton(sp => sp.GetRequiredKeyedService<Neo4jGraphStore>(key));
-            services.AddSingleton<IGraphStore>(sp => sp.GetRequiredKeyedService<Neo4jGraphStore>(key));
-        }
+        services.TryAddSingleton<Neo4jGraphStore>(sp => sp.GetRequiredKeyedService<Neo4jGraphStore>(key));
+        services.TryAddSingleton<IGraphStore>(sp => sp.GetRequiredKeyedService<Neo4jGraphStore>(key));
 
         return services;
     }

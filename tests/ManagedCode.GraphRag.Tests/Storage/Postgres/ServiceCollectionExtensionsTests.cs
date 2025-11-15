@@ -28,7 +28,7 @@ public sealed class ServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public async Task AddPostgresGraphStore_CanRegisterDefault()
+    public async Task AddPostgresGraphStore_FirstStoreIsDefault()
     {
         var services = new ServiceCollection();
         services.AddSingleton<ILoggerFactory>(_ => NullLoggerFactory.Instance);
@@ -38,13 +38,48 @@ public sealed class ServiceCollectionExtensionsTests
         {
             options.ConnectionString = "Host=localhost";
             options.GraphName = "graph";
-        }, makeDefault: true);
+        });
 
         await using var provider = services.BuildServiceProvider();
+        var keyed = provider.GetRequiredKeyedService<PostgresGraphStore>("default");
         var store = provider.GetRequiredService<PostgresGraphStore>();
         var graphStore = provider.GetRequiredService<IGraphStore>();
 
+        Assert.Same(keyed, store);
         Assert.Same(store, graphStore);
+    }
+
+    [Fact]
+    public async Task AddPostgresGraphStore_SubsequentStoresDoNotOverrideDefault()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ILoggerFactory>(_ => NullLoggerFactory.Instance);
+        services.AddSingleton<ILogger<PostgresGraphStore>>(_ => NullLogger<PostgresGraphStore>.Instance);
+
+        services.AddPostgresGraphStore("primary", options =>
+        {
+            options.ConnectionString = "Host=localhost";
+            options.GraphName = "graph";
+        });
+
+        services.AddPostgresGraphStore("secondary", options =>
+        {
+            options.ConnectionString = "Host=localhost";
+            options.GraphName = "graph2";
+        });
+
+        await using var provider = services.BuildServiceProvider();
+
+        var defaultStore = provider.GetRequiredService<PostgresGraphStore>();
+        var graphStore = provider.GetRequiredService<IGraphStore>();
+        var primaryStore = provider.GetRequiredKeyedService<PostgresGraphStore>("primary");
+        var secondaryStore = provider.GetRequiredKeyedService<PostgresGraphStore>("secondary");
+        var secondaryGraphStore = provider.GetRequiredKeyedService<IGraphStore>("secondary");
+
+        Assert.Same(primaryStore, defaultStore);
+        Assert.Same(defaultStore, graphStore);
+        Assert.NotSame(primaryStore, secondaryStore);
+        Assert.Same(secondaryStore, secondaryGraphStore);
     }
 
     [Fact]
@@ -61,7 +96,6 @@ public sealed class ServiceCollectionExtensionsTests
             ConnectionString = "Host=localhost",
             GraphName = "graph",
             AutoCreateIndexes = false,
-            MakeDefault = true,
             VertexPropertyIndexes = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
             {
                 ["Person"] = new[] { "Email", "Name" }

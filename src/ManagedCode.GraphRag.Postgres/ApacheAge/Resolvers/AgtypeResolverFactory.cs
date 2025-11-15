@@ -24,8 +24,11 @@ internal sealed class AgtypeResolverFactory : PgTypeInfoResolverFactory
     {
         protected static DataTypeName AgtypeDataTypeName => new("ag_catalog.agtype");
 
-        private TypeInfoMappingCollection? _mappings;
-        protected TypeInfoMappingCollection Mappings => _mappings ??= AddMappings(new());
+        private static readonly Lazy<TypeInfoMappingCollection> ResolverMappings = new(static () => AddMappings(new()));
+
+        protected static TypeInfoMappingCollection BaseMappings => ResolverMappings.Value;
+
+        protected static TypeInfoMappingCollection Mappings => BaseMappings;
 
         public PgTypeInfo? GetTypeInfo(Type? type, DataTypeName? dataTypeName, PgSerializerOptions options)
             => Mappings.Find(type, dataTypeName, options);
@@ -41,8 +44,9 @@ internal sealed class AgtypeResolverFactory : PgTypeInfoResolverFactory
 
     private sealed class ArrayResolver : Resolver, IPgTypeInfoResolver
     {
-        private TypeInfoMappingCollection? _mappings;
-        private new TypeInfoMappingCollection Mappings => _mappings ??= AddMappings(new(base.Mappings));
+        private static readonly Lazy<TypeInfoMappingCollection> ArrayMappings = new(static () => AddMappings(new(BaseMappings)));
+
+        private static new TypeInfoMappingCollection Mappings => ArrayMappings.Value;
 
         public new PgTypeInfo? GetTypeInfo(Type? type, DataTypeName? dataTypeName, PgSerializerOptions options)
             => Mappings.Find(type, dataTypeName, options);
@@ -56,4 +60,3 @@ internal sealed class AgtypeResolverFactory : PgTypeInfoResolverFactory
     }
 }
 #pragma warning restore NPG9001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-

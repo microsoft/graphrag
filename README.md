@@ -205,7 +205,11 @@ dotnet test tests/ManagedCode.GraphRag.Tests/ManagedCode.GraphRag.Tests.csproj \
 
 ---
 
-## Apache AGE / PostgreSQL Setup
+## Graph Store Configuration
+
+GraphRAG ships with adapters for Apache AGE/PostgreSQL, Neo4j, and Azure Cosmos DB. Every adapter registers keyed services so you can address a specific store via `GetRequiredKeyedService<IGraphStore>("postgres")`, while the first registered store automatically becomes the unkeyed default (`GetRequiredService<IGraphStore>()`). This mirrors EF Core’s “one default context” pattern and removes any extra `MakeDefault` toggles.
+
+### Apache AGE / PostgreSQL Setup
 
 GraphRAG ships with a first-class Apache AGE adapter (`ManagedCode.GraphRag.Postgres`). AGE is enabled on top of PostgreSQL, so you only need a standard Postgres instance with the AGE extension installed.
 
@@ -226,15 +230,57 @@ GraphRAG ships with a first-class Apache AGE adapter (`ManagedCode.GraphRag.Post
        "GraphStores": {
          "postgres": {
            "ConnectionString": "Host=localhost;Port=5432;Username=postgres;Password=postgres;Database=graphrag",
-           "GraphName": "graphrag",
-           "MaxConnections": 40,
-           "MakeDefault": true
+          "GraphName": "graphrag"
          }
        }
      }
    }
    ```
-4. **Register through DI.** `services.AddPostgresGraphStore("postgres", configure: ...)` wires up `IAgeConnectionManager`, `IAgeClientFactory`, and `IGraphStore` automatically. `MaxConnections` caps the number of concurrent AGE sessions (the default is 40 so you stay under the container’s `max_connections`).
+4. **Register through DI.** `services.AddPostgresGraphStore("postgres", configure: ...)` wires up `IAgeConnectionManager`, `IAgeClientFactory`, and `IGraphStore` automatically. Pool sizing behaves like EF Core—tune it via connection-string keywords such as `Maximum Pool Size` when needed, otherwise the standard Npgsql defaults apply. The first Postgres store you register becomes the default `IGraphStore`, and additional stores stay keyed-only:
+   ```csharp
+   await using var client = ageClientFactory.CreateClient();
+   await client.OpenConnectionAsync(cancellationToken);
+   ```
+
+### Neo4j Setup
+
+Neo4j support lives in `ManagedCode.GraphRag.Neo4j` and uses the official Bolt driver:
+
+1. **Run Neo4j locally (optional).**
+   ```bash
+   docker run --rm \
+     -e NEO4J_AUTH=neo4j/test1234 \
+     -e NEO4J_ACCEPT_LICENSE_AGREEMENT=yes \
+     -p 7687:7687 -p 7474:7474 \
+     neo4j:5.23.0-community
+   ```
+2. **Register the store.**
+   ```csharp
+   builder.Services.AddNeo4jGraphStore("neo4j", options =>
+   {
+       options.Uri = "bolt://localhost:7687";
+       options.Username = "neo4j";
+       options.Password = "test1234";
+   });
+   ```
+   The first Neo4j registration will automatically satisfy `IGraphStore`; use `GetRequiredKeyedService<IGraphStore>("neo4j")` for explicit access.
+
+### Azure Cosmos DB Setup
+
+The Cosmos adapter (`ManagedCode.GraphRag.CosmosDb`) targets the SQL API and works with the emulator or live accounts:
+
+1. **Provide a connection string.** Set `COSMOS_EMULATOR_CONNECTION_STRING` or configure options manually.
+2. **Register the store.**
+   ```csharp
+   builder.Services.AddCosmosGraphStore("cosmos", options =>
+   {
+       options.ConnectionString = cosmosConnectionString;
+       options.DatabaseId = "GraphRagIntegration";
+       options.NodesContainerId = "nodes";
+       options.EdgesContainerId = "edges";
+   });
+   ```
+   As with other adapters, the first Cosmos store becomes the unkeyed default.
 
 > **Tip:** `IGraphStore` now exposes `GetNodesAsync` and `GetRelationshipsAsync` in addition to the targeted APIs (`InitializeAsync`, `Upsert*`, `GetOutgoingRelationshipsAsync`). These use the new AGE-powered enumerations so you can inspect or export the full graph without dropping down to concrete implementations.
 

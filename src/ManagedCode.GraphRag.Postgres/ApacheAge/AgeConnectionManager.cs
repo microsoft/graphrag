@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
@@ -18,19 +19,24 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
     private volatile bool _extensionEnsured;
     private bool _disposed;
 
-    public AgeConnectionManager(string connectionString, ILogger<AgeConnectionManager>? logger = null, int maxPoolSize = 100)
+    [ActivatorUtilitiesConstructor]
+    public AgeConnectionManager(
+        [FromKeyedServices] PostgresGraphStoreOptions options,
+        ILogger<AgeConnectionManager>? logger = null)
+        : this(options?.ConnectionString ?? throw new ArgumentNullException(nameof(options)), logger)
+    {
+    }
+
+    public AgeConnectionManager(string connectionString, ILogger<AgeConnectionManager>? logger = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
-        if (maxPoolSize <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(maxPoolSize), "Max pool size must be greater than zero.");
-        }
 
-        var connectionBuilder = new NpgsqlConnectionStringBuilder(connectionString)
+        var connectionBuilder = new NpgsqlConnectionStringBuilder(connectionString);
+        if (connectionBuilder.MaxPoolSize <= 0)
         {
-            MaxPoolSize = maxPoolSize,
-            MinPoolSize = Math.Min(10, maxPoolSize)
-        };
+            throw new ArgumentOutOfRangeException(nameof(connectionString), "Maximum Pool Size must be greater than zero.");
+        }
+        connectionBuilder.MinPoolSize = Math.Min(10, connectionBuilder.MaxPoolSize);
 
         ConnectionString = connectionBuilder.ConnectionString;
         _dataSource = NpgsqlDataSource.Create(connectionBuilder.ConnectionString);

@@ -2,13 +2,14 @@ using System.Text.Json;
 using GraphRag.Graphs;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace GraphRag.Storage.Cosmos;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCosmosGraphStore(this IServiceCollection services, string key, Action<CosmosGraphStoreOptions> configure, bool makeDefault = false)
+    public static IServiceCollection AddCosmosGraphStore(this IServiceCollection services, string key, Action<CosmosGraphStoreOptions> configure)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
@@ -40,11 +41,8 @@ public static class ServiceCollectionExtensions
         });
         services.AddKeyedSingleton<IGraphStore>(key, (sp, serviceKey) => sp.GetRequiredKeyedService<CosmosGraphStore>(serviceKey));
 
-        if (makeDefault)
-        {
-            services.AddSingleton(sp => sp.GetRequiredKeyedService<CosmosGraphStore>(key));
-            services.AddSingleton<IGraphStore>(sp => sp.GetRequiredKeyedService<CosmosGraphStore>(key));
-        }
+        services.TryAddSingleton<CosmosGraphStore>(sp => sp.GetRequiredKeyedService<CosmosGraphStore>(key));
+        services.TryAddSingleton<IGraphStore>(sp => sp.GetRequiredKeyedService<CosmosGraphStore>(key));
 
         return services;
     }

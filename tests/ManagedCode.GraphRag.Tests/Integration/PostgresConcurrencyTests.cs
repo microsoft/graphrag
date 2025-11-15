@@ -1,4 +1,6 @@
+using GraphRag.Storage.Postgres;
 using GraphRag.Storage.Postgres.ApacheAge;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 
@@ -50,7 +52,85 @@ public sealed class PostgresConcurrencyTests(GraphRagApplicationFixture fixture)
     }
 
     private static AgeConnectionManager CreateManager(string connectionString, int maxConnections = SharedConnectionLimit) =>
-        new(connectionString, NullLogger<AgeConnectionManager>.Instance, maxConnections);
+        new(ConfigurePool(connectionString, maxConnections), NullLogger<AgeConnectionManager>.Instance);
+
+    [Fact]
+    public async Task AgeClientFactory_CreatesManyClientsSequentially()
+    {
+        var connectionString = _fixture.PostgresConnectionString;
+        var graphName = $"factory_{Guid.NewGuid():N}";
+
+        var services = new ServiceCollection()
+            .AddLogging()
+            .AddPostgresGraphStore("factory", options =>
+            {
+                options.ConnectionString = ConfigurePool(connectionString, SharedConnectionLimit);
+                options.GraphName = graphName;
+            });
+
+        await using var provider = services.BuildServiceProvider();
+
+        var manager = provider.GetRequiredKeyedService<IAgeConnectionManager>("factory");
+        await SeedGraphAsync(manager, graphName);
+
+        var factory = provider.GetRequiredKeyedService<IAgeClientFactory>("factory");
+
+        for (var i = 0; i < 1500; i++)
+        {
+            await using var client = factory.CreateClient();
+            await client.OpenConnectionAsync();
+
+            var exists = await client.GraphExistsAsync(graphName);
+            Assert.True(exists, "Graph should exist for every constructed client.");
+
+            await client.CloseConnectionAsync();
+        }
+
+        await CleanupGraphAsync(manager, graphName);
+    }
+
+    [Fact]
+    public async Task AgeClientFactory_HandlesParallelClients()
+    {
+        var connectionString = _fixture.PostgresConnectionString;
+        var graphName = $"factory_{Guid.NewGuid():N}";
+
+        var services = new ServiceCollection()
+            .AddLogging()
+            .AddPostgresGraphStore("factory", options =>
+            {
+                options.ConnectionString = ConfigurePool(connectionString, SharedConnectionLimit);
+                options.GraphName = graphName;
+            });
+
+        await using var provider = services.BuildServiceProvider();
+
+        var manager = provider.GetRequiredKeyedService<IAgeConnectionManager>("factory");
+        await SeedGraphAsync(manager, graphName);
+
+        var factory = provider.GetRequiredKeyedService<IAgeClientFactory>("factory");
+
+        var tasks = Enumerable.Range(0, 1500).Select(async index =>
+        {
+            var nodeId = $"parallel-{index:D4}";
+            await using var client = factory.CreateClient();
+            await client.OpenConnectionAsync();
+            var createCypher = $"CREATE (:ParallelNode {{ id: '{nodeId}', idx: {index} }})";
+            await client.ExecuteCypherAsync(graphName, createCypher);
+
+            await using var verifyCommand = new NpgsqlCommand(
+                $"SELECT COUNT(*) FROM ag_catalog.cypher('{graphName}', $$ MATCH (n:ParallelNode {{ id: '{nodeId}' }}) RETURN n $$) AS (result ag_catalog.agtype);",
+                client.Connection);
+            var exists = (long)(await verifyCommand.ExecuteScalarAsync() ?? 0L);
+            Assert.Equal(1, exists);
+
+            await client.CloseConnectionAsync();
+        });
+
+        await Task.WhenAll(tasks);
+
+        await CleanupGraphAsync(manager, graphName);
+    }
 
     private static async Task SeedGraphAsync(IAgeConnectionManager manager, string graphName)
     {
@@ -107,5 +187,16 @@ public sealed class PostgresConcurrencyTests(GraphRagApplicationFixture fixture)
         Assert.Equal(expected, inserted);
 
         await client.CloseConnectionAsync().ConfigureAwait(false);
+    }
+
+    private static string ConfigurePool(string connectionString, int maxConnections)
+    {
+        var builder = new NpgsqlConnectionStringBuilder(connectionString)
+        {
+            MaxPoolSize = maxConnections,
+            MinPoolSize = Math.Min(10, maxConnections)
+        };
+
+        return builder.ConnectionString;
     }
 }

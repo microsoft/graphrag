@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace GraphRag.Storage.Postgres.ApacheAge;
@@ -7,7 +8,7 @@ public interface IAgeClientFactory
     AgeClient CreateClient();
 }
 
-internal sealed class AgeClientFactory(IAgeConnectionManager connectionManager, ILoggerFactory loggerFactory) : IAgeClientFactory
+internal sealed class AgeClientFactory([FromKeyedServices] IAgeConnectionManager connectionManager, ILoggerFactory loggerFactory) : IAgeClientFactory
 {
     private readonly IAgeConnectionManager _connectionManager = connectionManager ?? throw new ArgumentNullException(nameof(connectionManager));
     private readonly ILoggerFactory _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));

@@ -2,13 +2,14 @@ using GraphRag.Config;
 using GraphRag.Graphs;
 using GraphRag.Storage.Postgres.ApacheAge;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace GraphRag.Storage.Postgres;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddPostgresGraphStore(this IServiceCollection services, string key, Action<PostgresGraphStoreOptions> configure, bool makeDefault = false)
+    public static IServiceCollection AddPostgresGraphStore(this IServiceCollection services, string key, Action<PostgresGraphStoreOptions> configure)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
@@ -18,20 +19,8 @@ public static class ServiceCollectionExtensions
         configure(options);
 
         services.AddKeyedSingleton<PostgresGraphStoreOptions>(key, (_, _) => options);
-        services.AddKeyedSingleton<IAgeConnectionManager>(key, (sp, serviceKey) =>
-        {
-            var opts = sp.GetRequiredKeyedService<PostgresGraphStoreOptions>(serviceKey);
-            var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
-            var logger = loggerFactory.CreateLogger<AgeConnectionManager>();
-            return new AgeConnectionManager(opts.ConnectionString, logger, opts.MaxConnections);
-        });
-
-        services.AddKeyedSingleton<IAgeClientFactory>(key, (sp, serviceKey) =>
-        {
-            var connectionManager = sp.GetRequiredKeyedService<IAgeConnectionManager>(serviceKey);
-            var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
-            return new AgeClientFactory(connectionManager, loggerFactory);
-        });
+        services.AddKeyedSingleton<IAgeConnectionManager, AgeConnectionManager>(key);
+        services.AddKeyedSingleton<IAgeClientFactory, AgeClientFactory>(key);
 
         services.AddKeyedSingleton<PostgresGraphStore>(key, (sp, serviceKey) =>
         {
@@ -49,12 +38,9 @@ public static class ServiceCollectionExtensions
             return new PostgresExplainService(store, logger);
         });
 
-        if (makeDefault)
-        {
-            services.AddSingleton(sp => sp.GetRequiredKeyedService<PostgresGraphStore>(key));
-            services.AddSingleton<IGraphStore>(sp => sp.GetRequiredKeyedService<PostgresGraphStore>(key));
-            services.AddSingleton(sp => sp.GetRequiredKeyedService<PostgresExplainService>(key));
-        }
+        services.TryAddSingleton<PostgresGraphStore>(sp => sp.GetRequiredKeyedService<PostgresGraphStore>(key));
+        services.TryAddSingleton<IGraphStore>(sp => sp.GetRequiredKeyedService<PostgresGraphStore>(key));
+        services.TryAddSingleton<PostgresExplainService>(sp => sp.GetRequiredKeyedService<PostgresExplainService>(key));
 
         return services;
     }
@@ -84,7 +70,7 @@ public static class ServiceCollectionExtensions
                 options.AutoCreateIndexes = storeConfig.AutoCreateIndexes;
                 options.VertexPropertyIndexes = ClonePropertyIndexMap(storeConfig.VertexPropertyIndexes);
                 options.EdgePropertyIndexes = ClonePropertyIndexMap(storeConfig.EdgePropertyIndexes);
-            }, storeConfig.MakeDefault);
+            });
         }
 
         return services;
@@ -138,5 +124,4 @@ public sealed class PostgresGraphStoreOptions
 
     public Dictionary<string, string[]> EdgePropertyIndexes { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
-    public int MaxConnections { get; set; } = 40;
 }
