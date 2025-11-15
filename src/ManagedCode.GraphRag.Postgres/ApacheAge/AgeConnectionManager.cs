@@ -14,6 +14,10 @@ public interface IAgeConnectionManager : IAsyncDisposable, IDisposable
 
 public sealed class AgeConnectionManager : IAgeConnectionManager
 {
+    private const int ConnectionLimitMaxAttempts = 3;
+    private static readonly TimeSpan ConnectionLimitBaseDelay = TimeSpan.FromMilliseconds(200);
+    private static readonly TimeSpan ConnectionLimitMaxDelay = TimeSpan.FromSeconds(2);
+
     private readonly NpgsqlDataSource _dataSource;
     private readonly ILogger<AgeConnectionManager> _logger;
     private volatile bool _extensionEnsured;
@@ -50,7 +54,7 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
         ThrowIfDisposed();
 
         await EnsureExtensionCreatedAsync(cancellationToken).ConfigureAwait(false);
-        var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        var connection = await OpenDataSourceConnectionAsync(cancellationToken).ConfigureAwait(false);
         await LoadAgeAsync(connection, cancellationToken).ConfigureAwait(false);
         await SetSearchPathAsync(connection, cancellationToken).ConfigureAwait(false);
         return connection;
@@ -104,8 +108,7 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
             return;
         }
 
-        await using var connection = new NpgsqlConnection(ConnectionString);
-        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = await OpenDataSourceConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
         command.CommandText = "CREATE EXTENSION IF NOT EXISTS age;";
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
@@ -159,4 +162,37 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
 
     private void ThrowIfDisposed() =>
         ObjectDisposedException.ThrowIf(_disposed, nameof(AgeConnectionManager));
+
+    private async Task<NpgsqlConnection> OpenDataSourceConnectionAsync(CancellationToken cancellationToken)
+    {
+        var attempt = 0;
+
+        while (true)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            attempt++;
+
+            try
+            {
+                return await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (PostgresException ex) when (ShouldRetry(ex, attempt))
+            {
+                var delay = GetRetryDelay(attempt);
+                LogMessages.ConnectionRetrying(_logger, ConnectionString, attempt, delay, ex.MessageText);
+                await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+            }
+        }
+    }
+
+    private static bool ShouldRetry(PostgresException ex, int attempt) =>
+        ex.SqlState == PostgresErrorCodes.TooManyConnections && attempt < ConnectionLimitMaxAttempts;
+
+    private static TimeSpan GetRetryDelay(int attempt)
+    {
+        var delayMillis = Math.Min(
+            ConnectionLimitBaseDelay.TotalMilliseconds * Math.Pow(2, attempt - 1),
+            ConnectionLimitMaxDelay.TotalMilliseconds);
+        return TimeSpan.FromMilliseconds(delayMillis);
+    }
 }

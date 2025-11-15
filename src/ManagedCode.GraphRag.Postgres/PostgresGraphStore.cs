@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -14,7 +15,7 @@ using NpgsqlTypes;
 
 namespace GraphRag.Storage.Postgres;
 
-public class PostgresGraphStore : IGraphStore, IAsyncDisposable
+public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStore, IAsyncDisposable
 {
     private readonly string _graphName;
     private readonly string _graphNameLiteral;
@@ -26,6 +27,8 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
     private readonly IReadOnlyDictionary<string, string[]> _edgePropertyIndexConfig;
     private readonly IAgeClientFactory _ageClientFactory;
     private readonly IAgeConnectionManager? _ownedConnectionManager;
+    private static readonly IReadOnlyDictionary<string, object?> EmptyProperties =
+        new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>());
 
     public PostgresGraphStore(string connectionString, string graphName, ILogger<PostgresGraphStore> logger, ILoggerFactory? loggerFactory = null)
         : this(new PostgresGraphStoreOptions
@@ -82,12 +85,97 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
         _logger.LogInformation("Apache AGE graph {GraphName} initialised.", _graphName);
     }
 
+    public async ValueTask<IGraphStoreScope> CreateScopeAsync(CancellationToken cancellationToken = default)
+    {
+        var scope = await _ageClientFactory.CreateScopeAsync(cancellationToken).ConfigureAwait(false);
+        return new PostgresGraphStoreScope(scope);
+    }
+
     public async Task UpsertNodeAsync(string id, string label, IReadOnlyDictionary<string, object?> properties, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(label);
         ArgumentNullException.ThrowIfNull(properties);
 
+        await using var client = _ageClientFactory.CreateClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await UpsertNodeInternalAsync(client, id, label, properties, cancellationToken).ConfigureAwait(false);
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task UpsertNodesAsync(IReadOnlyCollection<GraphNodeUpsert> nodes, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(nodes);
+        if (nodes.Count == 0)
+        {
+            return;
+        }
+
+        await using var client = _ageClientFactory.CreateClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        foreach (var node in nodes)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(node.Id);
+            ArgumentException.ThrowIfNullOrWhiteSpace(node.Label);
+            await UpsertNodeInternalAsync(client, node.Id, node.Label, NormalizeProperties(node.Properties), cancellationToken).ConfigureAwait(false);
+        }
+
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
+        _logger.LogInformation("Bulk upserted {Count} nodes into graph {GraphName}.", nodes.Count, _graphName);
+    }
+
+    public async Task UpsertRelationshipAsync(string sourceId, string targetId, string type, IReadOnlyDictionary<string, object?> properties, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(targetId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(type);
+        ArgumentNullException.ThrowIfNull(properties);
+
+        await using var client = _ageClientFactory.CreateClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await UpsertRelationshipInternalAsync(client, sourceId, targetId, type, properties, cancellationToken).ConfigureAwait(false);
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task UpsertRelationshipsAsync(IReadOnlyCollection<GraphRelationshipUpsert> relationships, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(relationships);
+        if (relationships.Count == 0)
+        {
+            return;
+        }
+
+        var expanded = ExpandRelationships(relationships).ToList();
+        if (expanded.Count == 0)
+        {
+            return;
+        }
+
+        await using var client = _ageClientFactory.CreateClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        foreach (var relationship in expanded)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(relationship.SourceId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(relationship.TargetId);
+            ArgumentException.ThrowIfNullOrWhiteSpace(relationship.Type);
+
+            await UpsertRelationshipInternalAsync(
+                client,
+                relationship.SourceId,
+                relationship.TargetId,
+                relationship.Type,
+                NormalizeProperties(relationship.Properties),
+                cancellationToken).ConfigureAwait(false);
+        }
+
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
+        _logger.LogInformation("Bulk upserted {Count} relationships into graph {GraphName}.", expanded.Count, _graphName);
+    }
+
+    private async Task UpsertNodeInternalAsync(IAgeClient client, string id, string label, IReadOnlyDictionary<string, object?> properties, CancellationToken cancellationToken)
+    {
         var parameters = new Dictionary<string, object?>
         {
             [CypherParameterNames.NodeId] = id
@@ -112,20 +200,13 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
         queryBuilder.AppendLine();
         queryBuilder.Append("RETURN n");
 
-        var query = queryBuilder.ToString();
-
         await EnsureLabelIndexesAsync(label, isEdge: false, cancellationToken).ConfigureAwait(false);
-        await ExecuteCypherAsync(query, parameters, cancellationToken).ConfigureAwait(false);
+        await ExecuteCypherAsync(client, queryBuilder.ToString(), parameters, cancellationToken).ConfigureAwait(false);
         _logger.LogDebug("Upserted node {Id} ({Label}) into graph {GraphName}.", id, label, _graphName);
     }
 
-    public async Task UpsertRelationshipAsync(string sourceId, string targetId, string type, IReadOnlyDictionary<string, object?> properties, CancellationToken cancellationToken = default)
+    private async Task UpsertRelationshipInternalAsync(IAgeClient client, string sourceId, string targetId, string type, IReadOnlyDictionary<string, object?> properties, CancellationToken cancellationToken)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(sourceId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(targetId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(type);
-        ArgumentNullException.ThrowIfNull(properties);
-
         var parameters = new Dictionary<string, object?>
         {
             [CypherParameterNames.SourceId] = sourceId,
@@ -155,10 +236,8 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
         queryBuilder.AppendLine();
         queryBuilder.Append("RETURN rel");
 
-        var query = queryBuilder.ToString();
-
         await EnsureLabelIndexesAsync(type, isEdge: true, cancellationToken).ConfigureAwait(false);
-        await ExecuteCypherAsync(query, parameters, cancellationToken).ConfigureAwait(false);
+        await ExecuteCypherAsync(client, queryBuilder.ToString(), parameters, cancellationToken).ConfigureAwait(false);
         _logger.LogDebug("Upserted relationship {Source}-[{Type}]->{Target} in graph {GraphName}.", sourceId, type, targetId, _graphName);
     }
 
@@ -332,16 +411,40 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
     {
         await using var client = _ageClientFactory.CreateClient();
         await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-
-        await using var command = client.Connection.CreateCommand();
-        var queryLiteral = WrapInDollarQuotes(query);
-        command.CommandText = string.Concat(
-            "SELECT *",
-            "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", ", queryLiteral, "::cstring, @params::ag_catalog.agtype) AS (result agtype);");
-        command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, SerializeParameters(parameters)));
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        await ExecuteCypherAsync(client, query, parameters, cancellationToken).ConfigureAwait(false);
         await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
     }
+
+    private async Task ExecuteCypherAsync(IAgeClient client, string query, IReadOnlyDictionary<string, object?> parameters, CancellationToken cancellationToken)
+    {
+        var queryLiteral = WrapInDollarQuotes(query);
+        var commandText = string.Concat(
+            "SELECT *",
+            "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", ", queryLiteral, "::cstring, @params::ag_catalog.agtype) AS (result agtype);");
+        var payload = SerializeParameters(parameters);
+
+        for (var attempt = 0; attempt < 2; attempt++)
+        {
+            await using var command = client.Connection.CreateCommand();
+            command.CommandText = commandText;
+            command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, payload));
+
+            try
+            {
+                await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                return;
+            }
+            catch (PostgresException ex) when (ShouldRetryOnLabelCreationRace(ex) && attempt == 0)
+            {
+                continue;
+            }
+        }
+    }
+
+    private static bool ShouldRetryOnLabelCreationRace(PostgresException exception) =>
+        exception.SqlState is PostgresErrorCodes.DuplicateTable or
+            PostgresErrorCodes.DuplicateObject or
+            PostgresErrorCodes.UniqueViolation;
 
     private static string EscapeLabel(string label)
     {
@@ -526,7 +629,14 @@ LIMIT 1;";
         {
             await using var command = client.Connection.CreateCommand();
             command.CommandText = commandText;
-            await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            try
+            {
+                await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (PostgresException ex) when (IsDuplicateSchemaObject(ex))
+            {
+                continue;
+            }
         }
 
         await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -795,6 +905,39 @@ LIMIT 1;";
         {
             return new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         }
+    }
+
+    private static IReadOnlyDictionary<string, object?> NormalizeProperties(IReadOnlyDictionary<string, object?>? properties) =>
+        properties ?? EmptyProperties;
+
+    private static IEnumerable<GraphRelationshipUpsert> ExpandRelationships(IEnumerable<GraphRelationshipUpsert> relationships)
+    {
+        foreach (var relationship in relationships)
+        {
+            yield return relationship;
+
+            if (relationship.Bidirectional)
+            {
+                yield return relationship with
+                {
+                    SourceId = relationship.TargetId,
+                    TargetId = relationship.SourceId,
+                    Bidirectional = false
+                };
+            }
+        }
+    }
+
+    private static bool IsDuplicateSchemaObject(PostgresException exception) =>
+        exception.SqlState is PostgresErrorCodes.DuplicateTable or
+            PostgresErrorCodes.DuplicateObject or
+            PostgresErrorCodes.UniqueViolation;
+
+    private sealed class PostgresGraphStoreScope(IAgeClientScope innerScope) : IGraphStoreScope
+    {
+        private readonly IAgeClientScope _innerScope = innerScope;
+
+        public ValueTask DisposeAsync() => _innerScope.DisposeAsync();
     }
 
     public async ValueTask DisposeAsync()

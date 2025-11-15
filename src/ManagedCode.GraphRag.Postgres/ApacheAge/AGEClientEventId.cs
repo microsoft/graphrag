@@ -5,6 +5,7 @@ internal static class AgeClientEventId
     #region Connection
     public const int CONNECTION_OPENED = 1000;
     public const int CONNECTION_CLOSED = 1001;
+    public const int CONNECTION_RETRYING = 1002;
 
     public const int NULL_CONNECTION_WARNING = 1800;
 

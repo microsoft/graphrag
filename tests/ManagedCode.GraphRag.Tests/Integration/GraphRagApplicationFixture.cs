@@ -5,8 +5,6 @@ using GraphRag.Indexing.Runtime;
 using GraphRag.Storage.Cosmos;
 using GraphRag.Storage.Neo4j;
 using GraphRag.Storage.Postgres;
-using ManagedCode.GraphRag.Tests.Infrastructure;
-using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;

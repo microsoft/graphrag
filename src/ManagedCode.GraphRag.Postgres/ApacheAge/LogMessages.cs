@@ -23,6 +23,17 @@ internal static partial class LogMessages
         string connectionString);
 
     [LoggerMessage(
+    EventId = AgeClientEventId.CONNECTION_RETRYING,
+    Level = LogLevel.Warning,
+    Message = "Connection limit reached for {connectionString}. Attempt {attempt} failed; retrying after {delay}. Reason: {reason}")]
+    public static partial void ConnectionRetrying(
+        ILogger logger,
+        string connectionString,
+        int attempt,
+        TimeSpan delay,
+        string reason);
+
+    [LoggerMessage(
     EventId = AgeClientEventId.NULL_CONNECTION_WARNING,
     Level = LogLevel.Warning,
     Message = "{message}")]
