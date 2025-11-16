@@ -8,6 +8,7 @@ using System.Text.Json;
 using GraphRag.Constants;
 using GraphRag.Graphs;
 using GraphRag.Storage.Postgres.ApacheAge;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
@@ -39,7 +40,11 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
     {
     }
 
-    public PostgresGraphStore(PostgresGraphStoreOptions options, ILogger<PostgresGraphStore> logger, ILoggerFactory? loggerFactory = null, IAgeClientFactory? ageClientFactory = null)
+    public PostgresGraphStore(
+        [FromKeyedServices] PostgresGraphStoreOptions options,
+        ILogger<PostgresGraphStore> logger,
+        ILoggerFactory? loggerFactory = null,
+        [FromKeyedServices] IAgeClientFactory? ageClientFactory = null)
     {
         ArgumentNullException.ThrowIfNull(options);
 
@@ -93,7 +98,13 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 
         await using var client = _ageClientFactory.CreateClient();
         await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await UpsertNodeInternalAsync(client, id, label, properties, cancellationToken).ConfigureAwait(false);
+        var normalized = NormalizeProperties(properties);
+        var (writes, removes) = SplitProperties(normalized);
+        await UpsertNodeInternalAsync(client, id, label, writes, cancellationToken).ConfigureAwait(false);
+        if (removes.Count > 0)
+        {
+            await RemoveNodePropertiesAsync(client, id, label, removes, cancellationToken).ConfigureAwait(false);
+        }
         await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
     }
 
@@ -112,7 +123,13 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(node.Id);
             ArgumentException.ThrowIfNullOrWhiteSpace(node.Label);
-            await UpsertNodeInternalAsync(client, node.Id, node.Label, NormalizeProperties(node.Properties), cancellationToken).ConfigureAwait(false);
+            var normalized = NormalizeProperties(node.Properties);
+            var (writes, removes) = SplitProperties(normalized);
+            await UpsertNodeInternalAsync(client, node.Id, node.Label, writes, cancellationToken).ConfigureAwait(false);
+            if (removes.Count > 0)
+            {
+                await RemoveNodePropertiesAsync(client, node.Id, node.Label, removes, cancellationToken).ConfigureAwait(false);
+            }
         }
 
         await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -128,7 +145,13 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 
         await using var client = _ageClientFactory.CreateClient();
         await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await UpsertRelationshipInternalAsync(client, sourceId, targetId, type, properties, cancellationToken).ConfigureAwait(false);
+        var normalized = NormalizeProperties(properties);
+        var (writes, removes) = SplitProperties(normalized);
+        await UpsertRelationshipInternalAsync(client, sourceId, targetId, type, writes, cancellationToken).ConfigureAwait(false);
+        if (removes.Count > 0)
+        {
+            await RemoveRelationshipPropertiesAsync(client, sourceId, targetId, type, removes, cancellationToken).ConfigureAwait(false);
+        }
         await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
     }
 
@@ -155,17 +178,101 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
             ArgumentException.ThrowIfNullOrWhiteSpace(relationship.TargetId);
             ArgumentException.ThrowIfNullOrWhiteSpace(relationship.Type);
 
+            var normalized = NormalizeProperties(relationship.Properties);
+            var (writes, removes) = SplitProperties(normalized);
+
             await UpsertRelationshipInternalAsync(
                 client,
                 relationship.SourceId,
                 relationship.TargetId,
                 relationship.Type,
-                NormalizeProperties(relationship.Properties),
+                writes,
                 cancellationToken).ConfigureAwait(false);
+
+            if (removes.Count > 0)
+            {
+                await RemoveRelationshipPropertiesAsync(
+                    client,
+                    relationship.SourceId,
+                    relationship.TargetId,
+                    relationship.Type,
+                    removes,
+                    cancellationToken).ConfigureAwait(false);
+            }
         }
 
         await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
         _logger.LogInformation("Bulk upserted {Count} relationships into graph {GraphName}.", expanded.Count, _graphName);
+    }
+
+    public async Task DeleteNodesAsync(IReadOnlyCollection<string> nodeIds, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(nodeIds);
+        if (nodeIds.Count == 0)
+        {
+            return;
+        }
+
+        await using var client = _ageClientFactory.CreateClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        foreach (var batch in nodeIds.Chunk(128))
+        {
+            var parameters = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+            {
+                [GraphQueryParameters.NodeIds] = batch
+            };
+
+            const string query = @"
+                MATCH (n)
+                WHERE n.id IN $" + GraphQueryParameters.NodeIds + @"
+                DETACH DELETE n";
+
+            await ExecuteCypherAsync(client, query, parameters, cancellationToken).ConfigureAwait(false);
+        }
+
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
+        _logger.LogInformation("Deleted {Count} nodes from graph {GraphName}.", nodeIds.Count, _graphName);
+    }
+
+    public async Task DeleteRelationshipsAsync(IReadOnlyCollection<GraphRelationshipKey> relationships, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(relationships);
+        if (relationships.Count == 0)
+        {
+            return;
+        }
+
+        await using var client = _ageClientFactory.CreateClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+
+        foreach (var batch in relationships.Chunk(64))
+        {
+            var payload = batch
+                .Select(rel => new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+                {
+                    [GraphQueryParameters.SourceId] = rel.SourceId,
+                    [GraphQueryParameters.TargetId] = rel.TargetId,
+                    [GraphQueryParameters.RelationshipType] = rel.Type
+                })
+                .ToArray();
+
+            var parameters = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+            {
+                [GraphQueryParameters.Relationships] = payload
+            };
+
+            const string query = @"
+                UNWIND $" + GraphQueryParameters.Relationships + @" AS rel
+                MATCH (source { id: rel." + GraphQueryParameters.SourceId + @" })-[edge]->(target { id: rel." + GraphQueryParameters.TargetId + @" })
+                WHERE type(edge) = rel." + GraphQueryParameters.RelationshipType + @"
+                DELETE edge";
+
+            await ExecuteCypherAsync(client, query, parameters, cancellationToken).ConfigureAwait(false);
+        }
+
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
+        _logger.LogInformation("Deleted {Count} relationships from graph {GraphName}.", relationships.Count, _graphName);
     }
 
     private async Task UpsertNodeInternalAsync(IAgeClient client, string id, string label, IReadOnlyDictionary<string, object?> properties, CancellationToken cancellationToken)
@@ -445,6 +552,95 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
         exception.SqlState is PostgresErrorCodes.DuplicateTable or
             PostgresErrorCodes.DuplicateObject or
             PostgresErrorCodes.UniqueViolation;
+
+    private static (IReadOnlyDictionary<string, object?> Writes, IReadOnlyCollection<string> Removes) SplitProperties(IReadOnlyDictionary<string, object?> properties)
+    {
+        if (properties.Count == 0)
+        {
+            return (EmptyProperties, Array.Empty<string>());
+        }
+
+        var writes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        var removes = new List<string>();
+
+        foreach (var (key, value) in properties)
+        {
+            if (value is null)
+            {
+                removes.Add(key);
+                continue;
+            }
+
+            writes[key] = value;
+        }
+
+        IReadOnlyDictionary<string, object?> writeResult = writes.Count == 0 ? EmptyProperties : writes;
+        IReadOnlyCollection<string> removeResult = removes.Count == 0 ? Array.Empty<string>() : removes;
+        return (writeResult, removeResult);
+    }
+
+    private async Task RemoveNodePropertiesAsync(IAgeClient client, string id, string label, IReadOnlyCollection<string> propertyKeys, CancellationToken cancellationToken)
+    {
+        if (propertyKeys.Count == 0)
+        {
+            return;
+        }
+
+        var parameters = new Dictionary<string, object?>
+        {
+            [CypherParameterNames.NodeId] = id
+        };
+
+        var builder = new StringBuilder();
+        builder.Append("MATCH (n:");
+        builder.Append(EscapeLabel(label));
+        builder.Append(" { id: $");
+        builder.Append(CypherParameterNames.NodeId);
+        builder.Append(" })");
+
+        foreach (var key in propertyKeys)
+        {
+            builder.AppendLine();
+            builder.Append("REMOVE n.`");
+            builder.Append(EscapePropertyName(key));
+            builder.Append('`');
+        }
+
+        await ExecuteCypherAsync(client, builder.ToString(), parameters, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task RemoveRelationshipPropertiesAsync(IAgeClient client, string sourceId, string targetId, string type, IReadOnlyCollection<string> propertyKeys, CancellationToken cancellationToken)
+    {
+        if (propertyKeys.Count == 0)
+        {
+            return;
+        }
+
+        var parameters = new Dictionary<string, object?>
+        {
+            [CypherParameterNames.SourceId] = sourceId,
+            [CypherParameterNames.TargetId] = targetId
+        };
+
+        var builder = new StringBuilder();
+        builder.Append("MATCH (source { id: $");
+        builder.Append(CypherParameterNames.SourceId);
+        builder.Append(" })-[rel:");
+        builder.Append(EscapeLabel(type));
+        builder.Append("]->(target { id: $");
+        builder.Append(CypherParameterNames.TargetId);
+        builder.Append(" })");
+
+        foreach (var key in propertyKeys)
+        {
+            builder.AppendLine();
+            builder.Append("REMOVE rel.`");
+            builder.Append(EscapePropertyName(key));
+            builder.Append('`');
+        }
+
+        await ExecuteCypherAsync(client, builder.ToString(), parameters, cancellationToken).ConfigureAwait(false);
+    }
 
     private static string EscapeLabel(string label)
     {

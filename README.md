@@ -315,7 +315,7 @@ The Cosmos adapter (`ManagedCode.GraphRag.CosmosDb`) targets the SQL API and wor
    ```
    As with other adapters, the first Cosmos store becomes the unkeyed default.
 
-> **Tip:** `IGraphStore` now exposes `GetNodesAsync` and `GetRelationshipsAsync` in addition to the targeted APIs (`InitializeAsync`, `Upsert*`, `GetOutgoingRelationshipsAsync`). These use the new AGE-powered enumerations so you can inspect or export the full graph without dropping down to concrete implementations.
+> **Tip:** `IGraphStore` now exposes full graph inspection and mutation helpers (`GetNodesAsync`, `GetRelationshipsAsync`, `DeleteNodesAsync`, `DeleteRelationshipsAsync`) in addition to the targeted APIs (`InitializeAsync`, `Upsert*`, `GetOutgoingRelationshipsAsync`). These use the same AGE-powered primitives, so you can inspect, prune, or export the graph without dropping down to concrete implementations.
 
 > **Pagination:** `GetNodesAsync` and `GetRelationshipsAsync` accept an optional `GraphTraversalOptions` object (`new GraphTraversalOptions { Skip = 100, Take = 50 }`) if you want to page through very large graphs. The defaults stream everything, one record at a time, without materialising the entire graph in memory.
 

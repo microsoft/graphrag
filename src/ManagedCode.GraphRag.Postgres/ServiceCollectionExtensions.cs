@@ -3,7 +3,6 @@ using GraphRag.Graphs;
 using GraphRag.Storage.Postgres.ApacheAge;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 
 namespace GraphRag.Storage.Postgres;
 
@@ -22,25 +21,14 @@ public static class ServiceCollectionExtensions
         services.AddKeyedSingleton<IAgeConnectionManager, AgeConnectionManager>(key);
         services.AddKeyedSingleton<IAgeClientFactory, AgeClientFactory>(key);
 
-        services.AddKeyedSingleton<PostgresGraphStore>(key, (sp, serviceKey) =>
-        {
-            var opts = sp.GetRequiredKeyedService<PostgresGraphStoreOptions>(serviceKey);
-            var logger = sp.GetRequiredService<ILogger<PostgresGraphStore>>();
-            var loggerFactory = sp.GetService<ILoggerFactory>();
-            var ageClientFactory = sp.GetRequiredKeyedService<IAgeClientFactory>(serviceKey);
-            return new PostgresGraphStore(opts, logger, loggerFactory, ageClientFactory);
-        });
+        services.AddKeyedSingleton<PostgresGraphStore>(key);
         services.AddKeyedSingleton<IGraphStore>(key, (sp, serviceKey) => sp.GetRequiredKeyedService<PostgresGraphStore>(serviceKey));
-        services.AddKeyedSingleton<PostgresExplainService>(key, (sp, serviceKey) =>
-        {
-            var store = sp.GetRequiredKeyedService<PostgresGraphStore>(serviceKey);
-            var logger = sp.GetRequiredService<ILogger<PostgresExplainService>>();
-            return new PostgresExplainService(store, logger);
-        });
+        services.AddKeyedSingleton<PostgresExplainService>(key);
 
-        services.TryAddSingleton<PostgresGraphStore>(sp => sp.GetRequiredKeyedService<PostgresGraphStore>(key));
-        services.TryAddSingleton<IGraphStore>(sp => sp.GetRequiredKeyedService<PostgresGraphStore>(key));
-        services.TryAddSingleton<PostgresExplainService>(sp => sp.GetRequiredKeyedService<PostgresExplainService>(key));
+        var defaultKey = key;
+        services.TryAddSingleton<PostgresGraphStore>(sp => sp.GetRequiredKeyedService<PostgresGraphStore>(defaultKey));
+        services.TryAddSingleton<IGraphStore>(sp => sp.GetRequiredKeyedService<PostgresGraphStore>(defaultKey));
+        services.TryAddSingleton<PostgresExplainService>(sp => sp.GetRequiredKeyedService<PostgresExplainService>(defaultKey));
 
         return services;
     }

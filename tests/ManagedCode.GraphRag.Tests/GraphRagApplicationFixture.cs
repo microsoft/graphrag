@@ -1,7 +1,6 @@
+using System.Runtime.InteropServices;
 using DotNet.Testcontainers.Builders;
 using GraphRag;
-using GraphRag.Graphs;
-using GraphRag.Indexing.Runtime;
 using GraphRag.Storage.Cosmos;
 using GraphRag.Storage.JanusGraph;
 using GraphRag.Storage.Neo4j;
@@ -57,23 +56,43 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(5432))
             .Build();
 
-        _cosmosContainer = new CosmosDbBuilder()
-            .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview")
-            .Build();
+        if (IsCosmosSupported())
+        {
+            _cosmosContainer = new CosmosDbBuilder()
+                .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview")
+                .Build();
+        }
 
-        await Task.WhenAll(_neo4jContainer.StartAsync(), _postgresContainer.StartAsync(), _cosmosContainer.StartAsync()).ConfigureAwait(false);
+        if (IsJanusSupported())
+        {
+            _janusContainer = new JanusGraphBuilder().Build();
+        }
+
+        var startTasks = new List<Task>
+        {
+            _neo4jContainer.StartAsync(),
+            _postgresContainer.StartAsync()
+        };
+
+        if (_cosmosContainer is not null)
+        {
+            startTasks.Add(_cosmosContainer.StartAsync());
+        }
+
+        if (_janusContainer is not null)
+        {
+            startTasks.Add(_janusContainer.StartAsync());
+        }
+
+        await Task.WhenAll(startTasks).ConfigureAwait(false);
         await EnsurePostgresDatabaseAsync().ConfigureAwait(false);
 
         boltEndpoint = new Uri(_neo4jContainer.GetConnectionString(), UriKind.Absolute);
         postgresConnection = _postgresContainer.GetConnectionString();
-        cosmosConnectionString = _cosmosContainer.GetConnectionString();
+        cosmosConnectionString = _cosmosContainer?.GetConnectionString();
 
-        _janusContainer = new JanusGraphBuilder().Build();
-        await _janusContainer.StartAsync().ConfigureAwait(false);
-        var janusHost = _janusContainer.Hostname;
-        var janusPort = _janusContainer.GetMappedPublicPort(8182);
-
-        var includeCosmos = true;
+        var janusHost = _janusContainer?.Hostname;
+        var janusPort = _janusContainer?.GetMappedPublicPort(8182);
 
         var configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
 
@@ -86,40 +105,6 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
 
         if (boltEndpoint is not null && postgresConnection is not null)
         {
-            services.AddKeyedSingleton<WorkflowDelegate>("neo4j-seed", static (_, _) => async (config, context, token) =>
-            {
-                var graph = context.Services.GetRequiredKeyedService<IGraphStore>("neo4j");
-                await graph.InitializeAsync(token).ConfigureAwait(false);
-                await graph.UpsertNodeAsync("alice", "Person", new Dictionary<string, object?> { ["name"] = "Alice" }, token).ConfigureAwait(false);
-                await graph.UpsertNodeAsync("bob", "Person", new Dictionary<string, object?> { ["name"] = "Bob" }, token).ConfigureAwait(false);
-                await graph.UpsertRelationshipAsync("alice", "bob", "KNOWS", new Dictionary<string, object?> { ["since"] = 2024 }, token).ConfigureAwait(false);
-                var relationships = new List<GraphRelationship>();
-                await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("alice", token).ConfigureAwait(false))
-                {
-                    relationships.Add(relationship);
-                }
-
-                context.Items["neo4j:relationship-count"] = relationships.Count;
-                return new WorkflowResult(null);
-            });
-
-            services.AddKeyedSingleton<WorkflowDelegate>("postgres-seed", static (_, _) => async (config, context, token) =>
-            {
-                var graph = context.Services.GetRequiredKeyedService<IGraphStore>("postgres");
-                await graph.InitializeAsync(token).ConfigureAwait(false);
-                await graph.UpsertNodeAsync("chapter-1", "Chapter", new Dictionary<string, object?> { ["title"] = "Origins" }, token).ConfigureAwait(false);
-                await graph.UpsertNodeAsync("chapter-2", "Chapter", new Dictionary<string, object?> { ["title"] = "Discovery" }, token).ConfigureAwait(false);
-                await graph.UpsertRelationshipAsync("chapter-1", "chapter-2", "LEADS_TO", new Dictionary<string, object?> { ["weight"] = 0.9 }, token).ConfigureAwait(false);
-                var relationships = new List<GraphRelationship>();
-                await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("chapter-1", token).ConfigureAwait(false))
-                {
-                    relationships.Add(relationship);
-                }
-
-                context.Items["postgres:relationship-count"] = relationships.Count;
-                return new WorkflowResult(null);
-            });
-
             services.AddNeo4jGraphStore("neo4j", options =>
             {
                 options.Uri = boltEndpoint.ToString();
@@ -134,42 +119,25 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
             });
         }
 
-        if (includeCosmos)
-        {
-            services.AddKeyedSingleton<WorkflowDelegate>("cosmos-seed", static (_, _) => async (config, context, token) =>
-            {
-                var graph = context.Services.GetRequiredKeyedService<IGraphStore>("cosmos");
-                await graph.InitializeAsync(token).ConfigureAwait(false);
-                await graph.UpsertNodeAsync("c1", "Content", new Dictionary<string, object?> { ["title"] = "Doc" }, token).ConfigureAwait(false);
-                await graph.UpsertNodeAsync("c2", "Content", new Dictionary<string, object?> { ["title"] = "Attachment" }, token).ConfigureAwait(false);
-                await graph.UpsertRelationshipAsync("c1", "c2", "EMBEDS", new Dictionary<string, object?> { ["score"] = 0.42 }, token).ConfigureAwait(false);
-                var relationships = new List<GraphRelationship>();
-                await foreach (var relationship in graph.GetOutgoingRelationshipsAsync("c1", token).ConfigureAwait(false))
-                {
-                    relationships.Add(relationship);
-                }
-
-                context.Items["cosmos:relationship-count"] = relationships.Count;
-                return new WorkflowResult(null);
-            });
-        }
-
-        if (includeCosmos)
+        if (cosmosConnectionString is not null)
         {
             services.AddCosmosGraphStore("cosmos", options =>
             {
-                options.ConnectionString = cosmosConnectionString!;
+                options.ConnectionString = cosmosConnectionString;
                 options.DatabaseId = "GraphRagIntegration";
                 options.NodesContainerId = "nodes";
                 options.EdgesContainerId = "edges";
             });
         }
 
-        services.AddJanusGraphStore("janus", options =>
+        if (_janusContainer is not null && janusHost is not null && janusPort is not null)
         {
-            options.Host = janusHost;
-            options.Port = janusPort;
-        });
+            services.AddJanusGraphStore("janus", options =>
+            {
+                options.Host = janusHost;
+                options.Port = janusPort.Value;
+            });
+        }
 
         _serviceProvider = services.BuildServiceProvider();
         _scope = _serviceProvider.CreateAsyncScope();
@@ -257,5 +225,22 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
         {
             await _janusContainer.DisposeAsync().ConfigureAwait(false);
         }
+    }
+
+    private static bool IsJanusSupported()
+    {
+        var flag = Environment.GetEnvironmentVariable("GRAPH_RAG_ENABLE_JANUS");
+        return string.Equals(flag, "true", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsCosmosSupported()
+    {
+        var flag = Environment.GetEnvironmentVariable("GRAPH_RAG_ENABLE_COSMOS");
+        if (string.Equals(flag, "true", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return RuntimeInformation.ProcessArchitecture == Architecture.X64;
     }
 }

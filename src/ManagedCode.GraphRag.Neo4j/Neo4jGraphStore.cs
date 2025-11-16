@@ -84,6 +84,43 @@ SET r += $props";
         }
     }
 
+    public async Task DeleteNodesAsync(IReadOnlyCollection<string> nodeIds, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(nodeIds);
+        if (nodeIds.Count == 0)
+        {
+            return;
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        await using var session = _driver.AsyncSession();
+        const string cypher = "MATCH (n) WHERE n.id IN $ids DETACH DELETE n";
+        await session.ExecuteWriteAsync(tx => tx.RunAsync(cypher, new { ids = nodeIds }));
+    }
+
+    public async Task DeleteRelationshipsAsync(IReadOnlyCollection<GraphRelationshipKey> relationships, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(relationships);
+        if (relationships.Count == 0)
+        {
+            return;
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        var payload = relationships
+            .Select(rel => new { rel.SourceId, rel.TargetId, rel.Type })
+            .ToArray();
+
+        const string cypher = @"
+UNWIND $rels AS rel
+MATCH (source {id: rel.SourceId})-[edge]->(target {id: rel.TargetId})
+WHERE type(edge) = rel.Type
+DELETE edge";
+
+        await using var session = _driver.AsyncSession();
+        await session.ExecuteWriteAsync(tx => tx.RunAsync(cypher, new { rels = payload }));
+    }
+
     public IAsyncEnumerable<GraphRelationship> GetOutgoingRelationshipsAsync(string sourceId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceId);

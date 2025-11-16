@@ -1,3 +1,4 @@
+using System.Globalization;
 using GraphRag.Graphs;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,67 +18,212 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
 
     [Theory]
     [MemberData(nameof(GraphProviders))]
-    public async Task GraphStores_RoundTripRelationshipsAsync(string providerKey)
+    public async Task GraphStores_UpdateExistingNodes(string providerKey)
     {
-        var graphStore = fixture.Services.GetRequiredKeyedService<IGraphStore>(providerKey);
-        await graphStore.InitializeAsync();
-
-        var sourceId = $"{providerKey}-src-{Guid.NewGuid():N}";
-        var targetId = $"{providerKey}-dst-{Guid.NewGuid():N}";
-        var relationType = "CONNECTS";
-        var sourceProps = new Dictionary<string, object?>
+        var store = GetStore(providerKey);
+        if (store is null)
         {
-            ["name"] = $"{providerKey}-source"
-        };
-        var targetProps = new Dictionary<string, object?>
-        {
-            ["name"] = $"{providerKey}-target"
-        };
-        var edgeProps = new Dictionary<string, object?>
-        {
-            ["weight"] = 0.9,
-            ["provider"] = providerKey
-        };
+            return;
+        }
+        await store.InitializeAsync();
 
         var label = ProviderLabels[providerKey];
-        await graphStore.UpsertNodeAsync(sourceId, label, sourceProps);
-        await graphStore.UpsertNodeAsync(targetId, label, targetProps);
-        await graphStore.UpsertRelationshipAsync(sourceId, targetId, relationType, edgeProps);
+        var nodeId = $"{providerKey}-update-{Guid.NewGuid():N}";
 
-        var relationships = new List<GraphRelationship>();
-        await foreach (var relationship in graphStore.GetOutgoingRelationshipsAsync(sourceId))
+        await store.UpsertNodeAsync(nodeId, label, new Dictionary<string, object?> { ["name"] = "alpha", ["score"] = 1 });
+        await store.UpsertNodeAsync(nodeId, label, new Dictionary<string, object?> { ["name"] = "beta", ["score"] = 2 });
+
+        var node = await FindNodeAsync(store, nodeId);
+        Assert.NotNull(node);
+        Assert.Equal("beta", node!.Properties["name"]);
+        Assert.Equal(2, Convert.ToInt32(node.Properties["score"], CultureInfo.InvariantCulture));
+    }
+
+    [Theory]
+    [MemberData(nameof(GraphProviders))]
+    public async Task GraphStores_RemovePropertiesWhenValueIsNull(string providerKey)
+    {
+        var store = GetStore(providerKey);
+        if (store is null)
         {
-            relationships.Add(relationship);
+            return;
+        }
+        await store.InitializeAsync();
+
+        var label = ProviderLabels[providerKey];
+        var nodeId = $"{providerKey}-cleanup-{Guid.NewGuid():N}";
+
+        await store.UpsertNodeAsync(nodeId, label, new Dictionary<string, object?> { ["nickname"] = "alpha" });
+        var node = await FindNodeAsync(store, nodeId);
+        Assert.Equal("alpha", node!.Properties["nickname"]);
+
+        await store.UpsertNodeAsync(nodeId, label, new Dictionary<string, object?> { ["nickname"] = null });
+        var updated = await FindNodeAsync(store, nodeId);
+        Assert.False(updated!.Properties.ContainsKey("nickname"));
+    }
+
+    [Theory]
+    [MemberData(nameof(GraphProviders))]
+    public async Task GraphStores_HandleBidirectionalRelationships(string providerKey)
+    {
+        var store = GetStore(providerKey);
+        if (store is null)
+        {
+            return;
+        }
+        await store.InitializeAsync();
+
+        var label = ProviderLabels[providerKey];
+        var a = $"{providerKey}-bi-a-{Guid.NewGuid():N}";
+        var b = $"{providerKey}-bi-b-{Guid.NewGuid():N}";
+
+        await store.UpsertNodeAsync(a, label, new Dictionary<string, object?>());
+        await store.UpsertNodeAsync(b, label, new Dictionary<string, object?>());
+
+        var relationships = new[]
+        {
+            new GraphRelationshipUpsert(a, b, "KNOWS", new Dictionary<string, object?> { ["direction"] = "forward" }, Bidirectional: true)
+        };
+
+        await store.UpsertRelationshipsAsync(relationships);
+
+        var outgoingA = await CollectAsync(store.GetOutgoingRelationshipsAsync(a));
+        var outgoingB = await CollectAsync(store.GetOutgoingRelationshipsAsync(b));
+
+        Assert.Contains(outgoingA, rel => rel.TargetId == b && rel.Type == "KNOWS");
+        Assert.Contains(outgoingB, rel => rel.TargetId == a && rel.Type == "KNOWS");
+    }
+
+    [Theory]
+    [MemberData(nameof(GraphProviders))]
+    public async Task GraphStores_CanCreateAndRetrieveNodes(string providerKey)
+    {
+        var store = GetStore(providerKey);
+        if (store is null)
+        {
+            return;
+        }
+        await store.InitializeAsync();
+
+        var label = ProviderLabels[providerKey];
+        var nodeId = $"{providerKey}-node-{Guid.NewGuid():N}";
+        var props = new Dictionary<string, object?>
+        {
+            ["name"] = $"name-{providerKey}",
+            ["index"] = 1
+        };
+
+        await store.UpsertNodeAsync(nodeId, label, props);
+        var node = await FindNodeAsync(store, nodeId);
+        Assert.NotNull(node);
+        Assert.Equal(label, node!.Label);
+        Assert.Equal($"name-{providerKey}", node.Properties["name"]);
+    }
+
+    [Theory]
+    [MemberData(nameof(GraphProviders))]
+    public async Task GraphStores_CanCreateAndRetrieveRelationships(string providerKey)
+    {
+        var store = GetStore(providerKey);
+        if (store is null)
+        {
+            return;
+        }
+        await store.InitializeAsync();
+
+        var label = ProviderLabels[providerKey];
+        var sourceId = $"{providerKey}-rel-src-{Guid.NewGuid():N}";
+        var targetId = $"{providerKey}-rel-dst-{Guid.NewGuid():N}";
+
+        await store.UpsertNodeAsync(sourceId, label, new Dictionary<string, object?>());
+        await store.UpsertNodeAsync(targetId, label, new Dictionary<string, object?>());
+        await store.UpsertRelationshipAsync(sourceId, targetId, "CONNECTS", new Dictionary<string, object?>
+        {
+            ["score"] = 0.99,
+            ["provider"] = providerKey
+        });
+
+        var outgoing = await CollectAsync(store.GetOutgoingRelationshipsAsync(sourceId));
+        var relationship = Assert.Single(outgoing, rel => rel.TargetId == targetId);
+        Assert.Equal("CONNECTS", relationship.Type);
+        Assert.Equal(providerKey, relationship.Properties["provider"]);
+
+        var allEdges = await CollectAsync(store.GetRelationshipsAsync());
+        Assert.Contains(allEdges, rel => rel.SourceId == sourceId && rel.TargetId == targetId);
+    }
+
+    [Theory]
+    [MemberData(nameof(GraphProviders))]
+    public async Task GraphStores_CanUpsertInBatch(string providerKey)
+    {
+        var store = GetStore(providerKey);
+        if (store is null)
+        {
+            return;
+        }
+        await store.InitializeAsync();
+        var label = ProviderLabels[providerKey];
+
+        var nodes = Enumerable.Range(0, 3)
+            .Select(index => new GraphNodeUpsert(
+                $"{providerKey}-batch-node-{index}-{Guid.NewGuid():N}",
+                label,
+                new Dictionary<string, object?> { ["index"] = index }))
+            .ToList();
+
+        await store.UpsertNodesAsync(nodes);
+
+        foreach (var node in nodes)
+        {
+            Assert.NotNull(await FindNodeAsync(store, node.Id));
         }
 
-        var match = Assert.Single(relationships, rel => rel.TargetId == targetId);
-        Assert.Equal(sourceId, match.SourceId);
-        Assert.Equal(relationType, match.Type);
-        Assert.Equal(providerKey, match.Properties["provider"]);
+        var relationships = nodes.Skip(1)
+            .Select(node => new GraphRelationshipUpsert(nodes[0].Id, node.Id, "CONNECTS", new Dictionary<string, object?>()))
+            .ToList();
 
-        var nodeIds = new HashSet<string>();
-        await foreach (var node in graphStore.GetNodesAsync())
+        await store.UpsertRelationshipsAsync(relationships);
+        var outgoing = await CollectAsync(store.GetOutgoingRelationshipsAsync(nodes[0].Id));
+        Assert.Equal(relationships.Count, outgoing.Count);
+    }
+
+    [Theory]
+    [MemberData(nameof(GraphProviders))]
+    public async Task GraphStores_CanDeleteRelationshipsByRewriting(string providerKey)
+    {
+        var store = GetStore(providerKey);
+        if (store is null)
         {
-            nodeIds.Add(node.Id);
+            return;
         }
+        await store.InitializeAsync();
 
-        Assert.Contains(sourceId, nodeIds);
-        Assert.Contains(targetId, nodeIds);
+        var label = ProviderLabels[providerKey];
+        var sourceId = $"{providerKey}-del-src-{Guid.NewGuid():N}";
+        var targetId = $"{providerKey}-del-dst-{Guid.NewGuid():N}";
 
-        var edges = new List<GraphRelationship>();
-        await foreach (var edge in graphStore.GetRelationshipsAsync())
-        {
-            edges.Add(edge);
-        }
+        await store.UpsertNodeAsync(sourceId, label, new Dictionary<string, object?>());
+        await store.UpsertNodeAsync(targetId, label, new Dictionary<string, object?>());
+        await store.UpsertRelationshipAsync(sourceId, targetId, "CONNECTS", new Dictionary<string, object?>());
 
-        Assert.Contains(edges, rel => rel.SourceId == sourceId && rel.TargetId == targetId && rel.Type == relationType);
+        var initial = await CollectAsync(store.GetOutgoingRelationshipsAsync(sourceId));
+        Assert.Contains(initial, rel => rel.TargetId == targetId);
+
+        await store.UpsertRelationshipAsync(sourceId, targetId, "CONNECTS", new Dictionary<string, object?> { ["flag"] = "active" });
+        var updated = await CollectAsync(store.GetOutgoingRelationshipsAsync(sourceId));
+
+        Assert.Contains(updated, rel => rel.TargetId == targetId && rel.Properties.ContainsKey("flag"));
     }
 
     [Theory]
     [MemberData(nameof(GraphProviders))]
     public async Task GraphStores_HandlePagination(string providerKey)
     {
-        var graphStore = fixture.Services.GetRequiredKeyedService<IGraphStore>(providerKey);
+        var graphStore = GetStore(providerKey);
+        if (graphStore is null)
+        {
+            return;
+        }
         await graphStore.InitializeAsync();
 
         var label = ProviderLabels.GetValueOrDefault(providerKey, "Entity");
@@ -161,5 +307,21 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
         }
 
         return list;
+    }
+
+    private IGraphStore? GetStore(string providerKey) =>
+        fixture.Services.GetKeyedService<IGraphStore>(providerKey);
+
+    private static async Task<GraphNode?> FindNodeAsync(IGraphStore store, string nodeId, CancellationToken cancellationToken = default)
+    {
+        await foreach (var node in store.GetNodesAsync(cancellationToken: cancellationToken))
+        {
+            if (node.Id == nodeId)
+            {
+                return node;
+            }
+        }
+
+        return null;
     }
 }

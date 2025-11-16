@@ -11,3 +11,8 @@ public sealed record GraphRelationshipUpsert(
     string Type,
     IReadOnlyDictionary<string, object?> Properties,
     bool Bidirectional = false);
+
+public sealed record GraphRelationshipKey(
+    string SourceId,
+    string TargetId,
+    string Type);

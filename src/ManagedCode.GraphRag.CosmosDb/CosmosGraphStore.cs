@@ -1,3 +1,4 @@
+using System.Net;
 using System.Runtime.CompilerServices;
 using GraphRag.Graphs;
 using Microsoft.Azure.Cosmos;
@@ -78,6 +79,43 @@ public sealed class CosmosGraphStore(CosmosClient client, string databaseId, str
         }
     }
 
+    public async Task DeleteNodesAsync(IReadOnlyCollection<string> nodeIds, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(nodeIds);
+        if (nodeIds.Count == 0)
+        {
+            return;
+        }
+
+        var container = _client.GetContainer(_databaseId, _nodesContainerId);
+        foreach (var batch in nodeIds.Chunk(32))
+        {
+            var deletions = batch.Select(id => DeleteItemIfExistsAsync(container, id, new PartitionKey(id), cancellationToken));
+            await Task.WhenAll(deletions).ConfigureAwait(false);
+        }
+    }
+
+    public async Task DeleteRelationshipsAsync(IReadOnlyCollection<GraphRelationshipKey> relationships, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(relationships);
+        if (relationships.Count == 0)
+        {
+            return;
+        }
+
+        var container = _client.GetContainer(_databaseId, _edgesContainerId);
+        foreach (var batch in relationships.Chunk(32))
+        {
+            var deletions = batch.Select(rel =>
+            {
+                var id = BuildEdgeId(rel.SourceId, rel.Type, rel.TargetId);
+                return DeleteItemIfExistsAsync(container, id, new PartitionKey(rel.SourceId), cancellationToken);
+            });
+
+            await Task.WhenAll(deletions).ConfigureAwait(false);
+        }
+    }
+
     public IAsyncEnumerable<GraphRelationship> GetOutgoingRelationshipsAsync(string sourceId, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceId);
@@ -104,6 +142,20 @@ public sealed class CosmosGraphStore(CosmosClient client, string databaseId, str
     private sealed record NodeDocument(string Id, string Label, Dictionary<string, object?> Properties);
 
     private sealed record EdgeDocument(string Id, string SourceId, string TargetId, string Type, Dictionary<string, object?> Properties);
+
+    private static async Task DeleteItemIfExistsAsync(Container container, string id, PartitionKey partitionKey, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await container.DeleteItemStreamAsync(id, partitionKey, cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            // Item already removed; ignore.
+        }
+    }
+
+    private static string BuildEdgeId(string sourceId, string type, string targetId) => $"{sourceId}:{type}:{targetId}";
 
     public IAsyncEnumerable<GraphNode> GetNodesAsync(GraphTraversalOptions? options = null, CancellationToken cancellationToken = default)
     {

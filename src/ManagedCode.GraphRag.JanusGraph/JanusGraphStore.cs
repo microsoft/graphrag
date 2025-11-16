@@ -2,8 +2,6 @@ using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using System.Collections.Generic;
-using System.Linq;
 using GraphRag.Graphs;
 using Gremlin.Net.Driver;
 using Gremlin.Net.Driver.Exceptions;
@@ -39,17 +37,19 @@ public sealed class JanusGraphStore : IGraphStore, IAsyncDisposable
         ArgumentNullException.ThrowIfNull(properties);
 
         const string script = @"
-node = g.V().hasLabel(label).has('id', id).fold().coalesce(unfold(), addV(label).property('id', id));
+nodeTraversal = g.V().hasLabel(nodeLabel).has('id', nodeId).fold().coalesce(unfold(), addV(nodeLabel).property('id', nodeId));
+node = nodeTraversal.next();
 props.each { k, v ->
   if (v == null) { node.properties(k).drop(); }
   else { node.property(k, v); }
 };
-node";
+node;
+null";
 
         var bindings = new Dictionary<string, object?>
         {
-            ["label"] = label,
-            ["id"] = id,
+            ["nodeLabel"] = label,
+            ["nodeId"] = id,
             ["props"] = properties
         };
 
@@ -73,26 +73,27 @@ node";
         ArgumentNullException.ThrowIfNull(properties);
 
         const string script = @"
-source = g.V().has('id', sourceId).tryNext().orElse(null);
-target = g.V().has('id', targetId).tryNext().orElse(null);
-if (source == null || target == null) {
+sourceTraversal = g.V().has('id', sourceVertexId).limit(1);
+targetTraversal = g.V().has('id', targetVertexId).limit(1);
+if (!sourceTraversal.hasNext() || !targetTraversal.hasNext()) {
   throw new RuntimeException('Source or target vertex not found.');
 }
-sourceVertex = source;
-targetVertex = target;
-sourceVertex.outE(type).where(inV().has('id', targetId)).drop().iterate();
-edge = sourceVertex.addE(type).to(targetVertex).next();
+g.V().has('id', sourceVertexId).outE(edgeLabel).where(inV().has('id', targetVertexId)).drop().iterate();
+sourceVertex = sourceTraversal.next();
+targetVertex = targetTraversal.next();
+edge = sourceVertex.addEdge(edgeLabel, targetVertex);
 props.each { k, v ->
   if (v == null) { edge.properties(k).drop(); }
   else { edge.property(k, v); }
 };
-edge";
+edge;
+null";
 
         var bindings = new Dictionary<string, object?>
         {
-            ["sourceId"] = sourceId,
-            ["targetId"] = targetId,
-            ["type"] = type,
+            ["sourceVertexId"] = sourceId,
+            ["targetVertexId"] = targetId,
+            ["edgeLabel"] = type,
             ["props"] = properties
         };
 
@@ -123,11 +124,75 @@ edge";
         }
     }
 
+    public async Task DeleteNodesAsync(IReadOnlyCollection<string> nodeIds, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(nodeIds);
+        if (nodeIds.Count == 0)
+        {
+            return;
+        }
+
+        const string script = @"
+if (nodeIds == null || nodeIds.isEmpty()) {
+  return [];
+}
+g.V().has('id', within(nodeIds)).drop().iterate();";
+
+        var bindings = new Dictionary<string, object?>
+        {
+            ["nodeIds"] = nodeIds.ToArray()
+        };
+
+        await SubmitAsync<object>(script, bindings, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task DeleteRelationshipsAsync(IReadOnlyCollection<GraphRelationshipKey> relationships, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(relationships);
+        if (relationships.Count == 0)
+        {
+            return;
+        }
+
+        const string script = @"
+edges.each { rel ->
+  g.V().has('id', rel.sourceId)
+    .outE(rel.type)
+    .where(inV().has('id', rel.targetId))
+    .drop()
+    .iterate();
+}";
+
+        foreach (var batch in relationships.Chunk(64))
+        {
+            var payload = batch.Select(rel => new Dictionary<string, object?>
+            {
+                ["sourceId"] = rel.SourceId,
+                ["targetId"] = rel.TargetId,
+                ["type"] = rel.Type
+            }).ToList();
+
+            var bindings = new Dictionary<string, object?>
+            {
+                ["edges"] = payload
+            };
+
+            await SubmitAsync<object>(script, bindings, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
     public async IAsyncEnumerable<GraphRelationship> GetOutgoingRelationshipsAsync(string sourceId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceId);
 
-        const string script = "g.V().has('id', sourceId).outE().elementMap()";
+        const string script = @"
+g.V().has('id', sourceId)
+ .outE()
+ .project('sourceId','targetId','type','properties')
+ .by(outV().values('id'))
+ .by(inV().values('id'))
+ .by(label())
+ .by(valueMap())";
         var bindings = new Dictionary<string, object?> { ["sourceId"] = sourceId };
         var edges = await SubmitAsync<IDictionary<string, object?>>(script, bindings, cancellationToken).ConfigureAwait(false);
 
@@ -156,7 +221,11 @@ edge";
     {
         options?.Validate();
         var script = BuildRangeScript("g.E()", options?.Skip, options?.Take, out var parameters);
-        script += ".elementMap()";
+        script += @".project('sourceId','targetId','type','properties')
+            .by(outV().values('id'))
+            .by(inV().values('id'))
+            .by(label())
+            .by(valueMap())";
 
         var edges = await SubmitAsync<IDictionary<string, object?>>(script, parameters, cancellationToken).ConfigureAwait(false);
         foreach (var edge in edges)
@@ -228,6 +297,26 @@ edge";
     private static GraphRelationship ToRelationship(IDictionary<string, object?> raw)
     {
         var map = NormalizeMap(raw);
+        if (map.TryGetValue("sourceId", out var simpleSource) &&
+            map.TryGetValue("targetId", out var simpleTarget) &&
+            map.TryGetValue("type", out var simpleType))
+        {
+            var props = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+            if (map.TryGetValue("properties", out var propsValue) && propsValue is IDictionary<string, object?> dict)
+            {
+                foreach (var (key, value) in dict)
+                {
+                    props[key] = NormalizeValue(value);
+                }
+            }
+
+            return new GraphRelationship(
+                Convert.ToString(simpleSource, CultureInfo.InvariantCulture) ?? string.Empty,
+                Convert.ToString(simpleTarget, CultureInfo.InvariantCulture) ?? string.Empty,
+                Convert.ToString(simpleType, CultureInfo.InvariantCulture) ?? string.Empty,
+                props);
+        }
+
         var label = GetMeta(map, "label");
         var source = ExtractVertexId(map, "outV");
         var target = ExtractVertexId(map, "inV");
@@ -308,7 +397,7 @@ edge";
         },
         IDictionary<string, object?> dict => dict.ToDictionary(pair => pair.Key, pair => (object?)NormalizeValue(pair.Value), StringComparer.OrdinalIgnoreCase),
         IList list when list.Count == 1 => NormalizeValue(list[0]),
-        IEnumerable enumerable when enumerable is not string => enumerable.Cast<object?>().Select(item => NormalizeValue(item)).ToArray(),
+        IEnumerable enumerable when enumerable is not string => enumerable.Cast<object?>().Select(NormalizeValue).ToArray(),
         DateTime dateTime => dateTime.ToUniversalTime(),
         DateTimeOffset dto => dto.ToUniversalTime(),
         byte[] bytes => Convert.ToBase64String(bytes),

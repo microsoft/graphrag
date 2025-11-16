@@ -1,9 +1,10 @@
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace GraphRag.Storage.Postgres;
 
-public sealed class PostgresExplainService(PostgresGraphStore graphStore, ILogger<PostgresExplainService> logger)
+public sealed class PostgresExplainService([FromKeyedServices] PostgresGraphStore graphStore, ILogger<PostgresExplainService> logger)
 {
     private readonly PostgresGraphStore _graphStore = graphStore ?? throw new ArgumentNullException(nameof(graphStore));
     private readonly ILogger<PostgresExplainService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));

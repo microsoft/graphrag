@@ -15,6 +15,9 @@
 - Keep bulk graph store operations on `IGraphStore`; do not split them into a separate `IBulkGraphStore` interface.
 - Avoid separate scoped graph store abstractions (e.g., `IScopedGraphStore`); keep scope management on the primary client/graph store or its factory rather than exposing an extra DI service.
 - Always update `README.md` (and related docs) to reflect any behavior or API changes you make so documentation stays current with the code.
+- Do not add trivial POCO/unit tests (e.g., pure record equality); focus tests on meaningful flows and integration scenarios.
+- When registering graph stores (especially Postgres) use `AddKeyedSingleton<T>(key)` without bespoke lambdas unless strictly required; rely on DI to construct services.
+- All integration tests must run against real dependencies via Testcontainers modules (Neo4j, Postgres/AGE, Cosmos, Janus, etc.); do not fall back to Aspire seeding or mock containers.
 
 # Conversations
 any resulting updates to agents.md should go under the section "## Rules to follow"
