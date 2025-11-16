@@ -15,6 +15,8 @@
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Npgsql" />
+    <PackageReference Include="Testcontainers.CosmosDb" />
+    <PackageReference Include="Testcontainers.JanusGraph" />
     <PackageReference Include="Testcontainers.Neo4j" />
     <PackageReference Include="Testcontainers.PostgreSql" />
     <PackageReference Include="xunit" />
@@ -25,6 +27,7 @@
     <ProjectReference Include="..\..\src\ManagedCode.GraphRag\ManagedCode.GraphRag.csproj" />
     <ProjectReference Include="..\..\src\ManagedCode.GraphRag.CosmosDb\ManagedCode.GraphRag.CosmosDb.csproj" />
     <ProjectReference Include="..\..\src\ManagedCode.GraphRag.Neo4j\ManagedCode.GraphRag.Neo4j.csproj" />
+    <ProjectReference Include="..\..\src\ManagedCode.GraphRag.JanusGraph\ManagedCode.GraphRag.JanusGraph.csproj" />
     <ProjectReference Include="..\..\src\ManagedCode.GraphRag.Postgres\ManagedCode.GraphRag.Postgres.csproj" />
   </ItemGroup>
 

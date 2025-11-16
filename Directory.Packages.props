@@ -1,7 +1,7 @@
 <Project>
   <ItemGroup>
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
-    <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.54.1" />
+    <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.55.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
@@ -13,9 +13,12 @@
     <PackageVersion Include="Microsoft.ML.Tokenizers" Version="2.0.0" />
     <PackageVersion Include="Microsoft.ML.Tokenizers.Data.O200kBase" Version="2.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Gremlin.Net" Version="3.7.4" />
     <PackageVersion Include="Neo4j.Driver" Version="5.28.3" />
     <PackageVersion Include="Npgsql" Version="9.0.4" />
     <PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.2.39" />
+    <PackageVersion Include="Testcontainers.CosmosDb" Version="4.8.1" />
+    <PackageVersion Include="Testcontainers.JanusGraph" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.Neo4j" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.8.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />

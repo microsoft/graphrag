@@ -3,11 +3,14 @@ using GraphRag;
 using GraphRag.Graphs;
 using GraphRag.Indexing.Runtime;
 using GraphRag.Storage.Cosmos;
+using GraphRag.Storage.JanusGraph;
 using GraphRag.Storage.Neo4j;
 using GraphRag.Storage.Postgres;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using Testcontainers.CosmosDb;
+using Testcontainers.JanusGraph;
 using Testcontainers.Neo4j;
 using Testcontainers.PostgreSql;
 
@@ -23,50 +26,54 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
     private AsyncServiceScope? _scope;
     private Neo4jContainer? _neo4jContainer;
     private PostgreSqlContainer? _postgresContainer;
+    private CosmosDbContainer? _cosmosContainer;
+    private JanusGraphContainer? _janusContainer;
 
     public IServiceProvider Services => _scope?.ServiceProvider ?? throw new InvalidOperationException("The fixture has not been initialized.");
     public string PostgresConnectionString => _postgresContainer?.GetConnectionString() ?? throw new InvalidOperationException("PostgreSQL container is not available.");
 
     public async Task InitializeAsync()
     {
-        var skipContainers = string.Equals(
-            Environment.GetEnvironmentVariable("GRAPHRAG_SKIP_TESTCONTAINERS"),
-            "1",
-            StringComparison.OrdinalIgnoreCase);
-
         Uri? boltEndpoint = null;
         string? postgresConnection = null;
+        string? cosmosConnectionString = null;
 
-        if (!skipContainers)
-        {
-            _neo4jContainer = new Neo4jBuilder()
-                .WithImage("neo4j:5.23.0-community")
-                .WithEnvironment("NEO4J_ACCEPT_LICENSE_AGREEMENT", "yes")
-                .WithEnvironment("NEO4J_PLUGINS", "[\"apoc\"]")
-                .WithEnvironment("NEO4J_dbms_default__listen__address", "0.0.0.0")
-                .WithEnvironment("NEO4J_dbms_default__advertised__address", "localhost")
-                .WithEnvironment("NEO4J_AUTH", $"neo4j/{Neo4jPassword}")
-                .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(7687))
-                .Build();
+        _neo4jContainer = new Neo4jBuilder()
+            .WithImage("neo4j:5.23.0-community")
+            .WithEnvironment("NEO4J_ACCEPT_LICENSE_AGREEMENT", "yes")
+            .WithEnvironment("NEO4J_PLUGINS", "[\"apoc\"]")
+            .WithEnvironment("NEO4J_dbms_default__listen__address", "0.0.0.0")
+            .WithEnvironment("NEO4J_dbms_default__advertised__address", "localhost")
+            .WithEnvironment("NEO4J_AUTH", $"neo4j/{Neo4jPassword}")
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(7687))
+            .Build();
 
-            _postgresContainer = new PostgreSqlBuilder()
-                .WithImage("apache/age:latest")
-                .WithDatabase(PostgresDatabase)
-                .WithUsername("postgres")
-                .WithPassword(PostgresPassword)
-                .WithCleanUp(true)
-                .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(5432))
-                .Build();
+        _postgresContainer = new PostgreSqlBuilder()
+            .WithImage("apache/age:latest")
+            .WithDatabase(PostgresDatabase)
+            .WithUsername("postgres")
+            .WithPassword(PostgresPassword)
+            .WithCleanUp(true)
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(5432))
+            .Build();
 
-            await Task.WhenAll(_neo4jContainer.StartAsync(), _postgresContainer.StartAsync()).ConfigureAwait(false);
-            await EnsurePostgresDatabaseAsync().ConfigureAwait(false);
+        _cosmosContainer = new CosmosDbBuilder()
+            .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview")
+            .Build();
 
-            boltEndpoint = new Uri(_neo4jContainer.GetConnectionString(), UriKind.Absolute);
-            postgresConnection = _postgresContainer.GetConnectionString();
-        }
+        await Task.WhenAll(_neo4jContainer.StartAsync(), _postgresContainer.StartAsync(), _cosmosContainer.StartAsync()).ConfigureAwait(false);
+        await EnsurePostgresDatabaseAsync().ConfigureAwait(false);
 
-        var cosmosConnectionString = Environment.GetEnvironmentVariable("COSMOS_EMULATOR_CONNECTION_STRING");
-        var includeCosmos = !string.IsNullOrWhiteSpace(cosmosConnectionString);
+        boltEndpoint = new Uri(_neo4jContainer.GetConnectionString(), UriKind.Absolute);
+        postgresConnection = _postgresContainer.GetConnectionString();
+        cosmosConnectionString = _cosmosContainer.GetConnectionString();
+
+        _janusContainer = new JanusGraphBuilder().Build();
+        await _janusContainer.StartAsync().ConfigureAwait(false);
+        var janusHost = _janusContainer.Hostname;
+        var janusPort = _janusContainer.GetMappedPublicPort(8182);
+
+        var includeCosmos = true;
 
         var configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
 
@@ -77,7 +84,7 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
 
         services.AddGraphRag();
 
-        if (!skipContainers && boltEndpoint is not null && postgresConnection is not null)
+        if (boltEndpoint is not null && postgresConnection is not null)
         {
             services.AddKeyedSingleton<WorkflowDelegate>("neo4j-seed", static (_, _) => async (config, context, token) =>
             {
@@ -158,6 +165,12 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
             });
         }
 
+        services.AddJanusGraphStore("janus", options =>
+        {
+            options.Host = janusHost;
+            options.Port = janusPort;
+        });
+
         _serviceProvider = services.BuildServiceProvider();
         _scope = _serviceProvider.CreateAsyncScope();
     }
@@ -233,6 +246,16 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
         if (_postgresContainer is not null)
         {
             await _postgresContainer.DisposeAsync().ConfigureAwait(false);
+        }
+
+        if (_cosmosContainer is not null)
+        {
+            await _cosmosContainer.DisposeAsync().ConfigureAwait(false);
+        }
+
+        if (_janusContainer is not null)
+        {
+            await _janusContainer.DisposeAsync().ConfigureAwait(false);
         }
     }
 }

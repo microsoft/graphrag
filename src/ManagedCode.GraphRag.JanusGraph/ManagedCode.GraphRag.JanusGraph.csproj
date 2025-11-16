@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--NuGet-->
+  <PropertyGroup>
+    <Title>ManagedCode.GraphRag.JanusGraph</Title>
+    <PackageId>ManagedCode.GraphRag.JanusGraph</PackageId>
+    <Description>JanusGraph adapter for ManagedCode GraphRag library</Description>
+    <PackageTags>managedcode, graphrag, janusgraph, gremlin, graphdb</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Gremlin.Net" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ManagedCode.GraphRag\ManagedCode.GraphRag.csproj" />
+  </ItemGroup>
+</Project>

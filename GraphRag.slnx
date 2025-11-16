@@ -6,6 +6,7 @@
   </Configurations>
   <Folder Name="/src/">
     <Project Path="src/ManagedCode.GraphRag.CosmosDb/ManagedCode.GraphRag.CosmosDb.csproj" />
+    <Project Path="src/ManagedCode.GraphRag.JanusGraph/ManagedCode.GraphRag.JanusGraph.csproj" />
     <Project Path="src/ManagedCode.GraphRag.Neo4j/ManagedCode.GraphRag.Neo4j.csproj" />
     <Project Path="src/ManagedCode.GraphRag.Postgres/ManagedCode.GraphRag.Postgres.csproj" />
     <Project Path="src/ManagedCode.GraphRag/ManagedCode.GraphRag.csproj" />
