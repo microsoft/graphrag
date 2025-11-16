@@ -32,6 +32,16 @@ public sealed class CosmosGraphStore(CosmosClient client, string databaseId, str
         await container.UpsertItemAsync(document, new PartitionKey(document.Id), cancellationToken: cancellationToken);
     }
 
+    public async Task UpsertNodesAsync(IReadOnlyCollection<GraphNodeUpsert> nodes, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(nodes);
+
+        foreach (var node in nodes)
+        {
+            await UpsertNodeAsync(node.Id, node.Label, node.Properties, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
     public async Task UpsertRelationshipAsync(string sourceId, string targetId, string type, IReadOnlyDictionary<string, object?> properties, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceId);
@@ -41,6 +51,31 @@ public sealed class CosmosGraphStore(CosmosClient client, string databaseId, str
         var container = _client.GetContainer(_databaseId, _edgesContainerId);
         var document = new EdgeDocument($"{sourceId}:{type}:{targetId}", sourceId, targetId, type, new Dictionary<string, object?>(properties));
         await container.UpsertItemAsync(document, new PartitionKey(document.SourceId), cancellationToken: cancellationToken);
+    }
+
+    public async Task UpsertRelationshipsAsync(IReadOnlyCollection<GraphRelationshipUpsert> relationships, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(relationships);
+
+        foreach (var relationship in relationships)
+        {
+            await UpsertRelationshipAsync(
+                relationship.SourceId,
+                relationship.TargetId,
+                relationship.Type,
+                relationship.Properties,
+                cancellationToken).ConfigureAwait(false);
+
+            if (relationship.Bidirectional)
+            {
+                await UpsertRelationshipAsync(
+                    relationship.TargetId,
+                    relationship.SourceId,
+                    relationship.Type,
+                    relationship.Properties,
+                    cancellationToken).ConfigureAwait(false);
+            }
+        }
     }
 
     public IAsyncEnumerable<GraphRelationship> GetOutgoingRelationshipsAsync(string sourceId, CancellationToken cancellationToken = default)

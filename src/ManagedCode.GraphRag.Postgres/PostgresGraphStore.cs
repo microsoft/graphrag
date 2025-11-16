@@ -15,7 +15,7 @@ using NpgsqlTypes;
 
 namespace GraphRag.Storage.Postgres;
 
-public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStore, IAsyncDisposable
+public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 {
     private readonly string _graphName;
     private readonly string _graphNameLiteral;
@@ -77,18 +77,12 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
-        await using var client = _ageClientFactory.CreateClient();
+        await using var client = _ageClientFactory.CreateUnscopedClient();
         await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await client.CreateGraphAsync(_graphName, cancellationToken).ConfigureAwait(false);
         await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
 
         _logger.LogInformation("Apache AGE graph {GraphName} initialised.", _graphName);
-    }
-
-    public async ValueTask<IGraphStoreScope> CreateScopeAsync(CancellationToken cancellationToken = default)
-    {
-        var scope = await _ageClientFactory.CreateScopeAsync(cancellationToken).ConfigureAwait(false);
-        return new PostgresGraphStoreScope(scope);
     }
 
     public async Task UpsertNodeAsync(string id, string label, IReadOnlyDictionary<string, object?> properties, CancellationToken cancellationToken = default)
@@ -200,7 +194,7 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
         queryBuilder.AppendLine();
         queryBuilder.Append("RETURN n");
 
-        await EnsureLabelIndexesAsync(label, isEdge: false, cancellationToken).ConfigureAwait(false);
+        await EnsureLabelIndexesAsync(client, label, isEdge: false, cancellationToken).ConfigureAwait(false);
         await ExecuteCypherAsync(client, queryBuilder.ToString(), parameters, cancellationToken).ConfigureAwait(false);
         _logger.LogDebug("Upserted node {Id} ({Label}) into graph {GraphName}.", id, label, _graphName);
     }
@@ -236,15 +230,13 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
         queryBuilder.AppendLine();
         queryBuilder.Append("RETURN rel");
 
-        await EnsureLabelIndexesAsync(type, isEdge: true, cancellationToken).ConfigureAwait(false);
+        await EnsureLabelIndexesAsync(client, type, isEdge: true, cancellationToken).ConfigureAwait(false);
         await ExecuteCypherAsync(client, queryBuilder.ToString(), parameters, cancellationToken).ConfigureAwait(false);
         _logger.LogDebug("Upserted relationship {Source}-[{Type}]->{Target} in graph {GraphName}.", sourceId, type, targetId, _graphName);
     }
 
-    public Task EnsurePropertyKeyIndexAsync(string label, string propertyKey, bool isEdge, CancellationToken cancellationToken = default)
-    {
-        return EnsurePropertyKeyIndexInternalAsync(label, propertyKey, isEdge, relation: null, cancellationToken);
-    }
+    public Task EnsurePropertyKeyIndexAsync(string label, string propertyKey, bool isEdge, CancellationToken cancellationToken = default) =>
+        EnsurePropertyKeyIndexInternalAsync(label, propertyKey, isEdge, relation: null, cancellationToken);
 
     public async Task<IReadOnlyList<string>> ExplainAsync(string cypherQuery, IReadOnlyDictionary<string, object?>? parameters = null, CancellationToken cancellationToken = default)
     {
@@ -256,7 +248,7 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
         return await ExecuteExplainAsync(explainQuery, parameterJson, cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task EnsurePropertyKeyIndexInternalAsync(string label, string propertyKey, bool isEdge, string? relation, CancellationToken cancellationToken)
+    private async Task EnsurePropertyKeyIndexInternalAsync(IAgeClient client, string label, string propertyKey, bool isEdge, string? relation, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(label);
         ArgumentException.ThrowIfNullOrWhiteSpace(propertyKey);
@@ -267,7 +259,7 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
             return;
         }
 
-        relation ??= await ResolveLabelRelationAsync(label, isEdge, cancellationToken).ConfigureAwait(false);
+        relation ??= await ResolveLabelRelationAsync(client, label, isEdge, cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(relation))
         {
             _propertyIndexes.TryRemove(cacheKey, out _);
@@ -279,8 +271,16 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
         var columnExpression = $"agtype_access_operator(VARIADIC ARRAY[properties, '\"{propertyKey}\"'::agtype])";
         var command = $"CREATE INDEX IF NOT EXISTS {indexName} ON {relation} USING BTREE ({columnExpression});";
 
-        await ExecuteIndexCommandsAsync(new[] { command }, cancellationToken).ConfigureAwait(false);
+        await ExecuteIndexCommandsAsync(client, new[] { command }, cancellationToken).ConfigureAwait(false);
         _logger.LogInformation("Ensured targeted index {Index} on {Relation} for property {Property}.", indexName, relation, propertyKey);
+    }
+
+    private async Task EnsurePropertyKeyIndexInternalAsync(string label, string propertyKey, bool isEdge, string? relation, CancellationToken cancellationToken)
+    {
+        await using var client = _ageClientFactory.CreateUnscopedClient();
+        await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await EnsurePropertyKeyIndexInternalAsync(client, label, propertyKey, isEdge, relation, cancellationToken).ConfigureAwait(false);
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public IAsyncEnumerable<GraphRelationship> GetOutgoingRelationshipsAsync(string sourceId, CancellationToken cancellationToken = default)
@@ -290,7 +290,7 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
 
         async IAsyncEnumerable<GraphRelationship> FetchAsync(string nodeId, [EnumeratorCancellation] CancellationToken token)
         {
-            await using var client = _ageClientFactory.CreateClient();
+            await using var client = _ageClientFactory.CreateUnscopedClient();
             await client.OpenConnectionAsync(token).ConfigureAwait(false);
 
             await using var command = client.Connection.CreateCommand();
@@ -333,7 +333,7 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
 
         async IAsyncEnumerable<GraphRelationship> FetchRelationships(GraphTraversalOptions? traversalOptions, [EnumeratorCancellation] CancellationToken token)
         {
-            await using var client = _ageClientFactory.CreateClient();
+            await using var client = _ageClientFactory.CreateUnscopedClient();
             await client.OpenConnectionAsync(token).ConfigureAwait(false);
 
             await using var command = client.Connection.CreateCommand();
@@ -375,7 +375,7 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
 
         async IAsyncEnumerable<GraphNode> FetchNodes(GraphTraversalOptions? traversalOptions, [EnumeratorCancellation] CancellationToken token)
         {
-            await using var client = _ageClientFactory.CreateClient();
+            await using var client = _ageClientFactory.CreateUnscopedClient();
             await client.OpenConnectionAsync(token).ConfigureAwait(false);
 
             await using var command = client.Connection.CreateCommand();
@@ -409,7 +409,7 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
 
     protected virtual async Task ExecuteCypherAsync(string query, IReadOnlyDictionary<string, object?> parameters, CancellationToken cancellationToken)
     {
-        await using var client = _ageClientFactory.CreateClient();
+        await using var client = _ageClientFactory.CreateUnscopedClient();
         await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await ExecuteCypherAsync(client, query, parameters, cancellationToken).ConfigureAwait(false);
         await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -552,7 +552,7 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
         };
     }
 
-    private async Task EnsureLabelIndexesAsync(string label, bool isEdge, CancellationToken cancellationToken)
+    private async Task EnsureLabelIndexesAsync(IAgeClient client, string label, bool isEdge, CancellationToken cancellationToken)
     {
         if (!_autoCreateIndexes)
         {
@@ -565,7 +565,7 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
             return;
         }
 
-        var relation = await ResolveLabelRelationAsync(label, isEdge, cancellationToken).ConfigureAwait(false);
+        var relation = await ResolveLabelRelationAsync(client, label, isEdge, cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(relation))
         {
             _indexedLabels.TryRemove(cacheKey, out _);
@@ -575,14 +575,14 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
         var commands = BuildDefaultIndexCommands(relation, isEdge).ToArray();
         if (commands.Length > 0)
         {
-            await ExecuteIndexCommandsAsync(commands, cancellationToken).ConfigureAwait(false);
+            await ExecuteIndexCommandsAsync(client, commands, cancellationToken).ConfigureAwait(false);
             _logger.LogInformation("Ensured AGE default indexes on {Relation} ({LabelType}).", relation, isEdge ? "edge" : "vertex");
         }
 
-        await EnsureConfiguredPropertyIndexesAsync(label, relation, isEdge, cancellationToken).ConfigureAwait(false);
+        await EnsureConfiguredPropertyIndexesAsync(client, label, relation, isEdge, cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task EnsureConfiguredPropertyIndexesAsync(string label, string relation, bool isEdge, CancellationToken cancellationToken)
+    private async Task EnsureConfiguredPropertyIndexesAsync(IAgeClient client, string label, string relation, bool isEdge, CancellationToken cancellationToken)
     {
         var propertyMap = isEdge ? _edgePropertyIndexConfig : _vertexPropertyIndexConfig;
         if (!propertyMap.TryGetValue(label, out var properties) || properties.Length == 0)
@@ -592,14 +592,21 @@ public class PostgresGraphStore : IGraphStore, IBulkGraphStore, IScopedGraphStor
 
         foreach (var property in properties)
         {
-            await EnsurePropertyKeyIndexInternalAsync(label, property, isEdge, relation, cancellationToken).ConfigureAwait(false);
+            await EnsurePropertyKeyIndexInternalAsync(client, label, property, isEdge, relation, cancellationToken).ConfigureAwait(false);
         }
     }
 
     protected virtual async Task<string?> ResolveLabelRelationAsync(string label, bool isEdge, CancellationToken cancellationToken)
     {
-        await using var client = _ageClientFactory.CreateClient();
+        await using var client = _ageClientFactory.CreateUnscopedClient();
         await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        var relation = await ResolveLabelRelationAsync(client, label, isEdge, cancellationToken).ConfigureAwait(false);
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
+        return relation;
+    }
+
+    protected virtual async Task<string?> ResolveLabelRelationAsync(IAgeClient client, string label, bool isEdge, CancellationToken cancellationToken)
+    {
         await using var command = client.Connection.CreateCommand();
         const string sql = @"
 SELECT quote_ident(n.nspname) || '.' || quote_ident(c.relname)
@@ -616,15 +623,19 @@ LIMIT 1;";
         command.Parameters.AddWithValue("label_kind", isEdge ? "e" : "v");
 
         var result = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
-        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
         return result as string;
     }
 
     protected virtual async Task ExecuteIndexCommandsAsync(IEnumerable<string> commands, CancellationToken cancellationToken)
     {
-        await using var client = _ageClientFactory.CreateClient();
+        await using var client = _ageClientFactory.CreateUnscopedClient();
         await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await ExecuteIndexCommandsAsync(client, commands, cancellationToken).ConfigureAwait(false);
+        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
+    }
 
+    protected virtual async Task ExecuteIndexCommandsAsync(IAgeClient client, IEnumerable<string> commands, CancellationToken cancellationToken)
+    {
         foreach (var commandText in commands)
         {
             await using var command = client.Connection.CreateCommand();
@@ -638,13 +649,11 @@ LIMIT 1;";
                 continue;
             }
         }
-
-        await client.CloseConnectionAsync(cancellationToken).ConfigureAwait(false);
     }
 
     protected virtual async Task<IReadOnlyList<string>> ExecuteExplainAsync(string explainQuery, string parameterJson, CancellationToken cancellationToken)
     {
-        await using var client = _ageClientFactory.CreateClient();
+        await using var client = _ageClientFactory.CreateUnscopedClient();
         await client.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
 
         await using var command = client.Connection.CreateCommand();
@@ -932,13 +941,6 @@ LIMIT 1;";
         exception.SqlState is PostgresErrorCodes.DuplicateTable or
             PostgresErrorCodes.DuplicateObject or
             PostgresErrorCodes.UniqueViolation;
-
-    private sealed class PostgresGraphStoreScope(IAgeClientScope innerScope) : IGraphStoreScope
-    {
-        private readonly IAgeClientScope _innerScope = innerScope;
-
-        public ValueTask DisposeAsync() => _innerScope.DisposeAsync();
-    }
 
     public async ValueTask DisposeAsync()
     {

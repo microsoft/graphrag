@@ -7,6 +7,7 @@ namespace GraphRag.Storage.Postgres.ApacheAge;
 public interface IAgeClientFactory
 {
     IAgeClient CreateClient();
+    IAgeClient CreateUnscopedClient();
     ValueTask<IAgeClientScope> CreateScopeAsync(CancellationToken cancellationToken = default);
 }
 
@@ -25,6 +26,8 @@ internal sealed class AgeClientFactory([FromKeyedServices] IAgeConnectionManager
 
         return CreatePhysicalClient();
     }
+
+    public IAgeClient CreateUnscopedClient() => CreatePhysicalClient();
 
     public ValueTask<IAgeClientScope> CreateScopeAsync(CancellationToken cancellationToken = default)
     {

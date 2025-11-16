@@ -33,6 +33,16 @@ public sealed class Neo4jGraphStore(IDriver driver, ILogger<Neo4jGraphStore> log
         await session.ExecuteWriteAsync(tx => tx.RunAsync(cypher, new { id, props = properties }));
     }
 
+    public async Task UpsertNodesAsync(IReadOnlyCollection<GraphNodeUpsert> nodes, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(nodes);
+
+        foreach (var node in nodes)
+        {
+            await UpsertNodeAsync(node.Id, node.Label, node.Properties, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
     public async Task UpsertRelationshipAsync(string sourceId, string targetId, string type, IReadOnlyDictionary<string, object?> properties, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceId);
@@ -47,6 +57,31 @@ SET r += $props";
 
         await using var session = _driver.AsyncSession();
         await session.ExecuteWriteAsync(tx => tx.RunAsync(cypher, new { sourceId, targetId, props = properties }));
+    }
+
+    public async Task UpsertRelationshipsAsync(IReadOnlyCollection<GraphRelationshipUpsert> relationships, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(relationships);
+
+        foreach (var relationship in relationships)
+        {
+            await UpsertRelationshipAsync(
+                relationship.SourceId,
+                relationship.TargetId,
+                relationship.Type,
+                relationship.Properties,
+                cancellationToken).ConfigureAwait(false);
+
+            if (relationship.Bidirectional)
+            {
+                await UpsertRelationshipAsync(
+                    relationship.TargetId,
+                    relationship.SourceId,
+                    relationship.Type,
+                    relationship.Properties,
+                    cancellationToken).ConfigureAwait(false);
+            }
+        }
     }
 
     public IAsyncEnumerable<GraphRelationship> GetOutgoingRelationshipsAsync(string sourceId, CancellationToken cancellationToken = default)

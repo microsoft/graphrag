@@ -1,4 +1,3 @@
-using GraphRag.Graphs;
 using GraphRag.Storage.Postgres;
 using GraphRag.Storage.Postgres.ApacheAge;
 using Microsoft.Extensions.DependencyInjection;
@@ -193,8 +192,8 @@ public sealed class PostgresConcurrencyTests(GraphRagApplicationFixture fixture)
         var store = provider.GetRequiredKeyedService<PostgresGraphStore>("scoped");
         await store.InitializeAsync();
 
-        var scopedStore = Assert.IsAssignableFrom<IScopedGraphStore>(store);
         var manager = provider.GetRequiredKeyedService<IAgeConnectionManager>("scoped");
+        var clientFactory = provider.GetRequiredKeyedService<IAgeClientFactory>("scoped");
 
         const int scopeCount = 100;
         const int operationsPerScope = 500;
@@ -209,7 +208,7 @@ public sealed class PostgresConcurrencyTests(GraphRagApplicationFixture fixture)
 
         async Task ExecuteScopeAsync(int scopeIndex)
         {
-            await using var scope = await scopedStore.CreateScopeAsync();
+            await using var scope = await clientFactory.CreateScopeAsync();
             for (var i = 0; i < operationsPerScope; i++)
             {
                 var nodeId = $"scope-{scopeIndex:D4}-node-{i:D4}";

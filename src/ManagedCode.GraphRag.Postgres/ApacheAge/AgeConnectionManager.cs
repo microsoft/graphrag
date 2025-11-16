@@ -41,6 +41,7 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
             throw new ArgumentOutOfRangeException(nameof(connectionString), "Maximum Pool Size must be greater than zero.");
         }
         connectionBuilder.MinPoolSize = Math.Min(10, connectionBuilder.MaxPoolSize);
+        connectionBuilder.Timeout = 0;
 
         ConnectionString = connectionBuilder.ConnectionString;
         _dataSource = NpgsqlDataSource.Create(connectionBuilder.ConnectionString);
@@ -182,11 +183,22 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
                 LogMessages.ConnectionRetrying(_logger, ConnectionString, attempt, delay, ex.MessageText);
                 await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
             }
+            catch (NpgsqlException ex) when (ShouldRetryOnPoolExhaustion(ex, attempt))
+            {
+                var delay = GetRetryDelay(attempt);
+                LogMessages.ConnectionRetrying(_logger, ConnectionString, attempt, delay, ex.Message);
+                await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+            }
         }
     }
 
     private static bool ShouldRetry(PostgresException ex, int attempt) =>
         ex.SqlState == PostgresErrorCodes.TooManyConnections && attempt < ConnectionLimitMaxAttempts;
+
+    private static bool ShouldRetryOnPoolExhaustion(NpgsqlException ex, int attempt) =>
+        attempt < ConnectionLimitMaxAttempts &&
+        ex.InnerException is TimeoutException &&
+        ex.Message.Contains("The connection pool has been exhausted", StringComparison.OrdinalIgnoreCase);
 
     private static TimeSpan GetRetryDelay(int attempt)
     {

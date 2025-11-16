@@ -236,7 +236,7 @@ GraphRAG ships with a first-class Apache AGE adapter (`ManagedCode.GraphRag.Post
      }
    }
    ```
-4. **Register through DI.** `services.AddPostgresGraphStore("postgres", configure: ...)` wires up `IAgeConnectionManager`, `IAgeClientFactory`, `IGraphStore`, `IScopedGraphStore`, and `IBulkGraphStore`. Pool sizing follows the standard Npgsql settings (configure `Max Pool Size`, `Timeout`, etc. inside the connection string). The first registration becomes the default unkeyed `IGraphStore`; additional stores remain keyed-only.
+4. **Register through DI.** `services.AddPostgresGraphStore("postgres", configure: ...)` wires up `IAgeConnectionManager`, `IAgeClientFactory`, `PostgresGraphStore`, `IGraphStore`, and `PostgresExplainService`. Pool sizing follows the standard Npgsql settings (configure `Max Pool Size`, `Timeout`, etc. inside the connection string). The first registration becomes the default unkeyed `IGraphStore`; additional stores remain keyed-only.
 
    ```csharp
    var services = new ServiceCollection()
@@ -253,23 +253,27 @@ GraphRAG ships with a first-class Apache AGE adapter (`ManagedCode.GraphRag.Post
    var graphStore = provider.GetRequiredService<IGraphStore>();
 
    // Scoped operations reuse a single AGE/Postgres connection for the lifetime of the scope
-   var scopedStore = provider.GetRequiredService<IScopedGraphStore>();
-   await using (await scopedStore.CreateScopeAsync())
+   var ageClientFactory = provider.GetRequiredKeyedService<IAgeClientFactory>("postgres");
+   await using (await ageClientFactory.CreateScopeAsync())
    {
        await graphStore.UpsertNodeAsync("node-1", "Example", new Dictionary<string, object?> { ["name"] = "Scoped" });
        await graphStore.UpsertNodeAsync("node-2", "Example", new Dictionary<string, object?> { ["name"] = "Connection" });
    }
 
    // Bulk helpers batch large workloads while keeping the scoped connection alive
-   var bulkStore = provider.GetRequiredService<IBulkGraphStore>();
-   await bulkStore.UpsertNodesAsync(new[]
+   await graphStore.UpsertNodesAsync(new[]
    {
        new GraphNodeUpsert("bulk-1", "Example", new Dictionary<string, object?> { ["name"] = "Bulk" }),
        new GraphNodeUpsert("bulk-2", "Example", new Dictionary<string, object?> { ["name"] = "Write" })
    });
+
+   await graphStore.UpsertRelationshipsAsync(new[]
+   {
+       new GraphRelationshipUpsert("bulk-1", "bulk-2", "RELATES_TO", new Dictionary<string, object?>())
+   });
    ```
 
-   The `AgeConnectionManager` automatically retries transient `53300: too many clients` errors (up to three exponential backoff attempts) so scopes can wait for a free slot before failing. When a scope is disposed, the underlying `IAgeClientScope` returns its connection to the pool, keeping concurrency predictable even under heavy fan-out.
+   The `AgeConnectionManager` automatically retries transient `53300: too many clients` errors (up to three exponential backoff attempts) so scopes can wait for a free slot before failing. When a scope is disposed, the underlying `IAgeClientScope` created by `IAgeClientFactory` returns its connection to the pool, keeping concurrency predictable even under heavy fan-out.
 
 ### Neo4j Setup
 

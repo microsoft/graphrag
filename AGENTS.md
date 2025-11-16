@@ -12,6 +12,9 @@
 - When initialization logic is required (initialization tasks), add a simple hosted service to perform it and register that hosted service inside the relevant extensions.
 - Do not expose user-facing knobs for AGE/Postgres connection pool sizing (e.g., `MaxConnections` parameters); rely on EF Core-style connection-string keywords and reasonable defaults inside the connector.
 - Graph store registrations (Postgres, Neo4j, Cosmos) must automatically register a default `IGraphStore`; remove `MakeDefault` toggles/options and rely on the first registration when an unkeyed graph store is requested.
+- Keep bulk graph store operations on `IGraphStore`; do not split them into a separate `IBulkGraphStore` interface.
+- Avoid separate scoped graph store abstractions (e.g., `IScopedGraphStore`); keep scope management on the primary client/graph store or its factory rather than exposing an extra DI service.
+- Always update `README.md` (and related docs) to reflect any behavior or API changes you make so documentation stays current with the code.
 
 # Conversations
 any resulting updates to agents.md should go under the section "## Rules to follow"

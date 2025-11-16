@@ -29,7 +29,7 @@ public sealed class PipelineExecutorTests
         {
             new WorkflowStep("ok", (cfg, ctx, token) => ValueTask.FromResult(new WorkflowResult("done"))),
             new WorkflowStep("boom", (cfg, ctx, token) => throw new InvalidOperationException("fail")),
-            new WorkflowStep("skipped", (cfg, ctx, token) => throw new Exception("should not run"))
+            new WorkflowStep("skipped", (cfg, ctx, token) => throw new InvalidOperationException("should not run"))
         });
 
         var executor = new PipelineExecutor(new NullLogger<PipelineExecutor>());

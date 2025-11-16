@@ -29,12 +29,12 @@ public sealed class PostgresBulkGraphStoreTests(GraphRagApplicationFixture fixtu
         await using var provider = services.BuildServiceProvider();
         var store = provider.GetRequiredKeyedService<PostgresGraphStore>("bulk");
         var connectionManager = provider.GetRequiredKeyedService<IAgeConnectionManager>("bulk");
+        var clientFactory = provider.GetRequiredKeyedService<IAgeClientFactory>("bulk");
         await store.InitializeAsync();
 
-        var scopedStore = Assert.IsAssignableFrom<IScopedGraphStore>(store);
-        await using var scope = await scopedStore.CreateScopeAsync();
+        await using var scope = await clientFactory.CreateScopeAsync();
 
-        var bulkStore = Assert.IsAssignableFrom<IBulkGraphStore>(store);
+        var bulkStore = provider.GetRequiredKeyedService<IGraphStore>("bulk");
         await bulkStore.UpsertNodesAsync(new[]
         {
             new GraphNodeUpsert("bulk-node-1", "BulkEntity", new Dictionary<string, object?> { ["name"] = "first" }),
@@ -84,12 +84,12 @@ public sealed class PostgresBulkGraphStoreTests(GraphRagApplicationFixture fixtu
         await using var provider = services.BuildServiceProvider();
         var store = provider.GetRequiredKeyedService<PostgresGraphStore>("bulk_scope");
         var connectionManager = provider.GetRequiredKeyedService<IAgeConnectionManager>("bulk_scope");
+        var clientFactory = provider.GetRequiredKeyedService<IAgeClientFactory>("bulk_scope");
         await store.InitializeAsync();
 
-        var scopedStore = Assert.IsAssignableFrom<IScopedGraphStore>(store);
-        var bulkStore = Assert.IsAssignableFrom<IBulkGraphStore>(store);
+        var bulkStore = provider.GetRequiredKeyedService<IGraphStore>("bulk_scope");
 
-        await using (await scopedStore.CreateScopeAsync())
+        await using (await clientFactory.CreateScopeAsync())
         {
             await bulkStore.UpsertNodesAsync(new[]
             {
