@@ -64,6 +64,9 @@ def prune_graph(
         ])
 
     # remove edges by min weight
+    if len(graph.edges) == 0:
+        return graph
+
     if min_edge_weight_pct > 0:
         min_edge_weight = np.percentile(
             [data[schemas.EDGE_WEIGHT] for _, _, data in graph.edges(data=True)],
