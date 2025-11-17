@@ -222,6 +222,7 @@ If the graph is sparse, the pipeline falls back to connected components to ensur
 ## Integration Testing Strategy
 
 - **Real services only.** All graph operations run against containerised Neo4j and Apache AGE/PostgreSQL instances provisioned by Testcontainers.
+- **Extended startup window.** The integration fixture raises `TestcontainersSettings.WaitStrategyTimeout` to 10 minutes so first-time Docker pulls have enough time to complete before readiness checks fail.
 - **Deterministic heuristics.** `StubEmbeddingGenerator` guarantees stable embeddings so semantic-dedup and token-budget assertions remain reliable.
 - **Cross-store validation.** Shared integration fixtures verify that workflows succeed against each adapter (Cosmos tests activate when the emulator connection string is present).
 - **Prompt precedence.** Tests validate that manual prompt overrides win over auto-tuned variants while still cascading correctly to the default templates.

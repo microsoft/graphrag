@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
 using GraphRag;
 using GraphRag.Storage.Cosmos;
 using GraphRag.Storage.JanusGraph;
@@ -20,6 +21,7 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
     private const string Neo4jPassword = "test1234";
     private const string PostgresPassword = "postgres";
     private const string PostgresDatabase = "graphragdb";
+    private static readonly TimeSpan ContainerStartupTimeout = TimeSpan.FromMinutes(10);
 
     private ServiceProvider _serviceProvider = null!;
     private AsyncServiceScope? _scope;
@@ -30,6 +32,15 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
 
     public IServiceProvider Services => _scope?.ServiceProvider ?? throw new InvalidOperationException("The fixture has not been initialized.");
     public string PostgresConnectionString => _postgresContainer?.GetConnectionString() ?? throw new InvalidOperationException("PostgreSQL container is not available.");
+
+    static GraphRagApplicationFixture()
+    {
+        if (TestcontainersSettings.WaitStrategyTimeout is null || TestcontainersSettings.WaitStrategyTimeout < ContainerStartupTimeout)
+        {
+            // Pulling these images can easily exceed the default timeout on fresh machines, so relax it globally.
+            TestcontainersSettings.WaitStrategyTimeout = ContainerStartupTimeout;
+        }
+    }
 
     public async Task InitializeAsync()
     {
