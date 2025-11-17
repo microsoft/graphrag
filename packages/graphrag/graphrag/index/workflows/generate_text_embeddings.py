@@ -10,13 +10,8 @@ import pandas as pd
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.embeddings import (
     community_full_content_embedding,
-    community_summary_embedding,
-    community_title_embedding,
     create_index_name,
-    document_text_embedding,
     entity_description_embedding,
-    entity_title_embedding,
-    relationship_description_embedding,
     text_unit_text_embedding,
 )
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -47,29 +42,14 @@ async def run_workflow(
     logger.info("Workflow started: generate_text_embeddings")
     embedded_fields = config.embed_text.names
     logger.info("Embedding the following fields: %s", embedded_fields)
-    documents = None
-    relationships = None
     text_units = None
     entities = None
     community_reports = None
-    if document_text_embedding in embedded_fields:
-        documents = await load_table_from_storage("documents", context.output_storage)
-    if relationship_description_embedding in embedded_fields:
-        relationships = await load_table_from_storage(
-            "relationships", context.output_storage
-        )
     if text_unit_text_embedding in embedded_fields:
         text_units = await load_table_from_storage("text_units", context.output_storage)
-    if (
-        entity_title_embedding in embedded_fields
-        or entity_description_embedding in embedded_fields
-    ):
+    if entity_description_embedding in embedded_fields:
         entities = await load_table_from_storage("entities", context.output_storage)
-    if (
-        community_title_embedding in embedded_fields
-        or community_summary_embedding in embedded_fields
-        or community_full_content_embedding in embedded_fields
-    ):
+    if community_full_content_embedding in embedded_fields:
         community_reports = await load_table_from_storage(
             "community_reports", context.output_storage
         )
@@ -87,8 +67,6 @@ async def run_workflow(
     tokenizer = get_tokenizer(model_config)
 
     output = await generate_text_embeddings(
-        documents=documents,
-        relationships=relationships,
         text_units=text_units,
         entities=entities,
         community_reports=community_reports,
@@ -115,8 +93,6 @@ async def run_workflow(
 
 
 async def generate_text_embeddings(
-    documents: pd.DataFrame | None,
-    relationships: pd.DataFrame | None,
     text_units: pd.DataFrame | None,
     entities: pd.DataFrame | None,
     community_reports: pd.DataFrame | None,
@@ -131,25 +107,11 @@ async def generate_text_embeddings(
 ) -> dict[str, pd.DataFrame]:
     """All the steps to generate all embeddings."""
     embedding_param_map = {
-        document_text_embedding: {
-            "data": documents.loc[:, ["id", "text"]] if documents is not None else None,
-            "embed_column": "text",
-        },
-        relationship_description_embedding: {
-            "data": relationships.loc[:, ["id", "description"]]
-            if relationships is not None
-            else None,
-            "embed_column": "description",
-        },
         text_unit_text_embedding: {
             "data": text_units.loc[:, ["id", "text"]]
             if text_units is not None
             else None,
             "embed_column": "text",
-        },
-        entity_title_embedding: {
-            "data": entities.loc[:, ["id", "title"]] if entities is not None else None,
-            "embed_column": "title",
         },
         entity_description_embedding: {
             "data": entities.loc[:, ["id", "title", "description"]].assign(
@@ -158,18 +120,6 @@ async def generate_text_embeddings(
             if entities is not None
             else None,
             "embed_column": "title_description",
-        },
-        community_title_embedding: {
-            "data": community_reports.loc[:, ["id", "title"]]
-            if community_reports is not None
-            else None,
-            "embed_column": "title",
-        },
-        community_summary_embedding: {
-            "data": community_reports.loc[:, ["id", "summary"]]
-            if community_reports is not None
-            else None,
-            "embed_column": "summary",
         },
         community_full_content_embedding: {
             "data": community_reports.loc[:, ["id", "full_content"]]
