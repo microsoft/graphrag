@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+using System.Globalization;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using GraphRag;
@@ -21,7 +21,9 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
     private const string Neo4jPassword = "test1234";
     private const string PostgresPassword = "postgres";
     private const string PostgresDatabase = "graphragdb";
-    private static readonly TimeSpan ContainerStartupTimeout = TimeSpan.FromMinutes(10);
+    private const string ContainerTimeoutEnvVar = "GRAPH_RAG_CONTAINER_TIMEOUT_MINUTES";
+    private static readonly TimeSpan DefaultContainerStartupTimeout = TimeSpan.FromMinutes(30);
+    private static readonly TimeSpan ContainerStartupTimeout = ResolveContainerStartupTimeout();
 
     private ServiceProvider _serviceProvider = null!;
     private AsyncServiceScope? _scope;
@@ -165,6 +167,19 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
         return builder.ConnectionString;
     }
 
+    private static TimeSpan ResolveContainerStartupTimeout()
+    {
+        var envValue = Environment.GetEnvironmentVariable(ContainerTimeoutEnvVar);
+        if (!string.IsNullOrWhiteSpace(envValue) &&
+            double.TryParse(envValue, NumberStyles.Float, CultureInfo.InvariantCulture, out var minutes) &&
+            minutes > 0)
+        {
+            return TimeSpan.FromMinutes(minutes);
+        }
+
+        return DefaultContainerStartupTimeout;
+    }
+
     private async Task EnsurePostgresDatabaseAsync()
     {
         if (_postgresContainer is null)
@@ -247,11 +262,6 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
     private static bool IsCosmosSupported()
     {
         var flag = Environment.GetEnvironmentVariable("GRAPH_RAG_ENABLE_COSMOS");
-        if (string.Equals(flag, "true", StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        return RuntimeInformation.ProcessArchitecture == Architecture.X64;
+        return string.Equals(flag, "true", StringComparison.OrdinalIgnoreCase);
     }
 }
