@@ -8,14 +8,7 @@ public sealed class GraphStoreStressTests(GraphRagApplicationFixture fixture)
 {
     private const int ParallelOperations = 1500;
 
-    private static readonly (string Key, string Label)[] ProviderMap =
-    {
-        ("postgres", "Chapter"),
-        ("neo4j", "Person"),
-        ("cosmos", "Document")
-    };
-
-    public static IEnumerable<object[]> Providers => ProviderMap.Select(tuple => new object[] { tuple.Key, tuple.Label });
+    public static IEnumerable<object[]> Providers => GraphStoreTestProviders.ProviderKeysAndLabels;
 
     [Theory]
     [MemberData(nameof(Providers))]

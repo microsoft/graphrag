@@ -1,11 +1,12 @@
 using GraphRag.Graphs;
 using GraphRag.Storage.Postgres;
 using GraphRag.Storage.Postgres.ApacheAge;
+using ManagedCode.GraphRag.Tests.Integration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 
-namespace ManagedCode.GraphRag.Tests.Integration;
+namespace ManagedCode.GraphRag.Tests.Storage.Postgres;
 
 [Collection(nameof(GraphRagApplicationCollection))]
 public sealed class PostgresBulkGraphStoreTests(GraphRagApplicationFixture fixture)

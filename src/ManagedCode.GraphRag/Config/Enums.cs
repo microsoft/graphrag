@@ -7,6 +7,15 @@ public enum InputFileType
     Json
 }
 
+public enum CacheType
+{
+    File,
+    Memory,
+    None,
+    Blob,
+    CosmosDb
+}
+
 public enum StorageType
 {
     File,
@@ -32,6 +41,12 @@ public enum ChunkStrategyType
 {
     Tokens,
     Sentence
+}
+
+public enum AsyncType
+{
+    Threaded,
+    AsyncIO
 }
 
 public enum SearchMethod

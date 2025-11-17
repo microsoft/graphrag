@@ -7,14 +7,7 @@ namespace ManagedCode.GraphRag.Tests.Integration;
 [Collection(nameof(GraphRagApplicationCollection))]
 public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixture)
 {
-    private static readonly IReadOnlyDictionary<string, string> ProviderLabels = new Dictionary<string, string>
-    {
-        ["neo4j"] = "Person",
-        ["postgres"] = "Chapter",
-        ["janus"] = "Person"
-    };
-
-    public static IEnumerable<object[]> GraphProviders => ProviderLabels.Keys.Select(key => new object[] { key });
+    public static IEnumerable<object[]> GraphProviders => GraphStoreTestProviders.ProviderKeys;
 
     [Theory]
     [MemberData(nameof(GraphProviders))]
@@ -27,7 +20,7 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
         }
         await store.InitializeAsync();
 
-        var label = ProviderLabels[providerKey];
+        var label = GraphStoreTestProviders.GetLabel(providerKey);
         var nodeId = $"{providerKey}-update-{Guid.NewGuid():N}";
 
         await store.UpsertNodeAsync(nodeId, label, new Dictionary<string, object?> { ["name"] = "alpha", ["score"] = 1 });
@@ -50,7 +43,7 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
         }
         await store.InitializeAsync();
 
-        var label = ProviderLabels[providerKey];
+        var label = GraphStoreTestProviders.GetLabel(providerKey);
         var nodeId = $"{providerKey}-cleanup-{Guid.NewGuid():N}";
 
         await store.UpsertNodeAsync(nodeId, label, new Dictionary<string, object?> { ["nickname"] = "alpha" });
@@ -73,7 +66,7 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
         }
         await store.InitializeAsync();
 
-        var label = ProviderLabels[providerKey];
+        var label = GraphStoreTestProviders.GetLabel(providerKey);
         var a = $"{providerKey}-bi-a-{Guid.NewGuid():N}";
         var b = $"{providerKey}-bi-b-{Guid.NewGuid():N}";
 
@@ -105,7 +98,7 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
         }
         await store.InitializeAsync();
 
-        var label = ProviderLabels[providerKey];
+        var label = GraphStoreTestProviders.GetLabel(providerKey);
         var nodeId = $"{providerKey}-node-{Guid.NewGuid():N}";
         var props = new Dictionary<string, object?>
         {
@@ -131,7 +124,7 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
         }
         await store.InitializeAsync();
 
-        var label = ProviderLabels[providerKey];
+        var label = GraphStoreTestProviders.GetLabel(providerKey);
         var sourceId = $"{providerKey}-rel-src-{Guid.NewGuid():N}";
         var targetId = $"{providerKey}-rel-dst-{Guid.NewGuid():N}";
 
@@ -162,7 +155,7 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
             return;
         }
         await store.InitializeAsync();
-        var label = ProviderLabels[providerKey];
+        var label = GraphStoreTestProviders.GetLabel(providerKey);
 
         var nodes = Enumerable.Range(0, 3)
             .Select(index => new GraphNodeUpsert(
@@ -198,7 +191,7 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
         }
         await store.InitializeAsync();
 
-        var label = ProviderLabels[providerKey];
+        var label = GraphStoreTestProviders.GetLabel(providerKey);
         var sourceId = $"{providerKey}-del-src-{Guid.NewGuid():N}";
         var targetId = $"{providerKey}-del-dst-{Guid.NewGuid():N}";
 
@@ -226,7 +219,7 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
         }
         await graphStore.InitializeAsync();
 
-        var label = ProviderLabels.GetValueOrDefault(providerKey, "Entity");
+        var label = GraphStoreTestProviders.GetLabel(providerKey);
         var nodeIds = new List<string>();
         for (var i = 0; i < 5; i++)
         {

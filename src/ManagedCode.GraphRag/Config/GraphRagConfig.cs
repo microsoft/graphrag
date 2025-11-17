@@ -11,6 +11,8 @@ public sealed class GraphRagConfig
 
     public InputConfig Input { get; set; } = new();
 
+    public CacheConfig Cache { get; set; } = new();
+
     public ChunkingConfig Chunks { get; set; } = new();
 
     public StorageConfig Output { get; set; } = new();
@@ -36,11 +38,17 @@ public sealed class GraphRagConfig
 
     public TextEmbeddingConfig EmbedText { get; set; } = new();
 
+    public EmbedGraphConfig EmbedGraph { get; set; } = new();
+
     public ExtractGraphConfig ExtractGraph { get; set; } = new();
+
+    public ExtractGraphNlpConfig ExtractGraphNlp { get; set; } = new();
 
     public SummarizeDescriptionsConfig SummarizeDescriptions { get; set; } = new();
 
     public ClusterGraphConfig ClusterGraph { get; set; } = new();
+
+    public PruneGraphConfig PruneGraph { get; set; } = new();
 
     public HeuristicMaintenanceConfig Heuristics { get; set; } = new();
 
@@ -49,6 +57,18 @@ public sealed class GraphRagConfig
     public PromptTuningConfig PromptTuning { get; set; } = new();
 
     public SnapshotsConfig Snapshots { get; set; } = new();
+
+    public ClaimExtractionConfig ExtractClaims { get; set; } = new();
+
+    public UmapConfig Umap { get; set; } = new();
+
+    public LocalSearchConfig LocalSearch { get; set; } = new();
+
+    public GlobalSearchConfig GlobalSearch { get; set; } = new();
+
+    public DriftSearchConfig DriftSearch { get; set; } = new();
+
+    public BasicSearchConfig BasicSearch { get; set; } = new();
 
     public Dictionary<string, object?> Extensions { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 

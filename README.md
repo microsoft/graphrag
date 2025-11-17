@@ -164,6 +164,38 @@ See [`docs/indexing-and-query.md`](docs/indexing-and-query.md) for the full list
 
 ---
 
+## Configuration Parity
+
+The .NET configuration surface now mirrors the original Python CLI. `GraphRagConfig` exposes the same sections as `graphrag.config`, including cache providers, NLP-driven graph extraction, claim extraction, graph pruning, and every search mode (local/global/DRIFT/basic). This makes it straightforward to move existing Python configs across without rethinking every knob:
+
+```json
+{
+  "GraphRag": {
+    "Cache": { "Type": "File", "BaseDir": "cache" },
+    "ExtractGraphNlp": {
+      "ConcurrentRequests": 25,
+      "TextAnalyzer": { "ModelName": "en_core_web_md", "IncludeNamedEntities": true }
+    },
+    "ExtractClaims": {
+      "Enabled": true,
+      "ModelId": "chat_model",
+      "Prompt": "prompts/claims.txt",
+      "MaxGleanings": 2
+    },
+    "PruneGraph": { "MinNodeFrequency": 2, "MinEdgeWeightPercentile": 40 },
+    "EmbedGraph": { "Enabled": false, "Dimensions": 1536 },
+    "LocalSearch": { "ChatModelId": "chat_model", "EmbeddingModelId": "embedding_model" },
+    "GlobalSearch": { "MapPrompt": "prompts/global_map.txt", "ReducePrompt": "prompts/global_reduce.txt" },
+    "DriftSearch": { "Prompt": "prompts/drift.txt", "Concurrency": 32 },
+    "BasicSearch": { "K": 10 }
+  }
+}
+```
+
+`ClaimExtractionConfig.GetResolvedStrategy` mirrors the Python behaviour by loading prompt files from the configured root (and throwing if the file is missing) while still letting you override the entire `Strategy` block when needed.
+
+---
+
 ## Community Detection & Graph Analytics
 
 Community creation defaults to the fast label propagation algorithm. Tweak clustering directly through configuration:

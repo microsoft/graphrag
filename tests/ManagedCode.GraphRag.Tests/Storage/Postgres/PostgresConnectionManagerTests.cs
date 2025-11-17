@@ -1,13 +1,14 @@
 using GraphRag.Storage.Postgres;
 using GraphRag.Storage.Postgres.ApacheAge;
+using ManagedCode.GraphRag.Tests.Integration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 
-namespace ManagedCode.GraphRag.Tests.Integration;
+namespace ManagedCode.GraphRag.Tests.Storage.Postgres;
 
 [Collection(nameof(GraphRagApplicationCollection))]
-public sealed class PostgresConcurrencyTests(GraphRagApplicationFixture fixture)
+public sealed class PostgresConnectionManagerTests(GraphRagApplicationFixture fixture)
 {
     private const string SeedNodeId = "__seed__";
     private const int SharedConnectionLimit = 40;
@@ -40,19 +41,12 @@ public sealed class PostgresConcurrencyTests(GraphRagApplicationFixture fixture)
         await using var manager = CreateManager(connectionString, SharedConnectionLimit);
         await SeedGraphAsync(manager, graphName);
 
-        var tasks = Enumerable.Range(0, 5000).Select(async index =>
-        {
-            await UpsertAndVerifyNodeAsync(manager, graphName, index).ConfigureAwait(false);
-        });
-
+        var tasks = Enumerable.Range(0, 5000).Select(index => UpsertAndVerifyNodeAsync(manager, graphName, index));
         await Task.WhenAll(tasks);
 
         await AssertNodeCountAsync(manager, graphName, 5000);
         await CleanupGraphAsync(manager, graphName);
     }
-
-    private static AgeConnectionManager CreateManager(string connectionString, int maxConnections = SharedConnectionLimit) =>
-        new(ConfigurePool(connectionString, maxConnections), NullLogger<AgeConnectionManager>.Instance);
 
     [Fact]
     public async Task AgeClientFactory_CreatesManyClientsSequentially()
@@ -287,6 +281,9 @@ public sealed class PostgresConcurrencyTests(GraphRagApplicationFixture fixture)
             }
         }
     }
+
+    private static AgeConnectionManager CreateManager(string connectionString, int maxConnections = SharedConnectionLimit) =>
+        new(ConfigurePool(connectionString, maxConnections), NullLogger<AgeConnectionManager>.Instance);
 
     private static async Task SeedGraphAsync(IAgeConnectionManager manager, string graphName)
     {

@@ -18,6 +18,7 @@
 - Do not add trivial POCO/unit tests (e.g., pure record equality); focus tests on meaningful flows and integration scenarios.
 - When registering graph stores (especially Postgres) use `AddKeyedSingleton<T>(key)` without bespoke lambdas unless strictly required; rely on DI to construct services.
 - All integration tests must run against real dependencies via Testcontainers modules (Neo4j, Postgres/AGE, Cosmos, Janus, etc.); do not fall back to Aspire seeding or mock containers.
+- Keep integration tests provider-agnostic; avoid adding Postgres-only scenarios when the same flow should apply to every backend.
 
 # Conversations
 any resulting updates to agents.md should go under the section "## Rules to follow"

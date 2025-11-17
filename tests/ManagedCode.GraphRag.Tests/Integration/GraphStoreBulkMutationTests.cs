@@ -8,15 +8,7 @@ public sealed class GraphStoreBulkMutationTests(GraphRagApplicationFixture fixtu
 {
     private readonly GraphRagApplicationFixture _fixture = fixture;
 
-    private static readonly (string Key, string Label)[] ProviderMap =
-    {
-        ("postgres", "Chapter"),
-        ("neo4j", "Person"),
-        ("janus", "Person"),
-        ("cosmos", "Document")
-    };
-
-    public static IEnumerable<object[]> Providers => ProviderMap.Select(tuple => new object[] { tuple.Key, tuple.Label });
+    public static IEnumerable<object[]> Providers => GraphStoreTestProviders.ProviderKeysAndLabels;
 
     [Theory]
     [MemberData(nameof(Providers))]

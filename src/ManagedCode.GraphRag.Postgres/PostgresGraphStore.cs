@@ -574,7 +574,7 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
             writes[key] = value;
         }
 
-        IReadOnlyDictionary<string, object?> writeResult = writes.Count == 0 ? EmptyProperties : writes;
+        var writeResult = writes.Count == 0 ? EmptyProperties : writes;
         IReadOnlyCollection<string> removeResult = removes.Count == 0 ? Array.Empty<string>() : removes;
         return (writeResult, removeResult);
     }
