@@ -10,7 +10,7 @@ env:
   DOTNET_VERSION: '10.0.x'
   SOLUTION_FILE: GraphRag.slnx
   GRAPH_RAG_ENABLE_JANUS: 'true'
-  GRAPH_RAG_ENABLE_COSMOS: 'true'
+  GRAPH_RAG_ENABLE_COSMOS: 'false'
 
 jobs:
   build:
