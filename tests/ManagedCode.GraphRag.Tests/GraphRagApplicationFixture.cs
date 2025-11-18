@@ -69,6 +69,8 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(5432))
             .Build();
 
+        _janusContainer = new JanusGraphBuilder().Build();
+
         if (IsCosmosSupported())
         {
             _cosmosContainer = new CosmosDbBuilder()
@@ -76,25 +78,16 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
                 .Build();
         }
 
-        if (IsJanusSupported())
-        {
-            _janusContainer = new JanusGraphBuilder().Build();
-        }
-
         var startTasks = new List<Task>
         {
             _neo4jContainer.StartAsync(),
-            _postgresContainer.StartAsync()
+            _postgresContainer.StartAsync(),
+            _janusContainer.StartAsync()
         };
 
         if (_cosmosContainer is not null)
         {
             startTasks.Add(_cosmosContainer.StartAsync());
-        }
-
-        if (_janusContainer is not null)
-        {
-            startTasks.Add(_janusContainer.StartAsync());
         }
 
         await Task.WhenAll(startTasks).ConfigureAwait(false);
@@ -104,8 +97,8 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
         postgresConnection = _postgresContainer.GetConnectionString();
         cosmosConnectionString = _cosmosContainer?.GetConnectionString();
 
-        var janusHost = _janusContainer?.Hostname;
-        var janusPort = _janusContainer?.GetMappedPublicPort(8182);
+        var janusHost = _janusContainer.Hostname;
+        var janusPort = _janusContainer.GetMappedPublicPort(8182);
 
         var configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
 
@@ -143,14 +136,11 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
             });
         }
 
-        if (_janusContainer is not null && janusHost is not null && janusPort is not null)
+        services.AddJanusGraphStore("janus", options =>
         {
-            services.AddJanusGraphStore("janus", options =>
-            {
-                options.Host = janusHost;
-                options.Port = janusPort.Value;
-            });
-        }
+            options.Host = janusHost;
+            options.Port = janusPort;
+        });
 
         _serviceProvider = services.BuildServiceProvider();
         _scope = _serviceProvider.CreateAsyncScope();
@@ -251,12 +241,6 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
         {
             await _janusContainer.DisposeAsync().ConfigureAwait(false);
         }
-    }
-
-    private static bool IsJanusSupported()
-    {
-        var flag = Environment.GetEnvironmentVariable("GRAPH_RAG_ENABLE_JANUS");
-        return string.Equals(flag, "true", StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsCosmosSupported()

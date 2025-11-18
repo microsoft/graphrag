@@ -309,6 +309,24 @@ GraphRAG ships with a first-class Apache AGE adapter (`ManagedCode.GraphRag.Post
 
    The `AgeConnectionManager` automatically retries transient `53300: too many clients` errors (up to three exponential backoff attempts) so scopes can wait for a free slot before failing. When a scope is disposed, the underlying `IAgeClientScope` created by `IAgeClientFactory` returns its connection to the pool, keeping concurrency predictable even under heavy fan-out.
 
+   Need to tune pooling or other Npgsql settings? Set `options.ConfigureConnectionStringBuilder` / `ConfigureDataSourceBuilder` when registering the store:
+
+   ```csharp
+   builder.Services.AddPostgresGraphStore("postgres", options =>
+   {
+       options.ConnectionString = postgresConnectionString;
+       options.ConfigureConnectionStringBuilder = builder =>
+       {
+           builder.MaxPoolSize = 80;
+           builder.MinPoolSize = 40;
+       };
+       options.ConfigureDataSourceBuilder = ds =>
+       {
+           ds.EnableArrayNullabilityMode();
+       };
+   });
+   ```
+
 ### Neo4j Setup
 
 Neo4j support lives in `ManagedCode.GraphRag.Neo4j` and uses the official Bolt driver:
@@ -332,6 +350,39 @@ Neo4j support lives in `ManagedCode.GraphRag.Neo4j` and uses the official Bolt d
    ```
    The first Neo4j registration will automatically satisfy `IGraphStore`; use `GetRequiredKeyedService<IGraphStore>("neo4j")` for explicit access.
 
+   You can also override the auth token and driver config:
+
+   ```csharp
+builder.Services.AddNeo4jGraphStore("neo4j", options =>
+{
+    options.Uri = "neo4j+s://example.databases.neo4j.io";
+    options.AuthTokenFactory = _ => AuthTokens.Basic("user", "pass");
+    options.ConfigureDriver = config => config.WithMaxConnectionPoolSize(50);
+    // Or bypass everything and provide your own driver:
+    options.DriverFactory = opts => GraphDatabase.Driver(opts.Uri, AuthTokens.None);
+});
+```
+
+### JanusGraph Setup
+
+JanusGraph support (`ManagedCode.GraphRag.JanusGraph`) uses Gremlin.Net under the hood and now starts automatically in the integration fixture. Register it just like the other stores:
+
+```csharp
+builder.Services.AddJanusGraphStore("janus", options =>
+{
+    options.Host = "localhost";
+    options.Port = 8182;
+    options.ConnectionPoolSize = 16; // optional
+    options.MaxInProcessPerConnection = 32; // optional
+    options.ConfigureConnectionPool = pool =>
+    {
+        pool.MaxInProcessPerConnection = Math.Max(pool.MaxInProcessPerConnection, 8);
+    };
+});
+```
+
+By default the adapter uses a 32-connection pool with 64 in-flight requests per connection, but you can override those numbers (or mutate the underlying `ConnectionPoolSettings` directly) via the new option properties shown above.
+
 ### Azure Cosmos DB Setup
 
 The Cosmos adapter (`ManagedCode.GraphRag.CosmosDb`) targets the SQL API and works with the emulator or live accounts:
@@ -339,15 +390,20 @@ The Cosmos adapter (`ManagedCode.GraphRag.CosmosDb`) targets the SQL API and wor
 1. **Provide a connection string.** Set `COSMOS_EMULATOR_CONNECTION_STRING` or configure options manually.
 2. **Register the store.**
    ```csharp
-   builder.Services.AddCosmosGraphStore("cosmos", options =>
-   {
-       options.ConnectionString = cosmosConnectionString;
-       options.DatabaseId = "GraphRagIntegration";
-       options.NodesContainerId = "nodes";
-       options.EdgesContainerId = "edges";
-   });
-   ```
-   As with other adapters, the first Cosmos store becomes the unkeyed default.
+builder.Services.AddCosmosGraphStore("cosmos", options =>
+{
+    options.ConnectionString = cosmosConnectionString;
+    options.DatabaseId = "GraphRagIntegration";
+    options.NodesContainerId = "nodes";
+    options.EdgesContainerId = "edges";
+    options.ConfigureClientOptions = clientOptions =>
+    {
+        clientOptions.GatewayModeMaxConnectionLimit = 100;
+    };
+    options.ConfigureSerializer = serializer => serializer.PropertyNamingPolicy = null;
+});
+```
+   As with other adapters, the first Cosmos store becomes the unkeyed default. If you already have a `CosmosClient`, set `options.ClientFactory` to return it and GraphRAG will reuse that instance.
 
 > **Tip:** `IGraphStore` now exposes full graph inspection and mutation helpers (`GetNodesAsync`, `GetRelationshipsAsync`, `DeleteNodesAsync`, `DeleteRelationshipsAsync`) in addition to the targeted APIs (`InitializeAsync`, `Upsert*`, `GetOutgoingRelationshipsAsync`). These use the same AGE-powered primitives, so you can inspect, prune, or export the graph without dropping down to concrete implementations.
 

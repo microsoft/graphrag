@@ -74,7 +74,7 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
         {
             var factory = loggerFactory ?? NullLoggerFactory.Instance;
             var connectionManagerLogger = factory.CreateLogger<AgeConnectionManager>();
-            var connectionManager = new AgeConnectionManager(connectionString, connectionManagerLogger);
+            var connectionManager = new AgeConnectionManager(options, connectionManagerLogger);
             _ownedConnectionManager = connectionManager;
             _ageClientFactory = new AgeClientFactory(connectionManager, factory);
         }

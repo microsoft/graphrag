@@ -5,13 +5,19 @@ using System.Text.Json;
 using GraphRag.Graphs;
 using Gremlin.Net.Driver;
 using Gremlin.Net.Driver.Exceptions;
-using Gremlin.Net.Structure.IO.GraphSON;
 using Microsoft.Extensions.Logging;
 
 namespace GraphRag.Storage.JanusGraph;
 
 public sealed class JanusGraphStore : IGraphStore, IAsyncDisposable
 {
+    private const string PropertyBagKey = "gr_props";
+    private static readonly string[] TransientMarkers =
+    {
+        "Local lock contention",
+        "Expected value mismatch",
+        "violates a uniqueness constraint"
+    };
     private readonly GremlinClient _client;
     private readonly ILogger<JanusGraphStore> _logger;
 
@@ -21,7 +27,9 @@ public sealed class JanusGraphStore : IGraphStore, IAsyncDisposable
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         var server = new GremlinServer(options.Host, options.Port, enableSsl: false);
-        _client = new GremlinClient(server, new GraphSON3MessageSerializer());
+        var serializer = JanusGraphGraphSONSerializerFactory.Create();
+        var poolSettings = BuildConnectionPoolSettings(options);
+        _client = new GremlinClient(server, serializer, poolSettings);
     }
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -39,10 +47,13 @@ public sealed class JanusGraphStore : IGraphStore, IAsyncDisposable
         const string script = @"
 nodeTraversal = g.V().hasLabel(nodeLabel).has('id', nodeId).fold().coalesce(unfold(), addV(nodeLabel).property('id', nodeId));
 node = nodeTraversal.next();
+propValue = node.property('gr_props').orElse(null);
+propBag = propValue == null ? [:] : new groovy.json.JsonSlurper().parseText(propValue);
 props.each { k, v ->
-  if (v == null) { node.properties(k).drop(); }
-  else { node.property(k, v); }
+  if (v == null) { propBag.remove(k); }
+  else { propBag[k] = v; }
 };
+node.property('gr_props', groovy.json.JsonOutput.toJson(propBag));
 node;
 null";
 
@@ -50,7 +61,7 @@ null";
         {
             ["nodeLabel"] = label,
             ["nodeId"] = id,
-            ["props"] = properties
+            ["props"] = PreparePropertyPayload(properties)
         };
 
         await SubmitAsync<object>(script, bindings, cancellationToken).ConfigureAwait(false);
@@ -82,10 +93,12 @@ g.V().has('id', sourceVertexId).outE(edgeLabel).where(inV().has('id', targetVert
 sourceVertex = sourceTraversal.next();
 targetVertex = targetTraversal.next();
 edge = sourceVertex.addEdge(edgeLabel, targetVertex);
+propBag = [:];
 props.each { k, v ->
-  if (v == null) { edge.properties(k).drop(); }
-  else { edge.property(k, v); }
+  if (v == null) { propBag.remove(k); }
+  else { propBag[k] = v; }
 };
+edge.property('gr_props', groovy.json.JsonOutput.toJson(propBag));
 edge;
 null";
 
@@ -94,7 +107,7 @@ null";
             ["sourceVertexId"] = sourceId,
             ["targetVertexId"] = targetId,
             ["edgeLabel"] = type,
-            ["props"] = properties
+            ["props"] = PreparePropertyPayload(properties)
         };
 
         await SubmitAsync<object>(script, bindings, cancellationToken).ConfigureAwait(false);
@@ -192,13 +205,13 @@ g.V().has('id', sourceId)
  .by(outV().values('id'))
  .by(inV().values('id'))
  .by(label())
- .by(valueMap())";
+ .by(coalesce(values('gr_props'), constant([:])))";
         var bindings = new Dictionary<string, object?> { ["sourceId"] = sourceId };
-        var edges = await SubmitAsync<IDictionary<string, object?>>(script, bindings, cancellationToken).ConfigureAwait(false);
+        var edges = await SubmitAsync<IDictionary<object, object?>>(script, bindings, cancellationToken).ConfigureAwait(false);
 
         foreach (var edge in edges)
         {
-            yield return ToRelationship(edge);
+            yield return ToRelationship((IDictionary)edge);
         }
     }
 
@@ -210,10 +223,10 @@ g.V().has('id', sourceId)
         var script = BuildRangeScript("g.V()", skip, take, out var parameters);
         script += ".valueMap(true)";
 
-        var nodes = await SubmitAsync<IDictionary<string, object?>>(script, parameters, cancellationToken).ConfigureAwait(false);
+        var nodes = await SubmitAsync<IDictionary<object, object?>>(script, parameters, cancellationToken).ConfigureAwait(false);
         foreach (var node in nodes)
         {
-            yield return ToNode(node);
+            yield return ToNode((IDictionary)node);
         }
     }
 
@@ -225,12 +238,12 @@ g.V().has('id', sourceId)
             .by(outV().values('id'))
             .by(inV().values('id'))
             .by(label())
-            .by(valueMap())";
+            .by(coalesce(values('gr_props'), constant([:])))";
 
-        var edges = await SubmitAsync<IDictionary<string, object?>>(script, parameters, cancellationToken).ConfigureAwait(false);
+        var edges = await SubmitAsync<IDictionary<object, object?>>(script, parameters, cancellationToken).ConfigureAwait(false);
         foreach (var edge in edges)
         {
-            yield return ToRelationship(edge);
+            yield return ToRelationship((IDictionary)edge);
         }
     }
 
@@ -261,20 +274,33 @@ g.V().has('id', sourceId)
 
     private async Task<IReadOnlyList<T>> SubmitAsync<T>(string script, IDictionary<string, object?>? parameters, CancellationToken cancellationToken)
     {
-        try
+        const int MaxRetries = 5;
+        var attempt = 0;
+
+        while (true)
         {
-            var bindings = ConvertBindings(parameters);
-            var result = await _client.SubmitAsync<T>(script, bindings, cancellationToken).ConfigureAwait(false);
-            return result.ToList();
-        }
-        catch (ResponseException ex)
-        {
-            _logger.LogError(ex, "JanusGraph query failed: {Script}", script);
-            throw;
+            try
+            {
+                var bindings = ConvertBindings(parameters);
+                var result = await _client.SubmitAsync<T>(script, bindings, cancellationToken).ConfigureAwait(false);
+                return result.ToList();
+            }
+            catch (ResponseException ex) when (attempt < MaxRetries && IsTransient(ex))
+            {
+                attempt++;
+                var delay = TimeSpan.FromMilliseconds(100 * attempt);
+                _logger.LogWarning(ex, "Transient JanusGraph error, retrying attempt {Attempt} of {MaxAttempts} for script {Script}", attempt, MaxRetries, script);
+                await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+            }
+            catch (ResponseException ex)
+            {
+                _logger.LogError(ex, "JanusGraph query failed: {Script}", script);
+                throw;
+            }
         }
     }
 
-    private static GraphNode ToNode(IDictionary<string, object?> raw)
+    private static GraphNode ToNode(IDictionary raw)
     {
         var map = NormalizeMap(raw);
         var id = GetMeta(map, "id");
@@ -288,13 +314,19 @@ g.V().has('id', sourceId)
                 continue;
             }
 
+            if (string.Equals(key, PropertyBagKey, StringComparison.OrdinalIgnoreCase))
+            {
+                ApplyJsonPropertyBag(properties, value);
+                continue;
+            }
+
             properties[key] = NormalizeValue(value);
         }
 
         return new GraphNode(id, label, properties);
     }
 
-    private static GraphRelationship ToRelationship(IDictionary<string, object?> raw)
+    private static GraphRelationship ToRelationship(IDictionary raw)
     {
         var map = NormalizeMap(raw);
         if (map.TryGetValue("sourceId", out var simpleSource) &&
@@ -302,18 +334,15 @@ g.V().has('id', sourceId)
             map.TryGetValue("type", out var simpleType))
         {
             var props = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
-            if (map.TryGetValue("properties", out var propsValue) && propsValue is IDictionary<string, object?> dict)
+            if (map.TryGetValue("properties", out var propsValue))
             {
-                foreach (var (key, value) in dict)
-                {
-                    props[key] = NormalizeValue(value);
-                }
+                ApplyJsonPropertyBag(props, propsValue);
             }
 
             return new GraphRelationship(
-                Convert.ToString(simpleSource, CultureInfo.InvariantCulture) ?? string.Empty,
-                Convert.ToString(simpleTarget, CultureInfo.InvariantCulture) ?? string.Empty,
-                Convert.ToString(simpleType, CultureInfo.InvariantCulture) ?? string.Empty,
+                ToScalarString(simpleSource),
+                ToScalarString(simpleTarget),
+                ToScalarString(simpleType),
                 props);
         }
 
@@ -329,18 +358,24 @@ g.V().has('id', sourceId)
                 continue;
             }
 
+            if (string.Equals(key, PropertyBagKey, StringComparison.OrdinalIgnoreCase))
+            {
+                ApplyJsonPropertyBag(properties, value);
+                continue;
+            }
+
             properties[key] = NormalizeValue(value);
         }
 
         return new GraphRelationship(source, target, label, properties);
     }
 
-    private static Dictionary<string, object?> NormalizeMap(IDictionary<string, object?> raw)
+    private static Dictionary<string, object?> NormalizeMap(IDictionary raw)
     {
         var result = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
-        foreach (var entry in raw)
+        foreach (DictionaryEntry entry in raw)
         {
-            var key = entry.Key?.ToString() ?? string.Empty;
+            var key = Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? string.Empty;
             result[key] = entry.Value;
         }
 
@@ -348,34 +383,63 @@ g.V().has('id', sourceId)
     }
 
     private static bool IsMetaKey(string key) =>
-        key is "id" or "label" or "~id" or "~label" or "~inV" or "~outV" or "inV" or "outV";
+        key is "id" or "label" or "~id" or "~label" or "~inV" or "~outV" or "inV" or "outV" or "T.id" or "T.label";
 
     private static string GetMeta(IReadOnlyDictionary<string, object?> map, string key)
     {
         if (map.TryGetValue(key, out var value) && value is not null)
         {
-            return Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty;
+            return ToScalarString(value);
         }
 
         var metaKey = "~" + key;
         if (map.TryGetValue(metaKey, out value) && value is not null)
         {
-            return Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty;
+            return ToScalarString(value);
+        }
+
+        var tokenKey = "T." + key;
+        if (map.TryGetValue(tokenKey, out value) && value is not null)
+        {
+            return ToScalarString(value);
         }
 
         return string.Empty;
+    }
+
+    private static string ToScalarString(object? value)
+    {
+        switch (value)
+        {
+            case null:
+                return string.Empty;
+            case string s:
+                return s;
+            case IDictionary:
+                return string.Empty;
+            case IEnumerable enumerable:
+                foreach (var item in enumerable)
+                {
+                    return ToScalarString(item);
+                }
+
+                return string.Empty;
+            default:
+                return Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty;
+        }
     }
 
     private static string ExtractVertexId(IReadOnlyDictionary<string, object?> map, string key)
     {
         if (map.TryGetValue(key, out var value) || map.TryGetValue("~" + key, out value))
         {
-            return value switch
+            if (value is IDictionary dictionary)
             {
-                null => string.Empty,
-                IDictionary<string, object?> dict => GetMeta((IReadOnlyDictionary<string, object?>)dict, "id"),
-                _ => Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty
-            };
+                var normalized = NormalizeMap(dictionary);
+                return GetMeta(normalized, "id");
+            }
+
+            return ToScalarString(value);
         }
 
         return string.Empty;
@@ -395,7 +459,11 @@ g.V().has('id', sourceId)
             JsonValueKind.Null => null,
             _ => element.GetRawText()
         },
-        IDictionary<string, object?> dict => dict.ToDictionary(pair => pair.Key, pair => (object?)NormalizeValue(pair.Value), StringComparer.OrdinalIgnoreCase),
+        IDictionary dictionary => dictionary.Cast<DictionaryEntry>()
+            .ToDictionary(
+                entry => Convert.ToString(entry.Key, CultureInfo.InvariantCulture) ?? string.Empty,
+                entry => (object?)NormalizeValue(entry.Value),
+                StringComparer.OrdinalIgnoreCase),
         IList list when list.Count == 1 => NormalizeValue(list[0]),
         IEnumerable enumerable when enumerable is not string => enumerable.Cast<object?>().Select(NormalizeValue).ToArray(),
         DateTime dateTime => dateTime.ToUniversalTime(),
@@ -403,6 +471,42 @@ g.V().has('id', sourceId)
         byte[] bytes => Convert.ToBase64String(bytes),
         _ => value
     };
+
+    private static bool IsTransient(ResponseException ex)
+    {
+        foreach (var marker in TransientMarkers)
+        {
+            if (ContainsMarker(ex.Message, marker))
+            {
+                return true;
+            }
+
+            if (ex.StatusAttributes is not null &&
+                ex.StatusAttributes.TryGetValue("message", out var attribute) &&
+                attribute is string statusMessage &&
+                ContainsMarker(statusMessage, marker))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool ContainsMarker(string? source, string marker) =>
+        source?.IndexOf(marker, StringComparison.OrdinalIgnoreCase) >= 0;
+
+    private static ConnectionPoolSettings BuildConnectionPoolSettings(JanusGraphStoreOptions options)
+    {
+        var settings = new ConnectionPoolSettings
+        {
+            PoolSize = options.ConnectionPoolSize ?? 32,
+            MaxInProcessPerConnection = options.MaxInProcessPerConnection ?? 64
+        };
+
+        options.ConfigureConnectionPool?.Invoke(settings);
+        return settings;
+    }
 
     private static Dictionary<string, object> ConvertBindings(IDictionary<string, object?>? source)
     {
@@ -430,6 +534,54 @@ g.V().has('id', sourceId)
 
         return dict;
     }
+
+    private static Dictionary<string, object?> PreparePropertyPayload(IReadOnlyDictionary<string, object?> properties)
+    {
+        var result = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (key, value) in properties)
+        {
+            if (string.Equals(key, "id", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            result[key] = value;
+        }
+
+        return result;
+    }
+
+    private static void ApplyJsonPropertyBag(IDictionary<string, object?> target, object? value)
+    {
+        switch (value)
+        {
+            case null:
+                return;
+            case string json when !string.IsNullOrWhiteSpace(json):
+                using (var document = JsonDocument.Parse(json))
+                {
+                    if (document.RootElement.ValueKind == JsonValueKind.Object)
+                    {
+                        foreach (var property in document.RootElement.EnumerateObject())
+                        {
+                            target[property.Name] = NormalizeValue(property.Value);
+                        }
+                    }
+                }
+
+                break;
+            case IEnumerable enumerable when value is not string:
+                foreach (var item in enumerable)
+                {
+                    ApplyJsonPropertyBag(target, item);
+                    break;
+                }
+
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 public sealed class JanusGraphStoreOptions
@@ -437,4 +589,7 @@ public sealed class JanusGraphStoreOptions
     public string Host { get; set; } = "localhost";
     public int Port { get; set; } = 8182;
     public string TraversalSource { get; set; } = "g";
+    public int? ConnectionPoolSize { get; set; }
+    public int? MaxInProcessPerConnection { get; set; }
+    public Action<ConnectionPoolSettings>? ConfigureConnectionPool { get; set; }
 }

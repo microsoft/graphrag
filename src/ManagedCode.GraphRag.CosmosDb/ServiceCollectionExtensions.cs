@@ -19,18 +19,22 @@ public static class ServiceCollectionExtensions
         configure(options);
 
         services.AddKeyedSingleton<CosmosGraphStoreOptions>(key, (_, _) => options);
-        services.AddKeyedSingleton<CosmosClient>(key, (_, _) =>
+        services.AddKeyedSingleton<CosmosClient>(key, (sp, serviceKey) =>
         {
+            var opts = sp.GetRequiredKeyedService<CosmosGraphStoreOptions>(serviceKey);
             var serializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web)
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
+            opts.ConfigureSerializer?.Invoke(serializerOptions);
+
             var cosmosOptions = new CosmosClientOptions
             {
                 Serializer = new SystemTextJsonCosmosSerializer(serializerOptions)
             };
+            opts.ConfigureClientOptions?.Invoke(cosmosOptions);
 
-            return new CosmosClient(options.ConnectionString, cosmosOptions);
+            return opts.ClientFactory?.Invoke(cosmosOptions) ?? new CosmosClient(opts.ConnectionString, cosmosOptions);
         });
         services.AddKeyedSingleton<CosmosGraphStore>(key, (sp, serviceKey) =>
         {
@@ -57,4 +61,10 @@ public sealed class CosmosGraphStoreOptions
     public string NodesContainerId { get; set; } = "nodes";
 
     public string EdgesContainerId { get; set; } = "edges";
+
+    public Action<JsonSerializerOptions>? ConfigureSerializer { get; set; }
+
+    public Action<CosmosClientOptions>? ConfigureClientOptions { get; set; }
+
+    public Func<CosmosClientOptions, CosmosClient>? ClientFactory { get; set; }
 }

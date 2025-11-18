@@ -3,6 +3,7 @@ using GraphRag.Graphs;
 using GraphRag.Storage.Postgres.ApacheAge;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Npgsql;
 
 namespace GraphRag.Storage.Postgres;
 
@@ -111,5 +112,9 @@ public sealed class PostgresGraphStoreOptions
     public Dictionary<string, string[]> VertexPropertyIndexes { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     public Dictionary<string, string[]> EdgePropertyIndexes { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+    public Action<NpgsqlConnectionStringBuilder>? ConfigureConnectionStringBuilder { get; set; }
+
+    public Action<NpgsqlDataSourceBuilder>? ConfigureDataSourceBuilder { get; set; }
 
 }

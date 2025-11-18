@@ -27,24 +27,34 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
     public AgeConnectionManager(
         [FromKeyedServices] PostgresGraphStoreOptions options,
         ILogger<AgeConnectionManager>? logger = null)
-        : this(options?.ConnectionString ?? throw new ArgumentNullException(nameof(options)), logger)
+        : this(options, options?.ConnectionString ?? throw new ArgumentNullException(nameof(options)), logger)
     {
     }
 
     public AgeConnectionManager(string connectionString, ILogger<AgeConnectionManager>? logger = null)
+        : this(null, connectionString, logger)
+    {
+    }
+
+    private AgeConnectionManager(PostgresGraphStoreOptions? options, string connectionString, ILogger<AgeConnectionManager>? logger)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
 
         var connectionBuilder = new NpgsqlConnectionStringBuilder(connectionString);
+        connectionBuilder.MinPoolSize = Math.Min(10, Math.Max(connectionBuilder.MaxPoolSize, 1));
+        connectionBuilder.Timeout = 0;
+
+        options?.ConfigureConnectionStringBuilder?.Invoke(connectionBuilder);
+
         if (connectionBuilder.MaxPoolSize <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(connectionString), "Maximum Pool Size must be greater than zero.");
         }
-        connectionBuilder.MinPoolSize = Math.Min(10, connectionBuilder.MaxPoolSize);
-        connectionBuilder.Timeout = 0;
 
         ConnectionString = connectionBuilder.ConnectionString;
-        _dataSource = NpgsqlDataSource.Create(connectionBuilder.ConnectionString);
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnectionString);
+        options?.ConfigureDataSourceBuilder?.Invoke(dataSourceBuilder);
+        _dataSource = dataSourceBuilder.Build();
         _logger = logger ?? NullLogger<AgeConnectionManager>.Instance;
     }
 
