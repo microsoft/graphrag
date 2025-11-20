@@ -10,7 +10,11 @@ from pathlib import Path
 
 import typer
 
-from graphrag.config.defaults import graphrag_config_defaults
+from graphrag.config.defaults import (
+    DEFAULT_CHAT_MODEL,
+    DEFAULT_EMBEDDING_MODEL,
+    graphrag_config_defaults,
+)
 from graphrag.config.enums import IndexingMethod, SearchMethod
 from graphrag.prompt_tune.defaults import LIMIT, MAX_TOKEN_COUNT, N_SUBSET_MAX, K
 from graphrag.prompt_tune.types import DocSelectionType
@@ -112,9 +116,17 @@ def _initialize_cli(
     ),
 ) -> None:
     """Generate a default configuration file."""
+    model = typer.prompt(
+        "Specify the default chat model to use", default=DEFAULT_CHAT_MODEL
+    )
+    embedding_model = typer.prompt(
+        "Specify the default embedding model to use", default=DEFAULT_EMBEDDING_MODEL
+    )
     from graphrag.cli.initialize import initialize_project_at
 
-    initialize_project_at(path=root, force=force)
+    initialize_project_at(
+        path=root, force=force, model=model, embedding_model=embedding_model
+    )
 
 
 @app.command("index")
@@ -143,11 +155,6 @@ def _index_cli(
         "-v",
         help="Run the indexing pipeline with verbose logging",
     ),
-    memprofile: bool = typer.Option(
-        False,
-        "--memprofile",
-        help="Run the indexing pipeline with memory profiling",
-    ),
     dry_run: bool = typer.Option(
         False,
         "--dry-run",
@@ -173,7 +180,6 @@ def _index_cli(
     index_cli(
         root_dir=root,
         verbose=verbose,
-        memprofile=memprofile,
         cache=cache,
         dry_run=dry_run,
         skip_validation=skip_validation,
@@ -207,11 +213,6 @@ def _update_cli(
         "-v",
         help="Run the indexing pipeline with verbose logging.",
     ),
-    memprofile: bool = typer.Option(
-        False,
-        "--memprofile",
-        help="Run the indexing pipeline with memory profiling.",
-    ),
     cache: bool = typer.Option(
         True,
         "--cache/--no-cache",
@@ -233,7 +234,6 @@ def _update_cli(
     update_cli(
         root_dir=root,
         verbose=verbose,
-        memprofile=memprofile,
         cache=cache,
         skip_validation=skip_validation,
         method=method,

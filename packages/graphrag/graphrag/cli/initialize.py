@@ -35,7 +35,9 @@ from graphrag.prompts.query.question_gen_system_prompt import QUESTION_SYSTEM_PR
 logger = logging.getLogger(__name__)
 
 
-def initialize_project_at(path: Path, force: bool) -> None:
+def initialize_project_at(
+    path: Path, force: bool, model: str, embedding_model: str
+) -> None:
     """
     Initialize the project at the given path.
 
@@ -64,8 +66,11 @@ def initialize_project_at(path: Path, force: bool) -> None:
         root / (graphrag_config_defaults.input.storage.base_dir or "input")
     ).resolve()
     input_path.mkdir(parents=True, exist_ok=True)
-
-    settings_yaml.write_text(INIT_YAML, encoding="utf-8", errors="strict")
+    # using replace with custom tokens instead of format here because we have a placeholder for GRAPHRAG_API_KEY that is used later for .env overlay
+    formatted = INIT_YAML.replace("<DEFAULT_CHAT_MODEL>", model).replace(
+        "<DEFAULT_EMBEDDING_MODEL>", embedding_model
+    )
+    settings_yaml.write_text(formatted, encoding="utf-8", errors="strict")
 
     dotenv = root / ".env"
     if not dotenv.exists() or force:
