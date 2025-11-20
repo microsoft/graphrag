@@ -47,6 +47,8 @@ To initialize your workspace, first run the `graphrag init` command.
 graphrag init
 ```
 
+When prompted, specify the default chat and embedding models you would like to use in your config.
+
 This will create two files, `.env` and `settings.yaml`, and a directory `input`, in the current directory.
 
 - `input` Location of text files to process with `graphrag`.
