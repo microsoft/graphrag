@@ -11,7 +11,6 @@ from pydantic import BaseModel, Field, model_validator
 import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import VectorStoreType
-from graphrag.config.errors import LanguageModelConfigMissingError
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.chunking_config import ChunkingConfig
@@ -57,24 +56,6 @@ class GraphRagConfig(BaseModel):
         description="Available language model configurations.",
         default=graphrag_config_defaults.models,
     )
-
-    def _validate_models(self) -> None:
-        """Validate the models configuration.
-
-        Ensure both a default chat model and default embedding model
-        have been defined. Other models may also be defined but
-        defaults are required for the time being as places of the
-        code fallback to default model configs instead
-        of specifying a specific model.
-
-        TODO: Don't fallback to default models elsewhere in the code.
-        Forcing code to specify a model to use and allowing for any
-        names for model configurations.
-        """
-        if defs.DEFAULT_CHAT_MODEL_ID not in self.models:
-            raise LanguageModelConfigMissingError(defs.DEFAULT_CHAT_MODEL_ID)
-        if defs.DEFAULT_EMBEDDING_MODEL_ID not in self.models:
-            raise LanguageModelConfigMissingError(defs.DEFAULT_EMBEDDING_MODEL_ID)
 
     def _validate_retry_services(self) -> None:
         """Validate the retry services configuration."""
@@ -329,7 +310,6 @@ class GraphRagConfig(BaseModel):
     @model_validator(mode="after")
     def _validate_model(self):
         """Validate the model configuration."""
-        self._validate_models()
         self._validate_input_pattern()
         self._validate_input_base_dir()
         self._validate_reporting_base_dir()
