@@ -461,7 +461,7 @@ class PostgresPipelineStorage(PipelineStorage):
                     # Parse parquet data
                     df = pd.read_parquet(BytesIO(value))
                     log.info(f"Parsed parquet data on set method, DataFrame shape: {df.shape}")
-                    log.info(f"Parsed DataFrame head: {df.head()}")
+                    log.debug(f"Parsed DataFrame head: {df.head()}")
                     
                     # Prepare data for PostgreSQL
                     records = self._prepare_data_for_postgres(df, table_name)
