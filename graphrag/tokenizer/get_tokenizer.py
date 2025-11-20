@@ -3,19 +3,15 @@
 
 """Get Tokenizer."""
 
-from typing import TYPE_CHECKING
-
 from graphrag.config.defaults import ENCODING_MODEL
+from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.tokenizer.litellm_tokenizer import LitellmTokenizer
 from graphrag.tokenizer.tiktoken_tokenizer import TiktokenTokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
 
-if TYPE_CHECKING:
-    from graphrag.config.models.language_model_config import LanguageModelConfig
-
 
 def get_tokenizer(
-    model_config: "LanguageModelConfig | None" = None,
+    model_config: LanguageModelConfig | None = None,
     encoding_model: str = ENCODING_MODEL,
 ) -> Tokenizer:
     """

@@ -15,7 +15,7 @@ retry_factory = RetryFactory()
 
 
 @pytest.mark.parametrize(
-    ("strategy", "max_attempts", "max_retry_wait", "expected_time"),
+    ("strategy", "max_retries", "max_retry_wait", "expected_time"),
     [
         (
             "native",
@@ -44,7 +44,7 @@ retry_factory = RetryFactory()
     ],
 )
 def test_retries(
-    strategy: str, max_attempts: int, max_retry_wait: int, expected_time: float
+    strategy: str, max_retries: int, max_retry_wait: int, expected_time: float
 ) -> None:
     """
     Test various retry strategies with various configurations.
@@ -52,12 +52,12 @@ def test_retries(
     Args
     ----
         strategy: The retry strategy to use.
-        max_attempts: The maximum number of retry attempts.
+        max_retries: The maximum number of retry attempts.
         max_retry_wait: The maximum wait time between retries.
     """
     retry_service = retry_factory.create(
         strategy=strategy,
-        max_attempts=max_attempts,
+        max_retries=max_retries,
         max_retry_wait=max_retry_wait,
     )
 
@@ -75,16 +75,14 @@ def test_retries(
     elapsed_time = time.time() - start_time
 
     # subtract 1 from retries because the first call is not a retry
-    assert retries - 1 == max_attempts, (
-        f"Expected {max_attempts} retries, got {retries}"
-    )
+    assert retries - 1 == max_retries, f"Expected {max_retries} retries, got {retries}"
     assert elapsed_time >= expected_time, (
         f"Expected elapsed time >= {expected_time}, got {elapsed_time}"
     )
 
 
 @pytest.mark.parametrize(
-    ("strategy", "max_attempts", "max_retry_wait", "expected_time"),
+    ("strategy", "max_retries", "max_retry_wait", "expected_time"),
     [
         (
             "native",
@@ -113,7 +111,7 @@ def test_retries(
     ],
 )
 async def test_retries_async(
-    strategy: str, max_attempts: int, max_retry_wait: int, expected_time: float
+    strategy: str, max_retries: int, max_retry_wait: int, expected_time: float
 ) -> None:
     """
     Test various retry strategies with various configurations.
@@ -121,12 +119,12 @@ async def test_retries_async(
     Args
     ----
         strategy: The retry strategy to use.
-        max_attempts: The maximum number of retry attempts.
+        max_retries: The maximum number of retry attempts.
         max_retry_wait: The maximum wait time between retries.
     """
     retry_service = retry_factory.create(
         strategy=strategy,
-        max_attempts=max_attempts,
+        max_retries=max_retries,
         max_retry_wait=max_retry_wait,
     )
 
@@ -144,9 +142,7 @@ async def test_retries_async(
     elapsed_time = time.time() - start_time
 
     # subtract 1 from retries because the first call is not a retry
-    assert retries - 1 == max_attempts, (
-        f"Expected {max_attempts} retries, got {retries}"
-    )
+    assert retries - 1 == max_retries, f"Expected {max_retries} retries, got {retries}"
     assert elapsed_time >= expected_time, (
         f"Expected elapsed time >= {expected_time}, got {elapsed_time}"
     )

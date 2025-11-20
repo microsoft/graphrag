@@ -11,7 +11,6 @@ def get_embedding_settings(
     vector_store_params: dict | None = None,
 ) -> dict:
     """Transform GraphRAG config into settings for workflows."""
-    # TEMP
     embeddings_llm_settings = settings.get_language_model_config(
         settings.embed_text.model_id
     )

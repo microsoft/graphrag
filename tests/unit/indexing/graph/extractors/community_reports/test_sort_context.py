@@ -6,7 +6,7 @@ import platform
 from graphrag.index.operations.summarize_communities.graph_context.sort_context import (
     sort_context,
 )
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 nan = math.nan
 
@@ -204,16 +204,18 @@ context: list[dict] = [
 
 
 def test_sort_context():
-    ctx = sort_context(context)
+    tokenizer = get_tokenizer()
+    ctx = sort_context(context, tokenizer=tokenizer)
     assert ctx is not None, "Context is none"
-    num = num_tokens(ctx)
+    num = tokenizer.num_tokens(ctx)
     assert num == 828 if platform.system() == "Windows" else 826, (
         f"num_tokens is not matched for platform (win = 827, else 826): {num}"
     )
 
 
 def test_sort_context_max_tokens():
-    ctx = sort_context(context, max_context_tokens=800)
+    tokenizer = get_tokenizer()
+    ctx = sort_context(context, tokenizer=tokenizer, max_context_tokens=800)
     assert ctx is not None, "Context is none"
-    num = num_tokens(ctx)
+    num = tokenizer.num_tokens(ctx)
     assert num <= 800, f"num_tokens is not less than or equal to 800: {num}"

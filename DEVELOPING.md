@@ -11,12 +11,8 @@
 
 ## Install Dependencies
 ```shell
-# (optional) create virtual environment
-uv venv --python 3.10
-source .venv/bin/activate
-
 # install python dependencies
-uv sync --extra dev
+uv sync
 ```
 
 ## Execute the indexing engine
@@ -119,8 +115,3 @@ and then in your bashrc, add
 Make sure you have python3.10-dev installed or more generally `python<version>-dev`
 
 `sudo apt-get install python3.10-dev`
-
-### LLM call constantly exceeds TPM, RPM or time limits
-
-`GRAPHRAG_LLM_THREAD_COUNT` and `GRAPHRAG_EMBEDDING_THREAD_COUNT` are both set to 50 by default. You can modify these values
-to reduce concurrency. Please refer to the [Configuration Documents](https://microsoft.github.io/graphrag/config/overview/)

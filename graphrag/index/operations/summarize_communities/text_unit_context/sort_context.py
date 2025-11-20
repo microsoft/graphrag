@@ -8,7 +8,7 @@ import logging
 import pandas as pd
 
 import graphrag.data_model.schemas as schemas
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +57,7 @@ def get_context_string(
 
 def sort_context(
     local_context: list[dict],
+    tokenizer: Tokenizer,
     sub_community_reports: list[dict] | None = None,
     max_context_tokens: int | None = None,
 ) -> str:
@@ -73,7 +74,7 @@ def sort_context(
             new_context_string = get_context_string(
                 current_text_units, sub_community_reports
             )
-            if num_tokens(new_context_string) > max_context_tokens:
+            if tokenizer.num_tokens(new_context_string) > max_context_tokens:
                 break
 
             context_string = new_context_string

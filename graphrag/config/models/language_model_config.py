@@ -3,6 +3,7 @@
 
 """Language model configuration."""
 
+import logging
 from typing import Literal
 
 import tiktoken
@@ -14,10 +15,11 @@ from graphrag.config.errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
     AzureApiVersionMissingError,
-    AzureDeploymentNameMissingError,
     ConflictingSettingsError,
 )
 from graphrag.language_model.factory import ModelFactory
+
+logger = logging.getLogger(__name__)
 
 
 class LanguageModelConfig(BaseModel):
@@ -96,6 +98,14 @@ class LanguageModelConfig(BaseModel):
         if not ModelFactory.is_supported_model(self.type):
             msg = f"Model type {self.type} is not recognized, must be one of {ModelFactory.get_chat_models() + ModelFactory.get_embedding_models()}."
             raise KeyError(msg)
+        if self.type in [
+            "openai_chat",
+            "openai_embedding",
+            "azure_openai_chat",
+            "azure_openai_embedding",
+        ]:
+            msg = f"Model config based on fnllm is deprecated and will be removed in GraphRAG v3, please use {ModelType.Chat} or {ModelType.Embedding} instead to switch to LiteLLM config."
+            logger.warning(msg)
 
     model_provider: str | None = Field(
         description="The model provider to use.",
@@ -214,7 +224,8 @@ class LanguageModelConfig(BaseModel):
             or self.type == ModelType.AzureOpenAIEmbedding
             or self.model_provider == "azure"  # indicates Litellm + AOI
         ) and (self.deployment_name is None or self.deployment_name.strip() == ""):
-            raise AzureDeploymentNameMissingError(self.type)
+            msg = f"deployment_name is not set for Azure-hosted model. This will default to your model name ({self.model}). If different, this should be set."
+            logger.debug(msg)
 
     organization: str | None = Field(
         description="The organization to use for the LLM service.",

@@ -86,9 +86,10 @@ def _create_base_completions(
             msg = "Azure Managed Identity authentication is only supported for Azure models."
             raise ValueError(msg)
 
+        base_args["azure_scope"] = base_args.pop("audience")
         base_args["azure_ad_token_provider"] = get_bearer_token_provider(
             DefaultAzureCredential(),
-            COGNITIVE_SERVICES_AUDIENCE,
+            model_config.audience or COGNITIVE_SERVICES_AUDIENCE,
         )
 
     def _base_completion(**kwargs: Any) -> ModelResponse | CustomStreamWrapper:

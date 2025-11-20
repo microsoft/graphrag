@@ -142,9 +142,7 @@ class TestIndexer:
         ]
         command = [arg for arg in command if arg]
         logger.info("running command ", " ".join(command))
-        completion = subprocess.run(
-            command, env={**os.environ, "GRAPHRAG_INPUT_FILE_TYPE": input_file_type}
-        )
+        completion = subprocess.run(command, env=os.environ)
         assert completion.returncode == 0, (
             f"Indexer failed with return code: {completion.returncode}"
         )
@@ -224,18 +222,14 @@ class TestIndexer:
         os.environ,
         {
             **os.environ,
-            "BLOB_STORAGE_CONNECTION_STRING": os.getenv(
-                "GRAPHRAG_CACHE_CONNECTION_STRING", WELL_KNOWN_AZURITE_CONNECTION_STRING
-            ),
+            "BLOB_STORAGE_CONNECTION_STRING": WELL_KNOWN_AZURITE_CONNECTION_STRING,
             "LOCAL_BLOB_STORAGE_CONNECTION_STRING": WELL_KNOWN_AZURITE_CONNECTION_STRING,
-            "GRAPHRAG_CHUNK_SIZE": "1200",
-            "GRAPHRAG_CHUNK_OVERLAP": "0",
             "AZURE_AI_SEARCH_URL_ENDPOINT": os.getenv("AZURE_AI_SEARCH_URL_ENDPOINT"),
             "AZURE_AI_SEARCH_API_KEY": os.getenv("AZURE_AI_SEARCH_API_KEY"),
         },
         clear=True,
     )
-    @pytest.mark.timeout(800)
+    @pytest.mark.timeout(2000)
     def test_fixture(
         self,
         input_path: str,

@@ -107,7 +107,7 @@ class GraphRagConfig(BaseModel):
 
                 _ = retry_factory.create(
                     strategy=model.retry_strategy,
-                    max_attempts=model.max_retries,
+                    max_retries=model.max_retries,
                     max_retry_wait=model.max_retry_wait,
                 )
 

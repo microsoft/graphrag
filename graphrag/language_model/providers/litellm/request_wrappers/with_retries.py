@@ -39,7 +39,7 @@ def with_retries(
     retry_factory = RetryFactory()
     retry_service = retry_factory.create(
         strategy=model_config.retry_strategy,
-        max_attempts=model_config.max_retries,
+        max_retries=model_config.max_retries,
         max_retry_wait=model_config.max_retry_wait,
     )
 

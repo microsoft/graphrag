@@ -37,20 +37,8 @@ jobs:
       fail-fast: false # Continue running all jobs even if one fails
     env:
       DEBUG: 1
-      GRAPHRAG_LLM_TYPE: "azure_openai_chat"
-      GRAPHRAG_EMBEDDING_TYPE: "azure_openai_embedding"
       GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       GRAPHRAG_API_BASE: ${{ secrets.GRAPHRAG_API_BASE }}
-      GRAPHRAG_API_VERSION: ${{ secrets.GRAPHRAG_API_VERSION }}
-      GRAPHRAG_LLM_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_LLM_DEPLOYMENT_NAME }}
-      GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME }}
-      GRAPHRAG_LLM_MODEL: ${{ secrets.GRAPHRAG_LLM_MODEL }}
-      GRAPHRAG_EMBEDDING_MODEL: ${{ secrets.GRAPHRAG_EMBEDDING_MODEL }}
-      # We have Windows + Linux runners in 3.10, so we need to divide the rate limits by 2
-      GRAPHRAG_LLM_TPM: 200_000 # 400_000 / 2
-      GRAPHRAG_LLM_RPM: 1_000 # 2_000 / 2
-      GRAPHRAG_EMBEDDING_TPM: 225_000 # 450_000 / 2
-      GRAPHRAG_EMBEDDING_RPM: 1_000 # 2_000 / 2
       # Azure AI Search config
       AZURE_AI_SEARCH_URL_ENDPOINT: ${{ secrets.AZURE_AI_SEARCH_URL_ENDPOINT }}
       AZURE_AI_SEARCH_API_KEY: ${{ secrets.AZURE_AI_SEARCH_API_KEY }}
@@ -84,7 +72,7 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
-          uv sync --extra dev
+          uv sync
           uv pip install gensim
 
       - name: Build

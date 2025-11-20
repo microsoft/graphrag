@@ -1,28 +1,32 @@
 models:
   default_chat_model:
     azure_auth_type: api_key
-    type: ${GRAPHRAG_LLM_TYPE}
+    type: chat
+    model_provider: azure
     api_key: ${GRAPHRAG_API_KEY}
     api_base: ${GRAPHRAG_API_BASE}
-    api_version: ${GRAPHRAG_API_VERSION}
-    deployment_name: ${GRAPHRAG_LLM_DEPLOYMENT_NAME}
-    model: ${GRAPHRAG_LLM_MODEL}
-    tokens_per_minute: ${GRAPHRAG_LLM_TPM}
-    requests_per_minute: ${GRAPHRAG_LLM_RPM}
+    api_version: "2025-04-01-preview"
+    deployment_name: gpt-4.1
+    model: gpt-4.1
+    retry_strategy: exponential_backoff
+    tokens_per_minute: null
+    requests_per_minute: null
     model_supports_json: true
-    concurrent_requests: 50
+    concurrent_requests: 25
     async_mode: threaded
   default_embedding_model:
     azure_auth_type: api_key
-    type: ${GRAPHRAG_EMBEDDING_TYPE}
+    type: embedding
+    model_provider: azure
     api_key: ${GRAPHRAG_API_KEY}
     api_base: ${GRAPHRAG_API_BASE}
-    api_version: ${GRAPHRAG_API_VERSION}
-    deployment_name: ${GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME}
-    model: ${GRAPHRAG_EMBEDDING_MODEL}
+    api_version: "2025-04-01-preview"
+    deployment_name: text-embedding-ada-002
+    model: text-embedding-ada-002
+    retry_strategy: exponential_backoff
     tokens_per_minute: null
     requests_per_minute: null
-    concurrent_requests: 50
+    concurrent_requests: 25
     async_mode: threaded
 
 vector_store:
@@ -36,9 +40,4 @@ input:
   file_type: csv
 
 snapshots:
-  embeddings: True
-
-drift_search:
-  n_depth: 1
-  drift_k_followups: 3
-  primer_folds: 3
+  embeddings: true

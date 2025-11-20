@@ -130,7 +130,7 @@ def get_embedding_store(
         embedding_store = VectorStoreFactory().create_vector_store(
             vector_store_type=vector_store_type,
             vector_store_schema_config=single_embedding_config,
-            kwargs={**store},
+            **store,
         )
         embedding_store.connect(**store)
         # If there is only a single index, return the embedding store directly
