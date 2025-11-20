@@ -108,6 +108,18 @@ def _initialize_cli(
         resolve_path=True,
         autocompletion=ROOT_AUTOCOMPLETE,
     ),
+    model: str = typer.Option(
+        DEFAULT_CHAT_MODEL,
+        "--model",
+        "-m",
+        prompt="Specify the default chat model to use",
+    ),
+    embedding_model: str = typer.Option(
+        DEFAULT_EMBEDDING_MODEL,
+        "--embedding",
+        "-e",
+        prompt="Specify the default embedding model to use",
+    ),
     force: bool = typer.Option(
         False,
         "--force",
@@ -116,12 +128,6 @@ def _initialize_cli(
     ),
 ) -> None:
     """Generate a default configuration file."""
-    model = typer.prompt(
-        "Specify the default chat model to use", default=DEFAULT_CHAT_MODEL
-    )
-    embedding_model = typer.prompt(
-        "Specify the default embedding model to use", default=DEFAULT_EMBEDDING_MODEL
-    )
     from graphrag.cli.initialize import initialize_project_at
 
     initialize_project_at(
