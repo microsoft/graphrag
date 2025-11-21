@@ -17,11 +17,13 @@ from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
+from graphrag.telemetry.decorators import trace_workflow
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
 
+@trace_workflow("create_communities")
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,

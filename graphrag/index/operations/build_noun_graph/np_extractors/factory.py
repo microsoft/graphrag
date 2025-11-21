@@ -22,7 +22,7 @@ from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import 
 from graphrag.index.operations.build_noun_graph.np_extractors.syntactic_parsing_extractor import (
     SyntacticNounPhraseExtractor,
 )
-
+from graphrag.telemetry.decorators import add_trace
 
 class NounPhraseExtractorFactory:
     """A factory class for creating noun phrase extractor."""
@@ -74,7 +74,10 @@ class NounPhraseExtractorFactory:
                     word_delimiter=config.word_delimiter,
                 )
 
-
+@add_trace(
+    operation_name="np_extractor.factory.create_noun_phrase_extractor",
+    attributes={"component": "np_extractor_factory"},
+)
 def create_noun_phrase_extractor(
     analyzer_config: TextAnalyzerConfig,
 ) -> BaseNounPhraseExtractor:

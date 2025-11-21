@@ -67,6 +67,14 @@ dependencies = [
     "textblob>=0.18.0.post0",
     "spacy>=3.8.4",
     "litellm>=1.77.1",
+    "opentelemetry-api>=1.23.0",
+    "opentelemetry-sdk>=1.23.0",
+    "opentelemetry-exporter-zipkin-json>=1.23.0",
+    "opentelemetry.exporter.otlp>=1.20b0",
+    "opentelemetry-instrumentation>=0.44b0",
+    "opentelemetry-instrumentation-httpx>=0.44b0",
+    "opentelemetry-instrumentation-aiohttp-client>=0.44b0",
+    "dotenv>=0.9.9",
 ]
 
 [dependency-groups]

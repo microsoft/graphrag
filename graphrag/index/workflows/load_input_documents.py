@@ -13,11 +13,13 @@ from graphrag.index.input.factory import create_input
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.telemetry.decorators import trace_workflow
 from graphrag.utils.storage import write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
 
+@trace_workflow("load_input_documents")
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,

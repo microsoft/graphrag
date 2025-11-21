@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.telemetry.decorators import add_trace
 
 _default_config_files = ["settings.yaml", "settings.yml", "settings.json"]
 
@@ -142,7 +143,9 @@ def _parse(file_extension: str, contents: str) -> dict[str, Any]:
             )
             raise ValueError(msg)
 
-
+@add_trace(
+    operation_name="graphrag.config.load_config", 
+    attributes={"component": "config"})
 def load_config(
     root_dir: Path,
     config_filepath: Path | None = None,

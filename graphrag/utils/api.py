@@ -21,6 +21,9 @@ from graphrag.vector_stores.base import (
     VectorStoreSearchResult,
 )
 from graphrag.vector_stores.factory import VectorStoreFactory
+from graphrag.telemetry.decorators import trace_retrieval_operation
+import logging
+logger = logging.getLogger(__name__)
 
 
 class MultiVectorStore(BaseVectorStore):
@@ -93,7 +96,7 @@ class MultiVectorStore(BaseVectorStore):
             )
         return []
 
-
+@trace_retrieval_operation(operation_type="get_embedding_store")
 def get_embedding_store(
     config_args: dict[str, dict],
     embedding_name: str,
