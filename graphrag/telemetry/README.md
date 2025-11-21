@@ -55,32 +55,13 @@ from graphrag.api.query import lazy_search
 
 Open http://localhost:9411/zipkin and look for traces with service name `lazy-graphrag`.
 
-## Configuration
 
-### Environment Variables
+## Configure Environment Variables
 
 Configure telemetry using environment variables:
 
-```bash
-# Service identification
-export OTEL_SERVICE_NAME="my-graphrag-app"
-export OTEL_SERVICE_VERSION="1.0.0"
-export OTEL_SERVICE_NAMESPACE="my-company"
-
-# Zipkin configuration
-export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="http://localhost:9411/api/v2/spans"
-
-# Tracing configuration
-export OTEL_ENABLE_TRACING="true"
-export OTEL_ENABLE_METRICS="true"
-export OTEL_TRACE_SAMPLE_RATE="1.0"  # Sample 100% of traces
-
-# Environment
-export OTEL_DEPLOYMENT_ENVIRONMENT="production"
-
-# Disable telemetry completely (if needed)
-export GRAPHRAG_DISABLE_TELEMETRY="false"
-```
+### Copy .env.otlp.example to .env
+Update the variables as needed.
 
 ### Programmatic Configuration
 
@@ -224,14 +205,16 @@ The telemetry system automatically protects sensitive data:
 Completely disable telemetry:
 
 ```bash
-export GRAPHRAG_DISABLE_TELEMETRY="true"
+# In .env
+DISABLE_TELEMETRY="true"
 ```
 
 Or disable specific features:
 
 ```bash
-export OTEL_ENABLE_TRACING="false"
-export OTEL_ENABLE_METRICS="false"
+# In .env
+OTEL_ENABLE_TRACING="false"
+OTEL_ENABLE_METRICS="false"
 ```
 
 ## Troubleshooting
@@ -249,8 +232,8 @@ export OTEL_ENABLE_METRICS="false"
    - Verify OpenTelemetry dependencies are installed
 
 3. **High overhead**
-   - Reduce sampling rate: `export OTEL_TRACE_SAMPLE_RATE="0.1"`
-   - Disable if not needed: `export GRAPHRAG_DISABLE_TELEMETRY="true"`
+   - Reduce sampling rate: `OTEL_TRACE_SAMPLE_RATE="0.1"`
+   - Disable if not needed: `DISABLE_TELEMETRY="true"`
 
 ### Debug Mode
 
@@ -319,7 +302,7 @@ Use a different exporter:
 
 ```python
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.import BatchSpanProcessor
 
 # In your setup code
 jaeger_exporter = JaegerExporter(

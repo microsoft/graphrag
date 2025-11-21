@@ -17,4 +17,4 @@ if not is_telemetry_disabled():
     except Exception as e:
         logger.warning(f"Failed to initialize telemetry: {e}")
 else:
-    logger.info("Telemetry is not enabled. (Can be enabled via environment variable GRAPHRAG_DISABLE_TELEMETRY)")
+    logger.info("Telemetry is not enabled. (Can be enabled via environment variable DISABLE_TELEMETRY)")
