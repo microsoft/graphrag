@@ -150,34 +150,48 @@ public sealed class AgeClient(IAgeConnectionManager connectionManager, ILogger<A
         ArgumentException.ThrowIfNullOrWhiteSpace(cypher);
         CheckForExistingConnection();
 
-        await using var command = new NpgsqlCommand(
-            $"SELECT * FROM ag_catalog.cypher('{graph}', $$ {cypher} $$) as (result ag_catalog.agtype);",
-            _connection);
+        var commandText = $"SELECT * FROM ag_catalog.cypher('{graph}', $$ {cypher} $$) as (result ag_catalog.agtype);";
 
-        try
+        for (var attempt = 0; attempt < 2; attempt++)
         {
-            await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-            LogMessages.CypherExecuted(_logger, graph, cypher);
-        }
-        catch (PostgresException ex)
-        {
-            LogMessages.CypherExecutionError(
-                _logger,
-                $"Graph: {graph}. {ex.MessageText}",
-                cypher,
-                ex);
-            throw new AgeException($"Could not execute Cypher command. Graph: {graph}. Cypher: {cypher}", ex);
-        }
-        catch (Exception ex)
-        {
-            LogMessages.CypherExecutionError(
-                _logger,
-                $"Graph: {graph}. {ex.Message}",
-                cypher,
-                ex);
-            throw new AgeException($"Could not execute Cypher command. Graph: {graph}. Cypher: {cypher}", ex);
+            await using var command = new NpgsqlCommand(commandText, _connection);
+
+            try
+            {
+                await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                LogMessages.CypherExecuted(_logger, graph, cypher);
+                return;
+            }
+            catch (PostgresException ex) when (ShouldRetryOnLabelCreationRace(ex) && attempt == 0)
+            {
+                // AGE sometimes races on label/relation creation under parallel writes. Retry once.
+                continue;
+            }
+            catch (PostgresException ex)
+            {
+                LogMessages.CypherExecutionError(
+                    _logger,
+                    $"Graph: {graph}. {ex.MessageText}",
+                    cypher,
+                    ex);
+                throw new AgeException($"Could not execute Cypher command. Graph: {graph}. Cypher: {cypher}", ex);
+            }
+            catch (Exception ex)
+            {
+                LogMessages.CypherExecutionError(
+                    _logger,
+                    $"Graph: {graph}. {ex.Message}",
+                    cypher,
+                    ex);
+                throw new AgeException($"Could not execute Cypher command. Graph: {graph}. Cypher: {cypher}", ex);
+            }
         }
     }
+
+    private static bool ShouldRetryOnLabelCreationRace(PostgresException exception) =>
+        exception.SqlState is PostgresErrorCodes.DuplicateTable or
+            PostgresErrorCodes.DuplicateObject or
+            PostgresErrorCodes.UniqueViolation;
 
     public async Task<AgeDataReader> ExecuteQueryAsync(string query, CancellationToken cancellationToken = default, params object?[] parameters)
     {
