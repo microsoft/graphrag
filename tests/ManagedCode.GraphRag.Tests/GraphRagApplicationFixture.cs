@@ -69,7 +69,9 @@ public sealed class GraphRagApplicationFixture : IAsyncLifetime
             .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(5432))
             .Build();
 
-        _janusContainer = new JanusGraphBuilder().Build();
+        _janusContainer = new JanusGraphBuilder()
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilInternalTcpPortIsAvailable(8182))
+            .Build();
 
         if (IsCosmosSupported())
         {

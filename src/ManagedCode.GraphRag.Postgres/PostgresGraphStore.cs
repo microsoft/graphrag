@@ -8,11 +8,11 @@ using System.Text.Json;
 using GraphRag.Constants;
 using GraphRag.Graphs;
 using GraphRag.Storage.Postgres.ApacheAge;
+using GraphRag.Storage.Postgres.ApacheAge.Types;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
-using NpgsqlTypes;
 
 namespace GraphRag.Storage.Postgres;
 
@@ -401,6 +401,10 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
             await client.OpenConnectionAsync(token).ConfigureAwait(false);
 
             await using var command = client.Connection.CreateCommand();
+            var payload = JsonSerializer.Serialize(new Dictionary<string, object?>
+            {
+                [CypherParameterNames.NodeId] = nodeId
+            });
             command.CommandText = string.Concat(
                 "SELECT ",
                 "\n    source_id::text,",
@@ -410,13 +414,8 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
                 "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", $$",
                 "\n    MATCH (source { id: $node_id })-[rel]->(target)",
                 "\n    RETURN source.id AS source_id, target.id AS target_id, type(rel) AS edge_type, properties(rel) AS edge_props",
-                "\n$$, @params::ag_catalog.agtype) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype);");
-            var payload = JsonSerializer.Serialize(new Dictionary<string, object?>
-            {
-                [CypherParameterNames.NodeId] = nodeId
-            });
+                "\n$$, @params) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype);");
             command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, payload));
-
             await using var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false);
             while (await reader.ReadAsync(token).ConfigureAwait(false))
             {
@@ -445,6 +444,7 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 
             await using var command = client.Connection.CreateCommand();
             var pagination = BuildPaginationClause(traversalOptions);
+            var parametersJson = SerializeParameters(null);
             command.CommandText = string.Concat(
                 "SELECT ",
                 "\n    source_id::text,",
@@ -456,9 +456,8 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
                 "\n    RETURN source.id AS source_id, target.id AS target_id, type(rel) AS edge_type, properties(rel) AS edge_props",
                 "\n    ORDER BY source.id, target.id, type(rel)",
                 pagination,
-                "\n$$, @params::ag_catalog.agtype) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype);");
-            command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, SerializeParameters(null)));
-
+                "\n$$, @params) AS (source_id agtype, target_id agtype, edge_type agtype, edge_props agtype);");
+            command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, parametersJson));
             await using var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false);
             while (await reader.ReadAsync(token).ConfigureAwait(false))
             {
@@ -487,6 +486,7 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
 
             await using var command = client.Connection.CreateCommand();
             var pagination = BuildPaginationClause(traversalOptions);
+            var parametersJson = SerializeParameters(null);
             command.CommandText = string.Concat(
                 "SELECT ",
                 "\n    node_label::text,",
@@ -497,9 +497,8 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
                 "\n    RETURN head(labels(n)) AS node_label, n.id AS node_id, properties(n) AS node_props",
                 "\n    ORDER BY n.id",
                 pagination,
-                "\n$$, @params::ag_catalog.agtype) AS (node_label agtype, node_id agtype, node_props agtype);");
-            command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, SerializeParameters(null)));
-
+                "\n$$, @params) AS (node_label agtype, node_id agtype, node_props agtype);");
+            command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, parametersJson));
             await using var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false);
             while (await reader.ReadAsync(token).ConfigureAwait(false))
             {
@@ -525,17 +524,16 @@ public class PostgresGraphStore : IGraphStore, IAsyncDisposable
     private async Task ExecuteCypherAsync(IAgeClient client, string query, IReadOnlyDictionary<string, object?> parameters, CancellationToken cancellationToken)
     {
         var queryLiteral = WrapInDollarQuotes(query);
+        var payload = SerializeParameters(parameters);
         var commandText = string.Concat(
             "SELECT *",
-            "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", ", queryLiteral, "::cstring, @params::ag_catalog.agtype) AS (result agtype);");
-        var payload = SerializeParameters(parameters);
+            "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", ", queryLiteral, "::cstring, @params) AS (result agtype);");
 
         for (var attempt = 0; attempt < 2; attempt++)
         {
             await using var command = client.Connection.CreateCommand();
             command.CommandText = commandText;
             command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, payload));
-
             try
             {
                 await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
@@ -856,7 +854,7 @@ LIMIT 1;";
         var explainLiteral = WrapInDollarQuotes(explainQuery);
         command.CommandText = string.Concat(
             "SELECT plan",
-            "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", ", explainLiteral, "::cstring, @params::ag_catalog.agtype) AS (plan text);");
+            "\nFROM ag_catalog.cypher(", _graphNameLiteral, ", ", explainLiteral, "::cstring, @params) AS (plan text);");
         command.Parameters.Add(CreateAgTypeParameter(CypherParameterNames.Parameters, parameterJson));
 
         var plan = new List<string>();
@@ -892,10 +890,10 @@ LIMIT 1;";
     {
         ArgumentNullException.ThrowIfNull(jsonPayload);
 
-        return new NpgsqlParameter(name, NpgsqlDbType.Unknown)
+        var agtype = new Agtype(jsonPayload);
+        return new NpgsqlParameter<Agtype>(name, agtype)
         {
-            DataTypeName = "ag_catalog.agtype",
-            Value = jsonPayload
+            DataTypeName = "ag_catalog.agtype"
         };
     }
 

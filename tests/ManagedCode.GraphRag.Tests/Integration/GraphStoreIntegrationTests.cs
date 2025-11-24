@@ -246,6 +246,35 @@ public sealed class GraphStoreIntegrationTests(GraphRagApplicationFixture fixtur
         Assert.Equal(2, pagedEdges.Count);
     }
 
+    [Theory]
+    [MemberData(nameof(GraphProviders))]
+    public async Task PostgresGraphStore_PersistsStringPropertiesWithAgtypeParameters(string providerKey)
+    {
+        if (!string.Equals(providerKey, "postgres", StringComparison.OrdinalIgnoreCase))
+        {
+            // Other providers do not use agtype parameters.
+            return;
+        }
+
+        var store = GetStore(providerKey);
+        Assert.NotNull(store);
+        await store!.InitializeAsync();
+
+        var label = GraphStoreTestProviders.GetLabel(providerKey);
+        var nodeId = $"{providerKey}-agtype-{Guid.NewGuid():N}";
+        var payload = "line1\nline2 \"quoted\" \\ backslash and {braces}";
+
+        await store.UpsertNodeAsync(nodeId, label, new Dictionary<string, object?>
+        {
+            ["content"] = payload,
+            ["note"] = "ensure-agtype-parameter"
+        });
+
+        var stored = await FindNodeAsync(store, nodeId);
+        Assert.NotNull(stored);
+        Assert.Equal(payload, stored!.Properties["content"]?.ToString());
+    }
+
     [Fact]
     [Trait("Category", "Cosmos")]
     public async Task CosmosGraphStore_RoundTrips_WhenEmulatorAvailable()

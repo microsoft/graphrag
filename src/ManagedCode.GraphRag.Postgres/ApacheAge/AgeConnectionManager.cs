@@ -53,6 +53,7 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
 
         ConnectionString = connectionBuilder.ConnectionString;
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(ConnectionString);
+        dataSourceBuilder.UseAge();
         options?.ConfigureDataSourceBuilder?.Invoke(dataSourceBuilder);
         _dataSource = dataSourceBuilder.Build();
         _logger = logger ?? NullLogger<AgeConnectionManager>.Instance;

@@ -10,6 +10,9 @@
   <ItemGroup>
     <ProjectReference Include="../ManagedCode.GraphRag/ManagedCode.GraphRag.csproj" />
   </ItemGroup>
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NPG9001</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Npgsql" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
