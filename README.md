@@ -1,6 +1,6 @@
 # GraphRAG for .NET
 
-GraphRAG for .NET is a ground-up port of Microsoft’s GraphRAG reference implementation to the modern .NET 9 stack. The port keeps parity with the original Python pipelines while embracing native .NET idioms—dependency injection, logging abstractions, async I/O, and strongly-typed configuration.
+GraphRAG for .NET is a ground-up port of Microsoft's GraphRAG reference implementation to the modern .NET 10 stack. The port keeps parity with the original Python pipelines while embracing native .NET idioms—dependency injection, logging abstractions, async I/O, and strongly-typed configuration.
 
 > ℹ️ The upstream Python code remains available under [`submodules/graphrag-python`](submodules/graphrag-python) for side-by-side reference. Treat it as read-only unless a task explicitly targets the submodule.
 
@@ -42,7 +42,7 @@ graphrag/
 
 | Requirement | Notes |
 |-------------|-------|
-| [.NET SDK 9.0](https://dotnet.microsoft.com/download/dotnet/9.0) | The solution targets `net9.0`. Use the in-repo [`dotnet-install.sh`](dotnet-install.sh) helper on CI. |
+| [.NET SDK 10.0](https://dotnet.microsoft.com/download/dotnet/10.0) | The solution targets `net10.0`. Use the in-repo [`dotnet-install.sh`](dotnet-install.sh) helper on CI. |
 | Docker Desktop / compatible runtime | Required for Testcontainers-backed integration tests (Neo4j & Apache AGE/PostgreSQL). |
 | (Optional) Azure Cosmos DB Emulator | Set `COSMOS_EMULATOR_CONNECTION_STRING` to enable Cosmos-specific tests. |
 
@@ -57,9 +57,9 @@ graphrag/
    git submodule update --init --recursive
    ```
 
-2. **Install .NET 9 if needed**
+2. **Install .NET 10 if needed**
    ```bash
-   ./dotnet-install.sh --version 9.0.100
+   ./dotnet-install.sh --version 10.0.100
    export PATH="$HOME/.dotnet:$PATH"
    ```
 
