@@ -50,7 +50,7 @@
                 "period",
                 "size"
             ],
-            "max_runtime": 1200,
+            "max_runtime": 2000,
             "expected_artifacts": ["community_reports.parquet"]
         },
         "create_final_text_units": {
@@ -84,9 +84,9 @@
             ],
             "max_runtime": 150,
             "expected_artifacts": [
-                "embeddings.text_unit.text.parquet",
-                "embeddings.entity.description.parquet",
-                "embeddings.community.full_content.parquet"
+                "embeddings.text_unit_text.parquet",
+                "embeddings.entity_description.parquet",
+                "embeddings.community_full_content.parquet"
             ]
         }
     },

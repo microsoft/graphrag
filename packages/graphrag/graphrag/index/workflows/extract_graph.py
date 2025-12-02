@@ -121,14 +121,14 @@ async def extract_graph(
         async_type=extraction_async_type,
     )
 
-    if not _validate_data(extracted_entities):
-        error_msg = "Entity Extraction failed. No entities detected during extraction."
+    if len(extracted_entities) == 0:
+        error_msg = "Graph Extraction failed. No entities detected during extraction."
         logger.error(error_msg)
         raise ValueError(error_msg)
 
-    if not _validate_data(extracted_relationships):
+    if len(extracted_relationships) == 0:
         error_msg = (
-            "Entity Extraction failed. No relationships detected during extraction."
+            "Graph Extraction failed. No relationships detected during extraction."
         )
         logger.error(error_msg)
         raise ValueError(error_msg)
@@ -180,8 +180,3 @@ async def get_summarized_entities_relationships(
     extracted_entities.drop(columns=["description"], inplace=True)
     entities = extracted_entities.merge(entity_summaries, on="title", how="left")
     return entities, relationships
-
-
-def _validate_data(df: pd.DataFrame) -> bool:
-    """Validate that the dataframe has data."""
-    return len(df) > 0

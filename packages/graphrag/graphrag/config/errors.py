@@ -33,15 +33,6 @@ class AzureApiVersionMissingError(ValueError):
         super().__init__(msg)
 
 
-class LanguageModelConfigMissingError(ValueError):
-    """Missing model configuration error."""
-
-    def __init__(self, key: str = "") -> None:
-        """Init method definition."""
-        msg = f'A {key} model configuration is required. Please rerun `graphrag init` and set models["{key}"] in settings.yaml.'
-        super().__init__(msg)
-
-
 class ConflictingSettingsError(ValueError):
     """Missing model configuration error."""
 

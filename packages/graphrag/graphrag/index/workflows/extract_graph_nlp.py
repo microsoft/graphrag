@@ -75,6 +75,19 @@ async def extract_graph_nlp(
         cache=cache,
     )
 
+    if len(extracted_nodes) == 0:
+        error_msg = (
+            "NLP Graph Extraction failed. No entities detected during extraction."
+        )
+        logger.error(error_msg)
+        raise ValueError(error_msg)
+
+    if len(extracted_edges) == 0:
+        error_msg = (
+            "NLP Graph Extraction failed. No relationships detected during extraction."
+        )
+        logger.error(error_msg)
+
     # add in any other columns required by downstream workflows
     extracted_nodes["type"] = "NOUN PHRASE"
     extracted_nodes["description"] = ""

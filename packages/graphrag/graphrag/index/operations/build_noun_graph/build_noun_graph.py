@@ -98,9 +98,11 @@ def _extract_edges(
     Input: nodes_df with schema [id, title, frequency, text_unit_ids]
     Returns: edges_df with schema [source, target, weight, text_unit_ids]
     """
+    if nodes_df.empty:
+        return pd.DataFrame(columns=["source", "target", "weight", "text_unit_ids"])
+
     text_units_df = nodes_df.explode("text_unit_ids")
     text_units_df = text_units_df.rename(columns={"text_unit_ids": "text_unit_id"})
-
     text_units_df = (
         text_units_df.groupby("text_unit_id")
         .agg({"title": lambda x: list(x) if len(x) > 1 else np.nan})

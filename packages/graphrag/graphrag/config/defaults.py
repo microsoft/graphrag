@@ -275,7 +275,7 @@ class LanguageModelDefaults:
     n: int = 1
     frequency_penalty: float = 0.0
     presence_penalty: float = 0.0
-    request_timeout: float = 180.0
+    request_timeout: float = 600.0
     api_base: None = None
     api_version: None = None
     deployment_name: None = None

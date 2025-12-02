@@ -69,6 +69,16 @@ def prune_graph(
         lcc_only=pruning_config.lcc_only,
     )
 
+    if len(pruned.nodes) == 0:
+        error_msg = "Graph Pruning failed. No entities remain."
+        logger.error(error_msg)
+        raise ValueError(error_msg)
+
+    if len(pruned.edges) == 0:
+        error_msg = "Graph Pruning failed. No relationships remain."
+        logger.error(error_msg)
+        raise ValueError(error_msg)
+
     pruned_nodes, pruned_edges = graph_to_dataframes(
         pruned, node_columns=["title"], edge_columns=["source", "target"]
     )

@@ -26,9 +26,6 @@ async def run_workflow(
     output_storage, _, _ = get_update_storages(
         config, context.state["update_timestamp"]
     )
-
-    final_documents_df = context.state["incremental_update_final_documents"]
-    merged_relationships_df = context.state["incremental_update_merged_relationships"]
     merged_text_units = context.state["incremental_update_merged_text_units"]
     merged_entities_df = context.state["incremental_update_merged_entities"]
     merged_community_reports = context.state[
@@ -50,8 +47,6 @@ async def run_workflow(
     tokenizer = get_tokenizer(model_config)
 
     result = await generate_text_embeddings(
-        documents=final_documents_df,
-        relationships=merged_relationships_df,
         text_units=merged_text_units,
         entities=merged_entities_df,
         community_reports=merged_community_reports,

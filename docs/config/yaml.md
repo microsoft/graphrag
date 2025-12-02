@@ -182,14 +182,9 @@ Where to put all vectors for the system. Configured for lancedb by default. This
 
 The supported embeddings are:
 
-- `text_unit.text`
-- `document.text`
-- `entity.title`
-- `entity.description`
-- `relationship.description`
-- `community.title`
-- `community.summary`
-- `community.full_content`
+- `text_unit_text`
+- `entity_description`
+- `community_full_content`
 
 For example:
 
@@ -199,12 +194,12 @@ vector_store:
   db_uri: output/lancedb
   index_prefix: "christmas-carol"
   embeddings_schema:
-    text_unit.text:
+    text_unit_text:
       index_name: "text-unit-embeddings"
       id_field: "id_custom"
       vector_field: "vector_custom"
       vector_size: 3072
-    entity.description:
+    entity_description:
       id_field: "id_custom"
 
 ```
@@ -224,14 +219,9 @@ By default, the GraphRAG indexer will only export embeddings required for our qu
 
 Supported embeddings names are:
 
-- `text_unit.text`
-- `document.text`
-- `entity.title`
-- `entity.description`
-- `relationship.description`
-- `community.title`
-- `community.summary`
-- `community.full_content`
+- `text_unit_text`
+- `entity_description`
+- `community_full_content`
 
 #### Fields
 
