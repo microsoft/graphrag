@@ -81,7 +81,7 @@ Our pipeline can ingest .csv, .txt, or .json data from an input location. See th
 #### Fields
 
 - `storage` **StorageConfig**
-  - `type` **FileStorage|AzureBlobStorage|AzureCosmosStorage** - The storage type to use. Default=`FileStorage`
+  - `type` **file|azure_blob|azure_cosmos** - The storage type to use. Default=`file`
   - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
   - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
   - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
@@ -115,7 +115,7 @@ This section controls the storage mechanism used by the pipeline used for export
 
 #### Fields
 
-- `type` **FileStorage|AzureBlobStorage|AzureCosmosStorage** - The storage type to use. Default=`FileStorage`
+- `type` **file|azure_blob|azure_cosmos** - The storage type to use. Default=`file`
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
@@ -128,7 +128,7 @@ The section defines a secondary storage location for running incremental indexin
 
 #### Fields
 
-- `type` **FileStorage|AzureBlobStorage|AzureCosmosStorage** - The storage type to use. Default=`FileStorage`
+- `type` **file|azure_blob|azure_cosmos** - The storage type to use. Default=`file`
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.

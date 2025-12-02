@@ -8,7 +8,13 @@ These tests will test the StorageFactory class and the creation of each storage 
 import sys
 
 import pytest
-from graphrag_storage import Storage, StorageConfig, create_storage, register_storage
+from graphrag_storage import (
+    Storage,
+    StorageConfig,
+    StorageType,
+    create_storage,
+    register_storage,
+)
 from graphrag_storage.azure_blob_storage import AzureBlobStorage
 from graphrag_storage.azure_cosmos_storage import AzureCosmosStorage
 from graphrag_storage.file_storage import FileStorage
@@ -23,7 +29,7 @@ WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://127.0.0.1:8081/;A
 @pytest.mark.skip(reason="Blob storage emulator is not available in this environment")
 def test_create_blob_storage():
     config = StorageConfig(
-        type=AzureBlobStorage.__name__,
+        type=StorageType.AZURE_BLOB,
         connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
         base_dir="testbasedir",
         container_name="testcontainer",
@@ -38,7 +44,7 @@ def test_create_blob_storage():
 )
 def test_create_cosmosdb_storage():
     config = StorageConfig(
-        type=AzureCosmosStorage.__name__,
+        type=StorageType.AZURE_COSMOS,
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
         base_dir="testdatabase",
         container_name="testcontainer",
@@ -49,7 +55,7 @@ def test_create_cosmosdb_storage():
 
 def test_create_file():
     config = StorageConfig(
-        type=FileStorage.__name__,
+        type=StorageType.FILE,
         base_dir="/tmp/teststorage",
     )
     storage = create_storage(config)
@@ -59,7 +65,7 @@ def test_create_file():
 def test_create_memory_storage():
     config = StorageConfig(
         base_dir="",
-        type=MemoryStorage.__name__,
+        type=StorageType.MEMORY,
     )
     storage = create_storage(config)
     assert isinstance(storage, MemoryStorage)

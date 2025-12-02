@@ -45,6 +45,7 @@ class AzureCosmosStorage(Storage):
         container_name: str | None = None,
         connection_string: str | None = None,
         cosmosdb_account_url: str | None = None,
+        encoding: str = "utf-8",
         **kwargs: Any,
     ) -> None:
         """Create a CosmosDB storage instance."""
@@ -77,7 +78,7 @@ class AzureCosmosStorage(Storage):
                 url=cosmosdb_account_url,
                 credential=DefaultAzureCredential(),
             )
-        self._encoding = kwargs.get("encoding", "utf-8")
+        self._encoding = encoding
         self._database_name = database_name
         self._connection_string = connection_string
         self._cosmosdb_account_url = cosmosdb_account_url

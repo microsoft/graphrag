@@ -5,6 +5,8 @@
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from graphrag_storage.storage_type import StorageType
+
 
 class StorageConfig(BaseModel):
     """The default configuration section for storage."""
@@ -14,7 +16,7 @@ class StorageConfig(BaseModel):
 
     type: str = Field(
         description="The storage type to use.",
-        default="FileStorage",
+        default=StorageType.FILE,
     )
 
     base_dir: str | None = Field(

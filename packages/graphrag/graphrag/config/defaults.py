@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import ClassVar
 
-from graphrag_storage.file_storage import FileStorage
+from graphrag_storage import StorageType
 
 from graphrag.config.embeddings import default_embeddings
 from graphrag.config.enums import (
@@ -231,7 +231,7 @@ class GlobalSearchDefaults:
 class StorageDefaults:
     """Default values for storage."""
 
-    type: str = FileStorage.__name__
+    type: str = StorageType.FILE
     base_dir: str | None = None
     connection_string: None = None
     container_name: None = None

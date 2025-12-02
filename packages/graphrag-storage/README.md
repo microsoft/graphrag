@@ -4,13 +4,12 @@
 
 ```python
 import asyncio
-from graphrag_storage import StorageConfig, create_storage
-from graphrag_storage.file_storage import FileStorage
+from graphrag_storage import StorageConfig, create_storage, StorageType
 
 async def run():
     storage = create_storage(
         StorageConfig(
-            type="FileStorage", # or FileStorage.__name__
+            type=StorageType.FILE
             base_dir="output"
         )
     )
