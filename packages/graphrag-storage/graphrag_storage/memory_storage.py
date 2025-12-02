@@ -22,6 +22,7 @@ class MemoryStorage(FileStorage):
             "base_dir": "",
             **kwargs,
         }
+        kwargs.pop("type", None)
         super().__init__(**kwargs)
         self._storage = {}
 

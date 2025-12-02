@@ -30,18 +30,21 @@ class CacheFactory(Factory[PipelineCache]):
 # --- register built-in cache implementations ---
 def create_file_cache(**kwargs) -> PipelineCache:
     """Create a file-based cache implementation."""
+    kwargs.pop("type", None)
     storage = FileStorage(**kwargs)
     return JsonPipelineCache(storage)
 
 
 def create_blob_cache(**kwargs) -> PipelineCache:
     """Create a blob storage-based cache implementation."""
+    kwargs.pop("type", None)
     storage = AzureBlobStorage(**kwargs)
     return JsonPipelineCache(storage)
 
 
 def create_cosmosdb_cache(**kwargs) -> PipelineCache:
     """Create a CosmosDB-based cache implementation."""
+    kwargs.pop("type", None)
     storage = AzureCosmosStorage(**kwargs)
     return JsonPipelineCache(storage)
 

@@ -41,12 +41,11 @@ class AzureCosmosStorage(Storage):
 
     def __init__(
         self,
-        base_dir: str | None = None,
-        container_name: str | None = None,
+        base_dir: str,
+        container_name: str,
         connection_string: str | None = None,
         cosmosdb_account_url: str | None = None,
         encoding: str = "utf-8",
-        **kwargs: Any,
     ) -> None:
         """Create a CosmosDB storage instance."""
         logger.info("Creating cosmosdb storage")
@@ -56,18 +55,8 @@ class AzureCosmosStorage(Storage):
             logger.error(msg)
             raise ValueError(msg)
 
-        if connection_string is None and cosmosdb_account_url is None:
-            msg = "CosmosDB Storage requires either a connection_string or cosmosdb_account_url to be specified."
-            logger.error(msg)
-            raise ValueError(msg)
-
         if connection_string is not None and cosmosdb_account_url is not None:
             msg = "CosmosDB Storage requires either a connection_string or cosmosdb_account_url to be specified, not both."
-            logger.error(msg)
-            raise ValueError(msg)
-
-        if container_name is None:
-            msg = "CosmosDB Storage requires a container_name to be specified."
             logger.error(msg)
             raise ValueError(msg)
 
@@ -78,6 +67,11 @@ class AzureCosmosStorage(Storage):
                 url=cosmosdb_account_url,
                 credential=DefaultAzureCredential(),
             )
+        else:
+            msg = "CosmosDB Storage requires either a connection_string or cosmosdb_account_url to be specified."
+            logger.error(msg)
+            raise ValueError(msg)
+
         self._encoding = encoding
         self._database_name = database_name
         self._connection_string = connection_string

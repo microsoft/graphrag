@@ -43,7 +43,7 @@ async def test_get_creation_date():
 
 
 async def test_child():
-    storage = FileStorage()
+    storage = FileStorage(base_dir="")
     storage = storage.child("tests/fixtures/text/input")
     items = list(storage.find(re.compile(r".*\.txt$")))
     assert items == [str(Path("dulce.txt"))]

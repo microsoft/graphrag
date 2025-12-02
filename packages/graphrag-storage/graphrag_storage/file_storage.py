@@ -30,15 +30,8 @@ class FileStorage(Storage):
     _base_dir: Path
     _encoding: str
 
-    def __init__(
-        self, base_dir: str | None = None, encoding: str = "utf-8", **kwargs: Any
-    ) -> None:
+    def __init__(self, base_dir: str, encoding: str = "utf-8") -> None:
         """Create a file based storage."""
-        if base_dir is None:
-            msg = "FileStorage requires a base_dir to be specified."
-            logger.error(msg)
-            raise ValueError(msg)
-
         self._base_dir = Path(base_dir).resolve()
         self._encoding = encoding
         logger.info("Creating file storage at [%s]", self._base_dir)

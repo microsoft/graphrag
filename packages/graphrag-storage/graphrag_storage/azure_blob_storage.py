@@ -33,26 +33,15 @@ class AzureBlobStorage(Storage):
 
     def __init__(
         self,
-        base_dir: str | None = None,
-        connection_string: str | None = None,
+        container_name: str,
         storage_account_blob_url: str | None = None,
-        container_name: str | None = None,
+        connection_string: str | None = None,
+        base_dir: str | None = None,
         encoding: str = "utf-8",
-        **kwargs: Any,
     ) -> None:
         """Create a new BlobStorage instance."""
-        if connection_string is None and storage_account_blob_url is None:
-            msg = "AzureBlobStorage requires either a connection_string or storage_account_blob_url to be specified."
-            logger.error(msg)
-            raise ValueError(msg)
-
         if connection_string is not None and storage_account_blob_url is not None:
             msg = "AzureBlobStorage requires only one of connection_string or storage_account_blob_url to be specified, not both."
-            logger.error(msg)
-            raise ValueError(msg)
-
-        if container_name is None:
-            msg = "AzureBlobStorage requires a container_name to be specified."
             logger.error(msg)
             raise ValueError(msg)
 
@@ -70,6 +59,11 @@ class AzureBlobStorage(Storage):
                 account_url=storage_account_blob_url,
                 credential=DefaultAzureCredential(),
             )
+        else:
+            msg = "AzureBlobStorage requires either a connection_string or storage_account_blob_url to be specified."
+            logger.error(msg)
+            raise ValueError(msg)
+
         self._encoding = encoding
         self._container_name = container_name
         self._connection_string = connection_string
