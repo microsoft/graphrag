@@ -14,4 +14,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/ManagedCode.GraphRag.Tests/ManagedCode.GraphRag.Tests.csproj" />
   </Folder>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/ManagedCode.GraphRag.Benchmarks/ManagedCode.GraphRag.Benchmarks.csproj" />
+  </Folder>
 </Solution>
