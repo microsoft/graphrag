@@ -232,6 +232,7 @@ class StorageDefaults:
     """Default values for storage."""
 
     type: str = StorageType.FILE
+    encoding: str | None = None
     base_dir: str | None = None
     connection_string: None = None
     container_name: None = None

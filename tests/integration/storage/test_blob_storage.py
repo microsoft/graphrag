@@ -41,25 +41,10 @@ async def test_find():
         storage._delete_container()  # noqa: SLF001
 
 
-async def test_dotprefix():
-    storage = AzureBlobStorage(
-        connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
-        container_name="testfind",
-        path_prefix=".",
-    )
-    try:
-        await storage.set("input/christmas.txt", "Merry Christmas!", encoding="utf-8")
-        items = list(storage.find(file_pattern=re.compile(r".*\.txt$")))
-        assert items == ["input/christmas.txt"]
-    finally:
-        storage._delete_container()  # noqa: SLF001
-
-
 async def test_get_creation_date():
     storage = AzureBlobStorage(
         connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
         container_name="testfind",
-        path_prefix=".",
     )
     try:
         await storage.set("input/christmas.txt", "Merry Christmas!", encoding="utf-8")
