@@ -18,6 +18,10 @@ class MemoryStorage(FileStorage):
 
     def __init__(self, **kwargs: Any) -> None:
         """Init method definition."""
+        kwargs = {
+            "base_dir": "",
+            **kwargs,
+        }
         super().__init__(**kwargs)
         self._storage = {}
 

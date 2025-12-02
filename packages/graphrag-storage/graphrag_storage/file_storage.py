@@ -31,7 +31,7 @@ class FileStorage(Storage):
     _encoding: str
 
     def __init__(
-        self, base_dir: str | None = "", encoding: str = "utf-8", **kwargs: Any
+        self, base_dir: str | None = None, encoding: str = "utf-8", **kwargs: Any
     ) -> None:
         """Create a file based storage."""
         if base_dir is None:

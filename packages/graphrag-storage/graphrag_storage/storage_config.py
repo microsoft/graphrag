@@ -19,6 +19,11 @@ class StorageConfig(BaseModel):
         default=StorageType.FILE,
     )
 
+    encoding: str | None = Field(
+        description="The encoding to use for file storage.",
+        default=None,
+    )
+
     base_dir: str | None = Field(
         description="The base directory for the output.",
         default=None,

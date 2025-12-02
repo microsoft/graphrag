@@ -84,11 +84,14 @@ class Factory(ABC, Generic[T]):
             msg = f"Strategy '{strategy}' is not registered. Registered strategies are: {', '.join(list(self._service_initializers.keys()))}"
             raise ValueError(msg)
 
+        # Delete entries with value None
+        init_args = {k: v for k, v in (init_args or {}).items() if v is not None}
+
         service_descriptor = self._service_initializers[strategy]
         if service_descriptor.scope == "singleton":
             if strategy not in self._initialized_services:
                 self._initialized_services[strategy] = service_descriptor.initializer(
-                    **(init_args or {})
+                    **init_args
                 )
             return self._initialized_services[strategy]
 
