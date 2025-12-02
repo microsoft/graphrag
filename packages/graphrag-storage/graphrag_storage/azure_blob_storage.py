@@ -277,27 +277,7 @@ def _validate_blob_container_name(container_name: str) -> None:
     -------
         bool: True if valid, False otherwise.
     """
-    # Check the length of the name
-    if len(container_name) < 3 or len(container_name) > 63:
-        msg = f"Container name must be between 3 and 63 characters in length. Name provided was {len(container_name)} characters long."
-        raise ValueError(msg)
-
-    # Check if the name starts with a letter or number
-    if not container_name[0].isalnum():
-        msg = f"Container name must start with a letter or number. Starting character was {container_name[0]}."
-        raise ValueError(msg)
-
-    # Check for valid characters (letters, numbers, hyphen) and lowercase letters
-    if not re.match(r"^[a-z0-9-]+$", container_name):
-        msg = f"Container name must only contain:\n- lowercase letters\n- numbers\n- or hyphens\nName provided was {container_name}."
-        raise ValueError(msg)
-
-    # Check for consecutive hyphens
-    if "--" in container_name:
-        msg = f"Container name cannot contain consecutive hyphens. Name provided was {container_name}."
-        raise ValueError(msg)
-
-    # Check for hyphens at the end of the name
-    if container_name[-1] == "-":
-        msg = f"Container name cannot end with a hyphen. Name provided was {container_name}."
+    # Match alphanumeric or single hyphen not at the start or end, repeated 3-63 times.
+    if not re.match(r"^(?:[0-9a-z]|(?<!^)-(?!$)){3,63}$", container_name):
+        msg = f"Container name must be between 3 and 63 characters long and contain only lowercase letters, numbers, or hyphens. Name provided was {container_name}."
         raise ValueError(msg)
