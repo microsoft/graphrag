@@ -30,9 +30,9 @@ WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://127.0.0.1:8081/;A
 def test_create_blob_storage():
     config = StorageConfig(
         type=StorageType.AZURE_BLOB,
-        connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
+        azure_connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
         base_dir="testbasedir",
-        container_name="testcontainer",
+        azure_container_name="testcontainer",
     )
     storage = create_storage(config)
     assert isinstance(storage, AzureBlobStorage)
@@ -45,9 +45,9 @@ def test_create_blob_storage():
 def test_create_cosmosdb_storage():
     config = StorageConfig(
         type=StorageType.AZURE_COSMOS,
-        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        base_dir="testdatabase",
-        container_name="testcontainer",
+        azure_connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        azure_cosmosdb_database_name="testdatabase",
+        azure_container_name="testcontainer",
     )
     storage = create_storage(config)
     assert isinstance(storage, AzureCosmosStorage)

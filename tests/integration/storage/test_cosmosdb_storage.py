@@ -22,9 +22,9 @@ if not sys.platform.startswith("win"):
 
 async def test_find():
     storage = AzureCosmosStorage(
-        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        base_dir="testfind",
-        container_name="testfindcontainer",
+        azure_connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        azure_cosmosdb_database_name="testfind",
+        azure_container_name="testfindcontainer",
     )
     try:
         try:
@@ -65,9 +65,9 @@ async def test_find():
 
 async def test_child():
     storage = AzureCosmosStorage(
-        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        base_dir="testchild",
-        container_name="testchildcontainer",
+        azure_connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        azure_cosmosdb_database_name="testchild",
+        azure_container_name="testchildcontainer",
     )
     try:
         child_storage = storage.child("child")
@@ -78,9 +78,9 @@ async def test_child():
 
 async def test_clear():
     storage = AzureCosmosStorage(
-        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        base_dir="testclear",
-        container_name="testclearcontainer",
+        azure_connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        azure_cosmosdb_database_name="testclear",
+        azure_container_name="testclearcontainer",
     )
     try:
         json_exists = {
@@ -108,9 +108,9 @@ async def test_clear():
 
 async def test_get_creation_date():
     storage = AzureCosmosStorage(
-        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        base_dir="testclear",
-        container_name="testclearcontainer",
+        azure_connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        azure_cosmosdb_database_name="testclear",
+        azure_container_name="testclearcontainer",
     )
     try:
         json_content = {

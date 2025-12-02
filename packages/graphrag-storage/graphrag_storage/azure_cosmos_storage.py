@@ -41,30 +41,35 @@ class AzureCosmosStorage(Storage):
 
     def __init__(
         self,
-        base_dir: str,
-        container_name: str,
-        connection_string: str | None = None,
-        cosmosdb_account_url: str | None = None,
+        azure_cosmosdb_database_name: str,
+        azure_container_name: str,
+        azure_connection_string: str | None = None,
+        azure_cosmosdb_account_url: str | None = None,
         encoding: str = "utf-8",
     ) -> None:
         """Create a CosmosDB storage instance."""
         logger.info("Creating cosmosdb storage")
-        database_name = base_dir
+        database_name = azure_cosmosdb_database_name
         if database_name is None:
             msg = "CosmosDB Storage requires a base_dir to be specified. This is used as the database name."
             logger.error(msg)
             raise ValueError(msg)
 
-        if connection_string is not None and cosmosdb_account_url is not None:
+        if (
+            azure_connection_string is not None
+            and azure_cosmosdb_account_url is not None
+        ):
             msg = "CosmosDB Storage requires either a connection_string or cosmosdb_account_url to be specified, not both."
             logger.error(msg)
             raise ValueError(msg)
 
-        if connection_string:
-            self._cosmos_client = CosmosClient.from_connection_string(connection_string)
-        elif cosmosdb_account_url:
+        if azure_connection_string:
+            self._cosmos_client = CosmosClient.from_connection_string(
+                azure_connection_string
+            )
+        elif azure_cosmosdb_account_url:
             self._cosmos_client = CosmosClient(
-                url=cosmosdb_account_url,
+                url=azure_cosmosdb_account_url,
                 credential=DefaultAzureCredential(),
             )
         else:
@@ -74,12 +79,12 @@ class AzureCosmosStorage(Storage):
 
         self._encoding = encoding
         self._database_name = database_name
-        self._connection_string = connection_string
-        self._cosmosdb_account_url = cosmosdb_account_url
-        self._container_name = container_name
+        self._connection_string = azure_connection_string
+        self._cosmosdb_account_url = azure_cosmosdb_account_url
+        self._container_name = azure_container_name
         self._cosmosdb_account_name = (
-            cosmosdb_account_url.split("//")[1].split(".")[0]
-            if cosmosdb_account_url
+            azure_cosmosdb_account_url.split("//")[1].split(".")[0]
+            if azure_cosmosdb_account_url
             else None
         )
         self._no_id_prefixes = []

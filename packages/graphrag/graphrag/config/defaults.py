@@ -234,10 +234,10 @@ class StorageDefaults:
     type: str = StorageType.FILE
     encoding: str | None = None
     base_dir: str | None = None
-    connection_string: None = None
-    container_name: None = None
-    storage_account_blob_url: None = None
-    cosmosdb_account_url: None = None
+    azure_connection_string: None = None
+    azure_container_name: None = None
+    azure_storage_account_blob_url: None = None
+    azure_cosmosdb_account_url: None = None
 
 
 @dataclass

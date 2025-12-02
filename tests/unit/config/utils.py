@@ -129,10 +129,12 @@ def assert_reporting_configs(
 def assert_output_configs(actual: StorageConfig, expected: StorageConfig) -> None:
     assert expected.type == actual.type
     assert expected.base_dir == actual.base_dir
-    assert expected.connection_string == actual.connection_string
-    assert expected.container_name == actual.container_name
-    assert expected.storage_account_blob_url == actual.storage_account_blob_url
-    assert expected.cosmosdb_account_url == actual.cosmosdb_account_url
+    assert expected.azure_connection_string == actual.azure_connection_string
+    assert expected.azure_container_name == actual.azure_container_name
+    assert (
+        expected.azure_storage_account_blob_url == actual.azure_storage_account_blob_url
+    )
+    assert expected.azure_cosmosdb_account_url == actual.azure_cosmosdb_account_url
 
 
 def assert_update_output_configs(
@@ -140,10 +142,12 @@ def assert_update_output_configs(
 ) -> None:
     assert expected.type == actual.type
     assert expected.base_dir == actual.base_dir
-    assert expected.connection_string == actual.connection_string
-    assert expected.container_name == actual.container_name
-    assert expected.storage_account_blob_url == actual.storage_account_blob_url
-    assert expected.cosmosdb_account_url == actual.cosmosdb_account_url
+    assert expected.azure_connection_string == actual.azure_connection_string
+    assert expected.azure_container_name == actual.azure_container_name
+    assert (
+        expected.azure_storage_account_blob_url == actual.azure_storage_account_blob_url
+    )
+    assert expected.azure_cosmosdb_account_url == actual.azure_cosmosdb_account_url
 
 
 def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
@@ -159,12 +163,15 @@ def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
     assert actual.storage.type == expected.storage.type
     assert actual.file_type == expected.file_type
     assert actual.storage.base_dir == expected.storage.base_dir
-    assert actual.storage.connection_string == expected.storage.connection_string
     assert (
-        actual.storage.storage_account_blob_url
-        == expected.storage.storage_account_blob_url
+        actual.storage.azure_connection_string
+        == expected.storage.azure_connection_string
     )
-    assert actual.storage.container_name == expected.storage.container_name
+    assert (
+        actual.storage.azure_storage_account_blob_url
+        == expected.storage.azure_storage_account_blob_url
+    )
+    assert actual.storage.azure_container_name == expected.storage.azure_container_name
     assert actual.encoding == expected.encoding
     assert actual.file_pattern == expected.file_pattern
     assert actual.text_column == expected.text_column
