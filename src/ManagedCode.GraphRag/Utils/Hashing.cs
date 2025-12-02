@@ -11,27 +11,9 @@ public static class Hashing
     {
         ArgumentNullException.ThrowIfNull(fields);
 
-        var builder = new StringBuilder();
-        foreach (var field in fields)
-        {
-            builder.Append(field.Key);
-            builder.Append(':');
-            builder.Append(field.Value);
-            builder.Append('|');
-        }
-
-        var bytes = Encoding.UTF8.GetBytes(builder.ToString());
-        var hash = SHA512.HashData(bytes);
-        return Convert.ToHexString(hash).ToLowerInvariant();
-    }
-
-    public static string GenerateSha512Hash_OptimizedV1(IEnumerable<KeyValuePair<string, object?>> fields)
-    {
-        ArgumentNullException.ThrowIfNull(fields);
-
         using var hasher = IncrementalHash.CreateHash(HashAlgorithmName.SHA512);
 
-        Span<byte> buffer = stackalloc byte[256];
+        Span<byte> buffer = stackalloc byte[512];
 
         foreach (var field in fields)
         {

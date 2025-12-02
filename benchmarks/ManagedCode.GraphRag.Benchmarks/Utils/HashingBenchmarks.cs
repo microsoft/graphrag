@@ -47,61 +47,22 @@ public class HashingBenchmarks
     }
 
     [Benchmark(Baseline = true)]
-    public string HashSmallProperties()
-    {
-        return Hashing.GenerateSha512Hash(_smallProperties);
-    }
+    public string HashSmallProperties() => Hashing.GenerateSha512Hash(_smallProperties);
 
     [Benchmark]
-    public string HashSmallPropertiesOptimized()
-    {
-        return Hashing.GenerateSha512Hash_OptimizedV1(_smallProperties);
-    }
+    public string HashMediumProperties() => Hashing.GenerateSha512Hash(_mediumProperties);
 
     [Benchmark]
-    public string HashMediumProperties()
-    {
-        return Hashing.GenerateSha512Hash(_mediumProperties);
-    }
+    public string HashLargeProperties() => Hashing.GenerateSha512Hash(_largeProperties);
 
     [Benchmark]
-    public string HashMediumPropertiesOptimized()
-    {
-        return Hashing.GenerateSha512Hash_OptimizedV1(_mediumProperties);
-    }
+    public string HashLargeValueProperties() => Hashing.GenerateSha512Hash(_largeValueProperties);
 
     [Benchmark]
-    public string HashLargeProperties()
-    {
-        return Hashing.GenerateSha512Hash(_largeProperties);
-    }
-
-    [Benchmark]
-    public string HashLargePropertiesOptimized()
-    {
-        return Hashing.GenerateSha512Hash_OptimizedV1(_largeProperties);
-    }
-
-    [Benchmark]
-    public string HashLargeValueProperties()
-    {
-        return Hashing.GenerateSha512Hash(_largeValueProperties);
-    }
-
-    [Benchmark]
-    public string HashLargeValuePropertiesOptimized()
-    {
-        return Hashing.GenerateSha512Hash_OptimizedV1(_largeValueProperties);
-    }
-
-    [Benchmark]
-    public string HashWithTuples()
-    {
-        return Hashing.GenerateSha512Hash(
+    public string HashWithTuples() => Hashing.GenerateSha512Hash(
             ("id", "entity-123"),
             ("name", "Sample Entity Name"),
             ("type", "ORGANIZATION"),
             ("frequency", (object?)42),
             ("active", (object?)true));
-    }
 }
