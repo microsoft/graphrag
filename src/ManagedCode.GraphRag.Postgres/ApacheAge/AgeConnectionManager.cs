@@ -132,10 +132,25 @@ public sealed class AgeConnectionManager : IAgeConnectionManager
     {
         try
         {
+            await using var checkCommand = connection.CreateCommand();
+            checkCommand.CommandText = "SELECT 1 FROM pg_extension WHERE extname = 'age';";
+            checkCommand.CommandTimeout = 0;
+            var result = await checkCommand.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+
+            if (result is not null)
+            {
+                LogMessages.ExtensionLoaded(_logger, ConnectionString);
+                return;
+            }
+
             await using var load = connection.CreateCommand();
             load.CommandText = "LOAD 'age';";
             load.CommandTimeout = 0;
             await load.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            LogMessages.ExtensionLoaded(_logger, ConnectionString);
+        }
+        catch (PostgresException ex) when (ex.SqlState == "42501")
+        {
             LogMessages.ExtensionLoaded(_logger, ConnectionString);
         }
         catch (PostgresException ex)
