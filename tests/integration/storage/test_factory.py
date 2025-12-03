@@ -29,7 +29,7 @@ WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://127.0.0.1:8081/;A
 @pytest.mark.skip(reason="Blob storage emulator is not available in this environment")
 def test_create_blob_storage():
     config = StorageConfig(
-        type=StorageType.AZURE_BLOB,
+        type=StorageType.AzureBlob,
         azure_connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
         base_dir="testbasedir",
         azure_container_name="testcontainer",
@@ -44,7 +44,7 @@ def test_create_blob_storage():
 )
 def test_create_cosmosdb_storage():
     config = StorageConfig(
-        type=StorageType.AZURE_COSMOS,
+        type=StorageType.AzureCosmos,
         azure_connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
         azure_cosmosdb_database_name="testdatabase",
         azure_container_name="testcontainer",
@@ -55,7 +55,7 @@ def test_create_cosmosdb_storage():
 
 def test_create_file():
     config = StorageConfig(
-        type=StorageType.FILE,
+        type=StorageType.File,
         base_dir="/tmp/teststorage",
     )
     storage = create_storage(config)
@@ -65,7 +65,7 @@ def test_create_file():
 def test_create_memory_storage():
     config = StorageConfig(
         base_dir="",
-        type=StorageType.MEMORY,
+        type=StorageType.Memory,
     )
     storage = create_storage(config)
     assert isinstance(storage, MemoryStorage)

@@ -14,6 +14,10 @@ class Storage(ABC):
     """Provide a storage interface."""
 
     @abstractmethod
+    def __init__(self, **kwargs: Any) -> None:
+        """Create a storage instance."""
+
+    @abstractmethod
     def find(
         self,
         file_pattern: re.Pattern[str],

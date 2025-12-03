@@ -16,7 +16,7 @@ class StorageConfig(BaseModel):
 
     type: str = Field(
         description="The storage type to use. Builtin types include 'File', 'AzureBlob', and 'AzureCosmos'.",
-        default=StorageType.FILE,
+        default=StorageType.File,
     )
 
     encoding: str | None = Field(

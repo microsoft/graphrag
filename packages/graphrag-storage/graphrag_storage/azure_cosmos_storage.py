@@ -46,6 +46,7 @@ class AzureCosmosStorage(Storage):
         azure_connection_string: str | None = None,
         azure_account_url: str | None = None,
         encoding: str = "utf-8",
+        **kwargs: Any,
     ) -> None:
         """Create a CosmosDB storage instance."""
         logger.info("Creating cosmosdb storage")

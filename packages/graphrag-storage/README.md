@@ -9,7 +9,7 @@ from graphrag_storage import StorageConfig, create_storage, StorageType
 async def run():
     storage = create_storage(
         StorageConfig(
-            type=StorageType.FILE
+            type=StorageType.File
             base_dir="output"
         )
     )
@@ -29,7 +29,7 @@ from typing import Any
 from graphrag_storage import Storage, StorageConfig, create_storage, register_storage
 
 class MyStorage(Storage):
-    def __init__(self, some_setting: str, optional_setting: str = "default setting"):
+    def __init__(self, some_setting: str, optional_setting: str = "default setting", **kwargs: Any):
         # Validate settings and initialize
         ...
 
@@ -55,3 +55,28 @@ async def run():
 
 if __name__ == "__main__":
     asyncio.run(run())
+```
+
+### Information
+
+By default, the `create_storage` comes with the following storage providers registered that correspond to the entries in the `StorageType` enum.
+
+- `FileStorage`
+- `AzureBlobStorage`
+- `AzureCosmosStorage`
+- `MemoryStorage`
+
+You can directly import `storage_factory` if you want a clean factory with no preregistered storage providers.
+
+```python
+from graphrag_storage.storage_factory import storage_factory
+from graphrag_storage.file_storage import FileStorage
+
+# Or register a custom implementation, see above for example.
+storage_factory.register("my_storage_key", FileStorage)
+
+storage = storage_factory.create(strategy="my_storage_key", init_args={"base_dir": "...", "other_settings": "...",})
+
+...
+
+```

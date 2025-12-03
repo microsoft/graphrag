@@ -30,7 +30,7 @@ class FileStorage(Storage):
     _base_dir: Path
     _encoding: str
 
-    def __init__(self, base_dir: str, encoding: str = "utf-8") -> None:
+    def __init__(self, base_dir: str, encoding: str = "utf-8", **kwargs: Any) -> None:
         """Create a file based storage."""
         self._base_dir = Path(base_dir).resolve()
         self._encoding = encoding

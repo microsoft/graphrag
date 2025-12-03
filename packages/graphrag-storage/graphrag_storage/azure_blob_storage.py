@@ -38,6 +38,7 @@ class AzureBlobStorage(Storage):
         azure_connection_string: str | None = None,
         base_dir: str | None = None,
         encoding: str = "utf-8",
+        **kwargs: Any,
     ) -> None:
         """Create a new BlobStorage instance."""
         if azure_connection_string is not None and azure_account_url is not None:

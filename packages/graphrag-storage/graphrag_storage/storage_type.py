@@ -10,7 +10,7 @@ from enum import StrEnum
 class StorageType(StrEnum):
     """Enum for storage types."""
 
-    FILE = "File"
-    MEMORY = "Memory"
-    AZURE_BLOB = "AzureBlob"
-    AZURE_COSMOS = "AzureCosmos"
+    File = "file"
+    Memory = "memory"
+    AzureBlob = "blob"
+    AzureCosmos = "cosmosdb"

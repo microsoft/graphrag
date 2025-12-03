@@ -13,11 +13,11 @@ from graphrag_storage.storage_config import StorageConfig
 from graphrag_storage.storage_type import StorageType
 
 
-class _StorageFactory(Factory[Storage]):
+class StorageFactory(Factory[Storage]):
     """A factory class for storage implementations."""
 
 
-storage_factory = _StorageFactory()
+storage_factory = StorageFactory()
 
 
 def register_storage(
@@ -49,31 +49,26 @@ def create_storage(config: StorageConfig) -> Storage:
             The created storage implementation.
     """
     config_model = config.model_dump()
-    storage_strategy = config_model.pop("type")
-
-    # Check storage_strategy is a string
-    if not isinstance(storage_strategy, str):
-        msg = f"StorageConfig.type must be a string, got {type(storage_strategy)}"
-        raise TypeError(msg)
+    storage_strategy = config.type
 
     if storage_strategy not in storage_factory:
         match storage_strategy:
-            case StorageType.FILE:
+            case StorageType.File:
                 from graphrag_storage.file_storage import FileStorage
 
-                register_storage(StorageType.FILE, FileStorage)
-            case StorageType.MEMORY:
+                register_storage(StorageType.File, FileStorage)
+            case StorageType.Memory:
                 from graphrag_storage.memory_storage import MemoryStorage
 
-                register_storage(StorageType.MEMORY, MemoryStorage)
-            case StorageType.AZURE_BLOB:
+                register_storage(StorageType.Memory, MemoryStorage)
+            case StorageType.AzureBlob:
                 from graphrag_storage.azure_blob_storage import AzureBlobStorage
 
-                register_storage(StorageType.AZURE_BLOB, AzureBlobStorage)
-            case StorageType.AZURE_COSMOS:
+                register_storage(StorageType.AzureBlob, AzureBlobStorage)
+            case StorageType.AzureCosmos:
                 from graphrag_storage.azure_cosmos_storage import AzureCosmosStorage
 
-                register_storage(StorageType.AZURE_COSMOS, AzureCosmosStorage)
+                register_storage(StorageType.AzureCosmos, AzureCosmosStorage)
             case _:
                 msg = f"StorageConfig.type '{storage_strategy}' is not registered in the StorageFactory. Registered types: {', '.join(storage_factory.keys())}."
                 raise ValueError(msg)

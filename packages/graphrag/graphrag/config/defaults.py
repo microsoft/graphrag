@@ -231,7 +231,7 @@ class GlobalSearchDefaults:
 class StorageDefaults:
     """Default values for storage."""
 
-    type: str = StorageType.FILE
+    type: str = StorageType.File
     encoding: str | None = None
     base_dir: str | None = None
     azure_connection_string: None = None

@@ -50,7 +50,7 @@ models:
 
 input:
   storage:
-    type: {graphrag_config_defaults.input.storage.type} # or AzureBlob, AzureCosmos
+    type: {graphrag_config_defaults.input.storage.type} # or blob, cosmosdb
     base_dir: "{graphrag_config_defaults.input.storage.base_dir}"
   file_type: {graphrag_config_defaults.input.file_type.value} # [csv, text, json]
 
@@ -63,7 +63,7 @@ chunks:
 ## connection_string and container_name must be provided
 
 output:
-  type: {graphrag_config_defaults.output.type} # or AzureBlob, AzureCosmos
+  type: {graphrag_config_defaults.output.type} # or blob, cosmosdb
   base_dir: "{graphrag_config_defaults.output.base_dir}"
     
 cache:
