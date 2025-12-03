@@ -15,7 +15,7 @@ class StorageConfig(BaseModel):
     """Allow extra fields to support custom storage implementations."""
 
     type: str = Field(
-        description="The storage type to use. Builtin types include 'file', 'azure_blob', and 'azure_cosmos'.",
+        description="The storage type to use. Builtin types include 'File', 'AzureBlob', and 'AzureCosmos'.",
         default=StorageType.FILE,
     )
 
@@ -25,7 +25,7 @@ class StorageConfig(BaseModel):
     )
 
     base_dir: str | None = Field(
-        description="The base directory for the output when using file or azure_blob storage.",
+        description="The base directory for the output when using file or AzureBlob storage.",
         default=None,
     )
 
@@ -38,15 +38,11 @@ class StorageConfig(BaseModel):
         description="The Azure Blob Storage container name or CosmosDB container name to use.",
         default=None,
     )
-    azure_storage_account_blob_url: str | None = Field(
-        description="The Azure Blob Storage account blob url to use.",
+    azure_account_url: str | None = Field(
+        description="The account url for Azure Blob Storage or Azure CosmosDB.",
         default=None,
     )
     azure_cosmosdb_database_name: str | None = Field(
         description="The Azure CosmosDB database name to use.",
-        default=None,
-    )
-    azure_cosmosdb_account_url: str | None = Field(
-        description="The Azure CosmosDB account url to use.",
         default=None,
     )

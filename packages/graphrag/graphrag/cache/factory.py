@@ -6,9 +6,6 @@
 from __future__ import annotations
 
 from graphrag_common.factory import Factory
-from graphrag_storage.azure_blob_storage import AzureBlobStorage
-from graphrag_storage.azure_cosmos_storage import AzureCosmosStorage
-from graphrag_storage.file_storage import FileStorage
 
 from graphrag.cache.json_pipeline_cache import JsonPipelineCache
 from graphrag.cache.memory_pipeline_cache import InMemoryCache
@@ -30,6 +27,8 @@ class CacheFactory(Factory[PipelineCache]):
 # --- register built-in cache implementations ---
 def create_file_cache(**kwargs) -> PipelineCache:
     """Create a file-based cache implementation."""
+    from graphrag_storage.file_storage import FileStorage
+
     kwargs.pop("type", None)
     storage = FileStorage(**kwargs)
     return JsonPipelineCache(storage)
@@ -37,6 +36,8 @@ def create_file_cache(**kwargs) -> PipelineCache:
 
 def create_blob_cache(**kwargs) -> PipelineCache:
     """Create a blob storage-based cache implementation."""
+    from graphrag_storage.azure_blob_storage import AzureBlobStorage
+
     kwargs.pop("type", None)
     storage = AzureBlobStorage(**kwargs)
     return JsonPipelineCache(storage)
@@ -44,6 +45,8 @@ def create_blob_cache(**kwargs) -> PipelineCache:
 
 def create_cosmosdb_cache(**kwargs) -> PipelineCache:
     """Create a CosmosDB-based cache implementation."""
+    from graphrag_storage.azure_cosmos_storage import AzureCosmosStorage
+
     kwargs.pop("type", None)
     storage = AzureCosmosStorage(**kwargs)
     return JsonPipelineCache(storage)

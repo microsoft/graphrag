@@ -126,28 +126,14 @@ def assert_reporting_configs(
     assert actual.storage_account_blob_url == expected.storage_account_blob_url
 
 
-def assert_output_configs(actual: StorageConfig, expected: StorageConfig) -> None:
+def assert_storage_config(actual: StorageConfig, expected: StorageConfig) -> None:
     assert expected.type == actual.type
     assert expected.base_dir == actual.base_dir
     assert expected.azure_connection_string == actual.azure_connection_string
     assert expected.azure_container_name == actual.azure_container_name
-    assert (
-        expected.azure_storage_account_blob_url == actual.azure_storage_account_blob_url
-    )
-    assert expected.azure_cosmosdb_account_url == actual.azure_cosmosdb_account_url
-
-
-def assert_update_output_configs(
-    actual: StorageConfig, expected: StorageConfig
-) -> None:
-    assert expected.type == actual.type
-    assert expected.base_dir == actual.base_dir
-    assert expected.azure_connection_string == actual.azure_connection_string
-    assert expected.azure_container_name == actual.azure_container_name
-    assert (
-        expected.azure_storage_account_blob_url == actual.azure_storage_account_blob_url
-    )
-    assert expected.azure_cosmosdb_account_url == actual.azure_cosmosdb_account_url
+    assert expected.azure_account_url == actual.azure_account_url
+    assert expected.encoding == actual.encoding
+    assert expected.azure_cosmosdb_database_name == actual.azure_cosmosdb_database_name
 
 
 def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
@@ -160,18 +146,8 @@ def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
 
 
 def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
-    assert actual.storage.type == expected.storage.type
+    assert_storage_config(actual.storage, expected.storage)
     assert actual.file_type == expected.file_type
-    assert actual.storage.base_dir == expected.storage.base_dir
-    assert (
-        actual.storage.azure_connection_string
-        == expected.storage.azure_connection_string
-    )
-    assert (
-        actual.storage.azure_storage_account_blob_url
-        == expected.storage.azure_storage_account_blob_url
-    )
-    assert actual.storage.azure_container_name == expected.storage.azure_container_name
     assert actual.encoding == expected.encoding
     assert actual.file_pattern == expected.file_pattern
     assert actual.text_column == expected.text_column
@@ -365,11 +341,9 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
 
     assert_vector_store_configs(actual.vector_store, expected.vector_store)
     assert_reporting_configs(actual.reporting, expected.reporting)
-    assert_output_configs(actual.output, expected.output)
+    assert_storage_config(actual.output, expected.output)
 
-    assert_update_output_configs(
-        actual.update_index_output, expected.update_index_output
-    )
+    assert_storage_config(actual.update_index_output, expected.update_index_output)
 
     assert_cache_configs(actual.cache, expected.cache)
     assert_input_configs(actual.input, expected.input)

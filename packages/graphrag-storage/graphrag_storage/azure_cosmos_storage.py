@@ -44,7 +44,7 @@ class AzureCosmosStorage(Storage):
         azure_cosmosdb_database_name: str,
         azure_container_name: str,
         azure_connection_string: str | None = None,
-        azure_cosmosdb_account_url: str | None = None,
+        azure_account_url: str | None = None,
         encoding: str = "utf-8",
     ) -> None:
         """Create a CosmosDB storage instance."""
@@ -55,10 +55,7 @@ class AzureCosmosStorage(Storage):
             logger.error(msg)
             raise ValueError(msg)
 
-        if (
-            azure_connection_string is not None
-            and azure_cosmosdb_account_url is not None
-        ):
+        if azure_connection_string is not None and azure_account_url is not None:
             msg = "CosmosDB Storage requires either a connection_string or cosmosdb_account_url to be specified, not both."
             logger.error(msg)
             raise ValueError(msg)
@@ -67,9 +64,9 @@ class AzureCosmosStorage(Storage):
             self._cosmos_client = CosmosClient.from_connection_string(
                 azure_connection_string
             )
-        elif azure_cosmosdb_account_url:
+        elif azure_account_url:
             self._cosmos_client = CosmosClient(
-                url=azure_cosmosdb_account_url,
+                url=azure_account_url,
                 credential=DefaultAzureCredential(),
             )
         else:
@@ -80,11 +77,11 @@ class AzureCosmosStorage(Storage):
         self._encoding = encoding
         self._database_name = database_name
         self._connection_string = azure_connection_string
-        self._cosmosdb_account_url = azure_cosmosdb_account_url
+        self._cosmosdb_account_url = azure_account_url
         self._container_name = azure_container_name
         self._cosmosdb_account_name = (
-            azure_cosmosdb_account_url.split("//")[1].split(".")[0]
-            if azure_cosmosdb_account_url
+            azure_account_url.split("//")[1].split(".")[0]
+            if azure_account_url
             else None
         )
         self._no_id_prefixes = []

@@ -29,7 +29,7 @@ from typing import Any
 from graphrag_storage import Storage, StorageConfig, create_storage, register_storage
 
 class MyStorage(Storage):
-    def __init__(self, some_setting: str):
+    def __init__(self, some_setting: str, optional_setting: str = "default setting"):
         # Validate settings and initialize
         ...
 
