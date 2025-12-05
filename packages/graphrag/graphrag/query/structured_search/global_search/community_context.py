@@ -5,6 +5,8 @@
 
 from typing import Any
 
+import pandas as pd
+
 from graphrag.data_model.community import Community
 from graphrag.data_model.community_report import CommunityReport
 from graphrag.data_model.entity import Entity
@@ -52,7 +54,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
             )
         self.random_state = random_state
 
-    async def build_context(
+    async def build_context_chunks(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
@@ -70,7 +72,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
         conversation_history_user_turns_only: bool = True,
         conversation_history_max_turns: int | None = 5,
         **kwargs: Any,
-    ) -> ContextBuilderResult:
+    ) -> str | list[str]:
         """Prepare batches of community report data table as context data for global search."""
         conversation_history_context = ""
         final_context_data = {}
@@ -135,9 +137,133 @@ class GlobalCommunityContext(GlobalContextBuilder):
         # Update the final context data with the provided community_context_data
         final_context_data.update(community_context_data)
 
+        return final_context
+
+    async def build_context_records(
+        self,
+        query: str,
+        conversation_history: ConversationHistory | None = None,
+        use_community_summary: bool = True,
+        column_delimiter: str = "|",
+        shuffle_data: bool = True,
+        include_community_rank: bool = False,
+        min_community_rank: int = 0,
+        community_rank_name: str = "rank",
+        include_community_weight: bool = True,
+        community_weight_name: str = "occurrence",
+        normalize_community_weight: bool = True,
+        max_context_tokens: int = 8000,
+        context_name: str = "Reports",
+        conversation_history_user_turns_only: bool = True,
+        conversation_history_max_turns: int | None = 5,
+        **kwargs: Any,
+    ) -> dict[str, pd.DataFrame]:
+        """Prepare batches of community report data table as context data for global search."""
+        conversation_history_context = ""
+        final_context_data = {}
+        if conversation_history:
+            # build conversation history context
+            (
+                conversation_history_context,
+                conversation_history_context_data,
+            ) = conversation_history.build_context(
+                include_user_turns_only=conversation_history_user_turns_only,
+                max_qa_turns=conversation_history_max_turns,
+                column_delimiter=column_delimiter,
+                max_context_tokens=max_context_tokens,
+                recency_bias=False,
+            )
+            if conversation_history_context != "":
+                final_context_data = conversation_history_context_data
+
+        community_reports = self.community_reports
+
+        _, community_context_data = build_community_context(
+            community_reports=community_reports,
+            entities=self.entities,
+            tokenizer=self.tokenizer,
+            use_community_summary=use_community_summary,
+            column_delimiter=column_delimiter,
+            shuffle_data=shuffle_data,
+            include_community_rank=include_community_rank,
+            min_community_rank=min_community_rank,
+            community_rank_name=community_rank_name,
+            include_community_weight=include_community_weight,
+            community_weight_name=community_weight_name,
+            normalize_community_weight=normalize_community_weight,
+            max_context_tokens=max_context_tokens,
+            single_batch=False,
+            context_name=context_name,
+            random_state=self.random_state,
+        )
+
+        # Update the final context data with the provided community_context_data
+        final_context_data.update(community_context_data)
+
+        return final_context_data
+
+    async def build_context(
+        self,
+        query: str,
+        conversation_history: ConversationHistory | None = None,
+        use_community_summary: bool = True,
+        column_delimiter: str = "|",
+        shuffle_data: bool = True,
+        include_community_rank: bool = False,
+        min_community_rank: int = 0,
+        community_rank_name: str = "rank",
+        include_community_weight: bool = True,
+        community_weight_name: str = "occurrence",
+        normalize_community_weight: bool = True,
+        max_context_tokens: int = 8000,
+        context_name: str = "Reports",
+        **kwargs: Any,
+    ) -> ContextBuilderResult:
+        """Prepare batches of community report data table as context data for global search."""
+        final_context_data = {}
+        llm_calls, prompt_tokens, output_tokens = 0, 0, 0
+
+        community_reports = self.community_reports
+        if self.dynamic_community_selection is not None:
+            (
+                community_reports,
+                dynamic_info,
+            ) = await self.dynamic_community_selection.select(query)
+            llm_calls += dynamic_info["llm_calls"]
+            prompt_tokens += dynamic_info["prompt_tokens"]
+            output_tokens += dynamic_info["output_tokens"]
+
+        _, community_context_data = build_community_context(
+            community_reports=community_reports,
+            entities=self.entities,
+            tokenizer=self.tokenizer,
+            use_community_summary=use_community_summary,
+            column_delimiter=column_delimiter,
+            shuffle_data=shuffle_data,
+            include_community_rank=include_community_rank,
+            min_community_rank=min_community_rank,
+            community_rank_name=community_rank_name,
+            include_community_weight=include_community_weight,
+            community_weight_name=community_weight_name,
+            normalize_community_weight=normalize_community_weight,
+            max_context_tokens=max_context_tokens,
+            single_batch=False,
+            context_name=context_name,
+            random_state=self.random_state,
+        )
+
+        # Update the final context data with the provided community_context_data
+        final_context_data.update(community_context_data)
+
         return ContextBuilderResult(
-            context_chunks=final_context,
-            context_records=final_context_data,
+            context_chunks=await self.build_context_chunks(
+                query=query,
+                **kwargs,
+            ),
+            context_records=await self.build_context_records(
+                query=query,
+                **kwargs,
+            ),
             llm_calls=llm_calls,
             prompt_tokens=prompt_tokens,
             output_tokens=output_tokens,

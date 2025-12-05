@@ -24,7 +24,7 @@
 				"--root", 
 				"${input:root_folder}",
 				"--method", "${input:query_method}",
-				"--query", "${input:query}"
+				"${input:query}"
 			]
 		},
 		{

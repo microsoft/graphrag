@@ -36,6 +36,22 @@ class GlobalContextBuilder(ABC):
     ) -> ContextBuilderResult:
         """Build the context for the global search mode."""
 
+    @abstractmethod
+    async def build_context_chunks(
+        self,
+        query: str,
+        **kwargs,
+    ) -> str | list[str]:
+        """Build the context chunks for the global search mode."""
+
+    @abstractmethod
+    async def build_context_records(
+        self,
+        query: str,
+        **kwargs,
+    ) -> dict[str, pd.DataFrame]:
+        """Build the context records for the global search mode."""
+
 
 class LocalContextBuilder(ABC):
     """Base class for local-search context builders."""
@@ -48,6 +64,22 @@ class LocalContextBuilder(ABC):
         **kwargs,
     ) -> ContextBuilderResult:
         """Build the context for the local search mode."""
+
+    @abstractmethod
+    def build_context_chunks(
+        self,
+        query: str,
+        **kwargs,
+    ) -> str:
+        """Build the context chunks for the local search mode."""
+
+    @abstractmethod
+    def build_context_records(
+        self,
+        query: str,
+        **kwargs,
+    ) -> dict[str, pd.DataFrame]:
+        """Build the context records for the local search mode."""
 
 
 class DRIFTContextBuilder(ABC):
@@ -69,7 +101,22 @@ class BasicContextBuilder(ABC):
     def build_context(
         self,
         query: str,
-        conversation_history: ConversationHistory | None = None,
         **kwargs,
     ) -> ContextBuilderResult:
         """Build the context for the basic search mode."""
+
+    @abstractmethod
+    def build_context_chunks(
+        self,
+        query: str,
+        **kwargs,
+    ) -> str:
+        """Build the context chunks for the basic search mode."""
+
+    @abstractmethod
+    def build_context_records(
+        self,
+        query: str,
+        **kwargs,
+    ) -> dict[str, pd.DataFrame]:
+        """Build the context records for the basic search mode."""
