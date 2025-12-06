@@ -42,7 +42,6 @@ class SearchResult:
     prompt_tokens_categories: dict[str, int] | None = None
     output_tokens_categories: dict[str, int] | None = None
 
-
 T = TypeVar(
     "T",
     GlobalContextBuilder,
@@ -88,5 +87,15 @@ class BaseSearch(ABC, Generic[T]):
     ) -> AsyncGenerator[str, None]:
         """Stream search for the given query."""
         yield ""  # This makes it an async generator.
+        msg = "Subclasses must implement this method"
+        raise NotImplementedError(msg)
+    
+    @abstractmethod
+    async def format_records(
+        self,
+        records: dict[str, pd.DataFrame],
+        column_delimiter: str = "|",
+    ) -> str | list[str]:
+        """Format context records into a string representation."""
         msg = "Subclasses must implement this method"
         raise NotImplementedError(msg)

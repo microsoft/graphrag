@@ -12,9 +12,8 @@ from graphrag.data_model.text_unit import TextUnit
 from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.query.context_builder.builders import (
     BasicContextBuilder,
-    ContextBuilderResult,
+    LLMParameters,
 )
-from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.vector_stores.base import BaseVectorStore
@@ -38,62 +37,6 @@ class BasicSearchContext(BasicContextBuilder):
         self.text_units = text_units
         self.text_unit_embeddings = text_unit_embeddings
         self.embedding_vectorstore_key = embedding_vectorstore_key
-
-    def build_context_chunks(
-        self,
-        query: str,
-        k: int = 10,
-        max_context_tokens: int = 12_000,
-        column_delimiter: str = "|",
-        text_id_col: str = "id",
-        text_col: str = "text",
-        **kwargs,
-    ) -> str:
-        """Build the context for the basic search mode."""
-        if query != "":
-            related_texts = self.text_unit_embeddings.similarity_search_by_text(
-                text=query,
-                text_embedder=lambda t: self.text_embedder.embed(t),
-                k=k,
-            )
-
-            text_unit_ids = {t.document.id for t in related_texts}
-            text_units_filtered = []
-            text_units_filtered = [
-                {text_id_col: t.short_id, text_col: t.text}
-                for t in self.text_units or []
-                if t.id in text_unit_ids
-            ]
-            related_text_df = pd.DataFrame(text_units_filtered)
-        else:
-            related_text_df = pd.DataFrame({
-                text_id_col: [],
-                text_col: [],
-            })
-
-        # add these related text chunks into context until we fill up the context window
-        current_tokens = 0
-        text_ids = []
-        current_tokens = len(
-            self.tokenizer.encode(text_id_col + column_delimiter + text_col + "\n")
-        )
-        for i, row in related_text_df.iterrows():
-            text = row[text_id_col] + column_delimiter + row[text_col] + "\n"
-            tokens = len(self.tokenizer.encode(text))
-            if current_tokens + tokens > max_context_tokens:
-                msg = f"Reached token limit: {current_tokens + tokens}. Reverting to previous context state"
-                logger.warning(msg)
-                break
-
-            current_tokens += tokens
-            text_ids.append(i)
-        final_text_df = cast(
-            "pd.DataFrame",
-            related_text_df[related_text_df.index.isin(text_ids)].reset_index(
-                drop=True
-            ),
-        )
-        return final_text_df.to_csv(index=False, escapechar="\\", sep=column_delimiter)
 
     def build_context_records(
         self,
@@ -152,16 +95,11 @@ class BasicSearchContext(BasicContextBuilder):
         )
 
         return {context_name.lower(): final_text_df}
-
-    def build_context(
-        self,
-        query: str,
-        k: int = 10,
-        conversation_history: ConversationHistory | None = None,
-        **kwargs,
-    ) -> ContextBuilderResult:
-        """Build the context for the basic search mode."""
-        return ContextBuilderResult(
-            context_chunks=self.build_context_chunks(query=query, **kwargs),
-            context_records=self.build_context_records(query=query, **kwargs),
+    
+    def get_llm_values(self) -> LLMParameters:
+        """Get the LLM call values."""
+        return LLMParameters(
+            llm_calls=0,
+            prompt_tokens=0,
+            output_tokens=0,
         )

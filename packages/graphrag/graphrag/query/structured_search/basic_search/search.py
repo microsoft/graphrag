@@ -15,7 +15,10 @@ from graphrag.prompts.query.basic_search_system_prompt import (
 )
 from graphrag.query.context_builder.builders import BasicContextBuilder
 from graphrag.query.context_builder.conversation_history import ConversationHistory
-from graphrag.query.structured_search.base import BaseSearch, SearchResult
+from graphrag.query.structured_search.base import (
+    BaseSearch,
+    SearchResult,
+)
 from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
@@ -49,6 +52,17 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
         self.callbacks = callbacks or []
         self.response_type = response_type
 
+    async def format_records(self, records, column_delimiter = "|") -> str | list[str]:
+        """Format context records into a string representation."""
+        if len(records) == 1:
+                _, context_records_df = next(iter(records.items()))
+
+                if context_records_df is not None:
+                    return context_records_df.to_csv(
+                        index=False, escapechar="\\", sep=column_delimiter
+                    )
+        return ""
+
     async def search(
         self,
         query: str,
@@ -59,22 +73,30 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
         start_time = time.time()
         search_prompt = ""
         llm_calls, prompt_tokens, output_tokens = {}, {}, {}
+        context_chunks: str | list[str] = ""
+        column_delimiter: str = "|"
 
-        context_result = self.context_builder.build_context(
+        context_records = self.context_builder.build_context_records(
             query=query,
             conversation_history=conversation_history,
             **kwargs,
             **self.context_builder_params,
         )
 
-        llm_calls["build_context"] = context_result.llm_calls
-        prompt_tokens["build_context"] = context_result.prompt_tokens
-        output_tokens["build_context"] = context_result.output_tokens
+        llm_values = self.context_builder.get_llm_values()
+        llm_calls["build_context"] = llm_values.llm_calls
+        prompt_tokens["build_context"] = llm_values.prompt_tokens
+        output_tokens["build_context"] = llm_values.output_tokens
 
         logger.debug("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         try:
+            context_chunks = await self.format_records(
+                records=context_records,
+                column_delimiter=column_delimiter,
+            )
+                
             search_prompt = self.system_prompt.format(
-                context_data=context_result.context_chunks,
+                context_data=context_chunks,
                 response_type=self.response_type,
             )
             search_messages = [
@@ -96,12 +118,12 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
             output_tokens["response"] = len(self.tokenizer.encode(response))
 
             for callback in self.callbacks:
-                callback.on_context(context_result.context_records)
+                callback.on_context(context_records)
 
             return SearchResult(
                 response=response,
-                context_data=context_result.context_records,
-                context_text=context_result.context_chunks,
+                context_data=context_records,
+                context_text=context_chunks,
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=len(self.tokenizer.encode(search_prompt)),
@@ -115,8 +137,8 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
             logger.exception("Exception in _asearch")
             return SearchResult(
                 response="",
-                context_data=context_result.context_records,
-                context_text=context_result.context_chunks,
+                context_data=context_records,
+                context_text=context_chunks,
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=len(self.tokenizer.encode(search_prompt)),
@@ -133,22 +155,30 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
     ) -> AsyncGenerator[str, None]:
         """Build basic search context that fits a single context window and generate answer for the user query."""
         start_time = time.time()
+        context_chunks: str | list[str] = ""
+        column_delimiter: str = "|"
 
-        context_result = self.context_builder.build_context(
+        context_records = self.context_builder.build_context_records(
             query=query,
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
+
         logger.debug("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
+
+        context_chunks = await self.format_records(
+                records=context_records,
+                column_delimiter=column_delimiter,)
+
         search_prompt = self.system_prompt.format(
-            context_data=context_result.context_chunks, response_type=self.response_type
+            context_data=context_chunks, response_type=self.response_type
         )
         search_messages = [
             {"role": "system", "content": search_prompt},
         ]
 
         for callback in self.callbacks:
-            callback.on_context(context_result.context_records)
+            callback.on_context(context_records)
 
         async for chunk_response in self.model.achat_stream(
             prompt=query,
