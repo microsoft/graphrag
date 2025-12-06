@@ -95,7 +95,7 @@ class BasicSearchContext(BasicContextBuilder):
         )
 
         return {context_name.lower(): final_text_df}
-    
+
     def get_llm_values(self) -> LLMParameters:
         """Get the LLM call values."""
         return LLMParameters(

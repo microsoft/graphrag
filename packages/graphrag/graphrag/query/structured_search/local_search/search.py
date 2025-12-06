@@ -48,6 +48,17 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         self.callbacks = callbacks or []
         self.response_type = response_type
 
+    async def format_records(self, records, column_delimiter="|") -> str | list[str]:
+        """Format context records into a string representation."""
+        if len(records) == 1:
+            _, context_records_df = next(iter(records.items()))
+
+            if context_records_df is not None:
+                return context_records_df.to_csv(
+                    index=False, escapechar="\\", sep=column_delimiter
+                )
+        return ""
+
     async def search(
         self,
         query: str,

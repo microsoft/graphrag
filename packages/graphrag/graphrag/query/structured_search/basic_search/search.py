@@ -52,15 +52,15 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
         self.callbacks = callbacks or []
         self.response_type = response_type
 
-    async def format_records(self, records, column_delimiter = "|") -> str | list[str]:
+    async def format_records(self, records, column_delimiter="|") -> str | list[str]:
         """Format context records into a string representation."""
         if len(records) == 1:
-                _, context_records_df = next(iter(records.items()))
+            _, context_records_df = next(iter(records.items()))
 
-                if context_records_df is not None:
-                    return context_records_df.to_csv(
-                        index=False, escapechar="\\", sep=column_delimiter
-                    )
+            if context_records_df is not None:
+                return context_records_df.to_csv(
+                    index=False, escapechar="\\", sep=column_delimiter
+                )
         return ""
 
     async def search(
@@ -94,7 +94,7 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
                 records=context_records,
                 column_delimiter=column_delimiter,
             )
-                
+
             search_prompt = self.system_prompt.format(
                 context_data=context_chunks,
                 response_type=self.response_type,
@@ -167,8 +167,9 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
         logger.debug("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
 
         context_chunks = await self.format_records(
-                records=context_records,
-                column_delimiter=column_delimiter,)
+            records=context_records,
+            column_delimiter=column_delimiter,
+        )
 
         search_prompt = self.system_prompt.format(
             context_data=context_chunks, response_type=self.response_type

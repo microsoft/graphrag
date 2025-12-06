@@ -42,6 +42,7 @@ class SearchResult:
     prompt_tokens_categories: dict[str, int] | None = None
     output_tokens_categories: dict[str, int] | None = None
 
+
 T = TypeVar(
     "T",
     GlobalContextBuilder,
@@ -89,7 +90,7 @@ class BaseSearch(ABC, Generic[T]):
         yield ""  # This makes it an async generator.
         msg = "Subclasses must implement this method"
         raise NotImplementedError(msg)
-    
+
     @abstractmethod
     async def format_records(
         self,
