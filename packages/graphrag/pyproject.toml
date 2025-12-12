@@ -24,12 +24,14 @@ authors = [
 license = "MIT"
 readme = "README.md"
 license-files = ["LICENSE"]
-requires-python = ">=3.10,<3.13"
+requires-python = ">=3.10,<3.15"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 
 dependencies = [
@@ -43,7 +45,7 @@ dependencies = [
     "graphrag-common==2.7.0",
     "graspologic-native>=1.2.5",
     "json-repair>=0.30.3",
-    "lancedb>=0.17.0",
+    "lancedb==0.24.1",
     "litellm>=1.77.1",
     "networkx>=3.4.2",
     "nltk==3.9.1",
