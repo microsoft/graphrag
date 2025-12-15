@@ -20,15 +20,16 @@ authors = [
     {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
     {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
 ]
-license = "MIT"
+license = {text = "MIT"}
 readme = "README.md"
-license-files = ["LICENSE"]
-requires-python = ">=3.10,<3.13"
+requires-python = ">=3.10,<3.15"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
     "aiofiles>=24.1.0",
