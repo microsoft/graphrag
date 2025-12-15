@@ -41,8 +41,8 @@ def test_create_file_cache():
 
 def test_create_blob_cache():
     init_args = {
-        "azure_connection_string": WELL_KNOWN_BLOB_STORAGE_KEY,
-        "azure_container_name": "testcontainer",
+        "connection_string": WELL_KNOWN_BLOB_STORAGE_KEY,
+        "container_name": "testcontainer",
         "base_dir": "testcache",
     }
     cache = CacheFactory().create(strategy=CacheType.blob.value, init_args=init_args)
@@ -55,9 +55,9 @@ def test_create_blob_cache():
 )
 def test_create_cosmosdb_cache():
     init_args = {
-        "azure_connection_string": WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        "azure_cosmosdb_database_name": "testdatabase",
-        "azure_container_name": "testcontainer",
+        "connection_string": WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        "database_name": "testdatabase",
+        "container_name": "testcontainer",
     }
     cache = CacheFactory().create(
         strategy=CacheType.cosmosdb.value, init_args=init_args

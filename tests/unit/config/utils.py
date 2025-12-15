@@ -129,11 +129,11 @@ def assert_reporting_configs(
 def assert_storage_config(actual: StorageConfig, expected: StorageConfig) -> None:
     assert expected.type == actual.type
     assert expected.base_dir == actual.base_dir
-    assert expected.azure_connection_string == actual.azure_connection_string
-    assert expected.azure_container_name == actual.azure_container_name
-    assert expected.azure_account_url == actual.azure_account_url
+    assert expected.connection_string == actual.connection_string
+    assert expected.container_name == actual.container_name
+    assert expected.account_url == actual.account_url
     assert expected.encoding == actual.encoding
-    assert expected.azure_cosmosdb_database_name == actual.azure_cosmosdb_database_name
+    assert expected.database_name == actual.database_name
 
 
 def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:

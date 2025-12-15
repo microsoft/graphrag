@@ -29,20 +29,20 @@ class StorageConfig(BaseModel):
         default=None,
     )
 
-    azure_connection_string: str | None = Field(
-        description="The connection string for Azure Blob Storage or Azure CosmosDB.",
+    connection_string: str | None = Field(
+        description="The connection string for remote services.",
         default=None,
     )
 
-    azure_container_name: str | None = Field(
+    container_name: str | None = Field(
         description="The Azure Blob Storage container name or CosmosDB container name to use.",
         default=None,
     )
-    azure_account_url: str | None = Field(
-        description="The account url for Azure Blob Storage or Azure CosmosDB.",
+    account_url: str | None = Field(
+        description="The account url for Azure services.",
         default=None,
     )
-    azure_cosmosdb_database_name: str | None = Field(
-        description="The Azure CosmosDB database name to use.",
+    database_name: str | None = Field(
+        description="The database name to use.",
         default=None,
     )

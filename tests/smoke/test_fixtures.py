@@ -95,8 +95,8 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
 
     root = Path(input_path)
     input_storage = AzureBlobStorage(
-        azure_connection_string=WELL_KNOWN_AZURITE_CONNECTION_STRING,
-        azure_container_name=input_container,
+        connection_string=WELL_KNOWN_AZURITE_CONNECTION_STRING,
+        container_name=input_container,
     )
     # Bounce the container if it exists to clear out old run data
     input_storage._delete_container()  # noqa: SLF001

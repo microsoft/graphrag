@@ -13,8 +13,8 @@ WELL_KNOWN_BLOB_STORAGE_KEY = "DefaultEndpointsProtocol=http;AccountName=devstor
 
 async def test_find():
     storage = AzureBlobStorage(
-        azure_connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
-        azure_container_name="testfind",
+        connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
+        container_name="testfind",
     )
     try:
         try:
@@ -43,8 +43,8 @@ async def test_find():
 
 async def test_get_creation_date():
     storage = AzureBlobStorage(
-        azure_connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
-        azure_container_name="testfind",
+        connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
+        container_name="testfind",
     )
     try:
         await storage.set("input/christmas.txt", "Merry Christmas!", encoding="utf-8")
@@ -60,8 +60,8 @@ async def test_get_creation_date():
 
 async def test_child():
     parent = AzureBlobStorage(
-        azure_connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
-        azure_container_name="testchild",
+        connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
+        container_name="testchild",
     )
     try:
         try:
