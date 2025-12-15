@@ -20,9 +20,8 @@ authors = [
     {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
     {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
 ]
-license = "MIT"
+license = {text = "MIT"}
 readme = "README.md"
-license-files = ["LICENSE"]
 requires-python = ">=3.10,<3.15"
 classifiers = [
     "Programming Language :: Python :: 3",

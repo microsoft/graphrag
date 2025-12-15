@@ -21,9 +21,8 @@ authors = [
     {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
     {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
 ]
-license = "MIT"
+license = {text = "MIT"}
 readme = "README.md"
-license-files = ["LICENSE"]
 requires-python = ">=3.10,<3.15"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -52,7 +51,7 @@ dependencies = [
     "numpy>=1.25.2",
     "openai>=1.68.0",
     "pandas>=2.2.3",
-    "pyarrow>=17.0.0",
+    "pyarrow>=22.0.0",
     "pydantic>=2.10.3",
     "spacy>=3.8.4",
     "textblob>=0.18.0.post0",
