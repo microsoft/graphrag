@@ -21,7 +21,7 @@ authors = [
     {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
     {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
 ]
-requires-python = ">=3.10,<3.15"
+requires-python = ">=3.11,<3.15"
 
 [dependency-groups]
 dev = [
