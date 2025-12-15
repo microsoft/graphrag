@@ -30,10 +30,10 @@ def register_cache(
 
     Args
     ----
-        - storage_type: str
-            The storage id to register.
-        - storage_initializer: Callable[..., Storage]
-            The storage initializer to register.
+        - cache_type: str
+            The cache id to register.
+        - cache_initializer: Callable[..., Cache]
+            The cache initializer to register.
     """
     cache_factory.register(cache_type, cache_initializer, scope)
 
@@ -58,17 +58,17 @@ def create_cache(config: CacheConfig, storage: Storage | None = None) -> Cache:
 
     if cache_strategy not in cache_factory:
         match cache_strategy:
-            case "json":
+            case CacheType.Json:
                 from graphrag_cache.json_cache import JsonCache
 
                 register_cache(CacheType.Json, JsonCache)
 
-            case "memory":
+            case CacheType.Memory:
                 from graphrag_cache.memory_cache import MemoryCache
 
                 register_cache(CacheType.Memory, MemoryCache)
 
-            case "noop":
+            case CacheType.Noop:
                 from graphrag_cache.noop_cache import NoopCache
 
                 register_cache(CacheType.Noop, NoopCache)

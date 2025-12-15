@@ -12,7 +12,7 @@ async def run():
         CacheConfig(
             type=CacheType.Json
             storage=StorageConfig(
-                type=StorageType.File
+                type=StorageType.File,
                 base_dir="cache"
             )
         ),
@@ -47,7 +47,7 @@ register_cache("MyCache", MyCache)
 async def run():
     cache = create_cache(
         CacheConfig(
-            type="MyCache"
+            type="MyCache",
             some_setting="My Setting"
         )
     )
