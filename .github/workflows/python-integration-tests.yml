@@ -32,7 +32,7 @@ jobs:
     if: github.event.pull_request.draft == false
     strategy:
       matrix:
-        python-version: ["3.14"]
+        python-version: ["3.13"]
         os: [ubuntu-latest, windows-latest]
       fail-fast: false # continue running all jobs even if one fails
     env:

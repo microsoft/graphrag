@@ -22,13 +22,12 @@ authors = [
 ]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.11,<3.15"
+requires-python = ">=3.11,<3.14"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
     "aiofiles~=24.1",
@@ -36,7 +35,7 @@ dependencies = [
     "azure-identity~=1.19",
     "azure-storage-blob~=12.24",
     "graphrag-common==2.7.0",
-    "pandas>=2.3.0",
+    "pandas~=2.2",
     "pydantic~=2.10",
 ]
 
