@@ -6,7 +6,7 @@
 
 from collections.abc import Callable
 
-from graphrag_common.factory import Factory
+from graphrag_common.factory import Factory, ServiceScope
 
 from graphrag_storage.storage import Storage
 from graphrag_storage.storage_config import StorageConfig
@@ -21,7 +21,9 @@ storage_factory = StorageFactory()
 
 
 def register_storage(
-    storage_type: str, storage_initializer: Callable[..., Storage]
+    storage_type: str,
+    storage_initializer: Callable[..., Storage],
+    scope: ServiceScope = "transient",
 ) -> None:
     """Register a custom storage implementation.
 
@@ -32,7 +34,7 @@ def register_storage(
         - storage_initializer: Callable[..., Storage]
             The storage initializer to register.
     """
-    storage_factory.register(storage_type, storage_initializer)
+    storage_factory.register(storage_type, storage_initializer, scope)
 
 
 def create_storage(config: StorageConfig) -> Storage:
