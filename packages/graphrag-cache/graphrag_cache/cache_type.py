@@ -12,4 +12,4 @@ class CacheType(StrEnum):
 
     Json = "json"
     Memory = "memory"
-    Noop = "noop"
+    Noop = "none"

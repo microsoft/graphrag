@@ -165,14 +165,6 @@ class GraphRagConfig(BaseModel):
                 Path(self.update_index_output.base_dir).resolve()
             )
 
-    cache_storage: StorageConfig | None = Field(
-        description="The cache storage configuration.",
-        default=StorageConfig(
-            **asdict(graphrag_config_defaults.cache_storage),
-        ),
-    )
-    """The cache storage configuration."""
-
     cache: CacheConfig = Field(
         description="The cache configuration.",
         default=CacheConfig(**asdict(graphrag_config_defaults.cache)),

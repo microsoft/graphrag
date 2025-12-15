@@ -77,6 +77,7 @@ def create_cache(config: CacheConfig, storage: Storage | None = None) -> Cache:
                 msg = f"CacheConfig.type '{cache_strategy}' is not registered in the CacheFactory. Registered types: {', '.join(cache_factory.keys())}."
                 raise ValueError(msg)
 
-    return cache_factory.create(
-        strategy=cache_strategy, init_args={"storage": storage, **config_model}
-    )
+    if storage:
+        config_model["storage"] = storage
+
+    return cache_factory.create(strategy=cache_strategy, init_args=config_model)

@@ -6,23 +6,20 @@ import unittest
 
 from graphrag_cache import CacheConfig, CacheType
 from graphrag_cache import create_cache as cc
-from graphrag_storage import StorageConfig, StorageType, create_storage
+from graphrag_storage import StorageConfig, StorageType
 
 TEMP_DIR = "./.tmp"
 
 
 def create_cache():
-    storage = create_storage(
-        StorageConfig(
-            type=StorageType.File,
-            base_dir=os.path.join(os.getcwd(), ".tmp"),
-        )
-    )
     return cc(
         CacheConfig(
             type=CacheType.Json,
+            storage=StorageConfig(
+                type=StorageType.File,
+                base_dir=os.path.join(os.getcwd(), ".tmp"),
+            ),
         ),
-        storage=storage,
     )
 
 

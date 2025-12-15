@@ -3,6 +3,7 @@
 
 """Cache configuration model."""
 
+from graphrag_storage import StorageConfig
 from pydantic import BaseModel, ConfigDict, Field
 
 from graphrag_cache.cache_type import CacheType
@@ -19,12 +20,7 @@ class CacheConfig(BaseModel):
         default=CacheType.Json,
     )
 
-    encoding: str | None = Field(
-        description="The encoding to use for file-based caching.",
-        default=None,
-    )
-
-    name: str | None = Field(
-        description="The name to use for the cache instance.",
+    storage: StorageConfig | None = Field(
+        description="The storage configuration to use for file-based caches such as 'Json'.",
         default=None,
     )

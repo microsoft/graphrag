@@ -50,7 +50,7 @@ models:
 
 input:
   storage:
-    type: {graphrag_config_defaults.input.storage.type} # or blob, cosmosdb
+    type: {graphrag_config_defaults.input.storage.type} # [file, blob, cosmosdb]
     base_dir: "{graphrag_config_defaults.input.storage.base_dir}"
   file_type: {graphrag_config_defaults.input.file_type.value} # [csv, text, json]
 
@@ -63,15 +63,14 @@ chunks:
 ## connection_string and container_name must be provided
 
 output:
-  type: {graphrag_config_defaults.output.type} # or blob, cosmosdb
+  type: {graphrag_config_defaults.output.type} # [file, blob, cosmosdb]
   base_dir: "{graphrag_config_defaults.output.base_dir}"
-    
-cache_storage:
-  type: {graphrag_config_defaults.cache_storage.type} # [file, blob, cosmosdb]
-  base_dir: "{graphrag_config_defaults.cache_storage.base_dir}"
 
 cache:
-  type: {graphrag_config_defaults.cache.type} # [json, memory, noop]
+  type: {graphrag_config_defaults.cache.type} # [json, memory, none]
+  storage:
+    type: {graphrag_config_defaults.cache.storage.type} # [file, blob, cosmosdb]
+    base_dir: "{graphrag_config_defaults.cache.storage.base_dir}"
 
 reporting:
   type: {graphrag_config_defaults.reporting.type.value} # [file, blob]

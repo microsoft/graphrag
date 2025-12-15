@@ -37,10 +37,7 @@ async def run_pipeline(
     """Run all workflows using a simplified pipeline."""
     input_storage = create_storage(config.input.storage)
     output_storage = create_storage(config.output)
-    cache_storage: Storage | None = None
-    if config.cache_storage:
-        cache_storage = create_storage(config.cache_storage)
-    cache = create_cache(config.cache, storage=cache_storage)
+    cache = create_cache(config.cache)
 
     # load existing state in case any workflows are stateful
     state_json = await output_storage.get("context.json")

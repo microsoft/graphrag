@@ -138,8 +138,8 @@ def assert_storage_config(actual: StorageConfig, expected: StorageConfig) -> Non
 
 def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
     assert actual.type == expected.type
-    assert actual.encoding == expected.encoding
-    assert actual.name == expected.name
+    if actual.storage and expected.storage:
+        assert_storage_config(actual.storage, expected.storage)
 
 
 def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:

@@ -57,15 +57,6 @@ class BasicSearchDefaults:
 
 
 @dataclass
-class CacheDefaults:
-    """Default values for cache."""
-
-    type: CacheType = CacheType.Json
-    encoding: str | None = None
-    name: str | None = None
-
-
-@dataclass
 class ChunksDefaults:
     """Default values for chunks."""
 
@@ -239,13 +230,6 @@ class StorageDefaults:
 
 
 @dataclass
-class CacheStorageDefaults(StorageDefaults):
-    """Default values for cache storage."""
-
-    base_dir: str | None = DEFAULT_CACHE_BASE_DIR
-
-
-@dataclass
 class InputStorageDefaults(StorageDefaults):
     """Default values for input storage."""
 
@@ -263,6 +247,21 @@ class InputDefaults:
     text_column: str = "text"
     title_column: None = None
     metadata: None = None
+
+
+@dataclass
+class CacheStorageDefaults(StorageDefaults):
+    """Default values for cache storage."""
+
+    base_dir: str | None = DEFAULT_CACHE_BASE_DIR
+
+
+@dataclass
+class CacheDefaults:
+    """Default values for cache."""
+
+    type: CacheType = CacheType.Json
+    storage: CacheStorageDefaults = field(default_factory=CacheStorageDefaults)
 
 
 @dataclass
@@ -401,7 +400,6 @@ class GraphRagConfigDefaults:
         default_factory=UpdateIndexOutputDefaults
     )
     cache: CacheDefaults = field(default_factory=CacheDefaults)
-    cache_storage: CacheStorageDefaults = field(default_factory=CacheStorageDefaults)
     input: InputDefaults = field(default_factory=InputDefaults)
     embed_text: EmbedTextDefaults = field(default_factory=EmbedTextDefaults)
     chunks: ChunksDefaults = field(default_factory=ChunksDefaults)

@@ -14,10 +14,9 @@ class MemoryCache(Cache):
     _cache: dict[str, Any]
     _name: str
 
-    def __init__(self, name: str | None = None, **kwargs: Any) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """Init method definition."""
         self._cache = {}
-        self._name = name or ""
 
     async def get(self, key: str) -> Any:
         """Get the value for the given key.
@@ -30,7 +29,6 @@ class MemoryCache(Cache):
         -------
             - output - The value for the given key.
         """
-        key = self._create_cache_key(key)
         return self._cache.get(key)
 
     async def set(self, key: str, value: Any, debug_data: dict | None = None) -> None:
@@ -40,7 +38,6 @@ class MemoryCache(Cache):
             - key - The key to set the value for.
             - value - The value to set.
         """
-        key = self._create_cache_key(key)
         self._cache[key] = value
 
     async def has(self, key: str) -> bool:
@@ -53,7 +50,6 @@ class MemoryCache(Cache):
         -------
             - output - True if the key exists in the storage, False otherwise.
         """
-        key = self._create_cache_key(key)
         return key in self._cache
 
     async def delete(self, key: str) -> None:
@@ -62,7 +58,6 @@ class MemoryCache(Cache):
         Args:
             - key - The key to delete.
         """
-        key = self._create_cache_key(key)
         del self._cache[key]
 
     async def clear(self) -> None:
@@ -71,8 +66,4 @@ class MemoryCache(Cache):
 
     def child(self, name: str) -> "Cache":
         """Create a sub cache with the given name."""
-        return MemoryCache(name)
-
-    def _create_cache_key(self, key: str) -> str:
-        """Create a cache key for the given key."""
-        return f"{self._name}{key}"
+        return MemoryCache()
