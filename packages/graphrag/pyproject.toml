@@ -51,7 +51,7 @@ dependencies = [
     "nltk==3.9.1",
     "numpy>=2.0.0",
     "openai~=1.68",
-    "pandas~=2.2",
+    "pandas>=2.3.0",
     "pyarrow~=22.0",
     "pydantic~=2.10",
     "spacy~=3.8",
