@@ -49,7 +49,7 @@ dependencies = [
     "fastuuid~=0.14",
     "networkx~=3.4",
     "nltk==3.9.1",
-    "numpy~=1.25",
+    "numpy>=2.0.0",
     "openai~=1.68",
     "pandas~=2.2",
     "pyarrow~=22.0",
