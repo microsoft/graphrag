@@ -7,8 +7,8 @@ from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
+from graphrag_storage import Storage
 
-from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import (
     load_table_from_storage,
     write_table_to_storage,
@@ -31,16 +31,14 @@ class InputDelta:
     deleted_inputs: pd.DataFrame
 
 
-async def get_delta_docs(
-    input_dataset: pd.DataFrame, storage: PipelineStorage
-) -> InputDelta:
+async def get_delta_docs(input_dataset: pd.DataFrame, storage: Storage) -> InputDelta:
     """Get the delta between the input dataset and the final documents.
 
     Parameters
     ----------
     input_dataset : pd.DataFrame
         The input dataset.
-    storage : PipelineStorage
+    storage : Storage
         The Pipeline storage.
 
     Returns
@@ -65,9 +63,9 @@ async def get_delta_docs(
 
 async def concat_dataframes(
     name: str,
-    previous_storage: PipelineStorage,
-    delta_storage: PipelineStorage,
-    output_storage: PipelineStorage,
+    previous_storage: Storage,
+    delta_storage: Storage,
+    output_storage: Storage,
 ) -> pd.DataFrame:
     """Concatenate dataframes."""
     old_df = await load_table_from_storage(name, previous_storage)

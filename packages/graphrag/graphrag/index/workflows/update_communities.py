@@ -5,12 +5,13 @@
 
 import logging
 
+from graphrag_storage import Storage
+
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.utils import get_update_storages
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.update.communities import _update_and_merge_communities
-from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -37,9 +38,9 @@ async def run_workflow(
 
 
 async def _update_communities(
-    previous_storage: PipelineStorage,
-    delta_storage: PipelineStorage,
-    output_storage: PipelineStorage,
+    previous_storage: Storage,
+    delta_storage: Storage,
+    output_storage: Storage,
 ) -> dict:
     """Update the communities output."""
     old_communities = await load_table_from_storage("communities", previous_storage)

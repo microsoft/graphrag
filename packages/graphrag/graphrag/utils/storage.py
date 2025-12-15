@@ -7,13 +7,12 @@ import logging
 from io import BytesIO
 
 import pandas as pd
-
-from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag_storage import Storage
 
 logger = logging.getLogger(__name__)
 
 
-async def load_table_from_storage(name: str, storage: PipelineStorage) -> pd.DataFrame:
+async def load_table_from_storage(name: str, storage: Storage) -> pd.DataFrame:
     """Load a parquet from the storage instance."""
     filename = f"{name}.parquet"
     if not await storage.has(filename):
@@ -28,17 +27,17 @@ async def load_table_from_storage(name: str, storage: PipelineStorage) -> pd.Dat
 
 
 async def write_table_to_storage(
-    table: pd.DataFrame, name: str, storage: PipelineStorage
+    table: pd.DataFrame, name: str, storage: Storage
 ) -> None:
     """Write a table to storage."""
     await storage.set(f"{name}.parquet", table.to_parquet())
 
 
-async def delete_table_from_storage(name: str, storage: PipelineStorage) -> None:
+async def delete_table_from_storage(name: str, storage: Storage) -> None:
     """Delete a table to storage."""
     await storage.delete(f"{name}.parquet")
 
 
-async def storage_has_table(name: str, storage: PipelineStorage) -> bool:
+async def storage_has_table(name: str, storage: Storage) -> bool:
     """Check if a table exists in storage."""
     return await storage.has(f"{name}.parquet")

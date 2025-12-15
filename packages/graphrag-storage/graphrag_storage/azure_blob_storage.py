@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Azure Blob Storage implementation of PipelineStorage."""
+"""Azure Blob Storage implementation of Storage."""
 
 import logging
 import re
@@ -12,15 +12,15 @@ from typing import Any
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 
-from graphrag.storage.pipeline_storage import (
-    PipelineStorage,
+from graphrag_storage.storage import (
+    Storage,
     get_timestamp_formatted_with_local_tz,
 )
 
 logger = logging.getLogger(__name__)
 
 
-class BlobPipelineStorage(PipelineStorage):
+class AzureBlobStorage(Storage):
     """The Blob-Storage implementation."""
 
     _connection_string: str | None
@@ -28,45 +28,52 @@ class BlobPipelineStorage(PipelineStorage):
     _base_dir: str | None
     _encoding: str
     _storage_account_blob_url: str | None
+    _blob_service_client: BlobServiceClient
+    _storage_account_name: str | None
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        container_name: str,
+        account_url: str | None = None,
+        connection_string: str | None = None,
+        base_dir: str | None = None,
+        encoding: str = "utf-8",
+        **kwargs: Any,
+    ) -> None:
         """Create a new BlobStorage instance."""
-        connection_string = kwargs.get("connection_string")
-        storage_account_blob_url = kwargs.get("storage_account_blob_url")
-        base_dir = kwargs.get("base_dir")
-        container_name = kwargs["container_name"]
-        if container_name is None:
-            msg = "No container name provided for blob storage."
+        if connection_string is not None and account_url is not None:
+            msg = "AzureBlobStorage requires only one of connection_string or storage_account_blob_url to be specified, not both."
+            logger.error(msg)
             raise ValueError(msg)
-        if connection_string is None and storage_account_blob_url is None:
-            msg = "No storage account blob url provided for blob storage."
-            raise ValueError(msg)
+
+        _validate_blob_container_name(container_name)
 
         logger.info(
-            "Creating blob storage at [%s] and base_dir [%s]", container_name, base_dir
+            "Creating blob storage at [%s] and base_dir [%s]",
+            container_name,
+            base_dir,
         )
         if connection_string:
             self._blob_service_client = BlobServiceClient.from_connection_string(
                 connection_string
             )
-        else:
-            if storage_account_blob_url is None:
-                msg = "Either connection_string or storage_account_blob_url must be provided."
-                raise ValueError(msg)
-
+        elif account_url:
             self._blob_service_client = BlobServiceClient(
-                account_url=storage_account_blob_url,
+                account_url=account_url,
                 credential=DefaultAzureCredential(),
             )
-        self._encoding = kwargs.get("encoding", "utf-8")
+        else:
+            msg = "AzureBlobStorage requires either a connection_string or storage_account_blob_url to be specified."
+            logger.error(msg)
+            raise ValueError(msg)
+
+        self._encoding = encoding
         self._container_name = container_name
         self._connection_string = connection_string
         self._base_dir = base_dir
-        self._storage_account_blob_url = storage_account_blob_url
+        self._storage_account_blob_url = account_url
         self._storage_account_name = (
-            storage_account_blob_url.split("//")[1].split(".")[0]
-            if storage_account_blob_url
-            else None
+            account_url.split("//")[1].split(".")[0] if account_url else None
         )
         self._create_container()
 
@@ -208,17 +215,17 @@ class BlobPipelineStorage(PipelineStorage):
     async def clear(self) -> None:
         """Clear the cache."""
 
-    def child(self, name: str | None) -> "PipelineStorage":
+    def child(self, name: str | None) -> "Storage":
         """Create a child storage instance."""
         if name is None:
             return self
         path = str(Path(self._base_dir) / name) if self._base_dir else name
-        return BlobPipelineStorage(
+        return AzureBlobStorage(
             connection_string=self._connection_string,
             container_name=self._container_name,
             encoding=self._encoding,
             base_dir=path,
-            storage_account_blob_url=self._storage_account_blob_url,
+            account_url=self._storage_account_blob_url,
         )
 
     def keys(self) -> list[str]:
@@ -245,7 +252,7 @@ class BlobPipelineStorage(PipelineStorage):
             return ""
 
 
-def validate_blob_container_name(container_name: str):
+def _validate_blob_container_name(container_name: str) -> None:
     """
     Check if the provided blob container name is valid based on Azure rules.
 
@@ -265,34 +272,7 @@ def validate_blob_container_name(container_name: str):
     -------
         bool: True if valid, False otherwise.
     """
-    # Check the length of the name
-    if len(container_name) < 3 or len(container_name) > 63:
-        return ValueError(
-            f"Container name must be between 3 and 63 characters in length. Name provided was {len(container_name)} characters long."
-        )
-
-    # Check if the name starts with a letter or number
-    if not container_name[0].isalnum():
-        return ValueError(
-            f"Container name must start with a letter or number. Starting character was {container_name[0]}."
-        )
-
-    # Check for valid characters (letters, numbers, hyphen) and lowercase letters
-    if not re.match(r"^[a-z0-9-]+$", container_name):
-        return ValueError(
-            f"Container name must only contain:\n- lowercase letters\n- numbers\n- or hyphens\nName provided was {container_name}."
-        )
-
-    # Check for consecutive hyphens
-    if "--" in container_name:
-        return ValueError(
-            f"Container name cannot contain consecutive hyphens. Name provided was {container_name}."
-        )
-
-    # Check for hyphens at the end of the name
-    if container_name[-1] == "-":
-        return ValueError(
-            f"Container name cannot end with a hyphen. Name provided was {container_name}."
-        )
-
-    return True
+    # Match alphanumeric or single hyphen not at the start or end, repeated 3-63 times.
+    if not re.match(r"^(?:[0-9a-z]|(?<!^)-(?!$)){3,63}$", container_name):
+        msg = f"Container name must be between 3 and 63 characters long and contain only lowercase letters, numbers, or hyphens. Name provided was {container_name}."
+        raise ValueError(msg)

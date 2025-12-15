@@ -25,11 +25,11 @@ from graphrag.config.models.local_search_config import LocalSearchConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
-from graphrag.config.models.storage_config import StorageConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
 from graphrag.config.models.vector_store_config import VectorStoreConfig
+from graphrag_storage import StorageConfig
 from pydantic import BaseModel
 
 FAKE_API_KEY = "NOT_AN_API_KEY"
@@ -126,24 +126,14 @@ def assert_reporting_configs(
     assert actual.storage_account_blob_url == expected.storage_account_blob_url
 
 
-def assert_output_configs(actual: StorageConfig, expected: StorageConfig) -> None:
+def assert_storage_config(actual: StorageConfig, expected: StorageConfig) -> None:
     assert expected.type == actual.type
     assert expected.base_dir == actual.base_dir
     assert expected.connection_string == actual.connection_string
     assert expected.container_name == actual.container_name
-    assert expected.storage_account_blob_url == actual.storage_account_blob_url
-    assert expected.cosmosdb_account_url == actual.cosmosdb_account_url
-
-
-def assert_update_output_configs(
-    actual: StorageConfig, expected: StorageConfig
-) -> None:
-    assert expected.type == actual.type
-    assert expected.base_dir == actual.base_dir
-    assert expected.connection_string == actual.connection_string
-    assert expected.container_name == actual.container_name
-    assert expected.storage_account_blob_url == actual.storage_account_blob_url
-    assert expected.cosmosdb_account_url == actual.cosmosdb_account_url
+    assert expected.account_url == actual.account_url
+    assert expected.encoding == actual.encoding
+    assert expected.database_name == actual.database_name
 
 
 def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
@@ -156,15 +146,8 @@ def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
 
 
 def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
-    assert actual.storage.type == expected.storage.type
+    assert_storage_config(actual.storage, expected.storage)
     assert actual.file_type == expected.file_type
-    assert actual.storage.base_dir == expected.storage.base_dir
-    assert actual.storage.connection_string == expected.storage.connection_string
-    assert (
-        actual.storage.storage_account_blob_url
-        == expected.storage.storage_account_blob_url
-    )
-    assert actual.storage.container_name == expected.storage.container_name
     assert actual.encoding == expected.encoding
     assert actual.file_pattern == expected.file_pattern
     assert actual.text_column == expected.text_column
@@ -358,11 +341,9 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
 
     assert_vector_store_configs(actual.vector_store, expected.vector_store)
     assert_reporting_configs(actual.reporting, expected.reporting)
-    assert_output_configs(actual.output, expected.output)
+    assert_storage_config(actual.output, expected.output)
 
-    assert_update_output_configs(
-        actual.update_index_output, expected.update_index_output
-    )
+    assert_storage_config(actual.update_index_output, expected.update_index_output)
 
     assert_cache_configs(actual.cache, expected.cache)
     assert_input_configs(actual.input, expected.input)

@@ -7,6 +7,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import ClassVar
 
+from graphrag_storage import StorageType
+
 from graphrag.config.embeddings import default_embeddings
 from graphrag.config.enums import (
     AsyncType,
@@ -17,7 +19,6 @@ from graphrag.config.enums import (
     ModelType,
     NounPhraseExtractorType,
     ReportingType,
-    StorageType,
     VectorStoreType,
 )
 from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
@@ -230,12 +231,13 @@ class GlobalSearchDefaults:
 class StorageDefaults:
     """Default values for storage."""
 
-    type: ClassVar[StorageType] = StorageType.file
+    type: str = StorageType.File
+    encoding: str | None = None
     base_dir: str | None = None
-    connection_string: None = None
-    container_name: None = None
-    storage_account_blob_url: None = None
-    cosmosdb_account_url: None = None
+    azure_connection_string: None = None
+    azure_container_name: None = None
+    azure_storage_account_blob_url: None = None
+    azure_cosmosdb_account_url: None = None
 
 
 @dataclass

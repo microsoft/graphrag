@@ -13,8 +13,9 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
+    from graphrag_storage import Storage
+
     from graphrag.config.models.input_config import InputConfig
-    from graphrag.storage.pipeline_storage import PipelineStorage
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 class InputReader(metaclass=ABCMeta):
     """Provide a cache interface for the pipeline."""
 
-    def __init__(self, storage: PipelineStorage, config: InputConfig, **kwargs):
+    def __init__(self, storage: Storage, config: InputConfig, **kwargs):
         self._storage = storage
         self._config = config
 

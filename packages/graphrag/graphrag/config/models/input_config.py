@@ -3,12 +3,12 @@
 
 """Parameterization settings for the default configuration."""
 
+from graphrag_storage import StorageConfig
 from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import InputFileType
-from graphrag.config.models.storage_config import StorageConfig
 
 
 class InputConfig(BaseModel):

@@ -3,6 +3,9 @@
 
 """Utility functions for the GraphRAG run module."""
 
+from graphrag_storage import Storage, create_storage
+from graphrag_storage.memory_storage import MemoryStorage
+
 from graphrag.cache.memory_pipeline_cache import InMemoryCache
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
@@ -12,15 +15,12 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.state import PipelineState
 from graphrag.index.typing.stats import PipelineRunStats
-from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
-from graphrag.storage.pipeline_storage import PipelineStorage
-from graphrag.utils.api import create_storage_from_config
 
 
 def create_run_context(
-    input_storage: PipelineStorage | None = None,
-    output_storage: PipelineStorage | None = None,
-    previous_storage: PipelineStorage | None = None,
+    input_storage: Storage | None = None,
+    output_storage: Storage | None = None,
+    previous_storage: Storage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
     stats: PipelineRunStats | None = None,
@@ -28,9 +28,9 @@ def create_run_context(
 ) -> PipelineRunContext:
     """Create the run context for the pipeline."""
     return PipelineRunContext(
-        input_storage=input_storage or MemoryPipelineStorage(),
-        output_storage=output_storage or MemoryPipelineStorage(),
-        previous_storage=previous_storage or MemoryPipelineStorage(),
+        input_storage=input_storage or MemoryStorage(),
+        output_storage=output_storage or MemoryStorage(),
+        previous_storage=previous_storage or MemoryStorage(),
         cache=cache or InMemoryCache(),
         callbacks=callbacks or NoopWorkflowCallbacks(),
         stats=stats or PipelineRunStats(),
@@ -50,10 +50,10 @@ def create_callback_chain(
 
 def get_update_storages(
     config: GraphRagConfig, timestamp: str
-) -> tuple[PipelineStorage, PipelineStorage, PipelineStorage]:
+) -> tuple[Storage, Storage, Storage]:
     """Get storage objects for the update index run."""
-    output_storage = create_storage_from_config(config.output)
-    update_storage = create_storage_from_config(config.update_index_output)
+    output_storage = create_storage(config.output)
+    update_storage = create_storage(config.update_index_output)
     timestamped_storage = update_storage.child(timestamp)
     delta_storage = timestamped_storage.child("delta")
     previous_storage = timestamped_storage.child("previous")

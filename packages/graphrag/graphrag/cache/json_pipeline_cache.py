@@ -6,17 +6,18 @@
 import json
 from typing import Any
 
+from graphrag_storage import Storage
+
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 class JsonPipelineCache(PipelineCache):
     """File pipeline cache class definition."""
 
-    _storage: PipelineStorage
+    _storage: Storage
     _encoding: str
 
-    def __init__(self, storage: PipelineStorage, encoding="utf-8"):
+    def __init__(self, storage: Storage, encoding="utf-8"):
         """Init method definition."""
         self._storage = storage
         self._encoding = encoding

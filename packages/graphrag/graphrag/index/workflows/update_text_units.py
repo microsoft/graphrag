@@ -7,12 +7,12 @@ import logging
 
 import numpy as np
 import pandas as pd
+from graphrag_storage import Storage
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.utils import get_update_storages
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -40,9 +40,9 @@ async def run_workflow(
 
 
 async def _update_text_units(
-    previous_storage: PipelineStorage,
-    delta_storage: PipelineStorage,
-    output_storage: PipelineStorage,
+    previous_storage: Storage,
+    delta_storage: Storage,
+    output_storage: Storage,
     entity_id_mapping: dict,
 ) -> pd.DataFrame:
     """Update the text units output."""

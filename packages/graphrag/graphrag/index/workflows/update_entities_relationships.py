@@ -6,6 +6,7 @@
 import logging
 
 import pandas as pd
+from graphrag_storage import Storage
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -17,7 +18,6 @@ from graphrag.index.update.entities import _group_and_resolve_entities
 from graphrag.index.update.relationships import _update_and_merge_relationships
 from graphrag.index.workflows.extract_graph import get_summarized_entities_relationships
 from graphrag.language_model.manager import ModelManager
-from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -55,9 +55,9 @@ async def run_workflow(
 
 
 async def _update_entities_and_relationships(
-    previous_storage: PipelineStorage,
-    delta_storage: PipelineStorage,
-    output_storage: PipelineStorage,
+    previous_storage: Storage,
+    delta_storage: Storage,
+    output_storage: Storage,
     config: GraphRagConfig,
     cache: PipelineCache,
     callbacks: WorkflowCallbacks,
