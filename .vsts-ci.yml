@@ -10,7 +10,7 @@ trigger:
 
 variables:
   isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
-  pythonVersion: "3.10"
+  pythonVersion: "3.13"
   poetryVersion: "1.6.1"
   nodeVersion: "18.x"
   artifactsFullFeedName: "Resilience/resilience_python"
