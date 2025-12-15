@@ -31,8 +31,8 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "python-dotenv>=1.0.1",
-    "pyyaml>=6.0.2",
+    "python-dotenv~=1.0",
+    "pyyaml~=6.0",
 ]
 
 [project.urls]

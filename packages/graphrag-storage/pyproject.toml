@@ -31,13 +31,13 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "aiofiles>=24.1.0",
-    "azure-cosmos>=4.9.0",
-    "azure-identity>=1.19.0",
-    "azure-storage-blob>=12.24.0",
+    "aiofiles~=24.1",
+    "azure-cosmos~=4.9",
+    "azure-identity~=1.19",
+    "azure-storage-blob~=12.24",
     "graphrag-common==2.7.0",
-    "pandas>=2.2.3",
-    "pydantic>=2.10.3",
+    "pandas~=2.2",
+    "pydantic~=2.10",
 ]
 
 [project.urls]
