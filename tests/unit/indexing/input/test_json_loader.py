@@ -3,9 +3,8 @@
 
 from graphrag.config.enums import InputFileType
 from graphrag.config.models.input_config import InputConfig
-from graphrag.config.models.storage_config import StorageConfig
 from graphrag.index.input.factory import InputReaderFactory
-from graphrag.utils.api import create_storage_from_config
+from graphrag_storage import StorageConfig, create_storage
 
 
 async def test_json_loader_one_file_one_object():
@@ -16,7 +15,7 @@ async def test_json_loader_one_file_one_object():
         file_type=InputFileType.json,
         file_pattern=".*\\.json$",
     )
-    storage = create_storage_from_config(config.storage)
+    storage = create_storage(config.storage)
     documents = (
         await InputReaderFactory()
         .create(config.file_type, {"storage": storage, "config": config})
@@ -34,7 +33,7 @@ async def test_json_loader_one_file_multiple_objects():
         file_type=InputFileType.json,
         file_pattern=".*\\.json$",
     )
-    storage = create_storage_from_config(config.storage)
+    storage = create_storage(config.storage)
     documents = (
         await InputReaderFactory()
         .create(config.file_type, {"storage": storage, "config": config})
@@ -54,7 +53,7 @@ async def test_json_loader_one_file_with_title():
         file_pattern=".*\\.json$",
         title_column="title",
     )
-    storage = create_storage_from_config(config.storage)
+    storage = create_storage(config.storage)
     documents = (
         await InputReaderFactory()
         .create(config.file_type, {"storage": storage, "config": config})
@@ -74,7 +73,7 @@ async def test_json_loader_one_file_with_metadata():
         title_column="title",
         metadata=["title"],
     )
-    storage = create_storage_from_config(config.storage)
+    storage = create_storage(config.storage)
     documents = (
         await InputReaderFactory()
         .create(config.file_type, {"storage": storage, "config": config})
@@ -92,7 +91,7 @@ async def test_json_loader_multiple_files():
         file_type=InputFileType.json,
         file_pattern=".*\\.json$",
     )
-    storage = create_storage_from_config(config.storage)
+    storage = create_storage(config.storage)
     documents = (
         await InputReaderFactory()
         .create(config.file_type, {"storage": storage, "config": config})

@@ -8,11 +8,12 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from graphrag_storage import create_storage
+
 import graphrag.api as api
 from graphrag.callbacks.noop_query_callbacks import NoopQueryCallbacks
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.utils.api import create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, storage_has_table
 
 if TYPE_CHECKING:
@@ -376,7 +377,7 @@ def _resolve_output_files(
 ) -> dict[str, Any]:
     """Read indexing output files to a dataframe dict."""
     dataframe_dict = {}
-    storage_obj = create_storage_from_config(config.output)
+    storage_obj = create_storage(config.output)
     for name in output_list:
         df_value = asyncio.run(load_table_from_storage(name=name, storage=storage_obj))
         dataframe_dict[name] = df_value

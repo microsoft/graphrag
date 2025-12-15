@@ -56,7 +56,7 @@ def test_create_blob_cache():
 def test_create_cosmosdb_cache():
     init_args = {
         "connection_string": WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        "base_dir": "testdatabase",
+        "database_name": "testdatabase",
         "container_name": "testcontainer",
     }
     cache = CacheFactory().create(

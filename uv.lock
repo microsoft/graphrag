@@ -13,6 +13,7 @@ members = [
     "graphrag",
     "graphrag-common",
     "graphrag-monorepo",
+    "graphrag-storage",
 ]
 
 [[package]]
@@ -1328,6 +1329,7 @@ dependencies = [
     { name = "devtools" },
     { name = "environs" },
     { name = "graphrag-common" },
+    { name = "graphrag-storage" },
     { name = "graspologic-native" },
     { name = "json-repair" },
     { name = "lancedb" },
@@ -1359,6 +1361,7 @@ requires-dist = [
     { name = "devtools", specifier = ">=0.12.2" },
     { name = "environs", specifier = ">=11.0.0" },
     { name = "graphrag-common", editable = "packages/graphrag-common" },
+    { name = "graphrag-storage", editable = "packages/graphrag-storage" },
     { name = "graspologic-native", specifier = ">=1.2.5" },
     { name = "json-repair", specifier = ">=0.30.3" },
     { name = "lancedb", specifier = "==0.24.1" },
@@ -1444,6 +1447,31 @@ dev = [
     { name = "ruff", specifier = ">=0.8.2" },
     { name = "semversioner", specifier = ">=2.0.5" },
     { name = "update-toml", specifier = ">=0.2.1" },
+]
+
+[[package]]
+name = "graphrag-storage"
+version = "2.7.0"
+source = { editable = "packages/graphrag-storage" }
+dependencies = [
+    { name = "aiofiles" },
+    { name = "azure-cosmos" },
+    { name = "azure-identity" },
+    { name = "azure-storage-blob" },
+    { name = "graphrag-common" },
+    { name = "pandas" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiofiles", specifier = ">=24.1.0" },
+    { name = "azure-cosmos", specifier = ">=4.9.0" },
+    { name = "azure-identity", specifier = ">=1.19.0" },
+    { name = "azure-storage-blob", specifier = ">=12.24.0" },
+    { name = "graphrag-common", editable = "packages/graphrag-common" },
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "pydantic", specifier = ">=2.10.3" },
 ]
 
 [[package]]

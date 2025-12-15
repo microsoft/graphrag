@@ -81,7 +81,7 @@ Our pipeline can ingest .csv, .txt, or .json data from an input location. See th
 #### Fields
 
 - `storage` **StorageConfig**
-  - `type` **file|blob|cosmosdb** - The storage type to use. Default=`file`
+  - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
   - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
   - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
   - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.

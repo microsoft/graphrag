@@ -7,12 +7,12 @@ import logging
 
 import numpy as np
 import pandas as pd
+from graphrag_storage import Storage
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.utils import get_update_storages
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import (
     load_table_from_storage,
     storage_has_table,
@@ -43,9 +43,9 @@ async def run_workflow(
 
 
 async def _update_covariates(
-    previous_storage: PipelineStorage,
-    delta_storage: PipelineStorage,
-    output_storage: PipelineStorage,
+    previous_storage: Storage,
+    delta_storage: Storage,
+    output_storage: Storage,
 ) -> None:
     """Update the covariates output."""
     old_covariates = await load_table_from_storage("covariates", previous_storage)
