@@ -20,24 +20,23 @@ authors = [
     {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
     {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
 ]
-license = "MIT"
+license = {text = "MIT"}
 readme = "README.md"
-license-files = ["LICENSE"]
-requires-python = ">=3.10,<3.13"
+requires-python = ">=3.11,<3.14"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "aiofiles>=24.1.0",
-    "azure-cosmos>=4.9.0",
-    "azure-identity>=1.19.0",
-    "azure-storage-blob>=12.24.0",
+    "aiofiles~=24.1",
+    "azure-cosmos~=4.9",
+    "azure-identity~=1.19",
+    "azure-storage-blob~=12.24",
     "graphrag-common==2.7.0",
-    "pandas>=2.2.3",
-    "pydantic>=2.10.3",
+    "pandas>=2.3.0",
+    "pydantic~=2.10",
 ]
 
 [project.urls]

@@ -379,7 +379,7 @@ def _query_cli(
         autocompletion=ROOT_AUTOCOMPLETE,
     ),
     method: SearchMethod = typer.Option(
-        SearchMethod.GLOBAL,
+        SearchMethod.GLOBAL.value,
         "--method",
         "-m",
         help="The query algorithm to use.",
