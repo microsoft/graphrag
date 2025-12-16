@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing embed_text, load_strategy and create_row_from_embedding_data methods definition."""
+"""A module containing embed_text method definition."""
 
 import logging
 

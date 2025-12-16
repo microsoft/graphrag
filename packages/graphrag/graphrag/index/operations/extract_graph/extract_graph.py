@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing entity_extract methods."""
+"""A module containing extract_graph method."""
 
 import logging
 
@@ -35,7 +35,7 @@ async def extract_graph(
         nonlocal num_started
         text = row[text_column]
         id = row[id_column]
-        result = await run_extract_graph(
+        result = await _run_extract_graph(
             text=text,
             source_id=id,
             entity_types=entity_types,
@@ -68,7 +68,7 @@ async def extract_graph(
     return (entities, relationships)
 
 
-async def run_extract_graph(
+async def _run_extract_graph(
     text: str,
     source_id: str,
     entity_types: list[str],

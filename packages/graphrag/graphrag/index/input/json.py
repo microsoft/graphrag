@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing load method definition."""
+"""A module containing 'JSONFileReader' model."""
 
 import json
 import logging

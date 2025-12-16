@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing the WorkflowCallbacks registry."""
+"""A module containing 'WorkflowCallbacksManager' model."""
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult

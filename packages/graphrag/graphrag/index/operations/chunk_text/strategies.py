@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing chunk strategies."""
+"""A module containing run_tokens and run_sentences methods."""
 
 from collections.abc import Iterable
 

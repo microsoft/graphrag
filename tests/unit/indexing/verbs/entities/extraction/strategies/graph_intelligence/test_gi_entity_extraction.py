@@ -2,7 +2,7 @@
 # Licensed under the MIT License
 import unittest
 
-from graphrag.index.operations.extract_graph.extract_graph import run_extract_graph
+from graphrag.index.operations.extract_graph.extract_graph import _run_extract_graph
 from graphrag.prompts.index.extract_graph import GRAPH_EXTRACTION_PROMPT
 
 from tests.unit.indexing.verbs.helpers.mock_llm import create_mock_llm
@@ -22,7 +22,7 @@ SIMPLE_EXTRACTION_RESPONSE = """
 
 class TestRunChain(unittest.IsolatedAsyncioTestCase):
     async def test_run_extract_graph_single_document_correct_entities_returned(self):
-        entities_df, _ = await run_extract_graph(
+        entities_df, _ = await _run_extract_graph(
             text="test_text",
             source_id="1",
             entity_types=["person"],
@@ -39,7 +39,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_run_extract_graph_single_document_correct_edges_returned(self):
-        _, relationships_df = await run_extract_graph(
+        _, relationships_df = await _run_extract_graph(
             text="test_text",
             source_id="1",
             entity_types=["person"],
@@ -61,7 +61,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         }
 
     async def test_run_extract_graph_single_document_source_ids_mapped(self):
-        entities_df, relationships_df = await run_extract_graph(
+        entities_df, relationships_df = await _run_extract_graph(
             text="test_text",
             source_id="1",
             entity_types=["person"],
