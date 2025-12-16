@@ -7,19 +7,11 @@ from unittest.mock import MagicMock
 import pytest
 import tiktoken
 from graphrag.index.text_splitting.text_splitting import (
-    NoopTextSplitter,
     TokenChunkerOptions,
     TokenTextSplitter,
     split_multiple_texts_on_tokens,
     split_single_text_on_tokens,
 )
-
-
-def test_noop_text_splitter() -> None:
-    splitter = NoopTextSplitter()
-
-    assert list(splitter.split_text("some text")) == ["some text"]
-    assert list(splitter.split_text(["some", "text"])) == ["some", "text"]
 
 
 class MockTokenizer:

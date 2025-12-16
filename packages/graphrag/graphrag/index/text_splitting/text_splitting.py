@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing the 'Tokenizer', 'TextSplitter', 'NoopTextSplitter' and 'TokenTextSplitter' models."""
+"""A module containing the 'Tokenizer', 'TextSplitter', and 'TokenTextSplitter' models."""
 
 import logging
 from abc import ABC, abstractmethod
@@ -70,14 +70,6 @@ class TextSplitter(ABC):
     @abstractmethod
     def split_text(self, text: str | list[str]) -> Iterable[str]:
         """Split text method definition."""
-
-
-class NoopTextSplitter(TextSplitter):
-    """Noop text splitter class definition."""
-
-    def split_text(self, text: str | list[str]) -> Iterable[str]:
-        """Split text method definition."""
-        return [text] if isinstance(text, str) else text
 
 
 class TokenTextSplitter(TextSplitter):
