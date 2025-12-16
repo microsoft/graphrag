@@ -1,16 +1,22 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Module containing the NoopPipelineCache implementation."""
+"""Abstract base class for cache."""
 
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
 from typing import Any
 
-from graphrag.cache.pipeline_cache import PipelineCache
 
+class Cache(ABC):
+    """Provide a cache interface for the pipeline."""
 
-class NoopPipelineCache(PipelineCache):
-    """A no-op implementation of the pipeline cache, usually useful for testing."""
+    @abstractmethod
+    def __init__(self, **kwargs: Any) -> None:
+        """Create a cache instance."""
 
+    @abstractmethod
     async def get(self, key: str) -> Any:
         """Get the value for the given key.
 
@@ -22,11 +28,9 @@ class NoopPipelineCache(PipelineCache):
         -------
             - output - The value for the given key.
         """
-        return None
 
-    async def set(
-        self, key: str, value: str | bytes | None, debug_data: dict | None = None
-    ) -> None:
+    @abstractmethod
+    async def set(self, key: str, value: Any, debug_data: dict | None = None) -> None:
         """Set the value for the given key.
 
         Args:
@@ -34,6 +38,7 @@ class NoopPipelineCache(PipelineCache):
             - value - The value to set.
         """
 
+    @abstractmethod
     async def has(self, key: str) -> bool:
         """Return True if the given key exists in the cache.
 
@@ -44,8 +49,8 @@ class NoopPipelineCache(PipelineCache):
         -------
             - output - True if the key exists in the cache, False otherwise.
         """
-        return False
 
+    @abstractmethod
     async def delete(self, key: str) -> None:
         """Delete the given key from the cache.
 
@@ -53,13 +58,14 @@ class NoopPipelineCache(PipelineCache):
             - key - The key to delete.
         """
 
+    @abstractmethod
     async def clear(self) -> None:
         """Clear the cache."""
 
-    def child(self, name: str) -> PipelineCache:
+    @abstractmethod
+    def child(self, name: str) -> Cache:
         """Create a child cache with the given name.
 
         Args:
             - name - The name to create the sub cache with.
         """
-        return self

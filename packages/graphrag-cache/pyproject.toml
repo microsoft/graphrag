@@ -1,8 +1,7 @@
 [project]
-name = "graphrag"
-# Maintainers: do not change the version here manually
+name = "graphrag-cache"
 version = "2.7.0"
-description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
+description = "GraphRAG cache package."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
     {name = "Andrés Morales Esquivel", email = "andresmor@microsoft.com"},
@@ -21,50 +20,20 @@ authors = [
     {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
     {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
 ]
-license = {text = "MIT"}
+license = "MIT"
 readme = "README.md"
-requires-python = ">=3.11,<3.14"
+license-files = ["LICENSE"]
+requires-python = ">=3.10,<3.13"
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
 ]
-
 dependencies = [
-    "aiofiles~=24.1",
-    "azure-cosmos~=4.9",
-    "azure-identity~=1.19",
-    "azure-search-documents~=11.5",
-    "azure-storage-blob~=12.24",
-    "devtools~=0.12",
-    "environs~=11.0",
-    "graphrag-cache==2.7.0",
     "graphrag-common==2.7.0",
     "graphrag-storage==2.7.0",
-    "graspologic-native~=1.2",
-    "json-repair~=0.30",
-    "lancedb~=0.24.1",
-    "litellm~=1.77",
-    "fastuuid~=0.13",
-    "networkx~=3.4",
-    "nltk==3.9.1",
-    "numpy>=2.1.0",
-    "openai~=1.68",
-    "pandas>=2.3.0",
-    "pyarrow~=22.0",
-    "pydantic~=2.10",
-    "spacy~=3.8",
-    "blis~=1.0",
-    "textblob~=0.18",
-    "tiktoken~=0.11",
-    "tqdm~=4.67",
-    "typing-extensions~=4.12",
-    "typer~=0.16",
 ]
-
-[project.scripts]
-graphrag = "graphrag.cli.main:app"
 
 [project.urls]
 Source = "https://github.com/microsoft/graphrag"
@@ -72,4 +41,3 @@ Source = "https://github.com/microsoft/graphrag"
 [build-system]
 requires = ["hatchling>=1.27.0,<2.0.0"]
 build-backend = "hatchling.build"
-

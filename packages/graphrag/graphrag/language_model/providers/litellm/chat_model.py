@@ -38,7 +38,8 @@ from graphrag.language_model.providers.litellm.types import (
 )
 
 if TYPE_CHECKING:
-    from graphrag.cache.pipeline_cache import PipelineCache
+    from graphrag_cache import Cache
+
     from graphrag.config.models.language_model_config import LanguageModelConfig
     from graphrag.language_model.response.base import ModelResponse as MR  # noqa: N817
 
@@ -113,7 +114,7 @@ def _create_base_completions(
 
 def _create_completions(
     model_config: "LanguageModelConfig",
-    cache: "PipelineCache | None",
+    cache: "Cache | None",
     cache_key_prefix: str,
 ) -> tuple[FixedModelCompletion, AFixedModelCompletion]:
     """Wrap the base litellm completion function with the model configuration and additional features.
@@ -203,7 +204,7 @@ class LitellmChatModel:
         self,
         name: str,
         config: "LanguageModelConfig",
-        cache: "PipelineCache | None" = None,
+        cache: "Cache | None" = None,
         **kwargs: Any,
     ):
         self.name = name

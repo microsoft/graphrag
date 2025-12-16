@@ -3,9 +3,11 @@
 
 """Parameterization settings for the default configuration."""
 
+from dataclasses import asdict
 from pathlib import Path
 
 from devtools import pformat
+from graphrag_cache import CacheConfig
 from graphrag_storage import StorageConfig, StorageType
 from pydantic import BaseModel, Field, model_validator
 
@@ -13,7 +15,6 @@ import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import VectorStoreType
 from graphrag.config.models.basic_search_config import BasicSearchConfig
-from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
@@ -165,7 +166,8 @@ class GraphRagConfig(BaseModel):
             )
 
     cache: CacheConfig = Field(
-        description="The cache configuration.", default=CacheConfig()
+        description="The cache configuration.",
+        default=CacheConfig(**asdict(graphrag_config_defaults.cache)),
     )
     """The cache configuration."""
 

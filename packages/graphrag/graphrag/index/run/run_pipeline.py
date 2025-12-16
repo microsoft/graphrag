@@ -12,6 +12,7 @@ from dataclasses import asdict
 from typing import Any
 
 import pandas as pd
+from graphrag_cache import create_cache
 from graphrag_storage import Storage, create_storage
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -20,7 +21,6 @@ from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.pipeline import Pipeline
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
-from graphrag.utils.api import create_cache_from_config
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ async def run_pipeline(
     """Run all workflows using a simplified pipeline."""
     input_storage = create_storage(config.input.storage)
     output_storage = create_storage(config.output)
-    cache = create_cache_from_config(config.cache)
+    cache = create_cache(config.cache)
 
     # load existing state in case any workflows are stateful
     state_json = await output_storage.get("context.json")

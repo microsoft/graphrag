@@ -5,7 +5,6 @@ from dataclasses import asdict
 
 import graphrag.config.defaults as defs
 from graphrag.config.models.basic_search_config import BasicSearchConfig
-from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
@@ -29,6 +28,7 @@ from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
 from graphrag.config.models.vector_store_config import VectorStoreConfig
+from graphrag_cache import CacheConfig
 from graphrag_storage import StorageConfig
 from pydantic import BaseModel
 
@@ -138,11 +138,8 @@ def assert_storage_config(actual: StorageConfig, expected: StorageConfig) -> Non
 
 def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
     assert actual.type == expected.type
-    assert actual.base_dir == expected.base_dir
-    assert actual.connection_string == expected.connection_string
-    assert actual.container_name == expected.container_name
-    assert actual.storage_account_blob_url == expected.storage_account_blob_url
-    assert actual.cosmosdb_account_url == expected.cosmosdb_account_url
+    if actual.storage and expected.storage:
+        assert_storage_config(actual.storage, expected.storage)
 
 
 def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:

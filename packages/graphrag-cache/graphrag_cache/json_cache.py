@@ -6,27 +6,35 @@
 import json
 from typing import Any
 
-from graphrag_storage import Storage
+from graphrag_storage import Storage, StorageConfig, create_storage
 
-from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag_cache.cache import Cache
 
 
-class JsonPipelineCache(PipelineCache):
+class JsonCache(Cache):
     """File pipeline cache class definition."""
 
     _storage: Storage
-    _encoding: str
 
-    def __init__(self, storage: Storage, encoding="utf-8"):
+    def __init__(
+        self,
+        storage: Storage | dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> None:
         """Init method definition."""
-        self._storage = storage
-        self._encoding = encoding
+        if storage is None:
+            msg = "JsonCache requires either a Storage instance to be provided or a StorageConfig to create one."
+            raise ValueError(msg)
+        if isinstance(storage, Storage):
+            self._storage = storage
+        else:
+            self._storage = create_storage(StorageConfig(**storage))
 
-    async def get(self, key: str) -> str | None:
+    async def get(self, key: str) -> Any | None:
         """Get method definition."""
         if await self.has(key):
             try:
-                data = await self._storage.get(key, encoding=self._encoding)
+                data = await self._storage.get(key)
                 data = json.loads(data)
             except UnicodeDecodeError:
                 await self._storage.delete(key)
@@ -44,9 +52,7 @@ class JsonPipelineCache(PipelineCache):
         if value is None:
             return
         data = {"result": value, **(debug_data or {})}
-        await self._storage.set(
-            key, json.dumps(data, ensure_ascii=False), encoding=self._encoding
-        )
+        await self._storage.set(key, json.dumps(data, ensure_ascii=False))
 
     async def has(self, key: str) -> bool:
         """Has method definition."""
@@ -61,6 +67,6 @@ class JsonPipelineCache(PipelineCache):
         """Clear method definition."""
         await self._storage.clear()
 
-    def child(self, name: str) -> "JsonPipelineCache":
+    def child(self, name: str) -> "Cache":
         """Child method definition."""
-        return JsonPipelineCache(self._storage.child(name), encoding=self._encoding)
+        return JsonCache(storage=self._storage.child(name))
