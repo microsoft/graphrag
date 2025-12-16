@@ -141,12 +141,14 @@ This section controls the cache mechanism used by the pipeline. This is used to 
 
 #### Fields
 
-- `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
-- `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
-- `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
-- `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
-- `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
-- `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
+- `type` **json|memory|none** - The storage type to use. Default=`json`
+- `storage` **StorageConfig**
+  - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+  - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
+  - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
+  - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
+  - `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
+  - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
 
 ### reporting
 
