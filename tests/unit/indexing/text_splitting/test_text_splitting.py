@@ -2,14 +2,11 @@
 # Licensed under the MIT License
 
 from unittest import mock
-from unittest.mock import MagicMock
 
 import pytest
 import tiktoken
 from graphrag.index.text_splitting.text_splitting import (
-    TokenChunkerOptions,
     TokenTextSplitter,
-    split_multiple_texts_on_tokens,
     split_single_text_on_tokens,
 )
 
@@ -55,32 +52,21 @@ def test_split_text_large_input(mock_split):
 
 
 @mock.patch("graphrag.index.text_splitting.text_splitting.split_single_text_on_tokens")
-@mock.patch("graphrag.index.text_splitting.text_splitting.TokenChunkerOptions")
-def test_token_text_splitter(mock_tokenizer, mock_split_text):
-    text = "chunk1 chunk2 chunk3"
+def test_token_text_splitter(mock_split_text):
     expected_chunks = ["chunk1", "chunk2", "chunk3"]
 
-    mocked_tokenizer = MagicMock()
-    mock_tokenizer.return_value = mocked_tokenizer
     mock_split_text.return_value = expected_chunks
 
-    splitter = TokenTextSplitter()
+    splitter = TokenTextSplitter(chunk_size=5, chunk_overlap=2)
 
     splitter.split_text(["chunk1", "chunk2", "chunk3"])
 
-    mock_split_text.assert_called_once_with(text=text, tokenizer=mocked_tokenizer)
+    mock_split_text.assert_called_once()
 
 
 def test_split_single_text_on_tokens():
     text = "This is a test text, meaning to be taken seriously by this test only."
     mocked_tokenizer = MockTokenizer()
-    tokenizer = TokenChunkerOptions(
-        chunk_overlap=5,
-        tokens_per_chunk=10,
-        decode=mocked_tokenizer.decode,
-        encode=lambda text: mocked_tokenizer.encode(text),
-    )
-
     expected_splits = [
         "This is a ",
         "is a test ",
@@ -97,27 +83,14 @@ def test_split_single_text_on_tokens():
         "est only.",
     ]
 
-    result = split_single_text_on_tokens(text=text, tokenizer=tokenizer)
-    assert result == expected_splits
-
-
-def test_split_multiple_texts_on_tokens():
-    texts = [
-        "This is a test text, meaning to be taken seriously by this test only.",
-        "This is th second text, meaning to be taken seriously by this test only.",
-    ]
-
-    mocked_tokenizer = MockTokenizer()
-    mock_tick = MagicMock()
-    tokenizer = TokenChunkerOptions(
+    result = split_single_text_on_tokens(
+        text=text,
         chunk_overlap=5,
         tokens_per_chunk=10,
         decode=mocked_tokenizer.decode,
         encode=lambda text: mocked_tokenizer.encode(text),
     )
-
-    split_multiple_texts_on_tokens(texts, tokenizer, tick=mock_tick)
-    mock_tick.assert_called()
+    assert result == expected_splits
 
 
 def test_split_single_text_on_tokens_no_overlap():
@@ -131,13 +104,6 @@ def test_split_single_text_on_tokens_no_overlap():
 
     def decode(tokens: list[int]) -> str:
         return enc.decode(tokens)
-
-    tokenizer = TokenChunkerOptions(
-        chunk_overlap=1,
-        tokens_per_chunk=2,
-        decode=decode,
-        encode=lambda text: encode(text),
-    )
 
     expected_splits = [
         "This is",
@@ -157,5 +123,11 @@ def test_split_single_text_on_tokens_no_overlap():
         " only.",
     ]
 
-    result = split_single_text_on_tokens(text=text, tokenizer=tokenizer)
+    result = split_single_text_on_tokens(
+        text=text,
+        chunk_overlap=1,
+        tokens_per_chunk=2,
+        decode=decode,
+        encode=lambda text: encode(text),
+    )
     assert result == expected_splits

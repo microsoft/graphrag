@@ -10,12 +10,13 @@ from typing import Any, cast
 import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.chunking_config import ChunkStrategyType
+from graphrag.chunking.chunker import Chunker, create_chunker
+from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.operations.chunk_text.chunk_text import chunk_text
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash
+from graphrag.logger.progress import progress_ticker
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
@@ -30,18 +31,7 @@ async def run_workflow(
     logger.info("Workflow started: create_base_text_units")
     documents = await load_table_from_storage("documents", context.output_storage)
 
-    chunks = config.chunks
-
-    output = create_base_text_units(
-        documents,
-        context.callbacks,
-        chunks.size,
-        chunks.overlap,
-        chunks.encoding_model,
-        strategy=chunks.strategy,
-        prepend_metadata=chunks.prepend_metadata,
-        chunk_size_includes_metadata=chunks.chunk_size_includes_metadata,
-    )
+    output = create_base_text_units(documents, context.callbacks, config.chunks)
 
     await write_table_to_storage(output, "text_units", context.output_storage)
 
@@ -52,19 +42,21 @@ async def run_workflow(
 def create_base_text_units(
     documents: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    size: int,
-    overlap: int,
-    encoding_model: str,
-    strategy: ChunkStrategyType,
-    prepend_metadata: bool,
-    chunk_size_includes_metadata: bool,
+    chunks_config: ChunkingConfig,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     documents.sort_values(by=["id"], ascending=[True], inplace=True)
 
-    tokenizer = get_tokenizer(encoding_model=encoding_model)
+    size = chunks_config.size
+    encoding_model = chunks_config.encoding_model
+    prepend_metadata = chunks_config.prepend_metadata
+    chunk_size_includes_metadata = chunks_config.chunk_size_includes_metadata
 
-    def chunker(row: pd.Series) -> Any:
+    tokenizer = get_tokenizer(encoding_model=encoding_model)
+    num_total = _get_num_total(documents, "text")
+    tick = progress_ticker(callbacks.progress, num_total)
+
+    def chunker_fn(row: pd.Series) -> Any:
         line_delimiter = ".\n"
         metadata_str = ""
         metadata_tokens = 0
@@ -85,16 +77,14 @@ def create_base_text_units(
                     message = "Metadata tokens exceeds the maximum tokens per chunk. Please increase the tokens per chunk."
                     raise ValueError(message)
 
-        chunked = chunk_text(
+        chunks_config.size = size - metadata_tokens
+        chunker = create_chunker(chunks_config)
+
+        chunked = _chunk_text(
             pd.DataFrame([row]).reset_index(drop=True),
             column="text",
-            size=size - metadata_tokens,
-            overlap=overlap,
-            encoding_model=encoding_model,
-            strategy=strategy,
-            callbacks=callbacks,
+            chunker=chunker,
         )[0]
-
         if prepend_metadata:
             for index, chunk in enumerate(chunked):
                 if isinstance(chunk, str):
@@ -105,6 +95,7 @@ def create_base_text_units(
                     )
 
         row["chunks"] = chunked
+        tick()
         return row
 
     # Track progress of row-wise apply operation
@@ -113,7 +104,7 @@ def create_base_text_units(
 
     def chunker_with_logging(row: pd.Series, row_index: int) -> Any:
         """Add logging to chunker execution."""
-        result = chunker(row)
+        result = chunker_fn(row)
         logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
         return result
 
@@ -141,4 +132,31 @@ def create_base_text_units(
 
     return cast(
         "pd.DataFrame", text_units[text_units["text"].notna()].reset_index(drop=True)
+    )
+
+
+def _get_num_total(output: pd.DataFrame, column: str) -> int:
+    num_total = 0
+    for row in output[column]:
+        if isinstance(row, str):
+            num_total += 1
+        else:
+            num_total += len(row)
+    return num_total
+
+
+def _chunk_text(
+    input: pd.DataFrame,
+    column: str,
+    chunker: Chunker,
+) -> pd.Series:
+    return cast(
+        "pd.Series",
+        input.apply(
+            cast(
+                "Any",
+                lambda x: chunker.chunk(x[column]),
+            ),
+            axis=1,
+        ),
     )

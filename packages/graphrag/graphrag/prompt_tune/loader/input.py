@@ -46,8 +46,6 @@ async def load_docs_in_chunks(
     select_method: DocSelectionType,
     limit: int,
     logger: logging.Logger,
-    chunk_size: int,
-    overlap: int,
     n_subset_max: int = N_SUBSET_MAX,
     k: int = K,
 ) -> list[str]:
@@ -69,16 +67,10 @@ async def load_docs_in_chunks(
         {"storage": input_storage, "config": config.input},
     )
     dataset = await input_reader.read_files()
-    chunk_config = config.chunks
     chunks_df = create_base_text_units(
         documents=dataset,
         callbacks=NoopWorkflowCallbacks(),
-        size=chunk_size,
-        overlap=overlap,
-        encoding_model=chunk_config.encoding_model,
-        strategy=chunk_config.strategy,
-        prepend_metadata=chunk_config.prepend_metadata,
-        chunk_size_includes_metadata=chunk_config.chunk_size_includes_metadata,
+        chunks_config=config.chunks,
     )
 
     # Depending on the select method, build the dataset
