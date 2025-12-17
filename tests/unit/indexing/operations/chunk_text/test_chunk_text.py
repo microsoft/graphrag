@@ -10,9 +10,9 @@ import pytest
 from graphrag.config.enums import ChunkStrategyType
 from graphrag.index.operations.chunk_text.chunk_text import (
     _get_num_total,
+    _load_strategy,
+    _run_strategy,
     chunk_text,
-    load_strategy,
-    run_strategy,
 )
 from graphrag.index.operations.chunk_text.typing import (
     TextChunk,
@@ -36,7 +36,7 @@ def test_get_num_total_array():
 def test_load_strategy_tokens():
     strategy_type = ChunkStrategyType.tokens
 
-    strategy_loaded = load_strategy(strategy_type)
+    strategy_loaded = _load_strategy(strategy_type)
 
     assert strategy_loaded.__name__ == "run_tokens"
 
@@ -44,7 +44,7 @@ def test_load_strategy_tokens():
 def test_load_strategy_sentence():
     strategy_type = ChunkStrategyType.sentence
 
-    strategy_loaded = load_strategy(strategy_type)
+    strategy_loaded = _load_strategy(strategy_type)
 
     assert strategy_loaded.__name__ == "run_sentences"
 
@@ -55,7 +55,7 @@ def test_load_strategy_none():
     with pytest.raises(
         ValueError, match="Unknown strategy: <enum 'ChunkStrategyType'>"
     ):
-        load_strategy(strategy_type)  # type: ignore
+        _load_strategy(strategy_type)  # type: ignore
 
 
 def test_run_strategy_str():
@@ -71,7 +71,7 @@ def test_run_strategy_str():
         )
     ]
 
-    runned = run_strategy(strategy_mocked, input, config, tick)
+    runned = _run_strategy(strategy_mocked, input, config, tick)
     assert runned == ["text test for run strategy"]
 
 
@@ -93,7 +93,7 @@ def test_run_strategy_arr_str():
         "use for strategy",
     ]
 
-    runned = run_strategy(strategy_mocked, input, config, tick)
+    runned = _run_strategy(strategy_mocked, input, config, tick)
     assert runned == expected
 
 
@@ -123,7 +123,7 @@ def test_run_strategy_arr_tuple():
         ),
     ]
 
-    runned = run_strategy(strategy_mocked, input, config, tick)
+    runned = _run_strategy(strategy_mocked, input, config, tick)
     assert runned == expected
 
 
@@ -153,12 +153,12 @@ def test_run_strategy_arr_tuple_same_doc():
         ),
     ]
 
-    runned = run_strategy(strategy_mocked, input, config, tick)
+    runned = _run_strategy(strategy_mocked, input, config, tick)
     assert runned == expected
 
 
-@mock.patch("graphrag.index.operations.chunk_text.chunk_text.load_strategy")
-@mock.patch("graphrag.index.operations.chunk_text.chunk_text.run_strategy")
+@mock.patch("graphrag.index.operations.chunk_text.chunk_text._load_strategy")
+@mock.patch("graphrag.index.operations.chunk_text.chunk_text._run_strategy")
 @mock.patch("graphrag.index.operations.chunk_text.chunk_text.progress_ticker")
 def test_chunk_text(mock_progress_ticker, mock_run_strategy, mock_load_strategy):
     input_data = pd.DataFrame({"name": ["The Shining"]})

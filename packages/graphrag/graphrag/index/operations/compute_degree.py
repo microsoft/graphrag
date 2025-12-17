@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing create_graph definition."""
+"""A module containing compute_degree method definition."""
 
 import networkx as nx
 import pandas as pd

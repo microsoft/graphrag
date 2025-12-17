@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing _get_num_total, chunk, run_strategy and load_strategy methods definitions."""
+"""A module containing chunk_text method definitions."""
 
 from typing import Any, cast
 
@@ -54,7 +54,7 @@ def chunk_text(
     strategy: sentence
     ```
     """
-    strategy_exec = load_strategy(strategy)
+    strategy_exec = _load_strategy(strategy)
 
     num_total = _get_num_total(input, column)
     tick = progress_ticker(callbacks.progress, num_total)
@@ -67,7 +67,7 @@ def chunk_text(
         input.apply(
             cast(
                 "Any",
-                lambda x: run_strategy(
+                lambda x: _run_strategy(
                     strategy_exec,
                     x[column],
                     config,
@@ -79,7 +79,7 @@ def chunk_text(
     )
 
 
-def run_strategy(
+def _run_strategy(
     strategy_exec: ChunkStrategy,
     input: ChunkInput,
     config: ChunkingConfig,
@@ -111,7 +111,7 @@ def run_strategy(
     return results
 
 
-def load_strategy(strategy: ChunkStrategyType) -> ChunkStrategy:
+def _load_strategy(strategy: ChunkStrategyType) -> ChunkStrategy:
     """Load strategy method definition."""
     match strategy:
         case ChunkStrategyType.tokens:

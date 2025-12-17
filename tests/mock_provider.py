@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing mock model provider definitions."""
+"""A module containing 'MockChatLLM' and 'MockEmbeddingLLM' models."""
 
 from collections.abc import AsyncGenerator, Generator
 from typing import Any

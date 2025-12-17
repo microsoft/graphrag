@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing the 'Tokenizer', 'TextSplitter', 'NoopTextSplitter' and 'TokenTextSplitter' models."""
+"""A module containing 'TokenChunkerOptions', 'TextSplitter', 'NoopTextSplitter', 'TokenTextSplitter', 'split_single_text_on_tokens', and 'split_multiple_texts_on_tokens'."""
 
 import logging
 from abc import ABC, abstractmethod
