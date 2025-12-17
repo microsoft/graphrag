@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'GraphExtractionResult' and 'GraphExtractor' models."""
+"""A module containing 'SummarizationResult' and 'SummarizeExtractor' models."""
 
 import json
 from dataclasses import dataclass

@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing the 'TokenTextSplitter' class."""
+"""A module containing 'TokenTextSplitter' class and 'split_single_text_on_tokens' function."""
 
 import logging
 from abc import ABC

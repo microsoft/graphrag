@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing compute_edge_combined_degree methods definition."""
+"""A module containing compute_edge_combined_degree method definition."""
 
 from typing import cast
 

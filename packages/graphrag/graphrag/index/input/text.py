@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing load method definition."""
+"""A module containing 'TextFileReader' model."""
 
 import logging
 from pathlib import Path

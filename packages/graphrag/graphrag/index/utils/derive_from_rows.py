@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Apply a generic transform function to each row in a table."""
+"""A module containing derive_from_rows, derive_from_rows_asyncio_threads, and derive_from_rows_asyncio methods."""
 
 import asyncio
 import inspect
@@ -55,9 +55,6 @@ async def derive_from_rows(
             raise ValueError(msg)
 
 
-"""A module containing the derive_from_rows_async method."""
-
-
 async def derive_from_rows_asyncio_threads(
     input: pd.DataFrame,
     transform: Callable[[pd.Series], Awaitable[ItemType]],
@@ -86,9 +83,6 @@ async def derive_from_rows_asyncio_threads(
     return await _derive_from_rows_base(
         input, transform, callbacks, gather, progress_msg
     )
-
-
-"""A module containing the derive_from_rows_async method."""
 
 
 async def derive_from_rows_asyncio(

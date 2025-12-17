@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'JsonPipelineCache' model."""
+"""A module containing 'JsonCache' model."""
 
 import json
 from typing import Any
