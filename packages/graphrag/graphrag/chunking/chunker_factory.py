@@ -1,0 +1,69 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""A module containing 'ChunkerFactory', 'register_chunker', and 'create_chunker'."""
+
+from collections.abc import Callable
+
+from graphrag_common.factory.factory import Factory, ServiceScope
+
+from graphrag.chunking.chunker import Chunker
+from graphrag.config.enums import ChunkStrategyType
+from graphrag.config.models.chunking_config import ChunkingConfig
+
+
+class ChunkerFactory(Factory[Chunker]):
+    """Factory for creating Chunker instances."""
+
+
+chunker_factory = ChunkerFactory()
+
+
+def register_chunker(
+    chunker_type: str,
+    chunker_initializer: Callable[..., Chunker],
+    scope: ServiceScope = "transient",
+) -> None:
+    """Register a custom chunker implementation.
+
+    Args
+    ----
+        - chunker_type: str
+            The chunker id to register.
+        - chunker_initializer: Callable[..., Chunker]
+            The chunker initializer to register.
+    """
+    chunker_factory.register(chunker_type, chunker_initializer, scope)
+
+
+def create_chunker(config: ChunkingConfig) -> Chunker:
+    """Create a chunker implementation based on the given configuration.
+
+    Args
+    ----
+        - config: ChunkingConfig
+            The chunker configuration to use.
+
+    Returns
+    -------
+        Chunker
+            The created chunker implementation.
+    """
+    config_model = config.model_dump()
+    chunker_strategy = config.strategy
+
+    if chunker_strategy not in chunker_factory:
+        match chunker_strategy:
+            case ChunkStrategyType.tokens:
+                from graphrag.chunking.token_chunker import TokenChunker
+
+                chunker_factory.register(ChunkStrategyType.tokens, TokenChunker)
+            case ChunkStrategyType.sentence:
+                from graphrag.chunking.sentence_chunker import SentenceChunker
+
+                chunker_factory.register(ChunkStrategyType.sentence, SentenceChunker)
+            case _:
+                msg = f"ChunkingConfig.strategy '{chunker_strategy}' is not registered in the ChunkerFactory. Registered types: {', '.join(chunker_factory.keys())}."
+                raise ValueError(msg)
+
+    return chunker_factory.create(chunker_strategy, init_args=config_model)

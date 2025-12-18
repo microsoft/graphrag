@@ -10,7 +10,8 @@ from typing import Any, cast
 import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.chunking.chunker import Chunker, create_chunker
+from graphrag.chunking.chunker import Chunker
+from graphrag.chunking.chunker_factory import create_chunker
 from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.context import PipelineRunContext

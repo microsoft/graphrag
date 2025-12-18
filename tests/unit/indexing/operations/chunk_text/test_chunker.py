@@ -4,7 +4,7 @@
 from unittest.mock import Mock, patch
 
 from graphrag.chunking.bootstrap import bootstrap
-from graphrag.chunking.chunker import create_chunker
+from graphrag.chunking.chunker_factory import create_chunker
 from graphrag.config.enums import ChunkStrategyType
 from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
