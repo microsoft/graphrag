@@ -6,6 +6,7 @@
 import logging
 
 import pandas as pd
+from graphrag_common.types.tokenizer import Tokenizer
 
 import graphrag.data_model.schemas as schemas
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -29,7 +30,6 @@ from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.language_model.manager import ModelManager
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.utils.storage import (
     load_table_from_storage,
     storage_has_table,

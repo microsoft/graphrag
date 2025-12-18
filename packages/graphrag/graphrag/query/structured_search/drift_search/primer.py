@@ -10,6 +10,7 @@ import time
 
 import numpy as np
 import pandas as pd
+from graphrag_common.types.tokenizer import Tokenizer
 from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
@@ -20,7 +21,6 @@ from graphrag.prompts.query.drift_search_system_prompt import (
 )
 from graphrag.query.structured_search.base import SearchResult
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 

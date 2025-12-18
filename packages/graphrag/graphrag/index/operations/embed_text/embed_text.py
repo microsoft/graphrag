@@ -7,11 +7,11 @@ import logging
 
 import numpy as np
 import pandas as pd
+from graphrag_common.types.tokenizer import Tokenizer
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.operations.embed_text.run_embed_text import run_embed_text
 from graphrag.language_model.protocol.base import EmbeddingModel
-from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument
 
 logger = logging.getLogger(__name__)

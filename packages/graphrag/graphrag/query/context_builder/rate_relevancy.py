@@ -9,11 +9,11 @@ from contextlib import nullcontext
 from typing import Any
 
 import numpy as np
+from graphrag_common.types.tokenizer import Tokenizer
 
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
 from graphrag.query.llm.text_utils import try_parse_json_object
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 

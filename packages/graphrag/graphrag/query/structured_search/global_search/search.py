@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import pandas as pd
+from graphrag_common.types.tokenizer import Tokenizer
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.language_model.protocol.base import ChatModel
@@ -31,7 +32,6 @@ from graphrag.query.context_builder.conversation_history import (
 )
 from graphrag.query.llm.text_utils import try_parse_json_object
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 

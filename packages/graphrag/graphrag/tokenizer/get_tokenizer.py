@@ -3,11 +3,12 @@
 
 """Get Tokenizer."""
 
+from graphrag_common.types.tokenizer import Tokenizer
+
 from graphrag.config.defaults import ENCODING_MODEL
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.tokenizer.litellm_tokenizer import LitellmTokenizer
 from graphrag.tokenizer.tiktoken_tokenizer import TiktokenTokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 def get_tokenizer(

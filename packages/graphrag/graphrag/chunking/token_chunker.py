@@ -6,8 +6,9 @@
 from collections.abc import Callable
 from typing import Any
 
+from graphrag_common.types.tokenizer import Tokenizer
+
 from graphrag.chunking.chunker import Chunker
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]

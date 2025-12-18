@@ -23,6 +23,7 @@ class MockTokenizer:
 
 tokenizer = get_tokenizer()
 
+
 class TestRunSentences:
     def setup_method(self, method):
         bootstrap()
@@ -73,6 +74,7 @@ class TestRunTokens:
         chunks = chunker.chunk(input)
 
         assert len(chunks) > 0
+
 
 def test_split_text_str_empty():
     result = split_text_on_tokens(

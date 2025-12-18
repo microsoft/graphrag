@@ -5,6 +5,8 @@
 
 from pathlib import Path
 
+from graphrag_common.types.tokenizer import Tokenizer
+
 from graphrag.prompt_tune.template.extract_graph import (
     EXAMPLE_EXTRACTION_TEMPLATE,
     GRAPH_EXTRACTION_JSON_PROMPT,
@@ -13,7 +15,6 @@ from graphrag.prompt_tune.template.extract_graph import (
     UNTYPED_GRAPH_EXTRACTION_PROMPT,
 )
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 EXTRACT_GRAPH_FILENAME = "extract_graph.txt"
 

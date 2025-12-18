@@ -7,6 +7,7 @@ from collections import defaultdict
 from typing import Any, cast
 
 import pandas as pd
+from graphrag_common.types.tokenizer import Tokenizer
 
 from graphrag.data_model.covariate import Covariate
 from graphrag.data_model.entity import Entity
@@ -24,7 +25,6 @@ from graphrag.query.input.retrieval.relationships import (
     to_relationship_dataframe,
 )
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 def build_entity_context(
