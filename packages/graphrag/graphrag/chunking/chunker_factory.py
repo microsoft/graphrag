@@ -10,6 +10,7 @@ from graphrag_common.factory.factory import Factory, ServiceScope
 from graphrag.chunking.chunker import Chunker
 from graphrag.config.enums import ChunkStrategyType
 from graphrag.config.models.chunking_config import ChunkingConfig
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 class ChunkerFactory(Factory[Chunker]):
@@ -36,7 +37,9 @@ def register_chunker(
     chunker_factory.register(chunker_type, chunker_initializer, scope)
 
 
-def create_chunker(config: ChunkingConfig) -> Chunker:
+def create_chunker(
+    config: ChunkingConfig, tokenizer: Tokenizer | None = None
+) -> Chunker:
     """Create a chunker implementation based on the given configuration.
 
     Args
@@ -50,6 +53,8 @@ def create_chunker(config: ChunkingConfig) -> Chunker:
             The created chunker implementation.
     """
     config_model = config.model_dump()
+    if tokenizer is not None:
+        config_model["tokenizer"] = tokenizer
     chunker_strategy = config.strategy
 
     if chunker_strategy not in chunker_factory:
@@ -57,11 +62,11 @@ def create_chunker(config: ChunkingConfig) -> Chunker:
             case ChunkStrategyType.tokens:
                 from graphrag.chunking.token_chunker import TokenChunker
 
-                chunker_factory.register(ChunkStrategyType.tokens, TokenChunker)
+                register_chunker(ChunkStrategyType.tokens, TokenChunker)
             case ChunkStrategyType.sentence:
                 from graphrag.chunking.sentence_chunker import SentenceChunker
 
-                chunker_factory.register(ChunkStrategyType.sentence, SentenceChunker)
+                register_chunker(ChunkStrategyType.sentence, SentenceChunker)
             case _:
                 msg = f"ChunkingConfig.strategy '{chunker_strategy}' is not registered in the ChunkerFactory. Registered types: {', '.join(chunker_factory.keys())}."
                 raise ValueError(msg)

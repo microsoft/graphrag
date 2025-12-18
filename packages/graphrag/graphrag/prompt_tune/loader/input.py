@@ -70,7 +70,11 @@ async def load_docs_in_chunks(
     chunks_df = create_base_text_units(
         documents=dataset,
         callbacks=NoopWorkflowCallbacks(),
-        chunks_config=config.chunks,
+        tokenizer=tokenizer,
+        chunk_size=config.chunks.size,
+        chunk_overlap=config.chunks.overlap,
+        prepend_metadata=config.chunks.prepend_metadata,
+        chunk_size_includes_metadata=config.chunks.chunk_size_includes_metadata,
     )
 
     # Depending on the select method, build the dataset

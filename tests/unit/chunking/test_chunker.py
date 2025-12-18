@@ -13,6 +13,16 @@ from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 
+class MockTokenizer:
+    def encode(self, text):
+        return [ord(char) for char in text]
+
+    def decode(self, token_ids):
+        return "".join(chr(id) for id in token_ids)
+
+
+tokenizer = get_tokenizer()
+
 class TestRunSentences:
     def setup_method(self, method):
         bootstrap()
@@ -59,22 +69,10 @@ class TestRunTokens:
             strategy=ChunkStrategyType.tokens,
         )
 
-        chunker = create_chunker(config)
+        chunker = create_chunker(config, tokenizer=tokenizer)
         chunks = chunker.chunk(input)
 
         assert len(chunks) > 0
-
-
-class MockTokenizer:
-    def encode(self, text):
-        return [ord(char) for char in text]
-
-    def decode(self, token_ids):
-        return "".join(chr(id) for id in token_ids)
-
-
-tokenizer = get_tokenizer()
-
 
 def test_split_text_str_empty():
     result = split_text_on_tokens(

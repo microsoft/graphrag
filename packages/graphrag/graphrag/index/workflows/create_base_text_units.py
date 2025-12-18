@@ -19,6 +19,7 @@ from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logger.progress import progress_ticker
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -32,7 +33,18 @@ async def run_workflow(
     logger.info("Workflow started: create_base_text_units")
     documents = await load_table_from_storage("documents", context.output_storage)
 
-    output = create_base_text_units(documents, context.callbacks, config.chunks)
+    chunking_config = config.chunks
+    tokenizer = get_tokenizer(encoding_model=chunking_config.encoding_model)
+
+    output = create_base_text_units(
+        documents,
+        context.callbacks,
+        tokenizer=tokenizer,
+        chunk_size=chunking_config.size,
+        chunk_overlap=chunking_config.overlap,
+        prepend_metadata=chunking_config.prepend_metadata,
+        chunk_size_includes_metadata=chunking_config.chunk_size_includes_metadata,
+    )
 
     await write_table_to_storage(output, "text_units", context.output_storage)
 
@@ -43,17 +55,15 @@ async def run_workflow(
 def create_base_text_units(
     documents: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    chunks_config: ChunkingConfig,
+    tokenizer: Tokenizer,
+    chunk_size: int,
+    chunk_overlap: int,
+    prepend_metadata: bool,
+    chunk_size_includes_metadata: bool,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     documents.sort_values(by=["id"], ascending=[True], inplace=True)
 
-    size = chunks_config.size
-    encoding_model = chunks_config.encoding_model
-    prepend_metadata = chunks_config.prepend_metadata
-    chunk_size_includes_metadata = chunks_config.chunk_size_includes_metadata
-
-    tokenizer = get_tokenizer(encoding_model=encoding_model)
     num_total = _get_num_total(documents, "text")
     tick = progress_ticker(callbacks.progress, num_total)
 
@@ -74,12 +84,17 @@ def create_base_text_units(
 
             if chunk_size_includes_metadata:
                 metadata_tokens = len(tokenizer.encode(metadata_str))
-                if metadata_tokens >= size:
+                if metadata_tokens >= chunk_size:
                     message = "Metadata tokens exceeds the maximum tokens per chunk. Please increase the tokens per chunk."
                     raise ValueError(message)
 
-        chunks_config.size = size - metadata_tokens
-        chunker = create_chunker(chunks_config)
+        chunker = create_chunker(
+            ChunkingConfig(
+                size=chunk_size - metadata_tokens,
+                overlap=chunk_overlap,
+            ),
+            tokenizer=tokenizer,
+        )
 
         chunked = _chunk_text(
             pd.DataFrame([row]).reset_index(drop=True),

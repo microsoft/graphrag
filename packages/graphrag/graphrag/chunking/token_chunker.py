@@ -7,7 +7,7 @@ from collections.abc import Callable
 from typing import Any
 
 from graphrag.chunking.chunker import Chunker
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]
@@ -22,13 +22,14 @@ class TokenChunker(Chunker):
         size: int,
         overlap: int,
         encoding_model: str,
+        tokenizer: Tokenizer,
         **kwargs: Any,
     ) -> None:
         """Create a token chunker instance."""
         self._size = size
         self._overlap = overlap
         self._encoding_model = encoding_model
-        self._tokenizer = get_tokenizer(encoding_model=encoding_model)
+        self._tokenizer = tokenizer
 
     def chunk(self, text: str) -> list[str]:
         """Chunk the text into token-based chunks."""
