@@ -10,7 +10,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.index.text_splitting.text_splitting import TokenTextSplitter
+from graphrag.chunking.token_text_splitter import TokenTextSplitter
 from graphrag.index.utils.is_null import is_null
 from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.logger.progress import ProgressTicker, progress_ticker

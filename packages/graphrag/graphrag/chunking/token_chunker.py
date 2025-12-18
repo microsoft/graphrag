@@ -6,8 +6,8 @@
 from typing import Any
 
 from graphrag.chunking.chunker import Chunker
-from graphrag.index.text_splitting.text_splitting import (
-    split_single_text_on_tokens,
+from graphrag.chunking.token_text_splitter import (
+    TokenTextSplitter,
 )
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
@@ -26,14 +26,12 @@ class TokenChunker(Chunker):
         self._size = size
         self._overlap = overlap
         self._encoding_model = encoding_model
+        self._text_splitter = TokenTextSplitter(
+            chunk_size=size,
+            chunk_overlap=overlap,
+            tokenizer=get_tokenizer(encoding_model=encoding_model),
+        )
 
     def chunk(self, text: str) -> list[str]:
         """Chunk the text into token-based chunks."""
-        tokenizer = get_tokenizer(encoding_model=self._encoding_model)
-        return split_single_text_on_tokens(
-            text,
-            chunk_overlap=self._overlap,
-            tokens_per_chunk=self._size,
-            encode=tokenizer.encode,
-            decode=tokenizer.decode,
-        )
+        return self._text_splitter.split_text(text)
