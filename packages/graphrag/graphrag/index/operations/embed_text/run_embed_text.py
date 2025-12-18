@@ -10,7 +10,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.chunking.token_text_splitter import TokenTextSplitter
+from graphrag.chunking.token_chunker import split_text_on_tokens
 from graphrag.index.utils.is_null import is_null
 from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.logger.progress import ProgressTicker, progress_ticker
@@ -39,17 +39,15 @@ async def run_embed_text(
     if is_null(input):
         return TextEmbeddingResult(embeddings=None)
 
-    splitter = _get_splitter(tokenizer, batch_max_tokens)
-
     semaphore: asyncio.Semaphore = asyncio.Semaphore(num_threads)
 
     # Break up the input texts. The sizes here indicate how many snippets are in each input text
-    texts, input_sizes = _prepare_embed_texts(input, splitter)
+    texts, input_sizes = _prepare_embed_texts(input, tokenizer, batch_max_tokens)
     text_batches = _create_text_batches(
         texts,
+        tokenizer,
         batch_size,
         batch_max_tokens,
-        splitter,
     )
     logger.info(
         "embedding %d inputs via %d snippets using %d batches. max_batch_size=%d, batch_max_tokens=%d",
@@ -70,13 +68,6 @@ async def run_embed_text(
     embeddings = _reconstitute_embeddings(embeddings, input_sizes)
 
     return TextEmbeddingResult(embeddings=embeddings)
-
-
-def _get_splitter(tokenizer: Tokenizer, batch_max_tokens: int) -> TokenTextSplitter:
-    return TokenTextSplitter(
-        tokenizer=tokenizer,
-        chunk_size=batch_max_tokens,
-    )
 
 
 async def _execute(
@@ -100,9 +91,9 @@ async def _execute(
 
 def _create_text_batches(
     texts: list[str],
+    tokenizer: Tokenizer,
     max_batch_size: int,
     max_batch_tokens: int,
-    splitter: TokenTextSplitter,
 ) -> list[list[str]]:
     """Create batches of texts to embed."""
     # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference
@@ -112,7 +103,7 @@ def _create_text_batches(
     current_batch_tokens = 0
 
     for text in texts:
-        token_count = splitter.num_tokens(text)
+        token_count = tokenizer.num_tokens(text)
         if (
             len(current_batch) >= max_batch_size
             or current_batch_tokens + token_count > max_batch_tokens
@@ -131,18 +122,23 @@ def _create_text_batches(
 
 
 def _prepare_embed_texts(
-    input: list[str], splitter: TokenTextSplitter
+    input: list[str],
+    tokenizer: Tokenizer,
+    batch_max_tokens: int = 8191,
+    chunk_overlap: int = 100,
 ) -> tuple[list[str], list[int]]:
     sizes: list[int] = []
     snippets: list[str] = []
 
     for text in input:
-        # Split the input text and filter out any empty content
-        split_texts = splitter.split_text(text)
-        if split_texts is None:
-            continue
+        split_texts = split_text_on_tokens(
+            text,
+            chunk_size=batch_max_tokens,
+            chunk_overlap=chunk_overlap,
+            encode=tokenizer.encode,
+            decode=tokenizer.decode,
+        )
         split_texts = [text for text in split_texts if len(text) > 0]
-
         sizes.append(len(split_texts))
         snippets.extend(split_texts)
 

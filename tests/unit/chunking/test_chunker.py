@@ -5,6 +5,9 @@ from unittest.mock import Mock, patch
 
 from graphrag.chunking.bootstrap import bootstrap
 from graphrag.chunking.chunker_factory import create_chunker
+from graphrag.chunking.token_chunker import (
+    split_text_on_tokens,
+)
 from graphrag.config.enums import ChunkStrategyType
 from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
@@ -60,6 +63,89 @@ class TestRunTokens:
         chunks = chunker.chunk(input)
 
         assert len(chunks) > 0
+
+
+class MockTokenizer:
+    def encode(self, text):
+        return [ord(char) for char in text]
+
+    def decode(self, token_ids):
+        return "".join(chr(id) for id in token_ids)
+
+
+tokenizer = get_tokenizer()
+
+
+def test_split_text_str_empty():
+    result = split_text_on_tokens(
+        "",
+        chunk_size=5,
+        chunk_overlap=2,
+        encode=tokenizer.encode,
+        decode=tokenizer.decode,
+    )
+    assert result == []
+
+
+def test_split_text_on_tokens():
+    text = "This is a test text, meaning to be taken seriously by this test only."
+    mocked_tokenizer = MockTokenizer()
+    expected_splits = [
+        "This is a ",
+        "is a test ",
+        "test text,",
+        "text, mean",
+        " meaning t",
+        "ing to be ",
+        "o be taken",
+        "taken seri",  # cspell:disable-line
+        " seriously",
+        "ously by t",  # cspell:disable-line
+        " by this t",
+        "his test o",
+        "est only.",
+    ]
+
+    result = split_text_on_tokens(
+        text=text,
+        chunk_overlap=5,
+        chunk_size=10,
+        decode=mocked_tokenizer.decode,
+        encode=lambda text: mocked_tokenizer.encode(text),
+    )
+    assert result == expected_splits
+
+
+def test_split_text_on_tokens_no_overlap():
+    text = "This is a test text, meaning to be taken seriously by this test only."
+    tok = get_tokenizer(encoding_model="cl100k_base")
+
+    expected_splits = [
+        "This is",
+        " is a",
+        " a test",
+        " test text",
+        " text,",
+        ", meaning",
+        " meaning to",
+        " to be",
+        " be taken",  # cspell:disable-line
+        " taken seriously",  # cspell:disable-line
+        " seriously by",
+        " by this",  # cspell:disable-line
+        " this test",
+        " test only",
+        " only.",
+    ]
+
+    result = split_text_on_tokens(
+        text=text,
+        chunk_size=2,
+        chunk_overlap=1,
+        decode=tok.decode,
+        encode=tok.encode,
+    )
+    assert result == expected_splits
 
 
 @patch("tiktoken.get_encoding")
