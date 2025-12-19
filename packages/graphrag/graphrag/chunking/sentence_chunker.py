@@ -15,7 +15,7 @@ from graphrag.chunking.chunker import Chunker
 class SentenceChunker(Chunker):
     """A chunker that splits text into sentence-based chunks."""
 
-    def __init__(self, prepend_metadata: bool, **kwargs: Any) -> None:
+    def __init__(self, prepend_metadata: bool = False, **kwargs: Any) -> None:
         """Create a sentence chunker instance."""
         self._prepend_metadata = prepend_metadata
         bootstrap()

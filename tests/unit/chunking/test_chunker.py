@@ -31,7 +31,7 @@ class TestRunSentences:
     def test_basic_functionality(self):
         """Test basic sentence splitting without metadata"""
         input = "This is a test. Another sentence."
-        chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.sentence))
+        chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.Sentence))
         chunks = chunker.chunk(input)
 
         assert len(chunks) == 2
@@ -41,14 +41,14 @@ class TestRunSentences:
     def test_multiple_documents(self):
         """Test processing multiple input documents"""
         input = ["First. Document.", "Second. Doc."]
-        chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.sentence))
+        chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.Sentence))
         chunks = [chunk for doc in input for chunk in chunker.chunk(doc)]
         assert len(chunks) == 4
 
     def test_mixed_whitespace_handling(self):
         """Test input with irregular whitespace"""
         input = "   Sentence with spaces. Another one!   "
-        chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.sentence))
+        chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.Sentence))
         chunks = chunker.chunk(input)
         assert chunks[0] == "   Sentence with spaces."
         assert chunks[1] == "Another one!"
@@ -67,7 +67,7 @@ class TestRunTokens:
             size=5,
             overlap=1,
             encoding_model="fake-encoding",
-            strategy=ChunkStrategyType.tokens,
+            strategy=ChunkStrategyType.Tokens,
         )
 
         chunker = create_chunker(config, tokenizer=tokenizer)

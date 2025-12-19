@@ -3,15 +3,11 @@
 
 """Chunk strategy type enumeration."""
 
-from enum import Enum
+from enum import StrEnum
 
 
-class ChunkStrategyType(str, Enum):
+class ChunkStrategyType(StrEnum):
     """ChunkStrategy class definition."""
 
-    tokens = "tokens"
-    sentence = "sentence"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
+    Tokens = "tokens"
+    Sentence = "sentence"

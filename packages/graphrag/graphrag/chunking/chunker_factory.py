@@ -59,14 +59,14 @@ def create_chunker(
 
     if chunker_strategy not in chunker_factory:
         match chunker_strategy:
-            case ChunkStrategyType.tokens:
+            case ChunkStrategyType.Tokens:
                 from graphrag.chunking.token_chunker import TokenChunker
 
-                register_chunker(ChunkStrategyType.tokens, TokenChunker)
-            case ChunkStrategyType.sentence:
+                register_chunker(ChunkStrategyType.Tokens, TokenChunker)
+            case ChunkStrategyType.Sentence:
                 from graphrag.chunking.sentence_chunker import SentenceChunker
 
-                register_chunker(ChunkStrategyType.sentence, SentenceChunker)
+                register_chunker(ChunkStrategyType.Sentence, SentenceChunker)
             case _:
                 msg = f"ChunkingConfig.strategy '{chunker_strategy}' is not registered in the ChunkerFactory. Registered types: {', '.join(chunker_factory.keys())}."
                 raise ValueError(msg)

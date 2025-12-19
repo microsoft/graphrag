@@ -3,36 +3,38 @@
 
 """Parameterization settings for the default configuration."""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from graphrag.chunking.chunk_strategy_type import ChunkStrategyType
-from graphrag.config.defaults import graphrag_config_defaults
 
 
 class ChunkingConfig(BaseModel):
     """Configuration section for chunking."""
 
+    model_config = ConfigDict(extra="allow")
+    """Allow extra fields to support custom cache implementations."""
+
     strategy: str = Field(
         description="The chunking strategy to use.",
-        default=ChunkStrategyType.tokens,
+        default=ChunkStrategyType.Tokens,
     )
-    size: int = Field(
+    size: int | None = Field(
         description="The chunk size to use.",
-        default=graphrag_config_defaults.chunks.size,
+        default=None,
     )
-    overlap: int = Field(
+    overlap: int | None = Field(
         description="The chunk overlap to use.",
-        default=graphrag_config_defaults.chunks.overlap,
+        default=None,
     )
-    encoding_model: str = Field(
+    encoding_model: str | None = Field(
         description="The encoding model to use.",
-        default=graphrag_config_defaults.chunks.encoding_model,
+        default=None,
     )
-    prepend_metadata: bool = Field(
+    prepend_metadata: bool | None = Field(
         description="Prepend metadata into each chunk.",
-        default=graphrag_config_defaults.chunks.prepend_metadata,
+        default=None,
     )
-    chunk_size_includes_metadata: bool = Field(
+    chunk_size_includes_metadata: bool | None = Field(
         description="Count metadata in max tokens.",
-        default=graphrag_config_defaults.chunks.chunk_size_includes_metadata,
+        default=None,
     )

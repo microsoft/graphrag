@@ -24,9 +24,9 @@ class TokenChunker(Chunker):
         size: int,
         overlap: int,
         encoding_model: str,
-        prepend_metadata: bool,
-        chunk_size_includes_metadata: bool,
         tokenizer: Tokenizer,
+        prepend_metadata: bool = False,
+        chunk_size_includes_metadata: bool = False,
         **kwargs: Any,
     ) -> None:
         """Create a token chunker instance."""

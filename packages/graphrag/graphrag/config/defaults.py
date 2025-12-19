@@ -60,9 +60,9 @@ class BasicSearchDefaults:
 class ChunksDefaults:
     """Default values for chunks."""
 
+    strategy: str = ChunkStrategyType.Tokens
     size: int = 1200
     overlap: int = 100
-    strategy: ClassVar[ChunkStrategyType] = ChunkStrategyType.tokens
     encoding_model: str = ENCODING_MODEL
     prepend_metadata: bool = False
     chunk_size_includes_metadata: bool = False

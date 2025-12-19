@@ -92,4 +92,3 @@ def create_base_text_units(
     return cast(
         "pd.DataFrame", text_units[text_units["text"].notna()].reset_index(drop=True)
     )
-
