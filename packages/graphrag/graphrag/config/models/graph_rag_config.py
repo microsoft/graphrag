@@ -127,7 +127,14 @@ class GraphRagConfig(BaseModel):
 
     chunks: ChunkingConfig = Field(
         description="The chunking configuration to use.",
-        default=ChunkingConfig(),
+        default=ChunkingConfig(
+            strategy=graphrag_config_defaults.chunks.strategy,
+            size=graphrag_config_defaults.chunks.size,
+            overlap=graphrag_config_defaults.chunks.overlap,
+            encoding_model=graphrag_config_defaults.chunks.encoding_model,
+            prepend_metadata=graphrag_config_defaults.chunks.prepend_metadata,
+            chunk_size_includes_metadata=graphrag_config_defaults.chunks.chunk_size_includes_metadata,
+        ),
     )
     """The chunking configuration to use."""
 
