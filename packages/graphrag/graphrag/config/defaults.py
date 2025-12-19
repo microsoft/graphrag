@@ -10,11 +10,11 @@ from typing import ClassVar
 from graphrag_cache import CacheType
 from graphrag_storage import StorageType
 
+from graphrag.chunking.chunk_strategy_type import ChunkStrategyType
 from graphrag.config.embeddings import default_embeddings
 from graphrag.config.enums import (
     AsyncType,
     AuthType,
-    ChunkStrategyType,
     InputFileType,
     ModelType,
     NounPhraseExtractorType,

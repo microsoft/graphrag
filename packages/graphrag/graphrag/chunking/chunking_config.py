@@ -5,13 +5,17 @@
 
 from pydantic import BaseModel, Field
 
+from graphrag.chunking.chunk_strategy_type import ChunkStrategyType
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import ChunkStrategyType
 
 
 class ChunkingConfig(BaseModel):
     """Configuration section for chunking."""
 
+    strategy: str = Field(
+        description="The chunking strategy to use.",
+        default=ChunkStrategyType.tokens,
+    )
     size: int = Field(
         description="The chunk size to use.",
         default=graphrag_config_defaults.chunks.size,
@@ -19,10 +23,6 @@ class ChunkingConfig(BaseModel):
     overlap: int = Field(
         description="The chunk overlap to use.",
         default=graphrag_config_defaults.chunks.overlap,
-    )
-    strategy: ChunkStrategyType = Field(
-        description="The chunking strategy to use.",
-        default=graphrag_config_defaults.chunks.strategy,
     )
     encoding_model: str = Field(
         description="The encoding model to use.",

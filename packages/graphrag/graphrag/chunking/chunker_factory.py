@@ -8,9 +8,9 @@ from collections.abc import Callable
 from graphrag_common.factory.factory import Factory, ServiceScope
 from graphrag_common.types.tokenizer import Tokenizer
 
+from graphrag.chunking.chunk_strategy_type import ChunkStrategyType
 from graphrag.chunking.chunker import Chunker
-from graphrag.config.enums import ChunkStrategyType
-from graphrag.config.models.chunking_config import ChunkingConfig
+from graphrag.chunking.chunking_config import ChunkingConfig
 
 
 class ChunkerFactory(Factory[Chunker]):

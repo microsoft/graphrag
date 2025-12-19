@@ -3,6 +3,7 @@
 
 """A module containing 'TokenChunker' class."""
 
+import json
 from collections.abc import Callable
 from typing import Any
 
@@ -23,6 +24,8 @@ class TokenChunker(Chunker):
         size: int,
         overlap: int,
         encoding_model: str,
+        prepend_metadata: bool,
+        chunk_size_includes_metadata: bool,
         tokenizer: Tokenizer,
         **kwargs: Any,
     ) -> None:
@@ -30,17 +33,43 @@ class TokenChunker(Chunker):
         self._size = size
         self._overlap = overlap
         self._encoding_model = encoding_model
+        self._prepend_metadata = prepend_metadata
+        self._chunk_size_includes_metadata = chunk_size_includes_metadata
         self._tokenizer = tokenizer
 
-    def chunk(self, text: str) -> list[str]:
+    def chunk(self, text: str, metadata: str | dict | None = None) -> list[str]:
         """Chunk the text into token-based chunks."""
-        return split_text_on_tokens(
+        line_delimiter = ".\n"
+        metadata_str = ""
+        metadata_tokens = 0
+
+        if self._prepend_metadata and metadata is not None:
+            if isinstance(metadata, str):
+                metadata = json.loads(metadata)
+            if isinstance(metadata, dict):
+                metadata_str = (
+                    line_delimiter.join(f"{k}: {v}" for k, v in metadata.items())
+                    + line_delimiter
+                )
+
+            if self._chunk_size_includes_metadata:
+                metadata_tokens = len(self._tokenizer.encode(metadata_str))
+                if metadata_tokens >= self._size:
+                    message = "Metadata tokens exceeds the maximum tokens per chunk. Please increase the tokens per chunk."
+                    raise ValueError(message)
+
+        chunks = split_text_on_tokens(
             text,
-            chunk_size=self._size,
+            chunk_size=self._size - metadata_tokens,
             chunk_overlap=self._overlap,
             encode=self._tokenizer.encode,
             decode=self._tokenizer.decode,
         )
+
+        if self._prepend_metadata:
+            chunks = [metadata_str + chunk for chunk in chunks]
+
+        return chunks
 
 
 def split_text_on_tokens(

@@ -15,5 +15,5 @@ class Chunker(ABC):
         """Create a chunker instance."""
 
     @abstractmethod
-    def chunk(self, text: str) -> list[str]:
+    def chunk(self, text: str, metadata: str | dict | None = None) -> list[str]:
         """Chunk method definition."""

@@ -12,6 +12,7 @@ from graphrag_cache.noop_cache import NoopCache
 from graphrag_storage import create_storage
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
+from graphrag.chunking.chunker_factory import create_chunker
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input.factory import InputReaderFactory
 from graphrag.index.operations.embed_text.run_embed_text import (
@@ -61,6 +62,7 @@ async def load_docs_in_chunks(
         cache=NoopCache(),
     )
     tokenizer = get_tokenizer(embeddings_llm_settings)
+    chunker = create_chunker(config.chunks, tokenizer)
     input_storage = create_storage(config.input.storage)
     input_reader = InputReaderFactory().create(
         config.input.file_type,
@@ -71,10 +73,7 @@ async def load_docs_in_chunks(
         documents=dataset,
         callbacks=NoopWorkflowCallbacks(),
         tokenizer=tokenizer,
-        chunk_size=config.chunks.size,
-        chunk_overlap=config.chunks.overlap,
-        prepend_metadata=config.chunks.prepend_metadata,
-        chunk_size_includes_metadata=config.chunks.chunk_size_includes_metadata,
+        chunker=chunker,
     )
 
     # Depending on the select method, build the dataset

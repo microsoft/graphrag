@@ -3,13 +3,13 @@
 
 from unittest.mock import Mock, patch
 
-from graphrag.chunking.bootstrap import bootstrap
+from graphrag.chunking.bootstrap_nltk import bootstrap
+from graphrag.chunking.chunk_strategy_type import ChunkStrategyType
 from graphrag.chunking.chunker_factory import create_chunker
+from graphrag.chunking.chunking_config import ChunkingConfig
 from graphrag.chunking.token_chunker import (
     split_text_on_tokens,
 )
-from graphrag.config.enums import ChunkStrategyType
-from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 
