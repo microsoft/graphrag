@@ -3,7 +3,6 @@
 
 """A module containing 'TokenChunker' class."""
 
-import json
 from collections.abc import Callable
 from typing import Any
 
@@ -23,7 +22,6 @@ class TokenChunker(Chunker):
         self,
         size: int,
         overlap: int,
-        encoding_model: str,
         tokenizer: Tokenizer,
         prepend_metadata: bool = False,
         chunk_size_includes_metadata: bool = False,
@@ -32,25 +30,18 @@ class TokenChunker(Chunker):
         """Create a token chunker instance."""
         self._size = size
         self._overlap = overlap
-        self._encoding_model = encoding_model
         self._prepend_metadata = prepend_metadata
         self._chunk_size_includes_metadata = chunk_size_includes_metadata
         self._tokenizer = tokenizer
 
-    def chunk(self, text: str, metadata: str | dict | None = None) -> list[str]:
+    def chunk(self, text: str, metadata: dict | None = None) -> list[str]:
         """Chunk the text into token-based chunks."""
-        line_delimiter = ".\n"
+        # we have to create and measure the metadata first to account for the length when chunking
         metadata_str = ""
         metadata_tokens = 0
 
         if self._prepend_metadata and metadata is not None:
-            if isinstance(metadata, str):
-                metadata = json.loads(metadata)
-            if isinstance(metadata, dict):
-                metadata_str = (
-                    line_delimiter.join(f"{k}: {v}" for k, v in metadata.items())
-                    + line_delimiter
-                )
+            metadata_str = ".\n".join(f"{k}: {v}" for k, v in metadata.items()) + ".\n"
 
             if self._chunk_size_includes_metadata:
                 metadata_tokens = len(self._tokenizer.encode(metadata_str))

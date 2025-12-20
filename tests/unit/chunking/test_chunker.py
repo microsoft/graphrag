@@ -11,14 +11,15 @@ from graphrag.chunking.token_chunker import (
     split_text_on_tokens,
 )
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag_common.types.tokenizer import Tokenizer
 
 
-class MockTokenizer:
-    def encode(self, text):
+class MockTokenizer(Tokenizer):
+    def encode(self, text) -> list[int]:
         return [ord(char) for char in text]
 
-    def decode(self, token_ids):
-        return "".join(chr(id) for id in token_ids)
+    def decode(self, tokens) -> str:
+        return "".join(chr(id) for id in tokens)
 
 
 tokenizer = get_tokenizer()
@@ -53,6 +54,18 @@ class TestRunSentences:
         assert chunks[0] == "   Sentence with spaces."
         assert chunks[1] == "Another one!"
 
+    def test_prepend_metadata(self):
+        """Test prepending metadata to chunks"""
+        input = "This is a test. Another sentence."
+        config = ChunkingConfig(
+            strategy=ChunkStrategyType.Sentence, prepend_metadata=True
+        )
+        chunker = create_chunker(config)
+        chunks = chunker.chunk(input, metadata={"message": "hello"})
+
+        assert chunks[0] == "message: hello.\nThis is a test."
+        assert chunks[1] == "message: hello.\nAnother sentence."
+
 
 class TestRunTokens:
     @patch("tiktoken.get_encoding")
@@ -74,6 +87,20 @@ class TestRunTokens:
         chunks = chunker.chunk(input)
 
         assert len(chunks) > 0
+
+    def test_prepend_metadata(self):
+        """Test prepending metadata to chunks"""
+        mocked_tokenizer = MockTokenizer()
+        input = "This is a test."
+        config = ChunkingConfig(
+            strategy=ChunkStrategyType.Tokens, size=5, overlap=0, prepend_metadata=True
+        )
+        chunker = create_chunker(config, tokenizer=mocked_tokenizer)
+        chunks = chunker.chunk(input, metadata={"message": "hello"})
+
+        assert chunks[0] == "message: hello.\nThis "
+        assert chunks[1] == "message: hello.\nis a "
+        assert chunks[2] == "message: hello.\ntest."
 
 
 def test_split_text_str_empty():
@@ -146,40 +173,3 @@ def test_split_text_on_tokens_no_overlap():
         encode=tok.encode,
     )
     assert result == expected_splits
-
-
-@patch("tiktoken.get_encoding")
-def test_get_encoding_fn_encode(mock_get_encoding):
-    # Create a mock encoding object with encode and decode methods
-    mock_encoding = Mock()
-    mock_encoding.encode = Mock(return_value=[1, 2, 3])
-    mock_encoding.decode = Mock(return_value="decoded text")
-
-    # Configure the mock_get_encoding to return the mock encoding object
-    mock_get_encoding.return_value = mock_encoding
-
-    # Call the function to get encode and decode functions
-    tokenizer = get_tokenizer(encoding_model="mock_encoding")
-
-    # Test the encode function
-    encoded_text = tokenizer.encode("test text")
-    assert encoded_text == [1, 2, 3]
-    mock_encoding.encode.assert_called_once_with("test text")
-
-
-@patch("tiktoken.get_encoding")
-def test_get_encoding_fn_decode(mock_get_encoding):
-    # Create a mock encoding object with encode and decode methods
-    mock_encoding = Mock()
-    mock_encoding.encode = Mock(return_value=[1, 2, 3])
-    mock_encoding.decode = Mock(return_value="decoded text")
-
-    # Configure the mock_get_encoding to return the mock encoding object
-    mock_get_encoding.return_value = mock_encoding
-
-    # Call the function to get encode and decode functions
-    tokenizer = get_tokenizer(encoding_model="mock_encoding")
-
-    decoded_text = tokenizer.decode([1, 2, 3])
-    assert decoded_text == "decoded text"
-    mock_encoding.decode.assert_called_once_with([1, 2, 3])

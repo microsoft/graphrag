@@ -3,6 +3,7 @@
 
 """A module containing run_workflow method definition."""
 
+import json
 import logging
 from typing import Any, cast
 
@@ -62,7 +63,10 @@ def create_base_text_units(
     logger.info("Starting chunking process for %d documents", total_rows)
 
     def chunker_with_logging(row: pd.Series, row_index: int) -> Any:
-        row["chunks"] = chunker.chunk(row["text"], row.get("metadata"))
+        metadata = row.get("metadata")
+        if (metadata is not None) and isinstance(metadata, str):
+            metadata = json.loads(metadata)
+        row["chunks"] = chunker.chunk(row["text"], metadata=metadata)
         tick()
         logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
         return row

@@ -3,7 +3,6 @@
 
 """A module containing 'SentenceChunker' class."""
 
-import json
 from typing import Any
 
 import nltk
@@ -20,19 +19,11 @@ class SentenceChunker(Chunker):
         self._prepend_metadata = prepend_metadata
         bootstrap()
 
-    def chunk(self, text: str, metadata: str | dict | None = None) -> list[str]:
+    def chunk(self, text: str, metadata: dict | None = None) -> list[str]:
         """Chunk the text into sentence-based chunks."""
         chunks = nltk.sent_tokenize(text)
 
         if self._prepend_metadata and metadata is not None:
-            line_delimiter = ".\n"
-            metadata_str = ""
-            if isinstance(metadata, str):
-                metadata = json.loads(metadata)
-            if isinstance(metadata, dict):
-                metadata_str = (
-                    line_delimiter.join(f"{k}: {v}" for k, v in metadata.items())
-                    + line_delimiter
-                )
+            metadata_str = ".\n".join(f"{k}: {v}" for k, v in metadata.items()) + ".\n"
             chunks = [metadata_str + chunk for chunk in chunks]
         return chunks
