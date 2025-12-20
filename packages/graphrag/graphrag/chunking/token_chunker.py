@@ -9,6 +9,7 @@ from typing import Any
 from graphrag_common.types.tokenizer import Tokenizer
 
 from graphrag.chunking.chunker import Chunker
+from graphrag.chunking.chunking_document import ChunkingDocument
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]
@@ -24,40 +25,31 @@ class TokenChunker(Chunker):
         overlap: int,
         tokenizer: Tokenizer,
         prepend_metadata: bool = False,
-        chunk_size_includes_metadata: bool = False,
         **kwargs: Any,
     ) -> None:
         """Create a token chunker instance."""
         self._size = size
         self._overlap = overlap
         self._prepend_metadata = prepend_metadata
-        self._chunk_size_includes_metadata = chunk_size_includes_metadata
         self._tokenizer = tokenizer
 
-    def chunk(self, text: str, metadata: dict | None = None) -> list[str]:
+    def chunk(
+        self, document: ChunkingDocument, metadata: dict | None = None
+    ) -> list[str]:
         """Chunk the text into token-based chunks."""
         # we have to create and measure the metadata first to account for the length when chunking
-        metadata_str = ""
-        metadata_tokens = 0
-
-        if self._prepend_metadata and metadata is not None:
-            metadata_str = ".\n".join(f"{k}: {v}" for k, v in metadata.items()) + ".\n"
-
-            if self._chunk_size_includes_metadata:
-                metadata_tokens = len(self._tokenizer.encode(metadata_str))
-                if metadata_tokens >= self._size:
-                    message = "Metadata tokens exceeds the maximum tokens per chunk. Please increase the tokens per chunk."
-                    raise ValueError(message)
+        text = str(document)
 
         chunks = split_text_on_tokens(
             text,
-            chunk_size=self._size - metadata_tokens,
+            chunk_size=self._size,
             chunk_overlap=self._overlap,
             encode=self._tokenizer.encode,
             decode=self._tokenizer.decode,
         )
 
-        if self._prepend_metadata:
+        if self._prepend_metadata and metadata is not None:
+            metadata_str = ".\n".join(f"{k}: {v}" for k, v in metadata.items()) + ".\n"
             chunks = [metadata_str + chunk for chunk in chunks]
 
         return chunks

@@ -100,12 +100,11 @@ These settings configure how we parse documents into text chunks. This is necess
 
 #### Fields
 
+- `strategy` **str**[tokens|sentences] - How to chunk the text. 
 - `size` **int** - The max chunk size in tokens.
 - `overlap` **int** - The chunk overlap in tokens.
-- `strategy` **str**[tokens|sentences] - How to chunk the text. 
 - `encoding_model` **str** - The text encoding model to use for splitting on token boundaries.
 - `prepend_metadata` **bool** - Determines if metadata values should be added at the beginning of each chunk. Default=`False`.
-- `chunk_size_includes_metadata` **bool** - Specifies whether the chunk size calculation should include metadata tokens. Default=`False`.
 
 ## Outputs and Storage
 

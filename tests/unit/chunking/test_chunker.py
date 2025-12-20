@@ -7,6 +7,7 @@ from graphrag.chunking.bootstrap_nltk import bootstrap
 from graphrag.chunking.chunk_strategy_type import ChunkStrategyType
 from graphrag.chunking.chunker_factory import create_chunker
 from graphrag.chunking.chunking_config import ChunkingConfig
+from graphrag.chunking.text_chunking_document import TextChunkingDocument
 from graphrag.chunking.token_chunker import (
     split_text_on_tokens,
 )
@@ -31,7 +32,7 @@ class TestRunSentences:
 
     def test_basic_functionality(self):
         """Test basic sentence splitting without metadata"""
-        input = "This is a test. Another sentence."
+        input = TextChunkingDocument(text="This is a test. Another sentence.")
         chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.Sentence))
         chunks = chunker.chunk(input)
 
@@ -39,16 +40,10 @@ class TestRunSentences:
         assert chunks[0] == "This is a test."
         assert chunks[1] == "Another sentence."
 
-    def test_multiple_documents(self):
-        """Test processing multiple input documents"""
-        input = ["First. Document.", "Second. Doc."]
-        chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.Sentence))
-        chunks = [chunk for doc in input for chunk in chunker.chunk(doc)]
-        assert len(chunks) == 4
-
     def test_mixed_whitespace_handling(self):
         """Test input with irregular whitespace"""
-        input = "   Sentence with spaces. Another one!   "
+
+        input = TextChunkingDocument(text="   Sentence with spaces. Another one!   ")
         chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.Sentence))
         chunks = chunker.chunk(input)
         assert chunks[0] == "   Sentence with spaces."
@@ -56,7 +51,7 @@ class TestRunSentences:
 
     def test_prepend_metadata(self):
         """Test prepending metadata to chunks"""
-        input = "This is a test. Another sentence."
+        input = TextChunkingDocument(text="This is a test. Another sentence.")
         config = ChunkingConfig(
             strategy=ChunkStrategyType.Sentence, prepend_metadata=True
         )
@@ -75,7 +70,9 @@ class TestRunTokens:
         mock_encoder.decode.side_effect = lambda x: bytes(x).decode()
         mock_get_encoding.return_value = mock_encoder
 
-        input = "Marley was dead: to begin with. There is no doubt whatever about that. The register of his burial was signed by the clergyman, the clerk, the undertaker, and the chief mourner. Scrooge signed it. And Scrooge's name was good upon 'Change, for anything he chose to put his hand to."
+        input = TextChunkingDocument(
+            text="Marley was dead: to begin with. There is no doubt whatever about that. The register of his burial was signed by the clergyman, the clerk, the undertaker, and the chief mourner. Scrooge signed it. And Scrooge's name was good upon 'Change, for anything he chose to put his hand to."
+        )
         config = ChunkingConfig(
             size=5,
             overlap=1,
@@ -91,7 +88,7 @@ class TestRunTokens:
     def test_prepend_metadata(self):
         """Test prepending metadata to chunks"""
         mocked_tokenizer = MockTokenizer()
-        input = "This is a test."
+        input = TextChunkingDocument(text="This is a test.")
         config = ChunkingConfig(
             strategy=ChunkStrategyType.Tokens, size=5, overlap=0, prepend_metadata=True
         )

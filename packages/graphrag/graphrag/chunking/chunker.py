@@ -6,6 +6,8 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
+from graphrag.chunking.chunking_document import ChunkingDocument
+
 
 class Chunker(ABC):
     """Abstract base class for text chunkers."""
@@ -15,5 +17,7 @@ class Chunker(ABC):
         """Create a chunker instance."""
 
     @abstractmethod
-    def chunk(self, text: str, metadata: dict | None = None) -> list[str]:
+    def chunk(
+        self, document: ChunkingDocument, metadata: dict | None = None
+    ) -> list[str]:
         """Chunk method definition."""

@@ -13,6 +13,7 @@ from graphrag_common.types.tokenizer import Tokenizer
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.chunking.chunker import Chunker
 from graphrag.chunking.chunker_factory import create_chunker
+from graphrag.chunking.text_chunking_document import TextChunkingDocument
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -66,7 +67,8 @@ def create_base_text_units(
         metadata = row.get("metadata")
         if (metadata is not None) and isinstance(metadata, str):
             metadata = json.loads(metadata)
-        row["chunks"] = chunker.chunk(row["text"], metadata=metadata)
+        document = TextChunkingDocument(text=row["text"])
+        row["chunks"] = chunker.chunk(document, metadata=metadata)
         tick()
         logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
         return row

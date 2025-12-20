@@ -34,7 +34,3 @@ class ChunkingConfig(BaseModel):
         description="Prepend metadata into each chunk.",
         default=None,
     )
-    chunk_size_includes_metadata: bool | None = Field(
-        description="Count metadata in max tokens.",
-        default=None,
-    )

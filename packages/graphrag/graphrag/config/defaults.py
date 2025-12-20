@@ -65,7 +65,6 @@ class ChunksDefaults:
     overlap: int = 100
     encoding_model: str = ENCODING_MODEL
     prepend_metadata: bool = False
-    chunk_size_includes_metadata: bool = False
 
 
 @dataclass

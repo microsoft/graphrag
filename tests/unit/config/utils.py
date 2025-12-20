@@ -167,7 +167,6 @@ def assert_chunking_configs(actual: ChunkingConfig, expected: ChunkingConfig) ->
     assert actual.strategy == expected.strategy
     assert actual.encoding_model == expected.encoding_model
     assert actual.prepend_metadata == expected.prepend_metadata
-    assert actual.chunk_size_includes_metadata == expected.chunk_size_includes_metadata
 
 
 def assert_snapshots_configs(
