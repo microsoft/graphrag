@@ -13,6 +13,7 @@ from graphrag_common.types.tokenizer import Tokenizer
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.chunking.chunker import Chunker
 from graphrag.chunking.chunker_factory import create_chunker
+from graphrag.chunking.prepend_metadata import prepend_metadata as prepend_metadata_fn
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -39,6 +40,7 @@ async def run_workflow(
         context.callbacks,
         tokenizer=tokenizer,
         chunker=chunker,
+        prepend_metadata=config.chunks.prepend_metadata,
     )
 
     await write_table_to_storage(output, "text_units", context.output_storage)
@@ -52,6 +54,7 @@ def create_base_text_units(
     callbacks: WorkflowCallbacks,
     tokenizer: Tokenizer,
     chunker: Chunker,
+    prepend_metadata: bool | None = False,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     documents.sort_values(by=["id"], ascending=[True], inplace=True)
@@ -63,10 +66,12 @@ def create_base_text_units(
     logger.info("Starting chunking process for %d documents", total_rows)
 
     def chunker_with_logging(row: pd.Series, row_index: int) -> Any:
-        metadata = row.get("metadata")
-        if (metadata is not None) and isinstance(metadata, str):
-            metadata = json.loads(metadata)
-        row["chunks"] = chunker.chunk(row["text"], metadata=metadata)
+        row["chunks"] = chunker.chunk(row["text"])
+
+        metadata = row.get("metadata", None)
+        if prepend_metadata and metadata is not None:
+            metadata = json.loads(metadata) if isinstance(metadata, str) else metadata
+            row["chunks"] = [prepend_metadata_fn(chunk, metadata) for chunk in row["chunks"]]
         tick()
         logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
         return row

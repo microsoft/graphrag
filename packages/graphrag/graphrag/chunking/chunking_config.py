@@ -32,5 +32,5 @@ class ChunkingConfig(BaseModel):
     )
     prepend_metadata: bool | None = Field(
         description="Prepend metadata into each chunk.",
-        default=None,
+        default=False,
     )

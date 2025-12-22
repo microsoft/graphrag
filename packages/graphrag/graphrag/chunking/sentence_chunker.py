@@ -14,16 +14,10 @@ from graphrag.chunking.chunker import Chunker
 class SentenceChunker(Chunker):
     """A chunker that splits text into sentence-based chunks."""
 
-    def __init__(self, prepend_metadata: bool = False, **kwargs: Any) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """Create a sentence chunker instance."""
-        self._prepend_metadata = prepend_metadata
         bootstrap()
 
-    def chunk(self, text: str, metadata: dict | None = None) -> list[str]:
+    def chunk(self, text) -> list[str]:
         """Chunk the text into sentence-based chunks."""
-        chunks = nltk.sent_tokenize(text)
-
-        if self._prepend_metadata and metadata is not None:
-            metadata_str = ".\n".join(f"{k}: {v}" for k, v in metadata.items()) + ".\n"
-            chunks = [metadata_str + chunk for chunk in chunks]
-        return chunks
+        return nltk.sent_tokenize(text)

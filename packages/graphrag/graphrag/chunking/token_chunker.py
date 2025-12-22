@@ -23,30 +23,22 @@ class TokenChunker(Chunker):
         size: int,
         overlap: int,
         tokenizer: Tokenizer,
-        prepend_metadata: bool = False,
         **kwargs: Any,
     ) -> None:
         """Create a token chunker instance."""
         self._size = size
         self._overlap = overlap
-        self._prepend_metadata = prepend_metadata
         self._tokenizer = tokenizer
 
-    def chunk(self, text: str, metadata: dict | None = None) -> list[str]:
+    def chunk(self, text: str) -> list[str]:
         """Chunk the text into token-based chunks."""
-        chunks = split_text_on_tokens(
+        return split_text_on_tokens(
             text,
             chunk_size=self._size,
             chunk_overlap=self._overlap,
             encode=self._tokenizer.encode,
             decode=self._tokenizer.decode,
         )
-
-        if self._prepend_metadata and metadata is not None:
-            metadata_str = ".\n".join(f"{k}: {v}" for k, v in metadata.items()) + ".\n"
-            chunks = [metadata_str + chunk for chunk in chunks]
-
-        return chunks
 
 
 def split_text_on_tokens(

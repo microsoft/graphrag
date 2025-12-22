@@ -48,18 +48,6 @@ class TestRunSentences:
         assert chunks[0] == "   Sentence with spaces."
         assert chunks[1] == "Another one!"
 
-    def test_prepend_metadata(self):
-        """Test prepending metadata to chunks"""
-        input = "This is a test. Another sentence."
-        config = ChunkingConfig(
-            strategy=ChunkStrategyType.Sentence, prepend_metadata=True
-        )
-        chunker = create_chunker(config)
-        chunks = chunker.chunk(input, metadata={"message": "hello"})
-
-        assert chunks[0] == "message: hello.\nThis is a test."
-        assert chunks[1] == "message: hello.\nAnother sentence."
-
 
 class TestRunTokens:
     @patch("tiktoken.get_encoding")
@@ -82,20 +70,6 @@ class TestRunTokens:
         chunks = chunker.chunk(input)
 
         assert len(chunks) > 0
-
-    def test_prepend_metadata(self):
-        """Test prepending metadata to chunks"""
-        mocked_tokenizer = MockTokenizer()
-        input = "This is a test."
-        config = ChunkingConfig(
-            strategy=ChunkStrategyType.Tokens, size=5, overlap=0, prepend_metadata=True
-        )
-        chunker = create_chunker(config, tokenizer=mocked_tokenizer)
-        chunks = chunker.chunk(input, metadata={"message": "hello"})
-
-        assert chunks[0] == "message: hello.\nThis "
-        assert chunks[1] == "message: hello.\nis a "
-        assert chunks[2] == "message: hello.\ntest."
 
 
 def test_split_text_str_empty():
