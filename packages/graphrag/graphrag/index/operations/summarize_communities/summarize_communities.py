@@ -7,7 +7,6 @@ import logging
 from collections.abc import Callable
 
 import pandas as pd
-from graphrag_common.types.tokenizer import Tokenizer
 
 import graphrag.data_model.schemas as schemas
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
@@ -27,6 +26,7 @@ from graphrag.index.operations.summarize_communities.utils import (
 from graphrag.index.utils.derive_from_rows import derive_from_rows
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.logger.progress import progress_ticker
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 

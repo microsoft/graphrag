@@ -3,8 +3,9 @@
 
 """LiteLLM Tokenizer."""
 
-from graphrag_common.types.tokenizer import Tokenizer
 from litellm import decode, encode  # type: ignore
+
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 class LitellmTokenizer(Tokenizer):

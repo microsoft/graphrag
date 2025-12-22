@@ -6,9 +6,9 @@
 import logging
 
 import pandas as pd
-from graphrag_common.types.tokenizer import Tokenizer
 
 import graphrag.data_model.schemas as schemas
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 

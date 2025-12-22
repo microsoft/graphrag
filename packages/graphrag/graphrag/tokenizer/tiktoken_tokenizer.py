@@ -4,7 +4,8 @@
 """Tiktoken Tokenizer."""
 
 import tiktoken
-from graphrag_common.types.tokenizer import Tokenizer
+
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 class TiktokenTokenizer(Tokenizer):

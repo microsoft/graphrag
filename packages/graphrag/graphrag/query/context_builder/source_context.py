@@ -7,11 +7,11 @@ import random
 from typing import Any, cast
 
 import pandas as pd
-from graphrag_common.types.tokenizer import Tokenizer
 
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 """
 Contain util functions to build text unit context for the search's system prompt

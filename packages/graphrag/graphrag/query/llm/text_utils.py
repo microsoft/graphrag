@@ -9,10 +9,10 @@ import re
 from collections.abc import Iterator
 from itertools import islice
 
-from graphrag_common.types.tokenizer import Tokenizer
 from json_repair import repair_json
 
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 

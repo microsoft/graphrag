@@ -8,7 +8,6 @@ import time
 from collections.abc import AsyncGenerator
 from typing import Any
 
-from graphrag_common.types.tokenizer import Tokenizer
 from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
@@ -27,6 +26,7 @@ from graphrag.query.structured_search.drift_search.primer import DRIFTPrimer
 from graphrag.query.structured_search.drift_search.state import QueryState
 from graphrag.query.structured_search.local_search.search import LocalSearch
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 

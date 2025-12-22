@@ -8,8 +8,6 @@ import time
 from collections.abc import AsyncGenerator
 from typing import Any
 
-from graphrag_common.types.tokenizer import Tokenizer
-
 from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.query.local_search_system_prompt import (
@@ -20,6 +18,7 @@ from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 

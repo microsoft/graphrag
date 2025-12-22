@@ -7,14 +7,13 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
-from graphrag_common.types.tokenizer import Tokenizer
-
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.builders import (
     GlobalContextBuilder,
     LocalContextBuilder,
 )
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 @dataclass

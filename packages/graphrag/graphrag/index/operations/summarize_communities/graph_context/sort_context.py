@@ -3,9 +3,9 @@
 """Sort context by degree in descending order."""
 
 import pandas as pd
-from graphrag_common.types.tokenizer import Tokenizer
 
 import graphrag.data_model.schemas as schemas
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 def sort_context(

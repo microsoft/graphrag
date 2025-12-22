@@ -7,8 +7,6 @@ import logging
 import time
 from typing import Any, cast
 
-from graphrag_common.types.tokenizer import Tokenizer
-
 from graphrag.callbacks.llm_callbacks import BaseLLMCallback
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.query.question_gen_system_prompt import QUESTION_SYSTEM_PROMPT
@@ -20,6 +18,7 @@ from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
 from graphrag.query.question_gen.base import BaseQuestionGen, QuestionResult
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 

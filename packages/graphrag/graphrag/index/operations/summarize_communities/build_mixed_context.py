@@ -4,12 +4,12 @@
 """A module containing build_mixed_context method definition."""
 
 import pandas as pd
-from graphrag_common.types.tokenizer import Tokenizer
 
 import graphrag.data_model.schemas as schemas
 from graphrag.index.operations.summarize_communities.graph_context.sort_context import (
     sort_context,
 )
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 def build_mixed_context(

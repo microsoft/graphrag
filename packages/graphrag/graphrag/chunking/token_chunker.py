@@ -6,13 +6,7 @@
 from collections.abc import Callable
 from typing import Any
 
-from graphrag_common.types.tokenizer import Tokenizer
-
 from graphrag.chunking.chunker import Chunker
-
-EncodedText = list[int]
-DecodeFn = Callable[[EncodedText], str]
-EncodeFn = Callable[[str], EncodedText]
 
 
 class TokenChunker(Chunker):
@@ -22,13 +16,15 @@ class TokenChunker(Chunker):
         self,
         size: int,
         overlap: int,
-        tokenizer: Tokenizer,
+        encode: Callable[[str], list[int]],
+        decode: Callable[[list[int]], str],
         **kwargs: Any,
     ) -> None:
         """Create a token chunker instance."""
         self._size = size
         self._overlap = overlap
-        self._tokenizer = tokenizer
+        self._encode = encode
+        self._decode = decode
 
     def chunk(self, text: str) -> list[str]:
         """Chunk the text into token-based chunks."""
@@ -36,8 +32,8 @@ class TokenChunker(Chunker):
             text,
             chunk_size=self._size,
             chunk_overlap=self._overlap,
-            encode=self._tokenizer.encode,
-            decode=self._tokenizer.decode,
+            encode=self._encode,
+            decode=self._decode,
         )
 
 
@@ -45,8 +41,8 @@ def split_text_on_tokens(
     text: str,
     chunk_size: int,
     chunk_overlap: int,
-    encode: EncodeFn,
-    decode: DecodeFn,
+    encode: Callable[[str], list[int]],
+    decode: Callable[[list[int]], str],
 ) -> list[str]:
     """Split a single text and return chunks using the tokenizer."""
     result = []

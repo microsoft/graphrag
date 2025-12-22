@@ -6,7 +6,6 @@
 from collections.abc import Callable
 
 from graphrag_common.factory.factory import Factory, ServiceScope
-from graphrag_common.types.tokenizer import Tokenizer
 
 from graphrag.chunking.chunk_strategy_type import ChunkStrategyType
 from graphrag.chunking.chunker import Chunker
@@ -38,7 +37,9 @@ def register_chunker(
 
 
 def create_chunker(
-    config: ChunkingConfig, tokenizer: Tokenizer | None = None
+    config: ChunkingConfig,
+    encode: Callable[[str], list[int]] | None,
+    decode: Callable[[list[int]], str] | None,
 ) -> Chunker:
     """Create a chunker implementation based on the given configuration.
 
@@ -53,8 +54,10 @@ def create_chunker(
             The created chunker implementation.
     """
     config_model = config.model_dump()
-    if tokenizer is not None:
-        config_model["tokenizer"] = tokenizer
+    if encode is not None:
+        config_model["encode"] = encode
+    if decode is not None:
+        config_model["decode"] = decode
     chunker_strategy = config.strategy
 
     if chunker_strategy not in chunker_factory:

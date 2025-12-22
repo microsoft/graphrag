@@ -11,7 +11,7 @@ from graphrag.chunking.token_chunker import (
     split_text_on_tokens,
 )
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag_common.types.tokenizer import Tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 class MockTokenizer(Tokenizer):

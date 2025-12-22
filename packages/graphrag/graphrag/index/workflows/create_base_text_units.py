@@ -8,7 +8,6 @@ import logging
 from typing import Any, cast
 
 import pandas as pd
-from graphrag_common.types.tokenizer import Tokenizer
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.chunking.chunker import Chunker
@@ -20,6 +19,7 @@ from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logger.progress import progress_ticker
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ async def run_workflow(
     documents = await load_table_from_storage("documents", context.output_storage)
 
     tokenizer = get_tokenizer(encoding_model=config.chunks.encoding_model)
-    chunker = create_chunker(config.chunks, tokenizer)
+    chunker = create_chunker(config.chunks, tokenizer.encode, tokenizer.decode)
     output = create_base_text_units(
         documents,
         context.callbacks,
@@ -71,7 +71,9 @@ def create_base_text_units(
         metadata = row.get("metadata", None)
         if prepend_metadata and metadata is not None:
             metadata = json.loads(metadata) if isinstance(metadata, str) else metadata
-            row["chunks"] = [prepend_metadata_fn(chunk, metadata) for chunk in row["chunks"]]
+            row["chunks"] = [
+                prepend_metadata_fn(chunk, metadata) for chunk in row["chunks"]
+            ]
         tick()
         logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
         return row

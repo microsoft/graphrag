@@ -7,7 +7,6 @@ import logging
 from typing import cast
 
 import pandas as pd
-from graphrag_common.types.tokenizer import Tokenizer
 
 import graphrag.data_model.schemas as schemas
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -31,6 +30,7 @@ from graphrag.index.utils.dataframes import (
     where_column_equals,
 )
 from graphrag.logger.progress import progress_iterable
+from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 
