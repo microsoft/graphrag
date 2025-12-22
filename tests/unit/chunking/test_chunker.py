@@ -3,15 +3,15 @@
 
 from unittest.mock import Mock, patch
 
-from graphrag.chunking.bootstrap_nltk import bootstrap
-from graphrag.chunking.chunk_strategy_type import ChunkStrategyType
-from graphrag.chunking.chunker_factory import create_chunker
-from graphrag.chunking.chunking_config import ChunkingConfig
-from graphrag.chunking.token_chunker import (
-    split_text_on_tokens,
-)
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
+from graphrag_chunking.bootstrap_nltk import bootstrap
+from graphrag_chunking.chunk_strategy_type import ChunkStrategyType
+from graphrag_chunking.chunker_factory import create_chunker
+from graphrag_chunking.chunking_config import ChunkingConfig
+from graphrag_chunking.token_chunker import (
+    split_text_on_tokens,
+)
 
 
 class MockTokenizer(Tokenizer):
@@ -20,9 +20,6 @@ class MockTokenizer(Tokenizer):
 
     def decode(self, tokens) -> str:
         return "".join(chr(id) for id in tokens)
-
-
-tokenizer = get_tokenizer()
 
 
 class TestRunSentences:
@@ -73,6 +70,7 @@ class TestRunTokens:
 
 
 def test_split_text_str_empty():
+    tokenizer = get_tokenizer()
     result = split_text_on_tokens(
         "",
         chunk_size=5,
@@ -112,9 +110,9 @@ def test_split_text_on_tokens():
     assert result == expected_splits
 
 
-def test_split_text_on_tokens_no_overlap():
+def test_split_text_on_tokens_one_overlap():
     text = "This is a test text, meaning to be taken seriously by this test only."
-    tok = get_tokenizer(encoding_model="cl100k_base")
+    tokenizer = get_tokenizer(encoding_model="o200k_base")
 
     expected_splits = [
         "This is",
@@ -125,10 +123,10 @@ def test_split_text_on_tokens_no_overlap():
         ", meaning",
         " meaning to",
         " to be",
-        " be taken",  # cspell:disable-line
-        " taken seriously",  # cspell:disable-line
+        " be taken",
+        " taken seriously",
         " seriously by",
-        " by this",  # cspell:disable-line
+        " by this",
         " this test",
         " test only",
         " only.",
@@ -138,7 +136,31 @@ def test_split_text_on_tokens_no_overlap():
         text=text,
         chunk_size=2,
         chunk_overlap=1,
-        decode=tok.decode,
-        encode=tok.encode,
+        decode=tokenizer.decode,
+        encode=tokenizer.encode,
     )
+    assert result == expected_splits
+
+
+def test_split_text_on_tokens_no_overlap():
+    text = "This is a test text, meaning to be taken seriously by this test only."
+    tokenizer = get_tokenizer(encoding_model="o200k_base")
+
+    expected_splits = [
+        "This is a",
+        " test text,",
+        " meaning to be",
+        " taken seriously by",
+        " this test only",
+        ".",
+    ]
+
+    result = split_text_on_tokens(
+        text=text,
+        chunk_size=3,
+        chunk_overlap=0,
+        decode=tokenizer.decode,
+        encode=tokenizer.encode,
+    )
+
     assert result == expected_splits

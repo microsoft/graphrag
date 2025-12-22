@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.chunking.add_metadata import add_metadata
+from graphrag_chunking.add_metadata import add_metadata
 
 
 def test_add_metadata_one_row():

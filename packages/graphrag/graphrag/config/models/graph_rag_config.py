@@ -8,11 +8,11 @@ from pathlib import Path
 
 from devtools import pformat
 from graphrag_cache import CacheConfig
+from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_storage import StorageConfig, StorageType
 from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
-from graphrag.chunking.chunking_config import ChunkingConfig
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import VectorStoreType
 from graphrag.config.models.basic_search_config import BasicSearchConfig

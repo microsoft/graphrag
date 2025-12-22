@@ -8,9 +8,9 @@ import logging
 from dataclasses import dataclass
 
 import numpy as np
+from graphrag_chunking.token_chunker import split_text_on_tokens
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.chunking.token_chunker import split_text_on_tokens
 from graphrag.index.utils.is_null import is_null
 from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.logger.progress import ProgressTicker, progress_ticker

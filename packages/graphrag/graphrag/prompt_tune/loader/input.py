@@ -9,10 +9,10 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from graphrag_cache.noop_cache import NoopCache
+from graphrag_chunking.chunker_factory import create_chunker
 from graphrag_storage import create_storage
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
-from graphrag.chunking.chunker_factory import create_chunker
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input.factory import InputReaderFactory
 from graphrag.index.operations.embed_text.run_embed_text import (

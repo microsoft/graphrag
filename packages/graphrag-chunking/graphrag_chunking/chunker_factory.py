@@ -7,9 +7,9 @@ from collections.abc import Callable
 
 from graphrag_common.factory.factory import Factory, ServiceScope
 
-from graphrag.chunking.chunk_strategy_type import ChunkStrategyType
-from graphrag.chunking.chunker import Chunker
-from graphrag.chunking.chunking_config import ChunkingConfig
+from graphrag_chunking.chunk_strategy_type import ChunkStrategyType
+from graphrag_chunking.chunker import Chunker
+from graphrag_chunking.chunking_config import ChunkingConfig
 
 
 class ChunkerFactory(Factory[Chunker]):
@@ -63,11 +63,11 @@ def create_chunker(
     if chunker_strategy not in chunker_factory:
         match chunker_strategy:
             case ChunkStrategyType.Tokens:
-                from graphrag.chunking.token_chunker import TokenChunker
+                from graphrag_chunking.token_chunker import TokenChunker
 
                 register_chunker(ChunkStrategyType.Tokens, TokenChunker)
             case ChunkStrategyType.Sentence:
-                from graphrag.chunking.sentence_chunker import SentenceChunker
+                from graphrag_chunking.sentence_chunker import SentenceChunker
 
                 register_chunker(ChunkStrategyType.Sentence, SentenceChunker)
             case _:

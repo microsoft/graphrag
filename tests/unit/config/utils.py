@@ -4,7 +4,6 @@
 from dataclasses import asdict
 
 import graphrag.config.defaults as defs
-from graphrag.chunking.chunking_config import ChunkingConfig
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
@@ -29,6 +28,7 @@ from graphrag.config.models.summarize_descriptions_config import (
 )
 from graphrag.config.models.vector_store_config import VectorStoreConfig
 from graphrag_cache import CacheConfig
+from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_storage import StorageConfig
 from pydantic import BaseModel
 

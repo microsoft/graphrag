@@ -53,6 +53,7 @@ package = false
 members = ["packages/*"]
 
 [tool.uv.sources]
+graphrag-chunking = { workspace = true }
 graphrag-common = { workspace = true }
 graphrag-storage = { workspace = true }
 graphrag-cache = { workspace = true }

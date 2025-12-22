@@ -6,7 +6,7 @@
 from collections.abc import Callable
 from typing import Any
 
-from graphrag.chunking.chunker import Chunker
+from graphrag_chunking.chunker import Chunker
 
 
 class TokenChunker(Chunker):

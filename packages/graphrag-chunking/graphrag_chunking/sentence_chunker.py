@@ -7,8 +7,8 @@ from typing import Any
 
 import nltk
 
-from graphrag.chunking.bootstrap_nltk import bootstrap
-from graphrag.chunking.chunker import Chunker
+from graphrag_chunking.bootstrap_nltk import bootstrap
+from graphrag_chunking.chunker import Chunker
 
 
 class SentenceChunker(Chunker):

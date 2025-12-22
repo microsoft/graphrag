@@ -5,7 +5,7 @@
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from graphrag.chunking.chunk_strategy_type import ChunkStrategyType
+from graphrag_chunking.chunk_strategy_type import ChunkStrategyType
 
 
 class ChunkingConfig(BaseModel):
