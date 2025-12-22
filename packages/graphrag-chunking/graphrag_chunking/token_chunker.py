@@ -6,7 +6,9 @@
 from collections.abc import Callable
 from typing import Any
 
+from graphrag_chunking.chunk_result import ChunkResult
 from graphrag_chunking.chunker import Chunker
+from graphrag_chunking.create_chunk_results import create_chunk_results
 
 
 class TokenChunker(Chunker):
@@ -26,15 +28,16 @@ class TokenChunker(Chunker):
         self._encode = encode
         self._decode = decode
 
-    def chunk(self, text: str) -> list[str]:
+    def chunk(self, text: str) -> list[ChunkResult]:
         """Chunk the text into token-based chunks."""
-        return split_text_on_tokens(
+        chunks = split_text_on_tokens(
             text,
             chunk_size=self._size,
             chunk_overlap=self._overlap,
             encode=self._encode,
             decode=self._decode,
         )
+        return create_chunk_results(chunks, encode=self._encode)
 
 
 def split_text_on_tokens(

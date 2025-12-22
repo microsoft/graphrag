@@ -28,22 +28,42 @@ class TestRunSentences:
 
     def test_basic_functionality(self):
         """Test basic sentence splitting without metadata"""
-        input = "This is a test. Another sentence."
+        input = "This is a test. Another sentence. And a third one!"
+        chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.Sentence))
+        chunks = chunker.chunk(input)
+
+        assert len(chunks) == 3
+        assert chunks[0].text == "This is a test."
+        assert chunks[0].index == 0
+        assert chunks[0].start_char == 0
+        assert chunks[0].end_char == 14
+
+        assert chunks[1].text == "Another sentence."
+        assert chunks[1].index == 1
+        assert chunks[1].start_char == 16
+        assert chunks[1].end_char == 32
+
+        assert chunks[2].text == "And a third one!"
+        assert chunks[2].index == 2
+        assert chunks[2].start_char == 34
+        assert chunks[2].end_char == 49
+
+    def test_mixed_whitespace_handling(self):
+        """Test input with irregular whitespace"""
+        input = "   Sentence with spaces. Another one!   "
         chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.Sentence))
         chunks = chunker.chunk(input)
 
         assert len(chunks) == 2
-        assert chunks[0] == "This is a test."
-        assert chunks[1] == "Another sentence."
+        assert chunks[0].text == "Sentence with spaces."
+        assert chunks[0].index == 0
+        assert chunks[0].start_char == 3
+        assert chunks[0].end_char == 23
 
-    def test_mixed_whitespace_handling(self):
-        """Test input with irregular whitespace"""
-
-        input = "   Sentence with spaces. Another one!   "
-        chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.Sentence))
-        chunks = chunker.chunk(input)
-        assert chunks[0] == "   Sentence with spaces."
-        assert chunks[1] == "Another one!"
+        assert chunks[1].text == "Another one!"
+        assert chunks[1].index == 1
+        assert chunks[1].start_char == 25
+        assert chunks[1].end_char == 36
 
 
 class TestRunTokens:

@@ -3,21 +3,42 @@
 
 """A module containing 'SentenceChunker' class."""
 
+from collections.abc import Callable
 from typing import Any
 
 import nltk
 
 from graphrag_chunking.bootstrap_nltk import bootstrap
+from graphrag_chunking.chunk_result import ChunkResult
 from graphrag_chunking.chunker import Chunker
+from graphrag_chunking.create_chunk_results import create_chunk_results
 
 
 class SentenceChunker(Chunker):
     """A chunker that splits text into sentence-based chunks."""
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(
+        self, encode: Callable[[str], list[int]] | None = None, **kwargs: Any
+    ) -> None:
         """Create a sentence chunker instance."""
+        self._encode = encode
         bootstrap()
 
-    def chunk(self, text) -> list[str]:
+    def chunk(self, text) -> list[ChunkResult]:
         """Chunk the text into sentence-based chunks."""
-        return nltk.sent_tokenize(text)
+        sentences = nltk.sent_tokenize(text.strip())
+        results = create_chunk_results(sentences, encode=self._encode)
+        # nltk sentence tokenizer may trim whitespace, so we need to adjust start/end chars
+        for index, result in enumerate(results):
+            txt = result.text
+            start = result.start_char
+            actual_start = text.find(txt, start)
+            delta = actual_start - start
+            if delta > 0:
+                result.start_char += delta
+                result.end_char += delta
+                # bump the next to keep the start check from falling too far behind
+                if index < len(results) - 1:
+                    results[index + 1].start_char += delta
+                    results[index + 1].end_char += delta
+        return results

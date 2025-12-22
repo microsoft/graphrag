@@ -66,7 +66,7 @@ def create_base_text_units(
     logger.info("Starting chunking process for %d documents", total_rows)
 
     def chunker_with_logging(row: pd.Series, row_index: int) -> Any:
-        row["chunks"] = chunker.chunk(row["text"])
+        row["chunks"] = [chunk.text for chunk in chunker.chunk(row["text"])]
 
         metadata = row.get("metadata", None)
         if prepend_metadata and metadata is not None:
