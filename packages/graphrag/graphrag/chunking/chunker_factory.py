@@ -38,8 +38,8 @@ def register_chunker(
 
 def create_chunker(
     config: ChunkingConfig,
-    encode: Callable[[str], list[int]] | None,
-    decode: Callable[[list[int]], str] | None,
+    encode: Callable[[str], list[int]] | None = None,
+    decode: Callable[[list[int]], str] | None = None,
 ) -> Chunker:
     """Create a chunker implementation based on the given configuration.
 

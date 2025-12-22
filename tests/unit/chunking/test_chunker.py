@@ -66,7 +66,7 @@ class TestRunTokens:
             strategy=ChunkStrategyType.Tokens,
         )
 
-        chunker = create_chunker(config, tokenizer=tokenizer)
+        chunker = create_chunker(config, mock_encoder.encode, mock_encoder.decode)
         chunks = chunker.chunk(input)
 
         assert len(chunks) > 0
