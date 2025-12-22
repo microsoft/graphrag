@@ -9,7 +9,6 @@ import nltk
 
 from graphrag.chunking.bootstrap_nltk import bootstrap
 from graphrag.chunking.chunker import Chunker
-from graphrag.chunking.chunking_document import ChunkingDocument
 
 
 class SentenceChunker(Chunker):
@@ -20,11 +19,8 @@ class SentenceChunker(Chunker):
         self._prepend_metadata = prepend_metadata
         bootstrap()
 
-    def chunk(
-        self, document: ChunkingDocument, metadata: dict | None = None
-    ) -> list[str]:
+    def chunk(self, text: str, metadata: dict | None = None) -> list[str]:
         """Chunk the text into sentence-based chunks."""
-        text = str(document)
         chunks = nltk.sent_tokenize(text)
 
         if self._prepend_metadata and metadata is not None:

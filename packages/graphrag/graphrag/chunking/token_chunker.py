@@ -9,7 +9,6 @@ from typing import Any
 from graphrag_common.types.tokenizer import Tokenizer
 
 from graphrag.chunking.chunker import Chunker
-from graphrag.chunking.chunking_document import ChunkingDocument
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]
@@ -33,13 +32,8 @@ class TokenChunker(Chunker):
         self._prepend_metadata = prepend_metadata
         self._tokenizer = tokenizer
 
-    def chunk(
-        self, document: ChunkingDocument, metadata: dict | None = None
-    ) -> list[str]:
+    def chunk(self, text: str, metadata: dict | None = None) -> list[str]:
         """Chunk the text into token-based chunks."""
-        # we have to create and measure the metadata first to account for the length when chunking
-        text = str(document)
-
         chunks = split_text_on_tokens(
             text,
             chunk_size=self._size,
