@@ -71,7 +71,10 @@ def create_base_text_units(
         metadata = row.get("metadata", None)
         if prepend_metadata and metadata is not None:
             metadata = json.loads(metadata) if isinstance(metadata, str) else metadata
-            row["chunks"] = [add_metadata(chunk, metadata, line_delimiter=".\n") for chunk in row["chunks"]]
+            row["chunks"] = [
+                add_metadata(chunk, metadata, line_delimiter=".\n")
+                for chunk in row["chunks"]
+            ]
         tick()
         logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
         return row
