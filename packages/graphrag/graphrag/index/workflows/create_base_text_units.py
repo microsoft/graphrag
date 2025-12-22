@@ -10,9 +10,9 @@ from typing import Any, cast
 import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.chunking.add_metadata import add_metadata
 from graphrag.chunking.chunker import Chunker
 from graphrag.chunking.chunker_factory import create_chunker
-from graphrag.chunking.prepend_metadata import prepend_metadata as prepend_metadata_fn
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -71,9 +71,7 @@ def create_base_text_units(
         metadata = row.get("metadata", None)
         if prepend_metadata and metadata is not None:
             metadata = json.loads(metadata) if isinstance(metadata, str) else metadata
-            row["chunks"] = [
-                prepend_metadata_fn(chunk, metadata) for chunk in row["chunks"]
-            ]
+            row["chunks"] = [add_metadata(chunk, metadata) for chunk in row["chunks"]]
         tick()
         logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
         return row

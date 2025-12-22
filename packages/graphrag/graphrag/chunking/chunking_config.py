@@ -18,19 +18,19 @@ class ChunkingConfig(BaseModel):
         description="The chunking strategy to use.",
         default=ChunkStrategyType.Tokens,
     )
-    size: int | None = Field(
-        description="The chunk size to use.",
-        default=None,
-    )
-    overlap: int | None = Field(
-        description="The chunk overlap to use.",
-        default=None,
-    )
     encoding_model: str | None = Field(
         description="The encoding model to use.",
         default=None,
     )
-    prepend_metadata: bool | None = Field(
+    size: int = Field(
+        description="The chunk size to use.",
+        default=1200,
+    )
+    overlap: int = Field(
+        description="The chunk overlap to use.",
+        default=100,
+    )
+    prepend_metadata: bool = Field(
         description="Prepend metadata into each chunk.",
         default=False,
     )
