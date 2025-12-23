@@ -6,8 +6,8 @@
 from enum import StrEnum
 
 
-class ChunkStrategyType(StrEnum):
-    """ChunkStrategy class definition."""
+class ChunkerType(StrEnum):
+    """ChunkerType class definition."""
 
     Tokens = "tokens"
     Sentence = "sentence"

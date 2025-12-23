@@ -62,7 +62,7 @@ async def load_docs_in_chunks(
         cache=NoopCache(),
     )
     tokenizer = get_tokenizer(embeddings_llm_settings)
-    chunker = create_chunker(config.chunks, tokenizer.encode, tokenizer.decode)
+    chunker = create_chunker(config.chunking, tokenizer.encode, tokenizer.decode)
     input_storage = create_storage(config.input.storage)
     input_reader = InputReaderFactory().create(
         config.input.file_type,

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from graphrag_cache import CacheType
-from graphrag_chunking.chunk_strategy_type import ChunkStrategyType
+from graphrag_chunking.chunk_strategy_type import ChunkerType
 from graphrag_storage import StorageType
 
 from graphrag.config.embeddings import default_embeddings
@@ -57,10 +57,10 @@ class BasicSearchDefaults:
 
 
 @dataclass
-class ChunksDefaults:
-    """Default values for chunks."""
+class ChunkingDefaults:
+    """Default values for chunking."""
 
-    strategy: str = ChunkStrategyType.Tokens
+    type: str = ChunkerType.Tokens
     size: int = 1200
     overlap: int = 100
     encoding_model: str = ENCODING_MODEL
@@ -126,7 +126,6 @@ class EmbedTextDefaults:
     batch_size: int = 16
     batch_max_tokens: int = 8191
     names: list[str] = field(default_factory=lambda: default_embeddings)
-    strategy: None = None
 
 
 @dataclass
@@ -139,7 +138,6 @@ class ExtractClaimsDefaults:
         "Any claims or facts that could be relevant to information discovery."
     )
     max_gleanings: int = 1
-    strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
     model_instance_name: str = "extract_claims"
 
@@ -153,7 +151,6 @@ class ExtractGraphDefaults:
         default_factory=lambda: ["organization", "person", "geo", "event"]
     )
     max_gleanings: int = 1
-    strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
     model_instance_name: str = "extract_graph"
 
@@ -360,7 +357,6 @@ class SummarizeDescriptionsDefaults:
     prompt: None = None
     max_length: int = 500
     max_input_tokens: int = 4_000
-    strategy: None = None
     model_id: str = DEFAULT_CHAT_MODEL_ID
     model_instance_name: str = "summarize_descriptions"
 
@@ -401,7 +397,7 @@ class GraphRagConfigDefaults:
     cache: CacheDefaults = field(default_factory=CacheDefaults)
     input: InputDefaults = field(default_factory=InputDefaults)
     embed_text: EmbedTextDefaults = field(default_factory=EmbedTextDefaults)
-    chunks: ChunksDefaults = field(default_factory=ChunksDefaults)
+    chunking: ChunkingDefaults = field(default_factory=ChunkingDefaults)
     snapshots: SnapshotsDefaults = field(default_factory=SnapshotsDefaults)
     extract_graph: ExtractGraphDefaults = field(default_factory=ExtractGraphDefaults)
     extract_graph_nlp: ExtractGraphNLPDefaults = field(

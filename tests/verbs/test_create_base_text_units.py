@@ -35,7 +35,7 @@ async def test_create_base_text_units_metadata():
 
     config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
     config.input.metadata = ["title"]
-    config.chunks.prepend_metadata = True
+    config.chunking.prepend_metadata = True
 
     await update_document_metadata(config.input.metadata, context)
 

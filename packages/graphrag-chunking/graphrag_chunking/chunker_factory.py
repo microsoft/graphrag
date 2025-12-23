@@ -7,7 +7,7 @@ from collections.abc import Callable
 
 from graphrag_common.factory.factory import Factory, ServiceScope
 
-from graphrag_chunking.chunk_strategy_type import ChunkStrategyType
+from graphrag_chunking.chunk_strategy_type import ChunkerType
 from graphrag_chunking.chunker import Chunker
 from graphrag_chunking.chunking_config import ChunkingConfig
 
@@ -58,18 +58,18 @@ def create_chunker(
         config_model["encode"] = encode
     if decode is not None:
         config_model["decode"] = decode
-    chunker_strategy = config.strategy
+    chunker_strategy = config.type
 
     if chunker_strategy not in chunker_factory:
         match chunker_strategy:
-            case ChunkStrategyType.Tokens:
+            case ChunkerType.Tokens:
                 from graphrag_chunking.token_chunker import TokenChunker
 
-                register_chunker(ChunkStrategyType.Tokens, TokenChunker)
-            case ChunkStrategyType.Sentence:
+                register_chunker(ChunkerType.Tokens, TokenChunker)
+            case ChunkerType.Sentence:
                 from graphrag_chunking.sentence_chunker import SentenceChunker
 
-                register_chunker(ChunkStrategyType.Sentence, SentenceChunker)
+                register_chunker(ChunkerType.Sentence, SentenceChunker)
             case _:
                 msg = f"ChunkingConfig.strategy '{chunker_strategy}' is not registered in the ChunkerFactory. Registered types: {', '.join(chunker_factory.keys())}."
                 raise ValueError(msg)

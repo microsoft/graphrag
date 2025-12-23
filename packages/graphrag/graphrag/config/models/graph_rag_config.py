@@ -125,14 +125,14 @@ class GraphRagConfig(BaseModel):
                 Path(self.input.storage.base_dir).resolve()
             )
 
-    chunks: ChunkingConfig = Field(
+    chunking: ChunkingConfig = Field(
         description="The chunking configuration to use.",
         default=ChunkingConfig(
-            strategy=graphrag_config_defaults.chunks.strategy,
-            size=graphrag_config_defaults.chunks.size,
-            overlap=graphrag_config_defaults.chunks.overlap,
-            encoding_model=graphrag_config_defaults.chunks.encoding_model,
-            prepend_metadata=graphrag_config_defaults.chunks.prepend_metadata,
+            type=graphrag_config_defaults.chunking.type,
+            size=graphrag_config_defaults.chunking.size,
+            overlap=graphrag_config_defaults.chunking.overlap,
+            encoding_model=graphrag_config_defaults.chunking.encoding_model,
+            prepend_metadata=graphrag_config_defaults.chunking.prepend_metadata,
         ),
     )
     """The chunking configuration to use."""

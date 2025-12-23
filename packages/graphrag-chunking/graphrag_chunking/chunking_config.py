@@ -5,7 +5,7 @@
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from graphrag_chunking.chunk_strategy_type import ChunkStrategyType
+from graphrag_chunking.chunk_strategy_type import ChunkerType
 
 
 class ChunkingConfig(BaseModel):
@@ -14,9 +14,9 @@ class ChunkingConfig(BaseModel):
     model_config = ConfigDict(extra="allow")
     """Allow extra fields to support custom cache implementations."""
 
-    strategy: str = Field(
-        description="The chunking strategy to use.",
-        default=ChunkStrategyType.Tokens,
+    type: str = Field(
+        description="The chunking type to use.",
+        default=ChunkerType.Tokens,
     )
     encoding_model: str | None = Field(
         description="The encoding model to use.",

@@ -61,11 +61,11 @@ async def prompt_tune(
     )
 
     # override chunking config in the configuration
-    if chunk_size != graph_config.chunks.size:
-        graph_config.chunks.size = chunk_size
+    if chunk_size != graph_config.chunking.size:
+        graph_config.chunking.size = chunk_size
 
-    if overlap != graph_config.chunks.overlap:
-        graph_config.chunks.overlap = overlap
+    if overlap != graph_config.chunking.overlap:
+        graph_config.chunking.overlap = overlap
 
     # configure the root logger with the specified log level
     from graphrag.logger.standard_logging import init_loggers

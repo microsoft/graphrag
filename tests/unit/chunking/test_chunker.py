@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag_chunking.bootstrap_nltk import bootstrap
-from graphrag_chunking.chunk_strategy_type import ChunkStrategyType
+from graphrag_chunking.chunk_strategy_type import ChunkerType
 from graphrag_chunking.chunker_factory import create_chunker
 from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_chunking.token_chunker import (
@@ -29,7 +29,7 @@ class TestRunSentences:
     def test_basic_functionality(self):
         """Test basic sentence splitting without metadata"""
         input = "This is a test. Another sentence. And a third one!"
-        chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.Sentence))
+        chunker = create_chunker(ChunkingConfig(type=ChunkerType.Sentence))
         chunks = chunker.chunk(input)
 
         assert len(chunks) == 3
@@ -51,7 +51,7 @@ class TestRunSentences:
     def test_mixed_whitespace_handling(self):
         """Test input with irregular whitespace"""
         input = "   Sentence with spaces. Another one!   "
-        chunker = create_chunker(ChunkingConfig(strategy=ChunkStrategyType.Sentence))
+        chunker = create_chunker(ChunkingConfig(type=ChunkerType.Sentence))
         chunks = chunker.chunk(input)
 
         assert len(chunks) == 2
@@ -80,7 +80,7 @@ class TestRunTokens:
             size=5,
             overlap=1,
             encoding_model="fake-encoding",
-            strategy=ChunkStrategyType.Tokens,
+            type=ChunkerType.Tokens,
         )
 
         chunker = create_chunker(config, mock_encoder.encode, mock_encoder.decode)

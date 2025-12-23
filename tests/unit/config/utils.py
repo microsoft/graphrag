@@ -164,7 +164,7 @@ def assert_text_embedding_configs(
 def assert_chunking_configs(actual: ChunkingConfig, expected: ChunkingConfig) -> None:
     assert actual.size == expected.size
     assert actual.overlap == expected.overlap
-    assert actual.strategy == expected.strategy
+    assert actual.type == expected.type
     assert actual.encoding_model == expected.encoding_model
     assert actual.prepend_metadata == expected.prepend_metadata
 
@@ -344,7 +344,7 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
     assert_cache_configs(actual.cache, expected.cache)
     assert_input_configs(actual.input, expected.input)
     assert_text_embedding_configs(actual.embed_text, expected.embed_text)
-    assert_chunking_configs(actual.chunks, expected.chunks)
+    assert_chunking_configs(actual.chunking, expected.chunking)
     assert_snapshots_configs(actual.snapshots, expected.snapshots)
     assert_extract_graph_configs(actual.extract_graph, expected.extract_graph)
     assert_extract_graph_nlp_configs(

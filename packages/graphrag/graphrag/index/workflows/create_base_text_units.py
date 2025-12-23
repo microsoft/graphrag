@@ -33,14 +33,14 @@ async def run_workflow(
     logger.info("Workflow started: create_base_text_units")
     documents = await load_table_from_storage("documents", context.output_storage)
 
-    tokenizer = get_tokenizer(encoding_model=config.chunks.encoding_model)
-    chunker = create_chunker(config.chunks, tokenizer.encode, tokenizer.decode)
+    tokenizer = get_tokenizer(encoding_model=config.chunking.encoding_model)
+    chunker = create_chunker(config.chunking, tokenizer.encode, tokenizer.decode)
     output = create_base_text_units(
         documents,
         context.callbacks,
         tokenizer=tokenizer,
         chunker=chunker,
-        prepend_metadata=config.chunks.prepend_metadata,
+        prepend_metadata=config.chunking.prepend_metadata,
     )
 
     await write_table_to_storage(output, "text_units", context.output_storage)
