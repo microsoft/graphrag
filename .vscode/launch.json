@@ -2,6 +2,7 @@
 	"_comment": "Use this file to configure the graphrag project for debugging. You may create other configuration profiles based on these or select one below to use.",
 	"version": "0.2.0",
 	"configurations": [
+
 		{
 			"name": "Indexer",
 			"type": "debugpy",
@@ -25,17 +26,6 @@
 				"${input:root_folder}",
 				"--method", "${input:query_method}",
 				"--query", "${input:query}"
-			]
-		},
-		{
-			"name": "Prompt Tuning",
-			"type": "debugpy",
-			"request": "launch",
-			"module": "uv",
-			"args": [
-				"poe", "prompt-tune",
-				"--config",
-				"${input:root_folder}/settings.yaml",
 			]
 		},
 		{
@@ -74,6 +64,30 @@
 			"console": "integratedTerminal",
     		"justMyCode": false 
 		},
+		{
+			"name": "Debug Prompt Tuning",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "uv",
+			"args": [
+				"poe", "prompt-tune",
+				"--root", 
+				"${input:root_folder}",
+				"--domain", "${input:domain}",
+				"--n-subset-max", "${input:subset_max}",
+				"--k", "${input:k}",
+				"--limit", "${input:limit}",
+				"--max-tokens", "${input:max_tokens}",
+				"--min-examples-required", "${input:min_examples_required}",
+				"--chunk-size", "${input:chunk_size}",
+				"--overlap", "${input:overlap}",
+				"--language", "${input:language}",
+				"--no-discover-entity-types",
+				"--output", "${input:output}"
+				
+			]
+		},
+		
 	],
     "inputs": [
         {
@@ -90,6 +104,66 @@
             "id": "query",
             "type": "promptString",
             "description": "Enter the query text"
-        }
+        },
+		{
+			"id": "domain",
+			"type": "promptString",
+			"description": "Enter the domain for prompt tuning",
+			"default": "christmas tales"
+		},
+		{
+			"id": "subset_max",
+			"type": "promptString",
+			"description": "Enter the n-subset-max value",
+			"default": "512"
+		},
+		{
+			"id": "k",
+			"type": "promptString",
+			"description": "Enter the k value",
+			"default": "15"
+		},
+		{
+			"id": "limit",
+			"type": "promptString",
+			"description": "Enter the limit value",
+			"default": "15"
+		},
+		{
+			"id": "max_tokens",
+			"type": "promptString",
+			"description": "Enter the max tokens value",
+			"default": "2048"
+		},
+		{
+			"id": "min_examples_required",
+			"type": "promptString",
+			"description": "Enter the min examples required value",
+			"default": "3"
+		},
+		{
+			"id": "chunk_size",
+			"type": "promptString",
+			"description": "Enter the chunk size value",
+			"default": "1024"
+		},
+		{
+			"id": "overlap",
+			"type": "promptString",
+			"description": "Enter the overlap value",
+			"default": "128"
+		},
+		{
+			"id": "language",
+			"type": "promptString",
+			"description": "Enter the language",
+			"default": "English"
+		},
+		{
+			"id": "output",
+			"type": "promptString",
+			"description": "Enter the output path for prompt tuning results",
+			"default": "output/prompt_tuning"
+		}
     ]
 }
