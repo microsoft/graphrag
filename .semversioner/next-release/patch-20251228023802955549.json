@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fix DynamicCommunitySelection type mismatch where children IDs as integers were not matching string report keys"
+}
