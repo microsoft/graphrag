@@ -123,8 +123,10 @@ class DynamicCommunitySelection:
                     # TODO check why some sub_communities are NOT in report_df
                     if community in self.communities:
                         for child in self.communities[community].children:
-                            if child in self.reports:
-                                communities_to_rate.append(child)
+                            # Convert child to string to match self.reports key type
+                            child_str = str(child)
+                            if child_str in self.reports:
+                                communities_to_rate.append(child_str)
                             else:
                                 logger.debug(
                                     "dynamic community selection: cannot find community %s in reports",
