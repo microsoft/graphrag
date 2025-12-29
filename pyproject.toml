@@ -71,6 +71,7 @@ _semversioner_release = "semversioner release"
 _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
 # Add more update toml tasks as packages are added
 _semversioner_update_graphrag_toml_version = "update-toml update --file packages/graphrag/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_chunking_toml_version = "update-toml update --file packages/graphrag-chunking/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
 _semversioner_update_graphrag_common_toml_version = "update-toml update --file packages/graphrag-common/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
 _semversioner_update_graphrag_storage_toml_version = "update-toml update --file packages/graphrag-storage/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
 _semversioner_update_graphrag_cache_toml_version = "update-toml update --file packages/graphrag-cache/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
@@ -108,6 +109,7 @@ sequence = [
     # Add more update toml tasks as packages are added
     '_semversioner_update_graphrag_toml_version',
     '_semversioner_update_graphrag_common_toml_version',
+    '_semversioner_update_graphrag_chunking_toml_version',
     '_semversioner_update_graphrag_storage_toml_version',
     '_semversioner_update_graphrag_cache_toml_version',
     '_semversioner_update_workspace_dependency_versions',
