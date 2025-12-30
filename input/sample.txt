@@ -1,0 +1,9 @@
+﻿GraphRAG is a graph-based retrieval-augmented generation system that uses knowledge graphs to enhance LLM outputs. It extracts structured data from unstructured text using the power of large language models.
+
+The system works by:
+1. Processing input documents and extracting entities and relationships
+2. Building a knowledge graph from the extracted information
+3. Creating community reports and embeddings
+4. Enabling semantic search across the knowledge graph
+
+GraphRAG was developed by Microsoft Research and supports various LLM providers including OpenAI and Google Gemini.

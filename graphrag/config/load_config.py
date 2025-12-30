@@ -75,10 +75,19 @@ def _load_dotenv(config_path: Path | str) -> None:
     config_path : Path | str
         The path to the config file.
     """
+    import os
+    from dotenv import dotenv_values
+    
     config_path = Path(config_path)
     dotenv_path = config_path.parent / ".env"
     if dotenv_path.exists():
-        load_dotenv(dotenv_path)
+        # Use dotenv_values to ensure variables are loaded into os.environ
+        env_config = dotenv_values(str(dotenv_path))
+        for key, value in env_config.items():
+            if value is not None:
+                # Strip BOM and whitespace from key names
+                clean_key = key.strip().lstrip('\ufeff')
+                os.environ[clean_key] = str(value)
 
 
 def _get_config_path(root_dir: Path, config_filepath: Path | None) -> Path:
