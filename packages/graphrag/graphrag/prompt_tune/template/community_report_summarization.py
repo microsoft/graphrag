@@ -56,13 +56,13 @@ Text:
 
 Entities
 
-id,entity,description
+human_readable_id,title,description
 5,VERDANT OASIS PLAZA,Verdant Oasis Plaza is the location of the Unity March
 6,HARMONY ASSEMBLY,Harmony Assembly is an organization that is holding a march at Verdant Oasis Plaza
 
 Relationships
 
-id,source,target,description
+human_readable_id,source,target,description
 37,VERDANT OASIS PLAZA,UNITY MARCH,Verdant Oasis Plaza is the location of the Unity March
 38,VERDANT OASIS PLAZA,HARMONY ASSEMBLY,Harmony Assembly is holding a march at Verdant Oasis Plaza
 39,VERDANT OASIS PLAZA,UNITY MARCH,The Unity March is taking place at Verdant Oasis Plaza
