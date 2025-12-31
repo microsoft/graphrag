@@ -35,12 +35,12 @@ Text:
 
 Entities
 
-id,entity,description
+human_readable_id,title,description
 5,ABILA CITY PARK,Abila City Park is the location of the POK rally
 
 Relationships
 
-id,source,target,description
+human_readable_id,source,target,description
 37,ABILA CITY PARK,POK RALLY,Abila City Park is the location of the POK rally
 38,ABILA CITY PARK,POK,POK is holding a rally in Abila City Park
 39,ABILA CITY PARK,POKRALLY,The POKRally is taking place at Abila City Park
