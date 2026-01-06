@@ -15,12 +15,12 @@ from graphrag.config.enums import (
     AsyncType,
     AuthType,
     ChunkStrategyType,
-    InputFileType,
     ModelType,
     NounPhraseExtractorType,
     ReportingType,
     VectorStoreType,
 )
+from graphrag.index.input.input_file_type import InputFileType
 from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
     EN_STOP_WORDS,
 )
@@ -241,7 +241,7 @@ class InputDefaults:
     """Default values for input."""
 
     storage: InputStorageDefaults = field(default_factory=InputStorageDefaults)
-    file_type: ClassVar[InputFileType] = InputFileType.text
+    file_type: ClassVar[InputFileType] = InputFileType.Text
     encoding: str = "utf-8"
     file_pattern: str = ""
     text_column: str = "text"

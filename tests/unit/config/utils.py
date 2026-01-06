@@ -18,7 +18,6 @@ from graphrag.config.models.extract_graph_nlp_config import (
 )
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
@@ -28,6 +27,7 @@ from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
 from graphrag.config.models.vector_store_config import VectorStoreConfig
+from graphrag.index.input.input_config import InputConfig
 from graphrag_cache import CacheConfig
 from graphrag_storage import StorageConfig
 from pydantic import BaseModel

@@ -24,7 +24,6 @@ from graphrag.config.models.extract_claims_config import ExtractClaimsConfig
 from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.global_search_config import GlobalSearchConfig
-from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
@@ -34,6 +33,7 @@ from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
 from graphrag.config.models.vector_store_config import VectorStoreConfig
+from graphrag.index.input.input_config import InputConfig
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter_factory import (
     RateLimiterFactory,
 )
@@ -110,7 +110,7 @@ class GraphRagConfig(BaseModel):
     def _validate_input_pattern(self) -> None:
         """Validate the input file pattern based on the specified type."""
         if len(self.input.file_pattern) == 0:
-            if self.input.file_type == defs.InputFileType.text:
+            if self.input.file_type == defs.InputFileType.Text:
                 self.input.file_pattern = ".*\\.txt$"
             else:
                 self.input.file_pattern = f".*\\.{self.input.file_type}$"

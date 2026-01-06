@@ -14,7 +14,7 @@ class InputConfig(BaseModel):
     """The default configuration section for Input."""
 
     model_config = ConfigDict(extra="allow")
-    """Allow extra fields to support custom cache implementations."""
+    """Allow extra fields to support custom reader implementations."""
 
     storage: StorageConfig = Field(
         description="The storage configuration to use for reading input documents.",
@@ -34,7 +34,7 @@ class InputConfig(BaseModel):
         description="The input file pattern to use.",
         default=graphrag_config_defaults.input.file_pattern,
     )
-    text_column: str = Field(
+    text_column: str | None = Field(
         description="The input text column to use.",
         default=graphrag_config_defaults.input.text_column,
     )

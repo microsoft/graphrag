@@ -1,8 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.enums import InputFileType
-from graphrag.config.models.input_config import InputConfig
+from graphrag.index.input.input_config import InputConfig
+from graphrag.index.input.input_file_type import InputFileType
 from graphrag.index.input.input_reader_factory import create_input_reader
 from graphrag_storage import StorageConfig, create_storage
 
@@ -12,7 +12,7 @@ async def test_json_loader_one_file_one_object():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/one-json-one-object",
         ),
-        file_type=InputFileType.json,
+        file_type=InputFileType.Json,
         file_pattern=".*\\.json$",
     )
     storage = create_storage(config.storage)
@@ -27,7 +27,7 @@ async def test_json_loader_one_file_multiple_objects():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/one-json-multiple-objects",
         ),
-        file_type=InputFileType.json,
+        file_type=InputFileType.Json,
         file_pattern=".*\\.json$",
     )
     storage = create_storage(config.storage)
@@ -43,7 +43,7 @@ async def test_json_loader_one_file_with_title():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/one-json-one-object",
         ),
-        file_type=InputFileType.json,
+        file_type=InputFileType.Json,
         file_pattern=".*\\.json$",
         title_column="title",
     )
@@ -59,7 +59,7 @@ async def test_json_loader_one_file_with_metadata():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/one-json-one-object",
         ),
-        file_type=InputFileType.json,
+        file_type=InputFileType.Json,
         file_pattern=".*\\.json$",
         title_column="title",
         metadata=["title"],
@@ -76,7 +76,7 @@ async def test_json_loader_multiple_files():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/multiple-jsons",
         ),
-        file_type=InputFileType.json,
+        file_type=InputFileType.Json,
         file_pattern=".*\\.json$",
     )
     storage = create_storage(config.storage)

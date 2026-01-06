@@ -10,8 +10,8 @@ from graphrag_common.factory import Factory
 from graphrag_common.factory.factory import ServiceScope
 from graphrag_storage.storage import Storage
 
-from graphrag.config.enums import InputFileType
-from graphrag.config.models.input_config import InputConfig
+from graphrag.index.input.input_config import InputConfig
+from graphrag.index.input.input_file_type import InputFileType
 from graphrag.index.input.input_reader import InputReader
 
 logger = logging.getLogger(__name__)
@@ -61,18 +61,18 @@ def create_input_reader(config: InputConfig, storage: Storage) -> InputReader:
 
     if input_strategy not in input_reader_factory:
         match input_strategy:
-            case InputFileType.csv:
+            case InputFileType.Csv:
                 from graphrag.index.input.csv import CSVFileReader
 
-                register_input_reader(InputFileType.csv, CSVFileReader)
-            case InputFileType.text:
+                register_input_reader(InputFileType.Csv, CSVFileReader)
+            case InputFileType.Text:
                 from graphrag.index.input.text import TextFileReader
 
-                register_input_reader(InputFileType.text, TextFileReader)
-            case InputFileType.json:
+                register_input_reader(InputFileType.Text, TextFileReader)
+            case InputFileType.Json:
                 from graphrag.index.input.json import JSONFileReader
 
-                register_input_reader(InputFileType.json, JSONFileReader)
+                register_input_reader(InputFileType.Json, JSONFileReader)
             case _:
                 msg = f"InputConfig.file_type '{input_strategy}' is not registered in the InputReaderFactory. Registered types: {', '.join(input_reader_factory.keys())}."
                 raise ValueError(msg)
