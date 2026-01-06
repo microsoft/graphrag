@@ -28,6 +28,11 @@ async def run_workflow(
 
     output = await load_input_documents(input_reader)
 
+    if len(output) == 0:
+        msg = "No input documents found."
+        logger.error(msg)
+        raise ValueError(msg)
+
     logger.info("Final # of rows loaded: %s", len(output))
     context.stats.num_documents = len(output)
 
