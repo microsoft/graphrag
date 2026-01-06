@@ -38,4 +38,4 @@ async def run_workflow(
 
 async def load_input_documents(input_reader: InputReader) -> pd.DataFrame:
     """Load and parse input documents into a standard format."""
-    return await input_reader.read_files()
+    return pd.DataFrame(await input_reader.read_files())

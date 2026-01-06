@@ -6,9 +6,8 @@
 import json
 import logging
 
-import pandas as pd
-
 from graphrag.index.input.structured_file_reader import StructuredFileReader
+from graphrag.index.input.text_document import TextDocument
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +15,7 @@ logger = logging.getLogger(__name__)
 class JSONFileReader(StructuredFileReader):
     """Reader implementation for json files."""
 
-    async def read_file(self, path: str) -> pd.DataFrame:
+    async def read_file(self, path: str) -> list[TextDocument]:
         """Read a JSON file into a DataFrame of documents.
 
         Args:
@@ -30,5 +29,4 @@ class JSONFileReader(StructuredFileReader):
         as_json = json.loads(text)
         # json file could just be a single object, or an array of objects
         rows = as_json if isinstance(as_json, list) else [as_json]
-        data = pd.DataFrame(rows)
-        return await self.process_data_columns(data, path)
+        return await self.process_data_columns(rows, path)

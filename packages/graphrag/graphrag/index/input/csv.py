@@ -3,12 +3,11 @@
 
 """A module containing 'CSVFileReader' model."""
 
+import csv
 import logging
-from io import BytesIO
-
-import pandas as pd
 
 from graphrag.index.input.structured_file_reader import StructuredFileReader
+from graphrag.index.input.text_document import TextDocument
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +15,7 @@ logger = logging.getLogger(__name__)
 class CSVFileReader(StructuredFileReader):
     """Reader implementation for csv files."""
 
-    async def read_file(self, path: str) -> pd.DataFrame:
+    async def read_file(self, path: str) -> list[TextDocument]:
         """Read a csv file into a DataFrame of documents.
 
         Args:
@@ -26,6 +25,7 @@ class CSVFileReader(StructuredFileReader):
         -------
             - output - DataFrame with a row for each document in the file.
         """
-        buffer = BytesIO(await self._storage.get(path, as_bytes=True))
-        data = pd.read_csv(buffer, encoding=self._encoding)
-        return await self.process_data_columns(data, path)
+        file = await self._storage.get(path)
+
+        reader = csv.DictReader(file.splitlines())
+        return await self.process_data_columns(list(reader), path)

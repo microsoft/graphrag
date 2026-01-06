@@ -4,10 +4,10 @@
 """A module containing 'CSVFileReader' model."""
 
 import logging
-
-import pandas as pd
+from typing import Any
 
 from graphrag.index.input.input_reader import InputReader
+from graphrag.index.input.text_document import TextDocument
 from graphrag.index.utils.hashing import gen_sha512_hash
 
 logger = logging.getLogger(__name__)
@@ -30,30 +30,29 @@ class StructuredFileReader(InputReader):
 
     async def process_data_columns(
         self,
-        documents: pd.DataFrame,
+        rows: list[dict[str, Any]],
         path: str,
-    ) -> pd.DataFrame:
-        """Process configured data columns of a DataFrame."""
-        # id is optional - generate from harvest from df or hash from text
-        if self._id_column is not None:
-            documents["id"] = documents.apply(lambda x: x[self._id_column], axis=1)
-        else:
-            documents["id"] = documents.apply(
-                lambda x: gen_sha512_hash(x, x.keys()), axis=1
+    ) -> list[TextDocument]:
+        """Process configured data columns from a list of loaded dicts."""
+        documents = []
+        for row in rows:
+            # text column is required - harvest from dict
+            text = row[self._text_column]
+            # id is optional - generate from harvest from dict or hash from text
+            id = (
+                row[self._id_column]
+                if self._id_column
+                else gen_sha512_hash({"text": text}, ["text"])
             )
-
-        # title is optional - harvest from df or use filename
-        if self._title_column is not None:
-            documents["title"] = documents.apply(
-                lambda x: x[self._title_column], axis=1
+            # title is optional - harvest from dict or use filename
+            title = row[self._title_column] if self._title_column else str(path)
+            creation_date = await self._storage.get_creation_date(path)
+            documents.append(
+                TextDocument(
+                    id=id,
+                    title=title,
+                    text=text,
+                    creation_date=creation_date,
+                )
             )
-        else:
-            documents["title"] = documents.apply(lambda _: path, axis=1)
-
-        # text column is required - harvest from df
-        documents["text"] = documents.apply(lambda x: x[self._text_column], axis=1)
-
-        creation_date = await self._storage.get_creation_date(path)
-        documents["creation_date"] = documents.apply(lambda _: creation_date, axis=1)
-
         return documents

@@ -8,12 +8,13 @@ from __future__ import annotations
 import logging
 import re
 from abc import ABCMeta, abstractmethod
+from dataclasses import asdict
 from typing import TYPE_CHECKING
-
-import pandas as pd
 
 if TYPE_CHECKING:
     from graphrag_storage import Storage
+
+    from graphrag.index.input.text_document import TextDocument
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +52,7 @@ class InputReader(metaclass=ABCMeta):
 
         self._file_pattern = pattern
 
-    async def read_files(self) -> pd.DataFrame:
+    async def read_files(self) -> list[TextDocument]:
         """Load files from storage and apply a loader function based on file type. Process metadata on the results if needed."""
         files = list(self._storage.find(re.compile(self._file_pattern)))
         if len(files) == 0:
@@ -59,11 +60,22 @@ class InputReader(metaclass=ABCMeta):
             logger.warning(msg)
             files = []
 
-        files_loaded = []
+        documents: list[TextDocument] = []
 
         for file in files:
             try:
-                files_loaded.append(await self.read_file(file))
+                file_documents = await self.read_file(file)
+
+                if self._metadata:
+                    for document in file_documents:
+                        # Collapse the metadata columns into a single JSON object column
+                        document.metadata = {
+                            k: v
+                            for k, v in asdict(document).items()
+                            if k in self._metadata
+                        }
+
+                documents.extend(file_documents)
             except Exception as e:  # noqa: BLE001 (catching Exception is fine here)
                 logger.warning("Warning! Error loading file %s. Skipping...", file)
                 logger.warning("Error: %s", e)
@@ -72,38 +84,23 @@ class InputReader(metaclass=ABCMeta):
             "Found %d %s files, loading %d",
             len(files),
             self._file_type,
-            len(files_loaded),
+            len(documents),
         )
-        result = pd.concat(files_loaded)
         total_files_log = (
-            f"Total number of unfiltered {self._file_type} rows: {len(result)}"
+            f"Total number of unfiltered {self._file_type} rows: {len(documents)}"
         )
         logger.info(total_files_log)
-        # Convert metadata columns to strings and collapse them into a JSON object
-        if self._metadata:
-            if all(col in result.columns for col in self._metadata):
-                # Collapse the metadata columns into a single JSON object column
-                result["metadata"] = result[self._metadata].apply(
-                    lambda row: row.to_dict(), axis=1
-                )
-            else:
-                value_error_msg = (
-                    "One or more metadata columns not found in the DataFrame."
-                )
-                raise ValueError(value_error_msg)
 
-            result[self._metadata] = result[self._metadata].astype(str)
-
-        return result
+        return documents
 
     @abstractmethod
-    async def read_file(self, path: str) -> pd.DataFrame:
-        """Read a file into a DataFrame of documents.
+    async def read_file(self, path: str) -> list[TextDocument]:
+        """Read a file into a list of documents.
 
         Args:
             - path - The path to read the file from.
 
         Returns
         -------
-            - output - DataFrame with a row for each document in the file.
+            - output - List with an entry for each document in the file.
         """

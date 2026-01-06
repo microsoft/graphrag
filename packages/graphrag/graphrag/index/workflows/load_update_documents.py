@@ -47,7 +47,7 @@ async def load_update_documents(
     previous_storage: Storage,
 ) -> pd.DataFrame:
     """Load and parse update-only input documents into a standard format."""
-    input_documents = await input_reader.read_files()
+    input_documents = pd.DataFrame(await input_reader.read_files())
     # previous storage is the output of the previous run
     # we'll use this to diff the input from the prior
     delta_documents = await get_delta_docs(input_documents, previous_storage)

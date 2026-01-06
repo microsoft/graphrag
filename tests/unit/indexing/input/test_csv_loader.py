@@ -20,8 +20,9 @@ async def test_csv_loader_one_file():
     storage = create_storage(config.storage)
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
-    assert documents.shape == (2, 4)
-    assert documents["title"].iloc[0] == "input.csv"
+    assert len(documents) == 2
+    assert documents[0].title == "input.csv"
+    assert documents[0].metadata is None
 
 
 async def test_csv_loader_one_file_with_title():
@@ -36,8 +37,8 @@ async def test_csv_loader_one_file_with_title():
     storage = create_storage(config.storage)
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
-    assert documents.shape == (2, 4)
-    assert documents["title"].iloc[0] == "Hello"
+    assert len(documents) == 2
+    assert documents[0].title == "Hello"
 
 
 async def test_csv_loader_one_file_with_metadata():
@@ -53,8 +54,8 @@ async def test_csv_loader_one_file_with_metadata():
     storage = create_storage(config.storage)
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
-    assert documents.shape == (2, 5)
-    assert documents["metadata"][0] == {"title": "Hello"}
+    assert len(documents) == 2
+    assert documents[0].metadata == {"title": "Hello"}
 
 
 async def test_csv_loader_multiple_files():
@@ -68,4 +69,4 @@ async def test_csv_loader_multiple_files():
     storage = create_storage(config.storage)
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
-    assert documents.shape == (4, 4)
+    assert len(documents) == 4

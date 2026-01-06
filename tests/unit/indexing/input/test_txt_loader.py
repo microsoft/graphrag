@@ -18,8 +18,9 @@ async def test_txt_loader_one_file():
     storage = create_storage(config.storage)
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
-    assert documents.shape == (1, 4)
-    assert documents["title"].iloc[0] == "input.txt"
+    assert len(documents) == 1
+    assert documents[0].title == "input.txt"
+    assert documents[0].metadata is None
 
 
 async def test_txt_loader_one_file_with_metadata():
@@ -34,9 +35,9 @@ async def test_txt_loader_one_file_with_metadata():
     storage = create_storage(config.storage)
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
-    assert documents.shape == (1, 5)
+    assert len(documents) == 1
     # unlike csv, we cannot set the title to anything other than the filename
-    assert documents["metadata"][0] == {"title": "input.txt"}
+    assert documents[0].metadata == {"title": "input.txt"}
 
 
 async def test_txt_loader_multiple_files():
@@ -50,4 +51,4 @@ async def test_txt_loader_multiple_files():
     storage = create_storage(config.storage)
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
-    assert documents.shape == (2, 4)
+    assert len(documents) == 2

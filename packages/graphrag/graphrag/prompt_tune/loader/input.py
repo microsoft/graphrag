@@ -68,7 +68,7 @@ async def load_docs_in_chunks(
     dataset = await input_reader.read_files()
     chunk_config = config.chunks
     chunks_df = create_base_text_units(
-        documents=dataset,
+        documents=pd.DataFrame(dataset),
         callbacks=NoopWorkflowCallbacks(),
         size=chunk_size,
         overlap=overlap,
