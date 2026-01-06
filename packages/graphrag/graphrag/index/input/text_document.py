@@ -19,5 +19,7 @@ class TextDocument:
     """The title of the document."""
     creation_date: str
     """The creation date of the document, ISO-8601 format."""
+    raw_data: dict[str, Any]
+    """Raw data from source document."""
     metadata: dict[str, Any] | None = None
     """Additional metadata associated with the document."""

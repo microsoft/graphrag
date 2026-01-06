@@ -32,5 +32,6 @@ class TextFileReader(InputReader):
             title=str(Path(path).name),
             text=text,
             creation_date=await self._storage.get_creation_date(path),
+            raw_data={},
         )
         return [document]

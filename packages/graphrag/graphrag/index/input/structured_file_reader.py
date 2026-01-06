@@ -55,6 +55,7 @@ class StructuredFileReader(InputReader):
                     title=title,
                     text=text,
                     creation_date=creation_date,
+                    raw_data=row,
                 )
             )
         return documents
