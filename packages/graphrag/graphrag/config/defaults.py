@@ -244,8 +244,9 @@ class InputDefaults:
     file_type: ClassVar[InputFileType] = InputFileType.Text
     encoding: str | None = None
     file_pattern: None = None
-    text_column: str = "text"
+    id_column: None = None
     title_column: None = None
+    text_column: None = None
     metadata: None = None
 
 

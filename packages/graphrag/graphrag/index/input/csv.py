@@ -29,7 +29,9 @@ class CSVFileReader(InputReader):
         """
         buffer = BytesIO(await self._storage.get(path, as_bytes=True))
         data = pd.read_csv(buffer, encoding=self._encoding)
-        data = process_data_columns(data, path, self._text_column, self._title_column)
+        data = process_data_columns(
+            data, path, self._id_column, self._title_column, self._text_column
+        )
         creation_date = await self._storage.get_creation_date(path)
         data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
         return data

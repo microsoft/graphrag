@@ -32,7 +32,9 @@ class JSONFileReader(InputReader):
         # json file could just be a single object, or an array of objects
         rows = as_json if isinstance(as_json, list) else [as_json]
         data = pd.DataFrame(rows)
-        data = process_data_columns(data, path, self._text_column, self._title_column)
+        data = process_data_columns(
+            data, path, self._id_column, self._title_column, self._text_column
+        )
         creation_date = await self._storage.get_creation_date(path)
         data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
 

@@ -34,13 +34,17 @@ class InputConfig(BaseModel):
         description="The input file pattern to use.",
         default=graphrag_config_defaults.input.file_pattern,
     )
-    text_column: str | None = Field(
-        description="The input text column to use.",
-        default=graphrag_config_defaults.input.text_column,
+    id_column: str | None = Field(
+        description="The input ID column to use.",
+        default=graphrag_config_defaults.input.id_column,
     )
     title_column: str | None = Field(
         description="The input title column to use.",
         default=graphrag_config_defaults.input.title_column,
+    )
+    text_column: str | None = Field(
+        description="The input text column to use.",
+        default=graphrag_config_defaults.input.text_column,
     )
     metadata: list[str] | None = Field(
         description="The document attribute columns to use.",
