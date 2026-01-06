@@ -1,0 +1,43 @@
+[project]
+name = "graphrag-chunking"
+version = "2.7.0"
+description = "Chunking utilities for GraphRAG"
+authors = [
+    {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
+    {name = "Andrés Morales Esquivel", email = "andresmor@microsoft.com"},
+    {name = "Chris Trevino", email = "chtrevin@microsoft.com"},
+    {name = "David Tittsworth", email = "datittsw@microsoft.com"},
+    {name = "Dayenne de Souza", email = "ddesouza@microsoft.com"},
+    {name = "Derek Worthen", email = "deworthe@microsoft.com"},
+    {name = "Gaudy Blanco Meneses", email = "gaudyb@microsoft.com"},
+    {name = "Ha Trinh", email = "trinhha@microsoft.com"},
+    {name = "Jonathan Larson", email = "jolarso@microsoft.com"},
+    {name = "Josh Bradley", email = "joshbradley@microsoft.com"},
+    {name = "Kate Lytvynets", email = "kalytv@microsoft.com"},
+    {name = "Kenny Zhang", email = "zhangken@microsoft.com"},
+    {name = "Mónica Carvajal"},
+    {name = "Nathan Evans", email = "naevans@microsoft.com"},
+    {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
+    {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "graphrag-common==2.7.0",
+    "pydantic~=2.10",
+]
+
+[project.urls]
+Source = "https://github.com/microsoft/graphrag"
+
+[build-system]
+requires = ["hatchling>=1.27.0,<2.0.0"]
+build-backend = "hatchling.build"
+

@@ -12,7 +12,7 @@ from graphrag.tokenizer.tokenizer import Tokenizer
 
 def get_tokenizer(
     model_config: LanguageModelConfig | None = None,
-    encoding_model: str = ENCODING_MODEL,
+    encoding_model: str | None = None,
 ) -> Tokenizer:
     """
     Get the tokenizer for the given model configuration or fallback to a tiktoken based tokenizer.
@@ -38,4 +38,6 @@ def get_tokenizer(
 
         return LitellmTokenizer(model_name=model_config.model)
 
+    if encoding_model is None:
+        encoding_model = ENCODING_MODEL
     return TiktokenTokenizer(encoding_name=encoding_model)

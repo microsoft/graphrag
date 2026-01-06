@@ -12,13 +12,10 @@ Backwards compatibility is not guaranteed at this time.
 """
 
 import logging
-from typing import Annotated
 
-import annotated_types
 from pydantic import PositiveInt, validate_call
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
-from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.language_model.manager import ModelManager
 from graphrag.logger.standard_logging import init_loggers
@@ -55,10 +52,6 @@ logger = logging.getLogger(__name__)
 @validate_call(config={"arbitrary_types_allowed": True})
 async def generate_indexing_prompts(
     config: GraphRagConfig,
-    chunk_size: PositiveInt = graphrag_config_defaults.chunks.size,
-    overlap: Annotated[
-        int, annotated_types.Gt(-1)
-    ] = graphrag_config_defaults.chunks.overlap,
     limit: PositiveInt = 15,
     selection_method: DocSelectionType = DocSelectionType.RANDOM,
     domain: str | None = None,
@@ -100,8 +93,6 @@ async def generate_indexing_prompts(
         limit=limit,
         select_method=selection_method,
         logger=logger,
-        chunk_size=chunk_size,
-        overlap=overlap,
         n_subset_max=n_subset_max,
         k=k,
     )
