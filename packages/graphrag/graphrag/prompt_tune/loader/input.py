@@ -9,6 +9,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from graphrag_cache.noop_cache import NoopCache
+from graphrag_chunking.chunker_factory import create_chunker
 from graphrag_storage import create_storage
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
@@ -46,8 +47,6 @@ async def load_docs_in_chunks(
     select_method: DocSelectionType,
     limit: int,
     logger: logging.Logger,
-    chunk_size: int,
-    overlap: int,
     n_subset_max: int = N_SUBSET_MAX,
     k: int = K,
 ) -> list[str]:
@@ -63,22 +62,18 @@ async def load_docs_in_chunks(
         cache=NoopCache(),
     )
     tokenizer = get_tokenizer(embeddings_llm_settings)
+    chunker = create_chunker(config.chunking, tokenizer.encode, tokenizer.decode)
     input_storage = create_storage(config.input.storage)
     input_reader = InputReaderFactory().create(
         config.input.file_type,
         {"storage": input_storage, "config": config.input},
     )
     dataset = await input_reader.read_files()
-    chunk_config = config.chunks
     chunks_df = create_base_text_units(
         documents=dataset,
         callbacks=NoopWorkflowCallbacks(),
-        size=chunk_size,
-        overlap=overlap,
-        encoding_model=chunk_config.encoding_model,
-        strategy=chunk_config.strategy,
-        prepend_metadata=chunk_config.prepend_metadata,
-        chunk_size_includes_metadata=chunk_config.chunk_size_includes_metadata,
+        tokenizer=tokenizer,
+        chunker=chunker,
     )
 
     # Depending on the select method, build the dataset

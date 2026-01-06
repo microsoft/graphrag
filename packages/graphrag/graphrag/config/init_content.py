@@ -54,9 +54,11 @@ input:
     base_dir: "{graphrag_config_defaults.input.storage.base_dir}"
   file_type: {graphrag_config_defaults.input.file_type.value} # [csv, text, json]
 
-chunks:
-  size: {graphrag_config_defaults.chunks.size}
-  overlap: {graphrag_config_defaults.chunks.overlap}
+chunking:
+  type: {graphrag_config_defaults.chunking.type}
+  size: {graphrag_config_defaults.chunking.size}
+  overlap: {graphrag_config_defaults.chunking.overlap}
+  encoding_model: {graphrag_config_defaults.chunking.encoding_model}
 
 ### Output/storage settings ###
 ## If blob storage is specified in the following four sections,

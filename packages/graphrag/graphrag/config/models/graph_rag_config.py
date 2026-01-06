@@ -8,6 +8,7 @@ from pathlib import Path
 
 from devtools import pformat
 from graphrag_cache import CacheConfig
+from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_storage import StorageConfig, StorageType
 from pydantic import BaseModel, Field, model_validator
 
@@ -15,7 +16,6 @@ import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import VectorStoreType
 from graphrag.config.models.basic_search_config import BasicSearchConfig
-from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
@@ -125,9 +125,15 @@ class GraphRagConfig(BaseModel):
                 Path(self.input.storage.base_dir).resolve()
             )
 
-    chunks: ChunkingConfig = Field(
+    chunking: ChunkingConfig = Field(
         description="The chunking configuration to use.",
-        default=ChunkingConfig(),
+        default=ChunkingConfig(
+            type=graphrag_config_defaults.chunking.type,
+            size=graphrag_config_defaults.chunking.size,
+            overlap=graphrag_config_defaults.chunking.overlap,
+            encoding_model=graphrag_config_defaults.chunking.encoding_model,
+            prepend_metadata=graphrag_config_defaults.chunking.prepend_metadata,
+        ),
     )
     """The chunking configuration to use."""
 

@@ -5,7 +5,6 @@ from dataclasses import asdict
 
 import graphrag.config.defaults as defs
 from graphrag.config.models.basic_search_config import BasicSearchConfig
-from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
@@ -29,6 +28,7 @@ from graphrag.config.models.summarize_descriptions_config import (
 )
 from graphrag.config.models.vector_store_config import VectorStoreConfig
 from graphrag_cache import CacheConfig
+from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_storage import StorageConfig
 from pydantic import BaseModel
 
@@ -164,10 +164,9 @@ def assert_text_embedding_configs(
 def assert_chunking_configs(actual: ChunkingConfig, expected: ChunkingConfig) -> None:
     assert actual.size == expected.size
     assert actual.overlap == expected.overlap
-    assert actual.strategy == expected.strategy
+    assert actual.type == expected.type
     assert actual.encoding_model == expected.encoding_model
     assert actual.prepend_metadata == expected.prepend_metadata
-    assert actual.chunk_size_includes_metadata == expected.chunk_size_includes_metadata
 
 
 def assert_snapshots_configs(
@@ -345,7 +344,7 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
     assert_cache_configs(actual.cache, expected.cache)
     assert_input_configs(actual.input, expected.input)
     assert_text_embedding_configs(actual.embed_text, expected.embed_text)
-    assert_chunking_configs(actual.chunks, expected.chunks)
+    assert_chunking_configs(actual.chunking, expected.chunking)
     assert_snapshots_configs(actual.snapshots, expected.snapshots)
     assert_extract_graph_configs(actual.extract_graph, expected.extract_graph)
     assert_extract_graph_nlp_configs(

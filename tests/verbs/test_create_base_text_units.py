@@ -35,7 +35,7 @@ async def test_create_base_text_units_metadata():
 
     config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
     config.input.metadata = ["title"]
-    config.chunks.prepend_metadata = True
+    config.chunking.prepend_metadata = True
 
     await update_document_metadata(config.input.metadata, context)
 
@@ -43,22 +43,3 @@ async def test_create_base_text_units_metadata():
 
     actual = await load_table_from_storage("text_units", context.output_storage)
     compare_outputs(actual, expected, ["text", "document_id", "n_tokens"])
-
-
-async def test_create_base_text_units_metadata_included_in_chunk():
-    expected = load_test_table("text_units_metadata_included_chunk")
-
-    context = await create_test_context()
-
-    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
-    config.input.metadata = ["title"]
-    config.chunks.prepend_metadata = True
-    config.chunks.chunk_size_includes_metadata = True
-
-    await update_document_metadata(config.input.metadata, context)
-
-    await run_workflow(config, context)
-
-    actual = await load_table_from_storage("text_units", context.output_storage)
-    # only check the columns from the base workflow - our expected table is the final and will have more
-    compare_outputs(actual, expected, columns=["text", "document_id", "n_tokens"])

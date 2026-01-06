@@ -306,14 +306,14 @@ def _prompt_tune_cli(
         help="The minimum number of examples to generate/include in the entity extraction prompt.",
     ),
     chunk_size: int = typer.Option(
-        graphrag_config_defaults.chunks.size,
+        graphrag_config_defaults.chunking.size,
         "--chunk-size",
-        help="The size of each example text chunk. Overrides chunks.size in the configuration file.",
+        help="The size of each example text chunk. Overrides chunking.size in the configuration file.",
     ),
     overlap: int = typer.Option(
-        graphrag_config_defaults.chunks.overlap,
+        graphrag_config_defaults.chunking.overlap,
         "--overlap",
-        help="The overlap size for chunking documents. Overrides chunks.overlap in the configuration file.",
+        help="The overlap size for chunking documents. Overrides chunking.overlap in the configuration file.",
     ),
     language: str | None = typer.Option(
         None,

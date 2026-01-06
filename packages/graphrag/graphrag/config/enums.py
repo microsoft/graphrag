@@ -112,17 +112,6 @@ class AsyncType(str, Enum):
     Threaded = "threaded"
 
 
-class ChunkStrategyType(str, Enum):
-    """ChunkStrategy class definition."""
-
-    tokens = "tokens"
-    sentence = "sentence"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
 class SearchMethod(Enum):
     """The type of search to run."""
 

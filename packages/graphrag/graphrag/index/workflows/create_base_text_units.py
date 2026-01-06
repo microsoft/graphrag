@@ -8,15 +8,18 @@ import logging
 from typing import Any, cast
 
 import pandas as pd
+from graphrag_chunking.add_metadata import add_metadata
+from graphrag_chunking.chunker import Chunker
+from graphrag_chunking.chunker_factory import create_chunker
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.chunking_config import ChunkStrategyType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.operations.chunk_text.chunk_text import chunk_text
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash
+from graphrag.logger.progress import progress_ticker
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -30,17 +33,14 @@ async def run_workflow(
     logger.info("Workflow started: create_base_text_units")
     documents = await load_table_from_storage("documents", context.output_storage)
 
-    chunks = config.chunks
-
+    tokenizer = get_tokenizer(encoding_model=config.chunking.encoding_model)
+    chunker = create_chunker(config.chunking, tokenizer.encode, tokenizer.decode)
     output = create_base_text_units(
         documents,
         context.callbacks,
-        chunks.size,
-        chunks.overlap,
-        chunks.encoding_model,
-        strategy=chunks.strategy,
-        prepend_metadata=chunks.prepend_metadata,
-        chunk_size_includes_metadata=chunks.chunk_size_includes_metadata,
+        tokenizer=tokenizer,
+        chunker=chunker,
+        prepend_metadata=config.chunking.prepend_metadata,
     )
 
     await write_table_to_storage(output, "text_units", context.output_storage)
@@ -52,70 +52,32 @@ async def run_workflow(
 def create_base_text_units(
     documents: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    size: int,
-    overlap: int,
-    encoding_model: str,
-    strategy: ChunkStrategyType,
-    prepend_metadata: bool,
-    chunk_size_includes_metadata: bool,
+    tokenizer: Tokenizer,
+    chunker: Chunker,
+    prepend_metadata: bool | None = False,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     documents.sort_values(by=["id"], ascending=[True], inplace=True)
 
-    tokenizer = get_tokenizer(encoding_model=encoding_model)
-
-    def chunker(row: pd.Series) -> Any:
-        line_delimiter = ".\n"
-        metadata_str = ""
-        metadata_tokens = 0
-
-        if prepend_metadata and "metadata" in row:
-            metadata = row["metadata"]
-            if isinstance(metadata, str):
-                metadata = json.loads(metadata)
-            if isinstance(metadata, dict):
-                metadata_str = (
-                    line_delimiter.join(f"{k}: {v}" for k, v in metadata.items())
-                    + line_delimiter
-                )
-
-            if chunk_size_includes_metadata:
-                metadata_tokens = len(tokenizer.encode(metadata_str))
-                if metadata_tokens >= size:
-                    message = "Metadata tokens exceeds the maximum tokens per chunk. Please increase the tokens per chunk."
-                    raise ValueError(message)
-
-        chunked = chunk_text(
-            pd.DataFrame([row]).reset_index(drop=True),
-            column="text",
-            size=size - metadata_tokens,
-            overlap=overlap,
-            encoding_model=encoding_model,
-            strategy=strategy,
-            callbacks=callbacks,
-        )[0]
-
-        if prepend_metadata:
-            for index, chunk in enumerate(chunked):
-                if isinstance(chunk, str):
-                    chunked[index] = metadata_str + chunk
-                else:
-                    chunked[index] = (
-                        (chunk[0], metadata_str + chunk[1], chunk[2]) if chunk else None
-                    )
-
-        row["chunks"] = chunked
-        return row
+    total_rows = len(documents)
+    tick = progress_ticker(callbacks.progress, total_rows)
 
     # Track progress of row-wise apply operation
-    total_rows = len(documents)
     logger.info("Starting chunking process for %d documents", total_rows)
 
     def chunker_with_logging(row: pd.Series, row_index: int) -> Any:
-        """Add logging to chunker execution."""
-        result = chunker(row)
+        row["chunks"] = [chunk.text for chunk in chunker.chunk(row["text"])]
+
+        metadata = row.get("metadata", None)
+        if prepend_metadata and metadata is not None:
+            metadata = json.loads(metadata) if isinstance(metadata, str) else metadata
+            row["chunks"] = [
+                add_metadata(chunk, metadata, line_delimiter=".\n")
+                for chunk in row["chunks"]
+            ]
+        tick()
         logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
-        return result
+        return row
 
     text_units = documents.apply(
         lambda row: chunker_with_logging(row, row.name), axis=1
