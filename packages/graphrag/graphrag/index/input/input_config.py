@@ -26,7 +26,7 @@ class InputConfig(BaseModel):
         description="The input file type to use.",
         default=graphrag_config_defaults.input.file_type,
     )
-    encoding: str = Field(
+    encoding: str | None = Field(
         description="The input file encoding to use.",
         default=defs.graphrag_config_defaults.input.encoding,
     )
