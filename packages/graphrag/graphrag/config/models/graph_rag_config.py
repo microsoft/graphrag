@@ -12,9 +12,8 @@ from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_storage import StorageConfig, StorageType
 from pydantic import BaseModel, Field, model_validator
 
-import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import VectorStoreType
+from graphrag.config.enums import ReportingType, VectorStoreType
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
@@ -176,7 +175,7 @@ class GraphRagConfig(BaseModel):
 
     def _validate_reporting_base_dir(self) -> None:
         """Validate the reporting base directory."""
-        if self.reporting.type == defs.ReportingType.file:
+        if self.reporting.type == ReportingType.file:
             if self.reporting.base_dir.strip() == "":
                 msg = "Reporting base directory is required for file reporting. Please rerun `graphrag init` and set the reporting configuration."
                 raise ValueError(msg)
