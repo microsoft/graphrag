@@ -19,7 +19,7 @@ async def test_json_loader_one_file_one_object():
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 1
-    assert documents[0].title == "input.json"
+    assert documents[0].title == "input.json (0)"
     assert documents[0].metadata is None
 
 
@@ -29,13 +29,13 @@ async def test_json_loader_one_file_multiple_objects():
             base_dir="tests/unit/indexing/input/data/one-json-multiple-objects",
         ),
         file_type=InputFileType.Json,
-        file_pattern=".*\\.json$",
     )
     storage = create_storage(config.storage)
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 3
-    assert documents[0].title == "input.json"
+    assert documents[0].title == "input.json (0)"
+    assert documents[1].title == "input.json (1)"
 
 
 async def test_json_loader_one_file_with_title():
@@ -44,7 +44,6 @@ async def test_json_loader_one_file_with_title():
             base_dir="tests/unit/indexing/input/data/one-json-one-object",
         ),
         file_type=InputFileType.Json,
-        file_pattern=".*\\.json$",
         title_column="title",
     )
     storage = create_storage(config.storage)
@@ -60,7 +59,6 @@ async def test_json_loader_one_file_with_metadata():
             base_dir="tests/unit/indexing/input/data/one-json-one-object",
         ),
         file_type=InputFileType.Json,
-        file_pattern=".*\\.json$",
         title_column="title",
         metadata=["title"],
     )
@@ -77,7 +75,6 @@ async def test_json_loader_multiple_files():
             base_dir="tests/unit/indexing/input/data/multiple-jsons",
         ),
         file_type=InputFileType.Json,
-        file_pattern=".*\\.json$",
     )
     storage = create_storage(config.storage)
     reader = create_input_reader(config, storage)

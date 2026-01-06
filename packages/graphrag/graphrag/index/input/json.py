@@ -16,14 +16,14 @@ class JSONFileReader(StructuredFileReader):
     """Reader implementation for json files."""
 
     async def read_file(self, path: str) -> list[TextDocument]:
-        """Read a JSON file into a DataFrame of documents.
+        """Read a JSON file into a list of documents.
 
         Args:
             - path - The path to read the file from.
 
         Returns
         -------
-            - output - DataFrame with a row for each document in the file.
+            - output - list with a TextDocument for each row in the file.
         """
         text = await self._storage.get(path, encoding=self._encoding)
         as_json = json.loads(text)

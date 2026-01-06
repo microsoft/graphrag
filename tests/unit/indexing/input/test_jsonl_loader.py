@@ -1,0 +1,53 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+from graphrag.index.input.input_config import InputConfig
+from graphrag.index.input.input_file_type import InputFileType
+from graphrag.index.input.input_reader_factory import create_input_reader
+from graphrag_storage import StorageConfig, create_storage
+
+
+async def test_jsonl_loader_one_file_multiple_objects():
+    config = InputConfig(
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-jsonl",
+        ),
+        file_type=InputFileType.JsonLines,
+        file_pattern=".*\\.jsonl$",
+    )
+    storage = create_storage(config.storage)
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
+    assert len(documents) == 3
+    assert documents[0].title == "input.jsonl (0)"
+
+
+async def test_jsonl_loader_one_file_with_title():
+    config = InputConfig(
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-jsonl",
+        ),
+        file_type=InputFileType.JsonLines,
+        title_column="title",
+    )
+    storage = create_storage(config.storage)
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
+    assert len(documents) == 3
+    assert documents[0].title == "Hello"
+
+
+async def test_jsonl_loader_one_file_with_metadata():
+    config = InputConfig(
+        storage=StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-jsonl",
+        ),
+        file_type=InputFileType.JsonLines,
+        title_column="title",
+        metadata=["title"],
+    )
+    storage = create_storage(config.storage)
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
+    assert len(documents) == 3
+    assert documents[0].metadata == {"title": "Hello"}

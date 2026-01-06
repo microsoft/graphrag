@@ -21,7 +21,7 @@ async def test_csv_loader_one_file():
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 2
-    assert documents[0].title == "input.csv"
+    assert documents[0].title == "input.csv (0)"
     assert documents[0].metadata is None
 
 
@@ -31,7 +31,6 @@ async def test_csv_loader_one_file_with_title():
             base_dir="tests/unit/indexing/input/data/one-csv",
         ),
         file_type=InputFileType.Csv,
-        file_pattern=".*\\.csv$",
         title_column="title",
     )
     storage = create_storage(config.storage)
@@ -47,7 +46,6 @@ async def test_csv_loader_one_file_with_metadata():
             base_dir="tests/unit/indexing/input/data/one-csv",
         ),
         file_type=InputFileType.Csv,
-        file_pattern=".*\\.csv$",
         title_column="title",
         metadata=["title"],
     )
@@ -64,7 +62,6 @@ async def test_csv_loader_multiple_files():
             base_dir="tests/unit/indexing/input/data/multiple-csvs",
         ),
         file_type=InputFileType.Csv,
-        file_pattern=".*\\.csv$",
     )
     storage = create_storage(config.storage)
     reader = create_input_reader(config, storage)

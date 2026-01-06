@@ -73,6 +73,10 @@ def create_input_reader(config: InputConfig, storage: Storage) -> InputReader:
                 from graphrag.index.input.json import JSONFileReader
 
                 register_input_reader(InputFileType.Json, JSONFileReader)
+            case InputFileType.JsonLines:
+                from graphrag.index.input.jsonl import JSONLinesFileReader
+
+                register_input_reader(InputFileType.JsonLines, JSONLinesFileReader)
             case _:
                 msg = f"InputConfig.file_type '{input_strategy}' is not registered in the InputReaderFactory. Registered types: {', '.join(input_reader_factory.keys())}."
                 raise ValueError(msg)

@@ -35,7 +35,7 @@ class StructuredFileReader(InputReader):
     ) -> list[TextDocument]:
         """Process configured data columns from a list of loaded dicts."""
         documents = []
-        for row in rows:
+        for index, row in enumerate(rows):
             # text column is required - harvest from dict
             text = row[self._text_column]
             # id is optional - generate from harvest from dict or hash from text
@@ -45,7 +45,9 @@ class StructuredFileReader(InputReader):
                 else gen_sha512_hash({"text": text}, ["text"])
             )
             # title is optional - harvest from dict or use filename
-            title = row[self._title_column] if self._title_column else str(path)
+            title = (
+                row[self._title_column] if self._title_column else f"{path} ({index})"
+            )
             creation_date = await self._storage.get_creation_date(path)
             documents.append(
                 TextDocument(
