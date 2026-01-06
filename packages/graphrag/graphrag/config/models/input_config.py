@@ -4,15 +4,17 @@
 """Parameterization settings for the default configuration."""
 
 from graphrag_storage import StorageConfig
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import InputFileType
 
 
 class InputConfig(BaseModel):
     """The default configuration section for Input."""
+
+    model_config = ConfigDict(extra="allow")
+    """Allow extra fields to support custom cache implementations."""
 
     storage: StorageConfig = Field(
         description="The storage configuration to use for reading input documents.",
@@ -20,7 +22,7 @@ class InputConfig(BaseModel):
             base_dir=graphrag_config_defaults.input.storage.base_dir,
         ),
     )
-    file_type: InputFileType = Field(
+    file_type: str = Field(
         description="The input file type to use.",
         default=graphrag_config_defaults.input.file_type,
     )

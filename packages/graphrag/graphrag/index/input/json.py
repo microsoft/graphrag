@@ -27,12 +27,12 @@ class JSONFileReader(InputReader):
         -------
             - output - DataFrame with a row for each document in the file.
         """
-        text = await self._storage.get(path, encoding=self._config.encoding)
+        text = await self._storage.get(path, encoding=self._encoding)
         as_json = json.loads(text)
         # json file could just be a single object, or an array of objects
         rows = as_json if isinstance(as_json, list) else [as_json]
         data = pd.DataFrame(rows)
-        data = process_data_columns(data, self._config, path)
+        data = process_data_columns(data, path, self._text_column, self._title_column)
         creation_date = await self._storage.get_creation_date(path)
         data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
 

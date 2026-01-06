@@ -3,7 +3,7 @@
 
 from graphrag.config.enums import InputFileType
 from graphrag.config.models.input_config import InputConfig
-from graphrag.index.input.factory import InputReaderFactory
+from graphrag.index.input.input_reader_factory import create_input_reader
 from graphrag_storage import StorageConfig, create_storage
 
 
@@ -16,11 +16,8 @@ async def test_txt_loader_one_file():
         file_pattern=".*\\.txt$",
     )
     storage = create_storage(config.storage)
-    documents = (
-        await InputReaderFactory()
-        .create(config.file_type, {"storage": storage, "config": config})
-        .read_files()
-    )
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
     assert documents.shape == (1, 4)
     assert documents["title"].iloc[0] == "input.txt"
 
@@ -35,11 +32,8 @@ async def test_txt_loader_one_file_with_metadata():
         metadata=["title"],
     )
     storage = create_storage(config.storage)
-    documents = (
-        await InputReaderFactory()
-        .create(config.file_type, {"storage": storage, "config": config})
-        .read_files()
-    )
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
     assert documents.shape == (1, 5)
     # unlike csv, we cannot set the title to anything other than the filename
     assert documents["metadata"][0] == {"title": "input.txt"}
@@ -54,9 +48,6 @@ async def test_txt_loader_multiple_files():
         file_pattern=".*\\.txt$",
     )
     storage = create_storage(config.storage)
-    documents = (
-        await InputReaderFactory()
-        .create(config.file_type, {"storage": storage, "config": config})
-        .read_files()
-    )
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
     assert documents.shape == (2, 4)

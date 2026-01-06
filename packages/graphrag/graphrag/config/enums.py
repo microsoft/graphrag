@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import Enum, StrEnum
 
 
 class CacheType(str, Enum):
@@ -27,7 +27,7 @@ class CacheType(str, Enum):
         return f'"{self.value}"'
 
 
-class InputFileType(str, Enum):
+class InputFileType(StrEnum):
     """The input file type for the pipeline."""
 
     csv = "csv"

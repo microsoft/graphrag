@@ -3,7 +3,9 @@
 
 from graphrag.config.enums import InputFileType
 from graphrag.config.models.input_config import InputConfig
-from graphrag.index.input.factory import InputReaderFactory
+from graphrag.index.input.input_reader_factory import (
+    create_input_reader,
+)
 from graphrag_storage import StorageConfig, create_storage
 
 
@@ -16,11 +18,8 @@ async def test_csv_loader_one_file():
         file_pattern=".*\\.csv$",
     )
     storage = create_storage(config.storage)
-    documents = (
-        await InputReaderFactory()
-        .create(config.file_type, {"storage": storage, "config": config})
-        .read_files()
-    )
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
     assert documents.shape == (2, 4)
     assert documents["title"].iloc[0] == "input.csv"
 
@@ -35,11 +34,8 @@ async def test_csv_loader_one_file_with_title():
         title_column="title",
     )
     storage = create_storage(config.storage)
-    documents = (
-        await InputReaderFactory()
-        .create(config.file_type, {"storage": storage, "config": config})
-        .read_files()
-    )
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
     assert documents.shape == (2, 4)
     assert documents["title"].iloc[0] == "Hello"
 
@@ -55,12 +51,8 @@ async def test_csv_loader_one_file_with_metadata():
         metadata=["title"],
     )
     storage = create_storage(config.storage)
-    documents = (
-        await InputReaderFactory()
-        .create(config.file_type, {"storage": storage, "config": config})
-        .read_files()
-    )
-    print(documents)
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
     assert documents.shape == (2, 5)
     assert documents["metadata"][0] == {"title": "Hello"}
 
@@ -74,9 +66,6 @@ async def test_csv_loader_multiple_files():
         file_pattern=".*\\.csv$",
     )
     storage = create_storage(config.storage)
-    documents = (
-        await InputReaderFactory()
-        .create(config.file_type, {"storage": storage, "config": config})
-        .read_files()
-    )
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
     assert documents.shape == (4, 4)

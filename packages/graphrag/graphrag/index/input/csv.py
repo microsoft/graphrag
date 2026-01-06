@@ -28,8 +28,8 @@ class CSVFileReader(InputReader):
             - output - DataFrame with a row for each document in the file.
         """
         buffer = BytesIO(await self._storage.get(path, as_bytes=True))
-        data = pd.read_csv(buffer, encoding=self._config.encoding)
-        data = process_data_columns(data, self._config, path)
+        data = pd.read_csv(buffer, encoding=self._encoding)
+        data = process_data_columns(data, path, self._text_column, self._title_column)
         creation_date = await self._storage.get_creation_date(path)
         data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
         return data

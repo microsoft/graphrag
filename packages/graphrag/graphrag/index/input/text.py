@@ -27,7 +27,7 @@ class TextFileReader(InputReader):
         -------
             - output - DataFrame with a row for each document in the file.
         """
-        text = await self._storage.get(path, encoding=self._config.encoding)
+        text = await self._storage.get(path, encoding=self._encoding)
         new_item = {"text": text}
         new_item["id"] = gen_sha512_hash(new_item, new_item.keys())
         new_item["title"] = str(Path(path).name)

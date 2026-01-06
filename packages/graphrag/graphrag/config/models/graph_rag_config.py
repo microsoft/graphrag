@@ -113,7 +113,7 @@ class GraphRagConfig(BaseModel):
             if self.input.file_type == defs.InputFileType.text:
                 self.input.file_pattern = ".*\\.txt$"
             else:
-                self.input.file_pattern = f".*\\.{self.input.file_type.value}$"
+                self.input.file_pattern = f".*\\.{self.input.file_type}$"
 
     def _validate_input_base_dir(self) -> None:
         """Validate the input base directory."""
