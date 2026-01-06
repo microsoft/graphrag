@@ -8,13 +8,12 @@ from io import BytesIO
 
 import pandas as pd
 
-from graphrag.index.input.input_reader import InputReader
-from graphrag.index.input.util import process_data_columns
+from graphrag.index.input.structured_file_reader import StructuredFileReader
 
 logger = logging.getLogger(__name__)
 
 
-class CSVFileReader(InputReader):
+class CSVFileReader(StructuredFileReader):
     """Reader implementation for csv files."""
 
     async def read_file(self, path: str) -> pd.DataFrame:
@@ -29,9 +28,4 @@ class CSVFileReader(InputReader):
         """
         buffer = BytesIO(await self._storage.get(path, as_bytes=True))
         data = pd.read_csv(buffer, encoding=self._encoding)
-        data = process_data_columns(
-            data, path, self._id_column, self._title_column, self._text_column
-        )
-        creation_date = await self._storage.get_creation_date(path)
-        data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
-        return data
+        return await self.process_data_columns(data, path)
