@@ -243,7 +243,7 @@ class InputDefaults:
     storage: InputStorageDefaults = field(default_factory=InputStorageDefaults)
     file_type: ClassVar[InputFileType] = InputFileType.Text
     encoding: str = "utf-8"
-    file_pattern: str = ""
+    file_pattern: None = None
     text_column: str = "text"
     title_column: None = None
     metadata: None = None

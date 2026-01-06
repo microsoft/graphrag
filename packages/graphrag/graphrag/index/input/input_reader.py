@@ -25,8 +25,8 @@ class InputReader(metaclass=ABCMeta):
         self,
         storage: Storage,
         file_type: str,
-        file_pattern: str,
         encoding: str = "utf-8",
+        file_pattern: str | None = None,
         text_column: str | None = None,
         title_column: str | None = None,
         metadata: list[str] | None = None,
@@ -34,11 +34,20 @@ class InputReader(metaclass=ABCMeta):
     ):
         self._storage = storage
         self._file_type = file_type
-        self._file_pattern = file_pattern
         self._encoding = encoding
         self._text_column = text_column
         self._title_column = title_column
         self._metadata = metadata
+
+        # built-in readers set a default pattern if none is provided
+        # this is usually just the file type itself, e.g., the file extension
+        pattern = (
+            file_pattern if file_pattern is not None else f".*\\.{self._file_type}$"
+        )
+        if file_pattern is None and self._file_type == "text":
+            pattern = ".*\\.txt$"
+
+        self._file_pattern = pattern
 
     async def read_files(self) -> pd.DataFrame:
         """Load files from storage and apply a loader function based on file type. Process metadata on the results if needed."""

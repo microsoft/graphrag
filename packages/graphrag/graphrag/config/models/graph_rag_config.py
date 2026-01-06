@@ -107,14 +107,6 @@ class GraphRagConfig(BaseModel):
     )
     """The input configuration."""
 
-    def _validate_input_pattern(self) -> None:
-        """Validate the input file pattern based on the specified type."""
-        if len(self.input.file_pattern) == 0:
-            if self.input.file_type == defs.InputFileType.Text:
-                self.input.file_pattern = ".*\\.txt$"
-            else:
-                self.input.file_pattern = f".*\\.{self.input.file_type}$"
-
     def _validate_input_base_dir(self) -> None:
         """Validate the input base directory."""
         if self.input.storage.type == StorageType.File:
@@ -312,7 +304,6 @@ class GraphRagConfig(BaseModel):
     @model_validator(mode="after")
     def _validate_model(self):
         """Validate the model configuration."""
-        self._validate_input_pattern()
         self._validate_input_base_dir()
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
