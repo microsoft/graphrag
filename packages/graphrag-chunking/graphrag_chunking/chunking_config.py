@@ -30,7 +30,7 @@ class ChunkingConfig(BaseModel):
         description="The chunk overlap to use.",
         default=100,
     )
-    prepend_metadata: bool = Field(
-        description="Prepend metadata into each chunk.",
-        default=False,
+    prepend_metadata: list[str] | None = Field(
+        description="Metadata fields from the source document to prepend on each chunk.",
+        default=None,
     )

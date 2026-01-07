@@ -46,7 +46,3 @@ class InputConfig(BaseModel):
         description="The input text column to use.",
         default=graphrag_config_defaults.input.text_column,
     )
-    metadata: list[str] | None = Field(
-        description="The document attribute columns to use.",
-        default=graphrag_config_defaults.input.metadata,
-    )

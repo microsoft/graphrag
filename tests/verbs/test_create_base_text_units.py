@@ -10,7 +10,6 @@ from .util import (
     compare_outputs,
     create_test_context,
     load_test_table,
-    update_document_metadata,
 )
 
 
@@ -34,10 +33,7 @@ async def test_create_base_text_units_metadata():
     context = await create_test_context()
 
     config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
-    config.input.metadata = ["title"]
-    config.chunking.prepend_metadata = True
-
-    await update_document_metadata(config.input.metadata, context)
+    config.chunking.prepend_metadata = ["title"]
 
     await run_workflow(config, context)
 

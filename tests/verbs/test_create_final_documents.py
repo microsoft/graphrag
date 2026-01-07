@@ -13,7 +13,6 @@ from .util import (
     compare_outputs,
     create_test_context,
     load_test_table,
-    update_document_metadata,
 )
 
 
@@ -42,10 +41,6 @@ async def test_create_final_documents_with_metadata_column():
     )
 
     config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
-    config.input.metadata = ["title"]
-
-    # simulate the metadata construction during initial input loading
-    await update_document_metadata(config.input.metadata, context)
 
     expected = await load_table_from_storage("documents", context.output_storage)
 

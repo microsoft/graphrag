@@ -3,7 +3,6 @@
 
 """A module containing run_workflow method definition."""
 
-import json
 import logging
 from typing import Any, cast
 
@@ -14,6 +13,7 @@ from graphrag_chunking.chunker_factory import create_chunker
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.input.text_document import TextDocument
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash
@@ -54,7 +54,7 @@ def create_base_text_units(
     callbacks: WorkflowCallbacks,
     tokenizer: Tokenizer,
     chunker: Chunker,
-    prepend_metadata: bool | None = False,
+    prepend_metadata: list[str] | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     documents.sort_values(by=["id"], ascending=[True], inplace=True)
@@ -68,9 +68,17 @@ def create_base_text_units(
     def chunker_with_logging(row: pd.Series, row_index: int) -> Any:
         row["chunks"] = [chunk.text for chunk in chunker.chunk(row["text"])]
 
-        metadata = row.get("metadata", None)
-        if prepend_metadata and metadata is not None:
-            metadata = json.loads(metadata) if isinstance(metadata, str) else metadata
+        if prepend_metadata:
+            # create a standard text document for metadata plucking
+            # ignore any additional fields in case the input dataframe has extra columns
+            document = TextDocument(
+                id=row["id"],
+                title=row["title"],
+                text=row["text"],
+                creation_date=row["creation_date"],
+                raw_data=row.get("raw_data", None),
+            )
+            metadata = document.pluck_metadata(prepend_metadata)
             row["chunks"] = [
                 add_metadata(chunk, metadata, line_delimiter=".\n")
                 for chunk in row["chunks"]

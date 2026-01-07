@@ -64,7 +64,7 @@ class ChunkingDefaults:
     size: int = 1200
     overlap: int = 100
     encoding_model: str = ENCODING_MODEL
-    prepend_metadata: bool = False
+    prepend_metadata: None = None
 
 
 @dataclass
@@ -243,7 +243,6 @@ class InputDefaults:
     id_column: None = None
     title_column: None = None
     text_column: None = None
-    metadata: None = None
 
 
 @dataclass

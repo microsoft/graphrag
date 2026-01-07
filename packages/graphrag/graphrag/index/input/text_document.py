@@ -19,7 +19,28 @@ class TextDocument:
     """The title of the document."""
     creation_date: str
     """The creation date of the document, ISO-8601 format."""
-    raw_data: dict[str, Any]
+    raw_data: dict[str, Any] | None = None
     """Raw data from source document."""
-    metadata: dict[str, Any] | None = None
-    """Additional metadata associated with the document."""
+
+    def pluck_metadata(self, fields: list[str]) -> dict[str, Any]:
+        """Extract metadata fields from a TextDocument.
+
+        This takes a two step approach for flexibility:
+        1. If the field is one of the standard text document fields (id, title, text, creation_date), just grab it directly. This accommodates unstructured text for example, which just has the standard fields.
+        2. Otherwise. try to extract it from the raw_data dict. This allows users to specify any column from the original input file.
+
+        If a field does not exist in either location, we'll throw because that means the user config is incorrect.
+        """
+        metadata = {}
+        for field in fields:
+            if field in ["id", "title", "text", "creation_date"]:
+                value = getattr(self, field)
+            else:
+                raw = self.raw_data or {}
+                if field not in raw:
+                    msg = f"Metadata field '{field}' not found in TextDocument standard fields or raw_data. Please check your configuration."
+                    raise ValueError(msg)
+                value = raw.get(field, None)
+            if value is not None:
+                metadata[field] = value
+        return metadata

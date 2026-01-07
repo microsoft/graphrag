@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'prepend_metadata' function."""
+"""A module containing 'add_metadata' function."""
 
 
 def add_metadata(

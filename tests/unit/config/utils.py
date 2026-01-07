@@ -149,7 +149,6 @@ def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
     assert actual.file_pattern == expected.file_pattern
     assert actual.text_column == expected.text_column
     assert actual.title_column == expected.title_column
-    assert actual.metadata == expected.metadata
 
 
 def assert_text_embedding_configs(

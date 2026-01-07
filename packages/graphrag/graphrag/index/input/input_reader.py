@@ -8,7 +8,6 @@ from __future__ import annotations
 import logging
 import re
 from abc import ABCMeta, abstractmethod
-from dataclasses import asdict
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -28,19 +27,11 @@ class InputReader(metaclass=ABCMeta):
         file_type: str,
         encoding: str = "utf-8",
         file_pattern: str | None = None,
-        id_column: str | None = None,
-        title_column: str | None = None,
-        text_column: str = "text",
-        metadata: list[str] | None = None,
         **kwargs,
     ):
         self._storage = storage
         self._file_type = file_type
         self._encoding = encoding
-        self._id_column = id_column
-        self._title_column = title_column
-        self._text_column = text_column
-        self._metadata = metadata
 
         # built-in readers set a default pattern if none is provided
         # this is usually just the file type itself, e.g., the file extension
@@ -64,18 +55,7 @@ class InputReader(metaclass=ABCMeta):
 
         for file in files:
             try:
-                file_documents = await self.read_file(file)
-
-                if self._metadata:
-                    for document in file_documents:
-                        # Collapse the metadata columns into a single JSON object column
-                        document.metadata = {
-                            k: v
-                            for k, v in asdict(document).items()
-                            if k in self._metadata
-                        }
-
-                documents.extend(file_documents)
+                documents.extend(await self.read_file(file))
             except Exception as e:  # noqa: BLE001 (catching Exception is fine here)
                 logger.warning("Warning! Error loading file %s. Skipping...", file)
                 logger.warning("Error: %s", e)
