@@ -38,7 +38,7 @@ class StructuredFileReader(InputReader):
         for index, row in enumerate(rows):
             # text column is required - harvest from dict
             text = row[self._text_column]
-            # id is optional - generate from harvest from dict or hash from text
+            # id is optional - harvest from dict or hash from text
             id = (
                 row[self._id_column]
                 if self._id_column
