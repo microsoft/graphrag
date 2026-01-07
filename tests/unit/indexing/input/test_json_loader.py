@@ -19,7 +19,7 @@ async def test_json_loader_one_file_one_object():
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 1
-    assert documents[0].title == "input.json (0)"
+    assert documents[0].title == "input.json"
     assert documents[0].raw_data == {
         "title": "Hello",
         "text": "Hi how are you today?",

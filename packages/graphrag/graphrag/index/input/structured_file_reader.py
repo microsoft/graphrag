@@ -45,9 +45,8 @@ class StructuredFileReader(InputReader):
                 else gen_sha512_hash({"text": text}, ["text"])
             )
             # title is optional - harvest from dict or use filename
-            title = (
-                row[self._title_column] if self._title_column else f"{path} ({index})"
-            )
+            num = f" ({index})" if len(rows) > 1 else ""
+            title = row[self._title_column] if self._title_column else f"{path}{num}"
             creation_date = await self._storage.get_creation_date(path)
             documents.append(
                 TextDocument(
