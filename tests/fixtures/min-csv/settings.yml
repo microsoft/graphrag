@@ -35,7 +35,7 @@ vector_store:
     overwrite: True
 
 input:
-  file_type: csv
+  type: csv
 
 snapshots:
   embeddings: true

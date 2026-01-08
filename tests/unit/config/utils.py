@@ -144,7 +144,7 @@ def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
 
 def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
     assert_storage_config(actual.storage, expected.storage)
-    assert actual.file_type == expected.file_type
+    assert actual.type == expected.type
     assert actual.encoding == expected.encoding
     assert actual.file_pattern == expected.file_pattern
     assert actual.text_column == expected.text_column

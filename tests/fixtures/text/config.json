@@ -1,6 +1,6 @@
 {
     "input_path": "./tests/fixtures/text",
-    "input_file_type": "text",
+    "input_type": "text",
     "index_method": "fast",
     "workflow_config": {
         "load_input_documents": {

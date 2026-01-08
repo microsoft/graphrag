@@ -16,6 +16,12 @@ logger = logging.getLogger(__name__)
 class TextFileReader(InputReader):
     """Reader implementation for text files."""
 
+    def __init__(self, file_pattern: str | None = None, **kwargs):
+        super().__init__(
+            file_pattern=file_pattern if file_pattern is not None else ".*\\.txt$",
+            **kwargs,
+        )
+
     async def read_file(self, path: str) -> list[TextDocument]:
         """Read a text file into a DataFrame of documents.
 

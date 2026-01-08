@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag_input import InputConfig, InputFileType, create_input_reader
+from graphrag_input import InputConfig, InputType, create_input_reader
 from graphrag_storage import StorageConfig, create_storage
 
 
@@ -10,7 +10,7 @@ async def test_csv_loader_one_file():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/one-csv",
         ),
-        file_type=InputFileType.Csv,
+        type=InputType.Csv,
         file_pattern=".*\\.csv$",
     )
     storage = create_storage(config.storage)
@@ -30,7 +30,7 @@ async def test_csv_loader_one_file_with_title():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/one-csv",
         ),
-        file_type=InputFileType.Csv,
+        type=InputType.Csv,
         title_column="title",
     )
     storage = create_storage(config.storage)
@@ -45,7 +45,7 @@ async def test_csv_loader_multiple_files():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/multiple-csvs",
         ),
-        file_type=InputFileType.Csv,
+        type=InputType.Csv,
     )
     storage = create_storage(config.storage)
     reader = create_input_reader(config, storage)

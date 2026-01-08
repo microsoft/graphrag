@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag_input import InputConfig, InputFileType, create_input_reader
+from graphrag_input import InputConfig, InputType, create_input_reader
 from graphrag_storage import StorageConfig, create_storage
 
 
@@ -10,7 +10,7 @@ async def test_jsonl_loader_one_file_multiple_objects():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/one-jsonl",
         ),
-        file_type=InputFileType.JsonLines,
+        type=InputType.JsonLines,
         file_pattern=".*\\.jsonl$",
     )
     storage = create_storage(config.storage)
@@ -30,7 +30,7 @@ async def test_jsonl_loader_one_file_with_title():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/one-jsonl",
         ),
-        file_type=InputFileType.JsonLines,
+        type=InputType.JsonLines,
         title_column="title",
     )
     storage = create_storage(config.storage)

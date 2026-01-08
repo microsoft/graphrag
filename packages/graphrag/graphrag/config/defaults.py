@@ -9,7 +9,7 @@ from typing import ClassVar
 
 from graphrag_cache import CacheType
 from graphrag_chunking.chunk_strategy_type import ChunkerType
-from graphrag_input import InputFileType
+from graphrag_input import InputType
 from graphrag_storage import StorageType
 
 from graphrag.config.embeddings import default_embeddings
@@ -237,7 +237,7 @@ class InputDefaults:
     """Default values for input."""
 
     storage: InputStorageDefaults = field(default_factory=InputStorageDefaults)
-    file_type: ClassVar[InputFileType] = InputFileType.Text
+    type: ClassVar[InputType] = InputType.Text
     encoding: str | None = None
     file_pattern: None = None
     id_column: None = None

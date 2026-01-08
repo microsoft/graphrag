@@ -15,6 +15,12 @@ logger = logging.getLogger(__name__)
 class CSVFileReader(StructuredFileReader):
     """Reader implementation for csv files."""
 
+    def __init__(self, file_pattern: str | None = None, **kwargs):
+        super().__init__(
+            file_pattern=file_pattern if file_pattern is not None else ".*\\.csv$",
+            **kwargs,
+        )
+
     async def read_file(self, path: str) -> list[TextDocument]:
         """Read a csv file into a list of documents.
 

@@ -126,7 +126,7 @@ class TestIndexer:
     def __run_indexer(
         self,
         root: Path,
-        input_file_type: str,
+        input_type: str,
         index_method: str,
     ):
         command = [
@@ -232,7 +232,7 @@ class TestIndexer:
     def test_fixture(
         self,
         input_path: str,
-        input_file_type: str,
+        input_type: str,
         index_method: str,
         workflow_config: dict[str, dict[str, Any]],
         query_config: list[dict[str, str]],
@@ -248,7 +248,7 @@ class TestIndexer:
             dispose = asyncio.run(prepare_azurite_data(input_path, azure))
 
         print("running indexer")
-        self.__run_indexer(root, input_file_type, index_method)
+        self.__run_indexer(root, input_type, index_method)
         print("indexer complete")
 
         if dispose is not None:

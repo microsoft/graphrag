@@ -52,7 +52,7 @@ input:
   storage:
     type: {graphrag_config_defaults.input.storage.type} # [file, blob, cosmosdb]
     base_dir: "{graphrag_config_defaults.input.storage.base_dir}"
-  file_type: {graphrag_config_defaults.input.file_type.value} # [csv, text, json]
+  type: {graphrag_config_defaults.input.type.value} # [csv, text, json]
 
 chunking:
   type: {graphrag_config_defaults.chunking.type}

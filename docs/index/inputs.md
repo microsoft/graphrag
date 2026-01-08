@@ -116,7 +116,7 @@ settings.yaml
 
 ```yaml
 input:
-    file_type: text
+    type: text
     metadata: [title]
 
 chunks:
@@ -194,7 +194,7 @@ settings.yaml
 
 ```yaml
 input:
-    file_type: json
+    type: json
     title_column: headline
     text_column: content
 

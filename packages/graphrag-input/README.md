@@ -13,12 +13,12 @@ This package provides input document loading utilities for GraphRAG, supporting 
 
 Basic usage with the factory:
 ```python
-from graphrag_input import create_input_reader, InputConfig, InputFileType
+from graphrag_input import create_input_reader, InputConfig, InputType
 from graphrag_storage import StorageConfig, create_storage
 
 config = InputConfig(
     storage=StorageConfig(base_dir="./input"),
-    file_type=InputFileType.Csv,
+    type=InputType.Csv,
     text_column="content",
     title_column="title",
 )

@@ -24,30 +24,19 @@ class InputReader(metaclass=ABCMeta):
     def __init__(
         self,
         storage: Storage,
-        file_type: str,
         encoding: str = "utf-8",
         file_pattern: str | None = None,
         **kwargs,
     ):
         self._storage = storage
-        self._file_type = file_type
         self._encoding = encoding
-
-        # built-in readers set a default pattern if none is provided
-        # this is usually just the file type itself, e.g., the file extension
-        pattern = (
-            file_pattern if file_pattern is not None else f".*\\.{self._file_type}$"
-        )
-        if file_pattern is None and self._file_type == "text":
-            pattern = ".*\\.txt$"
-
-        self._file_pattern = pattern
+        self._file_pattern = file_pattern
 
     async def read_files(self) -> list[TextDocument]:
         """Load files from storage and apply a loader function based on file type. Process metadata on the results if needed."""
         files = list(self._storage.find(re.compile(self._file_pattern)))
         if len(files) == 0:
-            msg = f"No {self._file_type} files found in storage"  # TODO: use a storage __str__ to define it per impl
+            msg = f"No {self._file_pattern} matches found in storage"
             logger.warning(msg)
             files = []
 
@@ -63,11 +52,11 @@ class InputReader(metaclass=ABCMeta):
         logger.info(
             "Found %d %s files, loading %d",
             len(files),
-            self._file_type,
+            self._file_pattern,
             len(documents),
         )
         total_files_log = (
-            f"Total number of unfiltered {self._file_type} rows: {len(documents)}"
+            f"Total number of unfiltered {self._file_pattern} rows: {len(documents)}"
         )
         logger.info(total_files_log)
 

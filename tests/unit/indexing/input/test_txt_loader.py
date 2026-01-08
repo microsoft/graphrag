@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag_input import InputConfig, InputFileType, create_input_reader
+from graphrag_input import InputConfig, InputType, create_input_reader
 from graphrag_storage import StorageConfig, create_storage
 
 
@@ -10,7 +10,7 @@ async def test_txt_loader_one_file():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/one-txt",
         ),
-        file_type=InputFileType.Text,
+        type=InputType.Text,
         file_pattern=".*\\.txt$",
     )
     storage = create_storage(config.storage)
@@ -26,7 +26,7 @@ async def test_txt_loader_multiple_files():
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/multiple-txts",
         ),
-        file_type=InputFileType.Text,
+        type=InputType.Text,
         file_pattern=".*\\.txt$",
     )
     storage = create_storage(config.storage)

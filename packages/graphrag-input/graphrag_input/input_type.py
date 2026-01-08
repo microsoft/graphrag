@@ -6,7 +6,7 @@
 from enum import StrEnum
 
 
-class InputFileType(StrEnum):
+class InputType(StrEnum):
     """The input file type for the pipeline."""
 
     Csv = "csv"

@@ -6,7 +6,7 @@
 from graphrag_storage import StorageConfig
 from pydantic import BaseModel, ConfigDict, Field
 
-from graphrag_input.input_file_type import InputFileType
+from graphrag_input.input_type import InputType
 
 
 class InputConfig(BaseModel):
@@ -19,9 +19,9 @@ class InputConfig(BaseModel):
         description="The storage configuration to use for reading input documents.",
         default_factory=lambda: StorageConfig(base_dir="input"),
     )
-    file_type: str = Field(
+    type: str = Field(
         description="The input file type to use.",
-        default=InputFileType.Text,
+        default=InputType.Text,
     )
     encoding: str | None = Field(
         description="The input file encoding to use.",

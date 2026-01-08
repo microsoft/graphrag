@@ -11,8 +11,8 @@ from graphrag_common.factory.factory import ServiceScope
 from graphrag_storage.storage import Storage
 
 from graphrag_input.input_config import InputConfig
-from graphrag_input.input_file_type import InputFileType
 from graphrag_input.input_reader import InputReader
+from graphrag_input.input_type import InputType
 
 logger = logging.getLogger(__name__)
 
@@ -57,28 +57,28 @@ def create_input_reader(config: InputConfig, storage: Storage) -> InputReader:
             The created input reader implementation.
     """
     config_model = config.model_dump()
-    input_strategy = config.file_type
+    input_strategy = config.type
 
     if input_strategy not in input_reader_factory:
         match input_strategy:
-            case InputFileType.Csv:
+            case InputType.Csv:
                 from graphrag_input.csv import CSVFileReader
 
-                register_input_reader(InputFileType.Csv, CSVFileReader)
-            case InputFileType.Text:
+                register_input_reader(InputType.Csv, CSVFileReader)
+            case InputType.Text:
                 from graphrag_input.text import TextFileReader
 
-                register_input_reader(InputFileType.Text, TextFileReader)
-            case InputFileType.Json:
+                register_input_reader(InputType.Text, TextFileReader)
+            case InputType.Json:
                 from graphrag_input.json import JSONFileReader
 
-                register_input_reader(InputFileType.Json, JSONFileReader)
-            case InputFileType.JsonLines:
+                register_input_reader(InputType.Json, JSONFileReader)
+            case InputType.JsonLines:
                 from graphrag_input.jsonl import JSONLinesFileReader
 
-                register_input_reader(InputFileType.JsonLines, JSONLinesFileReader)
+                register_input_reader(InputType.JsonLines, JSONLinesFileReader)
             case _:
-                msg = f"InputConfig.file_type '{input_strategy}' is not registered in the InputReaderFactory. Registered types: {', '.join(input_reader_factory.keys())}."
+                msg = f"InputConfig.type '{input_strategy}' is not registered in the InputReaderFactory. Registered types: {', '.join(input_reader_factory.keys())}."
                 raise ValueError(msg)
 
     config_model["storage"] = storage
