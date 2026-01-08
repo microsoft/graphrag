@@ -6,9 +6,9 @@
 from collections.abc import Callable
 from typing import Any
 
-from graphrag_chunking.chunk_result import ChunkResult
 from graphrag_chunking.chunker import Chunker
 from graphrag_chunking.create_chunk_results import create_chunk_results
+from graphrag_chunking.text_chunk import TextChunk
 
 
 class TokenChunker(Chunker):
@@ -28,7 +28,9 @@ class TokenChunker(Chunker):
         self._encode = encode
         self._decode = decode
 
-    def chunk(self, text: str) -> list[ChunkResult]:
+    def chunk(
+        self, text: str, transform: Callable[[str], str] | None = None
+    ) -> list[TextChunk]:
         """Chunk the text into token-based chunks."""
         chunks = split_text_on_tokens(
             text,
@@ -37,7 +39,7 @@ class TokenChunker(Chunker):
             encode=self._encode,
             decode=self._decode,
         )
-        return create_chunk_results(chunks, encode=self._encode)
+        return create_chunk_results(chunks, transform=transform, encode=self._encode)
 
 
 def split_text_on_tokens(

@@ -5,26 +5,28 @@
 
 from collections.abc import Callable
 
-from graphrag_chunking.chunk_result import ChunkResult
+from graphrag_chunking.text_chunk import TextChunk
 
 
 def create_chunk_results(
     chunks: list[str],
+    transform: Callable[[str], str] | None = None,
     encode: Callable[[str], list[int]] | None = None,
-) -> list[ChunkResult]:
-    """Create chunk results from a list of text chunks. The index assignments are 0-based and assume chunks we not stripped relative to the source text."""
+) -> list[TextChunk]:
+    """Create chunk results from a list of text chunks. The index assignments are 0-based and assume chunks were not stripped relative to the source text."""
     results = []
     start_char = 0
     for index, chunk in enumerate(chunks):
         end_char = start_char + len(chunk) - 1  # 0-based indices
-        chunk = ChunkResult(
-            text=chunk,
+        result = TextChunk(
+            original=chunk,
+            text=transform(chunk) if transform else chunk,
             index=index,
             start_char=start_char,
             end_char=end_char,
         )
         if encode:
-            chunk.token_count = len(encode(chunk.text))
-        results.append(chunk)
+            result.token_count = len(encode(result.text))
+        results.append(result)
         start_char = end_char + 1
     return results

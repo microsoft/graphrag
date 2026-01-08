@@ -7,9 +7,9 @@ import logging
 from typing import Any, cast
 
 import pandas as pd
-from graphrag_chunking.add_metadata import add_metadata
 from graphrag_chunking.chunker import Chunker
 from graphrag_chunking.chunker_factory import create_chunker
+from graphrag_chunking.transformers import add_metadata
 from graphrag_input import TextDocument
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -66,8 +66,6 @@ def create_base_text_units(
     logger.info("Starting chunking process for %d documents", total_rows)
 
     def chunker_with_logging(row: pd.Series, row_index: int) -> Any:
-        row["chunks"] = [chunk.text for chunk in chunker.chunk(row["text"])]
-
         if prepend_metadata:
             # create a standard text document for metadata plucking
             # ignore any additional fields in case the input dataframe has extra columns
@@ -76,13 +74,17 @@ def create_base_text_units(
                 title=row["title"],
                 text=row["text"],
                 creation_date=row["creation_date"],
-                raw_data=row.get("raw_data", None),
+                raw_data=row["raw_data"],
             )
-            metadata = document.pluck_metadata(prepend_metadata)
-            row["chunks"] = [
-                add_metadata(chunk, metadata, line_delimiter=".\n")
-                for chunk in row["chunks"]
-            ]
+            metadata = document.collect(prepend_metadata)
+            transformer = add_metadata(metadata=metadata, line_delimiter=".\n") # delim with . for back-compat older indexes
+        else:
+            transformer = None
+
+        row["chunks"] = [
+            chunk.text for chunk in chunker.chunk(row["text"], transform=transformer)
+        ]
+
         tick()
         logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
         return row
