@@ -77,7 +77,9 @@ def create_base_text_units(
                 raw_data=row["raw_data"],
             )
             metadata = document.collect(prepend_metadata)
-            transformer = add_metadata(metadata=metadata, line_delimiter=".\n") # delim with . for back-compat older indexes
+            transformer = add_metadata(
+                metadata=metadata, line_delimiter=".\n"
+            )  # delim with . for back-compat older indexes
         else:
             transformer = None
 
