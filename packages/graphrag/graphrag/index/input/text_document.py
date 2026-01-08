@@ -3,8 +3,13 @@
 
 """TextDocument dataclass."""
 
+import logging
 from dataclasses import dataclass
 from typing import Any
+
+from graphrag.index.input.get_property import get_property
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -37,10 +42,12 @@ class TextDocument:
                 value = getattr(self, field)
             else:
                 raw = self.raw_data or {}
-                if field not in raw:
-                    msg = f"Metadata field '{field}' not found in TextDocument standard fields or raw_data. Please check your configuration."
-                    raise ValueError(msg)
-                value = raw.get(field, None)
+                value = get_property(raw, field)
+                if value is None:
+                    logger.warning(
+                        "Metadata field '%s' not found in TextDocument standard fields or raw_data. Please check your configuration.",
+                        field,
+                    )
             if value is not None:
                 metadata[field] = value
         return metadata
