@@ -6,6 +6,7 @@
 import logging
 from typing import Any
 
+from graphrag.index.input.get_property import get_property
 from graphrag.index.input.input_reader import InputReader
 from graphrag.index.input.text_document import TextDocument
 from graphrag.index.utils.hashing import gen_sha512_hash
@@ -37,16 +38,20 @@ class StructuredFileReader(InputReader):
         documents = []
         for index, row in enumerate(rows):
             # text column is required - harvest from dict
-            text = row[self._text_column]
+            text = get_property(row, self._text_column)
             # id is optional - harvest from dict or hash from text
             id = (
-                row[self._id_column]
+                get_property(row, self._id_column)
                 if self._id_column
                 else gen_sha512_hash({"text": text}, ["text"])
             )
             # title is optional - harvest from dict or use filename
             num = f" ({index})" if len(rows) > 1 else ""
-            title = row[self._title_column] if self._title_column else f"{path}{num}"
+            title = (
+                get_property(row, self._title_column)
+                if self._title_column
+                else f"{path}{num}"
+            )
             creation_date = await self._storage.get_creation_date(path)
             documents.append(
                 TextDocument(
