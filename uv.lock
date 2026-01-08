@@ -12,6 +12,7 @@ members = [
     "graphrag-cache",
     "graphrag-chunking",
     "graphrag-common",
+    "graphrag-input",
     "graphrag-monorepo",
     "graphrag-storage",
 ]
@@ -854,6 +855,7 @@ dependencies = [
     { name = "fastuuid" },
     { name = "graphrag-cache" },
     { name = "graphrag-common" },
+    { name = "graphrag-input" },
     { name = "graphrag-storage" },
     { name = "graspologic-native" },
     { name = "json-repair" },
@@ -887,6 +889,7 @@ requires-dist = [
     { name = "fastuuid", specifier = "~=0.13" },
     { name = "graphrag-cache", editable = "packages/graphrag-cache" },
     { name = "graphrag-common", editable = "packages/graphrag-common" },
+    { name = "graphrag-input", editable = "packages/graphrag-input" },
     { name = "graphrag-storage", editable = "packages/graphrag-storage" },
     { name = "graspologic-native", specifier = "~=1.2" },
     { name = "json-repair", specifier = "~=0.30" },
@@ -950,6 +953,23 @@ dependencies = [
 requires-dist = [
     { name = "python-dotenv", specifier = "~=1.0" },
     { name = "pyyaml", specifier = "~=6.0" },
+]
+
+[[package]]
+name = "graphrag-input"
+version = "2.7.0"
+source = { editable = "packages/graphrag-input" }
+dependencies = [
+    { name = "graphrag-common" },
+    { name = "graphrag-storage" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "graphrag-common", editable = "packages/graphrag-common" },
+    { name = "graphrag-storage", editable = "packages/graphrag-storage" },
+    { name = "pydantic", specifier = "~=2.10" },
 ]
 
 [[package]]

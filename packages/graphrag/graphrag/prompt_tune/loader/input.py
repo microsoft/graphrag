@@ -10,11 +10,11 @@ import numpy as np
 import pandas as pd
 from graphrag_cache.noop_cache import NoopCache
 from graphrag_chunking.chunker_factory import create_chunker
+from graphrag_input import create_input_reader
 from graphrag_storage import create_storage
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.input.input_reader_factory import create_input_reader
 from graphrag.index.operations.embed_text.run_embed_text import (
     run_embed_text,
 )

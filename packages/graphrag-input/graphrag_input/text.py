@@ -6,9 +6,9 @@
 import logging
 from pathlib import Path
 
-from graphrag.index.input.input_reader import InputReader
-from graphrag.index.input.text_document import TextDocument
-from graphrag.index.utils.hashing import gen_sha512_hash
+from graphrag_input.hashing import gen_sha512_hash
+from graphrag_input.input_reader import InputReader
+from graphrag_input.text_document import TextDocument
 
 logger = logging.getLogger(__name__)
 

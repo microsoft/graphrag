@@ -1,11 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.index.input.input_config import InputConfig
-from graphrag.index.input.input_file_type import InputFileType
-from graphrag.index.input.input_reader_factory import (
-    create_input_reader,
-)
+from graphrag_input import InputConfig, InputFileType, create_input_reader
 from graphrag_storage import StorageConfig, create_storage
 
 

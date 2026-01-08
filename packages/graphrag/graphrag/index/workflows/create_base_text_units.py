@@ -10,10 +10,10 @@ import pandas as pd
 from graphrag_chunking.add_metadata import add_metadata
 from graphrag_chunking.chunker import Chunker
 from graphrag_chunking.chunker_factory import create_chunker
+from graphrag_input import TextDocument
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.input.text_document import TextDocument
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash

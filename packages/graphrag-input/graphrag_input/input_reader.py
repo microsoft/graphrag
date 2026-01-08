@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from graphrag_storage import Storage
 
-    from graphrag.index.input.text_document import TextDocument
+    from graphrag_input.text_document import TextDocument
 
 logger = logging.getLogger(__name__)
 

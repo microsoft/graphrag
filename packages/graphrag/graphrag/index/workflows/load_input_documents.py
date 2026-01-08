@@ -6,12 +6,9 @@
 import logging
 
 import pandas as pd
+from graphrag_input import InputReader, create_input_reader
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.input.input_reader import InputReader
-from graphrag.index.input.input_reader_factory import (
-    create_input_reader,
-)
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import write_table_to_storage

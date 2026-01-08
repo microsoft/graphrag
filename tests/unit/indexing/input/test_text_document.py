@@ -2,7 +2,7 @@
 # Licensed under the MIT License
 
 import pytest
-from graphrag.index.input.get_property import get_property
+from graphrag_input import get_property
 
 
 def test_get_property_single_level():

@@ -10,9 +10,9 @@ from graphrag_common.factory import Factory
 from graphrag_common.factory.factory import ServiceScope
 from graphrag_storage.storage import Storage
 
-from graphrag.index.input.input_config import InputConfig
-from graphrag.index.input.input_file_type import InputFileType
-from graphrag.index.input.input_reader import InputReader
+from graphrag_input.input_config import InputConfig
+from graphrag_input.input_file_type import InputFileType
+from graphrag_input.input_reader import InputReader
 
 logger = logging.getLogger(__name__)
 
@@ -62,19 +62,19 @@ def create_input_reader(config: InputConfig, storage: Storage) -> InputReader:
     if input_strategy not in input_reader_factory:
         match input_strategy:
             case InputFileType.Csv:
-                from graphrag.index.input.csv import CSVFileReader
+                from graphrag_input.csv import CSVFileReader
 
                 register_input_reader(InputFileType.Csv, CSVFileReader)
             case InputFileType.Text:
-                from graphrag.index.input.text import TextFileReader
+                from graphrag_input.text import TextFileReader
 
                 register_input_reader(InputFileType.Text, TextFileReader)
             case InputFileType.Json:
-                from graphrag.index.input.json import JSONFileReader
+                from graphrag_input.json import JSONFileReader
 
                 register_input_reader(InputFileType.Json, JSONFileReader)
             case InputFileType.JsonLines:
-                from graphrag.index.input.jsonl import JSONLinesFileReader
+                from graphrag_input.jsonl import JSONLinesFileReader
 
                 register_input_reader(InputFileType.JsonLines, JSONLinesFileReader)
             case _:

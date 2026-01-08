@@ -6,8 +6,7 @@
 from graphrag_storage import StorageConfig
 from pydantic import BaseModel, ConfigDict, Field
 
-import graphrag.config.defaults as defs
-from graphrag.config.defaults import graphrag_config_defaults
+from graphrag_input.input_file_type import InputFileType
 
 
 class InputConfig(BaseModel):
@@ -18,31 +17,29 @@ class InputConfig(BaseModel):
 
     storage: StorageConfig = Field(
         description="The storage configuration to use for reading input documents.",
-        default=StorageConfig(
-            base_dir=graphrag_config_defaults.input.storage.base_dir,
-        ),
+        default_factory=lambda: StorageConfig(base_dir="input"),
     )
     file_type: str = Field(
         description="The input file type to use.",
-        default=graphrag_config_defaults.input.file_type,
+        default=InputFileType.Text,
     )
     encoding: str | None = Field(
         description="The input file encoding to use.",
-        default=defs.graphrag_config_defaults.input.encoding,
+        default=None,
     )
     file_pattern: str | None = Field(
         description="The input file pattern to use.",
-        default=graphrag_config_defaults.input.file_pattern,
+        default=None,
     )
     id_column: str | None = Field(
         description="The input ID column to use.",
-        default=graphrag_config_defaults.input.id_column,
+        default=None,
     )
     title_column: str | None = Field(
         description="The input title column to use.",
-        default=graphrag_config_defaults.input.title_column,
+        default=None,
     )
     text_column: str | None = Field(
         description="The input text column to use.",
-        default=graphrag_config_defaults.input.text_column,
+        default=None,
     )

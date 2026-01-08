@@ -6,8 +6,8 @@
 import csv
 import logging
 
-from graphrag.index.input.structured_file_reader import StructuredFileReader
-from graphrag.index.input.text_document import TextDocument
+from graphrag_input.structured_file_reader import StructuredFileReader
+from graphrag_input.text_document import TextDocument
 
 logger = logging.getLogger(__name__)
 

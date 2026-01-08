@@ -9,6 +9,7 @@ from pathlib import Path
 from devtools import pformat
 from graphrag_cache import CacheConfig
 from graphrag_chunking.chunking_config import ChunkingConfig
+from graphrag_input import InputConfig
 from graphrag_storage import StorageConfig, StorageType
 from pydantic import BaseModel, Field, model_validator
 
@@ -32,7 +33,6 @@ from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
 from graphrag.config.models.vector_store_config import VectorStoreConfig
-from graphrag.index.input.input_config import InputConfig
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter_factory import (
     RateLimiterFactory,
 )

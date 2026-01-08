@@ -1,19 +1,19 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'JSONFileReader' model."""
+"""A module containing 'JSONLinesFileReader' model."""
 
 import json
 import logging
 
-from graphrag.index.input.structured_file_reader import StructuredFileReader
-from graphrag.index.input.text_document import TextDocument
+from graphrag_input.structured_file_reader import StructuredFileReader
+from graphrag_input.text_document import TextDocument
 
 logger = logging.getLogger(__name__)
 
 
 class JSONLinesFileReader(StructuredFileReader):
-    """Reader implementation for json files."""
+    """Reader implementation for json lines files."""
 
     async def read_file(self, path: str) -> list[TextDocument]:
         """Read a JSON lines file into a list of documents.

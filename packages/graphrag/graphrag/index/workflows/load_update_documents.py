@@ -6,11 +6,11 @@
 import logging
 
 import pandas as pd
+from graphrag_input.input_reader import InputReader
+from graphrag_input.input_reader_factory import create_input_reader
 from graphrag_storage import Storage
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.input.input_reader import InputReader
-from graphrag.index.input.input_reader_factory import create_input_reader
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.update.incremental_index import get_delta_docs

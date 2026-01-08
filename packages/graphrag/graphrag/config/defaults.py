@@ -9,6 +9,7 @@ from typing import ClassVar
 
 from graphrag_cache import CacheType
 from graphrag_chunking.chunk_strategy_type import ChunkerType
+from graphrag_input import InputFileType
 from graphrag_storage import StorageType
 
 from graphrag.config.embeddings import default_embeddings
@@ -20,7 +21,6 @@ from graphrag.config.enums import (
     ReportingType,
     VectorStoreType,
 )
-from graphrag.index.input.input_file_type import InputFileType
 from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
     EN_STOP_WORDS,
 )

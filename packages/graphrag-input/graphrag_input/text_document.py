@@ -7,7 +7,7 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
-from graphrag.index.input.get_property import get_property
+from graphrag_input.get_property import get_property
 
 logger = logging.getLogger(__name__)
 
