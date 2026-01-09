@@ -26,7 +26,7 @@ async def run_workflow(
     output = await load_input_documents(input_reader)
 
     if len(output) == 0:
-        msg = "No input documents found."
+        msg = "Error reading documents, please see logs."
         logger.error(msg)
         raise ValueError(msg)
 

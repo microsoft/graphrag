@@ -5,7 +5,7 @@ from graphrag_input import InputConfig, InputType, create_input_reader
 from graphrag_storage import StorageConfig, create_storage
 
 
-async def test_txt_loader_one_file():
+async def test_text_loader_one_file():
     config = InputConfig(
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/one-txt",
@@ -21,7 +21,7 @@ async def test_txt_loader_one_file():
     assert documents[0].raw_data is None
 
 
-async def test_txt_loader_multiple_files():
+async def test_text_loader_multiple_files():
     config = InputConfig(
         storage=StorageConfig(
             base_dir="tests/unit/indexing/input/data/multiple-txts",

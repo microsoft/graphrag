@@ -17,6 +17,8 @@ class InputType(StrEnum):
     """The JSON input type."""
     JsonLines = "jsonl"
     """The JSON Lines input type."""
+    MarkItDown = "markitdown"
+    """The MarkItDown input type."""
 
     def __repr__(self):
         """Get a string representation."""
