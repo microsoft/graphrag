@@ -21,7 +21,7 @@ class MarkItDownFileReader(InputReader):
 
     https://github.com/microsoft/markitdown
     """
-    
+
     async def read_file(self, path: str) -> list[TextDocument]:
         """Read a text file into a DataFrame of documents.
 
@@ -33,7 +33,7 @@ class MarkItDownFileReader(InputReader):
             - output - list with a TextDocument for each row in the file.
         """
         bytes = await self._storage.get(path, encoding=self._encoding, as_bytes=True)
-        md = MarkItDown(enable_plugins=False)
+        md = MarkItDown()
         result = md.convert_stream(
             BytesIO(bytes), stream_info=StreamInfo(extension=Path(path).suffix)
         )
