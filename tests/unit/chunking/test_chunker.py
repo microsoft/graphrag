@@ -27,7 +27,7 @@ class TestRunSentences:
         bootstrap()
 
     def test_basic_functionality(self):
-        """Test basic sentence splitting without metadata"""
+        """Test basic sentence splitting"""
         input = "This is a test. Another sentence. And a third one!"
         chunker = create_chunker(ChunkingConfig(type=ChunkerType.Sentence))
         chunks = chunker.chunk(input)

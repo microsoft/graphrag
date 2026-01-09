@@ -58,6 +58,7 @@ def prune_graph(
     """Prune a full graph based on graph statistics."""
     # create a temporary graph to prune, then turn it back into dataframes
     graph = create_graph(relationships, edge_attr=["weight"], nodes=entities)
+
     pruned = prune_graph_operation(
         graph,
         min_node_freq=pruning_config.min_node_freq,

@@ -33,22 +33,3 @@ async def test_create_final_documents():
 
     for column in DOCUMENTS_FINAL_COLUMNS:
         assert column in actual.columns
-
-
-async def test_create_final_documents_with_metadata_column():
-    context = await create_test_context(
-        storage=["text_units"],
-    )
-
-    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
-
-    expected = await load_table_from_storage("documents", context.output_storage)
-
-    await run_workflow(config, context)
-
-    actual = await load_table_from_storage("documents", context.output_storage)
-
-    compare_outputs(actual, expected)
-
-    for column in DOCUMENTS_FINAL_COLUMNS:
-        assert column in actual.columns

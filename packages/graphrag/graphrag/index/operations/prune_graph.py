@@ -50,7 +50,8 @@ def prune_graph(
     graph.remove_nodes_from([
         node
         for node, data in graph.nodes(data=True)
-        if data[schemas.NODE_FREQUENCY] < min_node_freq
+        if schemas.NODE_FREQUENCY not in data
+        or data[schemas.NODE_FREQUENCY] < min_node_freq
     ])
     if max_node_freq_std is not None:
         upper_threshold = _get_upper_threshold_by_std(
