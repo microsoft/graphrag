@@ -3,7 +3,6 @@
 
 """Parameterization settings for the default configuration."""
 
-from graphrag_storage import StorageConfig
 from pydantic import BaseModel, ConfigDict, Field
 
 from graphrag_input.input_type import InputType
@@ -15,10 +14,6 @@ class InputConfig(BaseModel):
     model_config = ConfigDict(extra="allow")
     """Allow extra fields to support custom reader implementations."""
 
-    storage: StorageConfig = Field(
-        description="The storage configuration to use for reading input documents.",
-        default_factory=lambda: StorageConfig(base_dir="input"),
-    )
     type: str = Field(
         description="The input file type to use.",
         default=InputType.Text,

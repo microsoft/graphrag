@@ -7,13 +7,14 @@ from graphrag_storage import StorageConfig, create_storage
 
 async def test_csv_loader_one_file():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-csv",
-        ),
         type=InputType.Csv,
         file_pattern=".*\\.csv$",
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-csv",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 2
@@ -27,13 +28,14 @@ async def test_csv_loader_one_file():
 
 async def test_csv_loader_one_file_with_title():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-csv",
-        ),
         type=InputType.Csv,
         title_column="title",
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-csv",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 2
@@ -42,12 +44,13 @@ async def test_csv_loader_one_file_with_title():
 
 async def test_csv_loader_multiple_files():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/multiple-csvs",
-        ),
         type=InputType.Csv,
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/multiple-csvs",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 4

@@ -31,7 +31,7 @@ class CSVFileReader(StructuredFileReader):
         -------
             - output - list with a TextDocument for each row in the file.
         """
-        file = await self._storage.get(path)
+        file = await self._storage.get(path, encoding=self._encoding)
 
         reader = csv.DictReader(file.splitlines())
         return await self.process_data_columns(list(reader), path)

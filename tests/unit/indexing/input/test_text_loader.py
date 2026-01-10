@@ -7,13 +7,14 @@ from graphrag_storage import StorageConfig, create_storage
 
 async def test_text_loader_one_file():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-txt",
-        ),
         type=InputType.Text,
         file_pattern=".*\\.txt$",
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-txt",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 1
@@ -23,13 +24,13 @@ async def test_text_loader_one_file():
 
 async def test_text_loader_multiple_files():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/multiple-txts",
-        ),
         type=InputType.Text,
-        file_pattern=".*\\.txt$",
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/multiple-txts",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 2

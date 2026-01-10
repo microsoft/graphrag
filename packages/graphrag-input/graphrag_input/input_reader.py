@@ -24,8 +24,8 @@ class InputReader(metaclass=ABCMeta):
     def __init__(
         self,
         storage: Storage,
+        file_pattern: str,
         encoding: str = "utf-8",
-        file_pattern: str | None = None,
         **kwargs,
     ):
         self._storage = storage

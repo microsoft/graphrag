@@ -35,7 +35,7 @@ async def run_pipeline(
     input_documents: pd.DataFrame | None = None,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
-    input_storage = create_storage(config.input.storage)
+    input_storage = create_storage(config.input_storage)
     output_storage = create_storage(config.output)
     cache = create_cache(config.cache)
 
@@ -49,7 +49,7 @@ async def run_pipeline(
     if is_update_run:
         logger.info("Running incremental indexing.")
 
-        update_storage = create_storage(config.update_index_output)
+        update_storage = create_storage(config.update_output_storage)
         # we use this to store the new subset index, and will merge its content with the previous index
         update_timestamp = time.strftime("%Y%m%d-%H%M%S")
         timestamped_storage = update_storage.child(update_timestamp)

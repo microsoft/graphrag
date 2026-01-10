@@ -143,7 +143,6 @@ def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
 
 
 def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
-    assert_storage_config(actual.storage, expected.storage)
     assert actual.type == expected.type
     assert actual.encoding == expected.encoding
     assert actual.file_pattern == expected.file_pattern
@@ -337,8 +336,8 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
     assert_vector_store_configs(actual.vector_store, expected.vector_store)
     assert_reporting_configs(actual.reporting, expected.reporting)
     assert_storage_config(actual.output, expected.output)
-
-    assert_storage_config(actual.update_index_output, expected.update_index_output)
+    assert_storage_config(actual.input_storage, expected.input_storage)
+    assert_storage_config(actual.update_output_storage, expected.update_output_storage)
 
     assert_cache_configs(actual.cache, expected.cache)
     assert_input_configs(actual.input, expected.input)

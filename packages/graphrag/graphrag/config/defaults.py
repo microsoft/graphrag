@@ -226,23 +226,22 @@ class StorageDefaults:
 
 
 @dataclass
-class InputStorageDefaults(StorageDefaults):
-    """Default values for input storage."""
-
-    base_dir: str | None = DEFAULT_INPUT_BASE_DIR
-
-
-@dataclass
 class InputDefaults:
     """Default values for input."""
 
-    storage: InputStorageDefaults = field(default_factory=InputStorageDefaults)
     type: ClassVar[InputType] = InputType.Text
     encoding: str | None = None
     file_pattern: None = None
     id_column: None = None
     title_column: None = None
     text_column: None = None
+
+
+@dataclass
+class InputStorageDefaults(StorageDefaults):
+    """Default values for input storage."""
+
+    base_dir: str | None = DEFAULT_INPUT_BASE_DIR
 
 
 @dataclass
@@ -311,7 +310,7 @@ class LocalSearchDefaults:
 
 
 @dataclass
-class OutputDefaults(StorageDefaults):
+class OutputStorageDefaults(StorageDefaults):
     """Default values for output."""
 
     base_dir: str | None = DEFAULT_OUTPUT_BASE_DIR
@@ -362,7 +361,7 @@ class SummarizeDescriptionsDefaults:
 
 
 @dataclass
-class UpdateIndexOutputDefaults(StorageDefaults):
+class UpdateOutputStorageDefaults(StorageDefaults):
     """Default values for update index output."""
 
     base_dir: str | None = DEFAULT_UPDATE_OUTPUT_BASE_DIR
@@ -389,13 +388,14 @@ class GraphRagConfigDefaults:
 
     models: dict = field(default_factory=dict)
     reporting: ReportingDefaults = field(default_factory=ReportingDefaults)
-    storage: StorageDefaults = field(default_factory=StorageDefaults)
-    output: OutputDefaults = field(default_factory=OutputDefaults)
-    update_index_output: UpdateIndexOutputDefaults = field(
-        default_factory=UpdateIndexOutputDefaults
+    input_storage: InputStorageDefaults = field(default_factory=InputStorageDefaults)
+    output_storage: OutputStorageDefaults = field(default_factory=OutputStorageDefaults)
+    update_output_storage: UpdateOutputStorageDefaults = field(
+        default_factory=UpdateOutputStorageDefaults
     )
     cache: CacheDefaults = field(default_factory=CacheDefaults)
     input: InputDefaults = field(default_factory=InputDefaults)
+
     embed_text: EmbedTextDefaults = field(default_factory=EmbedTextDefaults)
     chunking: ChunkingDefaults = field(default_factory=ChunkingDefaults)
     snapshots: SnapshotsDefaults = field(default_factory=SnapshotsDefaults)

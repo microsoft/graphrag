@@ -53,7 +53,7 @@ def get_update_storages(
 ) -> tuple[Storage, Storage, Storage]:
     """Get storage objects for the update index run."""
     output_storage = create_storage(config.output)
-    update_storage = create_storage(config.update_index_output)
+    update_storage = create_storage(config.update_output_storage)
     timestamped_storage = update_storage.child(timestamp)
     delta_storage = timestamped_storage.child("delta")
     previous_storage = timestamped_storage.child("previous")

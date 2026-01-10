@@ -7,13 +7,14 @@ from graphrag_storage import StorageConfig, create_storage
 
 async def test_json_loader_one_file_one_object():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-json-one-object",
-        ),
         type=InputType.Json,
         file_pattern=".*\\.json$",
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-json-one-object",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 1
@@ -26,12 +27,13 @@ async def test_json_loader_one_file_one_object():
 
 async def test_json_loader_one_file_multiple_objects():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-json-multiple-objects",
-        ),
         type=InputType.Json,
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-json-multiple-objects",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 3
@@ -41,13 +43,14 @@ async def test_json_loader_one_file_multiple_objects():
 
 async def test_json_loader_one_file_with_title():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-json-one-object",
-        ),
         type=InputType.Json,
         title_column="title",
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-json-one-object",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 1
@@ -56,12 +59,13 @@ async def test_json_loader_one_file_with_title():
 
 async def test_json_loader_multiple_files():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/multiple-jsons",
-        ),
         type=InputType.Json,
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/multiple-jsons",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 4

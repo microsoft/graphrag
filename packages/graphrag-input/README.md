@@ -25,12 +25,11 @@ from graphrag_input import create_input_reader, InputConfig, InputType
 from graphrag_storage import StorageConfig, create_storage
 
 config = InputConfig(
-    storage=StorageConfig(base_dir="./input"),
     type=InputType.Csv,
     text_column="content",
     title_column="title",
 )
-storage = create_storage(config.storage)
+storage = create_storage(StorageConfig(base_dir="./input"))
 reader = create_input_reader(config, storage)
 documents = await reader.read_files()
 ```
@@ -46,11 +45,10 @@ from graphrag_input import create_input_reader, InputConfig, InputType
 from graphrag_storage import StorageConfig, create_storage
 
 config = InputConfig(
-    storage=StorageConfig(base_dir="./input"),
     type=InputType.MarkitDown,
     file_pattern=".*\\.pdf$"
 )
-storage = create_storage(config.storage)
+storage = create_storage(StorageConfig(base_dir="./input"))
 reader = create_input_reader(config, storage)
 documents = await reader.read_files()
 ```
@@ -58,11 +56,11 @@ documents = await reader.read_files()
 YAML config example for above:
 ```yaml
 input:
-  storage:
-    type: file
-    base_dir: "input"
   type: markitdown
   file_pattern: ".*\\.pdf$$"
+input_storage:
+    type: file
+    base_dir: "input"
 ```
 
 Note that when specifying column names for data extraction, we can handle nested objects (e.g., in JSON) with dot notation:

@@ -7,13 +7,14 @@ from graphrag_storage import StorageConfig, create_storage
 
 async def test_jsonl_loader_one_file_multiple_objects():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-jsonl",
-        ),
         type=InputType.JsonLines,
         file_pattern=".*\\.jsonl$",
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-jsonl",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 3
@@ -27,13 +28,14 @@ async def test_jsonl_loader_one_file_multiple_objects():
 
 async def test_jsonl_loader_one_file_with_title():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-jsonl",
-        ),
         type=InputType.JsonLines,
         title_column="title",
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-jsonl",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 3

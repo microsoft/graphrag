@@ -106,14 +106,22 @@ class GraphRagConfig(BaseModel):
     )
     """The input configuration."""
 
+    input_storage: StorageConfig = Field(
+        description="The input storage configuration.",
+        default=StorageConfig(
+            base_dir=graphrag_config_defaults.input_storage.base_dir,
+        ),
+    )
+    """The input storage configuration."""
+
     def _validate_input_base_dir(self) -> None:
         """Validate the input base directory."""
-        if self.input.storage.type == StorageType.File:
-            if not self.input.storage.base_dir:
+        if self.input_storage.type == StorageType.File:
+            if not self.input_storage.base_dir:
                 msg = "input storage base directory is required for file input storage. Please rerun `graphrag init` and set the input storage configuration."
                 raise ValueError(msg)
-            self.input.storage.base_dir = str(
-                Path(self.input.storage.base_dir).resolve()
+            self.input_storage.base_dir = str(
+                Path(self.input_storage.base_dir).resolve()
             )
 
     chunking: ChunkingConfig = Field(
@@ -131,7 +139,7 @@ class GraphRagConfig(BaseModel):
     output: StorageConfig = Field(
         description="The output configuration.",
         default=StorageConfig(
-            base_dir=graphrag_config_defaults.output.base_dir,
+            base_dir=graphrag_config_defaults.output_storage.base_dir,
         ),
     )
     """The output configuration."""
@@ -144,22 +152,22 @@ class GraphRagConfig(BaseModel):
                 raise ValueError(msg)
             self.output.base_dir = str(Path(self.output.base_dir).resolve())
 
-    update_index_output: StorageConfig = Field(
+    update_output_storage: StorageConfig = Field(
         description="The output configuration for the updated index.",
         default=StorageConfig(
-            base_dir=graphrag_config_defaults.update_index_output.base_dir,
+            base_dir=graphrag_config_defaults.update_output_storage.base_dir,
         ),
     )
     """The output configuration for the updated index."""
 
-    def _validate_update_index_output_base_dir(self) -> None:
-        """Validate the update index output base directory."""
-        if self.update_index_output.type == StorageType.File:
-            if not self.update_index_output.base_dir:
-                msg = "update_index_output base directory is required for file output. Please rerun `graphrag init` and set the update_index_output configuration."
+    def _validate_update_output_storage_base_dir(self) -> None:
+        """Validate the update output base directory."""
+        if self.update_output_storage.type == StorageType.File:
+            if not self.update_output_storage.base_dir:
+                msg = "update_output_storage base directory is required for file output. Please rerun `graphrag init` and set the update_output_storage configuration."
                 raise ValueError(msg)
-            self.update_index_output.base_dir = str(
-                Path(self.update_index_output.base_dir).resolve()
+            self.update_output_storage.base_dir = str(
+                Path(self.update_output_storage.base_dir).resolve()
             )
 
     cache: CacheConfig = Field(
@@ -312,7 +320,7 @@ class GraphRagConfig(BaseModel):
         self._validate_input_base_dir()
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
-        self._validate_update_index_output_base_dir()
+        self._validate_update_output_storage_base_dir()
         self._validate_vector_store_db_uri()
         self._validate_factories()
         return self

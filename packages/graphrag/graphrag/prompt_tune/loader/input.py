@@ -63,7 +63,7 @@ async def load_docs_in_chunks(
     )
     tokenizer = get_tokenizer(embeddings_llm_settings)
     chunker = create_chunker(config.chunking, tokenizer.encode, tokenizer.decode)
-    input_storage = create_storage(config.input.storage)
+    input_storage = create_storage(config.input_storage)
     input_reader = create_input_reader(config.input, input_storage)
     dataset = await input_reader.read_files()
     chunks_df = create_base_text_units(

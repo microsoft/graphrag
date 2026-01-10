@@ -9,13 +9,14 @@ from graphrag_storage import StorageConfig, create_storage
 # and use html specifically because it requires no additional dependency installation
 async def test_markitdown_loader_one_file():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-html",
-        ),
         type=InputType.MarkItDown,
         file_pattern=".*\\.html$",
     )
-    storage = create_storage(config.storage)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-html",
+        )
+    )
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 1

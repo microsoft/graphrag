@@ -46,13 +46,10 @@ models:
     tokens_per_minute: null
     requests_per_minute: null
 
-### Input settings ###
+### Document processing settings ###
 
 input:
-  storage:
-    type: {graphrag_config_defaults.input.storage.type} # [file, blob, cosmosdb]
-    base_dir: "{graphrag_config_defaults.input.storage.base_dir}"
-  type: {graphrag_config_defaults.input.type.value} # [csv, text, json]
+  type: {graphrag_config_defaults.input.type.value} # [csv, text, json, jsonl]
 
 chunking:
   type: {graphrag_config_defaults.chunking.type}
@@ -60,24 +57,28 @@ chunking:
   overlap: {graphrag_config_defaults.chunking.overlap}
   encoding_model: {graphrag_config_defaults.chunking.encoding_model}
 
-### Output/storage settings ###
+### Storage settings ###
 ## If blob storage is specified in the following four sections,
 ## connection_string and container_name must be provided
 
-output:
-  type: {graphrag_config_defaults.output.type} # [file, blob, cosmosdb]
-  base_dir: "{graphrag_config_defaults.output.base_dir}"
+input_storage:
+    type: {graphrag_config_defaults.input_storage.type} # [file, blob, cosmosdb]
+    base_dir: "{graphrag_config_defaults.input_storage.base_dir}"
+
+output_storage:
+  type: {graphrag_config_defaults.output_storage.type} # [file, blob, cosmosdb]
+  base_dir: "{graphrag_config_defaults.output_storage.base_dir}"
+
+reporting:
+  type: {graphrag_config_defaults.reporting.type.value} # [file, blob]
+  base_dir: "{graphrag_config_defaults.reporting.base_dir}"
 
 cache:
   type: {graphrag_config_defaults.cache.type} # [json, memory, none]
   storage:
     type: {graphrag_config_defaults.cache.storage.type} # [file, blob, cosmosdb]
     base_dir: "{graphrag_config_defaults.cache.storage.base_dir}"
-
-reporting:
-  type: {graphrag_config_defaults.reporting.type.value} # [file, blob]
-  base_dir: "{graphrag_config_defaults.reporting.base_dir}"
-
+    
 vector_store:
   type: {vector_store_defaults.type}
   db_uri: {vector_store_defaults.db_uri}
