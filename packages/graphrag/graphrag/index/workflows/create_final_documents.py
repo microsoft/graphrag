@@ -67,4 +67,7 @@ def create_final_documents(
     rejoined["id"] = rejoined["id"].astype(str)
     rejoined["human_readable_id"] = rejoined.index
 
+    if "raw_data" not in rejoined.columns:
+        rejoined["raw_data"] = pd.Series(dtype="object")
+
     return rejoined.loc[:, DOCUMENTS_FINAL_COLUMNS]
