@@ -34,4 +34,6 @@ class CSVFileReader(StructuredFileReader):
         file = await self._storage.get(path, encoding=self._encoding)
 
         reader = csv.DictReader(file.splitlines())
-        return await self.process_data_columns(list(reader), path)
+        rows = list(reader)
+        print(rows)
+        return await self.process_data_columns(rows, path)

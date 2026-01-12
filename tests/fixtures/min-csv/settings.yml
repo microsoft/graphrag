@@ -36,6 +36,7 @@ vector_store:
 
 input:
   type: csv
+  encoding: utf-8-sig
 
 snapshots:
   embeddings: true
