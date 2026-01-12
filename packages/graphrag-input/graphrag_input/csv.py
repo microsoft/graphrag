@@ -35,5 +35,4 @@ class CSVFileReader(StructuredFileReader):
 
         reader = csv.DictReader(file.splitlines())
         rows = list(reader)
-        print(rows)
         return await self.process_data_columns(rows, path)
