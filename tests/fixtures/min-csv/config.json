@@ -73,7 +73,7 @@
                 15
             ],
             "nan_allowed_columns": [
-                "metadata"
+                "raw_data"
             ],
             "max_runtime": 30,
             "expected_artifacts": ["documents.parquet"]
