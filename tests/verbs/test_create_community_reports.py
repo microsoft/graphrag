@@ -4,15 +4,14 @@
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.schemas import COMMUNITY_REPORTS_FINAL_COLUMNS
-from graphrag.index.workflows.create_community_reports import (
-    run_workflow,
-)
-from graphrag.utils.storage import load_table_from_storage
-
 from graphrag.index.operations.summarize_communities.community_reports_extractor import (
     CommunityReportResponse,
     FindingModel,
 )
+from graphrag.index.workflows.create_community_reports import (
+    run_workflow,
+)
+from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
     DEFAULT_MODEL_CONFIG,

@@ -3,14 +3,14 @@
 
 """A module containing run_workflow method definition."""
 
-import json
 import logging
 from typing import Any, cast
 
 import pandas as pd
-from graphrag_chunking.add_metadata import add_metadata
 from graphrag_chunking.chunker import Chunker
 from graphrag_chunking.chunker_factory import create_chunker
+from graphrag_chunking.transformers import add_metadata
+from graphrag_input import TextDocument
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -54,7 +54,7 @@ def create_base_text_units(
     callbacks: WorkflowCallbacks,
     tokenizer: Tokenizer,
     chunker: Chunker,
-    prepend_metadata: bool | None = False,
+    prepend_metadata: list[str] | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     documents.sort_values(by=["id"], ascending=[True], inplace=True)
@@ -66,15 +66,27 @@ def create_base_text_units(
     logger.info("Starting chunking process for %d documents", total_rows)
 
     def chunker_with_logging(row: pd.Series, row_index: int) -> Any:
-        row["chunks"] = [chunk.text for chunk in chunker.chunk(row["text"])]
+        if prepend_metadata:
+            # create a standard text document for metadata plucking
+            # ignore any additional fields in case the input dataframe has extra columns
+            document = TextDocument(
+                id=row["id"],
+                title=row["title"],
+                text=row["text"],
+                creation_date=row["creation_date"],
+                raw_data=row["raw_data"],
+            )
+            metadata = document.collect(prepend_metadata)
+            transformer = add_metadata(
+                metadata=metadata, line_delimiter=".\n"
+            )  # delim with . for back-compat older indexes
+        else:
+            transformer = None
 
-        metadata = row.get("metadata", None)
-        if prepend_metadata and metadata is not None:
-            metadata = json.loads(metadata) if isinstance(metadata, str) else metadata
-            row["chunks"] = [
-                add_metadata(chunk, metadata, line_delimiter=".\n")
-                for chunk in row["chunks"]
-            ]
+        row["chunks"] = [
+            chunk.text for chunk in chunker.chunk(row["text"], transform=transformer)
+        ]
+
         tick()
         logger.info("chunker progress:  %d/%d", row_index + 1, total_rows)
         return row

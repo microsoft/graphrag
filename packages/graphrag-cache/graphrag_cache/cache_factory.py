@@ -26,7 +26,7 @@ def register_cache(
     cache_initializer: Callable[..., Cache],
     scope: ServiceScope = "transient",
 ) -> None:
-    """Register a custom storage implementation.
+    """Register a custom cache implementation.
 
     Args
     ----

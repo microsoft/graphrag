@@ -9,12 +9,12 @@ from pathlib import Path
 from devtools import pformat
 from graphrag_cache import CacheConfig
 from graphrag_chunking.chunking_config import ChunkingConfig
+from graphrag_input import InputConfig
 from graphrag_storage import StorageConfig, StorageType
 from pydantic import BaseModel, Field, model_validator
 
-import graphrag.config.defaults as defs
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import VectorStoreType
+from graphrag.config.enums import ReportingType, VectorStoreType
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
@@ -24,7 +24,6 @@ from graphrag.config.models.extract_claims_config import ExtractClaimsConfig
 from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.global_search_config import GlobalSearchConfig
-from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
@@ -107,22 +106,22 @@ class GraphRagConfig(BaseModel):
     )
     """The input configuration."""
 
-    def _validate_input_pattern(self) -> None:
-        """Validate the input file pattern based on the specified type."""
-        if len(self.input.file_pattern) == 0:
-            if self.input.file_type == defs.InputFileType.text:
-                self.input.file_pattern = ".*\\.txt$"
-            else:
-                self.input.file_pattern = f".*\\.{self.input.file_type.value}$"
+    input_storage: StorageConfig = Field(
+        description="The input storage configuration.",
+        default=StorageConfig(
+            base_dir=graphrag_config_defaults.input_storage.base_dir,
+        ),
+    )
+    """The input storage configuration."""
 
     def _validate_input_base_dir(self) -> None:
         """Validate the input base directory."""
-        if self.input.storage.type == StorageType.File:
-            if not self.input.storage.base_dir:
+        if self.input_storage.type == StorageType.File:
+            if not self.input_storage.base_dir:
                 msg = "input storage base directory is required for file input storage. Please rerun `graphrag init` and set the input storage configuration."
                 raise ValueError(msg)
-            self.input.storage.base_dir = str(
-                Path(self.input.storage.base_dir).resolve()
+            self.input_storage.base_dir = str(
+                Path(self.input_storage.base_dir).resolve()
             )
 
     chunking: ChunkingConfig = Field(
@@ -140,7 +139,7 @@ class GraphRagConfig(BaseModel):
     output: StorageConfig = Field(
         description="The output configuration.",
         default=StorageConfig(
-            base_dir=graphrag_config_defaults.output.base_dir,
+            base_dir=graphrag_config_defaults.output_storage.base_dir,
         ),
     )
     """The output configuration."""
@@ -153,22 +152,22 @@ class GraphRagConfig(BaseModel):
                 raise ValueError(msg)
             self.output.base_dir = str(Path(self.output.base_dir).resolve())
 
-    update_index_output: StorageConfig = Field(
+    update_output_storage: StorageConfig = Field(
         description="The output configuration for the updated index.",
         default=StorageConfig(
-            base_dir=graphrag_config_defaults.update_index_output.base_dir,
+            base_dir=graphrag_config_defaults.update_output_storage.base_dir,
         ),
     )
     """The output configuration for the updated index."""
 
-    def _validate_update_index_output_base_dir(self) -> None:
-        """Validate the update index output base directory."""
-        if self.update_index_output.type == StorageType.File:
-            if not self.update_index_output.base_dir:
-                msg = "update_index_output base directory is required for file output. Please rerun `graphrag init` and set the update_index_output configuration."
+    def _validate_update_output_storage_base_dir(self) -> None:
+        """Validate the update output base directory."""
+        if self.update_output_storage.type == StorageType.File:
+            if not self.update_output_storage.base_dir:
+                msg = "update_output_storage base directory is required for file output. Please rerun `graphrag init` and set the update_output_storage configuration."
                 raise ValueError(msg)
-            self.update_index_output.base_dir = str(
-                Path(self.update_index_output.base_dir).resolve()
+            self.update_output_storage.base_dir = str(
+                Path(self.update_output_storage.base_dir).resolve()
             )
 
     cache: CacheConfig = Field(
@@ -184,7 +183,7 @@ class GraphRagConfig(BaseModel):
 
     def _validate_reporting_base_dir(self) -> None:
         """Validate the reporting base directory."""
-        if self.reporting.type == defs.ReportingType.file:
+        if self.reporting.type == ReportingType.file:
             if self.reporting.base_dir.strip() == "":
                 msg = "Reporting base directory is required for file reporting. Please rerun `graphrag init` and set the reporting configuration."
                 raise ValueError(msg)
@@ -318,11 +317,10 @@ class GraphRagConfig(BaseModel):
     @model_validator(mode="after")
     def _validate_model(self):
         """Validate the model configuration."""
-        self._validate_input_pattern()
         self._validate_input_base_dir()
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
-        self._validate_update_index_output_base_dir()
+        self._validate_update_output_storage_base_dir()
         self._validate_vector_store_db_uri()
         self._validate_factories()
         return self

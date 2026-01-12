@@ -10,11 +10,11 @@ import numpy as np
 import pandas as pd
 from graphrag_cache.noop_cache import NoopCache
 from graphrag_chunking.chunker_factory import create_chunker
+from graphrag_input import create_input_reader
 from graphrag_storage import create_storage
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.input.factory import InputReaderFactory
 from graphrag.index.operations.embed_text.run_embed_text import (
     run_embed_text,
 )
@@ -63,14 +63,11 @@ async def load_docs_in_chunks(
     )
     tokenizer = get_tokenizer(embeddings_llm_settings)
     chunker = create_chunker(config.chunking, tokenizer.encode, tokenizer.decode)
-    input_storage = create_storage(config.input.storage)
-    input_reader = InputReaderFactory().create(
-        config.input.file_type,
-        {"storage": input_storage, "config": config.input},
-    )
+    input_storage = create_storage(config.input_storage)
+    input_reader = create_input_reader(config.input, input_storage)
     dataset = await input_reader.read_files()
     chunks_df = create_base_text_units(
-        documents=dataset,
+        documents=pd.DataFrame(dataset),
         callbacks=NoopWorkflowCallbacks(),
         tokenizer=tokenizer,
         chunker=chunker,

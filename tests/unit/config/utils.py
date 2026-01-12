@@ -17,7 +17,6 @@ from graphrag.config.models.extract_graph_nlp_config import (
 )
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
@@ -29,6 +28,7 @@ from graphrag.config.models.summarize_descriptions_config import (
 from graphrag.config.models.vector_store_config import VectorStoreConfig
 from graphrag_cache import CacheConfig
 from graphrag_chunking.chunking_config import ChunkingConfig
+from graphrag_input import InputConfig
 from graphrag_storage import StorageConfig
 from pydantic import BaseModel
 
@@ -143,13 +143,11 @@ def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
 
 
 def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
-    assert_storage_config(actual.storage, expected.storage)
-    assert actual.file_type == expected.file_type
+    assert actual.type == expected.type
     assert actual.encoding == expected.encoding
     assert actual.file_pattern == expected.file_pattern
     assert actual.text_column == expected.text_column
     assert actual.title_column == expected.title_column
-    assert actual.metadata == expected.metadata
 
 
 def assert_text_embedding_configs(
@@ -338,8 +336,8 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
     assert_vector_store_configs(actual.vector_store, expected.vector_store)
     assert_reporting_configs(actual.reporting, expected.reporting)
     assert_storage_config(actual.output, expected.output)
-
-    assert_storage_config(actual.update_index_output, expected.update_index_output)
+    assert_storage_config(actual.input_storage, expected.input_storage)
+    assert_storage_config(actual.update_output_storage, expected.update_output_storage)
 
     assert_cache_configs(actual.cache, expected.cache)
     assert_input_configs(actual.input, expected.input)

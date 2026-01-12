@@ -14,7 +14,7 @@ input:
     connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
     container_name: azurefixture
     base_dir: input
-  file_type: text
+  type: text
   
 
 cache:

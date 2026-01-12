@@ -63,7 +63,7 @@ def initialize_project_at(
         raise ValueError(msg)
 
     input_path = (
-        root / (graphrag_config_defaults.input.storage.base_dir or "input")
+        root / (graphrag_config_defaults.input_storage.base_dir or "input")
     ).resolve()
     input_path.mkdir(parents=True, exist_ok=True)
     # using replace with custom tokens instead of format here because we have a placeholder for GRAPHRAG_API_KEY that is used later for .env overlay

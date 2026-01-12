@@ -1,6 +1,6 @@
 {
     "input_path": "./tests/fixtures/text",
-    "input_file_type": "text",
+    "input_type": "text",
     "index_method": "fast",
     "workflow_config": {
         "load_input_documents": {
@@ -72,7 +72,7 @@
                 1
             ],
             "nan_allowed_columns": [
-                "metadata"
+                "raw_data"
             ],
             "max_runtime": 30,
             "expected_artifacts": ["documents.parquet"]

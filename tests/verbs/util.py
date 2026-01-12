@@ -5,7 +5,7 @@ import graphrag.config.defaults as defs
 import pandas as pd
 from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+from graphrag.utils.storage import write_table_to_storage
 from pandas.testing import assert_series_equal
 
 pd.set_option("display.max_columns", None)
@@ -87,12 +87,3 @@ def compare_outputs(
             print("Actual:")
             print(actual[column])
             raise
-
-
-async def update_document_metadata(metadata: list[str], context: PipelineRunContext):
-    """Takes the default documents and adds the configured metadata columns for later parsing by the text units and final documents workflows."""
-    documents = await load_table_from_storage("documents", context.output_storage)
-    documents["metadata"] = documents[metadata].apply(lambda row: row.to_dict(), axis=1)
-    await write_table_to_storage(
-        documents, "documents", context.output_storage
-    )  # write to the runtime context storage only

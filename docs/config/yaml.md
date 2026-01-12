@@ -87,9 +87,9 @@ Our pipeline can ingest .csv, .txt, or .json data from an input location. See th
   - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
   - `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
   - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
-- `file_type` **text|csv|json** - The type of input data to load. Default is `text`
+- `type` **text|csv|json** - The type of input data to load. Default is `text`
 - `encoding` **str** - The encoding of the input file. Default is `utf-8`
-- `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$`, `.*\.txt$`, or `.*\.json$` depending on the specified `file_type`, but you can customize it if needed.
+- `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$`, `.*\.txt$`, or `.*\.json$` depending on the specified `type`, but you can customize it if needed.
 - `text_column` **str** - (CSV/JSON only) The text column name. If unset we expect a column named `text`.
 - `title_column` **str** - (CSV/JSON only) The title column name, filename will be used if unset.
 - `metadata` **list[str]** - (CSV/JSON only) The additional document attributes fields to keep.

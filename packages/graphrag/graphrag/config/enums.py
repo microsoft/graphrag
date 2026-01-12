@@ -8,57 +8,6 @@ from __future__ import annotations
 from enum import Enum
 
 
-class CacheType(str, Enum):
-    """The cache configuration type for the pipeline."""
-
-    file = "file"
-    """The file cache configuration type."""
-    memory = "memory"
-    """The memory cache configuration type."""
-    none = "none"
-    """The none cache configuration type."""
-    blob = "blob"
-    """The blob cache configuration type."""
-    cosmosdb = "cosmosdb"
-    """The cosmosdb cache configuration type"""
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
-class InputFileType(str, Enum):
-    """The input file type for the pipeline."""
-
-    csv = "csv"
-    """The CSV input type."""
-    text = "text"
-    """The text input type."""
-    json = "json"
-    """The JSON input type."""
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
-class StorageType(str, Enum):
-    """The output type for the pipeline."""
-
-    file = "file"
-    """The file output type."""
-    memory = "memory"
-    """The memory output type."""
-    blob = "blob"
-    """The blob output type."""
-    cosmosdb = "cosmosdb"
-    """The cosmosdb output type"""
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
 class VectorStoreType(str, Enum):
     """The supported vector store types."""
 

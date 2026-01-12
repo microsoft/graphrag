@@ -9,9 +9,11 @@ import sys
 import warnings
 from pathlib import Path
 
+from graphrag_cache.cache_type import CacheType
+
 import graphrag.api as api
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
-from graphrag.config.enums import CacheType, IndexingMethod
+from graphrag.config.enums import IndexingMethod
 from graphrag.config.load_config import load_config
 from graphrag.index.validate_config import validate_config_names
 from graphrag.utils.cli import redact
@@ -102,7 +104,7 @@ def _run_index(
     )
 
     if not cache:
-        config.cache.type = CacheType.none
+        config.cache.type = CacheType.Noop
 
     if not skip_validation:
         validate_config_names(config)

@@ -64,7 +64,7 @@ TEXT = "text"
 N_TOKENS = "n_tokens"
 
 CREATION_DATE = "creation_date"
-METADATA = "metadata"
+RAW_DATA = "raw_data"
 
 # the following lists define the final content and ordering of columns in the data model parquet outputs
 ENTITIES_FINAL_COLUMNS = [
@@ -155,5 +155,5 @@ DOCUMENTS_FINAL_COLUMNS = [
     TEXT,
     TEXT_UNIT_IDS,
     CREATION_DATE,
-    METADATA,
+    RAW_DATA,
 ]
