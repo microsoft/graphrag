@@ -84,12 +84,7 @@ class LanceDBVectorStore(BaseVectorStore):
             })
 
             if data:
-                self.document_collection = self.db_connection.create_table(
-                    self.index_name if self.index_name else "",
-                    data=data,
-                    mode="overwrite",
-                    schema=data.schema,
-                )
+                self.document_collection.add(data)
 
     def similarity_search_by_vector(
         self, query_embedding: list[float] | np.ndarray, k: int = 10

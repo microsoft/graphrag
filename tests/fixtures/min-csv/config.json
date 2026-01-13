@@ -98,7 +98,7 @@
         },
         {
             "query": "What is the major conflict in this story and who are the protagonist and antagonist?",
-            "method": "global"
+            "method": "drift"
         }
     ],
     "slow": false

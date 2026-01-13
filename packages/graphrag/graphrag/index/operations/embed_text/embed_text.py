@@ -28,17 +28,10 @@ async def embed_text(
     num_threads: int,
     vector_store: BaseVectorStore,
     id_column: str = "id",
-    title_column: str | None = None,
 ):
     """Embed a piece of text into a vector space. The operation outputs a new column containing a mapping between doc_id and vector."""
     if embed_column not in input.columns:
         msg = f"Column {embed_column} not found in input dataframe with columns {input.columns}"
-        raise ValueError(msg)
-    title = title_column or embed_column
-    if title not in input.columns:
-        msg = (
-            f"Column {title} not found in input dataframe with columns {input.columns}"
-        )
         raise ValueError(msg)
     if id_column not in input.columns:
         msg = f"Column {id_column} not found in input dataframe with columns {input.columns}"

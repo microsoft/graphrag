@@ -156,14 +156,10 @@ class CosmosDBVectorStore(BaseVectorStore):
         # Upload documents to CosmosDB
         for doc in documents:
             if doc.vector is not None:
-                print("Document to store:")  # noqa: T201
-                print(doc)  # noqa: T201
                 doc_json = {
                     self.id_field: doc.id,
                     self.vector_field: doc.vector,
                 }
-                print("Storing document in CosmosDB:")  # noqa: T201
-                print(doc_json)  # noqa: T201
                 self._container_client.upsert_item(doc_json)
 
     def similarity_search_by_vector(
