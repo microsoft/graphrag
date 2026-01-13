@@ -86,7 +86,6 @@ class LanceDBVectorStore(BaseVectorStore):
             if data:
                 self.document_collection.add(data)
 
-
     def similarity_search_by_vector(
         self, query_embedding: list[float] | np.ndarray, k: int = 10
     ) -> list[VectorStoreSearchResult]:

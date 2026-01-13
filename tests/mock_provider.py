@@ -100,25 +100,22 @@ class MockEmbeddingLLM:
         self.config = LanguageModelConfig(
             type=ModelType.MockEmbedding, model="text-embedding-3-large", api_key="mock"
         )
+        self.vectors = 3072 * [1.0]
 
     def embed_batch(self, text_list: list[str], **kwargs: Any) -> list[list[float]]:
         """Generate an embedding for the input text."""
-        if isinstance(text_list, str):
-            return [[1.0, 1.0, 1.0]]
-        return [[1.0, 1.0, 1.0] for _ in text_list]
+        return [self.vectors for _ in text_list]
 
     def embed(self, text: str, **kwargs: Any) -> list[float]:
         """Generate an embedding for the input text."""
-        return [1.0, 1.0, 1.0]
+        return self.vectors
 
     async def aembed(self, text: str, **kwargs: Any) -> list[float]:
         """Generate an embedding for the input text."""
-        return [1.0, 1.0, 1.0]
+        return self.vectors
 
     async def aembed_batch(
         self, text_list: list[str], **kwargs: Any
     ) -> list[list[float]]:
         """Generate an embedding for the input text."""
-        if isinstance(text_list, str):
-            return [[1.0, 1.0, 1.0]]
-        return [[1.0, 1.0, 1.0] for _ in text_list]
+        return [self.vectors for _ in text_list]
