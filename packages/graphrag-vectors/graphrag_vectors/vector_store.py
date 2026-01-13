@@ -7,8 +7,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
-from graphrag.data_model.types import TextEmbedder
+from graphrag_vectors.types import TextEmbedder
 
 
 @dataclass
@@ -32,29 +31,24 @@ class VectorStoreSearchResult:
     """Similarity score between -1 and 1. Higher is more similar."""
 
 
-class BaseVectorStore(ABC):
+class VectorStore(ABC):
     """The base class for vector storage data-access classes."""
 
     def __init__(
         self,
-        vector_store_schema_config: VectorStoreSchemaConfig,
-        db_connection: Any | None = None,
-        document_collection: Any | None = None,
-        query_filter: Any | None = None,
+        index_name: str,
+        id_field: str = "id",
+        vector_field: str = "vector",
+        vector_size: int = 3072,
         **kwargs: Any,
     ):
-        self.db_connection = db_connection
-        self.document_collection = document_collection
-        self.query_filter = query_filter
-        self.kwargs = kwargs
-
-        self.index_name = vector_store_schema_config.index_name
-        self.id_field = vector_store_schema_config.id_field
-        self.vector_field = vector_store_schema_config.vector_field
-        self.vector_size = vector_store_schema_config.vector_size
+        self.index_name = index_name
+        self.id_field = id_field
+        self.vector_field = vector_field
+        self.vector_size = vector_size
 
     @abstractmethod
-    def connect(self, **kwargs: Any) -> None:
+    def connect(self) -> None:
         """Connect to vector storage."""
 
     @abstractmethod

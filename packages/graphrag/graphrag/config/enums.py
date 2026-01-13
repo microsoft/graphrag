@@ -8,14 +8,6 @@ from __future__ import annotations
 from enum import Enum
 
 
-class VectorStoreType(str, Enum):
-    """The supported vector store types."""
-
-    LanceDB = "lancedb"
-    AzureAISearch = "azure_ai_search"
-    CosmosDB = "cosmosdb"
-
-
 class ReportingType(str, Enum):
     """The reporting configuration type for the pipeline."""
 

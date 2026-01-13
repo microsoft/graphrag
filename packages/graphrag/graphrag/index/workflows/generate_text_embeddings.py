@@ -6,6 +6,12 @@
 import logging
 
 import pandas as pd
+from graphrag_vectors import (
+    IndexSchema,
+    VectorStore,
+    VectorStoreConfig,
+    create_vector_store,
+)
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.embeddings import (
@@ -15,8 +21,6 @@ from graphrag.config.embeddings import (
     text_unit_text_embedding,
 )
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.models.vector_store_config import VectorStoreConfig
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -28,8 +32,6 @@ from graphrag.utils.storage import (
     load_table_from_storage,
     write_table_to_storage,
 )
-from graphrag.vector_stores.base import BaseVectorStore
-from graphrag.vector_stores.factory import VectorStoreFactory
 
 logger = logging.getLogger(__name__)
 
@@ -184,22 +186,16 @@ async def _run_embeddings(
 def _create_vector_store(
     vector_store_config: VectorStoreConfig,
     index_name: str,
-    embedding_name: str | None = None,
-) -> BaseVectorStore:
-    embeddings_schema: dict[str, VectorStoreSchemaConfig] = (
-        vector_store_config.embeddings_schema
-    )
+    embedding_name: str,
+) -> VectorStore:
+    schema: dict[str, IndexSchema] = vector_store_config.index_schema
 
-    single_embedding_config: VectorStoreSchemaConfig = VectorStoreSchemaConfig()
+    single_embedding_config: IndexSchema = IndexSchema()
 
-    if (
-        embeddings_schema is not None
-        and embedding_name is not None
-        and embedding_name in embeddings_schema
-    ):
-        raw_config = embeddings_schema[embedding_name]
+    if schema is not None and embedding_name is not None and embedding_name in schema:
+        raw_config = schema[embedding_name]
         if isinstance(raw_config, dict):
-            single_embedding_config = VectorStoreSchemaConfig(**raw_config)
+            single_embedding_config = IndexSchema(**raw_config)
         else:
             single_embedding_config = raw_config
 
@@ -214,14 +210,11 @@ def _create_vector_store(
     if single_embedding_config.index_name is None:
         single_embedding_config.index_name = index_name
 
-    args = vector_store_config.model_dump()
-    args["vector_store_schema_config"] = single_embedding_config
-    vector_store = VectorStoreFactory().create(
-        vector_store_config.type,
-        args,
+    vector_store = create_vector_store(
+        vector_store_config, index_schema=single_embedding_config
     )
 
-    vector_store.connect(**args)
+    vector_store.connect()
     return vector_store
 
 

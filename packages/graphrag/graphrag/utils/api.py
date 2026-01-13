@@ -4,48 +4,39 @@
 """API functions for the GraphRAG module."""
 
 from pathlib import Path
-from typing import Any
+
+from graphrag_vectors import (
+    IndexSchema,
+    VectorStore,
+    VectorStoreConfig,
+    create_vector_store,
+)
 
 from graphrag.config.embeddings import create_index_name
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
-from graphrag.vector_stores.base import (
-    BaseVectorStore,
-)
-from graphrag.vector_stores.factory import VectorStoreFactory
 
 
 def get_embedding_store(
-    store: dict[str, Any],
+    config: VectorStoreConfig,
     embedding_name: str,
-) -> BaseVectorStore:
+) -> VectorStore:
     """Get the embedding description store."""
-    vector_store_type = store["type"]
-    index_name = create_index_name(store.get("index_prefix", ""), embedding_name)
+    index_name = create_index_name(config.index_prefix, embedding_name)
 
-    embeddings_schema: dict[str, VectorStoreSchemaConfig] = store.get(
-        "embeddings_schema", {}
-    )
-    embedding_config: VectorStoreSchemaConfig = VectorStoreSchemaConfig()
+    schema: dict[str, IndexSchema] = config.index_schema or {}
+    embedding_config: IndexSchema = IndexSchema()
 
-    if (
-        embeddings_schema is not None
-        and embedding_name is not None
-        and embedding_name in embeddings_schema
-    ):
-        raw_config = embeddings_schema[embedding_name]
+    if schema is not None and embedding_name is not None and embedding_name in schema:
+        raw_config = schema[embedding_name]
         if isinstance(raw_config, dict):
-            embedding_config = VectorStoreSchemaConfig(**raw_config)
+            embedding_config = IndexSchema(**raw_config)
         else:
             embedding_config = raw_config
 
     if embedding_config.index_name is None:
         embedding_config.index_name = index_name
 
-    embedding_store = VectorStoreFactory().create(
-        vector_store_type,
-        {**store, "vector_store_schema_config": embedding_config},
-    )
-    embedding_store.connect(**store)
+    embedding_store = create_vector_store(config, embedding_config)
+    embedding_store.connect()
 
     return embedding_store
 

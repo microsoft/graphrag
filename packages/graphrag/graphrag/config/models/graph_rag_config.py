@@ -11,10 +11,11 @@ from graphrag_cache import CacheConfig
 from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_input import InputConfig
 from graphrag_storage import StorageConfig, StorageType
+from graphrag_vectors import VectorStoreConfig, VectorStoreType
 from pydantic import BaseModel, Field, model_validator
 
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import ReportingType, VectorStoreType
+from graphrag.config.enums import ReportingType
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
@@ -32,7 +33,6 @@ from graphrag.config.models.snapshots_config import SnapshotsConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
-from graphrag.config.models.vector_store_config import VectorStoreConfig
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter_factory import (
     RateLimiterFactory,
 )
@@ -281,8 +281,7 @@ class GraphRagConfig(BaseModel):
         store = self.vector_store
         if store.type == VectorStoreType.LanceDB:
             if not store.db_uri or store.db_uri.strip == "":
-                msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
-                raise ValueError(msg)
+                store.db_uri = graphrag_config_defaults.vector_store.db_uri
             store.db_uri = str(Path(store.db_uri).resolve())
 
     def _validate_factories(self) -> None:

@@ -3,26 +3,23 @@
 
 from typing import Any
 
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.data_model.entity import Entity
-from graphrag.data_model.types import TextEmbedder
 from graphrag.language_model.manager import ModelManager
 from graphrag.query.context_builder.entity_extraction import (
     EntityVectorStoreKey,
     map_query_to_entities,
 )
-from graphrag.vector_stores.base import (
-    BaseVectorStore,
+from graphrag_vectors import (
+    TextEmbedder,
+    VectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
 )
 
 
-class MockBaseVectorStore(BaseVectorStore):
+class MockVectorStore(VectorStore):
     def __init__(self, documents: list[VectorStoreDocument]) -> None:
-        super().__init__(
-            vector_store_schema_config=VectorStoreSchemaConfig(index_name="mock")
-        )
+        super().__init__(index_name="mock")
         self.documents = documents
 
     def connect(self, **kwargs: Any) -> None:
@@ -92,7 +89,7 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="t22",
-        text_embedding_vectorstore=MockBaseVectorStore([
+        text_embedding_vectorstore=MockVectorStore([
             VectorStoreDocument(id=entity.title, vector=None) for entity in entities
         ]),
         text_embedder=ModelManager().get_or_create_embedding_model(
@@ -113,7 +110,7 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="",
-        text_embedding_vectorstore=MockBaseVectorStore([
+        text_embedding_vectorstore=MockVectorStore([
             VectorStoreDocument(id=entity.id, vector=None) for entity in entities
         ]),
         text_embedder=ModelManager().get_or_create_embedding_model(

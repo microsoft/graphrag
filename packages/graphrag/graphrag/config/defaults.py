@@ -11,6 +11,7 @@ from graphrag_cache import CacheType
 from graphrag_chunking.chunk_strategy_type import ChunkerType
 from graphrag_input import InputType
 from graphrag_storage import StorageType
+from graphrag_vectors import VectorStoreType
 
 from graphrag.config.embeddings import default_embeddings
 from graphrag.config.enums import (
@@ -19,7 +20,6 @@ from graphrag.config.enums import (
     ModelType,
     NounPhraseExtractorType,
     ReportingType,
-    VectorStoreType,
 )
 from graphrag.index.operations.build_noun_graph.np_extractors.stop_words import (
     EN_STOP_WORDS,
@@ -373,8 +373,7 @@ class VectorStoreDefaults:
 
     type: ClassVar[str] = VectorStoreType.LanceDB.value
     db_uri: str = str(Path(DEFAULT_OUTPUT_BASE_DIR) / "lancedb")
-    overwrite: bool = True
-    index_prefix: str = ""
+    index_prefix: None = None
     url: None = None
     api_key: None = None
     audience: None = None

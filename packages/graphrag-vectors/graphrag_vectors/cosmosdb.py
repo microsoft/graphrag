@@ -10,40 +10,50 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
 
-from graphrag.data_model.types import TextEmbedder
-from graphrag.vector_stores.base import (
-    BaseVectorStore,
+from graphrag_vectors.types import TextEmbedder
+from graphrag_vectors.vector_store import (
+    VectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
 )
 
 
-class CosmosDBVectorStore(BaseVectorStore):
+class CosmosDBVectorStore(VectorStore):
     """Azure CosmosDB vector storage implementation."""
 
     _cosmos_client: CosmosClient
     _database_client: DatabaseProxy
     _container_client: ContainerProxy
 
-    def connect(self, **kwargs: Any) -> Any:
+    def __init__(
+        self,
+        database_name: str,
+        connection_string: str | None = None,
+        url: str | None = None,
+        **kwargs,
+    ):
+        self.database_name = database_name
+        self.connection_string = connection_string
+        self.url = url
+        super().__init__(**kwargs)
+
+    def connect(self) -> Any:
         """Connect to CosmosDB vector storage."""
-        connection_string = kwargs.get("connection_string")
-        if connection_string:
-            self._cosmos_client = CosmosClient.from_connection_string(connection_string)
+        if self.connection_string:
+            self._cosmos_client = CosmosClient.from_connection_string(
+                self.connection_string
+            )
         else:
-            url = kwargs.get("url")
-            if not url:
+            if not self.url:
                 msg = "Either connection_string or url must be provided."
                 raise ValueError(msg)
             self._cosmos_client = CosmosClient(
-                url=url, credential=DefaultAzureCredential()
+                url=self.url, credential=DefaultAzureCredential()
             )
 
-        database_name = kwargs.get("database_name")
-        if database_name is None:
+        if self.database_name is None:
             msg = "Database name must be provided."
             raise ValueError(msg)
-        self._database_name = database_name
         if self.index_name is None:
             msg = "Index name is empty or not provided."
             raise ValueError(msg)
@@ -55,22 +65,22 @@ class CosmosDBVectorStore(BaseVectorStore):
 
     def _create_database(self) -> None:
         """Create the database if it doesn't exist."""
-        self._cosmos_client.create_database_if_not_exists(id=self._database_name)
+        self._cosmos_client.create_database_if_not_exists(id=self.database_name)
         self._database_client = self._cosmos_client.get_database_client(
-            self._database_name
+            self.database_name
         )
 
     def _delete_database(self) -> None:
         """Delete the database if it exists."""
         if self._database_exists():
-            self._cosmos_client.delete_database(self._database_name)
+            self._cosmos_client.delete_database(self.database_name)
 
     def _database_exists(self) -> bool:
         """Check if the database exists."""
         existing_database_names = [
             database["id"] for database in self._cosmos_client.list_databases()
         ]
-        return self._database_name in existing_database_names
+        return self.database_name in existing_database_names
 
     def _create_container(self) -> None:
         """Create the container if it doesn't exist."""

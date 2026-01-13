@@ -7,6 +7,7 @@ from copy import deepcopy
 from typing import Any
 
 import pandas as pd
+from graphrag_vectors import VectorStore
 
 from graphrag.data_model.community_report import CommunityReport
 from graphrag.data_model.covariate import Covariate
@@ -42,7 +43,6 @@ from graphrag.query.input.retrieval.text_units import get_candidate_text_units
 from graphrag.query.structured_search.base import LocalContextBuilder
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
-from graphrag.vector_stores.base import BaseVectorStore
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
     def __init__(
         self,
         entities: list[Entity],
-        entity_text_embeddings: BaseVectorStore,
+        entity_text_embeddings: VectorStore,
         text_embedder: EmbeddingModel,
         text_units: list[TextUnit] | None = None,
         community_reports: list[CommunityReport] | None = None,

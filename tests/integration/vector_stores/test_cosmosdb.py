@@ -7,9 +7,10 @@ import sys
 
 import numpy as np
 import pytest
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
-from graphrag.vector_stores.base import VectorStoreDocument
-from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
+from graphrag_vectors import (
+    CosmosDBVectorStore,
+    VectorStoreDocument,
+)
 
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
@@ -24,14 +25,13 @@ if not sys.platform.startswith("win"):
 def test_vector_store_operations():
     """Test basic vector store operations with CosmosDB."""
     vector_store = CosmosDBVectorStore(
-        vector_store_schema_config=VectorStoreSchemaConfig(index_name="testvector"),
+        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        database_name="test_db",
+        index_name="testvector",
     )
 
     try:
-        vector_store.connect(
-            connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-            database_name="test_db",
-        )
+        vector_store.connect()
 
         docs = [
             VectorStoreDocument(
@@ -72,13 +72,12 @@ def test_vector_store_operations():
 def test_clear():
     """Test clearing the vector store."""
     vector_store = CosmosDBVectorStore(
-        vector_store_schema_config=VectorStoreSchemaConfig(index_name="testclear"),
+        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        database_name="testclear",
+        index_name="testclear",
     )
     try:
-        vector_store.connect(
-            connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-            database_name="testclear",
-        )
+        vector_store.connect()
 
         doc = VectorStoreDocument(
             id="test",
@@ -100,19 +99,16 @@ def test_clear():
 def test_vector_store_customization():
     """Test vector store customization with CosmosDB."""
     vector_store = CosmosDBVectorStore(
-        vector_store_schema_config=VectorStoreSchemaConfig(
-            index_name="text-embeddings",
-            id_field="id",
-            vector_field="vector_custom",
-            vector_size=5,
-        ),
+        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        database_name="test_db",
+        index_name="text-embeddings",
+        id_field="id",
+        vector_field="vector_custom",
+        vector_size=5,
     )
 
     try:
-        vector_store.connect(
-            connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-            database_name="test_db",
-        )
+        vector_store.connect()
 
         docs = [
             VectorStoreDocument(

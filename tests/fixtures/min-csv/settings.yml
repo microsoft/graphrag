@@ -32,7 +32,6 @@ vector_store:
     type: "lancedb"
     db_uri: "./tests/fixtures/min-csv/lancedb"
     container_name: "lancedb_ci"
-    overwrite: True
 
 input:
   type: csv

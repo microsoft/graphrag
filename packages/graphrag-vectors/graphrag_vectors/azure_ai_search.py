@@ -22,43 +22,57 @@ from azure.search.documents.indexes.models import (
 )
 from azure.search.documents.models import VectorizedQuery
 
-from graphrag.data_model.types import TextEmbedder
-from graphrag.vector_stores.base import (
-    BaseVectorStore,
+from graphrag_vectors.types import TextEmbedder
+from graphrag_vectors.vector_store import (
+    VectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
 )
 
 
-class AzureAISearchVectorStore(BaseVectorStore):
+class AzureAISearchVectorStore(VectorStore):
     """Azure AI Search vector storage implementation."""
 
     index_client: SearchIndexClient
 
-    def connect(self, **kwargs: Any) -> Any:
+    def __init__(
+        self,
+        url: str,
+        api_key: str | None = None,
+        audience: str | None = None,
+        vector_search_profile_name: str = "vectorSearchProfile",
+        **kwargs: Any,
+    ):
+        self.url = url
+        self.api_key = api_key
+        self.audience = audience
+        self.vector_search_profile_name = vector_search_profile_name
+        super().__init__(**kwargs)
+
+    def connect(self) -> Any:
         """Connect to AI search vector storage."""
-        url = kwargs["url"]
-        api_key = kwargs.get("api_key")
-        audience = kwargs.get("audience")
-
-        self.vector_search_profile_name = kwargs.get(
-            "vector_search_profile_name", "vectorSearchProfile"
-        )
-
-        if url:
-            audience_arg = {"audience": audience} if audience and not api_key else {}
+        if self.url:
+            audience_arg = (
+                {"audience": self.audience}
+                if self.audience and not self.api_key
+                else {}
+            )
             self.db_connection = SearchClient(
-                endpoint=url,
+                endpoint=self.url,
                 index_name=self.index_name if self.index_name else "",
                 credential=(
-                    AzureKeyCredential(api_key) if api_key else DefaultAzureCredential()
+                    AzureKeyCredential(self.api_key)
+                    if self.api_key
+                    else DefaultAzureCredential()
                 ),
                 **audience_arg,
             )
             self.index_client = SearchIndexClient(
-                endpoint=url,
+                endpoint=self.url,
                 credential=(
-                    AzureKeyCredential(api_key) if api_key else DefaultAzureCredential()
+                    AzureKeyCredential(self.api_key)
+                    if self.api_key
+                    else DefaultAzureCredential()
                 ),
                 **audience_arg,
             )

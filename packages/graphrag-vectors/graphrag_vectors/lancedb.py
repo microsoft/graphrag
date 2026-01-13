@@ -9,20 +9,24 @@ import lancedb
 import numpy as np
 import pyarrow as pa
 
-from graphrag.data_model.types import TextEmbedder
-from graphrag.vector_stores.base import (
-    BaseVectorStore,
+from graphrag_vectors.types import TextEmbedder
+from graphrag_vectors.vector_store import (
+    VectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
 )
 
 
-class LanceDBVectorStore(BaseVectorStore):
+class LanceDBVectorStore(VectorStore):
     """LanceDB vector storage implementation."""
 
-    def connect(self, **kwargs: Any) -> Any:
+    def __init__(self, db_uri: str, **kwargs: Any):
+        self.db_uri = db_uri
+        super().__init__(**kwargs)
+
+    def connect(self) -> Any:
         """Connect to the vector storage."""
-        self.db_connection = lancedb.connect(kwargs["db_uri"])
+        self.db_connection = lancedb.connect(self.db_uri)
 
         if self.index_name and self.index_name in self.db_connection.table_names():
             self.document_collection = self.db_connection.open_table(self.index_name)
@@ -95,25 +99,15 @@ class LanceDBVectorStore(BaseVectorStore):
         self, query_embedding: list[float] | np.ndarray, k: int = 10
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
-        if self.query_filter:
-            docs = (
-                self.document_collection.search(
-                    query=query_embedding, vector_column_name=self.vector_field
-                )
-                .where(self.query_filter, prefilter=True)
-                .limit(k)
-                .to_list()
-            )
-        else:
-            query_embedding = np.array(query_embedding, dtype=np.float32)
+        query_embedding = np.array(query_embedding, dtype=np.float32)
 
-            docs = (
-                self.document_collection.search(
-                    query=query_embedding, vector_column_name=self.vector_field
-                )
-                .limit(k)
-                .to_list()
+        docs = (
+            self.document_collection.search(
+                query=query_embedding, vector_column_name=self.vector_field
             )
+            .limit(k)
+            .to_list()
+        )
         return [
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
