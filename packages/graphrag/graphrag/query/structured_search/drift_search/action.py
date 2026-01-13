@@ -50,7 +50,7 @@ class DriftAction:
         """Check if the action is complete (i.e., an answer is available)."""
         return self.answer is not None
 
-    async def search(self, search_engine: Any, global_query: str, scorer: Any = None):
+    async def search(self, search_engine: Any, global_query: str, k_followups: int, scorer: Any = None):
         """
         Execute an asynchronous search using the search engine, and update the action with the results.
 
@@ -71,7 +71,9 @@ class DriftAction:
             return self
 
         search_result = await search_engine.search(
-            drift_query=global_query, query=self.query
+            query=self.query,
+            drift_query=global_query,
+            k_followups=k_followups,
         )
 
         # Do not launch exception as it will roll up with other steps

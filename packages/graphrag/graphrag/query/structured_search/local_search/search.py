@@ -76,6 +76,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
                     context_data=context_result.context_chunks,
                     response_type=self.response_type,
                     global_query=drift_query,
+                    followups=kwargs.get("k_followups", 0),
                 )
             else:
                 search_prompt = self.system_prompt.format(
