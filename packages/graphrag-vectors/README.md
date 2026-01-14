@@ -14,18 +14,22 @@ from graphrag_vectors import (
 )
 
 # Create a vector store using the convenience function
+store_config = VectorStoreConfig(
+    type="lancedb",
+    db_uri="lance"
+)
+
 schema_config = IndexSchema(
     index_name="my_index",
     vector_size=1536,
 )
 
 vector_store = create_vector_store(
-    VectorStoreType.LanceDB,
-    db_uri="./lancedb",
+    config=store_config
     index_schema=schema_config,
 )
 
-vector_store.connect(db_uri="./lancedb")
+vector_store.connect()
 vector_store.create_index()
 ```
 
@@ -46,14 +50,14 @@ schema_config = IndexSchema(
 )
 
 vector_store = vector_store_factory.create(
-    VectorStoreType.LanceDB.value,
+    VectorStoreType.LanceDB,
     {
         "index_schema": schema_config,
         "db_uri": "./lancedb"
     }
 )
 
-vector_store.connect(db_uri="./lancedb")
+vector_store.connect()
 vector_store.create_index()
 ```
 
@@ -71,11 +75,14 @@ You can register custom vector store implementations:
 from graphrag_vectors import VectorStore, register_vector_store, create_vector_store
 
 class MyCustomVectorStore(VectorStore):
-    def connect(self, **kwargs):
+    def __init__(self, my_param):
+        self.my_param = my_param
+
+    def connect(self):
         # Implementation
         pass
     
-    def create_index(self, **kwargs):
+    def create_index(self):
         # Implementation
         pass
     
@@ -85,15 +92,18 @@ class MyCustomVectorStore(VectorStore):
 register_vector_store("my_custom_store", MyCustomVectorStore)
 
 # Use your custom vector store
+config = VectorStoreConfig(
+    type="my_custom_store",
+    my_param="something"
+)
 custom_store = create_vector_store(
-    "my_custom_store",
+    config=config,
     index_schema=schema_config,
-    # ... your custom kwargs
 )
 ```
 
 ## Configuration
 
 Vector stores are configured using:
-- `IndexSchema`: Schema configuration (index name, field names, vector size)
-- Implementation-specific kwargs passed to `create_vector_store()` or the factory's create method
+- `VectorStoreConfig`: baseline parameters for the store
+- `IndexSchema`: Schema configuration for the specific index to create/connect to (index name, field names, vector size)

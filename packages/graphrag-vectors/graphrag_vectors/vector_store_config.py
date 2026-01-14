@@ -3,7 +3,7 @@
 
 """Parameterization settings for the default configuration."""
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from graphrag_vectors.index_schema import IndexSchema
 from graphrag_vectors.vector_store_type import VectorStoreType
@@ -11,6 +11,9 @@ from graphrag_vectors.vector_store_type import VectorStoreType
 
 class VectorStoreConfig(BaseModel):
     """The default configuration section for Vector Store."""
+
+    model_config = ConfigDict(extra="allow")
+    """Allow extra fields to support custom vector implementations."""
 
     type: str = Field(
         description="The vector store type to use.",
