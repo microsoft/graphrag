@@ -7,13 +7,13 @@ These tests will test the VectorStoreFactory class and the creation of each vect
 
 import pytest
 from graphrag_vectors import (
-    AzureAISearchVectorStore,
-    CosmosDBVectorStore,
-    LanceDBVectorStore,
     VectorStore,
     VectorStoreFactory,
     VectorStoreType,
 )
+from graphrag_vectors.azure_ai_search import AzureAISearchVectorStore
+from graphrag_vectors.cosmosdb import CosmosDBVectorStore
+from graphrag_vectors.lancedb import LanceDBVectorStore
 
 # register the defaults, since they are lazily registered
 VectorStoreFactory().register(VectorStoreType.LanceDB, LanceDBVectorStore)

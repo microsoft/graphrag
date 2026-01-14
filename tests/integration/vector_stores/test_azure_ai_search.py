@@ -8,9 +8,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from graphrag_vectors import (
-    AzureAISearchVectorStore,
     VectorStoreDocument,
 )
+from graphrag_vectors.azure_ai_search import AzureAISearchVectorStore
 
 TEST_AZURE_AI_SEARCH_URL = os.environ.get(
     "TEST_AZURE_AI_SEARCH_URL", "https://test-url.search.windows.net"
