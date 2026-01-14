@@ -24,17 +24,13 @@ class TestAzureAISearchVectorStore:
     @pytest.fixture
     def mock_search_client(self):
         """Create a mock Azure AI Search client."""
-        with patch(
-            "graphrag_vectors.azure_ai_search.SearchClient"
-        ) as mock_client:
+        with patch("graphrag_vectors.azure_ai_search.SearchClient") as mock_client:
             yield mock_client.return_value
 
     @pytest.fixture
     def mock_index_client(self):
         """Create a mock Azure AI Search index client."""
-        with patch(
-            "graphrag_vectors.azure_ai_search.SearchIndexClient"
-        ) as mock_client:
+        with patch("graphrag_vectors.azure_ai_search.SearchIndexClient") as mock_client:
             yield mock_client.return_value
 
     @pytest.fixture
