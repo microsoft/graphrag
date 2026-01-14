@@ -65,11 +65,16 @@ class VectorStore(ABC):
     ) -> list[VectorStoreSearchResult]:
         """Perform ANN search by vector."""
 
-    @abstractmethod
     def similarity_search_by_text(
         self, text: str, text_embedder: TextEmbedder, k: int = 10
     ) -> list[VectorStoreSearchResult]:
-        """Perform ANN search by text."""
+        """Perform a text-based similarity search."""
+        query_embedding = text_embedder(text)
+        if query_embedding:
+            return self.similarity_search_by_vector(
+                query_embedding=query_embedding, k=k
+            )
+        return []
 
     @abstractmethod
     def search_by_id(self, id: str) -> VectorStoreDocument:

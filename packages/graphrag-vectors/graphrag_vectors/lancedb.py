@@ -9,7 +9,6 @@ import lancedb
 import numpy as np
 import pyarrow as pa
 
-from graphrag_vectors.types import TextEmbedder
 from graphrag_vectors.vector_store import (
     VectorStore,
     VectorStoreDocument,
@@ -113,15 +112,6 @@ class LanceDBVectorStore(VectorStore):
             )
             for doc in docs
         ]
-
-    def similarity_search_by_text(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10
-    ) -> list[VectorStoreSearchResult]:
-        """Perform a similarity search using a given input text."""
-        query_embedding = text_embedder(text)
-        if query_embedding:
-            return self.similarity_search_by_vector(query_embedding, k)
-        return []
 
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""
