@@ -32,10 +32,17 @@ class CosmosDBVectorStore(VectorStore):
         url: str | None = None,
         **kwargs,
     ):
+        super().__init__(**kwargs)
+        if self.id_field != "id":
+            msg = "CosmosDB requires the id_field to be 'id'."
+            raise ValueError(msg)
+        if not connection_string and not url:
+            msg = "Either connection_string or url must be provided for CosmosDB."
+            raise ValueError(msg)
+
         self.database_name = database_name
         self.connection_string = connection_string
         self.url = url
-        super().__init__(**kwargs)
 
     def connect(self) -> Any:
         """Connect to CosmosDB vector storage."""
@@ -44,22 +51,10 @@ class CosmosDBVectorStore(VectorStore):
                 self.connection_string
             )
         else:
-            if not self.url:
-                msg = "Either connection_string or url must be provided."
-                raise ValueError(msg)
             self._cosmos_client = CosmosClient(
                 url=self.url, credential=DefaultAzureCredential()
             )
 
-        if self.database_name is None:
-            msg = "Database name must be provided."
-            raise ValueError(msg)
-        if self.index_name is None:
-            msg = "Index name is empty or not provided."
-            raise ValueError(msg)
-        self._container_name = self.index_name
-
-        self.vector_size = self.vector_size
         self._create_database()
         self._create_container()
 
@@ -118,7 +113,7 @@ class CosmosDBVectorStore(VectorStore):
 
             # Create the container and container client
             self._database_client.create_container_if_not_exists(
-                id=self._container_name,
+                id=self.index_name,
                 partition_key=partition_key,
                 indexing_policy=indexing_policy,
                 vector_embedding_policy=vector_embedding_policy,
@@ -129,27 +124,27 @@ class CosmosDBVectorStore(VectorStore):
 
             # Create the container with compatible indexing policy
             self._database_client.create_container_if_not_exists(
-                id=self._container_name,
+                id=self.index_name,
                 partition_key=partition_key,
                 indexing_policy=indexing_policy,
                 vector_embedding_policy=vector_embedding_policy,
             )
 
         self._container_client = self._database_client.get_container_client(
-            self._container_name
+            self.index_name
         )
 
     def _delete_container(self) -> None:
         """Delete the vector store container in the database if it exists."""
         if self._container_exists():
-            self._database_client.delete_container(self._container_name)
+            self._database_client.delete_container(self.index_name)
 
     def _container_exists(self) -> bool:
         """Check if the container name exists in the database."""
         existing_container_names = [
             container["id"] for container in self._database_client.list_containers()
         ]
-        return self._container_name in existing_container_names
+        return self.index_name in existing_container_names
 
     def create_index(self) -> None:
         """Load documents into CosmosDB."""

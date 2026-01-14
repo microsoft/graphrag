@@ -43,42 +43,39 @@ class AzureAISearchVectorStore(VectorStore):
         vector_search_profile_name: str = "vectorSearchProfile",
         **kwargs: Any,
     ):
+        super().__init__(**kwargs)
+        if not url:
+            msg = "url must be provided for Azure AI Search."
+            raise ValueError(msg)
         self.url = url
         self.api_key = api_key
         self.audience = audience
         self.vector_search_profile_name = vector_search_profile_name
-        super().__init__(**kwargs)
 
     def connect(self) -> Any:
         """Connect to AI search vector storage."""
-        if self.url:
-            audience_arg = (
-                {"audience": self.audience}
-                if self.audience and not self.api_key
-                else {}
-            )
-            self.db_connection = SearchClient(
-                endpoint=self.url,
-                index_name=self.index_name if self.index_name else "",
-                credential=(
-                    AzureKeyCredential(self.api_key)
-                    if self.api_key
-                    else DefaultAzureCredential()
-                ),
-                **audience_arg,
-            )
-            self.index_client = SearchIndexClient(
-                endpoint=self.url,
-                credential=(
-                    AzureKeyCredential(self.api_key)
-                    if self.api_key
-                    else DefaultAzureCredential()
-                ),
-                **audience_arg,
-            )
-        else:
-            not_supported_error = "Azure AI Search expects `url`."
-            raise ValueError(not_supported_error)
+        audience_arg = (
+            {"audience": self.audience} if self.audience and not self.api_key else {}
+        )
+        self.db_connection = SearchClient(
+            endpoint=self.url,
+            index_name=self.index_name,
+            credential=(
+                AzureKeyCredential(self.api_key)
+                if self.api_key
+                else DefaultAzureCredential()
+            ),
+            **audience_arg,
+        )
+        self.index_client = SearchIndexClient(
+            endpoint=self.url,
+            credential=(
+                AzureKeyCredential(self.api_key)
+                if self.api_key
+                else DefaultAzureCredential()
+            ),
+            **audience_arg,
+        )
 
     def create_index(self) -> None:
         """Load documents into an Azure AI Search index."""
@@ -107,7 +104,7 @@ class AzureAISearchVectorStore(VectorStore):
         )
         # Configure the index
         index = SearchIndex(
-            name=self.index_name if self.index_name else "",
+            name=self.index_name,
             fields=[
                 SimpleField(
                     name=self.id_field,

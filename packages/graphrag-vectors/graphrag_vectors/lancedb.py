@@ -20,9 +20,9 @@ from graphrag_vectors.vector_store import (
 class LanceDBVectorStore(VectorStore):
     """LanceDB vector storage implementation."""
 
-    def __init__(self, db_uri: str, **kwargs: Any):
-        self.db_uri = db_uri
+    def __init__(self, db_uri: str = "lancedb", **kwargs: Any):
         super().__init__(**kwargs)
+        self.db_uri = db_uri
 
     def connect(self) -> Any:
         """Connect to the vector storage."""
