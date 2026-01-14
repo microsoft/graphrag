@@ -373,12 +373,6 @@ class VectorStoreDefaults:
 
     type: ClassVar[str] = VectorStoreType.LanceDB.value
     db_uri: str = str(Path(DEFAULT_OUTPUT_BASE_DIR) / "lancedb")
-    index_prefix: None = None
-    url: None = None
-    api_key: None = None
-    audience: None = None
-    database_name: None = None
-    schema: None = None
 
 
 @dataclass

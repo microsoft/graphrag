@@ -45,11 +45,6 @@ class VectorStoreConfig(BaseModel):
         default=None,
     )
 
-    index_prefix: str | None = Field(
-        description="Prefix to apply to all index names. Suitable for partitioning projects. If you want full customization of each index name, leave this None and create an index_schema entry.",
-        default=None,
-    )
-
     database_name: str | None = Field(
         description="The database name to use when type == cosmosdb.",
         default=None,

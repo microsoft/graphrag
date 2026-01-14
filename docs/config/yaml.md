@@ -172,7 +172,6 @@ Where to put all vectors for the system. Configured for lancedb by default. This
 - `url` **str** (only for AI Search) - AI Search endpoint
 - `api_key` **str** (optional - only for AI Search) - The AI Search api key to use.
 - `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
-- `index_prefix` **str** - (optional) A prefix for the indexes you will create for embeddings. This stores all indexes (tables) for a given dataset ingest.
 - `database_name` **str** - (cosmosdb only) Name of the database.
 - `index_schema` **dict[str, dict[str, str]]** (optional) - Enables customization for each of your embeddings. 
   - `<supported_embedding>`: 
@@ -193,7 +192,6 @@ For example:
 vector_store:
   type: lancedb
   db_uri: output/lancedb
-  index_prefix: "christmas-carol"
   index_schema:
     text_unit_text:
       index_name: "text-unit-embeddings"
