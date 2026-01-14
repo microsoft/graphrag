@@ -40,6 +40,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
     def __init__(
         self,
         model: ChatModel,
+        config: DRIFTSearchConfig,
         text_embedder: EmbeddingModel,
         entities: list[Entity],
         entity_text_embeddings: BaseVectorStore,
@@ -49,14 +50,13 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         covariates: dict[str, list[Covariate]] | None = None,
         tokenizer: Tokenizer | None = None,
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
-        config: DRIFTSearchConfig | None = None,
         local_system_prompt: str | None = None,
         local_mixed_context: LocalSearchMixedContext | None = None,
         reduce_system_prompt: str | None = None,
         response_type: str | None = None,
     ):
         """Initialize the DRIFT search context builder with necessary components."""
-        self.config = config or DRIFTSearchConfig()
+        self.config = config
         self.model = model
         self.text_embedder = text_embedder
         self.tokenizer = tokenizer or get_tokenizer()

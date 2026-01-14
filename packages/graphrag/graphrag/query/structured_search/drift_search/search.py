@@ -156,7 +156,11 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         raise ValueError(error_msg)
 
     async def _search_step(
-        self, global_query: str, search_engine: LocalSearch, actions: list[DriftAction]
+        self,
+        global_query: str,
+        k_followups: int,
+        search_engine: LocalSearch,
+        actions: list[DriftAction],
     ) -> list[DriftAction]:
         """
         Perform an asynchronous search step by executing each DriftAction asynchronously.
@@ -171,7 +175,11 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         list[DriftAction]: The results from executing the search actions asynchronously.
         """
         tasks = [
-            action.search(search_engine=search_engine, global_query=global_query)
+            action.search(
+                search_engine=search_engine,
+                global_query=global_query,
+                k_followups=k_followups,
+            )
             for action in actions
         ]
         return await tqdm_asyncio.gather(*tasks, leave=False)
@@ -241,7 +249,10 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             )
             # Process actions
             results = await self._search_step(
-                global_query=query, search_engine=self.local_search, actions=actions
+                global_query=query,
+                k_followups=self.context_builder.config.drift_k_followups,
+                search_engine=self.local_search,
+                actions=actions,
             )
 
             # Update query state
