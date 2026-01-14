@@ -24,11 +24,10 @@ VectorStoreFactory().register(VectorStoreType.CosmosDB, CosmosDBVectorStore)
 def test_create_lancedb_vector_store():
     kwargs = {
         "db_uri": "/tmp/lancedb",
-        "index_name": "test_collection",
     }
     vector_store = VectorStoreFactory().create(VectorStoreType.LanceDB, kwargs)
     assert isinstance(vector_store, LanceDBVectorStore)
-    assert vector_store.index_name == "test_collection"
+    assert vector_store.index_name == "vector_index"
 
 
 @pytest.mark.skip(reason="Azure AI Search requires credentials and setup")
