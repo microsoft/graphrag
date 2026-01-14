@@ -15,16 +15,18 @@ from graphrag_vectors import (
     VectorStoreType,
 )
 
+# register the defaults, since they are lazily registered
+VectorStoreFactory().register(VectorStoreType.LanceDB, LanceDBVectorStore)
+VectorStoreFactory().register(VectorStoreType.AzureAISearch, AzureAISearchVectorStore)
+VectorStoreFactory().register(VectorStoreType.CosmosDB, CosmosDBVectorStore)
+
 
 def test_create_lancedb_vector_store():
     kwargs = {
         "db_uri": "/tmp/lancedb",
         "index_name": "test_collection",
     }
-    vector_store = VectorStoreFactory().create(
-        VectorStoreType.LanceDB,
-        kwargs,
-    )
+    vector_store = VectorStoreFactory().create(VectorStoreType.LanceDB, kwargs)
     assert isinstance(vector_store, LanceDBVectorStore)
     assert vector_store.index_name == "test_collection"
 
