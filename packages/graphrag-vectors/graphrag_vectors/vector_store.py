@@ -37,12 +37,13 @@ class VectorStore(ABC):
     def __init__(
         self,
         index_name: str,
+        index_prefix: str | None = None,
         id_field: str = "id",
         vector_field: str = "vector",
         vector_size: int = 3072,
         **kwargs: Any,
     ):
-        self.index_name = index_name
+        self.index_name = f"{index_prefix}-{index_name}" if index_prefix else index_name
         self.id_field = id_field
         self.vector_field = vector_field
         self.vector_size = vector_size

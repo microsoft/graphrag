@@ -11,10 +11,11 @@ from graphrag_cache import CacheConfig
 from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_input import InputConfig
 from graphrag_storage import StorageConfig, StorageType
-from graphrag_vectors import VectorStoreConfig, VectorStoreType
+from graphrag_vectors import IndexSchema, VectorStoreConfig, VectorStoreType
 from pydantic import BaseModel, Field, model_validator
 
 from graphrag.config.defaults import graphrag_config_defaults
+from graphrag.config.embeddings import all_embeddings
 from graphrag.config.enums import ReportingType
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
@@ -276,6 +277,20 @@ class GraphRagConfig(BaseModel):
     )
     """The basic search configuration."""
 
+    def _validate_vector_store(self) -> None:
+        """Validate the vector store configuration specifically in the GraphRAG context. This checks and sets required dynamic defaults for the embeddings we require."""
+        self._validate_vector_store_db_uri()
+        # check and insert/overlay schemas for all of the core embeddings
+        # note that this does not require that they are used, only that they have a schema
+        # the embed_text block has the list of actual embeddings
+        if not self.vector_store.index_schema:
+            self.vector_store.index_schema = {}
+        for embedding in all_embeddings:
+            if embedding not in self.vector_store.index_schema:
+                self.vector_store.index_schema[embedding] = IndexSchema(
+                    index_name=embedding,
+                )
+
     def _validate_vector_store_db_uri(self) -> None:
         """Validate the vector store configuration."""
         store = self.vector_store
@@ -320,6 +335,6 @@ class GraphRagConfig(BaseModel):
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
         self._validate_update_output_storage_base_dir()
-        self._validate_vector_store_db_uri()
+        self._validate_vector_store()
         self._validate_factories()
         return self

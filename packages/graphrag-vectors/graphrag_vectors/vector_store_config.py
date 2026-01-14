@@ -47,7 +47,7 @@ class VectorStoreConfig(BaseModel):
     )
 
     index_prefix: str | None = Field(
-        description="The index prefix to use.",
+        description="Prefix to apply to all index names. Suitable for partitioning projects. If you want full customization of each index name, leave this None and create an index_schema entry.",
         default=None,
     )
 

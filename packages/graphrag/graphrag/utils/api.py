@@ -6,36 +6,18 @@
 from pathlib import Path
 
 from graphrag_vectors import (
-    IndexSchema,
     VectorStore,
     VectorStoreConfig,
     create_vector_store,
 )
-
-from graphrag.config.embeddings import create_index_name
 
 
 def get_embedding_store(
     config: VectorStoreConfig,
     embedding_name: str,
 ) -> VectorStore:
-    """Get the embedding description store."""
-    index_name = create_index_name(config.index_prefix, embedding_name)
-
-    schema: dict[str, IndexSchema] = config.index_schema or {}
-    embedding_config: IndexSchema = IndexSchema()
-
-    if schema is not None and embedding_name is not None and embedding_name in schema:
-        raw_config = schema[embedding_name]
-        if isinstance(raw_config, dict):
-            embedding_config = IndexSchema(**raw_config)
-        else:
-            embedding_config = raw_config
-
-    if embedding_config.index_name is None:
-        embedding_config.index_name = index_name
-
-    embedding_store = create_vector_store(config, embedding_config)
+    """Get the embedding store."""
+    embedding_store = create_vector_store(config, config.index_schema[embedding_name])
     embedding_store.connect()
 
     return embedding_store
