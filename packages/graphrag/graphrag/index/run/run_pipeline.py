@@ -160,6 +160,6 @@ async def _copy_previous_output(
     copy_storage: Storage,
 ):
     for file in storage.find(re.compile(r"\.parquet$")):
-        base_name = file[0].replace(".parquet", "")
+        base_name = file.replace(".parquet", "")
         table = await load_table_from_storage(base_name, storage)
         await write_table_to_storage(table, base_name, copy_storage)
