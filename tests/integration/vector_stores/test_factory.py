@@ -9,7 +9,6 @@ import pytest
 from graphrag_vectors import (
     AzureAISearchVectorStore,
     CosmosDBVectorStore,
-    IndexSchema,
     LanceDBVectorStore,
     VectorStore,
     VectorStoreFactory,
@@ -20,7 +19,7 @@ from graphrag_vectors import (
 def test_create_lancedb_vector_store():
     kwargs = {
         "db_uri": "/tmp/lancedb",
-        "index_schema": IndexSchema(index_name="test_collection"),
+        "index_name": "test_collection",
     }
     vector_store = VectorStoreFactory().create(
         VectorStoreType.LanceDB,
@@ -35,7 +34,7 @@ def test_create_azure_ai_search_vector_store():
     kwargs = {
         "url": "https://test.search.windows.net",
         "api_key": "test_key",
-        "index_schema": IndexSchema(index_name="test_collection"),
+        "index_name": "test_collection",
     }
     vector_store = VectorStoreFactory().create(
         VectorStoreType.AzureAISearch,
@@ -49,7 +48,7 @@ def test_create_cosmosdb_vector_store():
     kwargs = {
         "connection_string": "AccountEndpoint=https://test.documents.azure.com:443/;AccountKey=test_key==",
         "database_name": "test_db",
-        "index_schema": IndexSchema(index_name="test_collection"),
+        "index_name": "test_collection",
     }
 
     vector_store = VectorStoreFactory().create(
@@ -75,9 +74,7 @@ def test_register_and_create_custom_vector_store():
         "custom", lambda **kwargs: custom_vector_store_class(**kwargs)
     )
 
-    vector_store = VectorStoreFactory().create(
-        "custom", {"index_schema": IndexSchema()}
-    )
+    vector_store = VectorStoreFactory().create("custom", {})
 
     assert custom_vector_store_class.called
     assert vector_store is instance
@@ -140,7 +137,7 @@ def test_register_class_directly_works():
     # Test creating an instance
     vector_store = VectorStoreFactory().create(
         "custom_class",
-        {"index_schema": IndexSchema()},
+        {},
     )
 
     assert isinstance(vector_store, CustomVectorStore)
