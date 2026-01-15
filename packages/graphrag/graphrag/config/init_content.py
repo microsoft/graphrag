@@ -24,8 +24,9 @@ completion_models:
     api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file, or remove if managed identity
     retry:
       type: exponential_backoff
+      base_delay: 2.0
       max_retries: 7
-
+      jitter: true
 
 embedding_models:
   {defs.DEFAULT_EMBEDDING_MODEL_ID}:
@@ -35,7 +36,9 @@ embedding_models:
     api_key: ${{GRAPHRAG_API_KEY}}
     retry:
       type: exponential_backoff
+      base_delay: 2.0
       max_retries: 7
+      jitter: true
 
 ### Document processing settings ###
 

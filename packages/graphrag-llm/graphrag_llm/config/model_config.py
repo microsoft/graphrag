@@ -63,7 +63,7 @@ class ModelConfig(BaseModel):
     )
 
     retry: RetryConfig | None = Field(
-        default_factory=RetryConfig,
+        default=None,
         description="Configuration for the retry strategy.",
     )
 
