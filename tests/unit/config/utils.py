@@ -25,11 +25,11 @@ from graphrag.config.models.snapshots_config import SnapshotsConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
-from graphrag.config.models.vector_store_config import VectorStoreConfig
 from graphrag_cache import CacheConfig
 from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_input import InputConfig
 from graphrag_storage import StorageConfig
+from graphrag_vectors import VectorStoreConfig
 from pydantic import BaseModel
 
 FAKE_API_KEY = "NOT_AN_API_KEY"
@@ -112,7 +112,6 @@ def assert_vector_store_configs(
     assert actual.url == expected.url
     assert actual.api_key == expected.api_key
     assert actual.audience == expected.audience
-    assert actual.index_prefix == expected.index_prefix
     assert actual.database_name == expected.database_name
 
 

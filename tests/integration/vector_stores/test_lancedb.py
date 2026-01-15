@@ -8,9 +8,10 @@ import tempfile
 
 import numpy as np
 import pytest
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
-from graphrag.vector_stores.base import VectorStoreDocument
-from graphrag.vector_stores.lancedb import LanceDBVectorStore
+from graphrag_vectors import (
+    VectorStoreDocument,
+)
+from graphrag_vectors.lancedb import LanceDBVectorStore
 
 
 class TestLanceDBVectorStore:
@@ -58,11 +59,9 @@ class TestLanceDBVectorStore:
         temp_dir = tempfile.mkdtemp()
         try:
             vector_store = LanceDBVectorStore(
-                vector_store_schema_config=VectorStoreSchemaConfig(
-                    index_name="test_collection", vector_size=5
-                )
+                db_uri=temp_dir, index_name="test_collection", vector_size=5
             )
-            vector_store.connect(db_uri=temp_dir)
+            vector_store.connect()
             vector_store.create_index()
             vector_store.load_documents(sample_documents[:2])
 
@@ -111,11 +110,9 @@ class TestLanceDBVectorStore:
         temp_dir = tempfile.mkdtemp()
         try:
             vector_store = LanceDBVectorStore(
-                vector_store_schema_config=VectorStoreSchemaConfig(
-                    index_name="empty_collection", vector_size=5
-                )
+                db_uri=temp_dir, index_name="empty_collection", vector_size=5
             )
-            vector_store.connect(db_uri=temp_dir)
+            vector_store.connect()
 
             # Load the vector store with a document, then delete it
             sample_doc = VectorStoreDocument(
@@ -154,12 +151,10 @@ class TestLanceDBVectorStore:
         temp_dir = tempfile.mkdtemp()
         try:
             vector_store = LanceDBVectorStore(
-                vector_store_schema_config=VectorStoreSchemaConfig(
-                    index_name="filter_collection", vector_size=5
-                )
+                db_uri=temp_dir, index_name="filter_collection", vector_size=5
             )
 
-            vector_store.connect(db_uri=temp_dir)
+            vector_store.connect()
             vector_store.create_index()
             vector_store.load_documents(sample_documents_categories)
 
@@ -181,14 +176,13 @@ class TestLanceDBVectorStore:
         temp_dir = tempfile.mkdtemp()
         try:
             vector_store = LanceDBVectorStore(
-                vector_store_schema_config=VectorStoreSchemaConfig(
-                    index_name="text-embeddings",
-                    id_field="id_custom",
-                    vector_field="vector_custom",
-                    vector_size=5,
-                ),
+                db_uri=temp_dir,
+                index_name="text-embeddings",
+                id_field="id_custom",
+                vector_field="vector_custom",
+                vector_size=5,
             )
-            vector_store.connect(db_uri=temp_dir)
+            vector_store.connect()
             vector_store.create_index()
             vector_store.load_documents(sample_documents[:2])
 

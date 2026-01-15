@@ -19,6 +19,7 @@ members = [
     "graphrag-input",
     "graphrag-monorepo",
     "graphrag-storage",
+    "graphrag-vectors",
 ]
 
 [[package]]
@@ -1009,6 +1010,7 @@ dependencies = [
     { name = "graphrag-common" },
     { name = "graphrag-input" },
     { name = "graphrag-storage" },
+    { name = "graphrag-vectors" },
     { name = "graspologic-native" },
     { name = "json-repair" },
     { name = "lancedb" },
@@ -1043,6 +1045,7 @@ requires-dist = [
     { name = "graphrag-common", editable = "packages/graphrag-common" },
     { name = "graphrag-input", editable = "packages/graphrag-input" },
     { name = "graphrag-storage", editable = "packages/graphrag-storage" },
+    { name = "graphrag-vectors", editable = "packages/graphrag-vectors" },
     { name = "graspologic-native", specifier = "~=1.2" },
     { name = "json-repair", specifier = "~=0.30" },
     { name = "lancedb", specifier = "~=0.24.1" },
@@ -1201,6 +1204,35 @@ requires-dist = [
     { name = "azure-storage-blob", specifier = "~=12.24" },
     { name = "graphrag-common", editable = "packages/graphrag-common" },
     { name = "pandas", specifier = ">=2.3.0" },
+    { name = "pydantic", specifier = "~=2.10" },
+]
+
+[[package]]
+name = "graphrag-vectors"
+version = "2.7.0"
+source = { editable = "packages/graphrag-vectors" }
+dependencies = [
+    { name = "azure-core" },
+    { name = "azure-cosmos" },
+    { name = "azure-identity" },
+    { name = "azure-search-documents" },
+    { name = "graphrag-common" },
+    { name = "lancedb" },
+    { name = "numpy" },
+    { name = "pyarrow" },
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "azure-core", specifier = "~=1.32" },
+    { name = "azure-cosmos", specifier = "~=4.9" },
+    { name = "azure-identity", specifier = "~=1.19" },
+    { name = "azure-search-documents", specifier = "~=11.6" },
+    { name = "graphrag-common", editable = "packages/graphrag-common" },
+    { name = "lancedb", specifier = "~=0.24.1" },
+    { name = "numpy", specifier = "~=2.2" },
+    { name = "pyarrow", specifier = "~=22.0" },
     { name = "pydantic", specifier = "~=2.10" },
 ]
 

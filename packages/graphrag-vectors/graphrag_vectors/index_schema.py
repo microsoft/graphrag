@@ -17,8 +17,12 @@ def is_valid_field_name(field: str) -> bool:
     return bool(VALID_IDENTIFIER_REGEX.match(field))
 
 
-class VectorStoreSchemaConfig(BaseModel):
+class IndexSchema(BaseModel):
     """The default configuration section for Vector Store Schema."""
+
+    index_name: str = Field(
+        description="The index name to use.", default="vector_index"
+    )
 
     id_field: str = Field(
         description="The ID field to use.",
@@ -34,8 +38,6 @@ class VectorStoreSchemaConfig(BaseModel):
         description="The vector size to use.",
         default=DEFAULT_VECTOR_SIZE,
     )
-
-    index_name: str | None = Field(description="The index name to use.", default=None)
 
     def _validate_schema(self) -> None:
         """Validate the schema."""

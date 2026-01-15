@@ -10,67 +10,71 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
 
-from graphrag.data_model.types import TextEmbedder
-from graphrag.vector_stores.base import (
-    BaseVectorStore,
+from graphrag_vectors.vector_store import (
+    VectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
 )
 
 
-class CosmosDBVectorStore(BaseVectorStore):
+class CosmosDBVectorStore(VectorStore):
     """Azure CosmosDB vector storage implementation."""
 
     _cosmos_client: CosmosClient
     _database_client: DatabaseProxy
     _container_client: ContainerProxy
 
-    def connect(self, **kwargs: Any) -> Any:
+    def __init__(
+        self,
+        database_name: str,
+        connection_string: str | None = None,
+        url: str | None = None,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        if self.id_field != "id":
+            msg = "CosmosDB requires the id_field to be 'id'."
+            raise ValueError(msg)
+        if not connection_string and not url:
+            msg = "Either connection_string or url must be provided for CosmosDB."
+            raise ValueError(msg)
+
+        self.database_name = database_name
+        self.connection_string = connection_string
+        self.url = url
+
+    def connect(self) -> Any:
         """Connect to CosmosDB vector storage."""
-        connection_string = kwargs.get("connection_string")
-        if connection_string:
-            self._cosmos_client = CosmosClient.from_connection_string(connection_string)
+        if self.connection_string:
+            self._cosmos_client = CosmosClient.from_connection_string(
+                self.connection_string
+            )
         else:
-            url = kwargs.get("url")
-            if not url:
-                msg = "Either connection_string or url must be provided."
-                raise ValueError(msg)
             self._cosmos_client = CosmosClient(
-                url=url, credential=DefaultAzureCredential()
+                url=self.url, credential=DefaultAzureCredential()
             )
 
-        database_name = kwargs.get("database_name")
-        if database_name is None:
-            msg = "Database name must be provided."
-            raise ValueError(msg)
-        self._database_name = database_name
-        if self.index_name is None:
-            msg = "Index name is empty or not provided."
-            raise ValueError(msg)
-        self._container_name = self.index_name
-
-        self.vector_size = self.vector_size
         self._create_database()
         self._create_container()
 
     def _create_database(self) -> None:
         """Create the database if it doesn't exist."""
-        self._cosmos_client.create_database_if_not_exists(id=self._database_name)
+        self._cosmos_client.create_database_if_not_exists(id=self.database_name)
         self._database_client = self._cosmos_client.get_database_client(
-            self._database_name
+            self.database_name
         )
 
     def _delete_database(self) -> None:
         """Delete the database if it exists."""
         if self._database_exists():
-            self._cosmos_client.delete_database(self._database_name)
+            self._cosmos_client.delete_database(self.database_name)
 
     def _database_exists(self) -> bool:
         """Check if the database exists."""
         existing_database_names = [
             database["id"] for database in self._cosmos_client.list_databases()
         ]
-        return self._database_name in existing_database_names
+        return self.database_name in existing_database_names
 
     def _create_container(self) -> None:
         """Create the container if it doesn't exist."""
@@ -108,7 +112,7 @@ class CosmosDBVectorStore(BaseVectorStore):
 
             # Create the container and container client
             self._database_client.create_container_if_not_exists(
-                id=self._container_name,
+                id=self.index_name,
                 partition_key=partition_key,
                 indexing_policy=indexing_policy,
                 vector_embedding_policy=vector_embedding_policy,
@@ -119,27 +123,27 @@ class CosmosDBVectorStore(BaseVectorStore):
 
             # Create the container with compatible indexing policy
             self._database_client.create_container_if_not_exists(
-                id=self._container_name,
+                id=self.index_name,
                 partition_key=partition_key,
                 indexing_policy=indexing_policy,
                 vector_embedding_policy=vector_embedding_policy,
             )
 
         self._container_client = self._database_client.get_container_client(
-            self._container_name
+            self.index_name
         )
 
     def _delete_container(self) -> None:
         """Delete the vector store container in the database if it exists."""
         if self._container_exists():
-            self._database_client.delete_container(self._container_name)
+            self._database_client.delete_container(self.index_name)
 
     def _container_exists(self) -> bool:
         """Check if the container name exists in the database."""
         existing_container_names = [
             container["id"] for container in self._database_client.list_containers()
         ]
-        return self._container_name in existing_container_names
+        return self.index_name in existing_container_names
 
     def create_index(self) -> None:
         """Load documents into CosmosDB."""
@@ -221,17 +225,6 @@ class CosmosDBVectorStore(BaseVectorStore):
             )
             for item in items
         ]
-
-    def similarity_search_by_text(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10
-    ) -> list[VectorStoreSearchResult]:
-        """Perform a text-based similarity search."""
-        query_embedding = text_embedder(text)
-        if query_embedding:
-            return self.similarity_search_by_vector(
-                query_embedding=query_embedding, k=k
-            )
-        return []
 
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""

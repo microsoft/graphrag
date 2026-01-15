@@ -7,6 +7,7 @@ import logging
 from typing import cast
 
 import pandas as pd
+from graphrag_vectors import VectorStore
 
 from graphrag.data_model.text_unit import TextUnit
 from graphrag.language_model.protocol.base import EmbeddingModel
@@ -17,7 +18,6 @@ from graphrag.query.context_builder.builders import (
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
-from graphrag.vector_stores.base import BaseVectorStore
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class BasicSearchContext(BasicContextBuilder):
     def __init__(
         self,
         text_embedder: EmbeddingModel,
-        text_unit_embeddings: BaseVectorStore,
+        text_unit_embeddings: VectorStore,
         text_units: list[TextUnit] | None = None,
         tokenizer: Tokenizer | None = None,
         embedding_vectorstore_key: str = "id",

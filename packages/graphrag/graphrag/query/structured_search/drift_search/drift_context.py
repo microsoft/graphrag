@@ -9,6 +9,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from graphrag_vectors import VectorStore
 
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.data_model.community_report import CommunityReport
@@ -29,7 +30,6 @@ from graphrag.query.structured_search.local_search.mixed_context import (
 )
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
-from graphrag.vector_stores.base import BaseVectorStore
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         config: DRIFTSearchConfig,
         text_embedder: EmbeddingModel,
         entities: list[Entity],
-        entity_text_embeddings: BaseVectorStore,
+        entity_text_embeddings: VectorStore,
         text_units: list[TextUnit] | None = None,
         reports: list[CommunityReport] | None = None,
         relationships: list[Relationship] | None = None,

@@ -22,49 +22,59 @@ from azure.search.documents.indexes.models import (
 )
 from azure.search.documents.models import VectorizedQuery
 
-from graphrag.data_model.types import TextEmbedder
-from graphrag.vector_stores.base import (
-    BaseVectorStore,
+from graphrag_vectors.vector_store import (
+    VectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
 )
 
 
-class AzureAISearchVectorStore(BaseVectorStore):
+class AzureAISearchVectorStore(VectorStore):
     """Azure AI Search vector storage implementation."""
 
     index_client: SearchIndexClient
 
-    def connect(self, **kwargs: Any) -> Any:
+    def __init__(
+        self,
+        url: str,
+        api_key: str | None = None,
+        audience: str | None = None,
+        vector_search_profile_name: str = "vectorSearchProfile",
+        **kwargs: Any,
+    ):
+        super().__init__(**kwargs)
+        if not url:
+            msg = "url must be provided for Azure AI Search."
+            raise ValueError(msg)
+        self.url = url
+        self.api_key = api_key
+        self.audience = audience
+        self.vector_search_profile_name = vector_search_profile_name
+
+    def connect(self) -> Any:
         """Connect to AI search vector storage."""
-        url = kwargs["url"]
-        api_key = kwargs.get("api_key")
-        audience = kwargs.get("audience")
-
-        self.vector_search_profile_name = kwargs.get(
-            "vector_search_profile_name", "vectorSearchProfile"
+        audience_arg = (
+            {"audience": self.audience} if self.audience and not self.api_key else {}
         )
-
-        if url:
-            audience_arg = {"audience": audience} if audience and not api_key else {}
-            self.db_connection = SearchClient(
-                endpoint=url,
-                index_name=self.index_name if self.index_name else "",
-                credential=(
-                    AzureKeyCredential(api_key) if api_key else DefaultAzureCredential()
-                ),
-                **audience_arg,
-            )
-            self.index_client = SearchIndexClient(
-                endpoint=url,
-                credential=(
-                    AzureKeyCredential(api_key) if api_key else DefaultAzureCredential()
-                ),
-                **audience_arg,
-            )
-        else:
-            not_supported_error = "Azure AI Search expects `url`."
-            raise ValueError(not_supported_error)
+        self.db_connection = SearchClient(
+            endpoint=self.url,
+            index_name=self.index_name,
+            credential=(
+                AzureKeyCredential(self.api_key)
+                if self.api_key
+                else DefaultAzureCredential()
+            ),
+            **audience_arg,
+        )
+        self.index_client = SearchIndexClient(
+            endpoint=self.url,
+            credential=(
+                AzureKeyCredential(self.api_key)
+                if self.api_key
+                else DefaultAzureCredential()
+            ),
+            **audience_arg,
+        )
 
     def create_index(self) -> None:
         """Load documents into an Azure AI Search index."""
@@ -93,7 +103,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
         )
         # Configure the index
         index = SearchIndex(
-            name=self.index_name if self.index_name else "",
+            name=self.index_name,
             fields=[
                 SimpleField(
                     name=self.id_field,
@@ -153,17 +163,6 @@ class AzureAISearchVectorStore(BaseVectorStore):
             )
             for doc in response
         ]
-
-    def similarity_search_by_text(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10
-    ) -> list[VectorStoreSearchResult]:
-        """Perform a text-based similarity search."""
-        query_embedding = text_embedder(text)
-        if query_embedding:
-            return self.similarity_search_by_vector(
-                query_embedding=query_embedding, k=k
-            )
-        return []
 
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""

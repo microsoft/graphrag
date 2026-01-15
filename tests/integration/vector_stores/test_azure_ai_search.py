@@ -7,9 +7,10 @@ import os
 from unittest.mock import MagicMock, patch
 
 import pytest
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
-from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
-from graphrag.vector_stores.base import VectorStoreDocument
+from graphrag_vectors import (
+    VectorStoreDocument,
+)
+from graphrag_vectors.azure_ai_search import AzureAISearchVectorStore
 
 TEST_AZURE_AI_SEARCH_URL = os.environ.get(
     "TEST_AZURE_AI_SEARCH_URL", "https://test-url.search.windows.net"
@@ -23,58 +24,49 @@ class TestAzureAISearchVectorStore:
     @pytest.fixture
     def mock_search_client(self):
         """Create a mock Azure AI Search client."""
-        with patch(
-            "graphrag.vector_stores.azure_ai_search.SearchClient"
-        ) as mock_client:
+        with patch("graphrag_vectors.azure_ai_search.SearchClient") as mock_client:
             yield mock_client.return_value
 
     @pytest.fixture
     def mock_index_client(self):
         """Create a mock Azure AI Search index client."""
-        with patch(
-            "graphrag.vector_stores.azure_ai_search.SearchIndexClient"
-        ) as mock_client:
+        with patch("graphrag_vectors.azure_ai_search.SearchIndexClient") as mock_client:
             yield mock_client.return_value
 
     @pytest.fixture
     def vector_store(self, mock_search_client, mock_index_client):
         """Create an Azure AI Search vector store instance."""
         vector_store = AzureAISearchVectorStore(
-            vector_store_schema_config=VectorStoreSchemaConfig(
-                index_name="test_vectors", vector_size=5
-            ),
+            url=TEST_AZURE_AI_SEARCH_URL,
+            api_key=TEST_AZURE_AI_SEARCH_KEY,
+            index_name="test_vectors",
+            vector_size=5,
         )
 
         # Create the necessary mocks first
         vector_store.db_connection = mock_search_client
         vector_store.index_client = mock_index_client
 
-        vector_store.connect(
-            url=TEST_AZURE_AI_SEARCH_URL,
-            api_key=TEST_AZURE_AI_SEARCH_KEY,
-        )
+        vector_store.connect()
         return vector_store
 
     @pytest.fixture
     def vector_store_custom(self, mock_search_client, mock_index_client):
         """Create an Azure AI Search vector store instance."""
         vector_store = AzureAISearchVectorStore(
-            vector_store_schema_config=VectorStoreSchemaConfig(
-                index_name="test_vectors",
-                id_field="id_custom",
-                vector_field="vector_custom",
-                vector_size=5,
-            ),
+            url=TEST_AZURE_AI_SEARCH_URL,
+            api_key=TEST_AZURE_AI_SEARCH_KEY,
+            index_name="test_vectors",
+            id_field="id_custom",
+            vector_field="vector_custom",
+            vector_size=5,
         )
 
         # Create the necessary mocks first
         vector_store.db_connection = mock_search_client
         vector_store.index_client = mock_index_client
 
-        vector_store.connect(
-            url=TEST_AZURE_AI_SEARCH_URL,
-            api_key=TEST_AZURE_AI_SEARCH_KEY,
-        )
+        vector_store.connect()
         return vector_store
 
     @pytest.fixture

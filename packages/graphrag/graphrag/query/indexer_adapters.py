@@ -10,6 +10,7 @@ import logging
 from typing import cast
 
 import pandas as pd
+from graphrag_vectors import VectorStore
 
 from graphrag.data_model.community import Community
 from graphrag.data_model.community_report import CommunityReport
@@ -26,7 +27,6 @@ from graphrag.query.input.loaders.dfs import (
     read_relationships,
     read_text_units,
 )
-from graphrag.vector_stores.base import BaseVectorStore
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +103,7 @@ def read_indexer_reports(
 
 def read_indexer_report_embeddings(
     community_reports: list[CommunityReport],
-    embeddings_store: BaseVectorStore,
+    embeddings_store: VectorStore,
 ):
     """Read in the Community Reports from the raw indexing outputs."""
     for report in community_reports:

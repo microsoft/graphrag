@@ -3,6 +3,8 @@
 
 """Query Factory methods to support CLI."""
 
+from graphrag_vectors import VectorStore
+
 from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.community import Community
@@ -33,7 +35,6 @@ from graphrag.query.structured_search.local_search.mixed_context import (
 )
 from graphrag.query.structured_search.local_search.search import LocalSearch
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.vector_stores.base import BaseVectorStore
 
 
 def get_local_search_engine(
@@ -44,7 +45,7 @@ def get_local_search_engine(
     relationships: list[Relationship],
     covariates: dict[str, list[Covariate]],
     response_type: str,
-    description_embedding_store: BaseVectorStore,
+    description_embedding_store: VectorStore,
     system_prompt: str | None = None,
     callbacks: list[QueryCallbacks] | None = None,
 ) -> LocalSearch:
@@ -198,7 +199,7 @@ def get_drift_search_engine(
     text_units: list[TextUnit],
     entities: list[Entity],
     relationships: list[Relationship],
-    description_embedding_store: BaseVectorStore,
+    description_embedding_store: VectorStore,
     response_type: str,
     local_system_prompt: str | None = None,
     reduce_system_prompt: str | None = None,
@@ -249,7 +250,7 @@ def get_drift_search_engine(
 
 def get_basic_search_engine(
     text_units: list[TextUnit],
-    text_unit_embeddings: BaseVectorStore,
+    text_unit_embeddings: VectorStore,
     config: GraphRagConfig,
     response_type: str,
     system_prompt: str | None = None,

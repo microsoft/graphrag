@@ -5,6 +5,8 @@
 
 from enum import Enum
 
+from graphrag_vectors import VectorStore
+
 from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.language_model.protocol.base import EmbeddingModel
@@ -13,7 +15,6 @@ from graphrag.query.input.retrieval.entities import (
     get_entity_by_key,
     get_entity_by_name,
 )
-from graphrag.vector_stores.base import BaseVectorStore
 
 
 class EntityVectorStoreKey(str, Enum):
@@ -36,7 +37,7 @@ class EntityVectorStoreKey(str, Enum):
 
 def map_query_to_entities(
     query: str,
-    text_embedding_vectorstore: BaseVectorStore,
+    text_embedding_vectorstore: VectorStore,
     text_embedder: EmbeddingModel,
     all_entities_dict: dict[str, Entity],
     embedding_vectorstore_key: str = EntityVectorStoreKey.ID,

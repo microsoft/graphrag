@@ -294,7 +294,7 @@ def local_search_streaming(
     logger.debug(msg)
 
     description_embedding_store = get_embedding_store(
-        store=config.vector_store.model_dump(),
+        config=config.vector_store,
         embedding_name=entity_description_embedding,
     )
 
@@ -419,12 +419,12 @@ def drift_search_streaming(
     logger.debug(msg)
 
     description_embedding_store = get_embedding_store(
-        store=config.vector_store.model_dump(),
+        config=config.vector_store,
         embedding_name=entity_description_embedding,
     )
 
     full_content_embedding_store = get_embedding_store(
-        store=config.vector_store.model_dump(),
+        config=config.vector_store,
         embedding_name=community_full_content_embedding,
     )
 
@@ -528,7 +528,7 @@ def basic_search_streaming(
     logger.debug(msg)
 
     embedding_store = get_embedding_store(
-        store=config.vector_store.model_dump(),
+        config=config.vector_store,
         embedding_name=text_unit_text_embedding,
     )
 

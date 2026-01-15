@@ -11,10 +11,12 @@ from graphrag_cache import CacheConfig
 from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_input import InputConfig
 from graphrag_storage import StorageConfig, StorageType
+from graphrag_vectors import IndexSchema, VectorStoreConfig, VectorStoreType
 from pydantic import BaseModel, Field, model_validator
 
 from graphrag.config.defaults import graphrag_config_defaults
-from graphrag.config.enums import ReportingType, VectorStoreType
+from graphrag.config.embeddings import all_embeddings
+from graphrag.config.enums import ReportingType
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
@@ -32,7 +34,6 @@ from graphrag.config.models.snapshots_config import SnapshotsConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
-from graphrag.config.models.vector_store_config import VectorStoreConfig
 from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter_factory import (
     RateLimiterFactory,
 )
@@ -276,13 +277,26 @@ class GraphRagConfig(BaseModel):
     )
     """The basic search configuration."""
 
+    def _validate_vector_store(self) -> None:
+        """Validate the vector store configuration specifically in the GraphRAG context. This checks and sets required dynamic defaults for the embeddings we require."""
+        self._validate_vector_store_db_uri()
+        # check and insert/overlay schemas for all of the core embeddings
+        # note that this does not require that they are used, only that they have a schema
+        # the embed_text block has the list of actual embeddings
+        if not self.vector_store.index_schema:
+            self.vector_store.index_schema = {}
+        for embedding in all_embeddings:
+            if embedding not in self.vector_store.index_schema:
+                self.vector_store.index_schema[embedding] = IndexSchema(
+                    index_name=embedding,
+                )
+
     def _validate_vector_store_db_uri(self) -> None:
         """Validate the vector store configuration."""
         store = self.vector_store
         if store.type == VectorStoreType.LanceDB:
             if not store.db_uri or store.db_uri.strip == "":
-                msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
-                raise ValueError(msg)
+                store.db_uri = graphrag_config_defaults.vector_store.db_uri
             store.db_uri = str(Path(store.db_uri).resolve())
 
     def _validate_factories(self) -> None:
@@ -321,6 +335,6 @@ class GraphRagConfig(BaseModel):
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
         self._validate_update_output_storage_base_dir()
-        self._validate_vector_store_db_uri()
+        self._validate_vector_store()
         self._validate_factories()
         return self

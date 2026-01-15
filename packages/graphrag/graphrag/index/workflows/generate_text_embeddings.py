@@ -6,17 +6,18 @@
 import logging
 
 import pandas as pd
+from graphrag_vectors import (
+    VectorStoreConfig,
+    create_vector_store,
+)
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.embeddings import (
     community_full_content_embedding,
-    create_index_name,
     entity_description_embedding,
     text_unit_text_embedding,
 )
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.models.vector_store_config import VectorStoreConfig
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -28,8 +29,6 @@ from graphrag.utils.storage import (
     load_table_from_storage,
     write_table_to_storage,
 )
-from graphrag.vector_stores.base import BaseVectorStore
-from graphrag.vector_stores.factory import VectorStoreFactory
 
 logger = logging.getLogger(__name__)
 
@@ -163,8 +162,10 @@ async def _run_embeddings(
     vector_store_config: VectorStoreConfig,
 ) -> pd.DataFrame:
     """All the steps to generate single embedding."""
-    index_name = _get_index_name(vector_store_config, name)
-    vector_store = _create_vector_store(vector_store_config, index_name, name)
+    vector_store = create_vector_store(
+        vector_store_config, vector_store_config.index_schema[name]
+    )
+    vector_store.connect()
 
     data["embedding"] = await embed_text(
         input=data,
@@ -179,56 +180,3 @@ async def _run_embeddings(
     )
 
     return data.loc[:, ["id", "embedding"]]
-
-
-def _create_vector_store(
-    vector_store_config: VectorStoreConfig,
-    index_name: str,
-    embedding_name: str | None = None,
-) -> BaseVectorStore:
-    embeddings_schema: dict[str, VectorStoreSchemaConfig] = (
-        vector_store_config.embeddings_schema
-    )
-
-    single_embedding_config: VectorStoreSchemaConfig = VectorStoreSchemaConfig()
-
-    if (
-        embeddings_schema is not None
-        and embedding_name is not None
-        and embedding_name in embeddings_schema
-    ):
-        raw_config = embeddings_schema[embedding_name]
-        if isinstance(raw_config, dict):
-            single_embedding_config = VectorStoreSchemaConfig(**raw_config)
-        else:
-            single_embedding_config = raw_config
-
-    if (
-        single_embedding_config.index_name is not None
-        and vector_store_config.index_prefix
-    ):
-        single_embedding_config.index_name = (
-            f"{vector_store_config.index_prefix}-{single_embedding_config.index_name}"
-        )
-
-    if single_embedding_config.index_name is None:
-        single_embedding_config.index_name = index_name
-
-    args = vector_store_config.model_dump()
-    args["vector_store_schema_config"] = single_embedding_config
-    vector_store = VectorStoreFactory().create(
-        vector_store_config.type,
-        args,
-    )
-
-    vector_store.connect(**args)
-    return vector_store
-
-
-def _get_index_name(vector_store_config: VectorStoreConfig, embedding_name: str) -> str:
-    index_prefix = vector_store_config.index_prefix or ""
-    index_name = create_index_name(index_prefix, embedding_name)
-
-    msg = f"using vector store {vector_store_config.type} with index prefix {index_prefix} for embedding {embedding_name}: {index_name}"
-    logger.info(msg)
-    return index_name

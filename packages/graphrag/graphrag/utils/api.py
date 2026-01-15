@@ -4,48 +4,21 @@
 """API functions for the GraphRAG module."""
 
 from pathlib import Path
-from typing import Any
 
-from graphrag.config.embeddings import create_index_name
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
-from graphrag.vector_stores.base import (
-    BaseVectorStore,
+from graphrag_vectors import (
+    VectorStore,
+    VectorStoreConfig,
+    create_vector_store,
 )
-from graphrag.vector_stores.factory import VectorStoreFactory
 
 
 def get_embedding_store(
-    store: dict[str, Any],
+    config: VectorStoreConfig,
     embedding_name: str,
-) -> BaseVectorStore:
-    """Get the embedding description store."""
-    vector_store_type = store["type"]
-    index_name = create_index_name(store.get("index_prefix", ""), embedding_name)
-
-    embeddings_schema: dict[str, VectorStoreSchemaConfig] = store.get(
-        "embeddings_schema", {}
-    )
-    embedding_config: VectorStoreSchemaConfig = VectorStoreSchemaConfig()
-
-    if (
-        embeddings_schema is not None
-        and embedding_name is not None
-        and embedding_name in embeddings_schema
-    ):
-        raw_config = embeddings_schema[embedding_name]
-        if isinstance(raw_config, dict):
-            embedding_config = VectorStoreSchemaConfig(**raw_config)
-        else:
-            embedding_config = raw_config
-
-    if embedding_config.index_name is None:
-        embedding_config.index_name = index_name
-
-    embedding_store = VectorStoreFactory().create(
-        vector_store_type,
-        {**store, "vector_store_schema_config": embedding_config},
-    )
-    embedding_store.connect(**store)
+) -> VectorStore:
+    """Get the embedding store."""
+    embedding_store = create_vector_store(config, config.index_schema[embedding_name])
+    embedding_store.connect()
 
     return embedding_store
 
