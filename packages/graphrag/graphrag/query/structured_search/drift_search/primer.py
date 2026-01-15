@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pandas as pd
 from graphrag_llm.tokenizer import Tokenizer
-from graphrag_llm.utils import gather_completion_response_async, gather_embeddings
+from graphrag_llm.utils import gather_embeddings
 from pydantic import BaseModel, Field
 from tqdm.asyncio import tqdm_asyncio
 
@@ -86,8 +86,10 @@ class PrimerQueryProcessor:
                   {template}\n"
                   Ensure that the hypothetical answer does not reference new named entities that are not present in the original query."""
 
-        model_response = await self.chat_model.completion_async(messages=prompt)
-        text = await gather_completion_response_async(model_response)
+        model_response: LLMCompletionResponse = await self.chat_model.completion_async(
+            messages=prompt
+        )  # type: ignore
+        text = model_response.content
 
         prompt_tokens = len(self.tokenizer.encode(prompt))
         output_tokens = len(self.tokenizer.encode(text))
@@ -163,14 +165,13 @@ class DRIFTPrimer:
         ] = await self.chat_model.completion_async(
             messages=prompt, response_format=PrimerResponse
         )  # type: ignore
-        response = await gather_completion_response_async(model_response)
 
         parsed_response = model_response.formatted_response.model_dump()  # type: ignore
 
         token_ct = {
             "llm_calls": 1,
             "prompt_tokens": len(self.tokenizer.encode(prompt)),
-            "output_tokens": len(self.tokenizer.encode(response)),
+            "output_tokens": len(self.tokenizer.encode(model_response.content)),
         }
 
         return parsed_response, token_ct

@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 
 from graphrag_llm.utils import (
     CompletionMessagesBuilder,
-    gather_completion_response_async,
 )
 
 from graphrag.prompt_tune.prompt.entity_relationship import (
@@ -19,6 +18,7 @@ from graphrag.prompt_tune.prompt.entity_relationship import (
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
 
 MAX_EXAMPLES = 5
 
@@ -73,6 +73,6 @@ async def generate_entity_relationship_examples(
         for message in messages
     ]
 
-    responses = await asyncio.gather(*tasks)
+    responses: list[LLMCompletionResponse] = await asyncio.gather(*tasks)  # type: ignore
 
-    return [await gather_completion_response_async(response) for response in responses]
+    return [response.content for response in responses]

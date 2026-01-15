@@ -4,14 +4,13 @@
 # Licensed under the MIT License
 from typing import TYPE_CHECKING
 
-from graphrag_llm.utils import gather_completion_response_async
-
 from graphrag.prompt_tune.prompt.community_report_rating import (
     GENERATE_REPORT_RATING_PROMPT,
 )
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
 
 
 async def generate_community_report_rating(
@@ -35,6 +34,8 @@ async def generate_community_report_rating(
         domain=domain, persona=persona, input_text=docs_str
     )
 
-    response = await model.completion_async(messages=domain_prompt)
+    response: LLMCompletionResponse = await model.completion_async(
+        messages=domain_prompt
+    )  # type: ignore
 
-    return await gather_completion_response_async(response)
+    return response.content

@@ -7,12 +7,11 @@ import json
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from graphrag_llm.utils import gather_completion_response_async
-
 from graphrag.index.typing.error_handler import ErrorHandlerFn
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
 
 # these tokens are used in the prompt
 ENTITY_NAME_KEY = "entity_name"
@@ -122,7 +121,7 @@ class SummarizeExtractor:
         self, id: str | tuple[str, str] | list[str], descriptions: list[str]
     ):
         """Summarize descriptions using the LLM."""
-        response = await self._model.completion_async(
+        response: LLMCompletionResponse = await self._model.completion_async(
             messages=self._summarization_prompt.format(**{
                 ENTITY_NAME_KEY: json.dumps(id, ensure_ascii=False),
                 DESCRIPTION_LIST_KEY: json.dumps(
@@ -130,6 +129,6 @@ class SummarizeExtractor:
                 ),
                 MAX_LENGTH_KEY: self._max_summary_length,
             }),
-        )
+        )  # type: ignore
         # Calculate result
-        return await gather_completion_response_async(response)
+        return response.content

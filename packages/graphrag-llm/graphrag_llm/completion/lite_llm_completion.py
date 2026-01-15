@@ -17,8 +17,6 @@ from graphrag_llm.middleware import (
 )
 from graphrag_llm.types import LLMCompletionChunk, LLMCompletionResponse
 from graphrag_llm.utils import (
-    gather_completion_response,
-    gather_completion_response_async,
     structure_completion_response,
 )
 
@@ -169,9 +167,8 @@ class LiteLLMCompletion(LLMCompletion):
                 **kwargs,  # type: ignore
             )
             if response_format is not None:
-                content = gather_completion_response(response)
                 structured_response = structure_completion_response(
-                    content, response_format
+                    response.content, response_format
                 )
                 response.formatted_response = structured_response
             return response
@@ -214,9 +211,8 @@ class LiteLLMCompletion(LLMCompletion):
                 **kwargs,  # type: ignore
             )
             if response_format is not None:
-                content = await gather_completion_response_async(response)
                 structured_response = structure_completion_response(
-                    content, response_format
+                    response.content, response_format
                 )
                 response.formatted_response = structured_response
             return response

@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 from graphrag_llm.utils import (
     CompletionMessagesBuilder,
-    gather_completion_response_async,
 )
 from pydantic import BaseModel
 
@@ -69,5 +68,7 @@ async def generate_entity_types(
         parsed_model = response.formatted_response
         return parsed_model.entity_types if parsed_model else []
 
-    non_json_response = await model.completion_async(messages=messages)
-    return str(await gather_completion_response_async(non_json_response))
+    non_json_response: LLMCompletionResponse = await model.completion_async(
+        messages=messages
+    )  # type: ignore
+    return non_json_response.content

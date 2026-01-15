@@ -10,7 +10,6 @@ import litellm
 from graphrag_llm.completion.completion import LLMCompletion
 from graphrag_llm.utils import (
     create_completion_response,
-    gather_completion_response,
     structure_completion_response,
 )
 
@@ -110,9 +109,8 @@ class MockLLMCompletion(LLMCompletion):
         )
         self._mock_index += 1
         if response_format is not None:
-            content = gather_completion_response(response)
             structured_response = structure_completion_response(
-                content, response_format
+                response.content, response_format
             )
             response.formatted_response = structured_response
         return response

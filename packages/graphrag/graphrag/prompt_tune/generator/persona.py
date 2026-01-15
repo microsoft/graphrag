@@ -5,13 +5,12 @@
 
 from typing import TYPE_CHECKING
 
-from graphrag_llm.utils import gather_completion_response_async
-
 from graphrag.prompt_tune.defaults import DEFAULT_TASK
 from graphrag.prompt_tune.prompt.persona import GENERATE_PERSONA_PROMPT
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
 
 
 async def generate_persona(
@@ -28,6 +27,8 @@ async def generate_persona(
     formatted_task = task.format(domain=domain)
     persona_prompt = GENERATE_PERSONA_PROMPT.format(sample_task=formatted_task)
 
-    response = await model.completion_async(messages=persona_prompt)
+    response: LLMCompletionResponse = await model.completion_async(
+        messages=persona_prompt
+    )  # type: ignore
 
-    return await gather_completion_response_async(response)
+    return response.content

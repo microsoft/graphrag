@@ -5,14 +5,13 @@
 
 from typing import TYPE_CHECKING
 
-from graphrag_llm.utils import gather_completion_response_async
-
 from graphrag.prompt_tune.prompt.community_reporter_role import (
     GENERATE_COMMUNITY_REPORTER_ROLE_PROMPT,
 )
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
 
 
 async def generate_community_reporter_role(
@@ -36,6 +35,8 @@ async def generate_community_reporter_role(
         domain=domain, persona=persona, input_text=docs_str
     )
 
-    response = await model.completion_async(messages=domain_prompt)
+    response: LLMCompletionResponse = await model.completion_async(
+        messages=domain_prompt
+    )  # type: ignore
 
-    return await gather_completion_response_async(response)
+    return response.content

@@ -40,7 +40,7 @@ from openai.types.completion_usage import (
 )
 from openai.types.create_embedding_response import CreateEmbeddingResponse, Usage
 from openai.types.embedding import Embedding
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 from typing_extensions import TypedDict
 
 LLMCompletionMessagesParam = str | Sequence[ChatCompletionMessageParam | dict[str, Any]]
@@ -94,6 +94,12 @@ class LLMCompletionResponse(ChatCompletion, Generic[ResponseFormat]):
 
     formatted_response: ResponseFormat | None = None  # type: ignore
     """Formatted response according to the specified response_format json schema."""
+
+    @computed_field
+    @property
+    def content(self) -> str:
+        """Get the content of the first choice message."""
+        return self.choices[0].message.content or ""
 
 
 class LLMCompletionArgs(

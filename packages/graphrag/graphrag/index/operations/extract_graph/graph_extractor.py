@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING, Any
 import pandas as pd
 from graphrag_llm.utils import (
     CompletionMessagesBuilder,
-    gather_completion_response_async,
 )
 
 from graphrag.index.typing.error_handler import ErrorHandlerFn
@@ -23,6 +22,7 @@ from graphrag.prompts.index.extract_graph import (
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
 
 INPUT_TEXT_KEY = "input_text"
 RECORD_DELIMITER_KEY = "record_delimiter"
@@ -90,10 +90,10 @@ class GraphExtractor:
             })
         )
 
-        response = await self._model.completion_async(
+        response: LLMCompletionResponse = await self._model.completion_async(
             messages=messages_builder.build(),
-        )
-        results = await gather_completion_response_async(response)
+        )  # type: ignore
+        results = response.content
         messages_builder.add_assistant_message(results)
 
         # if gleanings are specified, enter a loop to extract more entities
@@ -101,10 +101,10 @@ class GraphExtractor:
         if self._max_gleanings > 0:
             for i in range(self._max_gleanings):
                 messages_builder.add_user_message(CONTINUE_PROMPT)
-                response = await self._model.completion_async(
+                response: LLMCompletionResponse = await self._model.completion_async(
                     messages=messages_builder.build(),
-                )
-                response_text = await gather_completion_response_async(response)
+                )  # type: ignore
+                response_text = response.content
                 messages_builder.add_assistant_message(response_text)
                 results += response_text
 
@@ -113,10 +113,10 @@ class GraphExtractor:
                     break
 
                 messages_builder.add_user_message(LOOP_PROMPT)
-                response = await self._model.completion_async(
+                response: LLMCompletionResponse = await self._model.completion_async(
                     messages=messages_builder.build(),
-                )
-                if await gather_completion_response_async(response) != "Y":
+                )  # type: ignore
+                if response.content != "Y":
                     break
 
         return results

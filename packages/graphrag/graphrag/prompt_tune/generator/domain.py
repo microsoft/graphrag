@@ -5,12 +5,11 @@
 
 from typing import TYPE_CHECKING
 
-from graphrag_llm.utils import gather_completion_response_async
-
 from graphrag.prompt_tune.prompt.domain import GENERATE_DOMAIN_PROMPT
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
 
 
 async def generate_domain(model: "LLMCompletion", docs: str | list[str]) -> str:
@@ -28,6 +27,8 @@ async def generate_domain(model: "LLMCompletion", docs: str | list[str]) -> str:
     docs_str = " ".join(docs) if isinstance(docs, list) else docs
     domain_prompt = GENERATE_DOMAIN_PROMPT.format(input_text=docs_str)
 
-    response = await model.completion_async(messages=domain_prompt)
+    response: LLMCompletionResponse = await model.completion_async(
+        messages=domain_prompt
+    )  # type: ignore
 
-    return await gather_completion_response_async(response)
+    return response.content

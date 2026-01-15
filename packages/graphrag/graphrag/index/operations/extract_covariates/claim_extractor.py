@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Any
 
 from graphrag_llm.utils import (
     CompletionMessagesBuilder,
-    gather_completion_response_async,
 )
 
 from graphrag.config.defaults import graphrag_config_defaults
@@ -22,6 +21,7 @@ from graphrag.prompts.index.extract_claims import (
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
 
 INPUT_TEXT_KEY = "input_text"
 INPUT_ENTITY_SPEC_KEY = "entity_specs"
@@ -127,10 +127,10 @@ class ClaimExtractor:
             })
         )
 
-        response = await self._model.completion_async(
+        response: LLMCompletionResponse = await self._model.completion_async(
             messages=messages_builder.build(),
-        )
-        results = await gather_completion_response_async(response)
+        )  # type: ignore
+        results = response.content
         messages_builder.add_assistant_message(results)
         claims = results.strip().removesuffix(COMPLETION_DELIMITER)
 
@@ -139,10 +139,10 @@ class ClaimExtractor:
         if self._max_gleanings > 0:
             for i in range(self._max_gleanings):
                 messages_builder.add_user_message(CONTINUE_PROMPT)
-                response = await self._model.completion_async(
+                response: LLMCompletionResponse = await self._model.completion_async(
                     messages=messages_builder.build(),
-                )
-                extension = await gather_completion_response_async(response)
+                )  # type: ignore
+                extension = response.content
                 messages_builder.add_assistant_message(extension)
                 claims += RECORD_DELIMITER + extension.strip().removesuffix(
                     COMPLETION_DELIMITER
@@ -153,11 +153,11 @@ class ClaimExtractor:
                     break
 
                 messages_builder.add_user_message(LOOP_PROMPT)
-                response = await self._model.completion_async(
+                response: LLMCompletionResponse = await self._model.completion_async(
                     messages=messages_builder.build(),
-                )
+                )  # type: ignore
 
-                if await gather_completion_response_async(response) != "Y":
+                if response.content != "Y":
                     break
 
         return self._parse_claim_tuples(results)
