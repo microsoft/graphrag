@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, cast
 
 import pandas as pd
 from graphrag_llm.tokenizer import Tokenizer
-from graphrag_llm.utils import gather_embeddings
 from graphrag_vectors import VectorStore
 
 from graphrag.data_model.text_unit import TextUnit
@@ -58,10 +57,9 @@ class BasicSearchContext(BasicContextBuilder):
         if query != "":
             related_texts = self.text_unit_embeddings.similarity_search_by_text(
                 text=query,
-                text_embedder=lambda t: gather_embeddings(
-                    self.text_embedder.embedding(input=[t])
-                )[0]
-                or [],
+                text_embedder=lambda t: self.text_embedder.embedding(
+                    input=[t]
+                ).first_embedding,
                 k=k,
             )
 

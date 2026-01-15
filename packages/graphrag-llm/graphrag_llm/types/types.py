@@ -57,7 +57,6 @@ LLMPromptTokensDetails = PromptTokensDetails
 LLMCompletionTokensDetails = CompletionTokensDetails
 
 
-LLMEmbeddingResponse = CreateEmbeddingResponse
 LLMEmbedding = Embedding
 LLMEmbeddingUsage = Usage
 
@@ -177,6 +176,26 @@ class AsyncLLMCompletionFunction(Protocol):
     ]:
         """Completion function."""
         ...
+
+
+class LLMEmbeddingResponse(CreateEmbeddingResponse):
+    """LLM Embedding Response extending OpenAI CreateEmbeddingResponse.
+
+    The response type returned by graphrag-llm LLMEmbeddingFunction.
+    Adds utilities for accessing embeddings.
+    """
+
+    @computed_field
+    @property
+    def embeddings(self) -> list[list[float]]:
+        """Get the embeddings as a list of lists of floats."""
+        return [data.embedding for data in self.data]
+
+    @computed_field
+    @property
+    def first_embedding(self) -> list[float]:
+        """Get the first embedding."""
+        return self.embeddings[0] if self.embeddings else []
 
 
 class LLMEmbeddingArgs(TypedDict, total=False, extra_items=Any):

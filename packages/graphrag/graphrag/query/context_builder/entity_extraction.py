@@ -6,7 +6,6 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
-from graphrag_llm.utils import gather_embeddings
 from graphrag_vectors import VectorStore
 
 from graphrag.data_model.entity import Entity
@@ -62,10 +61,7 @@ def map_query_to_entities(
         # oversample to account for excluded entities
         search_results = text_embedding_vectorstore.similarity_search_by_text(
             text=query,
-            text_embedder=lambda t: gather_embeddings(
-                text_embedder.embedding(input=[t])
-            )[0]
-            or [],
+            text_embedder=lambda t: text_embedder.embedding(input=[t]).first_embedding,
             k=k * oversample_scaler,
         )
         for result in search_results:

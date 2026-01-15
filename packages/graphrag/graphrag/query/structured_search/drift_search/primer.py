@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pandas as pd
 from graphrag_llm.tokenizer import Tokenizer
-from graphrag_llm.utils import gather_embeddings
 from pydantic import BaseModel, Field
 from tqdm.asyncio import tqdm_asyncio
 
@@ -116,9 +115,9 @@ class PrimerQueryProcessor:
         """
         hyde_query, token_ct = await self.expand_query(query)
         logger.debug("Expanded query: %s", hyde_query)
-        return gather_embeddings(self.text_embedder.embedding(input=[hyde_query]))[
-            0
-        ] or [], token_ct
+        return self.text_embedder.embedding(
+            input=[hyde_query]
+        ).first_embedding, token_ct
 
 
 class DRIFTPrimer:

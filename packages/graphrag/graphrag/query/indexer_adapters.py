@@ -10,7 +10,6 @@ import logging
 from typing import TYPE_CHECKING, cast
 
 import pandas as pd
-from graphrag_llm.utils import gather_embeddings
 from graphrag_vectors import VectorStore
 
 from graphrag.data_model.community import Community
@@ -206,7 +205,7 @@ def embed_community_reports(
 
     if embedding_col not in reports_df.columns:
         reports_df[embedding_col] = reports_df.loc[:, source_col].apply(
-            lambda x: gather_embeddings(embedder.embedding(input=[x]))[0] or []
+            lambda x: embedder.embedding(input=[x]).first_embedding
         )
 
     return reports_df

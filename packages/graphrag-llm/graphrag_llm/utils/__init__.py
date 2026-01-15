@@ -21,7 +21,6 @@ from graphrag_llm.utils.gather_completion_response import (
     gather_completion_response,
     gather_completion_response_async,
 )
-from graphrag_llm.utils.gather_embeddings import gather_embeddings
 from graphrag_llm.utils.structure_response import (
     structure_completion_response,
 )
@@ -37,6 +36,5 @@ __all__ = [
     "create_embedding_response",
     "gather_completion_response",
     "gather_completion_response_async",
-    "gather_embeddings",
     "structure_completion_response",
 ]

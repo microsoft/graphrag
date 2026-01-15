@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING
 import numpy as np
 from graphrag_chunking.token_chunker import split_text_on_tokens
 from graphrag_llm.tokenizer import Tokenizer
-from graphrag_llm.utils import gather_embeddings
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.utils.is_null import is_null
@@ -82,10 +81,8 @@ async def _execute(
 ) -> list[list[float]]:
     async def embed(chunk: list[str]):
         async with semaphore:
-            chunk_embeddings = gather_embeddings(
-                await model.embedding_async(input=chunk)
-            )
-            result = np.array(chunk_embeddings)
+            embeddings_response = await model.embedding_async(input=chunk)
+            result = np.array(embeddings_response.embeddings)
             tick(1)
         return result
 
