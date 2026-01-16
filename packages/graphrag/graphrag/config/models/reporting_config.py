@@ -28,7 +28,7 @@ class ReportingConfig(BaseModel):
         description="The reporting container name to use.",
         default=graphrag_config_defaults.reporting.container_name,
     )
-    storage_account_blob_url: str | None = Field(
+    account_url: str | None = Field(
         description="The storage account blob url to use.",
         default=graphrag_config_defaults.reporting.storage_account_blob_url,
     )
