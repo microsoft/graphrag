@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Iterator
 
-    from graphrag_llm.config import MetricsConfig, ModelConfig
+    from graphrag_llm.config import ModelConfig
     from graphrag_llm.types import (
         LLMCompletionChunk,
         LLMCompletionResponse,
@@ -22,14 +22,8 @@ class MetricsProcessor(ABC):
     """Abstract base class for metrics processors."""
 
     @abstractmethod
-    def __init__(self, *, metrics_config: "MetricsConfig", **kwargs: Any):
-        """Initialize MetricsProcessor.
-
-        Args
-        ----
-            metrics_config: MetricsConfig
-                The configuration for metrics processing.
-        """
+    def __init__(self, **kwargs: Any):
+        """Initialize MetricsProcessor."""
         raise NotImplementedError
 
     @abstractmethod

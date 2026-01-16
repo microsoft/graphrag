@@ -7,7 +7,6 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from graphrag_llm.config import MetricsConfig
     from graphrag_llm.types import Metrics
 
 
@@ -15,15 +14,8 @@ class MetricsWriter(ABC):
     """Abstract base class for metrics writers."""
 
     @abstractmethod
-    def __init__(self, *, metrics_config: "MetricsConfig", **kwargs: Any) -> None:
-        """Initialize MetricsWriter.
-
-        Args
-        ----
-            metrics_config: MetricsConfig
-                The configuration for the metrics writer.
-
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """Initialize MetricsWriter."""
         raise NotImplementedError
 
     @abstractmethod

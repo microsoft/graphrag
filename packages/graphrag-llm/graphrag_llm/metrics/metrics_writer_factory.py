@@ -64,7 +64,7 @@ def create_metrics_writer(metrics_config: "MetricsConfig") -> MetricsWriter:
         msg = "MetricsConfig.writer needs to be set to create a MetricsWriter."
         raise ValueError(msg)
 
-    extra = metrics_config.model_extra or {}
+    init_args = metrics_config.model_dump()
 
     if strategy not in metrics_writer_factory:
         match strategy:
@@ -88,6 +88,4 @@ def create_metrics_writer(metrics_config: "MetricsConfig") -> MetricsWriter:
                 msg = f"MetricsConfig.writer '{strategy}' is not registered in the MetricsWriterFactory. Registered strategies: {', '.join(metrics_writer_factory.keys())}"
                 raise ValueError(msg)
 
-    return metrics_writer_factory.create(
-        strategy=strategy, init_args={**extra, "metrics_config": metrics_config}
-    )
+    return metrics_writer_factory.create(strategy=strategy, init_args=init_args)

@@ -12,7 +12,6 @@ from typing import TYPE_CHECKING, Any
 from graphrag_llm.metrics.metrics_writer import MetricsWriter
 
 if TYPE_CHECKING:
-    from graphrag_llm.config import MetricsConfig
     from graphrag_llm.types import Metrics
 
 
@@ -23,9 +22,9 @@ class FileMetricsWriter(MetricsWriter):
     _base_dir: Path
     _file_path: Path
 
-    def __init__(self, *, metrics_config: "MetricsConfig", **kwargs: Any) -> None:
+    def __init__(self, *, base_dir: str | None = None, **kwargs: Any) -> None:
         """Initialize FileMetricsWriter."""
-        self._base_dir = Path(metrics_config.base_dir or Path.cwd()).resolve()
+        self._base_dir = Path(base_dir or Path.cwd()).resolve()
         now = datetime.now(timezone.utc).astimezone().strftime("%Y%m%d_%H%M%S")
         self._file_path = self._base_dir / f"{now}.jsonl"
 

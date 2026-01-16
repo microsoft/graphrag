@@ -16,7 +16,6 @@ from graphrag_llm.rate_limit.rate_limiter import RateLimiter
 class SlidingWindowRateLimiter(RateLimiter):
     """Sliding Window Rate Limiter implementation."""
 
-    _rate_limiting_enabled: bool = False
     _rpp: int | None = None
     _tpp: int | None = None
     _lock: threading.Lock
@@ -51,20 +50,6 @@ class SlidingWindowRateLimiter(RateLimiter):
                 If period_in_seconds is not a positive integer.
                 If requests_per_period or tokens_per_period are not positive integers.
         """
-        if period_in_seconds <= 0:
-            msg = "Period in seconds must be a positive integer."
-            raise ValueError(msg)
-
-        self._rate_limiting_enabled = (
-            requests_per_period is not None or tokens_per_period is not None
-        )
-
-        if (requests_per_period is not None and requests_per_period <= 0) or (
-            tokens_per_period is not None and tokens_per_period <= 0
-        ):
-            msg = "requests_per_period and tokens_per_period must be either None (disabled) or positive integers."
-            raise ValueError(msg)
-
         self._rpp = requests_per_period
         self._tpp = tokens_per_period
         self._lock = threading.Lock()
@@ -89,10 +74,6 @@ class SlidingWindowRateLimiter(RateLimiter):
         ------
             None: This context manager does not return any value.
         """
-        if not self._rate_limiting_enabled:
-            yield
-            return
-
         while True:
             with self._lock:
                 current_time = time.time()

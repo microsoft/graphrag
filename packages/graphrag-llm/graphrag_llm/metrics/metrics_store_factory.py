@@ -64,7 +64,7 @@ def create_metrics_store(config: "MetricsConfig", id: str) -> MetricsStore:
         from graphrag_llm.metrics.metrics_writer_factory import create_metrics_writer
 
         metrics_writer = create_metrics_writer(config)
-    extra: dict[str, Any] = config.model_extra or {}
+    init_args: dict[str, Any] = config.model_dump()
 
     if strategy not in metrics_store_factory:
         match strategy:
@@ -83,7 +83,7 @@ def create_metrics_store(config: "MetricsConfig", id: str) -> MetricsStore:
     return metrics_store_factory.create(
         strategy=strategy,
         init_args={
-            **extra,
+            **init_args,
             "id": id,
             "metrics_config": config,
             "metrics_writer": metrics_writer,

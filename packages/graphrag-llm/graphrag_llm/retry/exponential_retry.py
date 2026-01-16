@@ -54,14 +54,6 @@ class ExponentialRetry(Retry):
                 If max_retries is less than or equal to 0.
                 If base_delay is less than or equal to 1.0.
         """
-        if max_retries <= 0:
-            msg = "max_retries must be greater than 0."
-            raise ValueError(msg)
-
-        if base_delay <= 1.0:
-            msg = "base_delay must be greater than 1.0."
-            raise ValueError(msg)
-
         self._base_delay = base_delay
         self._jitter = jitter
         self._max_retries = max_retries

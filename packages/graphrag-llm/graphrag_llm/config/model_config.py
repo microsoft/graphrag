@@ -5,7 +5,7 @@
 
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from graphrag_llm.config.metrics_config import MetricsConfig
 from graphrag_llm.config.rate_limit_config import RateLimitConfig
@@ -81,3 +81,30 @@ class ModelConfig(BaseModel):
         default_factory=list,
         description="List of mock responses for testing.",
     )
+
+    def _validate_lite_llm_config(self) -> None:
+        """Validate LiteLLM specific configuration."""
+        if self.model_provider == "azure" and (
+            not self.azure_deployment_name or not self.api_base or not self.api_version
+        ):
+            msg = "azure_deployment_name, api_base, and api_version must be specified with the 'azure' model provider."
+            raise ValueError(msg)
+
+        if self.model_provider != "azure" and self.azure_deployment_name:
+            msg = "azure_deployment_name should not be specified for non-Azure model providers."
+            raise ValueError(msg)
+
+        if self.auth_method == AuthMethod.AzureManagedIdentity:
+            if self.api_key is not None:
+                msg = "api_key should not be set when using Azure Managed Identity."
+                raise ValueError(msg)
+        elif not self.api_key:
+            msg = "api_key must be set when auth_method=api_key."
+            raise ValueError(msg)
+
+    @model_validator(mode="after")
+    def _validate_model(self):
+        """Validate model configuration after initialization."""
+        if self.type == LLMProviderType.LiteLLM:
+            self._validate_lite_llm_config()
+        return self

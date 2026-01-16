@@ -12,7 +12,6 @@ from graphrag_llm.templating.template_manager import TemplateManager
 class FileTemplateManager(TemplateManager):
     """Abstract base class for template managers."""
 
-    _templates: dict[str, str]
     _encoding: str
     _templates_extension: str
     _templates_dir: Path
@@ -44,13 +43,6 @@ class FileTemplateManager(TemplateManager):
         self._templates = {}
         self._encoding = encoding
 
-        if template_extension.strip() == "":
-            msg = "templates_pattern cannot be an empty string."
-            raise ValueError(msg)
-
-        if not template_extension.startswith("."):
-            template_extension = f".{template_extension}"
-
         self._templates_extension = template_extension
 
         self._templates_dir = Path(base_dir).resolve()
@@ -58,16 +50,14 @@ class FileTemplateManager(TemplateManager):
             msg = f"Templates directory '{base_dir}' does not exist or is not a directory."
             raise ValueError(msg)
 
-        templates_pattern = f"*{template_extension}"
-        for template_path in self._templates_dir.glob(templates_pattern):
-            if template_path.is_file():
-                self._templates[template_path.stem] = template_path.read_text(
-                    encoding=encoding
-                )
-
     def get(self, template_name: str) -> str | None:
         """Retrieve a template by its name."""
-        return self._templates.get(template_name)
+        template_file = (
+            self._templates_dir / f"{template_name}{self._templates_extension}"
+        )
+        if template_file.exists() and template_file.is_file():
+            return template_file.read_text(encoding=self._encoding)
+        return None
 
     def register(self, template_name: str, template: str) -> None:
         """Register a new template."""

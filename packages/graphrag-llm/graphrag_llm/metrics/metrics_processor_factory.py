@@ -52,7 +52,7 @@ def create_metrics_processor(metrics_config: "MetricsConfig") -> MetricsProcesso
             An instance of a MetricsProcessor subclass.
     """
     strategy = metrics_config.type
-    extra = metrics_config.model_extra or {}
+    init_args = metrics_config.model_dump()
 
     if strategy not in metrics_processor_factory:
         match strategy:
@@ -73,7 +73,7 @@ def create_metrics_processor(metrics_config: "MetricsConfig") -> MetricsProcesso
     return metrics_processor_factory.create(
         strategy=strategy,
         init_args={
-            **extra,
+            **init_args,
             "metrics_config": metrics_config,
         },
     )

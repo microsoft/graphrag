@@ -109,8 +109,6 @@ class LiteLLMCompletion(LLMCompletion):
         self._rate_limiter = rate_limiter
         self._retrier = retrier
 
-        self._validate()
-
         self._completion, self._completion_async = _create_base_completions(
             model_config=model_config,
             drop_unsupported_params=drop_unsupported_params,
@@ -229,40 +227,6 @@ class LiteLLMCompletion(LLMCompletion):
     def tokenizer(self) -> "Tokenizer":
         """Get tokenizer."""
         return self._tokenizer
-
-    def _validate(self) -> None:
-        """Validate model configuration for LiteLLMCompletion."""
-        if (
-            self._model_config.model_provider == "azure"
-            and not self._model_config.azure_deployment_name
-        ):
-            msg = "Azure deployment name must be specified for Azure model provider."
-            raise ValueError(msg)
-
-        if (
-            self._model_config.model_provider != "azure"
-            and self._model_config.azure_deployment_name
-        ):
-            msg = "Azure deployment name should not be specified for non-Azure model providers."
-            raise ValueError(msg)
-
-        if self._model_config.model_provider == "azure" and (
-            not self._model_config.api_base or not self._model_config.api_version
-        ):
-            msg = "API base and API version must be specified for Azure model provider."
-            raise ValueError(msg)
-
-        if self._model_config.auth_method == AuthMethod.AzureManagedIdentity:
-            if self._model_config.model_provider != "azure":
-                msg = "Azure Managed Identity can only be used with the 'azure' model provider."
-                raise ValueError(msg)
-
-            if self._model_config.api_key is not None:
-                msg = "API key should not be set when using Azure Managed Identity."
-                raise ValueError(msg)
-        elif not self._model_config.api_key:
-            msg = "API key must be provided for authentication."
-            raise ValueError(msg)
 
 
 def _create_base_completions(

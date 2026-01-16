@@ -7,7 +7,6 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from graphrag_llm.config import MetricsConfig
     from graphrag_llm.metrics.metrics_writer import MetricsWriter
     from graphrag_llm.types import Metrics
 
@@ -20,7 +19,6 @@ class MetricsStore(ABC):
         self,
         *,
         id: str,
-        metrics_config: "MetricsConfig",
         metrics_writer: "MetricsWriter | None" = None,
         **kwargs: Any,
     ) -> None:
@@ -34,8 +32,6 @@ class MetricsStore(ABC):
                 candidate is the model id (e.g., openai/gpt-4o).
                 That way one store tracks and aggregates the metrics
                 per model.
-            metrics_config: MetricsConfig
-                The configuration for the metrics store.
             metrics_writer: MetricsWriter
                 The metrics writer to use for writing metrics.
 

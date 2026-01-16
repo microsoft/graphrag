@@ -3,7 +3,7 @@
 
 """RateLimit configuration."""
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from graphrag_llm.config.types import RateLimitType
 
@@ -33,3 +33,28 @@ class RateLimitConfig(BaseModel):
         default=None,
         description="The maximum number of tokens allowed per period. (default: None, no limit).",
     )
+
+    def _validate_sliding_window_config(self) -> None:
+        """Validate Sliding Window rate limit configuration."""
+        if self.period_in_seconds is not None and self.period_in_seconds <= 0:
+            msg = "period_in_seconds must be a positive integer for Sliding Window rate limit."
+            raise ValueError(msg)
+
+        if not self.requests_per_period and not self.tokens_per_period:
+            msg = "At least one of requests_per_period or tokens_per_period must be specified for Sliding Window rate limit."
+            raise ValueError(msg)
+
+        if self.requests_per_period is not None and self.requests_per_period <= 0:
+            msg = "requests_per_period must be a positive integer for Sliding Window rate limit."
+            raise ValueError(msg)
+
+        if self.tokens_per_period is not None and self.tokens_per_period <= 0:
+            msg = "tokens_per_period must be a positive integer for Sliding Window rate limit."
+            raise ValueError(msg)
+
+    @model_validator(mode="after")
+    def _validate_model(self):
+        """Validate the rate limit configuration based on its type."""
+        if self.type == RateLimitType.SlidingWindow:
+            self._validate_sliding_window_config()
+        return self

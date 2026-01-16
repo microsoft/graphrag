@@ -38,9 +38,6 @@ class ImmediateRetry(Retry):
             ValueError
                 If max_retries is less than or equal to 0.
         """
-        if max_retries <= 0:
-            msg = "max_retries must be greater than 0."
-            raise ValueError(msg)
         self._max_retries = max_retries
         self._exceptions_to_skip = exceptions_to_skip or _default_exceptions_to_skip
 
