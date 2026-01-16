@@ -31,13 +31,14 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "azure-identity>=1.19.0",
+    "azure-identity~=1.19.0",
     "graphrag-cache==2.7.0",
     "graphrag-common==2.7.0",
-    "jinja2>=3.1.6",
-    "litellm>=1.77.1",
-    "nest-asyncio2>=1.7.1",
-    "pydantic>=2.10.3",
+    "jinja2~=3.1",
+    "litellm~=1.80",
+    "nest-asyncio2~=1.7",
+    "pydantic~=2.10",
+    "typing-extensions~=4.12"
 ]
 
 [build-system]
