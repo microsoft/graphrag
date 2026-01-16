@@ -48,7 +48,7 @@ def test_litellm_provider_validation() -> None:
 
     with pytest.raises(
         ValueError,
-        match="azure_deployment_name, api_base, and api_version must be specified with the 'azure' model provider\\.",
+        match="azure_deployment_name and api_base must be specified with the 'azure' model provider\\.",
     ):
         _ = ModelConfig(
             type=LLMProviderType.LiteLLM,
@@ -58,25 +58,13 @@ def test_litellm_provider_validation() -> None:
 
     with pytest.raises(
         ValueError,
-        match="azure_deployment_name, api_base, and api_version must be specified with the 'azure' model provider\\.",
+        match="azure_deployment_name and api_base must be specified with the 'azure' model provider\\.",
     ):
         _ = ModelConfig(
             type=LLMProviderType.LiteLLM,
             model_provider="azure",
             model="gpt-4o",
             azure_deployment_name="my-deployment",
-        )
-
-    with pytest.raises(
-        ValueError,
-        match="azure_deployment_name, api_base, and api_version must be specified with the 'azure' model provider\\.",
-    ):
-        _ = ModelConfig(
-            type=LLMProviderType.LiteLLM,
-            model_provider="azure",
-            model="gpt-4o",
-            azure_deployment_name="my-deployment",
-            api_base="https://my-azure-endpoint/",
         )
 
     with pytest.raises(
@@ -120,7 +108,6 @@ def test_litellm_provider_validation() -> None:
         model="gpt-4o",
         azure_deployment_name="gpt-4o",
         api_base="https://my-azure-endpoint/",
-        api_version="2024-06-01",
         api_key="NOT_A_REAL_API_KEY",
     )
     _ = ModelConfig(
