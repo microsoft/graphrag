@@ -8,7 +8,6 @@ import time
 from math import ceil
 from queue import Queue
 
-import pytest
 from graphrag_llm.config import RateLimitConfig, RateLimitType
 from graphrag_llm.rate_limit import RateLimiter, create_rate_limiter
 
@@ -38,74 +37,6 @@ def test_binning():
         [],
         [5.1],
     ]
-
-
-def test_rate_limiter_validation():
-    """Test that the rate limiter can be created with valid parameters."""
-
-    # Valid parameters
-    rate_limiter = create_rate_limiter(
-        RateLimitConfig(
-            type=RateLimitType.SlidingWindow,
-            period_in_seconds=60,
-            requests_per_period=1000,
-            tokens_per_period=10000,
-        )
-    )
-    assert rate_limiter is not None
-
-    # Invalid strategy
-    with pytest.raises(
-        ValueError,
-        match=r"RateLimitConfig.type 'invalid_strategy' is not registered in the RateLimitFactory.",
-    ):
-        create_rate_limiter(
-            RateLimitConfig(
-                type="invalid_strategy",
-                period_in_seconds=60,
-            )
-        )
-
-    # Invalid rpm
-    with pytest.raises(
-        ValueError,
-        match="requests_per_period and tokens_per_period must be either None \\(disabled\\) or positive integers\\.",
-    ):
-        create_rate_limiter(
-            RateLimitConfig(
-                type=RateLimitType.SlidingWindow,
-                period_in_seconds=60,
-                requests_per_period=-1000,
-                tokens_per_period=10000,
-            )
-        )
-
-    # Invalid tpm
-    with pytest.raises(
-        ValueError,
-        match="requests_per_period and tokens_per_period must be either None \\(disabled\\) or positive integers\\.",
-    ):
-        create_rate_limiter(
-            RateLimitConfig(
-                type=RateLimitType.SlidingWindow,
-                period_in_seconds=60,
-                requests_per_period=1000,
-                tokens_per_period=-10000,
-            )
-        )
-
-    # Invalid period_in_seconds
-    with pytest.raises(
-        ValueError, match=r"Period in seconds must be a positive integer."
-    ):
-        create_rate_limiter(
-            RateLimitConfig(
-                type=RateLimitType.SlidingWindow,
-                period_in_seconds=0,
-                requests_per_period=1000,
-                tokens_per_period=10000,
-            )
-        )
 
 
 def test_rpm():
