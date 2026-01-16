@@ -28,10 +28,9 @@ models:
     concurrent_requests: 25
 
 vector_store:
-  default_vector_store:
-    type: "lancedb"
-    db_uri: "./tests/fixtures/min-csv/lancedb"
-    container_name: "lancedb_ci"
+  type: "lancedb"
+  db_uri: "./tests/fixtures/min-csv/lancedb"
+  container_name: "lancedb_ci"
 
 input:
   type: csv

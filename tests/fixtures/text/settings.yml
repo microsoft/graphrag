@@ -28,11 +28,10 @@ models:
     concurrent_requests: 25
 
 vector_store:
-  default_vector_store:
-    type: "azure_ai_search"
-    url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
-    api_key: ${AZURE_AI_SEARCH_API_KEY}
-    container_name: "simple_text_ci"
+  type: "azure_ai_search"
+  url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
+  api_key: ${AZURE_AI_SEARCH_API_KEY}
+  container_name: "simple_text_ci"
 
 community_reports:
   prompt: "prompts/community_report.txt"
