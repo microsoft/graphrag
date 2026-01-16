@@ -306,8 +306,8 @@ def _create_base_completions(
             return LLMCompletionResponse(**response.model_dump())
 
         async def _run_iterator() -> AsyncIterator[LLMCompletionChunk]:
-            async for chunk in response:  # type: ignore
-                yield LLMCompletionChunk(**chunk.model_dump())
+            async for chunk in response:
+                yield LLMCompletionChunk(**chunk.model_dump())  # type: ignore
 
         return _run_iterator()
 
