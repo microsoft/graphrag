@@ -170,10 +170,6 @@ class CosmosDBVectorStore(VectorStore):
         self, query_embedding: list[float], k: int = 10
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
-        if self._container_client is None:
-            msg = "Container client is not initialized."
-            raise ValueError(msg)
-
         try:
             query = f"SELECT TOP {k} c.{self.id_field}, c.{self.vector_field}, VectorDistance(c.{self.vector_field}, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.{self.vector_field}, @embedding)"  # noqa: S608
             query_params = [{"name": "@embedding", "value": query_embedding}]
@@ -228,17 +224,8 @@ class CosmosDBVectorStore(VectorStore):
 
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""
-        if self._container_client is None:
-            msg = "Container client is not initialized."
-            raise ValueError(msg)
-
         item = self._container_client.read_item(item=id, partition_key=id)
         return VectorStoreDocument(
-            id=item.get(self.id_field, ""),
+            id=item[self.id_field],
             vector=item.get(self.vector_field, []),
         )
-
-    def clear(self) -> None:
-        """Clear the vector store."""
-        self._delete_container()
-        self._delete_database()

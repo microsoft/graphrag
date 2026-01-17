@@ -26,9 +26,7 @@ class LanceDBVectorStore(VectorStore):
     def connect(self) -> Any:
         """Connect to the vector storage."""
         self.db_connection = lancedb.connect(self.db_uri)
-
-        if self.index_name and self.index_name in self.db_connection.table_names():
-            self.document_collection = self.db_connection.open_table(self.index_name)
+        self.document_collection = self.db_connection.open_table(self.index_name)
 
     def create_index(self) -> None:
         """Create index."""
@@ -42,7 +40,7 @@ class LanceDBVectorStore(VectorStore):
         })
 
         self.document_collection = self.db_connection.create_table(
-            self.index_name if self.index_name else "",
+            self.index_name,
             data=data,
             mode="overwrite",
             schema=data.schema,
@@ -55,6 +53,7 @@ class LanceDBVectorStore(VectorStore):
 
     def load_documents(self, documents: list[VectorStoreDocument]) -> None:
         """Load documents into vector storage."""
+        # we created a dummy document to set up the schema in .create_index; now remove it
         self.document_collection.delete(f"{self.id_field} = '__DUMMY__'")
 
         # Step 1: Prepare data columns manually
@@ -62,17 +61,12 @@ class LanceDBVectorStore(VectorStore):
         vectors = []
 
         for document in documents:
-            self.vector_size = (
-                len(document.vector) if document.vector else self.vector_size
-            )
             if document.vector is not None and len(document.vector) == self.vector_size:
                 ids.append(document.id)
                 vectors.append(np.array(document.vector, dtype=np.float32))
 
         # Step 2: Handle empty case
-        if len(ids) == 0:
-            data = None
-        else:
+        if len(ids) > 0:
             # Step 3: Flatten the vectors and build FixedSizeListArray manually
             flat_vector = np.concatenate(vectors).astype(np.float32)
             flat_array = pa.array(flat_vector, type=pa.float32())
@@ -86,8 +80,7 @@ class LanceDBVectorStore(VectorStore):
                 self.vector_field: vector_column,
             })
 
-            if data:
-                self.document_collection.add(data)
+            self.document_collection.add(data)
 
     def similarity_search_by_vector(
         self, query_embedding: list[float] | np.ndarray, k: int = 10
@@ -120,9 +113,7 @@ class LanceDBVectorStore(VectorStore):
             .where(f"{self.id_field} == '{id}'", prefilter=True)
             .to_list()
         )
-        if doc:
-            return VectorStoreDocument(
-                id=doc[0][self.id_field],
-                vector=doc[0][self.vector_field],
-            )
-        return VectorStoreDocument(id=id, vector=None)
+        return VectorStoreDocument(
+            id=doc[0][self.id_field],
+            vector=doc[0][self.vector_field],
+        )

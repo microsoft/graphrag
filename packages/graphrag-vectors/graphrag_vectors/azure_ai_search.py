@@ -78,10 +78,7 @@ class AzureAISearchVectorStore(VectorStore):
 
     def create_index(self) -> None:
         """Load documents into an Azure AI Search index."""
-        if (
-            self.index_name is not None
-            and self.index_name in self.index_client.list_index_names()
-        ):
+        if self.index_name in self.index_client.list_index_names():
             self.index_client.delete_index(self.index_name)
 
         # Configure vector search profile
@@ -168,6 +165,6 @@ class AzureAISearchVectorStore(VectorStore):
         """Search for a document by id."""
         response = self.db_connection.get_document(id)
         return VectorStoreDocument(
-            id=response.get(self.id_field, ""),
+            id=response[self.id_field],
             vector=response.get(self.vector_field, []),
         )

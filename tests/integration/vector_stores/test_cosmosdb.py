@@ -30,70 +30,40 @@ def test_vector_store_operations():
         index_name="testvector",
     )
 
-    try:
-        vector_store.connect()
+    vector_store.connect()
 
-        docs = [
-            VectorStoreDocument(
-                id="doc1",
-                vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-            ),
-            VectorStoreDocument(
-                id="doc2",
-                vector=[0.2, 0.3, 0.4, 0.5, 0.6],
-            ),
-        ]
-
-        vector_store.create_index()
-        vector_store.load_documents(docs)
-
-        doc = vector_store.search_by_id("doc1")
-        assert doc.id == "doc1"
-        assert doc.vector is not None
-        assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
-
-        # Define a simple text embedder function for testing
-        def mock_embedder(text: str) -> list[float]:
-            return [0.1, 0.2, 0.3, 0.4, 0.5]  # Return fixed embedding
-
-        vector_results = vector_store.similarity_search_by_vector(
-            [0.1, 0.2, 0.3, 0.4, 0.5], k=2
-        )
-        assert len(vector_results) > 0
-
-        text_results = vector_store.similarity_search_by_text(
-            "test query", mock_embedder, k=2
-        )
-        assert len(text_results) > 0
-    finally:
-        vector_store.clear()
-
-
-def test_clear():
-    """Test clearing the vector store."""
-    vector_store = CosmosDBVectorStore(
-        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        database_name="testclear",
-        index_name="testclear",
-    )
-    try:
-        vector_store.connect()
-
-        doc = VectorStoreDocument(
-            id="test",
+    docs = [
+        VectorStoreDocument(
+            id="doc1",
             vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-        )
+        ),
+        VectorStoreDocument(
+            id="doc2",
+            vector=[0.2, 0.3, 0.4, 0.5, 0.6],
+        ),
+    ]
 
-        vector_store.create_index()
-        vector_store.load_documents([doc])
-        result = vector_store.search_by_id("test")
-        assert result.id == "test"
+    vector_store.create_index()
+    vector_store.load_documents(docs)
 
-        # Clear and verify document is removed
-        vector_store.clear()
-        assert vector_store._database_exists() is False  # noqa: SLF001
-    finally:
-        pass
+    doc = vector_store.search_by_id("doc1")
+    assert doc.id == "doc1"
+    assert doc.vector is not None
+    assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
+
+    # Define a simple text embedder function for testing
+    def mock_embedder(text: str) -> list[float]:
+        return [0.1, 0.2, 0.3, 0.4, 0.5]  # Return fixed embedding
+
+    vector_results = vector_store.similarity_search_by_vector(
+        [0.1, 0.2, 0.3, 0.4, 0.5], k=2
+    )
+    assert len(vector_results) > 0
+
+    text_results = vector_store.similarity_search_by_text(
+        "test query", mock_embedder, k=2
+    )
+    assert len(text_results) > 0
 
 
 def test_vector_store_customization():
@@ -107,40 +77,37 @@ def test_vector_store_customization():
         vector_size=5,
     )
 
-    try:
-        vector_store.connect()
+    vector_store.connect()
 
-        docs = [
-            VectorStoreDocument(
-                id="doc1",
-                vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-            ),
-            VectorStoreDocument(
-                id="doc2",
-                vector=[0.2, 0.3, 0.4, 0.5, 0.6],
-            ),
-        ]
+    docs = [
+        VectorStoreDocument(
+            id="doc1",
+            vector=[0.1, 0.2, 0.3, 0.4, 0.5],
+        ),
+        VectorStoreDocument(
+            id="doc2",
+            vector=[0.2, 0.3, 0.4, 0.5, 0.6],
+        ),
+    ]
 
-        vector_store.create_index()
-        vector_store.load_documents(docs)
+    vector_store.create_index()
+    vector_store.load_documents(docs)
 
-        doc = vector_store.search_by_id("doc1")
-        assert doc.id == "doc1"
-        assert doc.vector is not None
-        assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
+    doc = vector_store.search_by_id("doc1")
+    assert doc.id == "doc1"
+    assert doc.vector is not None
+    assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
 
-        # Define a simple text embedder function for testing
-        def mock_embedder(text: str) -> list[float]:
-            return [0.1, 0.2, 0.3, 0.4, 0.5]  # Return fixed embedding
+    # Define a simple text embedder function for testing
+    def mock_embedder(text: str) -> list[float]:
+        return [0.1, 0.2, 0.3, 0.4, 0.5]  # Return fixed embedding
 
-        vector_results = vector_store.similarity_search_by_vector(
-            [0.1, 0.2, 0.3, 0.4, 0.5], k=2
-        )
-        assert len(vector_results) > 0
+    vector_results = vector_store.similarity_search_by_vector(
+        [0.1, 0.2, 0.3, 0.4, 0.5], k=2
+    )
+    assert len(vector_results) > 0
 
-        text_results = vector_store.similarity_search_by_text(
-            "test query", mock_embedder, k=2
-        )
-        assert len(text_results) > 0
-    finally:
-        vector_store.clear()
+    text_results = vector_store.similarity_search_by_text(
+        "test query", mock_embedder, k=2
+    )
+    assert len(text_results) > 0
