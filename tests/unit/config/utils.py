@@ -122,7 +122,7 @@ def assert_reporting_configs(
     assert actual.base_dir == expected.base_dir
     assert actual.connection_string == expected.connection_string
     assert actual.container_name == expected.container_name
-    assert actual.storage_account_blob_url == expected.storage_account_blob_url
+    assert actual.account_url == expected.account_url
 
 
 def assert_storage_config(actual: StorageConfig, expected: StorageConfig) -> None:

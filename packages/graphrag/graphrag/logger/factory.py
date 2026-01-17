@@ -54,7 +54,7 @@ def create_blob_logger(**kwargs) -> logging.Handler:
         connection_string=kwargs["connection_string"],
         container_name=kwargs["container_name"],
         base_dir=kwargs["base_dir"],
-        storage_account_blob_url=kwargs["storage_account_blob_url"],
+        account_url=kwargs["account_url"],
     )
 
 

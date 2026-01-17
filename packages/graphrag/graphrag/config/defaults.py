@@ -221,7 +221,7 @@ class StorageDefaults:
     base_dir: str | None = None
     azure_connection_string: None = None
     azure_container_name: None = None
-    azure_storage_account_blob_url: None = None
+    azure_account_url: None = None
     azure_cosmosdb_account_url: None = None
 
 
