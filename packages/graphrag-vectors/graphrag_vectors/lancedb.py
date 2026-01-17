@@ -26,7 +26,8 @@ class LanceDBVectorStore(VectorStore):
     def connect(self) -> Any:
         """Connect to the vector storage."""
         self.db_connection = lancedb.connect(self.db_uri)
-        self.document_collection = self.db_connection.open_table(self.index_name)
+        if self.index_name in self.db_connection.table_names():
+            self.document_collection = self.db_connection.open_table(self.index_name)
 
     def create_index(self) -> None:
         """Create index."""
