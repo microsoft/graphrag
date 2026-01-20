@@ -15,6 +15,18 @@
 			"console": "integratedTerminal"
 		},
 		{
+			"name": "Update",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "graphrag",
+			"args": [
+				"update",
+				"--root", 
+				"${input:root_folder}"
+			],
+			"console": "integratedTerminal"
+		},
+		{
 			"name": "Query",
 			"type": "debugpy",
 			"request": "launch",

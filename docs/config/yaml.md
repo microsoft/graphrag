@@ -85,7 +85,7 @@ Our pipeline can ingest .csv, .txt, or .json data from an input location. See th
   - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
   - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
   - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
-  - `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
+  - `account_url` **str** - (blob only) The storage account blob URL to use.
   - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
 - `type` **text|csv|json** - The type of input data to load. Default is `text`
 - `encoding` **str** - The encoding of the input file. Default is `utf-8`
@@ -118,10 +118,10 @@ This section controls the storage mechanism used by the pipeline used for export
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
-- `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
+- `account_url` **str** - (blob only) The storage account blob URL to use.
 - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
 
-### update_index_output
+### update_output_storage
 
 The section defines a secondary storage location for running incremental indexing, to preserve your original outputs.
 
@@ -131,7 +131,7 @@ The section defines a secondary storage location for running incremental indexin
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
-- `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
+- `account_url` **str** - (blob only) The storage account blob URL to use.
 - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
 
 ### cache
@@ -146,7 +146,7 @@ This section controls the cache mechanism used by the pipeline. This is used to 
   - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
   - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
   - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
-  - `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
+  - `account_url` **str** - (blob only) The storage account blob URL to use.
   - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
 
 ### reporting
@@ -159,7 +159,7 @@ This section controls the reporting mechanism used by the pipeline, for common e
 - `base_dir` **str** - The base directory to write reports to, relative to the root.
 - `connection_string` **str** - (blob only) The Azure Storage connection string.
 - `container_name` **str** - (blob only) The Azure Storage container name.
-- `storage_account_blob_url` **str** - The storage account blob URL to use.
+- `account_url` **str** - The storage account blob URL to use.
 
 ### vector_store
 

@@ -26,7 +26,7 @@ class BlobWorkflowLogger(logging.Handler):
         container_name: str | None,
         blob_name: str = "",
         base_dir: str | None = None,
-        storage_account_blob_url: str | None = None,
+        account_url: str | None = None,
         level: int = logging.NOTSET,
     ):
         """Create a new instance of the BlobWorkflowLogger class."""
@@ -35,24 +35,24 @@ class BlobWorkflowLogger(logging.Handler):
         if container_name is None:
             msg = "No container name provided for blob storage."
             raise ValueError(msg)
-        if connection_string is None and storage_account_blob_url is None:
+        if connection_string is None and account_url is None:
             msg = "No storage account blob url provided for blob storage."
             raise ValueError(msg)
 
         self._connection_string = connection_string
-        self._storage_account_blob_url = storage_account_blob_url
+        self.account_url = account_url
 
         if self._connection_string:
             self._blob_service_client = BlobServiceClient.from_connection_string(
                 self._connection_string
             )
         else:
-            if storage_account_blob_url is None:
-                msg = "Either connection_string or storage_account_blob_url must be provided."
+            if account_url is None:
+                msg = "Either connection_string or account_url must be provided."
                 raise ValueError(msg)
 
             self._blob_service_client = BlobServiceClient(
-                storage_account_blob_url,
+                account_url,
                 credential=DefaultAzureCredential(),
             )
 
@@ -107,7 +107,7 @@ class BlobWorkflowLogger(logging.Handler):
             self.__init__(
                 self._connection_string,
                 self._container_name,
-                storage_account_blob_url=self._storage_account_blob_url,
+                account_url=self.account_url,
             )
 
         blob_client = self._blob_service_client.get_blob_client(
