@@ -35,9 +35,20 @@ class LanceDBVectorStore(VectorStore):
         flat_array = pa.array(dummy_vector, type=pa.float32())
         vector_column = pa.FixedSizeListArray.from_arrays(flat_array, self.vector_size)
 
+        types = {
+            "string": (pa.string, "___DUMMY___"),
+            "integer": (pa.int64, 1),
+            "float": (pa.float32, 1.0),
+        }
+        others = {}
+        for field, field_type in self.fields.items():
+            pa_type, dummy_value = types[field_type]
+            others[field] = pa.array([dummy_value], type=pa_type())
+
         data = pa.table({
             self.id_field: pa.array(["__DUMMY__"], type=pa.string()),
             self.vector_field: vector_column,
+            **others,
         })
 
         self.document_collection = self.db_connection.create_table(
@@ -57,14 +68,18 @@ class LanceDBVectorStore(VectorStore):
         # we created a dummy document to set up the schema in .create_index; now remove it
         self.document_collection.delete(f"{self.id_field} = '__DUMMY__'")
 
-        # Step 1: Prepare data columns manually
+        # Step 1: Prepare data columns manually to ensure correct schema for vectors
         ids = []
         vectors = []
+        others = []
 
         for document in documents:
-            if document.vector is not None and len(document.vector) == self.vector_size:
-                ids.append(document.id)
-                vectors.append(np.array(document.vector, dtype=np.float32))
+            ids.append(document.id)
+            vectors.append(np.array(document.vector, dtype=np.float32))
+            other = {}
+            for field in self.fields:
+                other[field] = document.data.get(field) if document.data else None
+            others.append(other)
 
         # Step 2: Handle empty case
         if len(ids) > 0:
@@ -79,9 +94,21 @@ class LanceDBVectorStore(VectorStore):
             data = pa.table({
                 self.id_field: pa.array(ids, type=pa.string()),
                 self.vector_field: vector_column,
+                **{
+                    field: pa.array([other.get(field) for other in others])
+                    for field in self.fields
+                },
             })
 
             self.document_collection.add(data)
+
+    def _extract_data(self, doc: dict[str, Any]) -> dict[str, Any]:
+        """Extract additional field data from a document response."""
+        return {
+            field_name: doc[field_name]
+            for field_name in self.fields
+            if field_name in doc
+        }
 
     def similarity_search_by_vector(
         self, query_embedding: list[float] | np.ndarray, k: int = 10
@@ -101,6 +128,7 @@ class LanceDBVectorStore(VectorStore):
                 document=VectorStoreDocument(
                     id=doc[self.id_field],
                     vector=doc[self.vector_field],
+                    data=self._extract_data(doc),
                 ),
                 score=1 - abs(float(doc["_distance"])),
             )
@@ -109,12 +137,17 @@ class LanceDBVectorStore(VectorStore):
 
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""
-        doc = (
+        result = (
             self.document_collection.search()
             .where(f"{self.id_field} == '{id}'", prefilter=True)
             .to_list()
         )
+        if result is None or len(result) == 0:
+            msg = f"Document with id '{id}' not found."
+            raise IndexError(msg)
+        doc = result[0]
         return VectorStoreDocument(
-            id=doc[0][self.id_field],
-            vector=doc[0][self.vector_field],
+            id=doc[self.id_field],
+            vector=doc[self.vector_field],
+            data=self._extract_data(doc),
         )

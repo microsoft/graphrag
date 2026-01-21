@@ -18,6 +18,10 @@ class VectorStoreDocument:
     """unique id for the document"""
 
     vector: list[float] | None
+    """the vector embedding for the document"""
+
+    data: dict[str, Any] = None
+    """additional data associated with the document"""
 
 
 @dataclass
@@ -40,12 +44,14 @@ class VectorStore(ABC):
         id_field: str = "id",
         vector_field: str = "vector",
         vector_size: int = 3072,
+        fields: dict[str, str] | None = None,
         **kwargs: Any,
     ):
         self.index_name = index_name
         self.id_field = id_field
         self.vector_field = vector_field
         self.vector_size = vector_size
+        self.fields = fields or {}
 
     @abstractmethod
     def connect(self) -> None:

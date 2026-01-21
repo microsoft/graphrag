@@ -28,6 +28,13 @@ from graphrag_vectors.vector_store import (
     VectorStoreSearchResult,
 )
 
+# Mapping from field type strings to Azure AI Search data types
+FIELD_TYPE_MAPPING: dict[str, SearchFieldDataType] = {
+    "string": SearchFieldDataType.String,
+    "int": SearchFieldDataType.Int64,
+    "float": SearchFieldDataType.Double,
+}
+
 
 class AzureAISearchVectorStore(VectorStore):
     """Azure AI Search vector storage implementation."""
@@ -98,24 +105,37 @@ class AzureAISearchVectorStore(VectorStore):
                 )
             ],
         )
+        # Build the list of fields
+        fields = [
+            SimpleField(
+                name=self.id_field,
+                type=SearchFieldDataType.String,
+                key=True,
+            ),
+            SearchField(
+                name=self.vector_field,
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                searchable=True,
+                hidden=False,  # DRIFT needs to return the vector for client-side similarity
+                vector_search_dimensions=self.vector_size,
+                vector_search_profile_name=self.vector_search_profile_name,
+            ),
+        ]
+
+        # Add additional fields from the fields dictionary
+        for field_name, field_type in self.fields.items():
+            fields.append(
+                SimpleField(
+                    name=field_name,
+                    type=FIELD_TYPE_MAPPING[field_type],
+                    filterable=True,
+                )
+            )
+
         # Configure the index
         index = SearchIndex(
             name=self.index_name,
-            fields=[
-                SimpleField(
-                    name=self.id_field,
-                    type=SearchFieldDataType.String,
-                    key=True,
-                ),
-                SearchField(
-                    name=self.vector_field,
-                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                    searchable=True,
-                    hidden=False,  # DRIFT needs to return the vector for client-side similarity
-                    vector_search_dimensions=self.vector_size,
-                    vector_search_profile_name=self.vector_search_profile_name,
-                ),
-            ],
+            fields=fields,
             vector_search=vector_search,
         )
         self.index_client.create_or_update_index(
@@ -124,17 +144,30 @@ class AzureAISearchVectorStore(VectorStore):
 
     def load_documents(self, documents: list[VectorStoreDocument]) -> None:
         """Load documents into an Azure AI Search index."""
-        batch = [
-            {
-                self.id_field: doc.id,
-                self.vector_field: doc.vector,
-            }
-            for doc in documents
-            if doc.vector is not None
-        ]
+        batch = []
+        for doc in documents:
+            if doc.vector is not None:
+                doc_dict = {
+                    self.id_field: doc.id,
+                    self.vector_field: doc.vector,
+                }
+                # Add additional fields if they exist in the document data
+                if doc.data:
+                    for field_name in self.fields:
+                        if field_name in doc.data:
+                            doc_dict[field_name] = doc.data[field_name]
+                batch.append(doc_dict)
 
         if len(batch) > 0:
             self.db_connection.upload_documents(batch)
+
+    def _extract_data(self, doc: dict[str, Any]) -> dict[str, Any]:
+        """Extract additional field data from a document response."""
+        return {
+            field_name: doc[field_name]
+            for field_name in self.fields
+            if field_name in doc
+        }
 
     def similarity_search_by_vector(
         self, query_embedding: list[float], k: int = 10
@@ -153,6 +186,7 @@ class AzureAISearchVectorStore(VectorStore):
                 document=VectorStoreDocument(
                     id=doc.get(self.id_field, ""),
                     vector=doc.get(self.vector_field, []),
+                    data=self._extract_data(doc),
                 ),
                 # Cosine similarity between 0.333 and 1.000
                 # https://learn.microsoft.com/en-us/azure/search/hybrid-search-ranking#scores-in-a-hybrid-search-results
@@ -167,4 +201,5 @@ class AzureAISearchVectorStore(VectorStore):
         return VectorStoreDocument(
             id=response[self.id_field],
             vector=response.get(self.vector_field, []),
+            data=self._extract_data(response),
         )

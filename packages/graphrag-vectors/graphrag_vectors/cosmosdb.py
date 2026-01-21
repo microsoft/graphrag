@@ -164,14 +164,32 @@ class CosmosDBVectorStore(VectorStore):
                     self.id_field: doc.id,
                     self.vector_field: doc.vector,
                 }
+                # Add additional fields if they exist in the document data
+                if doc.data:
+                    for field_name in self.fields:
+                        if field_name in doc.data:
+                            doc_json[field_name] = doc.data[field_name]
                 self._container_client.upsert_item(doc_json)
+
+    def _extract_data(self, doc: dict[str, Any]) -> dict[str, Any]:
+        """Extract additional field data from a document response."""
+        return {
+            field_name: doc[field_name]
+            for field_name in self.fields
+            if field_name in doc
+        }
 
     def similarity_search_by_vector(
         self, query_embedding: list[float], k: int = 10
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
+        # Build field selection for query
+        field_selections = ", ".join([f"c.{field}" for field in self.fields])
+        if field_selections:
+            field_selections = ", " + field_selections
+
         try:
-            query = f"SELECT TOP {k} c.{self.id_field}, c.{self.vector_field}, VectorDistance(c.{self.vector_field}, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.{self.vector_field}, @embedding)"  # noqa: S608
+            query = f"SELECT TOP {k} c.{self.id_field}, c.{self.vector_field}{field_selections}, VectorDistance(c.{self.vector_field}, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.{self.vector_field}, @embedding)"  # noqa: S608
             query_params = [{"name": "@embedding", "value": query_embedding}]
             items = list(
                 self._container_client.query_items(
@@ -183,7 +201,7 @@ class CosmosDBVectorStore(VectorStore):
         except (CosmosHttpResponseError, ValueError):
             # Currently, the CosmosDB emulator does not support the VectorDistance function.
             # For emulator or test environments - fetch all items and calculate distance locally
-            query = f"SELECT c.{self.id_field}, c.{self.vector_field} FROM c"  # noqa: S608
+            query = f"SELECT c.{self.id_field}, c.{self.vector_field}{field_selections} FROM c"  # noqa: S608
             items = list(
                 self._container_client.query_items(
                     query=query,
@@ -216,6 +234,7 @@ class CosmosDBVectorStore(VectorStore):
                 document=VectorStoreDocument(
                     id=item.get(self.id_field, ""),
                     vector=item.get(self.vector_field, []),
+                    data=self._extract_data(item),
                 ),
                 score=item.get("SimilarityScore", 0.0),
             )
@@ -228,4 +247,5 @@ class CosmosDBVectorStore(VectorStore):
         return VectorStoreDocument(
             id=item[self.id_field],
             vector=item.get(self.vector_field, []),
+            data=self._extract_data(item),
         )

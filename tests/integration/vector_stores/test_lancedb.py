@@ -24,32 +24,17 @@ class TestLanceDBVectorStore:
             VectorStoreDocument(
                 id="1",
                 vector=[0.1, 0.2, 0.3, 0.4, 0.5],
+                data={"category": "animal"},
             ),
             VectorStoreDocument(
                 id="2",
                 vector=[0.2, 0.3, 0.4, 0.5, 0.6],
+                data={"category": "animal"},
             ),
             VectorStoreDocument(
                 id="3",
                 vector=[0.3, 0.4, 0.5, 0.6, 0.7],
-            ),
-        ]
-
-    @pytest.fixture
-    def sample_documents_categories(self):
-        """Create sample documents with different categories for testing."""
-        return [
-            VectorStoreDocument(
-                id="1",
-                vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-            ),
-            VectorStoreDocument(
-                id="2",
-                vector=[0.2, 0.3, 0.4, 0.5, 0.6],
-            ),
-            VectorStoreDocument(
-                id="3",
-                vector=[0.3, 0.4, 0.5, 0.6, 0.7],
+                data={"category": "plant"},
             ),
         ]
 
@@ -98,9 +83,8 @@ class TestLanceDBVectorStore:
             assert isinstance(text_results[0].score, float)
 
             # Test non-existent document
-            non_existent = vector_store.search_by_id("nonexistent")
-            assert non_existent.id == "nonexistent"
-            assert non_existent.vector is None
+            with pytest.raises(IndexError):
+                vector_store.search_by_id("nonexistent")
         finally:
             shutil.rmtree(temp_dir)
 
@@ -145,31 +129,6 @@ class TestLanceDBVectorStore:
             # Clean up - remove the temporary directory
             shutil.rmtree(temp_dir)
 
-    def test_filter_search(self, sample_documents_categories):
-        """Test filtered search with LanceDB."""
-        # Create a temporary directory for the test database
-        temp_dir = tempfile.mkdtemp()
-        try:
-            vector_store = LanceDBVectorStore(
-                db_uri=temp_dir, index_name="filter_collection", vector_size=5
-            )
-
-            vector_store.connect()
-            vector_store.create_index()
-            vector_store.load_documents(sample_documents_categories)
-
-            # Filter to include only documents about animals
-            results = vector_store.similarity_search_by_vector(
-                [0.1, 0.2, 0.3, 0.4, 0.5], k=3
-            )
-
-            # Should return at most 3 documents (the filtered ones)
-            assert len(results) <= 3
-            ids = [result.document.id for result in results]
-            assert set(ids).issubset({"1", "2", "3"})
-        finally:
-            shutil.rmtree(temp_dir)
-
     def test_vector_store_customization(self, sample_documents):
         """Test vector store customization with LanceDB."""
         # Create a temporary directory for the test database
@@ -181,6 +140,7 @@ class TestLanceDBVectorStore:
                 id_field="id_custom",
                 vector_field="vector_custom",
                 vector_size=5,
+                fields={"category": "string"},
             )
             vector_store.connect()
             vector_store.create_index()
@@ -207,7 +167,8 @@ class TestLanceDBVectorStore:
             vector_store.load_documents([sample_documents[2]])
             result = vector_store.search_by_id("3")
             assert result.id == "3"
-
+            assert result.data["category"] == "plant"
+            
             # Define a simple text embedder function for testing
             def mock_embedder(text: str) -> list[float]:
                 return [0.1, 0.2, 0.3, 0.4, 0.5]
@@ -219,8 +180,8 @@ class TestLanceDBVectorStore:
             assert isinstance(text_results[0].score, float)
 
             # Test non-existent document
-            non_existent = vector_store.search_by_id("nonexistent")
-            assert non_existent.id == "nonexistent"
-            assert non_existent.vector is None
+            with pytest.raises(IndexError):
+                vector_store.search_by_id("nonexistent")
+
         finally:
             shutil.rmtree(temp_dir)

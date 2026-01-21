@@ -39,6 +39,11 @@ class IndexSchema(BaseModel):
         default=DEFAULT_VECTOR_SIZE,
     )
 
+    fields: dict[str, str] = Field(
+        description="Additional fields to include in the index schema.",
+        default_factory=dict,
+    )
+
     def _validate_schema(self) -> None:
         """Validate the schema."""
         for field in [
