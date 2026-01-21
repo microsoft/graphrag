@@ -102,16 +102,17 @@ class LanceDBVectorStore(VectorStore):
 
             self.document_collection.add(data)
 
-    def _extract_data(self, doc: dict[str, Any]) -> dict[str, Any]:
+    def _extract_data(self, doc: dict[str, Any], select: list[str] | None = None) -> dict[str, Any]:
         """Extract additional field data from a document response."""
+        fields_to_extract = select if select is not None else list(self.fields.keys())
         return {
             field_name: doc[field_name]
-            for field_name in self.fields
+            for field_name in fields_to_extract
             if field_name in doc
         }
 
     def similarity_search_by_vector(
-        self, query_embedding: list[float] | np.ndarray, k: int = 10
+        self, query_embedding: list[float] | np.ndarray, k: int = 10, select: list[str] | None = None
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
         query_embedding = np.array(query_embedding, dtype=np.float32)
@@ -128,14 +129,14 @@ class LanceDBVectorStore(VectorStore):
                 document=VectorStoreDocument(
                     id=doc[self.id_field],
                     vector=doc[self.vector_field],
-                    data=self._extract_data(doc),
+                    data=self._extract_data(doc, select),
                 ),
                 score=1 - abs(float(doc["_distance"])),
             )
             for doc in docs
         ]
 
-    def search_by_id(self, id: str) -> VectorStoreDocument:
+    def search_by_id(self, id: str, select: list[str] | None = None) -> VectorStoreDocument:
         """Search for a document by id."""
         result = (
             self.document_collection.search()
@@ -149,5 +150,5 @@ class LanceDBVectorStore(VectorStore):
         return VectorStoreDocument(
             id=doc[self.id_field],
             vector=doc[self.vector_field],
-            data=self._extract_data(doc),
+            data=self._extract_data(doc, select),
         )

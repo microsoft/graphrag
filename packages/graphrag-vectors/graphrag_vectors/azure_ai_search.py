@@ -161,24 +161,33 @@ class AzureAISearchVectorStore(VectorStore):
         if len(batch) > 0:
             self.db_connection.upload_documents(batch)
 
-    def _extract_data(self, doc: dict[str, Any]) -> dict[str, Any]:
+    def _extract_data(self, doc: dict[str, Any], select: list[str] | None = None) -> dict[str, Any]:
         """Extract additional field data from a document response."""
+        fields_to_extract = select if select is not None else list(self.fields.keys())
         return {
             field_name: doc[field_name]
-            for field_name in self.fields
+            for field_name in fields_to_extract
             if field_name in doc
         }
 
     def similarity_search_by_vector(
-        self, query_embedding: list[float], k: int = 10
+        self, query_embedding: list[float], k: int = 10, select: list[str] | None = None
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
         vectorized_query = VectorizedQuery(
             vector=query_embedding, k_nearest_neighbors=k, fields=self.vector_field
         )
 
+        # Build the list of fields to select - always include id and vector fields
+        fields_to_select = [self.id_field, self.vector_field]
+        if select is not None:
+            fields_to_select.extend(select)
+        else:
+            fields_to_select.extend(self.fields.keys())
+
         response = self.db_connection.search(
             vector_queries=[vectorized_query],
+            select=fields_to_select,
         )
 
         return [
@@ -186,7 +195,7 @@ class AzureAISearchVectorStore(VectorStore):
                 document=VectorStoreDocument(
                     id=doc.get(self.id_field, ""),
                     vector=doc.get(self.vector_field, []),
-                    data=self._extract_data(doc),
+                    data=self._extract_data(doc, select),
                 ),
                 # Cosine similarity between 0.333 and 1.000
                 # https://learn.microsoft.com/en-us/azure/search/hybrid-search-ranking#scores-in-a-hybrid-search-results
@@ -195,11 +204,18 @@ class AzureAISearchVectorStore(VectorStore):
             for doc in response
         ]
 
-    def search_by_id(self, id: str) -> VectorStoreDocument:
+    def search_by_id(self, id: str, select: list[str] | None = None) -> VectorStoreDocument:
         """Search for a document by id."""
-        response = self.db_connection.get_document(id)
+        # Build the list of fields to select - always include id and vector fields
+        fields_to_select = [self.id_field, self.vector_field]
+        if select is not None:
+            fields_to_select.extend(select)
+        else:
+            fields_to_select.extend(self.fields.keys())
+
+        response = self.db_connection.get_document(id, selected_fields=fields_to_select)
         return VectorStoreDocument(
             id=response[self.id_field],
             vector=response.get(self.vector_field, []),
-            data=self._extract_data(response),
+            data=self._extract_data(response, select),
         )

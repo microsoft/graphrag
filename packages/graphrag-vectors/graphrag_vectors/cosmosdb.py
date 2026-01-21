@@ -171,20 +171,22 @@ class CosmosDBVectorStore(VectorStore):
                             doc_json[field_name] = doc.data[field_name]
                 self._container_client.upsert_item(doc_json)
 
-    def _extract_data(self, doc: dict[str, Any]) -> dict[str, Any]:
+    def _extract_data(self, doc: dict[str, Any], select: list[str] | None = None) -> dict[str, Any]:
         """Extract additional field data from a document response."""
+        fields_to_extract = select if select is not None else list(self.fields.keys())
         return {
             field_name: doc[field_name]
-            for field_name in self.fields
+            for field_name in fields_to_extract
             if field_name in doc
         }
 
     def similarity_search_by_vector(
-        self, query_embedding: list[float], k: int = 10
+        self, query_embedding: list[float], k: int = 10, select: list[str] | None = None
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
-        # Build field selection for query
-        field_selections = ", ".join([f"c.{field}" for field in self.fields])
+        # Build field selection for query based on select parameter
+        fields_to_select = select if select is not None else list(self.fields.keys())
+        field_selections = ", ".join([f"c.{field}" for field in fields_to_select])
         if field_selections:
             field_selections = ", " + field_selections
 
@@ -234,18 +236,18 @@ class CosmosDBVectorStore(VectorStore):
                 document=VectorStoreDocument(
                     id=item.get(self.id_field, ""),
                     vector=item.get(self.vector_field, []),
-                    data=self._extract_data(item),
+                    data=self._extract_data(item, select),
                 ),
                 score=item.get("SimilarityScore", 0.0),
             )
             for item in items
         ]
 
-    def search_by_id(self, id: str) -> VectorStoreDocument:
+    def search_by_id(self, id: str, select: list[str] | None = None) -> VectorStoreDocument:
         """Search for a document by id."""
         item = self._container_client.read_item(item=id, partition_key=id)
         return VectorStoreDocument(
             id=item[self.id_field],
             vector=item.get(self.vector_field, []),
-            data=self._extract_data(item),
+            data=self._extract_data(item, select),
         )
