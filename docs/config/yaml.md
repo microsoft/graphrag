@@ -6,7 +6,7 @@ Many of these config values have defaults. Rather than replicate them here, plea
 
 For example:
 
-```
+```bash
 # .env
 GRAPHRAG_API_KEY=some_api_key
 
@@ -27,16 +27,31 @@ For example:
 ```yml
 models:
   default_chat_model:
-    api_key: ${GRAPHRAG_API_KEY}
     type: chat
     model_provider: openai
-    model: gpt-4.1
-    model_supports_json: true
-  default_embedding_model:
+    auth_type: api_key
     api_key: ${GRAPHRAG_API_KEY}
-    type: embedding
+    model: gpt-4.1
+    api_base: https://<instance>.openai.azure.com
+    api_version: 2024-05-01-preview
+    model_supports_json: true
+    concurrent_requests: 25
+    retry_strategy: exponential_backoff
+    max_retries: 10
+    tokens_per_minute: null
+    requests_per_minute: null
+  default_embedding_model:
     model_provider: openai
+    auth_type: api_key
+    api_key: ${GRAPHRAG_API_KEY}
     model: text-embedding-3-large
+    api_base: https://<instance>.openai.azure.com
+    api_version: 2024-05-01-preview
+    concurrent_requests: 25
+    retry_strategy: exponential_backoff
+    max_retries: 10
+    tokens_per_minute: null
+    requests_per_minute: null
 ```
 
 #### Fields
@@ -82,29 +97,30 @@ Our pipeline can ingest .csv, .txt, or .json data from an input location. See th
 
 - `storage` **StorageConfig**
   - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+  - `encoding`**str**  - The encoding to use for file storage.
   - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
   - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
   - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
   - `account_url` **str** - (blob only) The storage account blob URL to use.
-  - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
+  - `database_name` **str** - (cosmosdb only) The database name to use.
 - `type` **text|csv|json** - The type of input data to load. Default is `text`
 - `encoding` **str** - The encoding of the input file. Default is `utf-8`
 - `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$`, `.*\.txt$`, or `.*\.json$` depending on the specified `type`, but you can customize it if needed.
-- `text_column` **str** - (CSV/JSON only) The text column name. If unset we expect a column named `text`.
-- `title_column` **str** - (CSV/JSON only) The title column name, filename will be used if unset.
-- `metadata` **list[str]** - (CSV/JSON only) The additional document attributes fields to keep.
+- `id_column` **str** - The input ID column to use.
+- `title_column` **str** - The input title column to use.
+- `text_column` **str** - The input text column to use.
 
-### chunks
+### chunking
 
 These settings configure how we parse documents into text chunks. This is necessary because very large documents may not fit into a single context window, and graph extraction accuracy can be modulated. Also note the `metadata` setting in the input document config, which will replicate document metadata into each chunk.
 
 #### Fields
 
-- `strategy` **str**[tokens|sentences] - How to chunk the text. 
+- `type` **tokens|sentence** - The chunking type to use.
+- `encoding_model` **str** - The text encoding model to use for splitting on token boundaries.
 - `size` **int** - The max chunk size in tokens.
 - `overlap` **int** - The chunk overlap in tokens.
-- `encoding_model` **str** - The text encoding model to use for splitting on token boundaries.
-- `prepend_metadata` **bool** - Determines if metadata values should be added at the beginning of each chunk. Default=`False`.
+- `prepend_metadata` **list[str]** - Metadata fields from the source document to prepend on each chunk.
 
 ## Outputs and Storage
 
@@ -115,11 +131,14 @@ This section controls the storage mechanism used by the pipeline used for export
 #### Fields
 
 - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+- `encoding`**str**  - The encoding to use for file storage.
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
 - `account_url` **str** - (blob only) The storage account blob URL to use.
-- `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
+- `database_name` **str** - (cosmosdb only) The database name to use.
+- `type` **text|csv|json** - The type of input data to load. Default is `text`
+- `encoding` **str** - The encoding of the input file. Default is `utf-8`
 
 ### update_output_storage
 
@@ -128,11 +147,14 @@ The section defines a secondary storage location for running incremental indexin
 #### Fields
 
 - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+- `encoding`**str**  - The encoding to use for file storage.
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
 - `account_url` **str** - (blob only) The storage account blob URL to use.
-- `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
+- `database_name` **str** - (cosmosdb only) The database name to use.
+- `type` **text|csv|json** - The type of input data to load. Default is `text`
+- `encoding` **str** - The encoding of the input file. Default is `utf-8`
 
 ### cache
 
@@ -143,11 +165,12 @@ This section controls the cache mechanism used by the pipeline. This is used to 
 - `type` **json|memory|none** - The storage type to use. Default=`json`
 - `storage` **StorageConfig**
   - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+  - `encoding`**str**  - The encoding to use for file storage.
   - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
   - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
   - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
   - `account_url` **str** - (blob only) The storage account blob URL to use.
-  - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
+  - `database_name` **str** - (cosmosdb only) The database name to use.
 
 ### reporting
 
@@ -168,11 +191,13 @@ Where to put all vectors for the system. Configured for lancedb by default. This
 #### Fields
 
 - `type` **lancedb|azure_ai_search|cosmosdb** - Type of vector store. Default=`lancedb`
-- `db_uri` **str** (only for lancedb) - The database uri. Default=`storage.base_dir/lancedb`
-- `url` **str** (only for AI Search) - AI Search endpoint
-- `api_key` **str** (optional - only for AI Search) - The AI Search api key to use.
-- `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
+- `db_uri` **str** (lancedb only) - The database uri. Default=`storage.base_dir/lancedb`
+- `url` **str** (blob/cosmosdb only) - Database / AI Search to be used.
+- `api_key` **str** (optional - AI Search only) - The AI Search api key to use.
+- `audience` **str** (AI Search only) - Audience for managed identity token if managed identity authentication is used.
+- `connection_string` **str** - (cosmosdb only) The Azure Storage connection string.
 - `database_name` **str** - (cosmosdb only) Name of the database.
+
 - `index_schema` **dict[str, dict[str, str]]** (optional) - Enables customization for each of your embeddings. 
   - `<supported_embedding>`: 
     - `index_name` **str**: (optional) - Name for the specific embedding index table.
@@ -202,7 +227,6 @@ vector_store:
       id_field: "id_custom"
 
 ```
-  
 
 ## Workflow Configurations
 
@@ -259,17 +283,19 @@ Defines settings for NLP-based graph extraction methods.
 #### Fields
 
 - `normalize_edge_weights` **bool** - Whether to normalize the edge weights during graph construction. Default=`True`.
+- `concurrent_requests` **int** - The number of threads to use for the extraction process.
+- `async_mode` **asyncio|threaded** - The async mode to use. Either `asyncio` or `threaded`.
 - `text_analyzer` **dict** - Parameters for the NLP model.
-  - extractor_type **regex_english|syntactic_parser|cfg** - Default=`regex_english`.
-  - model_name **str** - Name of NLP model (for SpaCy-based models)
-  - max_word_length **int** - Longest word to allow. Default=`15`.
-  - word_delimiter **str** - Delimiter to split words. Default ' '.
-  - include_named_entities **bool** - Whether to include named entities in noun phrases. Default=`True`.
-  - exclude_nouns **list[str] | None** - List of nouns to exclude. If `None`, we use an internal stopword list.
-  - exclude_entity_tags **list[str]** - List of entity tags to ignore.
-  - exclude_pos_tags **list[str]** - List of part-of-speech tags to ignore.
-  - noun_phrase_tags **list[str]** - List of noun phrase tags to ignore.
-  - noun_phrase_grammars **dict[str, str]** - Noun phrase grammars for the model (cfg-only).
+  - `extractor_type` **regex_english|syntactic_parser|cfg** - Default=`regex_english`.
+  - `model_name` **str** - Name of NLP model (for SpaCy-based models)
+  - `max_word_length` **int** - Longest word to allow. Default=`15`.
+  - `word_delimiter` **str** - Delimiter to split words. Default ' '.
+  - `include_named_entities` **bool** - Whether to include named entities in noun phrases. Default=`True`.
+  - `exclude_nouns` **list[str] | None** - List of nouns to exclude. If `None`, we use an internal stopword list.
+  - `exclude_entity_tags` **list[str]** - List of entity tags to ignore.
+  - `exclude_pos_tags` **list[str]** - List of part-of-speech tags to ignore.
+  - `noun_phrase_tags` **list[str]** - List of noun phrase tags to ignore.
+  - `noun_phrase_grammars` **dict[str, str]** - Noun phrase grammars for the model (cfg-only).
 
 ### prune_graph
 
@@ -277,13 +303,13 @@ Parameters for manual graph pruning. This can be used to optimize the modularity
 
 #### Fields
 
-- min_node_freq **int** - The minimum node frequency to allow.
-- max_node_freq_std **float | None** - The maximum standard deviation of node frequency to allow.
-- min_node_degree **int** - The minimum node degree to allow.
-- max_node_degree_std **float | None** - The maximum standard deviation of node degree to allow.
-- min_edge_weight_pct **float** - The minimum edge weight percentile to allow.
-- remove_ego_nodes **bool** - Remove ego nodes.
-- lcc_only **bool** - Only use largest connected component.
+- `min_node_freq` **int** - The minimum node frequency to allow.
+- `max_node_freq_std` **float | None** - The maximum standard deviation of node frequency to allow.
+- `min_node_degree` **int** - The minimum node degree to allow.
+- `max_node_degree_std` **float | None** - The maximum standard deviation of node degree to allow.
+- `min_edge_weight_pct` **float** - The minimum edge weight percentile to allow.
+- `remove_ego_nodes` **bool** - Remove ego nodes.
+- `lcc_only` **bool** - Only use largest connected component.
 
 ### cluster_graph
 
@@ -312,7 +338,8 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 
 - `model_id` **str** - Name of the model definition to use for API calls.
 - `model_instance_name` **str** - Name of the model singleton instance. Default is "community_reporting". This primarily affects the cache storage partitioning.
-- `prompt` **str** - The prompt file to use.
+- `graph_prompt` **str | None** - The community report extraction prompt to use for graph-based summarization.
+- `text_prompt` **str | None** - The community report extraction prompt to use for text-based summarization.
 - `max_length` **int** - The maximum number of output tokens per report.
 - `max_input_length` **int** - The maximum number of input tokens to use when generating reports.
 
@@ -322,6 +349,7 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 
 - `embeddings` **bool** - Export embeddings snapshots to parquet.
 - `graphml` **bool** - Export graph snapshot to GraphML.
+- `raw_graph` **bool** - Export raw extracted graph before merging.
 
 ## Query
 
@@ -329,9 +357,9 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 
 #### Fields
 
+- `prompt` **str** - The prompt file to use.
 - `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
 - `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
-- `prompt` **str** - The prompt file to use.
 - `text_unit_prop` **float** - The text unit proportion. 
 - `community_prop` **float** - The community proportion.
 - `conversation_history_max_turns` **int** - The conversation history maximum turns.
@@ -343,14 +371,10 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 
 #### Fields
 
+- `map_prompt` **str** - The global search mapper prompt to use.
+- `reduce_prompt` **str** - The global search reducer to use.
 - `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
-- `map_prompt` **str** - The mapper prompt file to use.
-- `reduce_prompt` **str** - The reducer prompt file to use.
 - `knowledge_prompt` **str** - The knowledge prompt file to use.
-- `map_prompt` **str | None** - The global search mapper prompt to use.
-- `reduce_prompt` **str | None** - The global search reducer to use.
-- `knowledge_prompt` **str | None** - The global search general prompt to use.
-- `max_context_tokens` **int** - The maximum context size to create, in tokens.
 - `data_max_tokens` **int** - The maximum tokens to use constructing the final response from the reduces responses.
 - `map_max_length` **int** - The maximum length to request for map responses, in words.
 - `reduce_max_length` **int** - The maximum length to request for reduce responses, in words.
@@ -364,12 +388,13 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 
 #### Fields
 
-- `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
-- `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
 - `prompt` **str** - The prompt file to use.
 - `reduce_prompt` **str** - The reducer prompt file to use.
+- `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
+- `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
 - `data_max_tokens` **int** - The data llm maximum tokens.
 - `reduce_max_tokens` **int** - The maximum tokens for the reduce phase. Only use if a non-o-series model.
+- `reduce_temperature` **float** - The temperature to use for token generation in reduce.
 - `reduce_max_completion_tokens` **int** - The maximum tokens for the reduce phase. Only use for o-series models.
 - `concurrency` **int** - The number of concurrent requests.
 - `drift_k_followups` **int** - The number of top global results to retrieve.
@@ -391,7 +416,8 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 
 #### Fields
 
+- `prompt` **str** - The prompt file to use.
 - `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
 - `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
-- `prompt` **str** - The prompt file to use.
-- `k` **int | None** - Number of text units to retrieve from the vector store for context building.
+- `k` **int** - Number of text units to retrieve from the vector store for context building.
+- `max_context_tokens` **int** - The maximum context size to create, in tokens.
