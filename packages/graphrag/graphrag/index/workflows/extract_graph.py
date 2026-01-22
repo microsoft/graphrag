@@ -4,9 +4,12 @@
 """A module containing run_workflow method definition."""
 
 import logging
+from typing import TYPE_CHECKING
 
 import pandas as pd
+from graphrag_llm.completion import create_completion
 
+from graphrag.cache.cache_key_creator import cache_key_creator
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -18,9 +21,10 @@ from graphrag.index.operations.summarize_descriptions.summarize_descriptions imp
 )
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.language_model.manager import ModelManager
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 logger = logging.getLogger(__name__)
 
@@ -33,26 +37,24 @@ async def run_workflow(
     logger.info("Workflow started: extract_graph")
     text_units = await load_table_from_storage("text_units", context.output_storage)
 
-    extraction_model_config = config.get_language_model_config(
-        config.extract_graph.model_id
+    extraction_model_config = config.get_completion_model_config(
+        config.extract_graph.completion_model_id
     )
     extraction_prompts = config.extract_graph.resolved_prompts()
-    extraction_model = ModelManager().get_or_create_chat_model(
-        name=config.extract_graph.model_instance_name,
-        model_type=extraction_model_config.type,
-        config=extraction_model_config,
-        cache=context.cache,
+    extraction_model = create_completion(
+        extraction_model_config,
+        cache=context.cache.child(config.extract_graph.model_instance_name),
+        cache_key_creator=cache_key_creator,
     )
 
-    summarization_model_config = config.get_language_model_config(
-        config.summarize_descriptions.model_id
+    summarization_model_config = config.get_completion_model_config(
+        config.summarize_descriptions.completion_model_id
     )
     summarization_prompts = config.summarize_descriptions.resolved_prompts()
-    summarization_model = ModelManager().get_or_create_chat_model(
-        name=config.summarize_descriptions.model_instance_name,
-        model_type=summarization_model_config.type,
-        config=summarization_model_config,
-        cache=context.cache,
+    summarization_model = create_completion(
+        summarization_model_config,
+        cache=context.cache.child(config.summarize_descriptions.model_instance_name),
+        cache_key_creator=cache_key_creator,
     )
 
     entities, relationships, raw_entities, raw_relationships = await extract_graph(
@@ -62,13 +64,13 @@ async def run_workflow(
         extraction_prompt=extraction_prompts.extraction_prompt,
         entity_types=config.extract_graph.entity_types,
         max_gleanings=config.extract_graph.max_gleanings,
-        extraction_num_threads=extraction_model_config.concurrent_requests,
-        extraction_async_type=extraction_model_config.async_mode,
+        extraction_num_threads=config.concurrent_requests,
+        extraction_async_type=config.async_mode,
         summarization_model=summarization_model,
         max_summary_length=config.summarize_descriptions.max_length,
         max_input_tokens=config.summarize_descriptions.max_input_tokens,
         summarization_prompt=summarization_prompts.summarize_prompt,
-        summarization_num_threads=summarization_model_config.concurrent_requests,
+        summarization_num_threads=config.concurrent_requests,
     )
 
     await write_table_to_storage(entities, "entities", context.output_storage)
@@ -94,13 +96,13 @@ async def run_workflow(
 async def extract_graph(
     text_units: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    extraction_model: ChatModel,
+    extraction_model: "LLMCompletion",
     extraction_prompt: str,
     entity_types: list[str],
     max_gleanings: int,
     extraction_num_threads: int,
     extraction_async_type: AsyncType,
-    summarization_model: ChatModel,
+    summarization_model: "LLMCompletion",
     max_summary_length: int,
     max_input_tokens: int,
     summarization_prompt: str,
@@ -155,7 +157,7 @@ async def get_summarized_entities_relationships(
     extracted_entities: pd.DataFrame,
     extracted_relationships: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    model: ChatModel,
+    model: "LLMCompletion",
     max_summary_length: int,
     max_input_tokens: int,
     summarization_prompt: str,

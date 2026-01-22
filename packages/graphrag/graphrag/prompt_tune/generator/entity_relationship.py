@@ -4,19 +4,27 @@
 """Entity relationship example generation module."""
 
 import asyncio
+from typing import TYPE_CHECKING
 
-from graphrag.language_model.protocol.base import ChatModel
+from graphrag_llm.utils import (
+    CompletionMessagesBuilder,
+)
+
 from graphrag.prompt_tune.prompt.entity_relationship import (
     ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT,
     ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
     UNTYPED_ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
 )
 
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
+
 MAX_EXAMPLES = 5
 
 
 async def generate_entity_relationship_examples(
-    model: ChatModel,
+    model: "LLMCompletion",
     persona: str,
     entity_types: str | list[str] | None,
     docs: str | list[str],
@@ -29,7 +37,8 @@ async def generate_entity_relationship_examples(
     on the json_mode parameter.
     """
     docs_list = [docs] if isinstance(docs, str) else docs
-    history = [{"content": persona, "role": "system"}]
+
+    msg_builder = CompletionMessagesBuilder().add_system_message(persona)
 
     if entity_types:
         entity_types_str = (
@@ -57,9 +66,13 @@ async def generate_entity_relationship_examples(
     messages = messages[:MAX_EXAMPLES]
 
     tasks = [
-        model.achat(message, history=history, json=json_mode) for message in messages
+        model.completion_async(
+            messages=msg_builder.add_user_message(message).build(),
+            response_format_json_object=json_mode,
+        )
+        for message in messages
     ]
 
-    responses = await asyncio.gather(*tasks)
+    responses: list[LLMCompletionResponse] = await asyncio.gather(*tasks)  # type: ignore
 
-    return [str(response.output.content) for response in responses]
+    return [response.content for response in responses]

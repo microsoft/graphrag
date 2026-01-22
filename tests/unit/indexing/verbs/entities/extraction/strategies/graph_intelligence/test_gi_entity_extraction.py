@@ -4,8 +4,8 @@ import unittest
 
 from graphrag.index.operations.extract_graph.extract_graph import _run_extract_graph
 from graphrag.prompts.index.extract_graph import GRAPH_EXTRACTION_PROMPT
-
-from tests.unit.indexing.verbs.helpers.mock_llm import create_mock_llm
+from graphrag_llm.completion import create_completion
+from graphrag_llm.config import LLMProviderType, ModelConfig
 
 SIMPLE_EXTRACTION_RESPONSE = """
 ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -20,6 +20,16 @@ SIMPLE_EXTRACTION_RESPONSE = """
 """.strip()
 
 
+model = create_completion(
+    ModelConfig(
+        type=LLMProviderType.MockLLM,
+        model_provider="openai",
+        model="gpt-4o",
+        mock_responses=[SIMPLE_EXTRACTION_RESPONSE],
+    )
+)
+
+
 class TestRunChain(unittest.IsolatedAsyncioTestCase):
     async def test_run_extract_graph_single_document_correct_entities_returned(self):
         entities_df, _ = await _run_extract_graph(
@@ -27,10 +37,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             source_id="1",
             entity_types=["person"],
             max_gleanings=0,
-            model=create_mock_llm(
-                responses=[SIMPLE_EXTRACTION_RESPONSE],
-                name="test_run_extract_graph_single_document_correct_entities_returned",
-            ),
+            model=model,
             prompt=GRAPH_EXTRACTION_PROMPT,
         )
 
@@ -44,10 +51,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             source_id="1",
             entity_types=["person"],
             max_gleanings=0,
-            model=create_mock_llm(
-                responses=[SIMPLE_EXTRACTION_RESPONSE],
-                name="test_run_extract_graph_single_document_correct_edges_returned",
-            ),
+            model=model,
             prompt=GRAPH_EXTRACTION_PROMPT,
         )
 
@@ -66,10 +70,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             source_id="1",
             entity_types=["person"],
             max_gleanings=0,
-            model=create_mock_llm(
-                responses=[SIMPLE_EXTRACTION_RESPONSE],
-                name="test_run_extract_graph_single_document_source_ids_mapped",
-            ),
+            model=model,
             prompt=GRAPH_EXTRACTION_PROMPT,
         )
 

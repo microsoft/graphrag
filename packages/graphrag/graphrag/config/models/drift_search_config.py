@@ -19,9 +19,9 @@ class DRIFTSearchConfig(BaseModel):
         description="The drift search reduce prompt to use.",
         default=graphrag_config_defaults.drift_search.reduce_prompt,
     )
-    chat_model_id: str = Field(
+    completion_model_id: str = Field(
         description="The model ID to use for drift search.",
-        default=graphrag_config_defaults.drift_search.chat_model_id,
+        default=graphrag_config_defaults.drift_search.completion_model_id,
     )
     embedding_model_id: str = Field(
         description="The model ID to use for drift search.",

@@ -13,11 +13,10 @@ Backwards compatibility is not guaranteed at this time.
 
 import logging
 
+from graphrag_llm.completion import create_completion
 from pydantic import PositiveInt, validate_call
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.language_model.manager import ModelManager
 from graphrag.logger.standard_logging import init_loggers
 from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT, PROMPT_TUNING_MODEL_ID
 from graphrag.prompt_tune.generator.community_report_rating import (
@@ -100,16 +99,10 @@ async def generate_indexing_prompts(
     # Create LLM from config
     # TODO: Expose a way to specify Prompt Tuning model ID through config
     logger.info("Retrieving language model configuration...")
-    default_llm_settings = config.get_language_model_config(PROMPT_TUNING_MODEL_ID)
+    default_llm_settings = config.get_completion_model_config(PROMPT_TUNING_MODEL_ID)
 
     logger.info("Creating language model...")
-    llm = ModelManager().register_chat(
-        name="prompt_tuning",
-        model_type=default_llm_settings.type,
-        config=default_llm_settings,
-        callbacks=NoopWorkflowCallbacks(),
-        cache=None,
-    )
+    llm = create_completion(default_llm_settings)
 
     if not domain:
         logger.info("Generating domain...")
@@ -128,8 +121,8 @@ async def generate_indexing_prompts(
     )
 
     entity_types = None
-    extract_graph_llm_settings = config.get_language_model_config(
-        config.extract_graph.model_id
+    extract_graph_llm_settings = config.get_completion_model_config(
+        config.extract_graph.completion_model_id
     )
     if discover_entity_types:
         logger.info("Generating entity types...")
@@ -138,7 +131,7 @@ async def generate_indexing_prompts(
             domain=domain,
             persona=persona,
             docs=doc_list,
-            json_mode=extract_graph_llm_settings.model_supports_json or False,
+            json_mode=True,
         )
 
     logger.info("Generating entity relationship examples...")

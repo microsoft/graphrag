@@ -5,18 +5,23 @@
 
 import logging
 import time
-from collections.abc import AsyncGenerator
-from typing import Any
+from collections.abc import AsyncGenerator, AsyncIterator
+from typing import TYPE_CHECKING, Any
+
+from graphrag_llm.tokenizer import Tokenizer
+from graphrag_llm.utils import CompletionMessagesBuilder
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.query.basic_search_system_prompt import (
     BASIC_SEARCH_SYSTEM_PROMPT,
 )
 from graphrag.query.context_builder.builders import BasicContextBuilder
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionChunk
 
 logger = logging.getLogger(__name__)
 """
@@ -29,7 +34,7 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
 
     def __init__(
         self,
-        model: ChatModel,
+        model: "LLMCompletion",
         context_builder: BasicContextBuilder,
         tokenizer: Tokenizer | None = None,
         system_prompt: str | None = None,
@@ -77,19 +82,28 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
                 context_data=context_result.context_chunks,
                 response_type=self.response_type,
             )
-            search_messages = [
-                {"role": "system", "content": search_prompt},
-            ]
+
+            messages_builder = (
+                CompletionMessagesBuilder()
+                .add_system_message(search_prompt)
+                .add_user_message(query)
+            )
 
             response = ""
-            async for chunk in self.model.achat_stream(
-                prompt=query,
-                history=search_messages,
-                model_parameters=self.model_params,
-            ):
+
+            response_stream: AsyncIterator[LLMCompletionChunk] = (
+                self.model.completion_async(
+                    messages=messages_builder.build(),
+                    stream=True,
+                    **self.model_params,
+                )
+            )  # type: ignore
+
+            async for chunk in response_stream:
+                response_text = chunk.choices[0].delta.content or ""
                 for callback in self.callbacks:
-                    callback.on_llm_new_token(chunk)
-                response += chunk
+                    callback.on_llm_new_token(response_text)
+                response += response_text
 
             llm_calls["response"] = 1
             prompt_tokens["response"] = len(self.tokenizer.encode(search_prompt))
@@ -143,18 +157,26 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
         search_prompt = self.system_prompt.format(
             context_data=context_result.context_chunks, response_type=self.response_type
         )
-        search_messages = [
-            {"role": "system", "content": search_prompt},
-        ]
+
+        messages_builder = (
+            CompletionMessagesBuilder()
+            .add_system_message(search_prompt)
+            .add_user_message(query)
+        )
 
         for callback in self.callbacks:
             callback.on_context(context_result.context_records)
 
-        async for chunk_response in self.model.achat_stream(
-            prompt=query,
-            history=search_messages,
-            model_parameters=self.model_params,
-        ):
+        response_stream: AsyncIterator[
+            LLMCompletionChunk
+        ] = await self.model.completion_async(
+            messages=messages_builder.build(),
+            stream=True,
+            **self.model_params,
+        )  # type: ignore
+
+        async for chunk in response_stream:
+            response_text = chunk.choices[0].delta.content or ""
             for callback in self.callbacks:
-                callback.on_llm_new_token(chunk_response)
-            yield chunk_response
+                callback.on_llm_new_token(response_text)
+            yield response_text

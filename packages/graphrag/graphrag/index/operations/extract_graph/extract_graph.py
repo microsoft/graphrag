@@ -4,6 +4,7 @@
 """A module containing extract_graph method."""
 
 import logging
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
@@ -11,7 +12,9 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.extract_graph.graph_extractor import GraphExtractor
 from graphrag.index.utils.derive_from_rows import derive_from_rows
-from graphrag.language_model.protocol.base import ChatModel
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +24,7 @@ async def extract_graph(
     callbacks: WorkflowCallbacks,
     text_column: str,
     id_column: str,
-    model: ChatModel,
+    model: "LLMCompletion",
     prompt: str,
     entity_types: list[str],
     max_gleanings: int,
@@ -72,7 +75,7 @@ async def _run_extract_graph(
     text: str,
     source_id: str,
     entity_types: list[str],
-    model: ChatModel,
+    model: "LLMCompletion",
     prompt: str,
     max_gleanings: int,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:

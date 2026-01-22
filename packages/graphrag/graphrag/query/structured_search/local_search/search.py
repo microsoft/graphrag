@@ -5,11 +5,13 @@
 
 import logging
 import time
-from collections.abc import AsyncGenerator
-from typing import Any
+from collections.abc import AsyncGenerator, AsyncIterator
+from typing import TYPE_CHECKING, Any
+
+from graphrag_llm.tokenizer import Tokenizer
+from graphrag_llm.utils import CompletionMessagesBuilder
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.query.local_search_system_prompt import (
     LOCAL_SEARCH_SYSTEM_PROMPT,
 )
@@ -18,7 +20,10 @@ from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionChunk
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +33,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
 
     def __init__(
         self,
-        model: ChatModel,
+        model: "LLMCompletion",
         context_builder: LocalContextBuilder,
         tokenizer: Tokenizer | None = None,
         system_prompt: str | None = None,
@@ -83,20 +88,28 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
                     context_data=context_result.context_chunks,
                     response_type=self.response_type,
                 )
-            history_messages = [
-                {"role": "system", "content": search_prompt},
-            ]
+
+            messages_builder = (
+                CompletionMessagesBuilder()
+                .add_system_message(search_prompt)
+                .add_user_message(query)
+            )
 
             full_response = ""
 
-            async for response in self.model.achat_stream(
-                prompt=query,
-                history=history_messages,
-                model_parameters=self.model_params,
-            ):
-                full_response += response
+            response: AsyncIterator[
+                LLMCompletionChunk
+            ] = await self.model.completion_async(
+                messages=messages_builder.build(),
+                stream=True,
+                **self.model_params,
+            )  # type: ignore
+
+            async for chunk in response:
+                response_text = chunk.choices[0].delta.content or ""
+                full_response += response_text
                 for callback in self.callbacks:
-                    callback.on_llm_new_token(response)
+                    callback.on_llm_new_token(response_text)
 
             llm_calls["response"] = 1
             prompt_tokens["response"] = len(self.tokenizer.encode(search_prompt))
@@ -147,18 +160,24 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         search_prompt = self.system_prompt.format(
             context_data=context_result.context_chunks, response_type=self.response_type
         )
-        history_messages = [
-            {"role": "system", "content": search_prompt},
-        ]
+
+        messages_builder = (
+            CompletionMessagesBuilder()
+            .add_system_message(search_prompt)
+            .add_user_message(query)
+        )
 
         for callback in self.callbacks:
             callback.on_context(context_result.context_records)
 
-        async for response in self.model.achat_stream(
-            prompt=query,
-            history=history_messages,
-            model_parameters=self.model_params,
-        ):
+        response: AsyncIterator[LLMCompletionChunk] = await self.model.completion_async(
+            messages=messages_builder.build(),
+            stream=True,
+            **self.model_params,
+        )  # type: ignore
+
+        async for chunk in response:
+            response_text = chunk.choices[0].delta.content or ""
             for callback in self.callbacks:
-                callback.on_llm_new_token(response)
-            yield response
+                callback.on_llm_new_token(response_text)
+            yield response_text

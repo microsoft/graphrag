@@ -5,142 +5,24 @@ import os
 from pathlib import Path
 from unittest import mock
 
-import graphrag.config.defaults as defs
-import pytest
-from graphrag.config.enums import AuthType, ModelType
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from pydantic import ValidationError
 
 from tests.unit.config.utils import (
-    DEFAULT_EMBEDDING_MODEL_CONFIG,
-    DEFAULT_MODEL_CONFIG,
+    DEFAULT_COMPLETION_MODELS,
+    DEFAULT_EMBEDDING_MODELS,
     FAKE_API_KEY,
     assert_graphrag_configs,
     get_default_graphrag_config,
 )
 
 
-def test_missing_openai_required_api_key() -> None:
-    model_config_missing_api_key = {
-        defs.DEFAULT_CHAT_MODEL_ID: {
-            "type": ModelType.Chat,
-            "model_provider": "openai",
-            "model": defs.DEFAULT_CHAT_MODEL,
-        },
-        defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
-    }
-
-    # API Key required for OpenAIChat
-    with pytest.raises(ValidationError):
-        GraphRagConfig(models=model_config_missing_api_key)
-
-    # API Key required for OpenAIEmbedding
-    model_config_missing_api_key[defs.DEFAULT_CHAT_MODEL_ID]["type"] = (
-        ModelType.Embedding
-    )
-    with pytest.raises(ValidationError):
-        GraphRagConfig(models=model_config_missing_api_key)
-
-
-def test_missing_azure_api_key() -> None:
-    model_config_missing_api_key = {
-        defs.DEFAULT_CHAT_MODEL_ID: {
-            "type": ModelType.Chat,
-            "model_provider": "azure",
-            "auth_type": AuthType.APIKey,
-            "model": defs.DEFAULT_CHAT_MODEL,
-            "api_base": "some_api_base",
-            "api_version": "some_api_version",
-            "deployment_name": "some_deployment_name",
-        },
-        defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
-    }
-
-    with pytest.raises(ValidationError):
-        GraphRagConfig(models=model_config_missing_api_key)
-
-    # API Key not required for managed identity
-    model_config_missing_api_key[defs.DEFAULT_CHAT_MODEL_ID]["auth_type"] = (
-        AuthType.AzureManagedIdentity
-    )
-    GraphRagConfig(models=model_config_missing_api_key)
-
-
-def test_conflicting_auth_type() -> None:
-    model_config_invalid_auth_type = {
-        defs.DEFAULT_CHAT_MODEL_ID: {
-            "auth_type": AuthType.AzureManagedIdentity,
-            "type": ModelType.Chat,
-            "model_provider": "openai",
-            "model": defs.DEFAULT_CHAT_MODEL,
-        },
-        defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
-    }
-
-    with pytest.raises(ValidationError):
-        GraphRagConfig(models=model_config_invalid_auth_type)
-
-
-def test_conflicting_azure_api_key() -> None:
-    model_config_conflicting_api_key = {
-        defs.DEFAULT_CHAT_MODEL_ID: {
-            "type": ModelType.Chat,
-            "model_provider": "azure",
-            "auth_type": AuthType.AzureManagedIdentity,
-            "model": defs.DEFAULT_CHAT_MODEL,
-            "api_base": "some_api_base",
-            "api_version": "some_api_version",
-            "deployment_name": "some_deployment_name",
-            "api_key": "THIS_SHOULD_NOT_BE_SET_WHEN_USING_MANAGED_IDENTITY",
-        },
-        defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
-    }
-
-    with pytest.raises(ValidationError):
-        GraphRagConfig(models=model_config_conflicting_api_key)
-
-
-base_azure_model_config = {
-    "type": ModelType.Chat,
-    "model_provider": "azure",
-    "auth_type": AuthType.AzureManagedIdentity,
-    "model": defs.DEFAULT_CHAT_MODEL,
-    "api_base": "some_api_base",
-    "api_version": "some_api_version",
-    "deployment_name": "some_deployment_name",
-}
-
-
-def test_missing_azure_api_base() -> None:
-    missing_api_base_config = base_azure_model_config.copy()
-    del missing_api_base_config["api_base"]
-
-    with pytest.raises(ValidationError):
-        GraphRagConfig(
-            models={
-                defs.DEFAULT_CHAT_MODEL_ID: missing_api_base_config,
-                defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
-            }  # type: ignore
-        )
-
-
-def test_missing_azure_api_version() -> None:
-    missing_api_version_config = base_azure_model_config.copy()
-    del missing_api_version_config["api_version"]
-
-    with pytest.raises(ValidationError):
-        GraphRagConfig(
-            models={
-                defs.DEFAULT_CHAT_MODEL_ID: missing_api_version_config,
-                defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
-            }  # type: ignore
-        )
-
-
 def test_default_config() -> None:
     expected = get_default_graphrag_config()
-    actual = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
+    actual = GraphRagConfig(
+        completion_models=DEFAULT_COMPLETION_MODELS,  # type: ignore
+        embedding_models=DEFAULT_EMBEDDING_MODELS,  # type: ignore
+    )
     assert_graphrag_configs(actual, expected)
 
 

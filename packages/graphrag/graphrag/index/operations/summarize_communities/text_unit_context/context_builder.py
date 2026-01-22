@@ -7,6 +7,7 @@ import logging
 from typing import cast
 
 import pandas as pd
+from graphrag_llm.tokenizer import Tokenizer
 
 import graphrag.data_model.schemas as schemas
 from graphrag.index.operations.summarize_communities.build_mixed_context import (
@@ -18,7 +19,6 @@ from graphrag.index.operations.summarize_communities.text_unit_context.prep_text
 from graphrag.index.operations.summarize_communities.text_unit_context.sort_context import (
     sort_context,
 )
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 

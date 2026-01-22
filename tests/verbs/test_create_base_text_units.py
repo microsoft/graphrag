@@ -1,12 +1,12 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.workflows.create_base_text_units import run_workflow
 from graphrag.utils.storage import load_table_from_storage
 
+from tests.unit.config.utils import get_default_graphrag_config
+
 from .util import (
-    DEFAULT_MODEL_CONFIG,
     compare_outputs,
     create_test_context,
     load_test_table,
@@ -18,7 +18,7 @@ async def test_create_base_text_units():
 
     context = await create_test_context()
 
-    config = GraphRagConfig(models=DEFAULT_MODEL_CONFIG)  # type: ignore
+    config = get_default_graphrag_config()
     config.chunking.prepend_metadata = ["title"]
 
     await run_workflow(config, context)

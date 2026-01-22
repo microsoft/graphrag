@@ -8,6 +8,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, ClassVar, Generic, Literal, TypeVar
 
+from graphrag_common.hasher import hash_data
+
 T = TypeVar("T", covariant=True)
 
 ServiceScope = Literal["singleton", "transient"]
@@ -57,9 +59,14 @@ class Factory(ABC, Generic[T]):
 
         Args
         ----
-            strategy: The name of the strategy.
-            initializer: A callable that creates an instance of T.
-            scope: The service scope, either 'singleton' or 'transient'.
+            strategy: str
+                The name of the strategy.
+            initializer: Callable[..., T]
+                A callable that creates an instance of T.
+            scope: ServiceScope (default: "transient")
+                The scope of the service ("singleton" or "transient").
+                Singleton services are cached based on their init args
+                so that the same instance is returned for the same init args.
         """
         self._service_initializers[strategy] = _ServiceDescriptor(scope, initializer)
 
@@ -69,8 +76,10 @@ class Factory(ABC, Generic[T]):
 
         Args
         ----
-            strategy: The name of the strategy.
-            init_args: Dict of keyword arguments to pass to the service initializer.
+            strategy: str
+                The name of the strategy.
+            init_args: dict[str, Any] | None
+                A dictionary of keyword arguments to pass to the service initializer.
 
         Returns
         -------
@@ -85,14 +94,20 @@ class Factory(ABC, Generic[T]):
             raise ValueError(msg)
 
         # Delete entries with value None
+        # That way services can have default values
         init_args = {k: v for k, v in (init_args or {}).items() if v is not None}
 
         service_descriptor = self._service_initializers[strategy]
         if service_descriptor.scope == "singleton":
-            if strategy not in self._initialized_services:
-                self._initialized_services[strategy] = service_descriptor.initializer(
+            cache_key = hash_data({
+                "strategy": strategy,
+                "init_args": init_args,
+            })
+
+            if cache_key not in self._initialized_services:
+                self._initialized_services[cache_key] = service_descriptor.initializer(
                     **init_args
                 )
-            return self._initialized_services[strategy]
+            return self._initialized_services[cache_key]
 
         return service_descriptor.initializer(**(init_args or {}))

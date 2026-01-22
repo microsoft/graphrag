@@ -5,10 +5,13 @@
 
 import json
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from graphrag.index.typing.error_handler import ErrorHandlerFn
-from graphrag.language_model.protocol.base import ChatModel
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
 
 # these tokens are used in the prompt
 ENTITY_NAME_KEY = "entity_name"
@@ -27,7 +30,7 @@ class SummarizationResult:
 class SummarizeExtractor:
     """Unipartite graph extractor class definition."""
 
-    _model: ChatModel
+    _model: "LLMCompletion"
     _summarization_prompt: str
     _on_error: ErrorHandlerFn
     _max_summary_length: int
@@ -35,7 +38,7 @@ class SummarizeExtractor:
 
     def __init__(
         self,
-        model: ChatModel,
+        model: "LLMCompletion",
         max_summary_length: int,
         max_input_tokens: int,
         summarization_prompt: str,
@@ -44,7 +47,7 @@ class SummarizeExtractor:
         """Init method definition."""
         # TODO: streamline construction
         self._model = model
-        self._tokenizer = get_tokenizer(model.config)
+        self._tokenizer = model.tokenizer
         self._summarization_prompt = summarization_prompt
         self._on_error = on_error or (lambda _e, _s, _d: None)
         self._max_summary_length = max_summary_length
@@ -118,15 +121,14 @@ class SummarizeExtractor:
         self, id: str | tuple[str, str] | list[str], descriptions: list[str]
     ):
         """Summarize descriptions using the LLM."""
-        response = await self._model.achat(
-            self._summarization_prompt.format(**{
+        response: LLMCompletionResponse = await self._model.completion_async(
+            messages=self._summarization_prompt.format(**{
                 ENTITY_NAME_KEY: json.dumps(id, ensure_ascii=False),
                 DESCRIPTION_LIST_KEY: json.dumps(
                     sorted(descriptions), ensure_ascii=False
                 ),
                 MAX_LENGTH_KEY: self._max_summary_length,
             }),
-            name="summarize",
-        )
+        )  # type: ignore
         # Calculate result
-        return str(response.output.content)
+        return response.content

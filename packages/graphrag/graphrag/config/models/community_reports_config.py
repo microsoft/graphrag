@@ -26,9 +26,9 @@ class CommunityReportPrompts:
 class CommunityReportsConfig(BaseModel):
     """Configuration section for community reports."""
 
-    model_id: str = Field(
+    completion_model_id: str = Field(
         description="The model ID to use for community reports.",
-        default=graphrag_config_defaults.community_reports.model_id,
+        default=graphrag_config_defaults.community_reports.completion_model_id,
     )
     model_instance_name: str = Field(
         description="The model singleton instance name. This primarily affects the cache storage partitioning.",

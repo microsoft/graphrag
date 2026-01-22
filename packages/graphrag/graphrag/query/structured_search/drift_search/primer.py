@@ -3,26 +3,44 @@
 
 """Primer for DRIFT search."""
 
-import json
 import logging
 import secrets
 import time
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+from graphrag_llm.tokenizer import Tokenizer
+from pydantic import BaseModel, Field
 from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.data_model.community_report import CommunityReport
-from graphrag.language_model.protocol.base import ChatModel, EmbeddingModel
 from graphrag.prompts.query.drift_search_system_prompt import (
     DRIFT_PRIMER_PROMPT,
 )
 from graphrag.query.structured_search.base import SearchResult
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.embedding import LLMEmbedding
+    from graphrag_llm.types import LLMCompletionResponse
 
 logger = logging.getLogger(__name__)
+
+
+class PrimerResponse(BaseModel):
+    """Response model for the primer."""
+
+    intermediate_answer: str = Field(
+        description="This answer should match the level of detail and length found in the community summaries. The intermediate answer should be exactly 2000 characters long. This must be formatted in markdown and must begin with a header that explains how the following text is related to the query.",
+    )
+    score: int = Field(
+        description="A score on how well the intermediate answer addresses the query. A score of 0 indicates a poor, unfocused answer, while a score of 100 indicates a highly focused, relevant answer that addresses the query in its entirety."
+    )
+    follow_up_queries: list[str] = Field(
+        description="A list of follow-up queries that could be asked to further explore the topic. These should be formatted as a list of strings. Generate at least five good follow-up queries."
+    )
 
 
 class PrimerQueryProcessor:
@@ -30,8 +48,8 @@ class PrimerQueryProcessor:
 
     def __init__(
         self,
-        chat_model: ChatModel,
-        text_embedder: EmbeddingModel,
+        chat_model: "LLMCompletion",
+        text_embedder: "LLMEmbedding",
         reports: list[CommunityReport],
         tokenizer: Tokenizer | None = None,
     ):
@@ -46,7 +64,7 @@ class PrimerQueryProcessor:
         """
         self.chat_model = chat_model
         self.text_embedder = text_embedder
-        self.tokenizer = tokenizer or get_tokenizer()
+        self.tokenizer = tokenizer or chat_model.tokenizer
         self.reports = reports
 
     async def expand_query(self, query: str) -> tuple[str, dict[str, int]]:
@@ -67,8 +85,10 @@ class PrimerQueryProcessor:
                   {template}\n"
                   Ensure that the hypothetical answer does not reference new named entities that are not present in the original query."""
 
-        model_response = await self.chat_model.achat(prompt)
-        text = model_response.output.content
+        model_response: LLMCompletionResponse = await self.chat_model.completion_async(
+            messages=prompt
+        )  # type: ignore
+        text = model_response.content
 
         prompt_tokens = len(self.tokenizer.encode(prompt))
         output_tokens = len(self.tokenizer.encode(text))
@@ -95,7 +115,9 @@ class PrimerQueryProcessor:
         """
         hyde_query, token_ct = await self.expand_query(query)
         logger.debug("Expanded query: %s", hyde_query)
-        return self.text_embedder.embed(hyde_query), token_ct
+        return self.text_embedder.embedding(
+            input=[hyde_query]
+        ).first_embedding, token_ct
 
 
 class DRIFTPrimer:
@@ -104,7 +126,7 @@ class DRIFTPrimer:
     def __init__(
         self,
         config: DRIFTSearchConfig,
-        chat_model: ChatModel,
+        chat_model: "LLMCompletion",
         tokenizer: Tokenizer | None = None,
     ):
         """
@@ -117,7 +139,7 @@ class DRIFTPrimer:
         """
         self.chat_model = chat_model
         self.config = config
-        self.tokenizer = tokenizer or get_tokenizer()
+        self.tokenizer = tokenizer or chat_model.tokenizer
 
     async def decompose_query(
         self, query: str, reports: pd.DataFrame
@@ -137,15 +159,18 @@ class DRIFTPrimer:
         prompt = DRIFT_PRIMER_PROMPT.format(
             query=query, community_reports=community_reports
         )
-        model_response = await self.chat_model.achat(prompt, json=True)
-        response = model_response.output.content
+        model_response: LLMCompletionResponse[
+            PrimerResponse
+        ] = await self.chat_model.completion_async(
+            messages=prompt, response_format=PrimerResponse
+        )  # type: ignore
 
-        parsed_response = json.loads(response)
+        parsed_response = model_response.formatted_response.model_dump()  # type: ignore
 
         token_ct = {
             "llm_calls": 1,
             "prompt_tokens": len(self.tokenizer.encode(prompt)),
-            "output_tokens": len(self.tokenizer.encode(response)),
+            "output_tokens": len(self.tokenizer.encode(model_response.content)),
         }
 
         return parsed_response, token_ct

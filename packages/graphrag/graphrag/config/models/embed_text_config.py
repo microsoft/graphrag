@@ -11,9 +11,9 @@ from graphrag.config.defaults import graphrag_config_defaults
 class EmbedTextConfig(BaseModel):
     """Configuration section for text embeddings."""
 
-    model_id: str = Field(
+    embedding_model_id: str = Field(
         description="The model ID to use for text embeddings.",
-        default=graphrag_config_defaults.embed_text.model_id,
+        default=graphrag_config_defaults.embed_text.embedding_model_id,
     )
     model_instance_name: str = Field(
         description="The model singleton instance name. This primarily affects the cache storage partitioning.",

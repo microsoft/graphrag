@@ -5,6 +5,7 @@
 
 import asyncio
 import logging
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
@@ -15,8 +16,10 @@ from graphrag.index.operations.summarize_descriptions.description_summary_extrac
 from graphrag.index.operations.summarize_descriptions.typing import (
     SummarizedDescriptionResult,
 )
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.logger.progress import ProgressTicker, progress_ticker
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +28,7 @@ async def summarize_descriptions(
     entities_df: pd.DataFrame,
     relationships_df: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    model: ChatModel,
+    model: "LLMCompletion",
     max_summary_length: int,
     max_input_tokens: int,
     prompt: str,
@@ -115,7 +118,7 @@ async def summarize_descriptions(
 async def run_summarize_descriptions(
     id: str | tuple[str, str],
     descriptions: list[str],
-    model: ChatModel,
+    model: "LLMCompletion",
     max_summary_length: int,
     max_input_tokens: int,
     prompt: str,

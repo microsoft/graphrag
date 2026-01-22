@@ -4,17 +4,20 @@
 """Orchestration Context Builders."""
 
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from graphrag_vectors import VectorStore
 
 from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
-from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.query.input.retrieval.entities import (
     get_entity_by_id,
     get_entity_by_key,
     get_entity_by_name,
 )
+
+if TYPE_CHECKING:
+    from graphrag_llm.embedding import LLMEmbedding
 
 
 class EntityVectorStoreKey(str, Enum):
@@ -38,7 +41,7 @@ class EntityVectorStoreKey(str, Enum):
 def map_query_to_entities(
     query: str,
     text_embedding_vectorstore: VectorStore,
-    text_embedder: EmbeddingModel,
+    text_embedder: "LLMEmbedding",
     all_entities_dict: dict[str, Entity],
     embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
     include_entity_names: list[str] | None = None,
@@ -58,7 +61,7 @@ def map_query_to_entities(
         # oversample to account for excluded entities
         search_results = text_embedding_vectorstore.similarity_search_by_text(
             text=query,
-            text_embedder=lambda t: text_embedder.embed(t),
+            text_embedder=lambda t: text_embedder.embedding(input=[t]).first_embedding,
             k=k * oversample_scaler,
         )
         for result in search_results:

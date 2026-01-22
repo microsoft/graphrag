@@ -8,11 +8,11 @@ import random
 from typing import Any, cast
 
 import pandas as pd
+from graphrag_llm.tokenizer import Tokenizer
 
 from graphrag.data_model.community_report import CommunityReport
 from graphrag.data_model.entity import Entity
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 logger = logging.getLogger(__name__)
 

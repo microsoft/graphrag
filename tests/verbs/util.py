@@ -1,7 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-import graphrag.config.defaults as defs
 import pandas as pd
 from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
@@ -9,27 +8,6 @@ from graphrag.utils.storage import write_table_to_storage
 from pandas.testing import assert_series_equal
 
 pd.set_option("display.max_columns", None)
-
-FAKE_API_KEY = "NOT_AN_API_KEY"
-
-DEFAULT_CHAT_MODEL_CONFIG = {
-    "api_key": FAKE_API_KEY,
-    "type": defs.DEFAULT_CHAT_MODEL_TYPE.value,
-    "model": defs.DEFAULT_CHAT_MODEL,
-    "model_provider": defs.DEFAULT_MODEL_PROVIDER,
-}
-
-DEFAULT_EMBEDDING_MODEL_CONFIG = {
-    "api_key": FAKE_API_KEY,
-    "type": defs.DEFAULT_EMBEDDING_MODEL_TYPE.value,
-    "model": defs.DEFAULT_EMBEDDING_MODEL,
-    "model_provider": defs.DEFAULT_MODEL_PROVIDER,
-}
-
-DEFAULT_MODEL_CONFIG = {
-    defs.DEFAULT_CHAT_MODEL_ID: DEFAULT_CHAT_MODEL_CONFIG,
-    defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
-}
 
 
 async def create_test_context(storage: list[str] | None = None) -> PipelineRunContext:

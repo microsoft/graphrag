@@ -6,7 +6,7 @@
 import logging
 from collections.abc import Iterable
 from dataclasses import asdict
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 
@@ -18,7 +18,9 @@ from graphrag.index.operations.extract_covariates.typing import (
     CovariateExtractionResult,
 )
 from graphrag.index.utils.derive_from_rows import derive_from_rows
-from graphrag.language_model.protocol.base import ChatModel
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +28,7 @@ logger = logging.getLogger(__name__)
 async def extract_covariates(
     input: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    model: ChatModel,
+    model: "LLMCompletion",
     column: str,
     covariate_type: str,
     max_gleanings: int,
@@ -75,7 +77,7 @@ async def run_extract_claims(
     input: str | Iterable[str],
     entity_types: list[str],
     resolved_entities_map: dict[str, str],
-    model: ChatModel,
+    model: "LLMCompletion",
     max_gleanings: int,
     claim_description: str,
     prompt: str,

@@ -1,16 +1,14 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.enums import ModelType
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.workflows.extract_graph import (
     run_workflow,
 )
 from graphrag.utils.storage import load_table_from_storage
 
+from tests.unit.config.utils import get_default_graphrag_config
+
 from .util import (
-    DEFAULT_CHAT_MODEL_CONFIG,
-    DEFAULT_EMBEDDING_MODEL_CONFIG,
     create_test_context,
 )
 
@@ -40,21 +38,17 @@ async def test_extract_graph():
         storage=["text_units"],
     )
 
-    extraction_model = DEFAULT_CHAT_MODEL_CONFIG.copy()
-    extraction_model["type"] = ModelType.MockChat
-    extraction_model["responses"] = MOCK_LLM_ENTITY_RESPONSES  # type: ignore
-    config = GraphRagConfig(
-        models={
-            "default_chat_model": extraction_model,
-            "default_embedding_model": DEFAULT_EMBEDDING_MODEL_CONFIG,
-        }  # type: ignore
-    )
+    config = get_default_graphrag_config()
+    config.completion_models["default_completion_model"].type = "mock"
+    config.completion_models[
+        "default_completion_model"
+    ].mock_responses = MOCK_LLM_ENTITY_RESPONSES
 
-    summarize_llm_settings = config.get_language_model_config(
-        config.summarize_descriptions.model_id
+    summarize_llm_settings = config.get_completion_model_config(
+        config.summarize_descriptions.completion_model_id
     ).model_dump()
-    summarize_llm_settings["type"] = ModelType.MockChat
-    summarize_llm_settings["responses"] = MOCK_LLM_SUMMARIZATION_RESPONSES
+    summarize_llm_settings["type"] = "mock"
+    summarize_llm_settings["mock_responses"] = MOCK_LLM_SUMMARIZATION_RESPONSES
     config.summarize_descriptions.max_input_tokens = 1000
     config.summarize_descriptions.max_length = 100
 

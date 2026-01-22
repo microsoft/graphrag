@@ -5,6 +5,8 @@
 
 from typing import Any
 
+from graphrag_llm.tokenizer import Tokenizer
+
 from graphrag.data_model.community import Community
 from graphrag.data_model.community_report import CommunityReport
 from graphrag.data_model.entity import Entity
@@ -20,7 +22,6 @@ from graphrag.query.context_builder.dynamic_community_selection import (
 )
 from graphrag.query.structured_search.base import GlobalContextBuilder
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 class GlobalCommunityContext(GlobalContextBuilder):

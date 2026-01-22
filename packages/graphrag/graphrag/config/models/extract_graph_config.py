@@ -22,9 +22,9 @@ class ExtractGraphPrompts:
 class ExtractGraphConfig(BaseModel):
     """Configuration section for entity extraction."""
 
-    model_id: str = Field(
+    completion_model_id: str = Field(
         description="The model ID to use for text embeddings.",
-        default=graphrag_config_defaults.extract_graph.model_id,
+        default=graphrag_config_defaults.extract_graph.completion_model_id,
     )
     model_instance_name: str = Field(
         description="The model singleton instance name. This primarily affects the cache storage partitioning.",

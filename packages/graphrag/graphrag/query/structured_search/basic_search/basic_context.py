@@ -4,20 +4,22 @@
 """Basic Context Builder implementation."""
 
 import logging
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import pandas as pd
+from graphrag_llm.tokenizer import Tokenizer
 from graphrag_vectors import VectorStore
 
 from graphrag.data_model.text_unit import TextUnit
-from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.query.context_builder.builders import (
     BasicContextBuilder,
     ContextBuilderResult,
 )
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.embedding import LLMEmbedding
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +29,7 @@ class BasicSearchContext(BasicContextBuilder):
 
     def __init__(
         self,
-        text_embedder: EmbeddingModel,
+        text_embedder: "LLMEmbedding",
         text_unit_embeddings: VectorStore,
         text_units: list[TextUnit] | None = None,
         tokenizer: Tokenizer | None = None,
@@ -55,7 +57,9 @@ class BasicSearchContext(BasicContextBuilder):
         if query != "":
             related_texts = self.text_unit_embeddings.similarity_search_by_text(
                 text=query,
-                text_embedder=lambda t: self.text_embedder.embed(t),
+                text_embedder=lambda t: self.text_embedder.embedding(
+                    input=[t]
+                ).first_embedding,
                 k=k,
             )
 
