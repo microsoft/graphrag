@@ -67,13 +67,20 @@ def init_loggers(
     log_level = logging.DEBUG if verbose else logging.INFO
     logger.setLevel(log_level)
 
-    # clear any existing handlers to avoid duplicate logs
-    if logger.hasHandlers():
-        # Close file handlers properly before removing them
-        for handler in logger.handlers:
-            if isinstance(handler, logging.FileHandler):
-                handler.close()
-        logger.handlers.clear()
+    llm_logger = logging.getLogger("graphrag_llm")
+    llm_logger.setLevel(log_level)
+
+    def _clear_handlers(logger: logging.Logger) -> None:
+        # clear any existing handlers to avoid duplicate logs
+        if logger.hasHandlers():
+            # Close file handlers properly before removing them
+            for handler in logger.handlers:
+                if isinstance(handler, logging.FileHandler):
+                    handler.close()
+            logger.handlers.clear()
+
+    _clear_handlers(logger)
+    _clear_handlers(llm_logger)
 
     reporting_config = config.reporting
     config_dict = reporting_config.model_dump()
@@ -81,3 +88,4 @@ def init_loggers(
 
     handler = LoggerFactory().create(reporting_config.type, args)
     logger.addHandler(handler)
+    llm_logger.addHandler(handler)

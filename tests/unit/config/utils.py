@@ -17,7 +17,6 @@ from graphrag.config.models.extract_graph_nlp_config import (
 )
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.config.models.reporting_config import ReportingConfig
@@ -28,28 +27,29 @@ from graphrag.config.models.summarize_descriptions_config import (
 from graphrag_cache import CacheConfig
 from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_input import InputConfig
+from graphrag_llm.config import MetricsConfig, ModelConfig, RateLimitConfig, RetryConfig
 from graphrag_storage import StorageConfig
 from graphrag_vectors import VectorStoreConfig
-from pydantic import BaseModel
 
 FAKE_API_KEY = "NOT_AN_API_KEY"
 
-DEFAULT_CHAT_MODEL_CONFIG = {
+DEFAULT_COMPLETION_MODEL_CONFIG = {
     "api_key": FAKE_API_KEY,
-    "type": defs.DEFAULT_CHAT_MODEL_TYPE.value,
-    "model": defs.DEFAULT_CHAT_MODEL,
+    "model": defs.DEFAULT_COMPLETION_MODEL,
     "model_provider": defs.DEFAULT_MODEL_PROVIDER,
 }
 
 DEFAULT_EMBEDDING_MODEL_CONFIG = {
     "api_key": FAKE_API_KEY,
-    "type": defs.DEFAULT_EMBEDDING_MODEL_TYPE.value,
     "model": defs.DEFAULT_EMBEDDING_MODEL,
     "model_provider": defs.DEFAULT_MODEL_PROVIDER,
 }
 
-DEFAULT_MODEL_CONFIG = {
-    defs.DEFAULT_CHAT_MODEL_ID: DEFAULT_CHAT_MODEL_CONFIG,
+DEFAULT_COMPLETION_MODELS = {
+    defs.DEFAULT_COMPLETION_MODEL_ID: DEFAULT_COMPLETION_MODEL_CONFIG,
+}
+
+DEFAULT_EMBEDDING_MODELS = {
     defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
 }
 
@@ -57,49 +57,59 @@ DEFAULT_MODEL_CONFIG = {
 def get_default_graphrag_config() -> GraphRagConfig:
     return GraphRagConfig(**{
         **asdict(defs.graphrag_config_defaults),
-        "models": DEFAULT_MODEL_CONFIG,
+        "completion_models": DEFAULT_COMPLETION_MODELS,
+        "embedding_models": DEFAULT_EMBEDDING_MODELS,
     })
 
 
-def assert_language_model_configs(
-    actual: LanguageModelConfig, expected: LanguageModelConfig
-) -> None:
-    assert actual.api_key == expected.api_key
-    assert actual.auth_type == expected.auth_type
+def assert_retry_configs(actual: RetryConfig, expected: RetryConfig) -> None:
     assert actual.type == expected.type
+    assert actual.max_retries == expected.max_retries
+    assert actual.base_delay == expected.base_delay
+    assert actual.jitter == expected.jitter
+    assert actual.max_delay == expected.max_delay
+
+
+def assert_rate_limit_configs(
+    actual: RateLimitConfig, expected: RateLimitConfig
+) -> None:
+    assert actual.type == expected.type
+    assert actual.period_in_seconds == expected.period_in_seconds
+    assert actual.requests_per_period == expected.requests_per_period
+    assert actual.tokens_per_period == expected.tokens_per_period
+
+
+def assert_metrics_configs(actual: MetricsConfig, expected: MetricsConfig) -> None:
+    assert actual.type == expected.type
+    assert actual.store == expected.store
+    assert actual.writer == expected.writer
+    assert actual.log_level == expected.log_level
+    assert actual.base_dir == expected.base_dir
+
+
+def assert_model_configs(actual: ModelConfig, expected: ModelConfig) -> None:
+    assert actual.type == expected.type
+    assert actual.model_provider == expected.model_provider
     assert actual.model == expected.model
-    assert actual.encoding_model == expected.encoding_model
-    assert actual.max_tokens == expected.max_tokens
-    assert actual.temperature == expected.temperature
-    assert actual.max_completion_tokens == expected.max_completion_tokens
-    assert actual.top_p == expected.top_p
-    assert actual.n == expected.n
-    assert actual.frequency_penalty == expected.frequency_penalty
-    assert actual.presence_penalty == expected.presence_penalty
-    assert actual.request_timeout == expected.request_timeout
+    assert actual.call_args == expected.call_args
     assert actual.api_base == expected.api_base
     assert actual.api_version == expected.api_version
-    assert actual.deployment_name == expected.deployment_name
-    assert actual.organization == expected.organization
-    assert actual.proxy == expected.proxy
-    assert actual.audience == expected.audience
-    assert actual.model_supports_json == expected.model_supports_json
-    assert actual.tokens_per_minute == expected.tokens_per_minute
-    assert actual.requests_per_minute == expected.requests_per_minute
-    assert actual.retry_strategy == expected.retry_strategy
-    assert actual.max_retries == expected.max_retries
-    assert actual.max_retry_wait == expected.max_retry_wait
-    assert actual.concurrent_requests == expected.concurrent_requests
-    assert actual.async_mode == expected.async_mode
-    if actual.responses is not None:
-        assert expected.responses is not None
-        assert len(actual.responses) == len(expected.responses)
-        for e, a in zip(actual.responses, expected.responses, strict=True):
-            assert isinstance(e, BaseModel)
-            assert isinstance(a, BaseModel)
-            assert e.model_dump() == a.model_dump()
+    assert actual.api_key == expected.api_key
+    assert actual.auth_method == expected.auth_method
+    assert actual.azure_deployment_name == expected.azure_deployment_name
+    if actual.retry and expected.retry:
+        assert_retry_configs(actual.retry, expected.retry)
     else:
-        assert expected.responses is None
+        assert actual.retry == expected.retry
+    if actual.rate_limit and expected.rate_limit:
+        assert_rate_limit_configs(actual.rate_limit, expected.rate_limit)
+    else:
+        assert actual.rate_limit == expected.rate_limit
+    if actual.metrics and expected.metrics:
+        assert_metrics_configs(actual.metrics, expected.metrics)
+    else:
+        assert actual.metrics == expected.metrics
+    assert actual.mock_responses == expected.mock_responses
 
 
 def assert_vector_store_configs(
@@ -155,7 +165,7 @@ def assert_text_embedding_configs(
     assert actual.batch_size == expected.batch_size
     assert actual.batch_max_tokens == expected.batch_max_tokens
     assert actual.names == expected.names
-    assert actual.model_id == expected.model_id
+    assert actual.embedding_model_id == expected.embedding_model_id
 
 
 def assert_chunking_configs(actual: ChunkingConfig, expected: ChunkingConfig) -> None:
@@ -179,7 +189,7 @@ def assert_extract_graph_configs(
     assert actual.prompt == expected.prompt
     assert actual.entity_types == expected.entity_types
     assert actual.max_gleanings == expected.max_gleanings
-    assert actual.model_id == expected.model_id
+    assert actual.completion_model_id == expected.completion_model_id
 
 
 def assert_text_analyzer_configs(
@@ -222,7 +232,7 @@ def assert_summarize_descriptions_configs(
 ) -> None:
     assert actual.prompt == expected.prompt
     assert actual.max_length == expected.max_length
-    assert actual.model_id == expected.model_id
+    assert actual.completion_model_id == expected.completion_model_id
 
 
 def assert_community_reports_configs(
@@ -232,7 +242,7 @@ def assert_community_reports_configs(
     assert actual.text_prompt == expected.text_prompt
     assert actual.max_length == expected.max_length
     assert actual.max_input_length == expected.max_input_length
-    assert actual.model_id == expected.model_id
+    assert actual.completion_model_id == expected.completion_model_id
 
 
 def assert_extract_claims_configs(
@@ -242,7 +252,7 @@ def assert_extract_claims_configs(
     assert actual.prompt == expected.prompt
     assert actual.description == expected.description
     assert actual.max_gleanings == expected.max_gleanings
-    assert actual.model_id == expected.model_id
+    assert actual.completion_model_id == expected.completion_model_id
 
 
 def assert_cluster_graph_configs(
@@ -325,12 +335,19 @@ def assert_basic_search_configs(
 
 
 def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) -> None:
-    a_keys = sorted(actual.models.keys())
-    e_keys = sorted(expected.models.keys())
-    assert len(a_keys) == len(e_keys)
-    for a, e in zip(a_keys, e_keys, strict=False):
+    completion_keys = sorted(actual.completion_models.keys())
+    expected_completion_keys = sorted(expected.completion_models.keys())
+    assert len(completion_keys) == len(expected_completion_keys)
+    for a, e in zip(completion_keys, expected_completion_keys, strict=False):
         assert a == e
-        assert_language_model_configs(actual.models[a], expected.models[e])
+        assert_model_configs(actual.completion_models[a], expected.completion_models[e])
+
+    embedding_keys = sorted(actual.embedding_models.keys())
+    expected_embedding_keys = sorted(expected.embedding_models.keys())
+    assert len(embedding_keys) == len(expected_embedding_keys)
+    for a, e in zip(embedding_keys, expected_embedding_keys, strict=False):
+        assert a == e
+        assert_model_configs(actual.embedding_models[a], expected.embedding_models[e])
 
     assert_vector_store_configs(actual.vector_store, expected.vector_store)
     assert_reporting_configs(actual.reporting, expected.reporting)

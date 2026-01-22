@@ -10,13 +10,14 @@ from devtools import pformat
 from graphrag_cache import CacheConfig
 from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_input import InputConfig
+from graphrag_llm.config import ModelConfig
 from graphrag_storage import StorageConfig, StorageType
 from graphrag_vectors import IndexSchema, VectorStoreConfig, VectorStoreType
 from pydantic import BaseModel, Field, model_validator
 
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.embeddings import all_embeddings
-from graphrag.config.enums import ReportingType
+from graphrag.config.enums import AsyncType, ReportingType
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
@@ -26,19 +27,12 @@ from graphrag.config.models.extract_claims_config import ExtractClaimsConfig
 from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.global_search_config import GlobalSearchConfig
-from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
-)
-from graphrag.language_model.providers.litellm.services.rate_limiter.rate_limiter_factory import (
-    RateLimiterFactory,
-)
-from graphrag.language_model.providers.litellm.services.retry.retry_factory import (
-    RetryFactory,
 )
 
 
@@ -53,54 +47,25 @@ class GraphRagConfig(BaseModel):
         """Get a string representation."""
         return self.model_dump_json(indent=4)
 
-    models: dict[str, LanguageModelConfig] = Field(
-        description="Available language model configurations.",
-        default=graphrag_config_defaults.models,
+    completion_models: dict[str, ModelConfig] = Field(
+        description="Available completion model configurations.",
+        default=graphrag_config_defaults.completion_models,
     )
 
-    def _validate_retry_services(self) -> None:
-        """Validate the retry services configuration."""
-        retry_factory = RetryFactory()
+    embedding_models: dict[str, ModelConfig] = Field(
+        description="Available embedding model configurations.",
+        default=graphrag_config_defaults.embedding_models,
+    )
 
-        for model_id, model in self.models.items():
-            if model.retry_strategy != "none":
-                if model.retry_strategy not in retry_factory:
-                    msg = f"Retry strategy '{model.retry_strategy}' for model '{model_id}' is not registered. Available strategies: {', '.join(retry_factory.keys())}"
-                    raise ValueError(msg)
+    concurrent_requests: int = Field(
+        description="The default number of concurrent requests to make to language models.",
+        default=graphrag_config_defaults.concurrent_requests,
+    )
 
-                _ = retry_factory.create(
-                    strategy=model.retry_strategy,
-                    init_args={
-                        "max_retries": model.max_retries,
-                        "max_retry_wait": model.max_retry_wait,
-                    },
-                )
-
-    def _validate_rate_limiter_services(self) -> None:
-        """Validate the rate limiter services configuration."""
-        rate_limiter_factory = RateLimiterFactory()
-
-        for model_id, model in self.models.items():
-            if model.rate_limit_strategy is not None:
-                if model.rate_limit_strategy not in rate_limiter_factory:
-                    msg = f"Rate Limiter strategy '{model.rate_limit_strategy}' for model '{model_id}' is not registered. Available strategies: {', '.join(rate_limiter_factory.keys())}"
-                    raise ValueError(msg)
-
-                rpm = (
-                    model.requests_per_minute
-                    if type(model.requests_per_minute) is int
-                    else None
-                )
-                tpm = (
-                    model.tokens_per_minute
-                    if type(model.tokens_per_minute) is int
-                    else None
-                )
-                if rpm is not None or tpm is not None:
-                    _ = rate_limiter_factory.create(
-                        strategy=model.rate_limit_strategy,
-                        init_args={"rpm": rpm, "tpm": tpm},
-                    )
+    async_mode: AsyncType = Field(
+        description="The default asynchronous mode to use for language model requests.",
+        default=graphrag_config_defaults.async_mode,
+    )
 
     input: InputConfig = Field(
         description="The input configuration.", default=InputConfig()
@@ -299,22 +264,17 @@ class GraphRagConfig(BaseModel):
                 store.db_uri = graphrag_config_defaults.vector_store.db_uri
             store.db_uri = str(Path(store.db_uri).resolve())
 
-    def _validate_factories(self) -> None:
-        """Validate the factories used in the configuration."""
-        self._validate_retry_services()
-        self._validate_rate_limiter_services()
-
-    def get_language_model_config(self, model_id: str) -> LanguageModelConfig:
-        """Get a model configuration by ID.
+    def get_completion_model_config(self, model_id: str) -> ModelConfig:
+        """Get a completion model configuration by ID.
 
         Parameters
         ----------
         model_id : str
-            The ID of the model to get. Should match an ID in the models list.
+            The ID of the model to get. Should match an ID in the completion_models list.
 
         Returns
         -------
-        LanguageModelConfig
+        ModelConfig
             The model configuration if found.
 
         Raises
@@ -322,11 +282,35 @@ class GraphRagConfig(BaseModel):
         ValueError
             If the model ID is not found in the configuration.
         """
-        if model_id not in self.models:
-            err_msg = f"Model ID {model_id} not found in configuration. Please rerun `graphrag init` and set the model configuration."
+        if model_id not in self.completion_models:
+            err_msg = f"Model ID {model_id} not found in completion_models. Please rerun `graphrag init` and set the completion_models configuration."
             raise ValueError(err_msg)
 
-        return self.models[model_id]
+        return self.completion_models[model_id]
+
+    def get_embedding_model_config(self, model_id: str) -> ModelConfig:
+        """Get an embedding model configuration by ID.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to get. Should match an ID in the embedding_models list.
+
+        Returns
+        -------
+        ModelConfig
+            The model configuration if found.
+
+        Raises
+        ------
+        ValueError
+            If the model ID is not found in the configuration.
+        """
+        if model_id not in self.embedding_models:
+            err_msg = f"Model ID {model_id} not found in embedding_models. Please rerun `graphrag init` and set the embedding_models configuration."
+            raise ValueError(err_msg)
+
+        return self.embedding_models[model_id]
 
     @model_validator(mode="after")
     def _validate_model(self):
@@ -336,5 +320,4 @@ class GraphRagConfig(BaseModel):
         self._validate_output_base_dir()
         self._validate_update_output_storage_base_dir()
         self._validate_vector_store()
-        self._validate_factories()
         return self

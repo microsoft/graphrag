@@ -8,9 +8,9 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from graphrag_cache.noop_cache import NoopCache
 from graphrag_chunking.chunker_factory import create_chunker
 from graphrag_input import create_input_reader
+from graphrag_llm.embedding import create_embedding
 from graphrag_storage import create_storage
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
@@ -19,14 +19,12 @@ from graphrag.index.operations.embed_text.run_embed_text import (
     run_embed_text,
 )
 from graphrag.index.workflows.create_base_text_units import create_base_text_units
-from graphrag.language_model.manager import ModelManager
 from graphrag.prompt_tune.defaults import (
     LIMIT,
     N_SUBSET_MAX,
     K,
 )
 from graphrag.prompt_tune.types import DocSelectionType
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 
 def _sample_chunks_from_embeddings(
@@ -51,17 +49,11 @@ async def load_docs_in_chunks(
     k: int = K,
 ) -> list[str]:
     """Load docs into chunks for generating prompts."""
-    embeddings_llm_settings = config.get_language_model_config(
-        config.embed_text.model_id
+    embeddings_llm_settings = config.get_embedding_model_config(
+        config.embed_text.embedding_model_id
     )
-    model = ModelManager().get_or_create_embedding_model(
-        name="text_embedding",
-        model_type=embeddings_llm_settings.type,
-        config=embeddings_llm_settings,
-        callbacks=NoopWorkflowCallbacks(),
-        cache=NoopCache(),
-    )
-    tokenizer = get_tokenizer(embeddings_llm_settings)
+    model = create_embedding(embeddings_llm_settings)
+    tokenizer = model.tokenizer
     chunker = create_chunker(config.chunking, tokenizer.encode, tokenizer.decode)
     input_storage = create_storage(config.input_storage)
     input_reader = create_input_reader(config.input, input_storage)
@@ -99,7 +91,7 @@ async def load_docs_in_chunks(
             tokenizer=tokenizer,
             batch_size=config.embed_text.batch_size,
             batch_max_tokens=config.embed_text.batch_max_tokens,
-            num_threads=embeddings_llm_settings.concurrent_requests,
+            num_threads=config.concurrent_requests,
         )
         embeddings = np.array(embedding_results.embeddings)
         chunks_df = _sample_chunks_from_embeddings(chunks_df, embeddings, k=k)

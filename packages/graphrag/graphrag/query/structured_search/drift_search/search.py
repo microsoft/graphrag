@@ -5,16 +5,17 @@
 
 import logging
 import time
-from collections.abc import AsyncGenerator
-from typing import Any
+from collections.abc import AsyncGenerator, AsyncIterator
+from typing import TYPE_CHECKING, Any
 
+from graphrag_llm.tokenizer import Tokenizer
+from graphrag_llm.utils import (
+    CompletionMessagesBuilder,
+    gather_completion_response_async,
+)
 from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
-from graphrag.language_model.protocol.base import ChatModel
-from graphrag.language_model.util import (
-    get_openai_model_parameters_from_dict,
-)
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
@@ -25,8 +26,10 @@ from graphrag.query.structured_search.drift_search.drift_context import (
 from graphrag.query.structured_search.drift_search.primer import DRIFTPrimer
 from graphrag.query.structured_search.drift_search.state import QueryState
 from graphrag.query.structured_search.local_search.search import LocalSearch
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionChunk
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +39,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
 
     def __init__(
         self,
-        model: ChatModel,
+        model: "LLMCompletion",
         context_builder: DRIFTSearchContextBuilder,
         tokenizer: Tokenizer | None = None,
         query_state: QueryState | None = None,
@@ -55,7 +58,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         super().__init__(model, context_builder, tokenizer)
 
         self.context_builder = context_builder
-        self.tokenizer = tokenizer or get_tokenizer()
+        self.tokenizer = tokenizer or model.tokenizer
         self.query_state = query_state or QueryState()
         self.primer = DRIFTPrimer(
             config=self.context_builder.config,
@@ -86,15 +89,13 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             "max_context_tokens": self.context_builder.config.local_search_max_data_tokens,
         }
 
-        model_params = get_openai_model_parameters_from_dict({
-            "model": self.model.config.model,
-            "max_tokens": self.context_builder.config.local_search_llm_max_gen_tokens,
+        model_params = {
             "temperature": self.context_builder.config.local_search_temperature,
             "n": self.context_builder.config.local_search_n,
             "top_p": self.context_builder.config.local_search_top_p,
             "max_completion_tokens": self.context_builder.config.local_search_llm_max_gen_completion_tokens,
-            "response_format": {"type": "json_object"},
-        })
+            "response_format_json_object": True,
+        }
 
         return LocalSearch(
             model=self.model,
@@ -280,12 +281,10 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             for callback in self.callbacks:
                 callback.on_reduce_response_start(response_state)
 
-            model_params = get_openai_model_parameters_from_dict({
-                "model": self.model.config.model,
-                "max_tokens": self.context_builder.config.reduce_max_tokens,
+            model_params = {
                 "temperature": self.context_builder.config.reduce_temperature,
                 "max_completion_tokens": self.context_builder.config.reduce_max_completion_tokens,
-            })
+            }
 
             reduced_response = await self._reduce_response(
                 responses=response_state,
@@ -331,12 +330,10 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         for callback in self.callbacks:
             callback.on_reduce_response_start(result.response)
 
-        model_params = get_openai_model_parameters_from_dict({
-            "model": self.model.config.model,
-            "max_tokens": self.context_builder.config.reduce_max_tokens,
+        model_params = {
             "temperature": self.context_builder.config.reduce_temperature,
             "max_completion_tokens": self.context_builder.config.reduce_max_completion_tokens,
-        })
+        }
 
         full_response = ""
         async for resp in self._reduce_response_streaming(
@@ -390,17 +387,19 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             context_data=reduce_responses,
             response_type=self.context_builder.response_type,
         )
-        search_messages = [
-            {"role": "system", "content": search_prompt},
-        ]
 
-        model_response = await self.model.achat(
-            prompt=query,
-            history=search_messages,
-            model_parameters=llm_kwargs.get("model_params", {}),
+        messages_builder = (
+            CompletionMessagesBuilder()
+            .add_system_message(search_prompt)
+            .add_user_message(query)
         )
 
-        reduced_response = model_response.output.content
+        model_response = await self.model.completion_async(
+            messages=messages_builder.build(),
+            **llm_kwargs.get("model_params", {}),
+        )
+
+        reduced_response = await gather_completion_response_async(model_response)
 
         llm_calls["reduce"] = 1
         prompt_tokens["reduce"] = len(self.tokenizer.encode(search_prompt)) + len(
@@ -445,15 +444,21 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             context_data=reduce_responses,
             response_type=self.context_builder.response_type,
         )
-        search_messages = [
-            {"role": "system", "content": search_prompt},
-        ]
 
-        async for response in self.model.achat_stream(
-            prompt=query,
-            history=search_messages,
-            model_parameters=model_params,
-        ):
+        messages_builder = (
+            CompletionMessagesBuilder()
+            .add_system_message(search_prompt)
+            .add_user_message(query)
+        )
+
+        response_search: AsyncIterator[
+            LLMCompletionChunk
+        ] = await self.model.completion_async(
+            messages=messages_builder.build(), stream=True, **model_params
+        )  # type: ignore
+
+        async for chunk in response_search:
+            response_text = chunk.choices[0].delta.content or ""
             for callback in self.callbacks:
-                callback.on_llm_new_token(response)
-            yield response
+                callback.on_llm_new_token(response_text)
+            yield response_text

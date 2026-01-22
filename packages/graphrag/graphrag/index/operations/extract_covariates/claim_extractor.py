@@ -6,15 +6,22 @@
 import logging
 import traceback
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+from graphrag_llm.utils import (
+    CompletionMessagesBuilder,
+)
 
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.index.typing.error_handler import ErrorHandlerFn
-from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_claims import (
     CONTINUE_PROMPT,
     LOOP_PROMPT,
 )
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
+    from graphrag_llm.types import LLMCompletionResponse
 
 INPUT_TEXT_KEY = "input_text"
 INPUT_ENTITY_SPEC_KEY = "entity_specs"
@@ -39,14 +46,14 @@ class ClaimExtractorResult:
 class ClaimExtractor:
     """Claim extractor class definition."""
 
-    _model: ChatModel
+    _model: "LLMCompletion"
     _extraction_prompt: str
     _max_gleanings: int
     _on_error: ErrorHandlerFn
 
     def __init__(
         self,
-        model: ChatModel,
+        model: "LLMCompletion",
         extraction_prompt: str,
         max_gleanings: int | None = None,
         on_error: ErrorHandlerFn | None = None,
@@ -112,26 +119,31 @@ class ClaimExtractor:
     async def _process_document(
         self, text: str, claim_description: str, entity_spec: dict
     ) -> list[dict]:
-        response = await self._model.achat(
+        messages_builder = CompletionMessagesBuilder().add_user_message(
             self._extraction_prompt.format(**{
                 INPUT_TEXT_KEY: text,
                 INPUT_CLAIM_DESCRIPTION_KEY: claim_description,
                 INPUT_ENTITY_SPEC_KEY: entity_spec,
             })
         )
-        results = response.output.content or ""
+
+        response: LLMCompletionResponse = await self._model.completion_async(
+            messages=messages_builder.build(),
+        )  # type: ignore
+        results = response.content
+        messages_builder.add_assistant_message(results)
         claims = results.strip().removesuffix(COMPLETION_DELIMITER)
 
         # if gleanings are specified, enter a loop to extract more claims
         # there are two exit criteria: (a) we hit the configured max, (b) the model says there are no more claims
         if self._max_gleanings > 0:
             for i in range(self._max_gleanings):
-                response = await self._model.achat(
-                    CONTINUE_PROMPT,
-                    name=f"extract-continuation-{i}",
-                    history=response.history,
-                )
-                extension = response.output.content or ""
+                messages_builder.add_user_message(CONTINUE_PROMPT)
+                response: LLMCompletionResponse = await self._model.completion_async(
+                    messages=messages_builder.build(),
+                )  # type: ignore
+                extension = response.content
+                messages_builder.add_assistant_message(extension)
                 claims += RECORD_DELIMITER + extension.strip().removesuffix(
                     COMPLETION_DELIMITER
                 )
@@ -140,13 +152,12 @@ class ClaimExtractor:
                 if i >= self._max_gleanings - 1:
                     break
 
-                response = await self._model.achat(
-                    LOOP_PROMPT,
-                    name=f"extract-loopcheck-{i}",
-                    history=response.history,
-                )
+                messages_builder.add_user_message(LOOP_PROMPT)
+                response: LLMCompletionResponse = await self._model.completion_async(
+                    messages=messages_builder.build(),
+                )  # type: ignore
 
-                if response.output.content != "Y":
+                if response.content != "Y":
                     break
 
         return self._parse_claim_tuples(results)

@@ -10,14 +10,13 @@ from typing import ClassVar
 from graphrag_cache import CacheType
 from graphrag_chunking.chunk_strategy_type import ChunkerType
 from graphrag_input import InputType
+from graphrag_llm.config import AuthMethod
 from graphrag_storage import StorageType
 from graphrag_vectors import VectorStoreType
 
 from graphrag.config.embeddings import default_embeddings
 from graphrag.config.enums import (
     AsyncType,
-    AuthType,
-    ModelType,
     NounPhraseExtractorType,
     ReportingType,
 )
@@ -29,13 +28,11 @@ DEFAULT_INPUT_BASE_DIR = "input"
 DEFAULT_OUTPUT_BASE_DIR = "output"
 DEFAULT_CACHE_BASE_DIR = "cache"
 DEFAULT_UPDATE_OUTPUT_BASE_DIR = "update_output"
-DEFAULT_CHAT_MODEL_ID = "default_chat_model"
-DEFAULT_CHAT_MODEL_TYPE = ModelType.Chat
-DEFAULT_CHAT_MODEL_AUTH_TYPE = AuthType.APIKey
-DEFAULT_CHAT_MODEL = "gpt-4.1"
+DEFAULT_COMPLETION_MODEL_ID = "default_completion_model"
+DEFAULT_COMPLETION_MODEL_AUTH_TYPE = AuthMethod.ApiKey
+DEFAULT_COMPLETION_MODEL = "gpt-4.1"
 DEFAULT_EMBEDDING_MODEL_ID = "default_embedding_model"
-DEFAULT_EMBEDDING_MODEL_TYPE = ModelType.Embedding
-DEFAULT_EMBEDDING_MODEL_AUTH_TYPE = AuthType.APIKey
+DEFAULT_EMBEDDING_MODEL_AUTH_TYPE = AuthMethod.ApiKey
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-large"
 DEFAULT_MODEL_PROVIDER = "openai"
 
@@ -52,7 +49,7 @@ class BasicSearchDefaults:
     prompt: None = None
     k: int = 10
     max_context_tokens: int = 12_000
-    chat_model_id: str = DEFAULT_CHAT_MODEL_ID
+    completion_model_id: str = DEFAULT_COMPLETION_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
 
@@ -84,7 +81,7 @@ class CommunityReportDefaults:
     text_prompt: None = None
     max_length: int = 2000
     max_input_length: int = 8000
-    model_id: str = DEFAULT_CHAT_MODEL_ID
+    completion_model_id: str = DEFAULT_COMPLETION_MODEL_ID
     model_instance_name: str = "community_reporting"
 
 
@@ -113,7 +110,7 @@ class DriftSearchDefaults:
     local_search_n: int = 1
     local_search_llm_max_gen_tokens: int | None = None
     local_search_llm_max_gen_completion_tokens: int | None = None
-    chat_model_id: str = DEFAULT_CHAT_MODEL_ID
+    completion_model_id: str = DEFAULT_COMPLETION_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
 
@@ -121,7 +118,7 @@ class DriftSearchDefaults:
 class EmbedTextDefaults:
     """Default values for embedding text."""
 
-    model_id: str = DEFAULT_EMBEDDING_MODEL_ID
+    embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
     model_instance_name: str = "text_embedding"
     batch_size: int = 16
     batch_max_tokens: int = 8191
@@ -138,7 +135,7 @@ class ExtractClaimsDefaults:
         "Any claims or facts that could be relevant to information discovery."
     )
     max_gleanings: int = 1
-    model_id: str = DEFAULT_CHAT_MODEL_ID
+    completion_model_id: str = DEFAULT_COMPLETION_MODEL_ID
     model_instance_name: str = "extract_claims"
 
 
@@ -151,7 +148,7 @@ class ExtractGraphDefaults:
         default_factory=lambda: ["organization", "person", "geo", "event"]
     )
     max_gleanings: int = 1
-    model_id: str = DEFAULT_CHAT_MODEL_ID
+    completion_model_id: str = DEFAULT_COMPLETION_MODEL_ID
     model_instance_name: str = "extract_graph"
 
 
@@ -209,7 +206,7 @@ class GlobalSearchDefaults:
     dynamic_search_num_repeats: int = 1
     dynamic_search_use_summary: bool = False
     dynamic_search_max_level: int = 2
-    chat_model_id: str = DEFAULT_CHAT_MODEL_ID
+    completion_model_id: str = DEFAULT_COMPLETION_MODEL_ID
 
 
 @dataclass
@@ -260,41 +257,6 @@ class CacheDefaults:
 
 
 @dataclass
-class LanguageModelDefaults:
-    """Default values for language model."""
-
-    api_key: None = None
-    auth_type: ClassVar[AuthType] = AuthType.APIKey
-    model_provider: str | None = None
-    encoding_model: str = ""
-    max_tokens: int | None = None
-    temperature: float = 0
-    max_completion_tokens: int | None = None
-    reasoning_effort: str | None = None
-    top_p: float = 1
-    n: int = 1
-    frequency_penalty: float = 0.0
-    presence_penalty: float = 0.0
-    request_timeout: float = 600.0
-    api_base: None = None
-    api_version: None = None
-    deployment_name: None = None
-    organization: None = None
-    proxy: None = None
-    audience: None = None
-    model_supports_json: None = None
-    tokens_per_minute: None = None
-    requests_per_minute: None = None
-    rate_limit_strategy: str | None = "static"
-    retry_strategy: str = "exponential_backoff"
-    max_retries: int = 10
-    max_retry_wait: float = 10.0
-    concurrent_requests: int = 25
-    responses: None = None
-    async_mode: AsyncType = AsyncType.Threaded
-
-
-@dataclass
 class LocalSearchDefaults:
     """Default values for local search."""
 
@@ -305,7 +267,7 @@ class LocalSearchDefaults:
     top_k_entities: int = 10
     top_k_relationships: int = 10
     max_context_tokens: int = 12_000
-    chat_model_id: str = DEFAULT_CHAT_MODEL_ID
+    completion_model_id: str = DEFAULT_COMPLETION_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
 
@@ -356,7 +318,7 @@ class SummarizeDescriptionsDefaults:
     prompt: None = None
     max_length: int = 500
     max_input_tokens: int = 4_000
-    model_id: str = DEFAULT_CHAT_MODEL_ID
+    completion_model_id: str = DEFAULT_COMPLETION_MODEL_ID
     model_instance_name: str = "summarize_descriptions"
 
 
@@ -380,6 +342,10 @@ class GraphRagConfigDefaults:
     """Default values for GraphRAG."""
 
     models: dict = field(default_factory=dict)
+    completion_models: dict = field(default_factory=dict)
+    embedding_models: dict = field(default_factory=dict)
+    concurrent_requests: int = 25
+    async_mode: AsyncType = AsyncType.Threaded
     reporting: ReportingDefaults = field(default_factory=ReportingDefaults)
     input_storage: InputStorageDefaults = field(default_factory=InputStorageDefaults)
     output_storage: OutputStorageDefaults = field(default_factory=OutputStorageDefaults)
@@ -415,6 +381,5 @@ class GraphRagConfigDefaults:
     workflows: None = None
 
 
-language_model_defaults = LanguageModelDefaults()
 vector_store_defaults = VectorStoreDefaults()
 graphrag_config_defaults = GraphRagConfigDefaults()

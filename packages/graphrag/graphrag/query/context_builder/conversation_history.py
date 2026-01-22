@@ -7,9 +7,9 @@ from dataclasses import dataclass
 from enum import Enum
 
 import pandas as pd
+from graphrag_llm.tokenizer import Tokenizer
 
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 """
 Enum for conversation roles

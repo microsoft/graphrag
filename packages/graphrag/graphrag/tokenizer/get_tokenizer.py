@@ -3,15 +3,14 @@
 
 """Get Tokenizer."""
 
+from graphrag_llm.config import ModelConfig, TokenizerConfig, TokenizerType
+from graphrag_llm.tokenizer import Tokenizer, create_tokenizer
+
 from graphrag.config.defaults import ENCODING_MODEL
-from graphrag.config.models.language_model_config import LanguageModelConfig
-from graphrag.tokenizer.litellm_tokenizer import LitellmTokenizer
-from graphrag.tokenizer.tiktoken_tokenizer import TiktokenTokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 
 
 def get_tokenizer(
-    model_config: LanguageModelConfig | None = None,
+    model_config: "ModelConfig | None" = None,
     encoding_model: str | None = None,
 ) -> Tokenizer:
     """
@@ -32,12 +31,18 @@ def get_tokenizer(
         An instance of a Tokenizer.
     """
     if model_config is not None:
-        if model_config.encoding_model.strip() != "":
-            # User has manually specified a tiktoken encoding model to use for the provided model configuration.
-            return TiktokenTokenizer(encoding_name=model_config.encoding_model)
-
-        return LitellmTokenizer(model_name=model_config.model)
+        return create_tokenizer(
+            TokenizerConfig(
+                type=TokenizerType.LiteLLM,
+                model_id=f"{model_config.model_provider}/{model_config.model}",
+            )
+        )
 
     if encoding_model is None:
         encoding_model = ENCODING_MODEL
-    return TiktokenTokenizer(encoding_name=encoding_model)
+    return create_tokenizer(
+        TokenizerConfig(
+            type=TokenizerType.Tiktoken,
+            encoding_name=encoding_model,
+        )
+    )

@@ -4,13 +4,17 @@
 """A module containing run_workflow method definition."""
 
 import logging
+from typing import TYPE_CHECKING
 
 import pandas as pd
+from graphrag_llm.embedding import create_embedding
+from graphrag_llm.tokenizer import Tokenizer
 from graphrag_vectors import (
     VectorStoreConfig,
     create_vector_store,
 )
 
+from graphrag.cache.cache_key_creator import cache_key_creator
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.embeddings import (
     community_full_content_embedding,
@@ -21,14 +25,13 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.language_model.manager import ModelManager
-from graphrag.language_model.protocol.base import EmbeddingModel
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.utils.storage import (
     load_table_from_storage,
     write_table_to_storage,
 )
+
+if TYPE_CHECKING:
+    from graphrag_llm.embedding import LLMEmbedding
 
 logger = logging.getLogger(__name__)
 
@@ -53,17 +56,17 @@ async def run_workflow(
             "community_reports", context.output_storage
         )
 
-    model_config = config.get_language_model_config(config.embed_text.model_id)
-
-    model = ModelManager().get_or_create_embedding_model(
-        name=config.embed_text.model_instance_name,
-        model_type=model_config.type,
-        config=model_config,
-        callbacks=context.callbacks,
-        cache=context.cache,
+    model_config = config.get_embedding_model_config(
+        config.embed_text.embedding_model_id
     )
 
-    tokenizer = get_tokenizer(model_config)
+    model = create_embedding(
+        model_config,
+        cache=context.cache.child(config.embed_text.model_instance_name),
+        cache_key_creator=cache_key_creator,
+    )
+
+    tokenizer = model.tokenizer
 
     output = await generate_text_embeddings(
         text_units=text_units,
@@ -74,7 +77,7 @@ async def run_workflow(
         tokenizer=tokenizer,
         batch_size=config.embed_text.batch_size,
         batch_max_tokens=config.embed_text.batch_max_tokens,
-        num_threads=model_config.concurrent_requests,
+        num_threads=config.concurrent_requests,
         vector_store_config=config.vector_store,
         embedded_fields=embedded_fields,
     )
@@ -96,7 +99,7 @@ async def generate_text_embeddings(
     entities: pd.DataFrame | None,
     community_reports: pd.DataFrame | None,
     callbacks: WorkflowCallbacks,
-    model: EmbeddingModel,
+    model: "LLMEmbedding",
     tokenizer: Tokenizer,
     batch_size: int,
     batch_max_tokens: int,
@@ -154,7 +157,7 @@ async def _run_embeddings(
     data: pd.DataFrame,
     embed_column: str,
     callbacks: WorkflowCallbacks,
-    model: EmbeddingModel,
+    model: "LLMEmbedding",
     tokenizer: Tokenizer,
     batch_size: int,
     batch_max_tokens: int,

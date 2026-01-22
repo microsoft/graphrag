@@ -4,10 +4,14 @@
 """A module containing run_workflow method definition."""
 
 import logging
+from typing import TYPE_CHECKING
 
 import pandas as pd
+from graphrag_llm.completion import create_completion
+from graphrag_llm.tokenizer import Tokenizer
 
 import graphrag.data_model.schemas as schemas
+from graphrag.cache.cache_key_creator import cache_key_creator
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -26,15 +30,14 @@ from graphrag.index.operations.summarize_communities.summarize_communities impor
 )
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.language_model.manager import ModelManager
-from graphrag.language_model.protocol.base import ChatModel
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.tokenizer.tokenizer import Tokenizer
 from graphrag.utils.storage import (
     load_table_from_storage,
     storage_has_table,
     write_table_to_storage,
 )
+
+if TYPE_CHECKING:
+    from graphrag_llm.completion import LLMCompletion
 
 logger = logging.getLogger(__name__)
 
@@ -54,18 +57,18 @@ async def run_workflow(
     ):
         claims = await load_table_from_storage("covariates", context.output_storage)
 
-    model_config = config.get_language_model_config(config.community_reports.model_id)
+    model_config = config.get_completion_model_config(
+        config.community_reports.completion_model_id
+    )
     prompts = config.community_reports.resolved_prompts()
 
-    model = ModelManager().get_or_create_chat_model(
-        name=config.community_reports.model_instance_name,
-        model_type=model_config.type,
-        config=model_config,
-        callbacks=context.callbacks,
-        cache=context.cache,
+    model = create_completion(
+        model_config,
+        cache=context.cache.child(config.community_reports.model_instance_name),
+        cache_key_creator=cache_key_creator,
     )
 
-    tokenizer = get_tokenizer(model_config)
+    tokenizer = model.tokenizer
 
     output = await create_community_reports(
         edges_input=edges,
@@ -78,8 +81,8 @@ async def run_workflow(
         prompt=prompts.graph_prompt,
         max_input_length=config.community_reports.max_input_length,
         max_report_length=config.community_reports.max_length,
-        num_threads=model_config.concurrent_requests,
-        async_type=model_config.async_mode,
+        num_threads=config.concurrent_requests,
+        async_type=config.async_mode,
     )
 
     await write_table_to_storage(output, "community_reports", context.output_storage)
@@ -94,7 +97,7 @@ async def create_community_reports(
     communities: pd.DataFrame,
     claims_input: pd.DataFrame | None,
     callbacks: WorkflowCallbacks,
-    model: ChatModel,
+    model: "LLMCompletion",
     tokenizer: Tokenizer,
     prompt: str,
     max_input_length: int,

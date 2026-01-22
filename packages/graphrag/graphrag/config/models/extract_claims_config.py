@@ -26,9 +26,9 @@ class ExtractClaimsConfig(BaseModel):
         description="Whether claim extraction is enabled.",
         default=graphrag_config_defaults.extract_claims.enabled,
     )
-    model_id: str = Field(
+    completion_model_id: str = Field(
         description="The model ID to use for claim extraction.",
-        default=graphrag_config_defaults.extract_claims.model_id,
+        default=graphrag_config_defaults.extract_claims.completion_model_id,
     )
     model_instance_name: str = Field(
         description="The model singleton instance name. This primarily affects the cache storage partitioning.",

@@ -5,13 +5,14 @@
 
 import logging
 
+from graphrag_llm.embedding import create_embedding
+
+from graphrag.cache.cache_key_creator import cache_key_creator
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.utils import get_update_storages
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.workflows.generate_text_embeddings import generate_text_embeddings
-from graphrag.language_model.manager import ModelManager
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.utils.storage import write_table_to_storage
 
 logger = logging.getLogger(__name__)
@@ -34,17 +35,17 @@ async def run_workflow(
 
     embedded_fields = config.embed_text.names
 
-    model_config = config.get_language_model_config(config.embed_text.model_id)
-
-    model = ModelManager().get_or_create_embedding_model(
-        name="text_embedding",
-        model_type=model_config.type,
-        config=model_config,
-        callbacks=context.callbacks,
-        cache=context.cache,
+    model_config = config.get_embedding_model_config(
+        config.embed_text.embedding_model_id
     )
 
-    tokenizer = get_tokenizer(model_config)
+    model = create_embedding(
+        model_config,
+        cache=context.cache.child("text_embedding"),
+        cache_key_creator=cache_key_creator,
+    )
+
+    tokenizer = model.tokenizer
 
     result = await generate_text_embeddings(
         text_units=merged_text_units,
@@ -55,7 +56,7 @@ async def run_workflow(
         tokenizer=tokenizer,
         batch_size=config.embed_text.batch_size,
         batch_max_tokens=config.embed_text.batch_max_tokens,
-        num_threads=model_config.concurrent_requests,
+        num_threads=config.concurrent_requests,
         vector_store_config=config.vector_store,
         embedded_fields=embedded_fields,
     )

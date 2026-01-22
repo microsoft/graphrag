@@ -21,31 +21,6 @@ class ReportingType(str, Enum):
         return f'"{self.value}"'
 
 
-class ModelType(str, Enum):
-    """LLMType enum class definition."""
-
-    # Embeddings
-    Embedding = "embedding"
-
-    # Chat Completion
-    Chat = "chat"
-
-    # Debug
-    MockChat = "mock_chat"
-    MockEmbedding = "mock_embedding"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
-class AuthType(str, Enum):
-    """AuthType enum class definition."""
-
-    APIKey = "api_key"
-    AzureManagedIdentity = "azure_managed_identity"
-
-
 class AsyncType(str, Enum):
     """Enum for the type of async to use."""
 

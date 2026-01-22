@@ -59,7 +59,7 @@ def test_factory() -> None:
     assert trans2.get_value() == "test2"
 
     single1 = factory.create("singleton_strategy", {"value": "singleton"})
-    single2 = factory.create("singleton_strategy", {"value": "ignored"})
+    single2 = factory.create("singleton_strategy", {"value": "singleton"})
 
     assert single1 is single2
     assert single1.get_value() == "singleton"

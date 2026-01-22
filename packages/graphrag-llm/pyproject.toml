@@ -1,0 +1,46 @@
+[project]
+name = "graphrag-llm"
+version = "2.7.0"
+description = "GraphRAG LLM package."
+authors = [
+    {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
+    {name = "Andrés Morales Esquivel", email = "andresmor@microsoft.com"},
+    {name = "Chris Trevino", email = "chtrevin@microsoft.com"},
+    {name = "David Tittsworth", email = "datittsw@microsoft.com"},
+    {name = "Dayenne de Souza", email = "ddesouza@microsoft.com"},
+    {name = "Derek Worthen", email = "deworthe@microsoft.com"},
+    {name = "Gaudy Blanco Meneses", email = "gaudyb@microsoft.com"},
+    {name = "Ha Trinh", email = "trinhha@microsoft.com"},
+    {name = "Jonathan Larson", email = "jolarso@microsoft.com"},
+    {name = "Josh Bradley", email = "joshbradley@microsoft.com"},
+    {name = "Kate Lytvynets", email = "kalytv@microsoft.com"},
+    {name = "Kenny Zhang", email = "zhangken@microsoft.com"},
+    {name = "Mónica Carvajal"},
+    {name = "Nathan Evans", email = "naevans@microsoft.com"},
+    {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
+    {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
+]
+license = "MIT"
+readme = "README.md"
+license-files = ["LICENSE"]
+requires-python = ">=3.10,<3.13"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "azure-identity~=1.19.0",
+    "graphrag-cache==2.7.0",
+    "graphrag-common==2.7.0",
+    "jinja2~=3.1",
+    "litellm~=1.80",
+    "nest-asyncio2~=1.7",
+    "pydantic~=2.10",
+    "typing-extensions~=4.12"
+]
+
+[build-system]
+requires = ["hatchling>=1.27.0,<2.0.0"]
+build-backend = "hatchling.build"

@@ -6,14 +6,17 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from graphrag_storage import Storage
 
 
 class Cache(ABC):
     """Provide a cache interface for the pipeline."""
 
     @abstractmethod
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, *, storage: Storage | None, **kwargs: Any) -> None:
         """Create a cache instance."""
 
     @abstractmethod

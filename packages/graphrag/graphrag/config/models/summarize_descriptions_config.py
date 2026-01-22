@@ -22,9 +22,9 @@ class SummarizeDescriptionsPrompts:
 class SummarizeDescriptionsConfig(BaseModel):
     """Configuration section for description summarization."""
 
-    model_id: str = Field(
+    completion_model_id: str = Field(
         description="The model ID to use for summarization.",
-        default=graphrag_config_defaults.summarize_descriptions.model_id,
+        default=graphrag_config_defaults.summarize_descriptions.completion_model_id,
     )
     model_instance_name: str = Field(
         description="The model singleton instance name. This primarily affects the cache storage partitioning.",

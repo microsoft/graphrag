@@ -11,7 +11,7 @@ from pathlib import Path
 import typer
 
 from graphrag.config.defaults import (
-    DEFAULT_CHAT_MODEL,
+    DEFAULT_COMPLETION_MODEL,
     DEFAULT_EMBEDDING_MODEL,
     graphrag_config_defaults,
 )
@@ -109,7 +109,7 @@ def _initialize_cli(
         autocompletion=ROOT_AUTOCOMPLETE,
     ),
     model: str = typer.Option(
-        DEFAULT_CHAT_MODEL,
+        DEFAULT_COMPLETION_MODEL,
         "--model",
         "-m",
         prompt="Specify the default chat model to use",
