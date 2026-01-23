@@ -377,7 +377,7 @@ def _resolve_output_files(
 ) -> dict[str, Any]:
     """Read indexing output files to a dataframe dict."""
     dataframe_dict = {}
-    storage_obj = create_storage(config.output)
+    storage_obj = create_storage(config.output_storage)
     for name in output_list:
         df_value = asyncio.run(load_table_from_storage(name=name, storage=storage_obj))
         dataframe_dict[name] = df_value
