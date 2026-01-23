@@ -6,32 +6,25 @@ This page contains information on selecting a model to use and options to supply
 
 GraphRAG was built and tested using OpenAI models, so this is the default model set we support. This is not intended to be a limiter or statement of quality or fitness for your use case, only that it's the set we are most familiar with for prompting, tuning, and debugging.
 
-GraphRAG uses [LiteLLM](https://docs.litellm.ai/) for calling language models. LiteLLM provides support for 100+ models though it is important to note that when choosing a model it must support returning [structured outputs](https://openai.com/index/introducing-structured-outputs-in-the-api/) adhering to a [JSON schema](https://docs.litellm.ai/docs/completion/json_mode). 
+GraphRAG uses [LiteLLM](https://docs.litellm.ai/) for calling language models. LiteLLM provides support for 100+ models though it is important to note that when choosing a model it must support returning [structured outputs](https://openai.com/index/introducing-structured-outputs-in-the-api/) adhering to a [JSON schema](https://docs.litellm.ai/docs/completion/json_mode).
 
 Example using LiteLLM as the language model manager for GraphRAG:
 
 ```yaml
-models:
-  default_chat_model:
-    type: chat
-    auth_type: api_key
-    api_key: ${GEMINI_API_KEY}
+completion_models:
+  default_completion_model:
     model_provider: gemini
     model: gemini-2.5-flash-lite
-  default_embedding_model:
-    type: embedding
-    auth_type: api_key
+    auth_method: api_key
     api_key: ${GEMINI_API_KEY}
+
+embedding_models:
+  default_embedding_model:
     model_provider: gemini
     model: gemini-embedding-001
+    auth_method: api_key
+    api_key: ${GEMINI_API_KEY}
 ```
-
-To use LiteLLM one must 
-
-- Set `type` to either `chat` or `embedding`.
-- Provide a `model_provider`, e.g., `openai`, `azure`, `gemini`, etc.
-- Set the `model` to a one supported by the `model_provider`'s API.
-- Provide a `deployment_name` if using `azure` as the `model_provider` if your deployment name differs from the model name.
 
 See [Detailed Configuration](yaml.md) for more details on configuration. [View LiteLLM basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`).
 
@@ -44,40 +37,31 @@ Versions of GraphRAG before 2.2.0 made extensive use of `max_tokens` and `logit_
 - Previously, GraphRAG used `max_tokens` to limit responses in a few locations. This is done so that we can have predictable content sizes when building downstream context windows for summarization. We have now switched from using `max_tokens` to use a prompted approach, which is working well in our tests. We suggest using `max_tokens` in your language model config only for budgetary reasons if you want to limit consumption, and not for expected response length control. We now also support the o-series equivalent `max_completion_tokens`, but if you use this keep in mind that there may be some unknown fixed reasoning consumption amount in addition to the response tokens, so it is not a good technique for response control.
 - Previously, GraphRAG used a combination of `max_tokens` and `logit_bias` to strictly control a binary yes/no question during gleanings. This is not possible with reasoning models, so again we have switched to a prompted approach. Our tests with gpt-4o, gpt-4o-mini, and o1 show that this works consistently, but could have issues if you have an older or smaller model.
 - The o-series models are much slower and more expensive. It may be useful to use an asymmetric approach to model use in your config: you can define as many models as you like in the `models` block of your settings.yaml and reference them by key for every workflow that requires a language model. You could use gpt-4o for indexing and o1 for query, for example. Experiment to find the right balance of cost, speed, and quality for your use case.
-- The o-series models contain a form of native native chain-of-thought reasoning that is absent in the non-o-series models. GraphRAG's prompts sometimes contain CoT because it was an effective technique with the gpt-4* series. It may be counterproductive with the o-series, so you may want to tune or even re-write large portions of the prompt templates (particularly for graph and claim extraction).
+- The o-series models contain a form of native native chain-of-thought reasoning that is absent in the non-o-series models. GraphRAG's prompts sometimes contain CoT because it was an effective technique with the gpt-4\* series. It may be counterproductive with the o-series, so you may want to tune or even re-write large portions of the prompt templates (particularly for graph and claim extraction).
 
 Example config with asymmetric model use:
 
 ```yaml
-models:
-  extraction_chat_model:
-    api_key: ${GRAPHRAG_API_KEY}
-    type: chat
+completion_models:
+  extraction_completion_model:
     model_provider: openai
-    auth_type: api_key
     model: gpt-4o
-    model_supports_json: true
-  query_chat_model:
+    auth_method: api_key
     api_key: ${GRAPHRAG_API_KEY}
-    type: chat
+  query_completion_model:
     model_provider: openai
-    auth_type: api_key
     model: o1
-    model_supports_json: true
-
+    auth_method: api_key
+    api_key: ${GRAPHRAG_API_KEY}
 ...
-
 extract_graph:
-  model_id: extraction_chat_model
+  completion_model_id: extraction_completion_model
   prompt: "prompts/extract_graph.txt"
-  entity_types: [organization,person,geo,event]
+  entity_types: [organization, person, geo, event]
   max_gleanings: 1
-
 ...
-
-
 global_search:
-  chat_model_id: query_chat_model
+  completion_model_id: query_completion_model
   map_prompt: "prompts/global_search_map_system_prompt.txt"
   reduce_prompt: "prompts/global_search_reduce_system_prompt.txt"
   knowledge_prompt: "prompts/global_search_knowledge_system_prompt.txt"
@@ -95,34 +79,36 @@ Many users have used platforms such as [ollama](https://ollama.com/) and [LiteLL
 
 ### Model Protocol
 
-We support model injection through the use of a standard chat and embedding Protocol and accompanying factories that you can use to register your model implementation. This is not supported with the CLI, so you'll need to use GraphRAG as a library.
+We support model injection through the use of a standard completion and embedding Protocol and accompanying factories that you can use to register your model implementation. This is not supported with the CLI, so you'll need to use GraphRAG as a library.
 
-- Our Protocol is [defined here](https://github.com/microsoft/graphrag/blob/main/graphrag/language_model/protocol/base.py)
-- We have a simple mock implementation in our tests that you can [reference here](https://github.com/microsoft/graphrag/blob/main/tests/mock_provider.py)
+- Our Protocol is [defined here](https://github.com/microsoft/graphrag/blob/main/packages/graphrag-llm/graphrag_llm/completion/completion.py)
+- We have a simple mock implementation in our tests that you can [reference here](https://github.com/microsoft/graphrag/blob/main/packages/graphrag-llm/graphrag_llm/completion/mock_llm_completion.py)
 
-Once you have a model implementation, you need to register it with our ChatModelFactory or EmbeddingModelFactory:
+Once you have a model implementation, you need to register it with our completion model factory or embedding model factory:
 
 ```python
-class MyCustomChatModel:
+from graphrag_llm.completion import LLMCompletion, register_completion
+
+class MyCustomCompletionModel(LLMCompletion):
     ...
     # implementation
 
 # elsewhere...
-ChatModelFactory.register("my-custom-chat-model", MyCustomChatModel)
+register_completion("my-custom-completion-model", MyCustomCompletionModel)
 ```
 
 Then in your config you can reference the type name you used:
 
 ```yaml
-models:
-  default_chat_model:
-    type: my-custom-chat-model
-
+completion_models:
+  default_completion_model:
+    type: my-custom-completion-model
+    ...
 
 extract_graph:
-  model_id: default_chat_model
+  completion_model_id: default_completion_model
   prompt: "prompts/extract_graph.txt"
-  entity_types: [organization,person,geo,event]
+  entity_types: [organization, person, geo, event]
   max_gleanings: 1
 ```
 
