@@ -1,6 +1,10 @@
 # GraphRAG Cache
 
-## Basic
+This package contains a collection of utilities to handle GraphRAG caching implementation.
+
+### Basic
+
+This example shows how to create a JSON cache with file storage using the GraphRAG cache package's configuration system. 
 
 ```python
 import asyncio
@@ -36,7 +40,9 @@ if __name__ == "__main__":
     asyncio.run(run())
 ```
 
-## Custom Cache
+### Custom Cache
+
+This demonstrates how to create a custom cache implementation by extending the base Cache class and registering it with the GraphRAG cache system. Once registered, the custom cache can be instantiated through the factory pattern using either CacheConfig or directly via cache_factory, allowing for extensible caching solutions tailored to specific needs.
 
 ```python
 import asyncio
@@ -75,7 +81,7 @@ if __name__ == "__main__":
     asyncio.run(run())
 ```
 
-### Details
+#### Details
 
 By default, the `create_cache` comes with the following cache providers registered that correspond to the entries in the `CacheType` enum. 
 
