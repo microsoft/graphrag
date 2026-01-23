@@ -22,7 +22,7 @@ class TableProvider(ABC):
         """
 
     @abstractmethod
-    async def read(self, table_name: str) -> pd.DataFrame:
+    async def read_dataframe(self, table_name: str) -> pd.DataFrame:
         """Read entire table as a pandas DataFrame.
         
         Args
@@ -37,7 +37,7 @@ class TableProvider(ABC):
         """
     
     @abstractmethod
-    async def write(self, table_name: str, df: pd.DataFrame) -> None:
+    async def write_dataframe(self, table_name: str, df: pd.DataFrame) -> None:
         """Write entire table from a pandas DataFrame.
         
         Args

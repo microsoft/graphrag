@@ -31,7 +31,7 @@ class ParquetTableProvider(TableProvider):
         """
         self._storage = storage
 
-    async def read(self, table_name: str) -> pd.DataFrame:
+    async def read_dataframe(self, table_name: str) -> pd.DataFrame:
         """Read a table from storage as a pandas DataFrame.
         
         Args
@@ -63,7 +63,7 @@ class ParquetTableProvider(TableProvider):
             raise
 
 
-    async def write(self, table_name: str, df: pd.DataFrame) -> None:
+    async def write_dataframe(self, table_name: str, df: pd.DataFrame) -> None:
         """Write a pandas DataFrame to storage as a Parquet file.
         
         Args

@@ -28,20 +28,20 @@ class TestParquetTableProvider(unittest.IsolatedAsyncioTestCase):
             "age": [30, 25, 35]
         })
 
-        await self.table_provider.write("users", df)
-        result = await self.table_provider.read("users")
+        await self.table_provider.write_dataframe("users", df)
+        result = await self.table_provider.read_dataframe("users")
 
         pd.testing.assert_frame_equal(result, df)
 
     async def test_read_nonexistent_table_raises_error(self):
         with pytest.raises(ValueError, match="Could not find nonexistent.parquet in storage!"):
-            await self.table_provider.read("nonexistent")
+            await self.table_provider.read_dataframe("nonexistent")
 
     async def test_empty_dataframe(self):
         df = pd.DataFrame()
 
-        await self.table_provider.write("empty", df)
-        result = await self.table_provider.read("empty")
+        await self.table_provider.write_dataframe("empty", df)
+        result = await self.table_provider.read_dataframe("empty")
 
         pd.testing.assert_frame_equal(result, df)
 
@@ -53,15 +53,15 @@ class TestParquetTableProvider(unittest.IsolatedAsyncioTestCase):
             "bool_col": [True, False, True]
         })
 
-        await self.table_provider.write("mixed", df)
-        result = await self.table_provider.read("mixed")
+        await self.table_provider.write_dataframe("mixed", df)
+        result = await self.table_provider.read_dataframe("mixed")
 
         pd.testing.assert_frame_equal(result, df)
 
     async def test_storage_persistence(self):
         df = pd.DataFrame({"x": [1, 2, 3]})
 
-        await self.table_provider.write("test", df)
+        await self.table_provider.write_dataframe("test", df)
         
         assert await self.storage.has("test.parquet")
         
