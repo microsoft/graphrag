@@ -1347,7 +1347,7 @@ requires-dist = [
     { name = "nltk", specifier = "==3.9.1" },
     { name = "numpy", specifier = ">=1.25.2" },
     { name = "openai", specifier = ">=1.68.0" },
-    { name = "pandas", specifier = "==2.2.3" },
+    { name = "pandas", specifier = ">=2,<3" },
     { name = "pyarrow", specifier = ">=17.0.0" },
     { name = "pydantic", specifier = ">=2.10.3" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
