@@ -38,7 +38,7 @@ def run_global_search(
     """
     cli_overrides: dict[str, Any] = {}
     if data_dir:
-        cli_overrides["output"] = {"base_dir": str(data_dir)}
+        cli_overrides["output_storage"] = {"base_dir": str(data_dir)}
     config = load_config(
         root_dir=root_dir,
         cli_overrides=cli_overrides,
@@ -124,7 +124,7 @@ def run_local_search(
     """
     cli_overrides: dict[str, Any] = {}
     if data_dir:
-        cli_overrides["output"] = {"base_dir": str(data_dir)}
+        cli_overrides["output_storage"] = {"base_dir": str(data_dir)}
     config = load_config(
         root_dir=root_dir,
         cli_overrides=cli_overrides,
@@ -221,7 +221,7 @@ def run_drift_search(
     """
     cli_overrides: dict[str, Any] = {}
     if data_dir:
-        cli_overrides["output"] = {"base_dir": str(data_dir)}
+        cli_overrides["output_storage"] = {"base_dir": str(data_dir)}
     config = load_config(
         root_dir=root_dir,
         cli_overrides=cli_overrides,
@@ -312,7 +312,7 @@ def run_basic_search(
     """
     cli_overrides: dict[str, Any] = {}
     if data_dir:
-        cli_overrides["output"] = {"base_dir": str(data_dir)}
+        cli_overrides["output_storage"] = {"base_dir": str(data_dir)}
     config = load_config(
         root_dir=root_dir,
         cli_overrides=cli_overrides,

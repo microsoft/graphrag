@@ -351,7 +351,7 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
 
     assert_vector_store_configs(actual.vector_store, expected.vector_store)
     assert_reporting_configs(actual.reporting, expected.reporting)
-    assert_storage_config(actual.output, expected.output)
+    assert_storage_config(actual.output_storage, expected.output_storage)
     assert_storage_config(actual.input_storage, expected.input_storage)
     assert_storage_config(actual.update_output_storage, expected.update_output_storage)
 
