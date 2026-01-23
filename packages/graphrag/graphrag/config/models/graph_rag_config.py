@@ -116,7 +116,10 @@ class GraphRagConfig(BaseModel):
             if not self.output_storage.base_dir:
                 msg = "output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
                 raise ValueError(msg)
-            self.output_storage.base_dir = str(Path(self.output_storage.base_dir).resolve())
+            self.output_storage.base_dir = str(
+                Path(self.output_storage.base_dir).resolve()
+            )
+
     update_output_storage: StorageConfig = Field(
         description="The output configuration for the updated index.",
         default=StorageConfig(

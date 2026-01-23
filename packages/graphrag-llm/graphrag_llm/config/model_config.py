@@ -3,6 +3,7 @@
 
 """Language model configuration."""
 
+import logging
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -11,6 +12,8 @@ from graphrag_llm.config.metrics_config import MetricsConfig
 from graphrag_llm.config.rate_limit_config import RateLimitConfig
 from graphrag_llm.config.retry_config import RetryConfig
 from graphrag_llm.config.types import AuthMethod, LLMProviderType
+
+logger = logging.getLogger(__name__)
 
 
 class ModelConfig(BaseModel):
@@ -84,15 +87,13 @@ class ModelConfig(BaseModel):
 
     def _validate_lite_llm_config(self) -> None:
         """Validate LiteLLM specific configuration."""
-        if self.model_provider == "azure" and (
-            not self.azure_deployment_name or not self.api_base
-        ):
-            msg = "azure_deployment_name and api_base must be specified with the 'azure' model provider."
+        if self.model_provider == "azure" and not self.api_base:
+            msg = "api_base must be specified with the 'azure' model provider."
             raise ValueError(msg)
 
-        if self.model_provider != "azure" and self.azure_deployment_name:
-            msg = "azure_deployment_name should not be specified for non-Azure model providers."
-            raise ValueError(msg)
+        if self.model_provider == "azure" and not self.azure_deployment_name:
+            msg = "azure_deployment_name is not specified and will default to model name. If your deployment name differs (uncommon), API calls will fail."
+            logger.warning(msg)
 
         if self.auth_method == AuthMethod.AzureManagedIdentity:
             if self.api_key is not None:
