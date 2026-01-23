@@ -84,13 +84,11 @@ class ModelConfig(BaseModel):
 
     def _validate_lite_llm_config(self) -> None:
         """Validate LiteLLM specific configuration."""
-        if self.model_provider == "azure" and (
-            not self.azure_deployment_name or not self.api_base
-        ):
-            msg = "azure_deployment_name and api_base must be specified with the 'azure' model provider."
+        if self.model_provider == "azure" and not self.api_base:
+            msg = "api_base must be specified with the 'azure' model provider."
             raise ValueError(msg)
 
-        if self.model_provider != "azure" and self.azure_deployment_name:
+        if self.model_provider != "azure" and self.azure_deployment_name is not None:
             msg = "azure_deployment_name should not be specified for non-Azure model providers."
             raise ValueError(msg)
 
