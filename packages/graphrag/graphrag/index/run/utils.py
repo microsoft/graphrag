@@ -5,7 +5,7 @@
 
 from graphrag_cache import Cache
 from graphrag_cache.memory_cache import MemoryCache
-from graphrag_storage import Storage, create_storage
+from graphrag_storage import ParquetTableProvider, Storage, create_storage
 from graphrag_storage.memory_storage import MemoryStorage
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
@@ -27,9 +27,11 @@ def create_run_context(
     state: PipelineState | None = None,
 ) -> PipelineRunContext:
     """Create the run context for the pipeline."""
+    output_storage = output_storage or MemoryStorage()
     return PipelineRunContext(
         input_storage=input_storage or MemoryStorage(),
-        output_storage=output_storage or MemoryStorage(),
+        output_storage=output_storage,
+        output_table_provider=ParquetTableProvider(storage=output_storage),
         previous_storage=previous_storage or MemoryStorage(),
         cache=cache or MemoryCache(),
         callbacks=callbacks or NoopWorkflowCallbacks(),

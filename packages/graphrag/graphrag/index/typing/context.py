@@ -10,7 +10,7 @@ from graphrag_cache import Cache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.typing.state import PipelineState
 from graphrag.index.typing.stats import PipelineRunStats
-from graphrag_storage import Storage
+from graphrag_storage import ParquetTableProvider, Storage
 
 
 @dataclass
@@ -22,6 +22,8 @@ class PipelineRunContext:
     "Storage for input documents."
     output_storage: Storage
     "Long-term storage for pipeline verbs to use. Items written here will be written to the storage provider."
+    output_table_provider: ParquetTableProvider
+    "Table provider for reading and writing output tables."
     previous_storage: Storage
     "Storage for previous pipeline run when running in update mode."
     cache: Cache

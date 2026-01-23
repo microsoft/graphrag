@@ -14,23 +14,16 @@ logger = logging.getLogger(__name__)
 
 async def load_table_from_storage(name: str, storage: Storage) -> pd.DataFrame:
     """Load a parquet from the storage instance."""
-    filename = f"{name}.parquet"
-    if not await storage.has(filename):
-        msg = f"Could not find {filename} in storage!"
-        raise ValueError(msg)
-    try:
-        logger.info("reading table from storage: %s", filename)
-        return pd.read_parquet(BytesIO(await storage.get(filename, as_bytes=True)))
-    except Exception:
-        logger.exception("error loading table from storage: %s", filename)
-        raise
+    table_provider = ParquetTableProvider(storage)
+    return await table_provider.read_dataframe(name)
 
 
 async def write_table_to_storage(
     table: pd.DataFrame, name: str, storage: Storage
 ) -> None:
     """Write a table to storage."""
-    await storage.set(f"{name}.parquet", table.to_parquet())
+    table_provider = ParquetTableProvider(storage)
+    await table_provider.write_dataframe(name, table)
 
 
 async def delete_table_from_storage(name: str, storage: Storage) -> None:
