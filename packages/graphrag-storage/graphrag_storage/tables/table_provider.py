@@ -47,6 +47,19 @@ class TableProvider(ABC):
             df: pd.DataFrame
                 The DataFrame to write as a table.
         """
-
+    @abstractmethod
+    async def has_dataframe(self, table_name: str) -> bool:
+        """Check if a table exists in the provider.
+        
+        Args
+        ----
+            table_name: str
+                The name of the table to check.
+        
+        Returns
+        -------
+            bool:
+                True if the table exists, False otherwise.
+        """
 
 

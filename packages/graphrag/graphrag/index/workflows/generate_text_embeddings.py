@@ -25,10 +25,6 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import (
-    load_table_from_storage,
-    write_table_to_storage,
-)
 
 if TYPE_CHECKING:
     from graphrag_llm.embedding import LLMEmbedding
@@ -48,13 +44,11 @@ async def run_workflow(
     entities = None
     community_reports = None
     if text_unit_text_embedding in embedded_fields:
-        text_units = await load_table_from_storage("text_units", context.output_storage)
+        text_units = await context.output_table_provider.read_dataframe("text_units")
     if entity_description_embedding in embedded_fields:
-        entities = await load_table_from_storage("entities", context.output_storage)
+        entities = await context.output_table_provider.read_dataframe("entities")
     if community_full_content_embedding in embedded_fields:
-        community_reports = await load_table_from_storage(
-            "community_reports", context.output_storage
-        )
+        community_reports = await context.output_table_provider.read_dataframe("community_reports")
 
     model_config = config.get_embedding_model_config(
         config.embed_text.embedding_model_id
@@ -84,10 +78,9 @@ async def run_workflow(
 
     if config.snapshots.embeddings:
         for name, table in output.items():
-            await write_table_to_storage(
-                table,
+            await context.output_table_provider.write_dataframe(
                 f"embeddings.{name}",
-                context.output_storage,
+                table,
             )
 
     logger.info("Workflow completed: generate_text_embeddings")
