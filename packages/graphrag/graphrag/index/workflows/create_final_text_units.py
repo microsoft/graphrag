@@ -23,14 +23,18 @@ async def run_workflow(
     logger.info("Workflow started: create_final_text_units")
     text_units = await context.output_table_provider.read_dataframe("text_units")
     final_entities = await context.output_table_provider.read_dataframe("entities")
-    final_relationships = await context.output_table_provider.read_dataframe("relationships")
-    
+    final_relationships = await context.output_table_provider.read_dataframe(
+        "relationships"
+    )
+
     final_covariates = None
-    if config.extract_claims.enabled:
-        try:
-            final_covariates = await context.output_table_provider.read_dataframe("covariates")
-        except Exception:
-            pass
+    if (
+        config.extract_claims.enabled
+        and await context.output_table_provider.has_dataframe("covariates")
+    ):
+        final_covariates = await context.output_table_provider.read_dataframe(
+            "covariates"
+        )
 
     output = create_final_text_units(
         text_units,

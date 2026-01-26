@@ -19,13 +19,15 @@ class PipelineRunContext:
 
     stats: PipelineRunStats
     input_storage: Storage
-    "Storage for input documents."
+    "Storage for reading input documents."
+    input_table_provider: ParquetTableProvider
+    "Table provider for reading input tables."
     output_storage: Storage
     "Long-term storage for pipeline verbs to use. Items written here will be written to the storage provider."
     output_table_provider: ParquetTableProvider
     "Table provider for reading and writing output tables."
-    previous_storage: Storage
-    "Storage for previous pipeline run when running in update mode."
+    previous_table_provider: ParquetTableProvider | None
+    "Table provider for reading previous pipeline run when running in update mode."
     cache: Cache
     "Cache instance for reading previous LLM responses."
     callbacks: WorkflowCallbacks

@@ -8,12 +8,12 @@ import logging
 import pandas as pd
 from graphrag_cache import Cache
 from graphrag_llm.completion import create_completion
-from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
+from graphrag_storage.tables.table_provider import TableProvider
 
 from graphrag.cache.cache_key_creator import cache_key_creator
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.run.utils import get_update_storages
+from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.update.entities import _group_and_resolve_entities
@@ -29,13 +29,9 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """Update the entities and relationships from a incremental index run."""
     logger.info("Workflow started: update_entities_relationships")
-    output_storage, previous_storage, delta_storage = get_update_storages(
-        config, context.state["update_timestamp"]
+    output_table_provider, previous_table_provider, delta_table_provider = (
+        get_update_table_providers(config, context.state["update_timestamp"])
     )
-    
-    previous_table_provider = ParquetTableProvider(previous_storage)
-    delta_table_provider = ParquetTableProvider(delta_storage)
-    output_table_provider = ParquetTableProvider(output_storage)
 
     (
         merged_entities_df,
@@ -59,9 +55,9 @@ async def run_workflow(
 
 
 async def _update_entities_and_relationships(
-    previous_table_provider: ParquetTableProvider,
-    delta_table_provider: ParquetTableProvider,
-    output_table_provider: ParquetTableProvider,
+    previous_table_provider: TableProvider,
+    delta_table_provider: TableProvider,
+    output_table_provider: TableProvider,
     config: GraphRagConfig,
     cache: Cache,
     callbacks: WorkflowCallbacks,
@@ -108,6 +104,8 @@ async def _update_entities_and_relationships(
 
     # Save the updated entities back to storage
     await output_table_provider.write_dataframe("entities", merged_entities_df)
-    await output_table_provider.write_dataframe("relationships", merged_relationships_df)
+    await output_table_provider.write_dataframe(
+        "relationships", merged_relationships_df
+    )
 
     return merged_entities_df, merged_relationships_df, entity_id_mapping

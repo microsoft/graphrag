@@ -33,7 +33,9 @@ async def run_workflow(
     )
 
     await context.output_table_provider.write_dataframe("entities", final_entities)
-    await context.output_table_provider.write_dataframe("relationships", final_relationships)
+    await context.output_table_provider.write_dataframe(
+        "relationships", final_relationships
+    )
 
     if config.snapshots.graphml:
         graph = create_graph(final_relationships, edge_attr=["weight"])

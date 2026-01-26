@@ -46,13 +46,13 @@ async def run_workflow(
     edges = await context.output_table_provider.read_dataframe("relationships")
     entities = await context.output_table_provider.read_dataframe("entities")
     communities = await context.output_table_provider.read_dataframe("communities")
-    
+
     claims = None
-    if config.extract_claims.enabled:
-        try:
-            claims = await context.output_table_provider.read_dataframe("covariates")
-        except Exception:
-            pass
+    if (
+        config.extract_claims.enabled
+        and await context.output_table_provider.has_dataframe("covariates")
+    ):
+        claims = await context.output_table_provider.read_dataframe("covariates")
 
     model_config = config.get_completion_model_config(
         config.community_reports.completion_model_id

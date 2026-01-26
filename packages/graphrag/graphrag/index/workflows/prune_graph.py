@@ -34,7 +34,9 @@ async def run_workflow(
     )
 
     await context.output_table_provider.write_dataframe("entities", pruned_entities)
-    await context.output_table_provider.write_dataframe("relationships", pruned_relationships)
+    await context.output_table_provider.write_dataframe(
+        "relationships", pruned_relationships
+    )
 
     logger.info("Workflow completed: prune_graph")
     return WorkflowFunctionOutput(

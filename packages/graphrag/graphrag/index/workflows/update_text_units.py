@@ -7,11 +7,10 @@ import logging
 
 import numpy as np
 import pandas as pd
-from graphrag_storage import Storage
-from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
+from graphrag_storage.tables.table_provider import TableProvider
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.run.utils import get_update_storages
+from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 
@@ -24,13 +23,16 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """Update the text units from a incremental index run."""
     logger.info("Workflow started: update_text_units")
-    output_storage, previous_storage, delta_storage = get_update_storages(
-        config, context.state["update_timestamp"]
+    output_table_provider, previous_table_provider, delta_table_provider = (
+        get_update_table_providers(config, context.state["update_timestamp"])
     )
     entity_id_mapping = context.state["incremental_update_entity_id_mapping"]
 
     merged_text_units = await _update_text_units(
-        previous_storage, delta_storage, output_storage, entity_id_mapping
+        previous_table_provider,
+        delta_table_provider,
+        output_table_provider,
+        entity_id_mapping,
     )
 
     context.state["incremental_update_merged_text_units"] = merged_text_units
@@ -40,16 +42,12 @@ async def run_workflow(
 
 
 async def _update_text_units(
-    previous_storage: Storage,
-    delta_storage: Storage,
-    output_storage: Storage,
+    previous_table_provider: TableProvider,
+    delta_table_provider: TableProvider,
+    output_table_provider: TableProvider,
     entity_id_mapping: dict,
 ) -> pd.DataFrame:
     """Update the text units output."""
-    previous_table_provider = ParquetTableProvider(previous_storage)
-    delta_table_provider = ParquetTableProvider(delta_storage)
-    output_table_provider = ParquetTableProvider(output_storage)
-    
     old_text_units = await previous_table_provider.read_dataframe("text_units")
     delta_text_units = await delta_table_provider.read_dataframe("text_units")
     merged_text_units = _update_and_merge_text_units(
