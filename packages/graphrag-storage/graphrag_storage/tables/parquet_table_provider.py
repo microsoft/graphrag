@@ -74,3 +74,6 @@ class ParquetTableProvider(TableProvider):
                 The DataFrame to write to storage.
         """
         await self._storage.set(f"{table_name}.parquet", df.to_parquet())
+
+    async def has_dataframe(self, table_name):
+        return await self._storage.has(f"{table_name}.parquet")

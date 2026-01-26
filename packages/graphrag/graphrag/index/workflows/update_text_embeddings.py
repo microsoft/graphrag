@@ -13,7 +13,7 @@ from graphrag.index.run.utils import get_update_storages
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.workflows.generate_text_embeddings import generate_text_embeddings
-from graphrag.utils.storage import write_table_to_storage
+from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,8 @@ async def run_workflow(
     output_storage, _, _ = get_update_storages(
         config, context.state["update_timestamp"]
     )
+    output_table_provider = ParquetTableProvider(output_storage)
+
     merged_text_units = context.state["incremental_update_merged_text_units"]
     merged_entities_df = context.state["incremental_update_merged_entities"]
     merged_community_reports = context.state[
@@ -62,11 +64,7 @@ async def run_workflow(
     )
     if config.snapshots.embeddings:
         for name, table in result.items():
-            await write_table_to_storage(
-                table,
-                f"embeddings.{name}",
-                output_storage,
-            )
+            await output_table_provider.write_dataframe(f"embeddings.{name}", table)
 
     logger.info("Workflow completed: update_text_embeddings")
     return WorkflowFunctionOutput(result=None)

@@ -14,7 +14,6 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.update.incremental_index import get_delta_docs
-from graphrag.utils.storage import write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +36,7 @@ async def run_workflow(
         logger.warning("No new update documents found.")
         return WorkflowFunctionOutput(result=None, stop=True)
 
-    await write_table_to_storage(output, "documents", context.output_storage)
+    await context.output_table_provider.write_dataframe("documents", output)
 
     return WorkflowFunctionOutput(result=output)
 
