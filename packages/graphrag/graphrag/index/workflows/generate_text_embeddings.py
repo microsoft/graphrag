@@ -48,7 +48,9 @@ async def run_workflow(
     if entity_description_embedding in embedded_fields:
         entities = await context.output_table_provider.read_dataframe("entities")
     if community_full_content_embedding in embedded_fields:
-        community_reports = await context.output_table_provider.read_dataframe("community_reports")
+        community_reports = await context.output_table_provider.read_dataframe(
+            "community_reports"
+        )
 
     model_config = config.get_embedding_model_config(
         config.embed_text.embedding_model_id

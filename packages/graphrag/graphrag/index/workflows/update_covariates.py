@@ -7,10 +7,10 @@ import logging
 
 import numpy as np
 import pandas as pd
-from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
+from graphrag_storage.tables.table_provider import TableProvider
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.run.utils import get_update_storages
+from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 
@@ -23,28 +23,26 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """Update the covariates from a incremental index run."""
     logger.info("Workflow started: update_covariates")
-    output_storage, previous_storage, delta_storage = get_update_storages(
-        config, context.state["update_timestamp"]
+    output_table_provider, previous_table_provider, delta_table_provider = (
+        get_update_table_providers(config, context.state["update_timestamp"])
     )
-    
-    previous_table_provider = ParquetTableProvider(previous_storage)
-    delta_table_provider = ParquetTableProvider(delta_storage)
-    output_table_provider = ParquetTableProvider(output_storage)
 
     if await previous_table_provider.has_dataframe(
         "covariates"
     ) and await delta_table_provider.has_dataframe("covariates"):
         logger.info("Updating Covariates")
-        await _update_covariates(previous_table_provider, delta_table_provider, output_table_provider)
+        await _update_covariates(
+            previous_table_provider, delta_table_provider, output_table_provider
+        )
 
     logger.info("Workflow completed: update_covariates")
     return WorkflowFunctionOutput(result=None)
 
 
 async def _update_covariates(
-    previous_table_provider: ParquetTableProvider,
-    delta_table_provider: ParquetTableProvider,
-    output_table_provider: ParquetTableProvider,
+    previous_table_provider: TableProvider,
+    delta_table_provider: TableProvider,
+    output_table_provider: TableProvider,
 ) -> None:
     """Update the covariates output."""
     old_covariates = await previous_table_provider.read_dataframe("covariates")

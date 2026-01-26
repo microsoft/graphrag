@@ -8,13 +8,14 @@ from typing import Any
 
 import pandas as pd
 
+
 class TableProvider(ABC):
     """Provide a table-based storage interface with support for DataFrames and row dictionaries."""
 
     @abstractmethod
     def __init__(self, **kwargs: Any) -> None:
         """Create a table provider instance.
-        
+
         Args
         ----
             **kwargs: Any
@@ -24,22 +25,22 @@ class TableProvider(ABC):
     @abstractmethod
     async def read_dataframe(self, table_name: str) -> pd.DataFrame:
         """Read entire table as a pandas DataFrame.
-        
+
         Args
         ----
             table_name: str
                 The name of the table to read.
-        
+
         Returns
         -------
             pd.DataFrame:
                 The table data as a DataFrame.
         """
-    
+
     @abstractmethod
     async def write_dataframe(self, table_name: str, df: pd.DataFrame) -> None:
         """Write entire table from a pandas DataFrame.
-        
+
         Args
         ----
             table_name: str
@@ -47,19 +48,28 @@ class TableProvider(ABC):
             df: pd.DataFrame
                 The DataFrame to write as a table.
         """
+
     @abstractmethod
     async def has_dataframe(self, table_name: str) -> bool:
         """Check if a table exists in the provider.
-        
+
         Args
         ----
             table_name: str
                 The name of the table to check.
-        
+
         Returns
         -------
             bool:
                 True if the table exists, False otherwise.
         """
 
+    @abstractmethod
+    def find_tables(self) -> list[str]:
+        """Find all table names in the provider.
 
+        Returns
+        -------
+            list[str]:
+                List of table names (without file extensions).
+        """

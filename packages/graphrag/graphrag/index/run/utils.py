@@ -19,20 +19,26 @@ from graphrag.index.typing.stats import PipelineRunStats
 
 def create_run_context(
     input_storage: Storage | None = None,
+    input_table_provider: ParquetTableProvider | None = None,
     output_storage: Storage | None = None,
-    previous_storage: Storage | None = None,
+    output_table_provider: ParquetTableProvider | None = None,
+    previous_table_provider: ParquetTableProvider | None = None,
     cache: Cache | None = None,
     callbacks: WorkflowCallbacks | None = None,
     stats: PipelineRunStats | None = None,
     state: PipelineState | None = None,
 ) -> PipelineRunContext:
     """Create the run context for the pipeline."""
+    input_storage = input_storage or MemoryStorage()
     output_storage = output_storage or MemoryStorage()
     return PipelineRunContext(
-        input_storage=input_storage or MemoryStorage(),
+        input_storage=input_storage,
+        input_table_provider=input_table_provider
+        or ParquetTableProvider(storage=input_storage),
         output_storage=output_storage,
-        output_table_provider=ParquetTableProvider(storage=output_storage),
-        previous_storage=previous_storage or MemoryStorage(),
+        output_table_provider=output_table_provider
+        or ParquetTableProvider(storage=output_storage),
+        previous_table_provider=previous_table_provider,
         cache=cache or MemoryCache(),
         callbacks=callbacks or NoopWorkflowCallbacks(),
         stats=stats or PipelineRunStats(),
@@ -50,14 +56,18 @@ def create_callback_chain(
     return manager
 
 
-def get_update_storages(
+def get_update_table_providers(
     config: GraphRagConfig, timestamp: str
-) -> tuple[Storage, Storage, Storage]:
-    """Get storage objects for the update index run."""
+) -> tuple[ParquetTableProvider, ParquetTableProvider, ParquetTableProvider]:
+    """Get table providers for the update index run."""
     output_storage = create_storage(config.output)
     update_storage = create_storage(config.update_output_storage)
     timestamped_storage = update_storage.child(timestamp)
     delta_storage = timestamped_storage.child("delta")
     previous_storage = timestamped_storage.child("previous")
 
-    return output_storage, previous_storage, delta_storage
+    output_table_provider = ParquetTableProvider(output_storage)
+    previous_table_provider = ParquetTableProvider(previous_storage)
+    delta_table_provider = ParquetTableProvider(delta_storage)
+
+    return output_table_provider, previous_table_provider, delta_table_provider

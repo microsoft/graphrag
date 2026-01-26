@@ -9,11 +9,10 @@ from graphrag_llm.embedding import create_embedding
 
 from graphrag.cache.cache_key_creator import cache_key_creator
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.run.utils import get_update_storages
+from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.workflows.generate_text_embeddings import generate_text_embeddings
-from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +23,9 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """Update the text embeddings from a incremental index run."""
     logger.info("Workflow started: update_text_embeddings")
-    output_storage, _, _ = get_update_storages(
+    output_table_provider, _, _ = get_update_table_providers(
         config, context.state["update_timestamp"]
     )
-    output_table_provider = ParquetTableProvider(output_storage)
 
     merged_text_units = context.state["incremental_update_merged_text_units"]
     merged_entities_df = context.state["incremental_update_merged_entities"]

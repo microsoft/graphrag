@@ -6,7 +6,12 @@ from io import BytesIO
 
 import pandas as pd
 import pytest
-from graphrag_storage import ParquetTableProvider, StorageConfig, StorageType, create_storage
+from graphrag_storage import (
+    ParquetTableProvider,
+    StorageConfig,
+    StorageType,
+    create_storage,
+)
 
 
 class TestParquetTableProvider(unittest.IsolatedAsyncioTestCase):
@@ -25,7 +30,7 @@ class TestParquetTableProvider(unittest.IsolatedAsyncioTestCase):
         df = pd.DataFrame({
             "id": [1, 2, 3],
             "name": ["Alice", "Bob", "Charlie"],
-            "age": [30, 25, 35]
+            "age": [30, 25, 35],
         })
 
         await self.table_provider.write_dataframe("users", df)
@@ -34,7 +39,9 @@ class TestParquetTableProvider(unittest.IsolatedAsyncioTestCase):
         pd.testing.assert_frame_equal(result, df)
 
     async def test_read_nonexistent_table_raises_error(self):
-        with pytest.raises(ValueError, match="Could not find nonexistent.parquet in storage!"):
+        with pytest.raises(
+            ValueError, match=r"Could not find nonexistent\.parquet in storage!"
+        ):
             await self.table_provider.read_dataframe("nonexistent")
 
     async def test_empty_dataframe(self):
@@ -50,7 +57,7 @@ class TestParquetTableProvider(unittest.IsolatedAsyncioTestCase):
             "int_col": [1, 2, 3],
             "float_col": [1.1, 2.2, 3.3],
             "str_col": ["a", "b", "c"],
-            "bool_col": [True, False, True]
+            "bool_col": [True, False, True],
         })
 
         await self.table_provider.write_dataframe("mixed", df)
@@ -62,10 +69,22 @@ class TestParquetTableProvider(unittest.IsolatedAsyncioTestCase):
         df = pd.DataFrame({"x": [1, 2, 3]})
 
         await self.table_provider.write_dataframe("test", df)
-        
+
         assert await self.storage.has("test.parquet")
-        
+
         parquet_bytes = await self.storage.get("test.parquet", as_bytes=True)
         loaded_df = pd.read_parquet(BytesIO(parquet_bytes))
-        
+
         pd.testing.assert_frame_equal(loaded_df, df)
+
+    async def test_has_dataframe(self):
+        df = pd.DataFrame({"a": [1, 2, 3]})
+
+        # Table doesn't exist yet
+        assert not await self.table_provider.has_dataframe("test_table")
+
+        # Write the table
+        await self.table_provider.write_dataframe("test_table", df)
+
+        # Now it exists
+        assert await self.table_provider.has_dataframe("test_table")
