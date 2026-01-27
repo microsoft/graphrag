@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-storage"
-version = "2.7.0"
+version = "2.7.1"
 description = "GraphRAG storage package."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
@@ -34,8 +34,8 @@ dependencies = [
     "azure-cosmos~=4.9",
     "azure-identity~=1.19",
     "azure-storage-blob~=12.24",
-    "graphrag-common==2.7.0",
-    "pandas>=2.3.0",
+    "graphrag-common==2.7.1",
+    "pandas~=2.3",
     "pydantic~=2.10",
 ]
 

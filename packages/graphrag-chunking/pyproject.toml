@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-chunking"
-version = "2.7.0"
+version = "2.7.1"
 description = "Chunking utilities for GraphRAG"
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
@@ -30,7 +30,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "graphrag-common==2.7.0",
+    "graphrag-common==2.7.1",
     "pydantic~=2.10",
 ]
 

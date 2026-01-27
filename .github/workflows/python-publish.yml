@@ -1,4 +1,5 @@
 name: Python Publish (pypi)
+
 on:
   release:
     types: [created]
@@ -13,10 +14,11 @@ jobs:
     name: Upload release to PyPI
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+
     environment:
       name: pypi
     permissions:
-      id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +44,57 @@ jobs:
       - name: Build Distributable
         shell: bash
         run: uv run poe build
+
+      - name: Inspect all distribution members and metadata
+        shell: bash
+        run: |
+          python - <<'PY'
+          import glob, zipfile, tarfile, re
+
+          print("\n=== FILES IN dist/ ===")
+          for f in glob.glob("dist/*"):
+            print(" ", f)
+
+          print("\n=== WHEELS ===")
+          for whl in glob.glob("dist/*.whl"):
+            print("\n---", whl, "---")
+            with zipfile.ZipFile(whl) as z:
+              for name in z.namelist():
+                print(name)
+
+              metas = [n for n in z.namelist() if n.endswith(".dist-info/METADATA")]
+              for meta in metas:
+                print("\n[METADATA:", meta, "]")
+                text = z.read(meta).decode("utf-8", "replace")
+
+                name_m = re.search(r"^Name:\s*(.+)$", text, re.M)
+                ver_m  = re.search(r"^Version:\s*(.+)$", text, re.M)
+
+                if name_m:
+                  print("Project Name:", name_m.group(1))
+                if ver_m:
+                  print("Version:", ver_m.group(1))
+
+          print("\n=== SDISTS ===")
+          for sdist in glob.glob("dist/*.tar.gz"):
+            print("\n---", sdist, "---")
+            with tarfile.open(sdist, "r:gz") as t:
+              for m in t.getmembers():
+                print(m.name)
+
+              metas = [m for m in t.getmembers() if m.name.endswith("PKG-INFO")]
+              for m in metas:
+                print("\n[PKG-INFO:", m.name, "]")
+                text = t.extractfile(m).read().decode("utf-8", "replace")
+
+                name_m = re.search(r"^Name:\s*(.+)$", text, re.M)
+                ver_m  = re.search(r"^Version:\s*(.+)$", text, re.M)
+
+                if name_m:
+                  print("Project Name:", name_m.group(1))
+                if ver_m:
+                  print("Version:", ver_m.group(1))
+          PY
 
       - name: Publish package distributions to PyPI
         run: uv publish

@@ -1,5 +1,10 @@
 # Changelog
+
 Note: version releases in the 0.x.y range may introduce breaking changes.
+
+## 2.7.1
+
+- patch: Pin pandas==2.3.3.
 
 ## 2.7.0
 

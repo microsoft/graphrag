@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-vectors"
-version = "2.7.0"
+version = "2.7.1"
 description = "GraphRAG vector store package."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
@@ -34,9 +34,9 @@ dependencies = [
     "azure-cosmos~=4.9",
     "azure-identity~=1.19",
     "azure-search-documents~=11.6",
-    "graphrag-common==2.7.0",
+    "graphrag-common==2.7.1",
     "lancedb~=0.24.1",
-    "numpy~=2.2",
+    "numpy~=2.1",
     "pyarrow~=22.0",
     "pydantic~=2.10",
 ]
