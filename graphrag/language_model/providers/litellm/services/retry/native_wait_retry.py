@@ -21,6 +21,7 @@ class NativeRetry(Retry):
         max_retries: int = 5,
         **kwargs: Any,
     ):
+        super().__init__(**kwargs)
         if max_retries <= 0:
             msg = "max_retries must be greater than 0."
             raise ValueError(msg)
@@ -30,19 +31,22 @@ class NativeRetry(Retry):
     def retry(self, func: Callable[..., Any], **kwargs: Any) -> Any:
         """Retry a synchronous function."""
         retries = 0
-        while True:
-            try:
-                return func(**kwargs)
-            except Exception as e:
-                if retries >= self._max_retries:
+        try:
+            while True:
+                try:
+                    return func(**kwargs)
+                except Exception as e:
+                    if retries >= self._max_retries:
+                        logger.exception(
+                            f"NativeRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        )
+                        raise
+                    retries += 1
                     logger.exception(
-                        f"NativeRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        f"NativeRetry: Request failed, immediately retrying, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                     )
-                    raise
-                retries += 1
-                logger.exception(
-                    f"NativeRetry: Request failed, immediately retrying, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
-                )
+        finally:
+            self._record_retries(retries)
 
     async def aretry(
         self,
@@ -51,16 +55,19 @@ class NativeRetry(Retry):
     ) -> Any:
         """Retry an asynchronous function."""
         retries = 0
-        while True:
-            try:
-                return await func(**kwargs)
-            except Exception as e:
-                if retries >= self._max_retries:
+        try:
+            while True:
+                try:
+                    return await func(**kwargs)
+                except Exception as e:
+                    if retries >= self._max_retries:
+                        logger.exception(
+                            f"NativeRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        )
+                        raise
+                    retries += 1
                     logger.exception(
-                        f"NativeRetry: Max retries exceeded, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
+                        f"NativeRetry: Request failed, immediately retrying, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
                     )
-                    raise
-                retries += 1
-                logger.exception(
-                    f"NativeRetry: Request failed, immediately retrying, retries={retries}, max_retries={self._max_retries}, exception={e}",  # noqa: G004, TRY401
-                )
+        finally:
+            self._record_retries(retries)

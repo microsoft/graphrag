@@ -115,7 +115,7 @@ def _create_completions(
     model_config: "LanguageModelConfig",
     cache: "PipelineCache | None",
     cache_key_prefix: str,
-) -> tuple[FixedModelCompletion, AFixedModelCompletion]:
+) -> tuple[FixedModelCompletion, AFixedModelCompletion, Any | None]:
     """Wrap the base litellm completion function with the model configuration and additional features.
 
     Wrap the base litellm completion function with instance variables based on the model configuration.
@@ -161,8 +161,9 @@ def _create_completions(
                 tpm=tpm,
             )
 
+    retry_service: Any | None = None
     if model_config.retry_strategy != "none":
-        completion, acompletion = with_retries(
+        completion, acompletion, retry_service = with_retries(
             sync_fn=completion,
             async_fn=acompletion,
             model_config=model_config,
@@ -183,7 +184,7 @@ def _create_completions(
         async_fn=acompletion,
     )
 
-    return (completion, acompletion)
+    return (completion, acompletion, retry_service)
 
 
 class LitellmModelOutput(BaseModel):
@@ -221,9 +222,19 @@ class LitellmChatModel:
         self.name = name
         self.config = config
         self.cache = cache.child(self.name) if cache else None
-        self.completion, self.acompletion = _create_completions(
-            config, self.cache, "chat"
-        )
+        (
+            self.completion,
+            self.acompletion,
+            self._retry_service,
+        ) = _create_completions(config, self.cache, "chat")
+        self._pipeline_context: Any = None  # For LLM usage tracking
+
+    def set_pipeline_context(self, context: Any) -> None:
+        """Set the pipeline context for LLM usage tracking."""
+        self._pipeline_context = context
+        # Propagate into retry service if available
+        if self._retry_service is not None:
+            self._retry_service.set_pipeline_context(context)
 
     def _get_kwargs(self, **kwargs: Any) -> dict[str, Any]:
         """Get model arguments supported by litellm."""
@@ -285,6 +296,16 @@ class LitellmChatModel:
 
         response = await self.acompletion(messages=messages, stream=False, **new_kwargs)  # type: ignore
 
+        # Record LLM usage if pipeline context is available
+        if self._pipeline_context is not None and hasattr(response, "usage"):
+            usage = getattr(response, "usage", None)
+            if usage:
+                self._pipeline_context.record_llm_usage(
+                    llm_calls=1,
+                    prompt_tokens=getattr(usage, "prompt_tokens", 0),
+                    completion_tokens=getattr(usage, "completion_tokens", 0),
+                )
+
         messages.append({
             "role": "assistant",
             "content": response.choices[0].message.content or "",  # type: ignore
@@ -335,9 +356,30 @@ class LitellmChatModel:
 
         response = await self.acompletion(messages=messages, stream=True, **new_kwargs)  # type: ignore
 
+        full_content = ""
         async for chunk in response:  # type: ignore
             if chunk.choices and chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
+                content = chunk.choices[0].delta.content
+                full_content += content
+                yield content
+
+        # Record LLM usage for streaming (estimate using tokenizer)
+        if self._pipeline_context is not None and full_content:
+            from graphrag.tokenizer.get_tokenizer import get_tokenizer
+
+            tokenizer = get_tokenizer(model_config=self.config)
+            # Calculate prompt text
+            prompt_text = "\n".join([
+                f"{msg['role']}: {msg['content']}" for msg in messages
+            ])
+            prompt_tokens = len(tokenizer.encode(prompt_text))
+            completion_tokens = len(tokenizer.encode(full_content))
+
+            self._pipeline_context.record_llm_usage(
+                llm_calls=1,
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+            )
 
     def chat(self, prompt: str, history: list | None = None, **kwargs: Any) -> "MR":
         """

@@ -35,7 +35,19 @@ class ModelManager:
         if not hasattr(self, "_initialized"):
             self.chat_models: dict[str, ChatModel] = {}
             self.embedding_models: dict[str, EmbeddingModel] = {}
+            self._pipeline_context: Any = None  # For LLM usage tracking
             self._initialized = True
+
+    def set_pipeline_context(self, context: Any) -> None:
+        """Set pipeline context for all models to enable LLM usage tracking."""
+        self._pipeline_context = context
+        # Update existing models that support context injection
+        for model in self.chat_models.values():
+            if hasattr(model, "set_pipeline_context"):
+                model.set_pipeline_context(context)  # type: ignore[attr-defined]
+        for model in self.embedding_models.values():
+            if hasattr(model, "set_pipeline_context"):
+                model.set_pipeline_context(context)  # type: ignore[attr-defined]
 
     @classmethod
     def get_instance(cls) -> ModelManager:
@@ -54,9 +66,11 @@ class ModelManager:
             **chat_kwargs: Additional parameters for instantiation.
         """
         chat_kwargs["name"] = name
-        self.chat_models[name] = ModelFactory.create_chat_model(
-            model_type, **chat_kwargs
-        )
+        model = ModelFactory.create_chat_model(model_type, **chat_kwargs)
+        # Inject pipeline context if available
+        if self._pipeline_context and hasattr(model, "set_pipeline_context"):
+            model.set_pipeline_context(self._pipeline_context)  # type: ignore[attr-defined]
+        self.chat_models[name] = model
         return self.chat_models[name]
 
     def register_embedding(
@@ -71,9 +85,11 @@ class ModelManager:
             **embedding_kwargs: Additional parameters for instantiation.
         """
         embedding_kwargs["name"] = name
-        self.embedding_models[name] = ModelFactory.create_embedding_model(
-            model_type, **embedding_kwargs
-        )
+        model = ModelFactory.create_embedding_model(model_type, **embedding_kwargs)
+        # Inject pipeline context if available
+        if self._pipeline_context and hasattr(model, "set_pipeline_context"):
+            model.set_pipeline_context(self._pipeline_context)  # type: ignore[attr-defined]
+        self.embedding_models[name] = model
         return self.embedding_models[name]
 
     def get_chat_model(self, name: str) -> ChatModel | None:
