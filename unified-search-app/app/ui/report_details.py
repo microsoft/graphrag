@@ -58,7 +58,8 @@ def create_report_details_ui(sv: SessionVariables):
             st.write("Error parsing report.")
             st.write(sv.selected_report.value.full_content_json)
         text_replacement = (
-            text.replace("Entity_Relationships", "Relationships")
+            text
+            .replace("Entity_Relationships", "Relationships")
             .replace("Entity_Claims", "Claims")
             .replace("Entity_Details", "Entities")
         )

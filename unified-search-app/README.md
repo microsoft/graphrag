@@ -15,14 +15,7 @@ We recommend always using a virtual environment:
 - `source .venv/bin/activate`
 
 ## Run index
-Use GraphRAG to index your dataset before running Unified Search. We recommend starting with the [Getting Started guide](https://microsoft.github.io/graphrag/get_started/). You need to run GraphRAG indexing with graph embedding umap enabled to use the functionalities of Unified Search. 
-``` yaml
-embed_graph:
-  enabled: true
-
-umap:
-  enabled: true
-```
+Use GraphRAG to index your dataset before running Unified Search. We recommend starting with the [Getting Started guide](https://microsoft.github.io/graphrag/get_started/).
 
 ## Datasets
 Unified Search supports multiple GraphRAG indexes by using a directory listing file. Create a `listing.json` file in the root folder where all your datasets are stored (locally or in blob storage), with the following format (one entry per dataset):
@@ -46,8 +39,8 @@ Unified Search supports multiple GraphRAG indexes by using a directory listing f
 For example, if you have a folder of GraphRAG indexes called "projects" and inside that you ran the Getting Started instructions, your listing.json in the projects folder could look like:
 ```json
 [{
-    "key": "ragtest-demo",
-    "path": "ragtest",
+    "key": "christmas-demo",
+    "path": "christmas",
     "name": "A Christmas Carol",
     "description": "Getting Started index of the novel A Christmas Carol",
     "community_level": 2
@@ -110,9 +103,9 @@ In the right panel you have several functionalities.
 1. At the top you can see general information related to the chosen dataset (name and description).
 2. Below the dataset information there is a button labeled "Suggest some questions" which analyzes the dataset using global search and generates the most important questions (the number of questions generated is the amount set in the configuration panel). If you want to select a question generated you have to click the checkbox at the left side of the question to select it. 
 3. A textbox that it is labeled as "Ask a question to compare the results" where you can type the question that you want to send.
-4. Two tabs called Search and Graph Explorer:
+4. Two tabs called Search and Community Explorer:
     1. Search: Here all the searches results are displayed with their citations.
-    2. Graph Explorer: This tab is divided in three sections: Community Reports, Entity Graph and Selected Report. 
+    2. Community Explorer: This tab is divided in two sections: Community Reports List, and Selected Report. 
 
 ##### Suggest some question clicked
 ![Suggest some question clicked](images/image-2.png)
@@ -120,8 +113,8 @@ In the right panel you have several functionalities.
 ##### Selected question clicked
 ![Selected question clicked](images/image-3.png)
 
-##### Graph Explorer tab
-![Graph Explorer tab](images/image-4.png)
+##### Community Explorer tab
+![Community Explorer tab](images/image-4.png)
 
 
 

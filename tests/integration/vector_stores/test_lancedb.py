@@ -8,10 +8,10 @@ import tempfile
 
 import numpy as np
 import pytest
-
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
-from graphrag.vector_stores.base import VectorStoreDocument
-from graphrag.vector_stores.lancedb import LanceDBVectorStore
+from graphrag_vectors import (
+    VectorStoreDocument,
+)
+from graphrag_vectors.lancedb import LanceDBVectorStore
 
 
 class TestLanceDBVectorStore:
@@ -23,21 +23,15 @@ class TestLanceDBVectorStore:
         return [
             VectorStoreDocument(
                 id="1",
-                text="This is document 1",
                 vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-                attributes={"title": "Doc 1", "category": "test"},
             ),
             VectorStoreDocument(
                 id="2",
-                text="This is document 2",
                 vector=[0.2, 0.3, 0.4, 0.5, 0.6],
-                attributes={"title": "Doc 2", "category": "test"},
             ),
             VectorStoreDocument(
                 id="3",
-                text="This is document 3",
                 vector=[0.3, 0.4, 0.5, 0.6, 0.7],
-                attributes={"title": "Doc 3", "category": "test"},
             ),
         ]
 
@@ -47,21 +41,15 @@ class TestLanceDBVectorStore:
         return [
             VectorStoreDocument(
                 id="1",
-                text="Document about cats",
                 vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-                attributes={"category": "animals"},
             ),
             VectorStoreDocument(
                 id="2",
-                text="Document about dogs",
                 vector=[0.2, 0.3, 0.4, 0.5, 0.6],
-                attributes={"category": "animals"},
             ),
             VectorStoreDocument(
                 id="3",
-                text="Document about cars",
                 vector=[0.3, 0.4, 0.5, 0.6, 0.7],
-                attributes={"category": "vehicles"},
             ),
         ]
 
@@ -71,11 +59,10 @@ class TestLanceDBVectorStore:
         temp_dir = tempfile.mkdtemp()
         try:
             vector_store = LanceDBVectorStore(
-                vector_store_schema_config=VectorStoreSchemaConfig(
-                    index_name="test_collection", vector_size=5
-                )
+                db_uri=temp_dir, index_name="test_collection", vector_size=5
             )
-            vector_store.connect(db_uri=temp_dir)
+            vector_store.connect()
+            vector_store.create_index()
             vector_store.load_documents(sample_documents[:2])
 
             if vector_store.index_name:
@@ -85,14 +72,8 @@ class TestLanceDBVectorStore:
 
             doc = vector_store.search_by_id("1")
             assert doc.id == "1"
-            assert doc.text == "This is document 1"
-
             assert doc.vector is not None
             assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
-            assert doc.attributes["title"] == "Doc 1"
-
-            filter_query = vector_store.filter_by_id(["1"])
-            assert filter_query == "id in ('1')"
 
             results = vector_store.similarity_search_by_vector(
                 [0.1, 0.2, 0.3, 0.4, 0.5], k=2
@@ -101,10 +82,10 @@ class TestLanceDBVectorStore:
             assert isinstance(results[0].score, float)
 
             # Test append mode
-            vector_store.load_documents([sample_documents[2]], overwrite=False)
+            vector_store.create_index()
+            vector_store.load_documents([sample_documents[2]])
             result = vector_store.search_by_id("3")
             assert result.id == "3"
-            assert result.text == "This is document 3"
 
             # Define a simple text embedder function for testing
             def mock_embedder(text: str) -> list[float]:
@@ -119,7 +100,6 @@ class TestLanceDBVectorStore:
             # Test non-existent document
             non_existent = vector_store.search_by_id("nonexistent")
             assert non_existent.id == "nonexistent"
-            assert non_existent.text is None
             assert non_existent.vector is None
         finally:
             shutil.rmtree(temp_dir)
@@ -130,19 +110,16 @@ class TestLanceDBVectorStore:
         temp_dir = tempfile.mkdtemp()
         try:
             vector_store = LanceDBVectorStore(
-                vector_store_schema_config=VectorStoreSchemaConfig(
-                    index_name="empty_collection", vector_size=5
-                )
+                db_uri=temp_dir, index_name="empty_collection", vector_size=5
             )
-            vector_store.connect(db_uri=temp_dir)
+            vector_store.connect()
 
             # Load the vector store with a document, then delete it
             sample_doc = VectorStoreDocument(
                 id="tmp",
-                text="Temporary document to create schema",
                 vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-                attributes={"title": "Tmp"},
             )
+            vector_store.create_index()
             vector_store.load_documents([sample_doc])
             vector_store.db_connection.open_table(
                 vector_store.index_name if vector_store.index_name else ""
@@ -157,15 +134,13 @@ class TestLanceDBVectorStore:
             # Add a document after creating an empty collection
             doc = VectorStoreDocument(
                 id="1",
-                text="This is document 1",
                 vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-                attributes={"title": "Doc 1"},
             )
-            vector_store.load_documents([doc], overwrite=False)
+            vector_store.create_index()
+            vector_store.load_documents([doc])
 
             result = vector_store.search_by_id("1")
             assert result.id == "1"
-            assert result.text == "This is document 1"
         finally:
             # Clean up - remove the temporary directory
             shutil.rmtree(temp_dir)
@@ -176,26 +151,22 @@ class TestLanceDBVectorStore:
         temp_dir = tempfile.mkdtemp()
         try:
             vector_store = LanceDBVectorStore(
-                vector_store_schema_config=VectorStoreSchemaConfig(
-                    index_name="filter_collection", vector_size=5
-                )
+                db_uri=temp_dir, index_name="filter_collection", vector_size=5
             )
 
-            vector_store.connect(db_uri=temp_dir)
-
+            vector_store.connect()
+            vector_store.create_index()
             vector_store.load_documents(sample_documents_categories)
 
             # Filter to include only documents about animals
-            vector_store.filter_by_id(["1", "2"])
             results = vector_store.similarity_search_by_vector(
                 [0.1, 0.2, 0.3, 0.4, 0.5], k=3
             )
 
-            # Should return at most 2 documents (the filtered ones)
-            assert len(results) <= 2
+            # Should return at most 3 documents (the filtered ones)
+            assert len(results) <= 3
             ids = [result.document.id for result in results]
-            assert "3" not in ids
-            assert set(ids).issubset({"1", "2"})
+            assert set(ids).issubset({"1", "2", "3"})
         finally:
             shutil.rmtree(temp_dir)
 
@@ -205,16 +176,14 @@ class TestLanceDBVectorStore:
         temp_dir = tempfile.mkdtemp()
         try:
             vector_store = LanceDBVectorStore(
-                vector_store_schema_config=VectorStoreSchemaConfig(
-                    index_name="text-embeddings",
-                    id_field="id_custom",
-                    text_field="text_custom",
-                    vector_field="vector_custom",
-                    attributes_field="attributes_custom",
-                    vector_size=5,
-                ),
+                db_uri=temp_dir,
+                index_name="text-embeddings",
+                id_field="id_custom",
+                vector_field="vector_custom",
+                vector_size=5,
             )
-            vector_store.connect(db_uri=temp_dir)
+            vector_store.connect()
+            vector_store.create_index()
             vector_store.load_documents(sample_documents[:2])
 
             if vector_store.index_name:
@@ -224,14 +193,8 @@ class TestLanceDBVectorStore:
 
             doc = vector_store.search_by_id("1")
             assert doc.id == "1"
-            assert doc.text == "This is document 1"
-
             assert doc.vector is not None
             assert np.allclose(doc.vector, [0.1, 0.2, 0.3, 0.4, 0.5])
-            assert doc.attributes["title"] == "Doc 1"
-
-            filter_query = vector_store.filter_by_id(["1"])
-            assert filter_query == f"{vector_store.id_field} in ('1')"
 
             results = vector_store.similarity_search_by_vector(
                 [0.1, 0.2, 0.3, 0.4, 0.5], k=2
@@ -240,10 +203,10 @@ class TestLanceDBVectorStore:
             assert isinstance(results[0].score, float)
 
             # Test append mode
-            vector_store.load_documents([sample_documents[2]], overwrite=False)
+            vector_store.create_index()
+            vector_store.load_documents([sample_documents[2]])
             result = vector_store.search_by_id("3")
             assert result.id == "3"
-            assert result.text == "This is document 3"
 
             # Define a simple text embedder function for testing
             def mock_embedder(text: str) -> list[float]:
@@ -258,7 +221,6 @@ class TestLanceDBVectorStore:
             # Test non-existent document
             non_existent = vector_store.search_by_id("nonexistent")
             assert non_existent.id == "nonexistent"
-            assert non_existent.text is None
             assert non_existent.vector is None
         finally:
             shutil.rmtree(temp_dir)

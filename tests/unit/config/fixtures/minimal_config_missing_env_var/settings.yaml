@@ -1,11 +1,11 @@
-models:
-  default_chat_model:
+completion_models:
+  default_completion_model:
     api_key: ${SOME_NON_EXISTENT_ENV_VAR}
-    type: chat
     model_provider: openai
-    model: gpt-4-turbo-preview
+    model: gpt-4.1
+
+embedding_models:
   default_embedding_model:
     api_key: ${SOME_NON_EXISTENT_ENV_VAR}
-    type: embedding
     model_provider: openai
-    model: text-embedding-3-small
+    model: text-embedding-3-large

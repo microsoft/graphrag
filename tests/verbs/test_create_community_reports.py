@@ -2,8 +2,6 @@
 # Licensed under the MIT License
 
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.config.enums import ModelType
 from graphrag.data_model.schemas import COMMUNITY_REPORTS_FINAL_COLUMNS
 from graphrag.index.operations.summarize_communities.community_reports_extractor import (
     CommunityReportResponse,
@@ -14,8 +12,9 @@ from graphrag.index.workflows.create_community_reports import (
 )
 from graphrag.utils.storage import load_table_from_storage
 
+from tests.unit.config.utils import get_default_graphrag_config
+
 from .util import (
-    DEFAULT_MODEL_CONFIG,
     compare_outputs,
     create_test_context,
     load_test_table,
@@ -35,7 +34,7 @@ MOCK_RESPONSES = [
                 summary="<insight_2_summary>", explanation="<insight_2_explanation"
             ),
         ],
-    )
+    ).model_dump_json()
 ]
 
 
@@ -51,18 +50,9 @@ async def test_create_community_reports():
         ]
     )
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-    llm_settings = config.get_language_model_config(
-        config.community_reports.model_id
-    ).model_dump()
-    llm_settings["type"] = ModelType.MockChat
-    llm_settings["responses"] = MOCK_RESPONSES
-    llm_settings["parse_json"] = True
-    config.community_reports.strategy = {
-        "type": "graph_intelligence",
-        "llm": llm_settings,
-        "graph_prompt": "",
-    }
+    config = get_default_graphrag_config()
+    config.completion_models["default_completion_model"].type = "mock"
+    config.completion_models["default_completion_model"].mock_responses = MOCK_RESPONSES  # type: ignore
 
     await run_workflow(config, context)
 

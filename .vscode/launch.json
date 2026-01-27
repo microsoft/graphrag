@@ -10,7 +10,19 @@
 			"args": [
 				"index",
 				"--root", 
-				"<path_to_index_folder>"
+				"${input:root_folder}"
+			],
+			"console": "integratedTerminal"
+		},
+		{
+			"name": "Update",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "graphrag",
+			"args": [
+				"update",
+				"--root", 
+				"${input:root_folder}"
 			],
 			"console": "integratedTerminal"
 		},
@@ -21,10 +33,10 @@
 			"module": "graphrag",
 			"args": [
 				"query",
+                "${input:query}",
 				"--root", 
-				"<path_to_index_folder>",
-				"--method", "basic",
-				"--query", "What are the top themes in this story",
+				"${input:root_folder}",
+				"--method", "${input:query_method}"
 			]
 		},
 		{
@@ -35,7 +47,7 @@
 			"args": [
 				"poe", "prompt-tune",
 				"--config",
-				"<path_to_ragtest_root_demo>/settings.yaml",
+				"${input:root_folder}/settings.yaml",
 			]
 		},
 		{
@@ -74,5 +86,22 @@
 			"console": "integratedTerminal",
     		"justMyCode": false 
 		},
-	]
+	],
+    "inputs": [
+        {
+            "id": "root_folder",
+            "type": "promptString",
+            "description": "Enter the root folder path"
+        },
+        {
+            "id": "query_method",
+            "type": "promptString",
+            "description": "Enter the query method (e.g., 'global', 'local')"
+        },
+        {
+            "id": "query",
+            "type": "promptString",
+            "description": "Enter the query text"
+        }
+    ]
 }

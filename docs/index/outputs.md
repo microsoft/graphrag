@@ -82,8 +82,6 @@ List of all entities found in the data by the LM.
 | text_unit_ids | str[] | List of the text units containing the entity. |
 | frequency     | int   | Count of text units the entity was found within. |
 | degree        | int   | Node degree (connectedness) in the graph. |
-| x             | float | X position of the node for visual layouts. If graph embeddings and UMAP are not turned on, this will be 0. |
-| y             | float | Y position of the node for visual layouts. If graph embeddings and UMAP are not turned on, this will be 0. |
 
 ## relationships
 List of all entity-to-entity relationships found in the data by the LM. This is also the _edge list_ for the graph.
@@ -104,7 +102,7 @@ List of all text chunks parsed from the input documents.
 | ----------------- | ----- | ----------- |
 | text              | str   | Raw full text of the chunk. |
 | n_tokens          | int   | Number of tokens in the chunk. This should normally match the `chunk_size` config parameter, except for the last chunk which is often shorter. |
-| document_ids      | str[] | List of document IDs the chunk came from. This is normally only 1 due to our default groupby, but for very short text documents (e.g., microblogs) it can be configured so text units span multiple documents. |
+| document_id       | str   | ID of the document the chunk came from. |
 | entity_ids        | str[] | List of entities found in the text unit. |
 | relationships_ids | str[] | List of relationships found in the text unit. |
 | covariate_ids     | str[] | Optional list of covariates found in the text unit. |

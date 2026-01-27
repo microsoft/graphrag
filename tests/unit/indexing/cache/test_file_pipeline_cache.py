@@ -4,17 +4,23 @@ import asyncio
 import os
 import unittest
 
-from graphrag.cache.json_pipeline_cache import JsonPipelineCache
-from graphrag.storage.file_pipeline_storage import (
-    FilePipelineStorage,
-)
+from graphrag_cache import CacheConfig, CacheType
+from graphrag_cache import create_cache as cc
+from graphrag_storage import StorageConfig, StorageType
 
 TEMP_DIR = "./.tmp"
 
 
 def create_cache():
-    storage = FilePipelineStorage(base_dir=os.path.join(os.getcwd(), ".tmp"))
-    return JsonPipelineCache(storage)
+    return cc(
+        CacheConfig(
+            type=CacheType.Json,
+            storage=StorageConfig(
+                type=StorageType.File,
+                base_dir=os.path.join(os.getcwd(), ".tmp"),
+            ),
+        ),
+    )
 
 
 class TestFilePipelineCache(unittest.IsolatedAsyncioTestCase):

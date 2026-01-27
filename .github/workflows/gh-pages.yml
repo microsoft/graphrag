@@ -6,7 +6,7 @@ permissions:
   contents: write
 
 env:
-  PYTHON_VERSION: "3.11"
+  PYTHON_VERSION: "3.13"
 
 jobs:
   build:
@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: uv sync
+        run: uv sync --all-packages
   
       - name: mkdocs build
         shell: bash

@@ -12,6 +12,35 @@ There are five surface areas that may be impacted on any given release. They are
 
 > TL;DR: Always run `graphrag init --path [path] --force` between minor version bumps to ensure you have the latest config format. Run the provided migration notebook between major version bumps if you want to avoid re-indexing prior datasets. Note that this will overwrite your configuration and prompts, so backup if necessary.
 
+# v3
+Run the [migration notebook](./docs/examples_notebooks/index_migration_to_v3.ipynb) to convert older tables to the v3 format. Our main goals with v3 were to slim down the core library to minimize long-term maintenance of features that are either largely unused or should have been out of scope for a long time anyway.
+
+## Data Model
+We made minimal data model changes that will affect your index for v3. The primary breaking change is that we removed a rarely-used document-grouping capability that resulted in the `text_units` table having a `document_ids` column with a list instead of a single entry in a column called `document_id`. v3 fixes that, and the migration notebook applies the change so you don't need to re-index.
+
+Most of the other changes we made are removal of fields that are no longer used or are out of scope. For example, we removed the UMAP step that generates x/y coordinates for the entities - new indexes will not produce these columns, but they won't hurt anything if they are in your existing tables.
+
+## API
+We have removed the multi-search variant from each search method in the API.
+
+## Config
+
+We did make several changes to the configuration model. The best way forward is to re-run `init`, which we always recommend for minor and major version bumps.
+
+This is a summary of changes:
+- Removed fnllm as underlying model manager, so the model types "openai_chat", "azure_openai_chat", "openai_embedding", and "azure_openai_embedding" are all invalid. Use "chat" or "embedding".
+- fnllm also had an experimental rate limiting "auto" setting, which is no longer allowed. Use `null` in your config as a default, or set explicit limits to tpm/rpm.
+- LiteLLM does require a model_provider, so add yours as appropriate. For example, if you previously used "openai_chat" for your model type, this would be "openai", and for "azure_openai_chat" this would be "azure".
+- Collapsed the `vector_store` dict into a single root-level object. This is because we no longer support multi-search, and this dict required a lot of downstream complexity for that single use case.
+- Removed the `outputs` block that was also only used for multi-search.
+- Most workflows had an undocumented `strategy` config dict that allowed fine tuning of internal settings. These fine tunings are never used and had associated complexity, so we removed it.
+- Vector store configuration now allows custom schema per embedded field. This overrides the need for the `container_name` prefix, which caused confusion anyway. Now, the default container name will simply be the embedded field name - if you need something custom, add the `index_schema` block and populate as needed.
+- We previously supported the ability to embed any text field in the data model. However, we only ever use text_unit_text, entity_description, and community_full_content, so all others have been removed.
+- Removed the `umap` and `embed_graph` blocks which were only used to add x/y fields to the entities. This fixed a long-standing dependency issue with graspologic. If you need x/y positions, see the [visualization guide](https://microsoft.github.io/graphrag/visualization_guide/) for using gephi.
+- Removed file filtering from input document loading. This was essentially unused.
+- Removed the groupby ability for text chunking. This was intended to allow short documents to be grouped before chunking, but is never used and added a bunch of complexity to the chunking process.
+
+
 # v2
 
 Run the [migration notebook](./docs/examples_notebooks/index_migration_to_v2.ipynb) to convert older tables to the v2 format.

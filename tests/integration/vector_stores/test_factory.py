@@ -6,29 +6,28 @@ These tests will test the VectorStoreFactory class and the creation of each vect
 """
 
 import pytest
+from graphrag_vectors import (
+    VectorStore,
+    VectorStoreFactory,
+    VectorStoreType,
+)
+from graphrag_vectors.azure_ai_search import AzureAISearchVectorStore
+from graphrag_vectors.cosmosdb import CosmosDBVectorStore
+from graphrag_vectors.lancedb import LanceDBVectorStore
 
-from graphrag.config.enums import VectorStoreType
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
-from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
-from graphrag.vector_stores.base import BaseVectorStore
-from graphrag.vector_stores.cosmosdb import CosmosDBVectorStore
-from graphrag.vector_stores.factory import VectorStoreFactory
-from graphrag.vector_stores.lancedb import LanceDBVectorStore
+# register the defaults, since they are lazily registered
+VectorStoreFactory().register(VectorStoreType.LanceDB, LanceDBVectorStore)
+VectorStoreFactory().register(VectorStoreType.AzureAISearch, AzureAISearchVectorStore)
+VectorStoreFactory().register(VectorStoreType.CosmosDB, CosmosDBVectorStore)
 
 
 def test_create_lancedb_vector_store():
     kwargs = {
         "db_uri": "/tmp/lancedb",
     }
-    vector_store = VectorStoreFactory.create_vector_store(
-        vector_store_type=VectorStoreType.LanceDB.value,
-        vector_store_schema_config=VectorStoreSchemaConfig(
-            index_name="test_collection"
-        ),
-        kwargs=kwargs,
-    )
+    vector_store = VectorStoreFactory().create(VectorStoreType.LanceDB, kwargs)
     assert isinstance(vector_store, LanceDBVectorStore)
-    assert vector_store.index_name == "test_collection"
+    assert vector_store.index_name == "vector_index"
 
 
 @pytest.mark.skip(reason="Azure AI Search requires credentials and setup")
@@ -36,13 +35,11 @@ def test_create_azure_ai_search_vector_store():
     kwargs = {
         "url": "https://test.search.windows.net",
         "api_key": "test_key",
+        "index_name": "test_collection",
     }
-    vector_store = VectorStoreFactory.create_vector_store(
-        vector_store_type=VectorStoreType.AzureAISearch.value,
-        vector_store_schema_config=VectorStoreSchemaConfig(
-            index_name="test_collection"
-        ),
-        kwargs=kwargs,
+    vector_store = VectorStoreFactory().create(
+        VectorStoreType.AzureAISearch,
+        kwargs,
     )
     assert isinstance(vector_store, AzureAISearchVectorStore)
 
@@ -52,14 +49,12 @@ def test_create_cosmosdb_vector_store():
     kwargs = {
         "connection_string": "AccountEndpoint=https://test.documents.azure.com:443/;AccountKey=test_key==",
         "database_name": "test_db",
+        "index_name": "test_collection",
     }
 
-    vector_store = VectorStoreFactory.create_vector_store(
-        vector_store_type=VectorStoreType.CosmosDB.value,
-        vector_store_schema_config=VectorStoreSchemaConfig(
-            index_name="test_collection"
-        ),
-        kwargs=kwargs,
+    vector_store = VectorStoreFactory().create(
+        VectorStoreType.CosmosDB,
+        kwargs,
     )
 
     assert isinstance(vector_store, CosmosDBVectorStore)
@@ -69,20 +64,18 @@ def test_register_and_create_custom_vector_store():
     """Test registering and creating a custom vector store type."""
     from unittest.mock import MagicMock
 
-    # Create a mock that satisfies the BaseVectorStore interface
-    custom_vector_store_class = MagicMock(spec=BaseVectorStore)
+    # Create a mock that satisfies the VectorStore interface
+    custom_vector_store_class = MagicMock(spec=VectorStore)
     # Make the mock return a mock instance when instantiated
     instance = MagicMock()
     instance.initialized = True
     custom_vector_store_class.return_value = instance
 
-    VectorStoreFactory.register(
+    VectorStoreFactory().register(
         "custom", lambda **kwargs: custom_vector_store_class(**kwargs)
     )
 
-    vector_store = VectorStoreFactory.create_vector_store(
-        vector_store_type="custom", vector_store_schema_config=VectorStoreSchemaConfig()
-    )
+    vector_store = VectorStoreFactory().create("custom", {})
 
     assert custom_vector_store_class.called
     assert vector_store is instance
@@ -90,48 +83,39 @@ def test_register_and_create_custom_vector_store():
     assert vector_store.initialized is True  # type: ignore # Attribute only exists on our mock
 
     # Check if it's in the list of registered vector store types
-    assert "custom" in VectorStoreFactory.get_vector_store_types()
-    assert VectorStoreFactory.is_supported_type("custom")
-
-
-def test_get_vector_store_types():
-    vector_store_types = VectorStoreFactory.get_vector_store_types()
-    # Check that built-in types are registered
-    assert VectorStoreType.LanceDB.value in vector_store_types
-    assert VectorStoreType.AzureAISearch.value in vector_store_types
-    assert VectorStoreType.CosmosDB.value in vector_store_types
+    assert "custom" in VectorStoreFactory()
 
 
 def test_create_unknown_vector_store():
-    with pytest.raises(ValueError, match="Unknown vector store type: unknown"):
-        VectorStoreFactory.create_vector_store(
-            vector_store_type="unknown",
-            vector_store_schema_config=VectorStoreSchemaConfig(),
-        )
+    with pytest.raises(ValueError, match="Strategy 'unknown' is not registered\\."):
+        VectorStoreFactory().create("unknown")
 
 
 def test_is_supported_type():
     # Test built-in types
-    assert VectorStoreFactory.is_supported_type(VectorStoreType.LanceDB.value)
-    assert VectorStoreFactory.is_supported_type(VectorStoreType.AzureAISearch.value)
-    assert VectorStoreFactory.is_supported_type(VectorStoreType.CosmosDB.value)
+    assert VectorStoreType.LanceDB in VectorStoreFactory()
+    assert VectorStoreType.AzureAISearch in VectorStoreFactory()
+    assert VectorStoreType.CosmosDB in VectorStoreFactory()
 
     # Test unknown type
-    assert not VectorStoreFactory.is_supported_type("unknown")
+    assert "unknown" not in VectorStoreFactory()
 
 
 def test_register_class_directly_works():
-    """Test that registering a class directly works (VectorStoreFactory allows this)."""
-    from graphrag.vector_stores.base import BaseVectorStore
+    """Test that registering a class directly works."""
+    from graphrag_vectors import VectorStore
 
-    class CustomVectorStore(BaseVectorStore):
+    class CustomVectorStore(VectorStore):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
 
         def connect(self, **kwargs):
             pass
 
-        def load_documents(self, documents, overwrite=True):
+        def create_index(self, **kwargs):
+            pass
+
+        def load_documents(self, documents):
             pass
 
         def similarity_search_by_vector(self, query_embedding, k=10, **kwargs):
@@ -140,25 +124,21 @@ def test_register_class_directly_works():
         def similarity_search_by_text(self, text, text_embedder, k=10, **kwargs):
             return []
 
-        def filter_by_id(self, include_ids):
-            return {}
-
         def search_by_id(self, id):
-            from graphrag.vector_stores.base import VectorStoreDocument
+            from graphrag_vectors import VectorStoreDocument
 
-            return VectorStoreDocument(id=id, text="test", vector=None)
+            return VectorStoreDocument(id=id, vector=None)
 
-    # VectorStoreFactory allows registering classes directly (no TypeError)
-    VectorStoreFactory.register("custom_class", CustomVectorStore)
+    # VectorStoreFactory() allows registering classes directly (no TypeError)
+    VectorStoreFactory().register("custom_class", CustomVectorStore)
 
     # Verify it was registered
-    assert "custom_class" in VectorStoreFactory.get_vector_store_types()
-    assert VectorStoreFactory.is_supported_type("custom_class")
+    assert "custom_class" in VectorStoreFactory()
 
     # Test creating an instance
-    vector_store = VectorStoreFactory.create_vector_store(
-        vector_store_type="custom_class",
-        vector_store_schema_config=VectorStoreSchemaConfig(),
+    vector_store = VectorStoreFactory().create(
+        "custom_class",
+        {},
     )
 
     assert isinstance(vector_store, CustomVectorStore)

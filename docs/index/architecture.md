@@ -6,24 +6,25 @@
 
 In order to support the GraphRAG system, the outputs of the indexing engine (in the Default Configuration Mode) are aligned to a knowledge model we call the _GraphRAG Knowledge Model_.
 This model is designed to be an abstraction over the underlying data storage technology, and to provide a common interface for the GraphRAG system to interact with.
-In normal use-cases the outputs of the GraphRAG Indexer would be loaded into a database system, and the GraphRAG's Query Engine would interact with the database using the knowledge model data-store types.
 
 ### Workflows
 
-Because of the complexity of our data indexing tasks, we needed to be able to express our data pipeline as series of multiple, interdependent workflows.
+Below is the core GraphRAG indexing pipeline. Individual workflows are described in detail in the [dataflow](./default_dataflow.md) page.
 
 ```mermaid
 ---
-title: Sample Workflow DAG
+title: Basic GraphRAG
 ---
 stateDiagram-v2
-    [*] --> Prepare
-    Prepare --> Chunk
-    Chunk --> ExtractGraph
-    Chunk --> EmbedDocuments
-    ExtractGraph --> GenerateReports
+    [*] --> LoadDocuments
+    LoadDocuments --> ChunkDocuments
+    ChunkDocuments --> ExtractGraph
+    ChunkDocuments --> ExtractClaims
+    ChunkDocuments --> EmbedChunks
+    ExtractGraph --> DetectCommunities
     ExtractGraph --> EmbedEntities
-    ExtractGraph --> EmbedGraph
+    DetectCommunities --> GenerateReports
+    GenerateReports --> EmbedReports
 ```
 
 ### LLM Caching
@@ -35,11 +36,12 @@ This allows our indexer to be more resilient to network issues, to act idempoten
 
 ### Providers & Factories
 
-Several subsystems within GraphRAG use a factory pattern to register and retrieve provider implementations. This allows deep customization to support models, storage, and so on that you may use but isn't built directly into GraphRAG.
+Several subsystems within GraphRAG use a factory pattern to register and retrieve provider implementations. This allows deep customization to support your own implementations of models, storage, and so on that we haven't built into the core library.
 
 The following subsystems use a factory pattern that allows you to register your own implementations:
 
-- [language model](https://github.com/microsoft/graphrag/blob/main/graphrag/language_model/factory.py) - implement your own `chat` and `embed` methods to use a model provider of choice beyond the built-in OpenAI/Azure support
+- [language model](https://github.com/microsoft/graphrag/blob/main/graphrag/language_model/factory.py) - implement your own `chat` and `embed` methods to use a model provider of choice beyond the built-in LiteLLM wrapper
+- [input reader](https://github.com/microsoft/graphrag/blob/main/graphrag/index/input/factory.py) - implement your own input document reader to support file types other than text, CSV, and JSON
 - [cache](https://github.com/microsoft/graphrag/blob/main/graphrag/cache/factory.py) - create your own cache storage location in addition to the file, blob, and CosmosDB ones we provide
 - [logger](https://github.com/microsoft/graphrag/blob/main/graphrag/logger/factory.py) - create your own log writing location in addition to the built-in file and blob storage
 - [storage](https://github.com/microsoft/graphrag/blob/main/graphrag/storage/factory.py) - create your own storage provider (database, etc.) beyond the file, blob, and CosmosDB ones built in

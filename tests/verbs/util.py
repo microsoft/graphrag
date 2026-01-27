@@ -2,35 +2,12 @@
 # Licensed under the MIT License
 
 import pandas as pd
-from pandas.testing import assert_series_equal
-
-import graphrag.config.defaults as defs
 from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+from graphrag.utils.storage import write_table_to_storage
+from pandas.testing import assert_series_equal
 
 pd.set_option("display.max_columns", None)
-
-FAKE_API_KEY = "NOT_AN_API_KEY"
-
-DEFAULT_CHAT_MODEL_CONFIG = {
-    "api_key": FAKE_API_KEY,
-    "type": defs.DEFAULT_CHAT_MODEL_TYPE.value,
-    "model": defs.DEFAULT_CHAT_MODEL,
-    "model_provider": defs.DEFAULT_MODEL_PROVIDER,
-}
-
-DEFAULT_EMBEDDING_MODEL_CONFIG = {
-    "api_key": FAKE_API_KEY,
-    "type": defs.DEFAULT_EMBEDDING_MODEL_TYPE.value,
-    "model": defs.DEFAULT_EMBEDDING_MODEL,
-    "model_provider": defs.DEFAULT_MODEL_PROVIDER,
-}
-
-DEFAULT_MODEL_CONFIG = {
-    defs.DEFAULT_CHAT_MODEL_ID: DEFAULT_CHAT_MODEL_CONFIG,
-    defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
-}
 
 
 async def create_test_context(storage: list[str] | None = None) -> PipelineRunContext:
@@ -68,7 +45,10 @@ def compare_outputs(
     )
 
     for column in cols:
-        assert column in actual.columns
+        try:
+            assert column in actual.columns
+        except AssertionError:
+            print(f"Column '{column}' not found in actual output.")
         try:
             # dtypes can differ since the test data is read from parquet and our workflow runs in memory
             if column != "id":  # don't check uuids
@@ -79,17 +59,9 @@ def compare_outputs(
                     check_index=False,
                 )
         except AssertionError:
+            print(f"Column '{column}' does not match.")
             print("Expected:")
             print(expected[column])
             print("Actual:")
             print(actual[column])
             raise
-
-
-async def update_document_metadata(metadata: list[str], context: PipelineRunContext):
-    """Takes the default documents and adds the configured metadata columns for later parsing by the text units and final documents workflows."""
-    documents = await load_table_from_storage("documents", context.output_storage)
-    documents["metadata"] = documents[metadata].apply(lambda row: row.to_dict(), axis=1)
-    await write_table_to_storage(
-        documents, "documents", context.output_storage
-    )  # write to the runtime context storage only

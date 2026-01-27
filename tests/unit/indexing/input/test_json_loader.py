@@ -1,81 +1,71 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.enums import InputFileType
-from graphrag.config.models.input_config import InputConfig
-from graphrag.config.models.storage_config import StorageConfig
-from graphrag.index.input.factory import create_input
-from graphrag.utils.api import create_storage_from_config
+from graphrag_input import InputConfig, InputType, create_input_reader
+from graphrag_storage import StorageConfig, create_storage
 
 
 async def test_json_loader_one_file_one_object():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-json-one-object",
-        ),
-        file_type=InputFileType.json,
+        type=InputType.Json,
         file_pattern=".*\\.json$",
     )
-    storage = create_storage_from_config(config.storage)
-    documents = await create_input(config=config, storage=storage)
-    assert documents.shape == (1, 4)
-    assert documents["title"].iloc[0] == "input.json"
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-json-one-object",
+        )
+    )
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
+    assert len(documents) == 1
+    assert documents[0].title == "input.json"
+    assert documents[0].raw_data == {
+        "title": "Hello",
+        "text": "Hi how are you today?",
+    }
 
 
 async def test_json_loader_one_file_multiple_objects():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-json-multiple-objects",
-        ),
-        file_type=InputFileType.json,
-        file_pattern=".*\\.json$",
+        type=InputType.Json,
     )
-    storage = create_storage_from_config(config.storage)
-    documents = await create_input(config=config, storage=storage)
-    print(documents)
-    assert documents.shape == (3, 4)
-    assert documents["title"].iloc[0] == "input.json"
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/one-json-multiple-objects",
+        )
+    )
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
+    assert len(documents) == 3
+    assert documents[0].title == "input.json (0)"
+    assert documents[1].title == "input.json (1)"
 
 
 async def test_json_loader_one_file_with_title():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/one-json-one-object",
-        ),
-        file_type=InputFileType.json,
-        file_pattern=".*\\.json$",
+        type=InputType.Json,
         title_column="title",
     )
-    storage = create_storage_from_config(config.storage)
-    documents = await create_input(config=config, storage=storage)
-    assert documents.shape == (1, 4)
-    assert documents["title"].iloc[0] == "Hello"
-
-
-async def test_json_loader_one_file_with_metadata():
-    config = InputConfig(
-        storage=StorageConfig(
+    storage = create_storage(
+        StorageConfig(
             base_dir="tests/unit/indexing/input/data/one-json-one-object",
-        ),
-        file_type=InputFileType.json,
-        file_pattern=".*\\.json$",
-        title_column="title",
-        metadata=["title"],
+        )
     )
-    storage = create_storage_from_config(config.storage)
-    documents = await create_input(config=config, storage=storage)
-    assert documents.shape == (1, 5)
-    assert documents["metadata"][0] == {"title": "Hello"}
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
+    assert len(documents) == 1
+    assert documents[0].title == "Hello"
 
 
 async def test_json_loader_multiple_files():
     config = InputConfig(
-        storage=StorageConfig(
-            base_dir="tests/unit/indexing/input/data/multiple-jsons",
-        ),
-        file_type=InputFileType.json,
-        file_pattern=".*\\.json$",
+        type=InputType.Json,
     )
-    storage = create_storage_from_config(config.storage)
-    documents = await create_input(config=config, storage=storage)
-    assert documents.shape == (4, 4)
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/multiple-jsons",
+        )
+    )
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
+    assert len(documents) == 4

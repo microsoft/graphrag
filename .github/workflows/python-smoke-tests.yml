@@ -32,7 +32,7 @@ jobs:
     if: github.event.pull_request.draft == false
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.13"]
         os: [ubuntu-latest, windows-latest]
       fail-fast: false # Continue running all jobs even if one fails
     env:
@@ -72,12 +72,11 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
-          uv sync
-          uv pip install gensim
+          uv sync --all-packages
 
       - name: Build
         run: |
-          uv build
+          uv build --all-packages
 
       - name: Install and start Azurite
         shell: bash

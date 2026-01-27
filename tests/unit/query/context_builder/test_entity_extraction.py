@@ -3,34 +3,42 @@
 
 from typing import Any
 
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.data_model.entity import Entity
-from graphrag.data_model.types import TextEmbedder
-from graphrag.language_model.manager import ModelManager
 from graphrag.query.context_builder.entity_extraction import (
     EntityVectorStoreKey,
     map_query_to_entities,
 )
-from graphrag.vector_stores.base import (
-    BaseVectorStore,
+from graphrag_llm.config import LLMProviderType, ModelConfig
+from graphrag_llm.embedding import create_embedding
+from graphrag_vectors import (
+    TextEmbedder,
+    VectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
 )
 
+embedding_model = create_embedding(
+    ModelConfig(
+        type=LLMProviderType.MockLLM,
+        model_provider="openai",
+        model="text-embedding-3-small",
+        mock_responses=[1.0, 1.0, 1.0],
+    )
+)
 
-class MockBaseVectorStore(BaseVectorStore):
+
+class MockVectorStore(VectorStore):
     def __init__(self, documents: list[VectorStoreDocument]) -> None:
-        super().__init__(
-            vector_store_schema_config=VectorStoreSchemaConfig(index_name="mock")
-        )
+        super().__init__(index_name="mock")
         self.documents = documents
 
     def connect(self, **kwargs: Any) -> None:
         raise NotImplementedError
 
-    def load_documents(
-        self, documents: list[VectorStoreDocument], overwrite: bool = True
-    ) -> None:
+    def create_index(self) -> None:
+        raise NotImplementedError
+
+    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
         raise NotImplementedError
 
     def similarity_search_by_vector(
@@ -47,15 +55,13 @@ class MockBaseVectorStore(BaseVectorStore):
         return sorted(
             [
                 VectorStoreSearchResult(
-                    document=document, score=abs(len(text) - len(document.text or ""))
+                    document=document,
+                    score=abs(len(text) - len(str(document.id) or "")),
                 )
                 for document in self.documents
             ],
             key=lambda x: x.score,
         )[:k]
-
-    def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
-        return [document for document in self.documents if document.id in include_ids]
 
     def search_by_id(self, id: str) -> VectorStoreDocument:
         result = self.documents[0]
@@ -93,35 +99,10 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="t22",
-        text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-            for entity in entities
+        text_embedding_vectorstore=MockVectorStore([
+            VectorStoreDocument(id=entity.title, vector=None) for entity in entities
         ]),
-        text_embedder=ModelManager().get_or_create_embedding_model(
-            model_type="mock_embedding", name="mock"
-        ),
-        all_entities_dict={entity.id: entity for entity in entities},
-        embedding_vectorstore_key=EntityVectorStoreKey.ID,
-        k=1,
-        oversample_scaler=1,
-    ) == [
-        Entity(
-            id="c4f93564-4507-4ee4-b102-98add401a965",
-            short_id="sid2",
-            title="t22",
-            rank=4,
-        )
-    ]
-
-    assert map_query_to_entities(
-        query="t22",
-        text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.title, text=entity.title, vector=None)
-            for entity in entities
-        ]),
-        text_embedder=ModelManager().get_or_create_embedding_model(
-            model_type="mock_embedding", name="mock"
-        ),
+        text_embedder=embedding_model,
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.TITLE,
         k=1,
@@ -137,40 +118,10 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="",
-        text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-            for entity in entities
+        text_embedding_vectorstore=MockVectorStore([
+            VectorStoreDocument(id=entity.id, vector=None) for entity in entities
         ]),
-        text_embedder=ModelManager().get_or_create_embedding_model(
-            model_type="mock_embedding", name="mock"
-        ),
-        all_entities_dict={entity.id: entity for entity in entities},
-        embedding_vectorstore_key=EntityVectorStoreKey.ID,
-        k=2,
-    ) == [
-        Entity(
-            id="c4f93564-4507-4ee4-b102-98add401a965",
-            short_id="sid2",
-            title="t22",
-            rank=4,
-        ),
-        Entity(
-            id="8fd6d72a-8e9d-4183-8a97-c38bcc971c83",
-            short_id="sid4",
-            title="t4444",
-            rank=3,
-        ),
-    ]
-
-    assert map_query_to_entities(
-        query="",
-        text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-            for entity in entities
-        ]),
-        text_embedder=ModelManager().get_or_create_embedding_model(
-            model_type="mock_embedding", name="mock"
-        ),
+        text_embedder=embedding_model,
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.TITLE,
         k=2,

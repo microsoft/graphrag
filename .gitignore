@@ -22,6 +22,8 @@ output/lancedb
 venv/
 .conda
 .tmp
+packages/graphrag-llm/notebooks/metrics
+packages/graphrag-llm/notebooks/cache
 
 .env
 build.zip
@@ -58,3 +60,6 @@ docsite/
 
 # Jupyter notebook
 .ipynb_checkpoints/
+
+# Root build assets
+packages/*/LICENSE

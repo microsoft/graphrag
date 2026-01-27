@@ -1,7 +1,7 @@
 [project]
-name = "graphrag"
-# Maintainers: do not change the version here manually, use ./scripts/release.sh
-version = "2.7.1"
+name = "graphrag-monorepo"
+classifiers = ["Private :: Do Not Upload"]
+version = "0.0.0"
 description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
@@ -21,90 +21,46 @@ authors = [
     {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
     {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
 ]
-license = "MIT"
-readme = "README.md"
-requires-python = ">=3.10,<3.13"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-]
-
-dependencies = [
-    "environs>=11.0.0",
-    # Vector Stores
-    "azure-search-documents>=11.5.2",
-    "lancedb>=0.17.0",
-    # Async IO
-    "aiofiles>=24.1.0",
-    # LLM
-    "fnllm[azure,openai]>=0.4.1",
-    "json-repair>=0.30.3",
-    "openai>=1.68.0",
-    "nltk==3.9.1",
-    "tiktoken>=0.11.0",
-    # Data-Science
-    "numpy>=1.25.2",
-    "graspologic>=3.4.1",
-    "networkx>=3.4.2",
-    "pandas>=2.2.3,<3",
-    "pyarrow>=17.0.0",
-    "umap-learn>=0.5.6",
-    # Configuration
-    "pyyaml>=6.0.2",
-    "python-dotenv>=1.0.1",
-    "pydantic>=2.10.3",
-    "devtools>=0.12.2",
-    "typing-extensions>=4.12.2",
-    # Azure
-    "azure-cosmos>=4.9.0",
-    "azure-identity>=1.19.0",
-    "azure-storage-blob>=12.24.0",
-    "future>=1.0.0", # Needed until graspologic fixes their dependency
-    "typer>=0.16.0",
-    "tqdm>=4.67.1",
-    "textblob>=0.18.0.post0",
-    "spacy>=3.8.4",
-    "litellm>=1.77.1",
-]
+requires-python = ">=3.11,<3.14"
 
 [dependency-groups]
 dev = [
-    "coverage>=7.6.9",
-    "ipykernel>=6.29.5",
-    "jupyter>=1.1.1",
-    "nbconvert>=7.16.4",
-    "poethepoet>=0.31.1",
-    "pandas-stubs>=2.3.0.250703",
-    "pyright>=1.1.390",
-    "pytest>=8.3.4",
-    "pytest-asyncio>=0.24.0",
-    "pytest-timeout>=2.3.1",
-    "ruff>=0.8.2",
-    "semversioner>=2.0.5",
-    "update-toml>=0.2.1",
-    "deptry>=0.21.1",
-    "mkdocs-material>=9.5.48",
-    "mkdocs-jupyter>=0.25.1",
-    "mkdocs-exclude-search>=0.6.6",
-    "pytest-dotenv>=0.5.2",
-    "mkdocs-typer>=0.0.3",
+    "coverage~=7.6",
+    "deptry~=0.21",
+    "ipykernel~=6.29",
+    "jupyter~=1.1",
+    "mkdocs-material~=9.5",
+    "mkdocs-jupyter~=0.25",
+    "mkdocs-exclude-search~=0.6",
+    "mkdocs-typer~=0.0.3",
+    "nbconvert~=7.16",
+    "pandas-stubs~=2.3",
+    "poethepoet~=0.31",
+    "pyright~=1.1",
+    "pytest~=8.3",
+    "pytest-asyncio~=0.24",
+    "pytest-dotenv~=0.5",
+    "pytest-timeout~=2.3",
+    "ruff~=0.8",
+    "semversioner~=2.0",
+    "update-toml~=0.2",
+    "pytest-xdist[psutil]~=3.8.0",
 ]
 
-[project.scripts]
-graphrag = "graphrag.cli.main:app"
+[tool.uv]
+package = false
 
-[project.urls]
-Source = "https://github.com/microsoft/graphrag"
+[tool.uv.workspace]
+members = ["packages/*"]
 
-[build-system]
-requires = ["setuptools>=64", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-include = ["graphrag*"]
-exclude = ["examples_notebooks*", "tests*"]
+[tool.uv.sources]
+graphrag-chunking = { workspace = true }
+graphrag-common = { workspace = true }
+graphrag-input = { workspace = true }
+graphrag-storage = { workspace = true }
+graphrag-cache = { workspace = true }
+graphrag-vectors = { workspace = true }
+graphrag-llm = { workspace = true }
 
 # Keep poethepoet for task management to minimize changes
 [tool.poe.tasks]
@@ -114,9 +70,19 @@ _ruff_check = 'ruff check .'
 _pyright = "pyright"
 _convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/local_search.ipynb'
 _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
+_copy_build_assets = "python -m scripts.copy_build_assets"
 _semversioner_release = "semversioner release"
 _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
-_semversioner_update_toml_version = "update-toml update --path project.version --value $(uv run semversioner current-version)"
+# Add more update toml tasks as packages are added
+_semversioner_update_graphrag_toml_version = "update-toml update --file packages/graphrag/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_chunking_toml_version = "update-toml update --file packages/graphrag-chunking/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_common_toml_version = "update-toml update --file packages/graphrag-common/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_storage_toml_version = "update-toml update --file packages/graphrag-storage/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_cache_toml_version = "update-toml update --file packages/graphrag-cache/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_input_toml_version = "update-toml update --file packages/graphrag-input/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_vectors_toml_version = "update-toml update --file packages/graphrag-vectors/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_graphrag_llm_toml_version = "update-toml update --file packages/graphrag-llm/pyproject.toml --path project.version --value $(uv run semversioner current-version)"
+_semversioner_update_workspace_dependency_versions = "python -m scripts.update_workspace_dependency_versions"
 semversioner_add = "semversioner add-change"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check'
@@ -126,7 +92,7 @@ _test_all = "coverage run -m pytest ./tests"
 test_unit = "pytest ./tests/unit"
 test_integration = "pytest ./tests/integration"
 test_smoke = "pytest ./tests/smoke"
-test_notebook = "pytest ./tests/notebook"
+test_notebook = "pytest -n auto ./tests/notebook"
 test_verbs = "pytest ./tests/verbs"
 index = "python -m graphrag index"
 update = "python -m graphrag update"
@@ -137,12 +103,27 @@ prompt_tune = "python -m graphrag prompt-tune"
 test_only = "pytest -s -k"
 serve_docs = "mkdocs serve"
 build_docs = "mkdocs build"
+_build_packages = "uv build --all-packages"
+_sync = "uv sync"
+
+[[tool.poe.tasks.build]]
+sequence = ['_copy_build_assets', '_build_packages']
 
 [[tool.poe.tasks.release]]
 sequence = [
     '_semversioner_release',
     '_semversioner_changelog',
-    '_semversioner_update_toml_version',
+    # Add more update toml tasks as packages are added
+    '_semversioner_update_graphrag_toml_version',
+    '_semversioner_update_graphrag_common_toml_version',
+    '_semversioner_update_graphrag_chunking_toml_version',
+    '_semversioner_update_graphrag_input_toml_version',
+    '_semversioner_update_graphrag_storage_toml_version',
+    '_semversioner_update_graphrag_cache_toml_version',
+    "_semversioner_update_graphrag_vectors_toml_version",
+    '_semversioner_update_graphrag_llm_toml_version',
+    '_semversioner_update_workspace_dependency_versions',
+    '_sync',
 ]
 ignore_fail = 'return_non_zero'
 
@@ -255,7 +236,14 @@ convention = "numpy"
 
 # https://github.com/microsoft/pyright/blob/9f81564a4685ff5c55edd3959f9b39030f590b2f/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
-include = ["graphrag", "tests", "examples_notebooks"]
+include = [
+    "packages/graphrag/graphrag", 
+    "packages/graphrag-common/graphrag_common", 
+    "packages/graphrag-storage/graphrag_storage", 
+    "packages/graphrag-cache/graphrag_cache",
+    "packages/graphrag-llm/graphrag_llm",
+    "tests"
+]
 exclude = ["**/node_modules", "**/__pycache__"]
 
 [tool.pytest.ini_options]

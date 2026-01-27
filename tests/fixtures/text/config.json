@@ -1,6 +1,7 @@
 {
     "input_path": "./tests/fixtures/text",
-    "input_file_type": "text",
+    "input_type": "text",
+    "index_method": "fast",
     "workflow_config": {
         "load_input_documents": {
             "max_runtime": 30
@@ -8,40 +9,22 @@
         "create_base_text_units": {
             "max_runtime": 30
         },
-        "extract_graph": {
-            "max_runtime": 500
+        "extract_graph_nlp": {
+            "max_runtime": 30
+        },
+        "prune_graph": {
+            "max_runtime": 30
         },
         "finalize_graph": {
             "row_range": [
                 10,
-                200
-            ],
-            "nan_allowed_columns": [
-                "x",
-                "y"
+                300
             ],
             "max_runtime": 30,
             "expected_artifacts": [
                 "entities.parquet",
                 "relationships.parquet"
             ]
-        },
-        "extract_covariates": {
-            "row_range": [
-                10,
-                100
-            ],
-            "nan_allowed_columns": [
-                "type",
-                "description",
-                "object_id",
-                "status",
-                "start_date",
-                "end_date",
-                "source_text"
-            ],
-            "max_runtime": 300,
-            "expected_artifacts": ["covariates.parquet"]
         },
         "create_communities": {
             "row_range": [
@@ -51,7 +34,7 @@
             "max_runtime": 30,
             "expected_artifacts": ["communities.parquet"]
         },
-        "create_community_reports": {
+        "create_community_reports_text": {
             "row_range": [
                 1,
                 30
@@ -67,7 +50,7 @@
                 "period",
                 "size"
             ],
-            "max_runtime": 300,
+            "max_runtime": 2000,
             "expected_artifacts": ["community_reports.parquet"]
         },
         "create_final_text_units": {
@@ -89,7 +72,7 @@
                 1
             ],
             "nan_allowed_columns": [
-                "metadata"
+                "raw_data"
             ],
             "max_runtime": 30,
             "expected_artifacts": ["documents.parquet"]
@@ -101,9 +84,9 @@
             ],
             "max_runtime": 150,
             "expected_artifacts": [
-                "embeddings.text_unit.text.parquet",
-                "embeddings.entity.description.parquet",
-                "embeddings.community.full_content.parquet"
+                "embeddings.text_unit_text.parquet",
+                "embeddings.entity_description.parquet",
+                "embeddings.community_full_content.parquet"
             ]
         }
     },

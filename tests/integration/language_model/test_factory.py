@@ -6,92 +6,99 @@
 These tests will test the LLMFactory class and the creation of custom and provided LLMs.
 """
 
-from collections.abc import AsyncGenerator, Generator
-from typing import Any
+from typing import TYPE_CHECKING, Any, Unpack
 
-from graphrag.language_model.factory import ModelFactory
-from graphrag.language_model.manager import ModelManager
-from graphrag.language_model.response.base import (
-    BaseModelOutput,
-    BaseModelResponse,
-    ModelResponse,
+from graphrag_llm.completion import (
+    LLMCompletion,
+    create_completion,
+    register_completion,
 )
+from graphrag_llm.config import ModelConfig
+from graphrag_llm.embedding import LLMEmbedding, create_embedding, register_embedding
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator, Iterator
+
+    from graphrag_llm.metrics import MetricsStore
+    from graphrag_llm.tokenizer import Tokenizer
+    from graphrag_llm.types import (
+        LLMCompletionArgs,
+        LLMCompletionChunk,
+        LLMCompletionResponse,
+        LLMEmbeddingArgs,
+        LLMEmbeddingResponse,
+        ResponseFormat,
+    )
 
 
-async def test_create_custom_chat_model():
-    class CustomChatModel:
+def test_create_custom_chat_model():
+    class CustomChatModel(LLMCompletion):
         config: Any
 
         def __init__(self, **kwargs):
             pass
 
-        async def achat(
-            self, prompt: str, history: list | None = None, **kwargs: Any
-        ) -> ModelResponse:
-            return BaseModelResponse(output=BaseModelOutput(content="content"))
+        def supports_structured_response(self) -> bool:
+            return True
 
-        def chat(
-            self, prompt: str, history: list | None = None, **kwargs: Any
-        ) -> ModelResponse:
-            return BaseModelResponse(
-                output=BaseModelOutput(
-                    content="content", full_response={"key": "value"}
-                )
-            )
+        def completion(
+            self,
+            /,
+            **kwargs: Unpack["LLMCompletionArgs[ResponseFormat]"],
+        ) -> "LLMCompletionResponse[ResponseFormat] | Iterator[LLMCompletionChunk]": ...
 
-        async def achat_stream(
-            self, prompt: str, history: list | None = None, **kwargs: Any
-        ) -> AsyncGenerator[str, None]:
-            yield ""
+        async def completion_async(
+            self,
+            /,
+            **kwargs: Unpack["LLMCompletionArgs[ResponseFormat]"],
+        ) -> (
+            "LLMCompletionResponse[ResponseFormat] | AsyncIterator[LLMCompletionChunk]"
+        ): ...
 
-        def chat_stream(
-            self, prompt: str, history: list | None = None, **kwargs: Any
-        ) -> Generator[str, None]: ...
+        @property
+        def metrics_store(self) -> "MetricsStore": ...
 
-    ModelFactory.register_chat("custom_chat", CustomChatModel)
-    model = ModelManager().get_or_create_chat_model("custom", "custom_chat")
+        @property
+        def tokenizer(self) -> "Tokenizer": ...
+
+    register_completion("custom_chat", CustomChatModel)
+
+    model = create_completion(
+        ModelConfig(
+            type="custom_chat",
+            model_provider="custom_provider",
+            model="custom_chat_model",
+        )
+    )
     assert isinstance(model, CustomChatModel)
-    response = await model.achat("prompt")
-    assert response.output.content == "content"
-    assert response.output.full_response is None
-
-    response = model.chat("prompt")
-    assert response.output.content == "content"
-    assert response.output.full_response == {"key": "value"}
 
 
-async def test_create_custom_embedding_llm():
-    class CustomEmbeddingModel:
-        config: Any
+def test_create_custom_embedding_llm():
+    class CustomEmbeddingModel(LLMEmbedding):
+        def __init__(self, **kwargs): ...
 
-        def __init__(self, **kwargs):
-            pass
+        def embedding(
+            self, /, **kwargs: Unpack["LLMEmbeddingArgs"]
+        ) -> "LLMEmbeddingResponse": ...
 
-        async def aembed(self, text: str, **kwargs) -> list[float]:
-            return [1.0]
+        async def embedding_async(
+            self, /, **kwargs: Unpack["LLMEmbeddingArgs"]
+        ) -> "LLMEmbeddingResponse": ...
 
-        def embed(self, text: str, **kwargs) -> list[float]:
-            return [1.0]
+        @property
+        def metrics_store(self) -> "MetricsStore": ...
 
-        async def aembed_batch(
-            self, text_list: list[str], **kwargs
-        ) -> list[list[float]]:
-            return [[1.0]]
+        @property
+        def tokenizer(self) -> "Tokenizer": ...
 
-        def embed_batch(self, text_list: list[str], **kwargs) -> list[list[float]]:
-            return [[1.0]]
+    register_embedding("custom_embedding", CustomEmbeddingModel)
 
-    ModelFactory.register_embedding("custom_embedding", CustomEmbeddingModel)
-    llm = ModelManager().get_or_create_embedding_model("custom", "custom_embedding")
-    assert isinstance(llm, CustomEmbeddingModel)
-    response = await llm.aembed("text")
-    assert response == [1.0]
+    model = create_embedding(
+        ModelConfig(
+            type="custom_embedding",
+            model_provider="custom_provider",
+            model="custom_embedding_model",
+        )
+    )
 
-    response = llm.embed("text")
-    assert response == [1.0]
-
-    response = await llm.aembed_batch(["text"])
-    assert response == [[1.0]]
-
-    response = llm.embed_batch(["text"])
-    assert response == [[1.0]]
+    assert isinstance(model, CustomEmbeddingModel)

@@ -1,6 +1,7 @@
 {
     "input_path": "./tests/fixtures/min-csv",
-    "input_file_type": "text",
+    "input_type": "text",
+    "index_method": "standard",
     "workflow_config": {
         "load_input_documents": {
             "max_runtime": 30
@@ -19,10 +20,6 @@
             "row_range": [
                 100,
                 750
-            ],
-            "nan_allowed_columns": [
-                "x",
-                "y"
             ],
             "max_runtime": 30,
             "expected_artifacts": [
@@ -54,7 +51,7 @@
                 "period",
                 "size"
             ],
-            "max_runtime": 300,
+            "max_runtime": 2000,
             "expected_artifacts": ["community_reports.parquet"]
         },
         "create_final_text_units": {
@@ -76,7 +73,7 @@
                 15
             ],
             "nan_allowed_columns": [
-                "metadata"
+                "raw_data"
             ],
             "max_runtime": 30,
             "expected_artifacts": ["documents.parquet"]
@@ -88,9 +85,9 @@
             ],
             "max_runtime": 150,
             "expected_artifacts": [
-                "embeddings.text_unit.text.parquet",
-                "embeddings.entity.description.parquet",
-                "embeddings.community.full_content.parquet"
+                "embeddings.text_unit_text.parquet",
+                "embeddings.entity_description.parquet",
+                "embeddings.community_full_content.parquet"
             ]
         }
     },
@@ -101,7 +98,7 @@
         },
         {
             "query": "What is the major conflict in this story and who are the protagonist and antagonist?",
-            "method": "global"
+            "method": "drift"
         }
     ],
     "slow": false

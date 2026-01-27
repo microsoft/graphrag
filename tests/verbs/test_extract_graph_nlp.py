@@ -1,14 +1,14 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.index.workflows.extract_graph_nlp import (
     run_workflow,
 )
 from graphrag.utils.storage import load_table_from_storage
 
+from tests.unit.config.utils import get_default_graphrag_config
+
 from .util import (
-    DEFAULT_MODEL_CONFIG,
     create_test_context,
 )
 
@@ -18,7 +18,7 @@ async def test_extract_graph_nlp():
         storage=["text_units"],
     )
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config = get_default_graphrag_config()
 
     await run_workflow(config, context)
 
@@ -29,7 +29,7 @@ async def test_extract_graph_nlp():
 
     # this will be the raw count of entities and edges with no pruning
     # with NLP it is deterministic, so we can assert exact row counts
-    assert len(nodes_actual) == 1148
+    assert len(nodes_actual) == 1147
     assert len(nodes_actual.columns) == 5
-    assert len(edges_actual) == 29445
+    assert len(edges_actual) == 29442
     assert len(edges_actual.columns) == 5

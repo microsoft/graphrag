@@ -13,7 +13,7 @@ def create_report_list_ui(sv: SessionVariables):
         sv.community_reports.value,
         height=1000,
         hide_index=True,
-        column_order=["id", "title"],
+        column_order=["human_readable_id", "title"],
         selection_mode="single-row",
         on_select="rerun",
     )

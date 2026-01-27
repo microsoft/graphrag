@@ -5,15 +5,13 @@ import re
 from typing import Any, cast
 
 import yaml
-
-from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.init_content import INIT_YAML
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 
 def test_init_yaml():
     data = yaml.load(INIT_YAML, Loader=yaml.FullLoader)
-    config = create_graphrag_config(data)
+    config = GraphRagConfig(**data)
     GraphRagConfig.model_validate(config, strict=True)
 
 
@@ -27,5 +25,5 @@ def test_init_yaml_uncommented():
 
     content = "\n".join([uncomment_line(line) for line in lines])
     data = yaml.load(content, Loader=yaml.FullLoader)
-    config = create_graphrag_config(data)
+    config = GraphRagConfig(**data)
     GraphRagConfig.model_validate(config, strict=True)

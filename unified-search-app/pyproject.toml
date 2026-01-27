@@ -6,26 +6,26 @@ authors = [
     {name = "GraphRAG team"},
 ]
 readme = "README.md"
-requires-python = ">=3.10,<3.12"
+requires-python = ">=3.11,<3.14"
 
 dependencies = [
     "streamlit==1.43.0",
-    "azure-search-documents>=11.4.0",
-    "azure-storage-blob>=12.20.0",
-    "azure-identity>=1.16.0",
-    "graphrag==2.0.0",
-    "altair>=5.3.0",
-    "streamlit-agraph>=0.0.45",
-    "st-tabs>=0.1.1",
-    "spacy>=3.8.4,<4.0.0",
+    "azure-search-documents~=11.4",
+    "azure-storage-blob~=12.20",
+    "azure-identity~=1.16",
+    "graphrag==2.5.0",
+    "altair~=5.3",
+    "streamlit-agraph~=0.0.45",
+    "st-tabs~=0.1",
+    "spacy~=3.8",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "poethepoet>=0.26.1",
-    "ipykernel>=6.29.4",
-    "pyright>=1.1.349",
-    "ruff>=0.4.7",
+    "poethepoet~=0.26",
+    "ipykernel~=6.29",
+    "pyright~=1.1",
+    "ruff~=0.8",
 ]
 
 [build-system]

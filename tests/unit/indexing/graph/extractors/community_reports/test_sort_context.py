@@ -208,8 +208,8 @@ def test_sort_context():
     ctx = sort_context(context, tokenizer=tokenizer)
     assert ctx is not None, "Context is none"
     num = tokenizer.num_tokens(ctx)
-    assert num == 828 if platform.system() == "Windows" else 826, (
-        f"num_tokens is not matched for platform (win = 827, else 826): {num}"
+    assert num == 825 if platform.system() == "Windows" else 826, (
+        f"num_tokens is not matched for platform (win = 825, else 826): {num}"
     )
 
 

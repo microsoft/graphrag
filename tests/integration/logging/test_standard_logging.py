@@ -4,10 +4,12 @@
 """Tests for standard logging functionality."""
 
 import logging
+import os
 import tempfile
 from pathlib import Path
 
 from graphrag.logger.standard_logging import DEFAULT_LOG_FILENAME, init_loggers
+
 from tests.unit.config.utils import get_default_graphrag_config
 
 
@@ -37,7 +39,11 @@ def test_logger_hierarchy():
 def test_init_loggers_file_config():
     """Test that init_loggers works with file configuration."""
     with tempfile.TemporaryDirectory() as temp_dir:
-        config = get_default_graphrag_config(root_dir=temp_dir)
+        # Need to manually change cwd since we are not using load_config
+        # to create graphrag config.
+        cwd = Path.cwd()
+        os.chdir(temp_dir)
+        config = get_default_graphrag_config()
 
         # call init_loggers with file config
         init_loggers(config=config)
@@ -67,12 +73,17 @@ def test_init_loggers_file_config():
             if isinstance(handler, logging.FileHandler):
                 handler.close()
         logger.handlers.clear()
+        os.chdir(cwd)
 
 
 def test_init_loggers_file_verbose():
     """Test that init_loggers works with verbose flag."""
     with tempfile.TemporaryDirectory() as temp_dir:
-        config = get_default_graphrag_config(root_dir=temp_dir)
+        # Need to manually change cwd since we are not using load_config
+        # to create graphrag config.
+        cwd = Path.cwd()
+        os.chdir(temp_dir)
+        config = get_default_graphrag_config()
 
         # call init_loggers with file config
         init_loggers(config=config, verbose=True)
@@ -95,12 +106,17 @@ def test_init_loggers_file_verbose():
             if isinstance(handler, logging.FileHandler):
                 handler.close()
         logger.handlers.clear()
+        os.chdir(cwd)
 
 
 def test_init_loggers_custom_filename():
     """Test that init_loggers works with custom filename."""
     with tempfile.TemporaryDirectory() as temp_dir:
-        config = get_default_graphrag_config(root_dir=temp_dir)
+        # Need to manually change cwd since we are not using load_config
+        # to create graphrag config.
+        cwd = Path.cwd()
+        os.chdir(temp_dir)
+        config = get_default_graphrag_config()
 
         # call init_loggers with file config
         init_loggers(config=config, filename="custom-log.log")
@@ -116,3 +132,4 @@ def test_init_loggers_custom_filename():
             if isinstance(handler, logging.FileHandler):
                 handler.close()
         logger.handlers.clear()
+        os.chdir(cwd)

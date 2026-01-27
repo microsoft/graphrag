@@ -8,8 +8,7 @@ import sys
 from datetime import datetime
 
 import pytest
-
-from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
+from graphrag_storage.azure_cosmos_storage import AzureCosmosStorage
 
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
@@ -22,15 +21,14 @@ if not sys.platform.startswith("win"):
 
 
 async def test_find():
-    storage = CosmosDBPipelineStorage(
+    storage = AzureCosmosStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        base_dir="testfind",
+        database_name="testfind",
         container_name="testfindcontainer",
     )
     try:
         try:
             items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
-            items = [item[0] for item in items]
             assert items == []
 
             json_content = {
@@ -40,7 +38,6 @@ async def test_find():
                 "christmas.json", json.dumps(json_content), encoding="utf-8"
             )
             items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
-            items = [item[0] for item in items]
             assert items == ["christmas.json"]
 
             json_content = {
@@ -48,7 +45,6 @@ async def test_find():
             }
             await storage.set("test.json", json.dumps(json_content), encoding="utf-8")
             items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
-            items = [item[0] for item in items]
             assert items == ["christmas.json", "test.json"]
 
             output = await storage.get("test.json")
@@ -68,22 +64,22 @@ async def test_find():
 
 
 async def test_child():
-    storage = CosmosDBPipelineStorage(
+    storage = AzureCosmosStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        base_dir="testchild",
+        database_name="testchild",
         container_name="testchildcontainer",
     )
     try:
         child_storage = storage.child("child")
-        assert type(child_storage) is CosmosDBPipelineStorage
+        assert type(child_storage) is AzureCosmosStorage
     finally:
         await storage.clear()
 
 
 async def test_clear():
-    storage = CosmosDBPipelineStorage(
+    storage = AzureCosmosStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        base_dir="testclear",
+        database_name="testclear",
         container_name="testclearcontainer",
     )
     try:
@@ -111,9 +107,9 @@ async def test_clear():
 
 
 async def test_get_creation_date():
-    storage = CosmosDBPipelineStorage(
+    storage = AzureCosmosStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
-        base_dir="testclear",
+        database_name="testclear",
         container_name="testclearcontainer",
     )
     try:

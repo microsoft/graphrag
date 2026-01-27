@@ -1,0 +1,70 @@
+[project]
+name = "graphrag"
+# Maintainers: do not change the version here manually
+version = "2.7.1"
+description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
+authors = [
+    {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
+    {name = "Andrés Morales Esquivel", email = "andresmor@microsoft.com"},
+    {name = "Chris Trevino", email = "chtrevin@microsoft.com"},
+    {name = "David Tittsworth", email = "datittsw@microsoft.com"},
+    {name = "Dayenne de Souza", email = "ddesouza@microsoft.com"},
+    {name = "Derek Worthen", email = "deworthe@microsoft.com"},
+    {name = "Gaudy Blanco Meneses", email = "gaudyb@microsoft.com"},
+    {name = "Ha Trinh", email = "trinhha@microsoft.com"},
+    {name = "Jonathan Larson", email = "jolarso@microsoft.com"},
+    {name = "Josh Bradley", email = "joshbradley@microsoft.com"},
+    {name = "Kate Lytvynets", email = "kalytv@microsoft.com"},
+    {name = "Kenny Zhang", email = "zhangken@microsoft.com"},
+    {name = "Mónica Carvajal"},
+    {name = "Nathan Evans", email = "naevans@microsoft.com"},
+    {name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com"},
+    {name = "Sarah Smith", email = "smithsarah@microsoft.com"},
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+dependencies = [
+    "azure-identity~=1.19",
+    "azure-search-documents~=11.5",
+    "azure-storage-blob~=12.24",
+    "devtools~=0.12",
+    "graphrag-cache==2.7.1",
+    "graphrag-common==2.7.1",
+    "graphrag-input==2.7.1",
+    "graphrag-llm==2.7.1",
+    "graphrag-storage==2.7.1",
+    "graphrag-vectors==2.7.1",
+    "graspologic-native~=1.2",
+    "json-repair~=0.30",
+    "networkx~=3.4",
+    "nltk==3.9.1",
+    "numpy~=2.1",
+    "pandas~=2.3",
+    "pyarrow~=22.0",
+    "pydantic~=2.10",
+    "spacy~=3.8",
+    "blis~=1.0",
+    "textblob~=0.18",
+    "tqdm~=4.67",
+    "typing-extensions~=4.12",
+    "typer~=0.16",
+]
+
+[project.scripts]
+graphrag = "graphrag.cli.main:app"
+
+[project.urls]
+Source = "https://github.com/microsoft/graphrag"
+
+[build-system]
+requires = ["hatchling>=1.27.0,<2.0.0"]
+build-backend = "hatchling.build"
+

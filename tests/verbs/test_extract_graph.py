@@ -1,15 +1,14 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.config.enums import ModelType
 from graphrag.index.workflows.extract_graph import (
     run_workflow,
 )
 from graphrag.utils.storage import load_table_from_storage
 
+from tests.unit.config.utils import get_default_graphrag_config
+
 from .util import (
-    DEFAULT_MODEL_CONFIG,
     create_test_context,
 )
 
@@ -39,27 +38,19 @@ async def test_extract_graph():
         storage=["text_units"],
     )
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-    extract_claims_llm_settings = config.get_language_model_config(
-        config.extract_graph.model_id
+    config = get_default_graphrag_config()
+    config.completion_models["default_completion_model"].type = "mock"
+    config.completion_models[
+        "default_completion_model"
+    ].mock_responses = MOCK_LLM_ENTITY_RESPONSES
+
+    summarize_llm_settings = config.get_completion_model_config(
+        config.summarize_descriptions.completion_model_id
     ).model_dump()
-    extract_claims_llm_settings["type"] = ModelType.MockChat
-    extract_claims_llm_settings["responses"] = MOCK_LLM_ENTITY_RESPONSES
-    config.extract_graph.strategy = {
-        "type": "graph_intelligence",
-        "llm": extract_claims_llm_settings,
-    }
-    summarize_llm_settings = config.get_language_model_config(
-        config.summarize_descriptions.model_id
-    ).model_dump()
-    summarize_llm_settings["type"] = ModelType.MockChat
-    summarize_llm_settings["responses"] = MOCK_LLM_SUMMARIZATION_RESPONSES
-    config.summarize_descriptions.strategy = {
-        "type": "graph_intelligence",
-        "llm": summarize_llm_settings,
-        "max_input_tokens": 1000,
-        "max_summary_length": 100,
-    }
+    summarize_llm_settings["type"] = "mock"
+    summarize_llm_settings["mock_responses"] = MOCK_LLM_SUMMARIZATION_RESPONSES
+    config.summarize_descriptions.max_input_tokens = 1000
+    config.summarize_descriptions.max_length = 100
 
     await run_workflow(config, context)
 

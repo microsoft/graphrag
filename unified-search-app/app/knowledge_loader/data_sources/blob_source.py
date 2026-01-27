@@ -13,10 +13,8 @@ import streamlit as st
 import yaml
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, ContainerClient
-from knowledge_loader.data_sources.typing import Datasource
-
-from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from knowledge_loader.data_sources.typing import Datasource
 
 from .default import blob_account_name, blob_container_name
 
@@ -115,7 +113,7 @@ class BlobDatasource(Datasource):
             str_settings = settings.read().decode("utf-8")
             config = os.path.expandvars(str_settings)
             settings_yaml = yaml.safe_load(config)
-            graphrag_config = create_graphrag_config(values=settings_yaml)
+            graphrag_config = GraphRagConfig(**settings_yaml)
         except Exception as err:
             if throw_on_missing:
                 error_msg = f"File {file} does not exist"

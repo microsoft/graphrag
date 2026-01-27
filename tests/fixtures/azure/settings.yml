@@ -2,11 +2,10 @@ extract_claims:
   enabled: true
 
 vector_store:
-  default_vector_store:
-    type: "azure_ai_search"
-    url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
-    api_key: ${AZURE_AI_SEARCH_API_KEY}
-    container_name: "azure_ci"
+  type: "azure_ai_search"
+  url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
+  api_key: ${AZURE_AI_SEARCH_API_KEY}
+  container_name: "azure_ci"
 
 input:
   storage:
@@ -14,7 +13,7 @@ input:
     connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
     container_name: azurefixture
     base_dir: input
-  file_type: text
+  type: text
   
 
 cache:

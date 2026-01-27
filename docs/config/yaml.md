@@ -6,12 +6,12 @@ Many of these config values have defaults. Rather than replicate them here, plea
 
 For example:
 
-```
+```bash
 # .env
 GRAPHRAG_API_KEY=some_api_key
 
 # settings.yml
-llm: 
+default_chat_model:
   api_key: ${GRAPHRAG_API_KEY}
 ```
 
@@ -21,54 +21,54 @@ llm:
 
 ### models
 
-This is a dict of model configurations. The dict key is used to reference this configuration elsewhere when a model instance is desired. In this way, you can specify as many different models as you need, and reference them differentially in the workflow steps.
+This is a set of dicts, one for completion model configuration and one for embedding model configuration. The dict keys are used to reference the model configuration elsewhere when a model instance is desired. In this way, you can specify as many different models as you need, and reference them independently in the workflow steps.
 
 For example:
+
 ```yml
-models:
-  default_chat_model:
+completion_models:
+  default_completion_model:
+    model_provider: openai
+    model: gpt-4.1
+    auth_method: api_key
     api_key: ${GRAPHRAG_API_KEY}
-    type: openai_chat
-    model: gpt-4o
-    model_supports_json: true
+
+embedding_models:
   default_embedding_model:
+    model_provider: openai
+    model: text-embedding-3-large
+    auth_method: api_key
     api_key: ${GRAPHRAG_API_KEY}
-    type: openai_embedding
-    model: text-embedding-ada-002
 ```
 
 #### Fields
 
-- `api_key` **str** - The OpenAI API key to use.
-- `auth_type` **api_key|azure_managed_identity** - Indicate how you want to authenticate requests.
-- `type` **chat**|**embedding**|**openai_chat|azure_openai_chat|openai_embedding|azure_openai_embedding|mock_chat|mock_embeddings** - The type of LLM to use.
-- `model_provider` **str|None** - The model provider to use, e.g., openai, azure, anthropic, etc. Required when `type == chat|embedding`. When `type == chat|embedding`, [LiteLLM](https://docs.litellm.ai/) is used under the hood which has support for calling 100+ models. [View LiteLLm basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`). [View Language Model Selection](models.md) for more details and examples on using LiteLLM.
+- `type` **litellm|mock** - The type of LLM provider to use. GraphRAG uses [LiteLLM](https://docs.litellm.ai/) for calling language models.
+- `model_provider` **str** - The model provider to use, e.g., openai, azure, anthropic, etc. [LiteLLM](https://docs.litellm.ai/) is used under the hood which has support for calling 100+ models. [View LiteLLm basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`). [View Language Model Selection](models.md) for more details and examples on using LiteLLM.
 - `model` **str** - The model name.
-- `encoding_model` **str** - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset).
-- `api_base` **str** - The API base url to use.
-- `api_version` **str** - The API version.
-- `deployment_name` **str** - The deployment name to use (Azure).
-- `organization` **str** - The client organization.
-- `proxy` **str** - The proxy URL to use.
-- `audience` **str** - (Azure OpenAI only) The URI of the target Azure resource/service for which a managed identity token is requested. Used if `api_key` is not defined. Default=`https://cognitiveservices.azure.com/.default`
-- `model_supports_json` **bool** - Whether the model supports JSON-mode output.
-- `request_timeout` **float** - The per-request timeout.
-- `tokens_per_minute` **int** - Set a leaky-bucket throttle on tokens-per-minute.
-- `requests_per_minute` **int** - Set a leaky-bucket throttle on requests-per-minute.
-- `retry_strategy` **str** - Retry strategy to use, "native" is the default and uses the strategy built into the OpenAI SDK. Other allowable values include "exponential_backoff", "random_wait", and "incremental_wait".
-- `max_retries` **int** - The maximum number of retries to use.
-- `max_retry_wait` **float** - The maximum backoff time.
-- `concurrent_requests` **int** The number of open requests to allow at once.
-- `async_mode` **asyncio|threaded** The async mode to use. Either `asyncio` or `threaded`.
-- `responses` **list[str]** - If this model type is mock, this is a list of response strings to return.
-- `n` **int** - The number of completions to generate.
-- `max_tokens` **int** - The maximum number of output tokens. Not valid for o-series models.
-- `temperature` **float** - The temperature to use. Not valid for o-series models.
-- `top_p` **float** - The top-p value to use. Not valid for o-series models.
-- `frequency_penalty` **float** - Frequency penalty for token generation. Not valid for o-series models.
-- `presence_penalty` **float** - Frequency penalty for token generation. Not valid for o-series models.
-- `max_completion_tokens` **int** - Max number of tokens to consume for chat completion. Must be large enough to include an unknown amount for "reasoning" by the model. o-series models only.
-- `reasoning_effort` **low|medium|high** - Amount of "thought" for the model to expend reasoning about a response. o-series models only.
+- `call_args`: **dict[str, Any]** - Default arguments to send with every model request. Example, `{"n": 5, "max_completion_tokens": 1000, "temperature": 1.5, "organization": "..." }`
+- `api_key` **str|None** - The OpenAI API key to use.
+- `api_base` **str|None** - The API base url to use.
+- `api_version` **str|None** - The API version.
+- `auth_method` **api_key|azure_managed_identity** - Indicate how you want to authenticate requests.
+- `azure_deployment_name` **str|None** - The deployment name to use if your model is hosted on Azure. Note that if your deployment name on Azure matches the model name, this is unnecessary.
+- retry **RetryConfig|None** - Retry settings. default=`None`, no retries.
+  - type **exponential_backoff|immediate** - Type of retry approach. default=`exponential_backoff`
+  - max_retries **int|None** - Max retries to take. default=`7`.
+  - base_delay **float|None** - Base delay when using `exponential_backoff`. default=`2.0`.
+  - jitter **bool|None** - Add jitter to retry delays when using `exponential_backoff`. default=`True`
+  - max_delay **float|None** - Maximum retry delay. default=`None`, no max.
+- rate_limit **RateLimitConfig|None** - Rate limit settings. default=`None`, no rate limiting.
+  - type **sliding_window** - Type of rate limit approach. default=`sliding_window`
+  - period_in_seconds **int|None** - Window size for `sliding_window` rate limiting. default=`60`, limit requests per minute.
+  - requests_per_period **int|None** - Maximum number of requests per period. default=`None`
+  - tokens_per_period **int|None** - Maximum number of tokens per period. default=`None`
+- metrics **MetricsConfig|None** - Metric settings. default=`MetricsConfig()`. View [metrics notebook](https://github.com/microsoft/graphrag/blob/main/packages/graphrag-llm/notebooks/04_metrics.ipynb) for more details on metrics.
+  - type **default** - The type of `MetricsProcessor` service to use for processing request metrics. default=`default`
+  - store **memory** - The type of `MetricsStore` service. default=`memory`.
+  - writer **log|file** - The type of `MetricsWriter` to use. Will write out metrics at the end of the process. default`log`, log metrics out using python standard logging at the end of the process.
+  - log_level **int|None** - The log level when using `log` writer. default=`20`, log `INFO` messages for metrics.
+  - base_dir **str|None** - The directory to write metrics to when using `file` writer. default=`Path.cwd()`.
 
 ## Input Files and Chunking
 
@@ -79,33 +79,31 @@ Our pipeline can ingest .csv, .txt, or .json data from an input location. See th
 #### Fields
 
 - `storage` **StorageConfig**
-  - `type` **file|blob|cosmosdb** - The storage type to use. Default=`file`
+  - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+  - `encoding`**str** - The encoding to use for file storage.
   - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
   - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
   - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
-  - `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
-  - `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
-- `file_type` **text|csv|json** - The type of input data to load. Default is `text`
+  - `account_url` **str** - (blob only) The storage account blob URL to use.
+  - `database_name` **str** - (cosmosdb only) The database name to use.
+- `type` **text|csv|json** - The type of input data to load. Default is `text`
 - `encoding` **str** - The encoding of the input file. Default is `utf-8`
-- `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$`, `.*\.txt$`, or `.*\.json$` depending on the specified `file_type`, but you can customize it if needed.
-- `file_filter` **dict** - Key/value pairs to filter. Default is None.
-- `text_column` **str** - (CSV/JSON only) The text column name. If unset we expect a column named `text`.
-- `title_column` **str** - (CSV/JSON only) The title column name, filename will be used if unset.
-- `metadata` **list[str]** - (CSV/JSON only) The additional document attributes fields to keep.
+- `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$`, `.*\.txt$`, or `.*\.json$` depending on the specified `type`, but you can customize it if needed.
+- `id_column` **str** - The input ID column to use.
+- `title_column` **str** - The input title column to use.
+- `text_column` **str** - The input text column to use.
 
-### chunks
+### chunking
 
 These settings configure how we parse documents into text chunks. This is necessary because very large documents may not fit into a single context window, and graph extraction accuracy can be modulated. Also note the `metadata` setting in the input document config, which will replicate document metadata into each chunk.
 
 #### Fields
 
+- `type` **tokens|sentence** - The chunking type to use.
+- `encoding_model` **str** - The text encoding model to use for splitting on token boundaries.
 - `size` **int** - The max chunk size in tokens.
 - `overlap` **int** - The chunk overlap in tokens.
-- `group_by_columns` **list[str]** - Group documents by these fields before chunking.
-- `strategy` **str**[tokens|sentences] - How to chunk the text. 
-- `encoding_model` **str** - The text encoding model to use for splitting on token boundaries.
-- `prepend_metadata` **bool** - Determines if metadata values should be added at the beginning of each chunk. Default=`False`.
-- `chunk_size_includes_metadata` **bool** - Specifies whether the chunk size calculation should include metadata tokens. Default=`False`.
+- `prepend_metadata` **list[str]** - Metadata fields from the source document to prepend on each chunk.
 
 ## Outputs and Storage
 
@@ -116,24 +114,30 @@ This section controls the storage mechanism used by the pipeline used for export
 #### Fields
 
 - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+- `encoding`**str** - The encoding to use for file storage.
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
-- `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
-- `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
+- `account_url` **str** - (blob only) The storage account blob URL to use.
+- `database_name` **str** - (cosmosdb only) The database name to use.
+- `type` **text|csv|json** - The type of input data to load. Default is `text`
+- `encoding` **str** - The encoding of the input file. Default is `utf-8`
 
-### update_index_output
+### update_output_storage
 
 The section defines a secondary storage location for running incremental indexing, to preserve your original outputs.
 
 #### Fields
 
 - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+- `encoding`**str** - The encoding to use for file storage.
 - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
-- `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
-- `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
+- `account_url` **str** - (blob only) The storage account blob URL to use.
+- `database_name` **str** - (cosmosdb only) The database name to use.
+- `type` **text|csv|json** - The type of input data to load. Default is `text`
+- `encoding` **str** - The encoding of the input file. Default is `utf-8`
 
 ### cache
 
@@ -141,12 +145,15 @@ This section controls the cache mechanism used by the pipeline. This is used to 
 
 #### Fields
 
-- `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
-- `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
-- `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
-- `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
-- `storage_account_blob_url` **str** - (blob only) The storage account blob URL to use.
-- `cosmosdb_account_blob_url` **str** - (cosmosdb only) The CosmosDB account blob URL to use.
+- `type` **json|memory|none** - The storage type to use. Default=`json`
+- `storage` **StorageConfig**
+  - `type` **file|memory|blob|cosmosdb** - The storage type to use. Default=`file`
+  - `encoding`**str** - The encoding to use for file storage.
+  - `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
+  - `connection_string` **str** - (blob/cosmosdb only) The Azure Storage connection string.
+  - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
+  - `account_url` **str** - (blob only) The storage account blob URL to use.
+  - `database_name` **str** - (cosmosdb only) The database name to use.
 
 ### reporting
 
@@ -158,7 +165,7 @@ This section controls the reporting mechanism used by the pipeline, for common e
 - `base_dir` **str** - The base directory to write reports to, relative to the root.
 - `connection_string` **str** - (blob only) The Azure Storage connection string.
 - `container_name` **str** - (blob only) The Azure Storage container name.
-- `storage_account_blob_url` **str** - The storage account blob URL to use.
+- `account_url` **str** - The storage account blob URL to use.
 
 ### vector_store
 
@@ -167,13 +174,41 @@ Where to put all vectors for the system. Configured for lancedb by default. This
 #### Fields
 
 - `type` **lancedb|azure_ai_search|cosmosdb** - Type of vector store. Default=`lancedb`
-- `db_uri` **str** (only for lancedb) - The database uri. Default=`storage.base_dir/lancedb`
-- `url` **str** (only for AI Search) - AI Search endpoint
-- `api_key` **str** (optional - only for AI Search) - The AI Search api key to use.
-- `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
-- `container_name` **str** - The name of a vector container. This stores all indexes (tables) for a given dataset ingest. Default=`default`
+- `db_uri` **str** (lancedb only) - The database uri. Default=`storage.base_dir/lancedb`
+- `url` **str** (blob/cosmosdb only) - Database / AI Search to be used.
+- `api_key` **str** (optional - AI Search only) - The AI Search api key to use.
+- `audience` **str** (AI Search only) - Audience for managed identity token if managed identity authentication is used.
+- `connection_string` **str** - (cosmosdb only) The Azure Storage connection string.
 - `database_name` **str** - (cosmosdb only) Name of the database.
-- `overwrite` **bool** (only used at index creation time) - Overwrite collection if it exist. Default=`True`
+
+- `index_schema` **dict[str, dict[str, str]]** (optional) - Enables customization for each of your embeddings.
+  - `<supported_embedding>`:
+    - `index_name` **str**: (optional) - Name for the specific embedding index table.
+    - `id_field` **str**: (optional) - Field name to be used as id. Default=`id`
+    - `vector_field` **str**: (optional) - Field name to be used as vector. Default=`vector`
+    - `vector_size` **int**: (optional) - Vector size for the embeddings. Default=`3072`
+
+The supported embeddings are:
+
+- `text_unit_text`
+- `entity_description`
+- `community_full_content`
+
+For example:
+
+```yaml
+vector_store:
+  type: lancedb
+  db_uri: output/lancedb
+  index_schema:
+    text_unit_text:
+      index_name: "text-unit-embeddings"
+      id_field: "id_custom"
+      vector_field: "vector_custom"
+      vector_size: 3072
+    entity_description:
+      id_field: "id_custom"
+```
 
 ## Workflow Configurations
 
@@ -189,19 +224,14 @@ By default, the GraphRAG indexer will only export embeddings required for our qu
 
 Supported embeddings names are:
 
-- `text_unit.text`
-- `document.text`
-- `entity.title`
-- `entity.description`
-- `relationship.description`
-- `community.title`
-- `community.summary`
-- `community.full_content`
+- `text_unit_text`
+- `entity_description`
+- `community_full_content`
 
 #### Fields
 
-- `model_id` **str** - Name of the model definition to use for text embedding.
-- `vector_store_id` **str** - Name of vector store definition to write to.
+- `embedding_model_id` **str** - Name of the model definition to use for text embedding.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "text_embedding". This primarily affects the cache storage partitioning.
 - `batch_size` **int** - The maximum batch size to use.
 - `batch_max_tokens` **int** - The maximum batch # of tokens.
 - `names` **list[str]** - List of the embeddings names to run (must be in supported list).
@@ -212,7 +242,8 @@ Tune the language model-based graph extraction process.
 
 #### Fields
 
-- `model_id` **str** - Name of the model definition to use for API calls.
+- `completion_model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "extract_graph". This primarily affects the cache storage partitioning.
 - `prompt` **str** - The prompt file to use.
 - `entity_types` **list[str]** - The entity types to identify.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
@@ -221,7 +252,8 @@ Tune the language model-based graph extraction process.
 
 #### Fields
 
-- `model_id` **str** - Name of the model definition to use for API calls.
+- `completion_model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "summarize_descriptions". This primarily affects the cache storage partitioning.
 - `prompt` **str** - The prompt file to use.
 - `max_length` **int** - The maximum number of output tokens per summarization.
 - `max_input_length` **int** - The maximum number of tokens to collect for summarization (this will limit how many descriptions you send to be summarized for a given entity or relationship).
@@ -233,17 +265,19 @@ Defines settings for NLP-based graph extraction methods.
 #### Fields
 
 - `normalize_edge_weights` **bool** - Whether to normalize the edge weights during graph construction. Default=`True`.
+- `concurrent_requests` **int** - The number of threads to use for the extraction process.
+- `async_mode` **asyncio|threaded** - The async mode to use. Either `asyncio` or `threaded`.
 - `text_analyzer` **dict** - Parameters for the NLP model.
-  - extractor_type **regex_english|syntactic_parser|cfg** - Default=`regex_english`.
-  - model_name **str** - Name of NLP model (for SpaCy-based models)
-  - max_word_length **int** - Longest word to allow. Default=`15`.
-  - word_delimiter **str** - Delimiter to split words. Default ' '.
-  - include_named_entities **bool** - Whether to include named entities in noun phrases. Default=`True`.
-  - exclude_nouns **list[str] | None** - List of nouns to exclude. If `None`, we use an internal stopword list.
-  - exclude_entity_tags **list[str]** - List of entity tags to ignore.
-  - exclude_pos_tags **list[str]** - List of part-of-speech tags to ignore.
-  - noun_phrase_tags **list[str]** - List of noun phrase tags to ignore.
-  - noun_phrase_grammars **dict[str, str]** - Noun phrase grammars for the model (cfg-only).
+  - `extractor_type` **regex_english|syntactic_parser|cfg** - Default=`regex_english`.
+  - `model_name` **str** - Name of NLP model (for SpaCy-based models)
+  - `max_word_length` **int** - Longest word to allow. Default=`15`.
+  - `word_delimiter` **str** - Delimiter to split words. Default ' '.
+  - `include_named_entities` **bool** - Whether to include named entities in noun phrases. Default=`True`.
+  - `exclude_nouns` **list[str] | None** - List of nouns to exclude. If `None`, we use an internal stopword list.
+  - `exclude_entity_tags` **list[str]** - List of entity tags to ignore.
+  - `exclude_pos_tags` **list[str]** - List of part-of-speech tags to ignore.
+  - `noun_phrase_tags` **list[str]** - List of noun phrase tags to ignore.
+  - `noun_phrase_grammars` **dict[str, str]** - Noun phrase grammars for the model (cfg-only).
 
 ### prune_graph
 
@@ -251,13 +285,13 @@ Parameters for manual graph pruning. This can be used to optimize the modularity
 
 #### Fields
 
-- min_node_freq **int** - The minimum node frequency to allow.
-- max_node_freq_std **float | None** - The maximum standard deviation of node frequency to allow.
-- min_node_degree **int** - The minimum node degree to allow.
-- max_node_degree_std **float | None** - The maximum standard deviation of node degree to allow.
-- min_edge_weight_pct **float** - The minimum edge weight percentile to allow.
-- remove_ego_nodes **bool** - Remove ego nodes.
-- lcc_only **bool** - Only use largest connected component.
+- `min_node_freq` **int** - The minimum node frequency to allow.
+- `max_node_freq_std` **float | None** - The maximum standard deviation of node frequency to allow.
+- `min_node_degree` **int** - The minimum node degree to allow.
+- `max_node_degree_std` **float | None** - The maximum standard deviation of node degree to allow.
+- `min_edge_weight_pct` **float** - The minimum edge weight percentile to allow.
+- `remove_ego_nodes` **bool** - Remove ego nodes.
+- `lcc_only` **bool** - Only use largest connected component.
 
 ### cluster_graph
 
@@ -274,7 +308,8 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 #### Fields
 
 - `enabled` **bool** - Whether to enable claim extraction. Off by default, because claim prompts really need user tuning.
-- `model_id` **str** - Name of the model definition to use for API calls.
+- `completion_model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "extract_claims". This primarily affects the cache storage partitioning.
 - `prompt` **str** - The prompt file to use.
 - `description` **str** - Describes the types of claims we want to extract.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
@@ -283,40 +318,20 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 
 #### Fields
 
-- `model_id` **str** - Name of the model definition to use for API calls.
-- `prompt` **str** - The prompt file to use.
+- `completion_model_id` **str** - Name of the model definition to use for API calls.
+- `model_instance_name` **str** - Name of the model singleton instance. Default is "community_reporting". This primarily affects the cache storage partitioning.
+- `graph_prompt` **str | None** - The community report extraction prompt to use for graph-based summarization.
+- `text_prompt` **str | None** - The community report extraction prompt to use for text-based summarization.
 - `max_length` **int** - The maximum number of output tokens per report.
 - `max_input_length` **int** - The maximum number of input tokens to use when generating reports.
-
-### embed_graph
-
-We use node2vec to embed the graph. This is primarily used for visualization, so it is not turned on by default.
-
-#### Fields
-
-- `enabled` **bool** - Whether to enable graph embeddings.
-- `dimensions` **int** - Number of vector dimensions to produce.
-- `num_walks` **int** - The node2vec number of walks.
-- `walk_length` **int** - The node2vec walk length.
-- `window_size` **int** - The node2vec window size.
-- `iterations` **int** - The node2vec number of iterations.
-- `random_seed` **int** - The node2vec random seed.
-- `strategy` **dict** - Fully override the embed graph strategy.
-
-### umap
-
-Indicates whether we should run UMAP dimensionality reduction. This is used to provide an x/y coordinate to each graph node, suitable for visualization. If this is not enabled, nodes will receive a 0/0 x/y coordinate. If this is enabled, you *must* enable graph embedding as well.
-
-#### Fields
-
-- `enabled` **bool** - Whether to enable UMAP layouts.
 
 ### snapshots
 
 #### Fields
 
 - `embeddings` **bool** - Export embeddings snapshots to parquet.
-- `graphml` **bool** - Export graph snapshots to GraphML.
+- `graphml` **bool** - Export graph snapshot to GraphML.
+- `raw_graph` **bool** - Export raw extracted graph before merging.
 
 ## Query
 
@@ -324,10 +339,10 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 
 #### Fields
 
-- `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
-- `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
 - `prompt` **str** - The prompt file to use.
-- `text_unit_prop` **float** - The text unit proportion. 
+- `completion_model_id` **str** - Name of the model definition to use for Chat Completion calls.
+- `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
+- `text_unit_prop` **float** - The text unit proportion.
 - `community_prop` **float** - The community proportion.
 - `conversation_history_max_turns` **int** - The conversation history maximum turns.
 - `top_k_entities` **int** - The top k mapped entities.
@@ -338,14 +353,10 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 
 #### Fields
 
-- `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
-- `map_prompt` **str** - The mapper prompt file to use.
-- `reduce_prompt` **str** - The reducer prompt file to use.
+- `map_prompt` **str** - The global search mapper prompt to use.
+- `reduce_prompt` **str** - The global search reducer to use.
+- `completion_model_id` **str** - Name of the model definition to use for Chat Completion calls.
 - `knowledge_prompt` **str** - The knowledge prompt file to use.
-- `map_prompt` **str | None** - The global search mapper prompt to use.
-- `reduce_prompt` **str | None** - The global search reducer to use.
-- `knowledge_prompt` **str | None** - The global search general prompt to use.
-- `max_context_tokens` **int** - The maximum context size to create, in tokens.
 - `data_max_tokens` **int** - The maximum tokens to use constructing the final response from the reduces responses.
 - `map_max_length` **int** - The maximum length to request for map responses, in words.
 - `reduce_max_length` **int** - The maximum length to request for reduce responses, in words.
@@ -359,12 +370,13 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 
 #### Fields
 
-- `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
-- `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
 - `prompt` **str** - The prompt file to use.
 - `reduce_prompt` **str** - The reducer prompt file to use.
+- `completion_model_id` **str** - Name of the model definition to use for Chat Completion calls.
+- `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
 - `data_max_tokens` **int** - The data llm maximum tokens.
 - `reduce_max_tokens` **int** - The maximum tokens for the reduce phase. Only use if a non-o-series model.
+- `reduce_temperature` **float** - The temperature to use for token generation in reduce.
 - `reduce_max_completion_tokens` **int** - The maximum tokens for the reduce phase. Only use for o-series models.
 - `concurrency` **int** - The number of concurrent requests.
 - `drift_k_followups` **int** - The number of top global results to retrieve.
@@ -386,7 +398,8 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 
 #### Fields
 
-- `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
-- `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
 - `prompt` **str** - The prompt file to use.
-- `k` **int | None** - Number of text units to retrieve from the vector store for context building.
+- `completion_model_id` **str** - Name of the model definition to use for Chat Completion calls.
+- `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
+- `k` **int** - Number of text units to retrieve from the vector store for context building.
+- `max_context_tokens` **int** - The maximum context size to create, in tokens.

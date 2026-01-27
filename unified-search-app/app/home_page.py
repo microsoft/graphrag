@@ -10,7 +10,6 @@ from app_logic import dataset_name, initialize, run_all_searches, run_generate_q
 from rag.typing import SearchType
 from st_tabs import TabBar
 from state.session_variables import SessionVariables
-from ui.full_graph import create_full_graph_ui
 from ui.questions_list import create_questions_list_ui
 from ui.report_details import create_report_details_ui
 from ui.report_list import create_report_list_ui
@@ -78,7 +77,7 @@ async def main():
         st.button(label="Reset", on_click=on_click_reset, kwargs={"sv": sv})
 
     tab_id = TabBar(
-        tabs=["Search", "Graph Explorer"],
+        tabs=["Search", "Community Explorer"],
         color="#fc9e9e",
         activeColor="#ff4b4b",
         default=0,
@@ -237,19 +236,11 @@ async def main():
                 st.write(e)
 
     if tab_id == 1:
-        report_list, graph, report_content = st.columns([0.20, 0.55, 0.25])
+        report_list, report_content = st.columns([0.33, 0.67])
 
         with report_list:
             st.markdown("##### Community Reports")
             create_report_list_ui(sv)
-
-        with graph:
-            title, dropdown = st.columns([0.80, 0.20])
-            title.markdown("##### Entity Graph (All entities)")
-            dropdown.selectbox(
-                "Community level", options=[0, 1], key=sv.graph_community_level.key
-            )
-            create_full_graph_ui(sv)
 
         with report_content:
             st.markdown("##### Selected Report")
