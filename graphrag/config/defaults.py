@@ -47,13 +47,13 @@ from graphrag.language_model.providers.litellm.services.retry.retry import Retry
 DEFAULT_OUTPUT_BASE_DIR = "output"
 DEFAULT_CHAT_MODEL_ID = "default_chat_model"
 DEFAULT_CHAT_MODEL_TYPE = ModelType.Chat
-DEFAULT_CHAT_MODEL = "gpt-4-turbo-preview"
+DEFAULT_CHAT_MODEL = "gemini-2.5-flash-lite"
 DEFAULT_CHAT_MODEL_AUTH_TYPE = AuthType.APIKey
 DEFAULT_EMBEDDING_MODEL_ID = "default_embedding_model"
 DEFAULT_EMBEDDING_MODEL_TYPE = ModelType.Embedding
-DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
+DEFAULT_EMBEDDING_MODEL = "gemini-embedding-001"
 DEFAULT_EMBEDDING_MODEL_AUTH_TYPE = AuthType.APIKey
-DEFAULT_MODEL_PROVIDER = "openai"
+DEFAULT_MODEL_PROVIDER = "gemini"
 DEFAULT_VECTOR_STORE_ID = "default_vector_store"
 
 ENCODING_MODEL = "cl100k_base"
@@ -176,7 +176,7 @@ class EmbedGraphDefaults:
 class EmbedTextDefaults:
     """Default values for embedding text."""
 
-    model: str = "text-embedding-3-small"
+    model: str = "gemini-embedding-001"
     batch_size: int = 16
     batch_max_tokens: int = 8191
     model_id: str = DEFAULT_EMBEDDING_MODEL_ID

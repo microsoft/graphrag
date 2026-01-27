@@ -5,8 +5,11 @@
 
 import inspect
 import json
+import logging
 from collections.abc import AsyncGenerator, Generator
 from typing import TYPE_CHECKING, Any, cast
+
+logger = logging.getLogger(__name__)
 
 import litellm
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
@@ -221,6 +224,9 @@ class LitellmChatModel:
         self.name = name
         self.config = config
         self.cache = cache.child(self.name) if cache else None
+        model_provider = config.model_provider
+        model = config.deployment_name or config.model
+        logger.info(f"Using LiteLLM provider with model: {model_provider}/{model}")
         self.completion, self.acompletion = _create_completions(
             config, self.cache, "chat"
         )

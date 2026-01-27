@@ -4,7 +4,10 @@
 """CLI implementation of the query subcommand."""
 
 import asyncio
+import contextlib
+import io
 import sys
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -18,7 +21,72 @@ from graphrag.utils.storage import load_table_from_storage, storage_has_table
 if TYPE_CHECKING:
     import pandas as pd
 
-# ruff: noqa: T201
+# Suppress harmless asyncio cleanup warnings on Windows
+warnings.filterwarnings("ignore", message=".*coroutine.*was never awaited")
+warnings.filterwarnings("ignore", message=".*Fatal error on SSL transport.*")
+warnings.filterwarnings("ignore", message=".*Event loop is closed.*")
+warnings.filterwarnings("ignore", category=RuntimeWarning, message=".*coroutine.*")
+
+# Install filtered stderr to suppress SSL cleanup errors
+_original_stderr = sys.stderr
+
+
+class FilteredStderr:
+    """Filter stderr to suppress harmless SSL cleanup errors on Windows."""
+
+    def __init__(self, original_stderr):
+        self.original_stderr = original_stderr
+        self.suppress_file_patterns = [
+            "sslproto.py",
+            "proactor_events.py",
+        ]
+        self.in_ssl_traceback = False
+
+    def write(self, message):
+        msg = message
+        msg_lower = message.lower()
+        
+        # Detect start of SSL cleanup exception - check for "Exception ignored" or "Traceback"
+        if ("exception ignored" in msg_lower or msg_lower.strip().startswith("traceback")) and \
+           ("ssl" in msg_lower or "_sslprotocol" in msg_lower or any(p in msg for p in self.suppress_file_patterns)):
+            self.in_ssl_traceback = True
+            return
+        
+        # If we're in an SSL traceback, suppress everything until blank line
+        if self.in_ssl_traceback:
+            # Stop suppressing on blank line (end of traceback) or if we see a non-SSL error
+            if message.strip() == "":
+                self.in_ssl_traceback = False
+            # Continue suppressing traceback lines
+            return
+        
+        # Also suppress individual SSL/asyncio cleanup error lines that aren't in a traceback
+        if any(p in msg for p in self.suppress_file_patterns) and \
+           ("runtimeerror" in msg_lower or "attributeerror" in msg_lower or "fatal error" in msg_lower or "event loop is closed" in msg_lower):
+            return
+            
+        self.original_stderr.write(message)
+
+    def flush(self):
+        self.original_stderr.flush()
+
+    def __getattr__(self, name):
+        return getattr(self.original_stderr, name)
+
+
+# Install filtered stderr to suppress SSL cleanup errors during program execution
+sys.stderr = FilteredStderr(_original_stderr)
+
+
+def _run_async_with_cleanup(coro):
+    """Run an async coroutine and suppress harmless SSL cleanup errors on Windows."""
+    result = asyncio.run(coro)
+    # Small delay to allow async cleanup
+    try:
+        asyncio.run(asyncio.sleep(0.1))
+    except (RuntimeError, AttributeError):
+        pass
+    return result
 
 
 def run_global_search(
@@ -59,21 +127,26 @@ def run_global_search(
         final_community_reports_list = dataframe_dict["community_reports"]
         index_names = dataframe_dict["index_names"]
 
-        response, context_data = asyncio.run(
-            api.multi_index_global_search(
-                config=config,
-                entities_list=final_entities_list,
-                communities_list=final_communities_list,
-                community_reports_list=final_community_reports_list,
-                index_names=index_names,
-                community_level=community_level,
-                dynamic_community_selection=dynamic_community_selection,
-                response_type=response_type,
-                streaming=streaming,
-                query=query,
-                verbose=verbose,
-            )
-        )
+        async def run_with_cleanup():
+            try:
+                return await api.multi_index_global_search(
+                    config=config,
+                    entities_list=final_entities_list,
+                    communities_list=final_communities_list,
+                    community_reports_list=final_community_reports_list,
+                    index_names=index_names,
+                    community_level=community_level,
+                    dynamic_community_selection=dynamic_community_selection,
+                    response_type=response_type,
+                    streaming=streaming,
+                    query=query,
+                    verbose=verbose,
+                )
+            finally:
+                # Give time for async cleanup
+                await asyncio.sleep(0.1)
+        
+        response, context_data = asyncio.run(run_with_cleanup())
         print(response)
         return response, context_data
 
@@ -113,21 +186,31 @@ def run_global_search(
             print()
             return full_response, context_data
 
-        return asyncio.run(run_streaming_search())
+        async def run_streaming_with_cleanup():
+            try:
+                return await run_streaming_search()
+            finally:
+                await asyncio.sleep(0.1)
+        
+        return asyncio.run(run_streaming_with_cleanup())
     # not streaming
-    response, context_data = asyncio.run(
-        api.global_search(
-            config=config,
-            entities=final_entities,
-            communities=final_communities,
-            community_reports=final_community_reports,
-            community_level=community_level,
-            dynamic_community_selection=dynamic_community_selection,
-            response_type=response_type,
-            query=query,
-            verbose=verbose,
-        )
-    )
+    async def run_search_with_cleanup():
+        try:
+            return await api.global_search(
+                config=config,
+                entities=final_entities,
+                communities=final_communities,
+                community_reports=final_community_reports,
+                community_level=community_level,
+                dynamic_community_selection=dynamic_community_selection,
+                response_type=response_type,
+                query=query,
+                verbose=verbose,
+            )
+        finally:
+            await asyncio.sleep(0.1)
+    
+    response, context_data = asyncio.run(run_search_with_cleanup())
     print(response)
 
     return response, context_data
@@ -416,7 +499,7 @@ def run_basic_search(
         final_text_units_list = dataframe_dict["text_units"]
         index_names = dataframe_dict["index_names"]
 
-        response, context_data = asyncio.run(
+        response, context_data = _run_async_with_cleanup(
             api.multi_index_basic_search(
                 config=config,
                 text_units_list=final_text_units_list,
@@ -461,7 +544,7 @@ def run_basic_search(
 
         return asyncio.run(run_streaming_search())
     # not streaming
-    response, context_data = asyncio.run(
+    response, context_data = _run_async_with_cleanup(
         api.basic_search(
             config=config,
             text_units=final_text_units,

@@ -3,7 +3,10 @@
 
 """Embedding model implementation using Litellm."""
 
+import logging
 from typing import TYPE_CHECKING, Any
+
+logger = logging.getLogger(__name__)
 
 import litellm
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
@@ -185,6 +188,9 @@ class LitellmEmbeddingModel:
         self.name = name
         self.config = config
         self.cache = cache.child(self.name) if cache else None
+        model_provider = config.model_provider
+        model = config.deployment_name or config.model
+        logger.info(f"Using LiteLLM provider with model: {model_provider}/{model}")
         self.embedding, self.aembedding = _create_embeddings(
             config, self.cache, "embeddings"
         )
