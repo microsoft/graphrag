@@ -41,6 +41,9 @@ dependencies = [
     "typing-extensions~=4.12"
 ]
 
+[project.urls]
+Source = "https://github.com/microsoft/graphrag"
+
 [build-system]
 requires = ["hatchling>=1.27.0,<2.0.0"]
 build-backend = "hatchling.build"
