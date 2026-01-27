@@ -37,6 +37,7 @@ dependencies = [
     "azure-storage-blob~=12.24",
     "devtools~=0.12",
     "graphrag-cache==3.0.0",
+    "graphrag-chunking==3.0.0",
     "graphrag-common==3.0.0",
     "graphrag-input==3.0.0",
     "graphrag-llm==3.0.0",
