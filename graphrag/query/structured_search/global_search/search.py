@@ -378,7 +378,6 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 search_prompt += "\n" + self.general_knowledge_inclusion_prompt
             search_messages = [
                 {"role": "system", "content": search_prompt},
-                {"role": "user", "content": query},
             ]
 
             search_response = ""
