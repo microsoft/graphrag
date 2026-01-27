@@ -22,7 +22,6 @@ from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.pipeline import Pipeline
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
-from graphrag.utils.storage import write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +88,8 @@ async def run_pipeline(
 
         # if the user passes in a df directly, write directly to storage so we can skip finding/parsing later
         if input_documents is not None:
-            await write_table_to_storage(input_documents, "documents", output_storage)
+            output_table_provider = ParquetTableProvider(output_storage)
+            await output_table_provider.write_dataframe("documents", input_documents)
             pipeline.remove("load_input_documents")
 
         context = create_run_context(

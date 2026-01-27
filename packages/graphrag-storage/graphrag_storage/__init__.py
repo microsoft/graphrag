@@ -10,10 +10,9 @@ from graphrag_storage.storage_factory import (
     register_storage,
 )
 from graphrag_storage.storage_type import StorageType
-from graphrag_storage.tables import ParquetTableProvider, TableProvider
+from graphrag_storage.tables import TableProvider
 
 __all__ = [
-    "ParquetTableProvider",
     "Storage",
     "StorageConfig",
     "StorageType",

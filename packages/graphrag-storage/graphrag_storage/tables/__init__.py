@@ -3,7 +3,6 @@
 
 """Table provider module for GraphRAG storage."""
 
-from .parquet_table_provider import ParquetTableProvider
 from .table_provider import TableProvider
 
-__all__ = ["ParquetTableProvider", "TableProvider"]
+__all__ = ["TableProvider"]
