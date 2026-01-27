@@ -37,12 +37,13 @@ def test_litellm_provider_validation() -> None:
 
     with pytest.raises(
         ValueError,
-        match="api_base must be specified with the 'azure' model provider\\.",
+        match="azure_deployment_name should not be specified for non-Azure model providers\\.",
     ):
         _ = ModelConfig(
             type=LLMProviderType.LiteLLM,
-            model_provider="azure",
+            model_provider="openai",
             model="gpt-4o",
+            azure_deployment_name="some-deployment",
         )
 
     with pytest.raises(
@@ -53,7 +54,6 @@ def test_litellm_provider_validation() -> None:
             type=LLMProviderType.LiteLLM,
             model_provider="azure",
             model="gpt-4o",
-            azure_deployment_name="my-deployment",
         )
 
     with pytest.raises(

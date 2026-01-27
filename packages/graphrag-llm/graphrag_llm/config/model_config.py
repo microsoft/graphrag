@@ -91,9 +91,9 @@ class ModelConfig(BaseModel):
             msg = "api_base must be specified with the 'azure' model provider."
             raise ValueError(msg)
 
-        if self.model_provider == "azure" and not self.azure_deployment_name:
-            msg = "azure_deployment_name is not specified and will default to model name. If your deployment name differs (uncommon), API calls will fail."
-            logger.warning(msg)
+        if self.model_provider != "azure" and self.azure_deployment_name is not None:
+            msg = "azure_deployment_name should not be specified for non-Azure model providers."
+            raise ValueError(msg)
 
         if self.auth_method == AuthMethod.AzureManagedIdentity:
             if self.api_key is not None:

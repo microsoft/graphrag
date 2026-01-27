@@ -1,6 +1,10 @@
 # GraphRAG Storage
 
+This package provides a unified storage abstraction layer with support for multiple backends including file system, Azure Blob, Azure Cosmos, and memory storage. It features a factory-based creation system with configuration-driven setup and extensible architecture for implementing custom storage providers.
+
 ## Basic
+
+This example creates a file storage system using the GraphRAG storage package's configuration system. The example shows setting up file storage in a specified directory and demonstrates basic storage operations like setting and getting key-value pairs.
 
 ```python
 import asyncio
@@ -22,6 +26,8 @@ if __name__ == "__main__":
 ```
 
 ## Custom Storage
+
+Here we create a custom storage implementation by extending the base Storage class and registering it with the GraphRAG storage system. Once registered, the custom storage can be instantiated through the factory pattern using either StorageConfig or directly via storage_factory, enabling extensible storage solutions for different backends.
 
 ```python
 import asyncio
@@ -57,7 +63,7 @@ if __name__ == "__main__":
     asyncio.run(run())
 ```
 
-### Details
+## Details
 
 By default, the `create_storage` comes with the following storage providers registered that correspond to the entries in the `StorageType` enum. 
 
