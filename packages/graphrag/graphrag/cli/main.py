@@ -68,9 +68,9 @@ def path_autocomplete(
         # Apply wildcard matching if required
         if match_wildcard:
             completions = filter(
-                lambda i: wildcard_match(i, match_wildcard)
-                if match_wildcard
-                else False,
+                lambda i: (
+                    wildcard_match(i, match_wildcard) if match_wildcard else False
+                ),
                 completions,
             )
 

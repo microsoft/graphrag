@@ -110,7 +110,8 @@ class RegexENNounPhraseExtractor(BaseNounPhraseExtractor):
         ) and all(len(token) <= self.max_word_length for token in cleaned_tokens)
         return {
             "cleaned_tokens": cleaned_tokens,
-            "cleaned_text": self.word_delimiter.join(token for token in cleaned_tokens)
+            "cleaned_text": self.word_delimiter
+            .join(token for token in cleaned_tokens)
             .replace("\n", "")
             .upper(),
             "has_proper_nouns": has_proper_nouns,

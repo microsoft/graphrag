@@ -57,9 +57,9 @@ class BasicSearchContext(BasicContextBuilder):
         if query != "":
             related_texts = self.text_unit_embeddings.similarity_search_by_text(
                 text=query,
-                text_embedder=lambda t: self.text_embedder.embedding(
-                    input=[t]
-                ).first_embedding,
+                text_embedder=lambda t: (
+                    self.text_embedder.embedding(input=[t]).first_embedding
+                ),
                 k=k,
             )
 

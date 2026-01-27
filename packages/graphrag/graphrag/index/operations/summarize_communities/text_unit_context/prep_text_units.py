@@ -29,7 +29,8 @@ def prep_text_units(
         [schemas.TITLE, schemas.COMMUNITY_ID, schemas.NODE_DEGREE, schemas.ID]
     ]
     text_unit_degrees = (
-        node_to_text_ids.groupby([schemas.COMMUNITY_ID, schemas.ID])
+        node_to_text_ids
+        .groupby([schemas.COMMUNITY_ID, schemas.ID])
         .agg({schemas.NODE_DEGREE: "sum"})
         .reset_index()
     )

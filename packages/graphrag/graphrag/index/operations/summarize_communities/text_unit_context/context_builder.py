@@ -65,7 +65,8 @@ def build_local_context(
     )
 
     context_df = (
-        context_df.groupby([schemas.COMMUNITY_ID, schemas.COMMUNITY_LEVEL])
+        context_df
+        .groupby([schemas.COMMUNITY_ID, schemas.COMMUNITY_LEVEL])
         .agg({schemas.ALL_CONTEXT: list})
         .reset_index()
     )
@@ -198,7 +199,8 @@ def build_level_context(
         axis=1,
     )
     community_df = (
-        community_df.groupby(schemas.COMMUNITY_ID)
+        community_df
+        .groupby(schemas.COMMUNITY_ID)
         .agg({schemas.ALL_CONTEXT: list})
         .reset_index()
     )

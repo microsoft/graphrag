@@ -43,7 +43,6 @@ __all__ = [
     "LLMCompletionFunctionToolParam",
     "LLMCompletionMessage",
     "LLMCompletionMessagesParam",
-    "LLMCompletionMessagesParam",
     "LLMCompletionResponse",
     "LLMCompletionTokensDetails",
     "LLMCompletionUsage",

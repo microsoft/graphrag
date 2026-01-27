@@ -6,6 +6,8 @@
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, ClassVar
 
+from typing_extensions import Self
+
 if TYPE_CHECKING:
     from graphrag_llm.types.types import Metrics
 
@@ -13,10 +15,10 @@ if TYPE_CHECKING:
 class MetricsAggregator:
     """Metrics Aggregator."""
 
-    _instance: ClassVar["MetricsAggregator | None"] = None
+    _instance: ClassVar["Self | None"] = None
     _aggregate_functions: dict[str, Callable[["Metrics"], None]]
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> "MetricsAggregator":
+    def __new__(cls, *args: Any, **kwargs: Any) -> Self:
         """Create a new instance of MetricsAggregator if it does not exist."""
         if cls._instance is None:
             cls._instance = super().__new__(cls, *args, **kwargs)

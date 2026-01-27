@@ -50,7 +50,8 @@ def _update_and_merge_relationships(
 
     # Group by title and resolve conflicts
     aggregated = (
-        merged_relationships.groupby(["source", "target"])
+        merged_relationships
+        .groupby(["source", "target"])
         .agg({
             "id": "first",
             "human_readable_id": "first",

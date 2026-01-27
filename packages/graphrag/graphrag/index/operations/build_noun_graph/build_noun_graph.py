@@ -64,7 +64,7 @@ async def _extract_nodes(
             await cache.set(key, result)
         return result
 
-    text_unit_df["noun_phrases"] = await derive_from_rows(
+    text_unit_df["noun_phrases"] = await derive_from_rows(  # type: ignore
         text_unit_df,
         extract,
         num_threads=num_threads,
@@ -104,7 +104,8 @@ def _extract_edges(
     text_units_df = nodes_df.explode("text_unit_ids")
     text_units_df = text_units_df.rename(columns={"text_unit_ids": "text_unit_id"})
     text_units_df = (
-        text_units_df.groupby("text_unit_id")
+        text_units_df
+        .groupby("text_unit_id")
         .agg({"title": lambda x: list(x) if len(x) > 1 else np.nan})
         .reset_index()
     )

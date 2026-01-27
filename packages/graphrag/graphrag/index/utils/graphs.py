@@ -292,14 +292,16 @@ def calculate_pmi_edge_weights(
 
     edges_df["prop_weight"] = edges_df[edge_weight_col] / total_edge_weights
     edges_df = (
-        edges_df.merge(
+        edges_df
+        .merge(
             copied_nodes_df, left_on=edge_source_col, right_on=node_name_col, how="left"
         )
         .drop(columns=[node_name_col])
         .rename(columns={"prop_occurrence": "source_prop"})
     )
     edges_df = (
-        edges_df.merge(
+        edges_df
+        .merge(
             copied_nodes_df, left_on=edge_target_col, right_on=node_name_col, how="left"
         )
         .drop(columns=[node_name_col])
@@ -338,8 +340,10 @@ def calculate_rrf_edge_weights(
         method="min", ascending=False
     )
     edges_df[edge_weight_col] = edges_df.apply(
-        lambda x: (1 / (rrf_smoothing_factor + x["pmi_rank"]))
-        + (1 / (rrf_smoothing_factor + x["raw_weight_rank"])),
+        lambda x: (
+            (1 / (rrf_smoothing_factor + x["pmi_rank"]))
+            + (1 / (rrf_smoothing_factor + x["raw_weight_rank"]))
+        ),
         axis=1,
     )
 

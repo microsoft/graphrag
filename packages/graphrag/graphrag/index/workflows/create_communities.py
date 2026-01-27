@@ -96,7 +96,8 @@ def create_communities(
         matched = targets.loc[targets["community_x"] == targets["community_y"]]
         text_units = matched.explode("text_unit_ids")
         grouped = (
-            text_units.groupby(["community_x", "level_x", "parent_x"])
+            text_units
+            .groupby(["community_x", "level_x", "parent_x"])
             .agg(relationship_ids=("id", list), text_unit_ids=("text_unit_ids", list))
             .reset_index()
         )

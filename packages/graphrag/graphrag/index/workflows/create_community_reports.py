@@ -150,7 +150,7 @@ def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
     )
 
     # Create NODE_DETAILS column
-    input.loc[:, schemas.NODE_DETAILS] = input.loc[
+    input.loc[:, schemas.NODE_DETAILS] = input.loc[  # type: ignore
         :,
         [
             schemas.SHORT_ID,
@@ -168,7 +168,7 @@ def _prep_edges(input: pd.DataFrame) -> pd.DataFrame:
     input.fillna(value={schemas.DESCRIPTION: "No Description"}, inplace=True)
 
     # Create EDGE_DETAILS column
-    input.loc[:, schemas.EDGE_DETAILS] = input.loc[
+    input.loc[:, schemas.EDGE_DETAILS] = input.loc[  # type: ignore
         :,
         [
             schemas.SHORT_ID,
@@ -187,7 +187,7 @@ def _prep_claims(input: pd.DataFrame) -> pd.DataFrame:
     input.fillna(value={schemas.DESCRIPTION: "No Description"}, inplace=True)
 
     # Create CLAIM_DETAILS column
-    input.loc[:, schemas.CLAIM_DETAILS] = input.loc[
+    input.loc[:, schemas.CLAIM_DETAILS] = input.loc[  # type: ignore
         :,
         [
             schemas.SHORT_ID,

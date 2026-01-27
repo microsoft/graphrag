@@ -96,9 +96,8 @@ class LanceDBVectorStore(VectorStore):
         query_embedding = np.array(query_embedding, dtype=np.float32)
 
         docs = (
-            self.document_collection.search(
-                query=query_embedding, vector_column_name=self.vector_field
-            )
+            self.document_collection
+            .search(query=query_embedding, vector_column_name=self.vector_field)
             .limit(k)
             .to_list()
         )
@@ -116,7 +115,8 @@ class LanceDBVectorStore(VectorStore):
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""
         doc = (
-            self.document_collection.search()
+            self.document_collection
+            .search()
             .where(f"{self.id_field} == '{id}'", prefilter=True)
             .to_list()
         )

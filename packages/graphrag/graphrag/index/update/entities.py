@@ -51,7 +51,8 @@ def _group_and_resolve_entities(
 
     # Group by title and resolve conflicts
     aggregated = (
-        combined.groupby("title")
+        combined
+        .groupby("title")
         .agg({
             "id": "first",
             "type": "first",

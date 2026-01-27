@@ -74,7 +74,7 @@ from .update_text_units import (
 )
 
 # register all of our built-in workflows at once
-PipelineFactory.register_all({
+PipelineFactory.register_all({  # noqa: RUF067
     "load_input_documents": run_load_input_documents,
     "load_update_documents": run_load_update_documents,
     "create_base_text_units": run_create_base_text_units,

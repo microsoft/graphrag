@@ -165,7 +165,8 @@ class CFGNounPhraseExtractor(BaseNounPhraseExtractor):
 
         return {
             "cleaned_tokens": cleaned_tokens,
-            "cleaned_text": self.word_delimiter.join(cleaned_tokens)
+            "cleaned_text": self.word_delimiter
+            .join(cleaned_tokens)
             .replace("\n", "")
             .upper(),
             "is_valid_entity": has_valid_entity,

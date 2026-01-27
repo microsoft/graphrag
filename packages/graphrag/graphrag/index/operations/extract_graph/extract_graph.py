@@ -102,7 +102,8 @@ async def _run_extract_graph(
 def _merge_entities(entity_dfs) -> pd.DataFrame:
     all_entities = pd.concat(entity_dfs, ignore_index=True)
     return (
-        all_entities.groupby(["title", "type"], sort=False)
+        all_entities
+        .groupby(["title", "type"], sort=False)
         .agg(
             description=("description", list),
             text_unit_ids=("source_id", list),
@@ -115,7 +116,8 @@ def _merge_entities(entity_dfs) -> pd.DataFrame:
 def _merge_relationships(relationship_dfs) -> pd.DataFrame:
     all_relationships = pd.concat(relationship_dfs, ignore_index=False)
     return (
-        all_relationships.groupby(["source", "target"], sort=False)
+        all_relationships
+        .groupby(["source", "target"], sort=False)
         .agg(
             description=("description", list),
             text_unit_ids=("source_id", list),

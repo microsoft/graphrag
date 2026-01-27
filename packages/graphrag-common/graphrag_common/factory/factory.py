@@ -28,7 +28,7 @@ class Factory(ABC, Generic[T]):
 
     _instance: ClassVar["Factory | None"] = None
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> "Factory":
+    def __new__(cls, *args: Any, **kwargs: Any) -> "Factory[T]":
         """Create a new instance of Factory if it does not exist."""
         if cls._instance is None:
             cls._instance = super().__new__(cls, *args, **kwargs)

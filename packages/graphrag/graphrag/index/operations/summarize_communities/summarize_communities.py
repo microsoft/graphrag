@@ -52,7 +52,8 @@ async def summarize_communities(
     reports: list[CommunityReport | None] = []
     tick = progress_ticker(callbacks.progress, len(local_contexts))
     community_hierarchy = (
-        communities.explode("children")
+        communities
+        .explode("children")
         .rename({"children": "sub_community"}, axis=1)
         .loc[:, ["community", "level", "sub_community"]]
     ).dropna()

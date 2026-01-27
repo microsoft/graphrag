@@ -6,6 +6,7 @@
 from typing import Any, ClassVar, TypedDict
 
 from litellm import model_cost
+from typing_extensions import Self
 
 
 class ModelCosts(TypedDict):
@@ -18,10 +19,10 @@ class ModelCosts(TypedDict):
 class ModelCostRegistry:
     """Registry for model costs."""
 
-    _instance: ClassVar["ModelCostRegistry | None"] = None
+    _instance: ClassVar["Self | None"] = None
     _model_costs: dict[str, ModelCosts]
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> "ModelCostRegistry":
+    def __new__(cls, *args: Any, **kwargs: Any) -> Self:
         """Create a new instance of ModelCostRegistry if it does not exist."""
         if cls._instance is None:
             cls._instance = super().__new__(cls, *args, **kwargs)

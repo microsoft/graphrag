@@ -247,7 +247,8 @@ def render_html_table(df: pd.DataFrame, search_type: str, key: str):
                     else value
                 )
                 title_value = (
-                    title_value.replace('"', "&quot;")
+                    title_value
+                    .replace('"', "&quot;")
                     .replace("'", "&apos;")
                     .replace("\n", " ")
                     .replace("\n\n", " ")

@@ -79,7 +79,7 @@ def _prepare_reports_at_level(
         edge_df.loc[:, schemas.EDGE_SOURCE].isin(nodes_set)
         & edge_df.loc[:, schemas.EDGE_TARGET].isin(nodes_set)
     ]
-    level_edge_df.loc[:, schemas.EDGE_DETAILS] = level_edge_df.loc[
+    level_edge_df.loc[:, schemas.EDGE_DETAILS] = level_edge_df.loc[  # type: ignore
         :,
         [
             schemas.SHORT_ID,
@@ -99,14 +99,16 @@ def _prepare_reports_at_level(
     # Merge node and edge details
     # Group edge details by node and aggregate into lists
     source_edges = (
-        level_edge_df.groupby(schemas.EDGE_SOURCE)
+        level_edge_df
+        .groupby(schemas.EDGE_SOURCE)
         .agg({schemas.EDGE_DETAILS: "first"})
         .reset_index()
         .rename(columns={schemas.EDGE_SOURCE: schemas.TITLE})
     )
 
     target_edges = (
-        level_edge_df.groupby(schemas.EDGE_TARGET)
+        level_edge_df
+        .groupby(schemas.EDGE_TARGET)
         .agg({schemas.EDGE_DETAILS: "first"})
         .reset_index()
         .rename(columns={schemas.EDGE_TARGET: schemas.TITLE})
@@ -129,7 +131,8 @@ def _prepare_reports_at_level(
 
     # Aggregate node and edge details
     merged_node_df = (
-        merged_node_df.groupby([
+        merged_node_df
+        .groupby([
             schemas.TITLE,
             schemas.COMMUNITY_ID,
             schemas.COMMUNITY_LEVEL,
@@ -155,8 +158,9 @@ def _prepare_reports_at_level(
         )
 
     # Create the ALL_CONTEXT column
-    merged_node_df[schemas.ALL_CONTEXT] = (
-        merged_node_df.loc[
+    merged_node_df[schemas.ALL_CONTEXT] = (  # type: ignore
+        merged_node_df
+        .loc[
             :,
             [
                 schemas.TITLE,
@@ -175,7 +179,8 @@ def _prepare_reports_at_level(
 
     # group all node details by community
     community_df = (
-        merged_node_df.groupby(schemas.COMMUNITY_ID)
+        merged_node_df
+        .groupby(schemas.COMMUNITY_ID)
         .agg({schemas.ALL_CONTEXT: list})
         .reset_index()
     )
@@ -351,7 +356,8 @@ def _get_community_df(
         axis=1,
     )
     community_df = (
-        community_df.groupby(schemas.COMMUNITY_ID)
+        community_df
+        .groupby(schemas.COMMUNITY_ID)
         .agg({schemas.ALL_CONTEXT: list})
         .reset_index()
     )

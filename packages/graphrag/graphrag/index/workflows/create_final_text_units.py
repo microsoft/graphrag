@@ -88,7 +88,8 @@ def _entities(df: pd.DataFrame) -> pd.DataFrame:
     unrolled = selected.explode(["text_unit_ids"]).reset_index(drop=True)
 
     return (
-        unrolled.groupby("text_unit_ids", sort=False)
+        unrolled
+        .groupby("text_unit_ids", sort=False)
         .agg(entity_ids=("id", "unique"))
         .reset_index()
         .rename(columns={"text_unit_ids": "id"})
@@ -100,7 +101,8 @@ def _relationships(df: pd.DataFrame) -> pd.DataFrame:
     unrolled = selected.explode(["text_unit_ids"]).reset_index(drop=True)
 
     return (
-        unrolled.groupby("text_unit_ids", sort=False)
+        unrolled
+        .groupby("text_unit_ids", sort=False)
         .agg(relationship_ids=("id", "unique"))
         .reset_index()
         .rename(columns={"text_unit_ids": "id"})
@@ -111,7 +113,8 @@ def _covariates(df: pd.DataFrame) -> pd.DataFrame:
     selected = df.loc[:, ["id", "text_unit_id"]]
 
     return (
-        selected.groupby("text_unit_id", sort=False)
+        selected
+        .groupby("text_unit_id", sort=False)
         .agg(covariate_ids=("id", "unique"))
         .reset_index()
         .rename(columns={"text_unit_id": "id"})

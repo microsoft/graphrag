@@ -62,7 +62,8 @@ def try_parse_json_object(input: str, verbose: bool = True) -> tuple[str, dict]:
 
     # Clean up json string.
     input = (
-        input.replace("{{", "{")
+        input
+        .replace("{{", "{")
         .replace("}}", "}")
         .replace('"[{', "[{")
         .replace('}]"', "}]")
