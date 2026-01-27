@@ -1,9 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation.
-# Licensed under the MIT License
 
-"""A file containing prompts definition."""
-
-COMMUNITY_REPORT_TEXT_PROMPT = """
 You are an AI assistant that helps a human analyst to perform general information discovery.
 Information discovery is the process of identifying and assessing relevant information associated with certain entities (e.g., organizations and individuals) within a network.
 
@@ -69,15 +64,21 @@ Output:
     "findings": [
         {{
             "summary": "Risk Management Operational Scope",
-            "explanation": "The Risk Management Department at Enron plays a pivotal role in identifying, assessing, and mitigating financial risks. Their proactive approach, highlighted from the beginning of 2000, helps safeguard Enron against potential financial pitfalls and ensures continuous compliance with evolving market regulations. Effective risk management not only prevents financial anomalies but also supports the company's strategic decision-making processes.\n\n[Data: Sources (2, 3), Date_Range ((2000, 01, 01), (2000, 07, 12))]"
+            "explanation": "The Risk Management Department at Enron plays a pivotal role in identifying, assessing, and mitigating financial risks. Their proactive approach, highlighted from the beginning of 2000, helps safeguard Enron against potential financial pitfalls and ensures continuous compliance with evolving market regulations. Effective risk management not only prevents financial anomalies but also supports the company's strategic decision-making processes.
+
+[Data: Sources (2, 3), Date_Range ((2000, 01, 01), (2000, 07, 12))]"
         }},
         {{
             "summary": "Legal Compliance and Governance",
-            "explanation": "The Legal Compliance Department ensures that all Enron's operations adhere to the legal standards set by regulatory bodies. Their focus on corporate governance and contract management, noted starting Q2 2000, is crucial in maintaining Enron's reputation and operational legality, especially in managing complex contracts and corporate agreements. Their efforts underscore the commitment to upholding high legal standards and ethical practices.\n\n[Data: Source (5), Date_Range ((2000, 04, 01), (2000, 07, 12))]"
+            "explanation": "The Legal Compliance Department ensures that all Enron's operations adhere to the legal standards set by regulatory bodies. Their focus on corporate governance and contract management, noted starting Q2 2000, is crucial in maintaining Enron's reputation and operational legality, especially in managing complex contracts and corporate agreements. Their efforts underscore the commitment to upholding high legal standards and ethical practices.
+
+[Data: Source (5), Date_Range ((2000, 04, 01), (2000, 07, 12))]"
         }},
         {{
             "summary": "Interdepartmental Collaboration for Compliance",
-            "explanation": "Collaboration between the Risk Management and Legal Compliance Departments, established in Q2 2000, ensures that risk mitigation strategies are legally sound and that compliance measures consider financial risks. This synergy is vital for holistic governance and has been instrumental in integrating risk management with legal compliance strategies at Enron. Enhanced interdepartmental cooperation during this period plays a crucial role in aligning the company's strategies with regulatory requirements.\n\n[Data: Sources (9), Date_Range ((2000, 04, 01), (2000, 07, 12))]"
+            "explanation": "Collaboration between the Risk Management and Legal Compliance Departments, established in Q2 2000, ensures that risk mitigation strategies are legally sound and that compliance measures consider financial risks. This synergy is vital for holistic governance and has been instrumental in integrating risk management with legal compliance strategies at Enron. Enhanced interdepartmental cooperation during this period plays a crucial role in aligning the company's strategies with regulatory requirements.
+
+[Data: Sources (9), Date_Range ((2000, 04, 01), (2000, 07, 12))]"
         }}
     ],
     "date_range": ["2000-01-01", "2000-07-12"]
@@ -92,4 +93,3 @@ Text:
 {input_text}
 
 Output:
-"""

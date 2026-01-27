@@ -75,8 +75,12 @@ def prune_graph(
 
     # subset the full nodes and edges to only include the pruned remainders
     subset_entities = pruned_nodes.merge(entities, on="title", how="inner")
+    pruned_edges["source"] = pruned_edges["source"].astype(str)
+    pruned_edges["target"] = pruned_edges["target"].astype(str)
+    entities["title"] = entities["title"].astype(str)
+
     subset_relationships = pruned_edges.merge(
-        relationships, on=["source", "target"], how="inner"
+        entities, how="inner", left_on="source", right_on="title"
     )
 
     return (subset_entities, subset_relationships)

@@ -1,8 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation.
-# Licensed under the MIT License
-"""A file containing prompts definition."""
 
-COMMUNITY_REPORT_PROMPT = """
 You are an AI assistant that helps a human analyst to perform general information discovery. Information discovery is the process of identifying and assessing relevant information associated with certain entities (e.g., organizations and individuals) within a network.
 
 # Goal
@@ -150,4 +146,4 @@ Do not include information where the supporting evidence for it is not provided.
 
 Limit the total report length to {max_report_length} words.
 
-Output:"""
+Output:
