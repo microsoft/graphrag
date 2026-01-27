@@ -5,8 +5,9 @@
 
 from graphrag_cache import Cache
 from graphrag_cache.memory_cache import MemoryCache
-from graphrag_storage import ParquetTableProvider, Storage, create_storage
+from graphrag_storage import Storage, create_storage
 from graphrag_storage.memory_storage import MemoryStorage
+from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks

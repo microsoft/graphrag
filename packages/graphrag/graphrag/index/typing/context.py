@@ -10,7 +10,8 @@ from graphrag_cache import Cache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.typing.state import PipelineState
 from graphrag.index.typing.stats import PipelineRunStats
-from graphrag_storage import ParquetTableProvider, Storage
+from graphrag_storage import Storage
+from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
 
 
 @dataclass

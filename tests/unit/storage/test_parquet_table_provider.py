@@ -7,11 +7,11 @@ from io import BytesIO
 import pandas as pd
 import pytest
 from graphrag_storage import (
-    ParquetTableProvider,
     StorageConfig,
     StorageType,
     create_storage,
 )
+from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
 
 
 class TestParquetTableProvider(unittest.IsolatedAsyncioTestCase):
