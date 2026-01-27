@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-llm"
-version = "2.7.1"
+version = "3.0.0"
 description = "GraphRAG LLM package."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
@@ -32,14 +32,17 @@ classifiers = [
 ]
 dependencies = [
     "azure-identity~=1.19.0",
-    "graphrag-cache==2.7.1",
-    "graphrag-common==2.7.1",
+    "graphrag-cache==3.0.0",
+    "graphrag-common==3.0.0",
     "jinja2~=3.1",
     "litellm~=1.80",
     "nest-asyncio2~=1.7",
     "pydantic~=2.10",
     "typing-extensions~=4.12"
 ]
+
+[project.urls]
+Source = "https://github.com/microsoft/graphrag"
 
 [build-system]
 requires = ["hatchling>=1.27.0,<2.0.0"]

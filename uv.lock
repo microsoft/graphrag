@@ -880,7 +880,7 @@ wheels = [
 
 [[package]]
 name = "graphrag"
-version = "2.7.1"
+version = "3.0.0"
 source = { editable = "packages/graphrag" }
 dependencies = [
     { name = "azure-identity" },
@@ -889,6 +889,7 @@ dependencies = [
     { name = "blis" },
     { name = "devtools" },
     { name = "graphrag-cache" },
+    { name = "graphrag-chunking" },
     { name = "graphrag-common" },
     { name = "graphrag-input" },
     { name = "graphrag-llm" },
@@ -917,6 +918,7 @@ requires-dist = [
     { name = "blis", specifier = "~=1.0" },
     { name = "devtools", specifier = "~=0.12" },
     { name = "graphrag-cache", editable = "packages/graphrag-cache" },
+    { name = "graphrag-chunking", editable = "packages/graphrag-chunking" },
     { name = "graphrag-common", editable = "packages/graphrag-common" },
     { name = "graphrag-input", editable = "packages/graphrag-input" },
     { name = "graphrag-llm", editable = "packages/graphrag-llm" },
@@ -939,7 +941,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-cache"
-version = "2.7.1"
+version = "3.0.0"
 source = { editable = "packages/graphrag-cache" }
 dependencies = [
     { name = "graphrag-common" },
@@ -954,7 +956,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-chunking"
-version = "2.7.1"
+version = "3.0.0"
 source = { editable = "packages/graphrag-chunking" }
 dependencies = [
     { name = "graphrag-common" },
@@ -969,7 +971,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-common"
-version = "2.7.1"
+version = "3.0.0"
 source = { editable = "packages/graphrag-common" }
 dependencies = [
     { name = "python-dotenv" },
@@ -984,7 +986,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-input"
-version = "2.7.1"
+version = "3.0.0"
 source = { editable = "packages/graphrag-input" }
 dependencies = [
     { name = "graphrag-common" },
@@ -1003,7 +1005,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-llm"
-version = "2.7.1"
+version = "3.0.0"
 source = { editable = "packages/graphrag-llm" }
 dependencies = [
     { name = "azure-identity" },
@@ -1085,7 +1087,7 @@ dev = [
 
 [[package]]
 name = "graphrag-storage"
-version = "2.7.1"
+version = "3.0.0"
 source = { editable = "packages/graphrag-storage" }
 dependencies = [
     { name = "aiofiles" },
@@ -1110,7 +1112,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-vectors"
-version = "2.7.1"
+version = "3.0.0"
 source = { editable = "packages/graphrag-vectors" }
 dependencies = [
     { name = "azure-core" },
