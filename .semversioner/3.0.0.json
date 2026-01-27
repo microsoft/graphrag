@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "description": "Monorepo restructure\n\n  New Packages:\n    - graphrag-cache\n    - graphrag-chunking\n    - graphrag-common\n    - graphrag-input\n    - graphrag-llm\n    - graphrag-storage\n    - graphrag-vectors\n\n  Changes:\n    - New config: run graphrag init --force to reinitialize config with new layout and options.",
+      "type": "major"
+    }
+  ],
+  "created_at": "2026-01-27T18:50:37+00:00",
+  "version": "3.0.0"
+}

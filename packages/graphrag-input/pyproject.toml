@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-input"
-version = "2.7.1"
+version = "3.0.0"
 description = "Input document loading utilities for GraphRAG"
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
@@ -30,8 +30,8 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "graphrag-common==2.7.1",
-    "graphrag-storage==2.7.1    ",
+    "graphrag-common==3.0.0",
+    "graphrag-storage==3.0.0    ",
     "pydantic~=2.10",
     "markitdown~=0.1.0"
 ]
