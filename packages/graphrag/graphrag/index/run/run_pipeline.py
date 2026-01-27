@@ -36,7 +36,7 @@ async def run_pipeline(
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
     input_storage = create_storage(config.input_storage)
-    output_storage = create_storage(config.output)
+    output_storage = create_storage(config.output_storage)
     cache = create_cache(config.cache)
 
     # load existing state in case any workflows are stateful

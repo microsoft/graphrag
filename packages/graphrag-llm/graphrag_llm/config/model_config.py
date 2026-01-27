@@ -3,6 +3,7 @@
 
 """Language model configuration."""
 
+import logging
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -11,6 +12,8 @@ from graphrag_llm.config.metrics_config import MetricsConfig
 from graphrag_llm.config.rate_limit_config import RateLimitConfig
 from graphrag_llm.config.retry_config import RetryConfig
 from graphrag_llm.config.types import AuthMethod, LLMProviderType
+
+logger = logging.getLogger(__name__)
 
 
 class ModelConfig(BaseModel):

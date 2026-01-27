@@ -52,7 +52,7 @@ def get_update_storages(
     config: GraphRagConfig, timestamp: str
 ) -> tuple[Storage, Storage, Storage]:
     """Get storage objects for the update index run."""
-    output_storage = create_storage(config.output)
+    output_storage = create_storage(config.output_storage)
     update_storage = create_storage(config.update_output_storage)
     timestamped_storage = update_storage.child(timestamp)
     delta_storage = timestamped_storage.child("delta")

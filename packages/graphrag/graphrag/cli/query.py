@@ -38,7 +38,7 @@ def run_global_search(
     """
     cli_overrides: dict[str, Any] = {}
     if data_dir:
-        cli_overrides["output"] = {"base_dir": str(data_dir)}
+        cli_overrides["output_storage"] = {"base_dir": str(data_dir)}
     config = load_config(
         root_dir=root_dir,
         cli_overrides=cli_overrides,
@@ -124,7 +124,7 @@ def run_local_search(
     """
     cli_overrides: dict[str, Any] = {}
     if data_dir:
-        cli_overrides["output"] = {"base_dir": str(data_dir)}
+        cli_overrides["output_storage"] = {"base_dir": str(data_dir)}
     config = load_config(
         root_dir=root_dir,
         cli_overrides=cli_overrides,
@@ -221,7 +221,7 @@ def run_drift_search(
     """
     cli_overrides: dict[str, Any] = {}
     if data_dir:
-        cli_overrides["output"] = {"base_dir": str(data_dir)}
+        cli_overrides["output_storage"] = {"base_dir": str(data_dir)}
     config = load_config(
         root_dir=root_dir,
         cli_overrides=cli_overrides,
@@ -312,7 +312,7 @@ def run_basic_search(
     """
     cli_overrides: dict[str, Any] = {}
     if data_dir:
-        cli_overrides["output"] = {"base_dir": str(data_dir)}
+        cli_overrides["output_storage"] = {"base_dir": str(data_dir)}
     config = load_config(
         root_dir=root_dir,
         cli_overrides=cli_overrides,
@@ -377,7 +377,7 @@ def _resolve_output_files(
 ) -> dict[str, Any]:
     """Read indexing output files to a dataframe dict."""
     dataframe_dict = {}
-    storage_obj = create_storage(config.output)
+    storage_obj = create_storage(config.output_storage)
     for name in output_list:
         df_value = asyncio.run(load_table_from_storage(name=name, storage=storage_obj))
         dataframe_dict[name] = df_value

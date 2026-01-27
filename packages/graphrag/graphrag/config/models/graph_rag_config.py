@@ -102,7 +102,7 @@ class GraphRagConfig(BaseModel):
     )
     """The chunking configuration to use."""
 
-    output: StorageConfig = Field(
+    output_storage: StorageConfig = Field(
         description="The output configuration.",
         default=StorageConfig(
             base_dir=graphrag_config_defaults.output_storage.base_dir,
@@ -112,11 +112,13 @@ class GraphRagConfig(BaseModel):
 
     def _validate_output_base_dir(self) -> None:
         """Validate the output base directory."""
-        if self.output.type == StorageType.File:
-            if not self.output.base_dir:
+        if self.output_storage.type == StorageType.File:
+            if not self.output_storage.base_dir:
                 msg = "output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
                 raise ValueError(msg)
-            self.output.base_dir = str(Path(self.output.base_dir).resolve())
+            self.output_storage.base_dir = str(
+                Path(self.output_storage.base_dir).resolve()
+            )
 
     update_output_storage: StorageConfig = Field(
         description="The output configuration for the updated index.",

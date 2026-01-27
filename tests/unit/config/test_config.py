@@ -49,11 +49,11 @@ def test_load_config_with_cli_overrides() -> None:
     output_dir = "some_output_dir"
     expected_output_base_dir = root_dir / output_dir
     expected = get_default_graphrag_config()
-    expected.output.base_dir = str(expected_output_base_dir)
+    expected.output_storage.base_dir = str(expected_output_base_dir)
 
     actual = load_config(
         root_dir=root_dir,
-        cli_overrides={"output": {"base_dir": output_dir}},
+        cli_overrides={"output_storage": {"base_dir": output_dir}},
     )
     assert_graphrag_configs(actual, expected)
     # Need to reset cwd after test
