@@ -2589,8 +2589,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2611,8 +2611,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.models.vector_store_schema_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorStoreSchemaConfig</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.context_builder.entity_extraction</span><span class="w"> </span><span class="kn">import</span> <span class="n">EntityVectorStoreKey</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.indexer_adapters</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">read_indexer_covariates</span><span class="p">,</span>
@@ -2626,13 +2624,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">LocalSearchMixedContext</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.structured_search.local_search.search</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalSearch</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.vector_stores.lancedb</span><span class="w"> </span><span class="kn">import</span> <span class="n">LanceDBVectorStore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag_vectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">IndexSchema</span><span class="p">,</span> <span class="n">LanceDBVectorStore</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-2">import os
 
 import pandas as pd
-
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.indexer_adapters import (
     read_indexer_covariates,
@@ -2646,7 +2642,29 @@ from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )
 from graphrag.query.structured_search.local_search.search import LocalSearch
-from graphrag.vector_stores.lancedb import LanceDBVectorStore</div>
+from graphrag_vectors import IndexSchema, LanceDBVectorStore</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 17</span>
+<span class="ansi-green-fg">     13</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">query</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">structured_search</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">local_search</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">mixed_context</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> (
+<span class="ansi-green-fg">     14</span>     LocalSearchMixedContext,
+<span class="ansi-green-fg">     15</span> )
+<span class="ansi-green-fg">     16</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">query</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">structured_search</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">local_search</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">search</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LocalSearch
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">17</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag_vectors</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> IndexSchema, LanceDBVectorStore
+
+<span class="ansi-red-fg">ImportError</span>: cannot import name 'LanceDBVectorStore' from 'graphrag_vectors' (/home/runner/work/graphrag/graphrag/packages/graphrag-vectors/graphrag_vectors/__init__.py)</pre>
 </div>
 </div>
 </div>
@@ -2771,9 +2789,7 @@ COMMUNITY_LEVEL = 2</div>
 <span class="c1"># load description embeddings to an in-memory lancedb vectorstore</span>
 <span class="c1"># to connect to a remote db, specify url and port values.</span>
 <span class="n">description_embedding_store</span> <span class="o">=</span> <span class="n">LanceDBVectorStore</span><span class="p">(</span>
-    <span class="n">vector_store_schema_config</span><span class="o">=</span><span class="n">VectorStoreSchemaConfig</span><span class="p">(</span>
-        <span class="n">index_name</span><span class="o">=</span><span class="s2">"default-entity-description"</span>
-    <span class="p">)</span>
+    <span class="n">index_schema</span><span class="o">=</span><span class="n">IndexSchema</span><span class="p">(</span><span class="n">index_name</span><span class="o">=</span><span class="s2">"default-entity-description"</span><span class="p">)</span>
 <span class="p">)</span>
 <span class="n">description_embedding_store</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_uri</span><span class="o">=</span><span class="n">LANCEDB_URI</span><span class="p">)</span>
 
@@ -2789,9 +2805,7 @@ entities = read_indexer_entities(entity_df, community_df, COMMUNITY_LEVEL)
 # load description embeddings to an in-memory lancedb vectorstore
 # to connect to a remote db, specify url and port values.
 description_embedding_store = LanceDBVectorStore(
-    vector_store_schema_config=VectorStoreSchemaConfig(
-        index_name="default-entity-description"
-    )
+    index_schema=IndexSchema(index_name="default-entity-description")
 )
 description_embedding_store.connect(db_uri=LANCEDB_URI)
 
@@ -2807,113 +2821,21 @@ entity_df.head()</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Entity count: 18
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[4]</span><span class="ansi-green-fg">, line 9</span>
+<span class="ansi-green-fg">      5</span> entities = read_indexer_entities(entity_df, community_df, COMMUNITY_LEVEL)
+<span class="ansi-green-fg">      7</span> <span style="color: rgb(95,135,135)"># load description embeddings to an in-memory lancedb vectorstore</span>
+<span class="ansi-green-fg">      8</span> <span style="color: rgb(95,135,135)"># to connect to a remote db, specify url and port values.</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">9</span> description_embedding_store = <span class="ansi-yellow-bg">LanceDBVectorStore</span>(
+<span class="ansi-green-fg">     10</span>     index_schema=IndexSchema(index_name=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">default-entity-description</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     11</span> )
+<span class="ansi-green-fg">     12</span> description_embedding_store.connect(db_uri=LANCEDB_URI)
+<span class="ansi-green-fg">     14</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Entity count: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">len</span>(entity_df)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>human_readable_id</th>
-<th>title</th>
-<th>type</th>
-<th>description</th>
-<th>text_unit_ids</th>
-<th>frequency</th>
-<th>degree</th>
-<th>x</th>
-<th>y</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>425a7862-0aef-4f69-a4c8-8bd42151c9d4</td>
-<td>0</td>
-<td>ALEX MERCER</td>
-<td>PERSON</td>
-<td>Agent Alex Mercer is a determined individual w...</td>
-<td>[8e938693af886bfd081acbbe8384c3671446bff84a134...</td>
-<td>4</td>
-<td>9</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr>
-<th>1</th>
-<td>bcdbf1fc-0dc1-460f-bc71-2781729c96ba</td>
-<td>1</td>
-<td>TAYLOR CRUZ</td>
-<td>PERSON</td>
-<td>Agent Taylor Cruz is a commanding and authorit...</td>
-<td>[8e938693af886bfd081acbbe8384c3671446bff84a134...</td>
-<td>4</td>
-<td>8</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr>
-<th>2</th>
-<td>ef02ef24-5762-46ce-93ce-7dea6fc86595</td>
-<td>2</td>
-<td>JORDAN HAYES</td>
-<td>PERSON</td>
-<td>Dr. Jordan Hayes is a scientist and a member o...</td>
-<td>[8e938693af886bfd081acbbe8384c3671446bff84a134...</td>
-<td>4</td>
-<td>9</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr>
-<th>3</th>
-<td>8b163d27-e43a-4a2c-a26f-866778d8720e</td>
-<td>3</td>
-<td>SAM RIVERA</td>
-<td>PERSON</td>
-<td>Sam Rivera is a cybersecurity expert and a tal...</td>
-<td>[8e938693af886bfd081acbbe8384c3671446bff84a134...</td>
-<td>4</td>
-<td>8</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr>
-<th>4</th>
-<td>542aa5bd-ba2d-400a-8488-c52d50bc300d</td>
-<td>4</td>
-<td>PARANORMAL MILITARY SQUAD</td>
-<td>ORGANIZATION</td>
-<td>The PARANORMAL MILITARY SQUAD is an elite grou...</td>
-<td>[8e938693af886bfd081acbbe8384c3671446bff84a134...</td>
-<td>2</td>
-<td>6</td>
-<td>0</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
-</div>
+<span class="ansi-red-fg">NameError</span>: name 'LanceDBVectorStore' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2971,7 +2893,7 @@ relationship_df.head()</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Relationship count: 54
+<pre>Relationship count: 107
 </pre>
 </div>
 </div>
@@ -3009,58 +2931,58 @@ relationship_df.head()</div>
 <tbody>
 <tr>
 <th>0</th>
-<td>2bfad9f4-5abd-48d0-8db3-a9cad9120413</td>
+<td>7c9039f8-43d7-4685-a317-f7bbbfac8e3a</td>
 <td>0</td>
 <td>ALEX MERCER</td>
-<td>TAYLOR CRUZ</td>
-<td>Alex Mercer and Taylor Cruz are both agents wo...</td>
-<td>37.0</td>
-<td>17</td>
-<td>[8e938693af886bfd081acbbe8384c3671446bff84a134...</td>
+<td>PARANORMAL MILITARY SQUAD</td>
+<td>Alex Mercer is a prominent agent and operative...</td>
+<td>17.0</td>
+<td>29</td>
+<td>[ff65e3e3764d360b35c55a83aaa35b0138af32551d0bc...</td>
 </tr>
 <tr>
 <th>1</th>
-<td>6cbb838f-9e83-4086-a684-15c8ed709e52</td>
+<td>f0310841-7ad1-4286-8e1d-1641c180b3ab</td>
 <td>1</td>
-<td>ALEX MERCER</td>
-<td>JORDAN HAYES</td>
-<td>Alex Mercer and Jordan Hayes are both agents w...</td>
-<td>42.0</td>
-<td>18</td>
-<td>[8e938693af886bfd081acbbe8384c3671446bff84a134...</td>
+<td>TAYLOR CRUZ</td>
+<td>PARANORMAL MILITARY SQUAD</td>
+<td>Taylor Cruz is a leading agent in the Paranorm...</td>
+<td>9.0</td>
+<td>29</td>
+<td>[ff65e3e3764d360b35c55a83aaa35b0138af32551d0bc...</td>
 </tr>
 <tr>
 <th>2</th>
-<td>bfdc25f1-80ca-477b-a304-94465b69e680</td>
+<td>84441d65-6f4e-40eb-92ef-743ac6d1229c</td>
 <td>2</td>
-<td>ALEX MERCER</td>
-<td>SAM RIVERA</td>
-<td>Alex Mercer and Sam Rivera are both agents and...</td>
-<td>26.0</td>
-<td>17</td>
-<td>[8e938693af886bfd081acbbe8384c3671446bff84a134...</td>
+<td>JORDAN HAYES</td>
+<td>PARANORMAL MILITARY SQUAD</td>
+<td>Dr. Jordan Hayes is a key member of the Parano...</td>
+<td>17.0</td>
+<td>25</td>
+<td>[ff65e3e3764d360b35c55a83aaa35b0138af32551d0bc...</td>
 </tr>
 <tr>
 <th>3</th>
-<td>7a7e943d-a4f5-487b-9625-5d0907c4c26d</td>
+<td>ec2c0109-3a2f-479e-89d9-7a64abe07a63</td>
 <td>3</td>
-<td>ALEX MERCER</td>
+<td>SAM RIVERA</td>
 <td>PARANORMAL MILITARY SQUAD</td>
-<td>Alex Mercer is a member of the Paranormal Mili...</td>
-<td>17.0</td>
-<td>15</td>
-<td>[8e938693af886bfd081acbbe8384c3671446bff84a134...</td>
+<td>Sam Rivera is a technical expert and agent wit...</td>
+<td>9.0</td>
+<td>29</td>
+<td>[ff65e3e3764d360b35c55a83aaa35b0138af32551d0bc...</td>
 </tr>
 <tr>
 <th>4</th>
-<td>5e00bcb9-a17e-4c27-8241-6ebb286a7fc6</td>
+<td>19d249b1-487e-4db9-85db-410cfb6ab986</td>
 <td>4</td>
-<td>ALEX MERCER</td>
-<td>DULCE</td>
-<td>Alex Mercer is preparing to lead the team into...</td>
-<td>15.0</td>
-<td>14</td>
-<td>[8e938693af886bfd081acbbe8384c3671446bff84a134...</td>
+<td>PARANORMAL MILITARY SQUAD</td>
+<td>OPERATION: DULCE</td>
+<td>The Paranormal Military Squad is the team assi...</td>
+<td>10.0</td>
+<td>20</td>
+<td>[ff65e3e3764d360b35c55a83aaa35b0138af32551d0bc...</td>
 </tr>
 </tbody>
 </table>
@@ -3117,7 +3039,7 @@ covariates = {"claims": claims}</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Claim records: 17
+<pre>Claim records: 41
 </pre>
 </div>
 </div>
@@ -3176,7 +3098,7 @@ report_df.head()</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Report records: 2
+<pre>Report records: 10
 </pre>
 </div>
 </div>
@@ -3221,39 +3143,93 @@ report_df.head()</div>
 <tbody>
 <tr>
 <th>0</th>
-<td>6c3a555680d647ac8be866a129c7b0ea</td>
+<td>9785e64b429dacd70cce8238051f3438b387ebcd6920ef...</td>
+<td>7</td>
+<td>7</td>
+<td>1</td>
 <td>0</td>
-<td>0</td>
-<td>0</td>
-<td>-1</td>
 <td>[]</td>
-<td>Operation: Dulce and Dulce Base Exploration</td>
-<td>The community revolves around 'Operation: Dulc...</td>
-<td># Operation: Dulce and Dulce Base Exploration\...</td>
+<td>Paranormal Military Squad and Operation Dulce</td>
+<td>This community centers on the Paranormal Milit...</td>
+<td># Paranormal Military Squad and Operation Dulc...</td>
 <td>8.5</td>
 <td>The impact severity rating is high due to the ...</td>
-<td>[{'explanation': 'Operation: Dulce is a signif...</td>
-<td>{\n    "title": "Operation: Dulce and Dulce Ba...</td>
-<td>2025-03-04</td>
-<td>7</td>
+<td>[{'explanation': 'The Paranormal Military Squa...</td>
+<td>{\n    "title": "Paranormal Military Squad and...</td>
+<td>2026-01-13</td>
+<td>4</td>
 </tr>
 <tr>
 <th>1</th>
-<td>0127331a1ea34b8ba19de2c2a4cb3bc9</td>
+<td>212c8ff1796bff731abe3d54f3216511ab15d5fb0d97eb...</td>
+<td>8</td>
+<td>8</td>
+<td>1</td>
+<td>0</td>
+<td>[]</td>
+<td>Paranormal Military Squad: Leadership and Scie...</td>
+<td>This community centers on the Paranormal Milit...</td>
+<td># Paranormal Military Squad: Leadership and Sc...</td>
+<td>8.0</td>
+<td>The community poses a high impact due to its i...</td>
+<td>[{'explanation': 'Taylor Cruz, often referred ...</td>
+<td>{\n    "title": "Paranormal Military Squad: Le...</td>
+<td>2026-01-13</td>
+<td>3</td>
+</tr>
+<tr>
+<th>2</th>
+<td>dbff99eaacade8ac4337a9bde0f533313445f0643ab3d0...</td>
+<td>9</td>
+<td>9</td>
+<td>1</td>
+<td>0</td>
+<td>[]</td>
+<td>Paranormal Military Squad and Operation: Dulce...</td>
+<td>This community centers around the Paranormal M...</td>
+<td># Paranormal Military Squad and Operation: Dul...</td>
+<td>8.5</td>
+<td>The community poses a high impact severity due...</td>
+<td>[{'explanation': 'The military complex is the ...</td>
+<td>{\n    "title": "Paranormal Military Squad and...</td>
+<td>2026-01-13</td>
+<td>3</td>
+</tr>
+<tr>
+<th>3</th>
+<td>b6e8ab1ac8ecc605bbec09ad78819b95ac08d62c5a9991...</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-1</td>
+<td>[7, 8, 9]</td>
+<td>Paranormal Military Squad and Operation: Dulce</td>
+<td>This community centers on the Paranormal Milit...</td>
+<td># Paranormal Military Squad and Operation: Dul...</td>
+<td>8.5</td>
+<td>The community poses a high impact due to its e...</td>
+<td>[{'explanation': 'Taylor Cruz is the central a...</td>
+<td>{\n    "title": "Paranormal Military Squad and...</td>
+<td>2026-01-13</td>
+<td>10</td>
+</tr>
+<tr>
+<th>4</th>
+<td>97038bee58306d13b709b615fb2b816cae0c11273a9e73...</td>
 <td>1</td>
 <td>1</td>
 <td>0</td>
 <td>-1</td>
 <td>[]</td>
-<td>Paranormal Military Squad and Operation: Dulce</td>
-<td>The community centers around the Paranormal Mi...</td>
-<td># Paranormal Military Squad and Operation: Dul...</td>
-<td>8.5</td>
+<td>Team of Agents Investigating Dulce Base</td>
+<td>This community centers on a specialized team o...</td>
+<td># Team of Agents Investigating Dulce Base\n\nT...</td>
+<td>7.5</td>
 <td>The impact severity rating is high due to the ...</td>
-<td>[{'explanation': 'Agent Alex Mercer is a key f...</td>
-<td>{\n    "title": "Paranormal Military Squad and...</td>
-<td>2025-03-04</td>
-<td>9</td>
+<td>[{'explanation': 'The core of this community i...</td>
+<td>{\n    "title": "Team of Agents Investigating ...</td>
+<td>2026-01-13</td>
+<td>5</td>
 </tr>
 </tbody>
 </table>
@@ -3344,7 +3320,7 @@ text_unit_df.head()</div>
 <th>human_readable_id</th>
 <th>text</th>
 <th>n_tokens</th>
-<th>document_ids</th>
+<th>document_id</th>
 <th>entity_ids</th>
 <th>relationship_ids</th>
 <th>covariate_ids</th>
@@ -3353,58 +3329,58 @@ text_unit_df.head()</div>
 <tbody>
 <tr>
 <th>0</th>
-<td>8e938693af886bfd081acbbe8384c3671446bff84a134a...</td>
-<td>1</td>
+<td>ff65e3e3764d360b35c55a83aaa35b0138af32551d0bc0...</td>
+<td>0</td>
 <td># Operation: Dulce\n\n## Chapter 1\n\nThe thru...</td>
 <td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[745d28dd-be20-411b-85ff-1c69ca70e7b3, 9cba185...</td>
+<td>6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a80...</td>
+<td>[bbb2ad85-3d0b-4c26-b6f9-71ed76ee64bd, 66112f0...</td>
+<td>[7c9039f8-43d7-4685-a317-f7bbbfac8e3a, f031084...</td>
+<td>[4c6e019b-29c5-456c-951c-0cd3df308634, b2d2c91...</td>
 </tr>
 <tr>
 <th>1</th>
-<td>fd1f46d32e1df6cd429542aeda3d64ddf3745ccb80f443...</td>
-<td>2</td>
-<td>, the hollow echo of the bay a stark reminder ...</td>
+<td>56388c08c6e58a2aeaa235be38fe973bbdcbfb5ca72fd2...</td>
+<td>1</td>
+<td>Taylor offered a brief nod, perhaps too curt,...</td>
 <td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[4f9b461f-5e8f-465d-9586-e2fc81787062, 0f74618...</td>
+<td>6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a80...</td>
+<td>[bbb2ad85-3d0b-4c26-b6f9-71ed76ee64bd, 66112f0...</td>
+<td>[e15afdbb-6757-4f10-897d-54b9bb3dddc7, 319a7dc...</td>
+<td>[9cdfde65-90c1-46a2-bfa2-9808ea4c821a, 83a704b...</td>
 </tr>
 <tr>
 <th>2</th>
-<td>7296d9a1f046854d59079dc183de8a054c27c4843d2979...</td>
-<td>3</td>
-<td>differently than praise from others. This was...</td>
+<td>6012990fbcfad49511dce9a360dcc28d0c9bd37dc7b337...</td>
+<td>2</td>
+<td>team was descending into the earth, carrying ...</td>
 <td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[3ef1be9c-4080-4fac-99bd-c4a636248904, 8730b20...</td>
+<td>6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a80...</td>
+<td>[bbb2ad85-3d0b-4c26-b6f9-71ed76ee64bd, 66112f0...</td>
+<td>[4f42f1c3-b769-48f6-a01d-6a4a89b1c084, 319a7dc...</td>
+<td>[d3d99801-1d52-4398-9e36-3dd3d8a06a56, 1a2f60a...</td>
 </tr>
 <tr>
 <th>3</th>
-<td>ac72722a02ac71242a2a91fca323198d04197daf60515d...</td>
-<td>4</td>
-<td>contrast to the rigid silence enveloping the ...</td>
+<td>402ae07f78c0154e8c24a93c00a90ee7c85e7478a755da...</td>
+<td>3</td>
+<td>Cruz squared their shoulders, clearly ruffled ...</td>
 <td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[2c292047-b79a-4958-ab57-7bf7d7a22c92, 3cbd18a...</td>
+<td>6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a80...</td>
+<td>[bbb2ad85-3d0b-4c26-b6f9-71ed76ee64bd, e1274d9...</td>
+<td>[7c9039f8-43d7-4685-a317-f7bbbfac8e3a, 84441d6...</td>
+<td>[b39dd61f-5a5a-4894-9047-23bee3e03f73, 23029bd...</td>
 </tr>
 <tr>
 <th>4</th>
-<td>4c277337d461a16aaf8f9760ddb8b44ef220e948a2341d...</td>
-<td>5</td>
-<td>a mask of duty.\n\nIn the midst of the descen...</td>
-<td>35</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[d084d615-3584-4ec8-9931-90aa6075c764, 4b84859...</td>
-<td>[6efdc42e-69a2-47c0-97ec-4b296cd16d5e]</td>
-<td>[db8da02f-f889-4bb5-8e81-ab2a72e380bb]</td>
+<td>999a787eccebd488865de53a048f60889847f42057d5ad...</td>
+<td>4</td>
+<td>to him, and he couldn't help but feel the wei...</td>
+<td>382</td>
+<td>6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a80...</td>
+<td>[bbb2ad85-3d0b-4c26-b6f9-71ed76ee64bd, 66112f0...</td>
+<td>[d3ea1355-14f3-494e-94cf-d43ac1077ab4, 72e568c...</td>
+<td>[7c71874a-1443-40a6-bbad-6bc78ef23ee4, dac744e...</td>
 </tr>
 </tbody>
 </table>
@@ -3414,8 +3390,8 @@ text_unit_df.head()</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3508,6 +3484,26 @@ tokenizer = get_tokenizer(chat_config)</div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[9]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">enums</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelType
+<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">models</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">language_model_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LanguageModelConfig
+<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">language_model</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">manager</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelManager
+
+<span class="ansi-red-fg">ImportError</span>: cannot import name 'ModelType' from 'graphrag.config.enums' (/home/runner/work/graphrag/graphrag/packages/graphrag/graphrag/config/enums.py)</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
@@ -3520,8 +3516,8 @@ tokenizer = get_tokenizer(chat_config)</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3564,6 +3560,35 @@ tokenizer = get_tokenizer(chat_config)</div>
     text_embedder=text_embedder,
     tokenizer=tokenizer,
 )</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 8</span>
+<span class="ansi-green-fg">      1</span> context_builder = LocalSearchMixedContext(
+<span class="ansi-green-fg">      2</span>     community_reports=reports,
+<span class="ansi-green-fg">      3</span>     text_units=text_units,
+<span class="ansi-green-fg">      4</span>     entities=entities,
+<span class="ansi-green-fg">      5</span>     relationships=relationships,
+<span class="ansi-green-fg">      6</span>     <span style="color: rgb(95,135,135)"># if you did not run covariates during indexing, set this to None</span>
+<span class="ansi-green-fg">      7</span>     covariates=covariates,
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">8</span>     entity_text_embeddings=<span class="ansi-yellow-bg">description_embedding_store</span>,
+<span class="ansi-green-fg">      9</span>     embedding_vectorstore_key=EntityVectorStoreKey.ID,  <span style="color: rgb(95,135,135)"># if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE</span>
+<span class="ansi-green-fg">     10</span>     text_embedder=text_embedder,
+<span class="ansi-green-fg">     11</span>     tokenizer=tokenizer,
+<span class="ansi-green-fg">     12</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'description_embedding_store' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3675,8 +3700,8 @@ model_params = {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3711,6 +3736,31 @@ model_params = {
     context_builder_params=local_context_params,
     response_type="multiple paragraphs",  # free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report
 )</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> search_engine = LocalSearch(
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span>     model=<span class="ansi-yellow-bg">chat_model</span>,
+<span class="ansi-green-fg">      3</span>     context_builder=context_builder,
+<span class="ansi-green-fg">      4</span>     tokenizer=tokenizer,
+<span class="ansi-green-fg">      5</span>     model_params=model_params,
+<span class="ansi-green-fg">      6</span>     context_builder_params=local_context_params,
+<span class="ansi-green-fg">      7</span>     response_type=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">multiple paragraphs</span><span class="ansi-yellow-fg">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
+<span class="ansi-green-fg">      8</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'chat_model' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3762,42 +3812,14 @@ print(result.response)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Warning: No community records added when building community context.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>## Overview of Agent Alex Mercer
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[13]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span>.search(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Tell me about Agent Mercer</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      2</span> <span style="color: rgb(0,135,0)">print</span>(result.response)
 
-Agent Alex Mercer is a central figure within the Paranormal Military Squad, playing a crucial role in Operation: Dulce, the mission to explore and uncover the secrets of the mysterious Dulce base. Mercer is characterized by his determination, leadership qualities, and a nuanced internal conflict between strict adherence to protocol and a natural inclination to question and explore beyond the surface. He is respected by his peers for his expertise and is often seen as a guiding force within the team [Data: Entities (0); Relationships (3, 24, 23, 4, 17, +more)].
-
-## Role in Operation: Dulce
-
-Mercer is directly involved in Operation: Dulce, both as a leader and as an active participant in the exploration of the Dulce base. He is responsible for guiding the team, making critical decisions, and ensuring the mission's objectives are met. His leadership is not without its challenges, as he must balance the demands of protocol—often emphasized by Agent Taylor Cruz—with his own drive to thoroughly investigate every detail and adapt to unforeseen circumstances [Data: Relationships (24, 23, 4, 0, 5, +more); Claims (5, 3)].
-
-## Relationships and Team Dynamics
-
-Alex Mercer maintains significant professional relationships with other key members of the squad. He shares a mutual respect and understanding with Dr. Jordan Hayes, particularly admiring Hayes's analytical abilities and composure under pressure. Their collaboration is marked by a shared commitment to discovery and a willingness to challenge the status quo when necessary [Data: Relationships (1, 25, 5)]. Mercer also acts as a mentor to Sam Rivera, providing guidance and support, and recognizing Rivera's technical expertise as vital to the mission's success [Data: Relationships (2, 15, 31, 50, +more)].
-
-His interactions with Taylor Cruz are more complex, marked by a professional rivalry and a competitive undercurrent. While Mercer acknowledges Cruz's authority and often follows their lead, he is not afraid to question decisions or advocate for a more flexible approach when the situation demands it [Data: Relationships (0, 19, 8, 22, +more)].
-
-## Personality and Internal Conflict
-
-Mercer's personality is defined by a sense of duty, determination, and a reflective nature. He often finds himself caught between the need to comply with established protocols and his own investigative instincts. This internal conflict is highlighted in his interactions with both Cruz and Hayes, as well as in his moments of introspection regarding the broader implications of their mission for humanity [Data: Claims (3, 5); Sources (0, 3)].
-
-## Summary
-
-In summary, Agent Alex Mercer is a determined and thoughtful leader within the Paranormal Military Squad, deeply involved in Operation: Dulce. His ability to balance protocol with adaptability, mentor junior agents, and collaborate with scientific experts makes him an indispensable member of the team. His internal struggles and relationships with other agents add depth to his character and influence the dynamics of the mission [Data: Entities (0); Relationships (1, 2, 3, 4, 5, 15, 17, 23, 24, +more); Claims (3, 5)].
-</pre>
+<span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3840,40 +3862,15 @@ print(result.response)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Warning: No community records added when building community context.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>## Overview of Dr. Jordan Hayes
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[14]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> question = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Tell me about Dr. Jordan Hayes</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span>.search(question)
+<span class="ansi-green-fg">      3</span> <span style="color: rgb(0,135,0)">print</span>(result.response)
 
-Dr. Jordan Hayes is a scientist and a key member of the Paranormal Military Squad, recognized for their expertise in physics and their composed, analytical demeanor. Hayes is deeply involved in Operation: Dulce, a mission focused on investigating alien technology and its implications for humanity. Their role is characterized by a reflective and skeptical approach, often advocating for adaptability and critical thinking in the face of unknown variables [Data: Entities (2, 4, 5); Relationships (10, 27, 48, 51, +more)].
-
-## Role in Operation: Dulce
-
-Within Operation: Dulce, Dr. Hayes is responsible for working with alien technology, providing analytical insights, and expressing concerns about the mission's challenges. Hayes is not only a technical expert but also a voice of caution, emphasizing the importance of remaining adaptive as the team faces unpredictable threats. Their skepticism toward strict adherence to protocol, particularly in interactions with Agent Taylor Cruz, highlights their belief that survival and success depend on flexibility and critical assessment rather than rigid rules [Data: Claims (2, 6, 10); Relationships (5, 25, 27, 48, 51, +more)].
-
-## Relationships and Team Dynamics
-
-Dr. Hayes maintains strong professional relationships with other team members, notably Alex Mercer and Sam Rivera. Hayes and Mercer share mutual respect and understanding, often collaborating closely and admiring each other's expertise. Hayes also works alongside Sam Rivera, with both valuing adaptability and analytical thinking. Their interactions with Taylor Cruz are marked by a complex dynamic—while there is mutual respect, there are also differing views on protocol versus adaptability, leading to moments of tension and eventual truce [Data: Relationships (1, 5, 9, 25, 41, +more)].
-
-## Notable Actions and Characteristics
-
-Hayes is described as composed and reflective, often contemplating the broader implications of their work. They have demonstrated assertiveness and a willingness to challenge authority when necessary, especially as the mission progresses. Hayes's technical acumen is evident in their work on alien technology, including identifying suspicious elements within the Dulce base that suggest hidden dangers. Their analytical mind and cautious approach make them a crucial asset to the team's efforts [Data: Entities (2, 13); Claims (6, 10); Relationships (48, 51, 26, 34, +more)].
-
-## Summary
-
-In summary, Dr. Jordan Hayes is a central figure in the exploration of Dulce base, balancing scientific rigor with adaptability and skepticism. Their contributions to the Paranormal Military Squad and Operation: Dulce are marked by technical expertise, thoughtful analysis, and a commitment to navigating the unknown with both caution and courage [Data: Entities (2, 4, 5); Relationships (10, 27, 48, 51, +more); Claims (2, 6, 10)].
-</pre>
+<span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3920,78 +3917,16 @@ In summary, Dr. Jordan Hayes is a central figure in the exploration of Dulce bas
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[15]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[15]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">entities</span><span class="ansi-yellow-fg">"</span>].head()
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>entity</th>
-<th>description</th>
-<th>number of relationships</th>
-<th>in_context</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>15</td>
-<td>BRIEFING ROOM</td>
-<td></td>
-<td>2</td>
-<td>True</td>
-</tr>
-<tr>
-<th>1</th>
-<td>6</td>
-<td>DULCE</td>
-<td></td>
-<td>5</td>
-<td>True</td>
-</tr>
-<tr>
-<th>2</th>
-<td>7</td>
-<td>THE TEAM</td>
-<td>The team is a group of individuals preparing t...</td>
-<td>5</td>
-<td>True</td>
-</tr>
-<tr>
-<th>3</th>
-<td>3</td>
-<td>SAM RIVERA</td>
-<td>Sam Rivera is a cybersecurity expert and a tal...</td>
-<td>8</td>
-<td>True</td>
-</tr>
-<tr>
-<th>4</th>
-<td>2</td>
-<td>JORDAN HAYES</td>
-<td>Dr. Jordan Hayes is a scientist and a member o...</td>
-<td>9</td>
-<td>True</td>
-</tr>
-</tbody>
-</table>
-</div>
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -4027,97 +3962,23 @@ In summary, Dr. Jordan Hayes is a central figure in the exploration of Dulce bas
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[16]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">relationships</span><span class="ansi-yellow-fg">"</span>].head()
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>source</th>
-<th>target</th>
-<th>description</th>
-<th>weight</th>
-<th>links</th>
-<th>in_context</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>24</td>
-<td>ALEX MERCER</td>
-<td>OPERATION: DULCE</td>
-<td>Alex Mercer is involved in and is part of Oper...</td>
-<td>24.0</td>
-<td>7</td>
-<td>True</td>
-</tr>
-<tr>
-<th>1</th>
-<td>27</td>
-<td>JORDAN HAYES</td>
-<td>OPERATION: DULCE</td>
-<td>Jordan Hayes is part of Operation: Dulce</td>
-<td>8.0</td>
-<td>7</td>
-<td>True</td>
-</tr>
-<tr>
-<th>2</th>
-<td>48</td>
-<td>OPERATION: DULCE</td>
-<td>JORDAN HAYES</td>
-<td>Jordan Hayes is working on alien technology as...</td>
-<td>16.0</td>
-<td>7</td>
-<td>True</td>
-</tr>
-<tr>
-<th>3</th>
-<td>1</td>
-<td>ALEX MERCER</td>
-<td>JORDAN HAYES</td>
-<td>Alex Mercer and Jordan Hayes are both agents w...</td>
-<td>42.0</td>
-<td>6</td>
-<td>True</td>
-</tr>
-<tr>
-<th>4</th>
-<td>31</td>
-<td>SAM RIVERA</td>
-<td>OPERATION: DULCE</td>
-<td>Sam Rivera is part of Operation: Dulce</td>
-<td>1.0</td>
-<td>7</td>
-<td>True</td>
-</tr>
-</tbody>
-</table>
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -4140,6 +4001,25 @@ In summary, Dr. Jordan Hayes is a central figure in the exploration of Dulce bas
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-17">if "reports" in result.context_data:
     result.context_data["reports"].head()</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[17]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">reports</span><span class="ansi-yellow-fg">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-yellow-bg">result</span>.context_data:
+<span class="ansi-green-fg">      2</span>     result.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">reports</span><span class="ansi-yellow-fg">"</span>].head()
+
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -4175,50 +4055,16 @@ In summary, Dr. Jordan Hayes is a central figure in the exploration of Dulce bas
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[18]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">sources</span><span class="ansi-yellow-fg">"</span>].head()
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>text</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>3</td>
-<td>contrast to the rigid silence enveloping the ...</td>
-</tr>
-<tr>
-<th>1</th>
-<td>0</td>
-<td># Operation: Dulce\n\n## Chapter 1\n\nThe thru...</td>
-</tr>
-<tr>
-<th>2</th>
-<td>1</td>
-<td>, the hollow echo of the bay a stark reminder ...</td>
-</tr>
-</tbody>
-</table>
-</div>
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -4258,21 +4104,15 @@ In summary, Dr. Jordan Hayes is a central figure in the exploration of Dulce bas
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>   id        entity               object_id     status start_date end_date  \
-0   4    SAM RIVERA                    NONE  SUSPECTED       NONE     NONE   
-1   9    SAM RIVERA                    NONE       TRUE       NONE     NONE   
-2  15    SAM RIVERA  SIGNAL INCONSISTENCIES       TRUE       NONE     NONE   
-3   2  JORDAN HAYES                    NONE  SUSPECTED       NONE     NONE   
-4   6  JORDAN HAYES                    NONE  SUSPECTED       NONE     NONE   
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[19]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">claims</span><span class="ansi-yellow-fg">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-yellow-bg">result</span>.context_data:
+<span class="ansi-green-fg">      2</span>     <span style="color: rgb(0,135,0)">print</span>(result.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">claims</span><span class="ansi-yellow-fg">"</span>].head())
 
-                                         description  in_context  
-0  Sam Rivera is engaged in a fervent quest for a...        True  
-1  Sam Rivera demonstrated technical expertise by...        True  
-2  Sam Rivera identifies structured anomalies in ...        True  
-3  Jordan Hayes is portrayed as skeptical of Tayl...        True  
-4  Jordan Hayes is providing analytical insights ...        True  
-</pre>
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -4300,8 +4140,8 @@ In summary, Dr. Jordan Hayes is a central figure in the exploration of Dulce bas
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -4334,6 +4174,30 @@ In summary, Dr. Jordan Hayes is a central figure in the exploration of Dulce bas
     model_params=model_params,
     context_builder_params=local_context_params,
 )</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[20]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> question_generator = LocalQuestionGen(
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span>     model=<span class="ansi-yellow-bg">chat_model</span>,
+<span class="ansi-green-fg">      3</span>     context_builder=context_builder,
+<span class="ansi-green-fg">      4</span>     tokenizer=tokenizer,
+<span class="ansi-green-fg">      5</span>     model_params=model_params,
+<span class="ansi-green-fg">      6</span>     context_builder_params=local_context_params,
+<span class="ansi-green-fg">      7</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'chat_model' is not defined</pre>
 </div>
 </div>
 </div>
@@ -4386,22 +4250,20 @@ print(candidate_questions.response)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Warning: No community records added when building community context.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>['- What role does Agent Mercer play in the exploration of Dulce base?', '- How does Agent Mercer interact with other members of the team during the mission at Dulce base?', '- What challenges does Agent Mercer face while investigating the secrets of Dulce base?', '- In what ways does Agent Mercer contribute to the success of Operation: Dulce?', '- How does Agent Mercer’s sense of duty influence his actions within the Dulce base?']
-</pre>
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[21]</span><span class="ansi-green-fg">, line 5</span>
+<span class="ansi-green-fg">      1</span> question_history = [
+<span class="ansi-green-fg">      2</span>     <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Tell me about Agent Mercer</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">      3</span>     <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">What happens in Dulce military base?</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">      4</span> ]
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> candidate_questions = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">question_generator</span>.agenerate(
+<span class="ansi-green-fg">      6</span>     question_history=question_history, context_data=<span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, question_count=<span class="ansi-green-fg">5</span>
+<span class="ansi-green-fg">      7</span> )
+<span class="ansi-green-fg">      8</span> <span style="color: rgb(0,135,0)">print</span>(candidate_questions.response)
+
+<span class="ansi-red-fg">NameError</span>: name 'question_generator' is not defined</pre>
 </div>
 </div>
 </div>

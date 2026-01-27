@@ -2261,14 +2261,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.models.drift_search_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DRIFTSearchConfig</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.models.language_model_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LanguageModelConfig</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.models.vector_store_schema_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorStoreSchemaConfig</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.language_model.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.indexer_adapters</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">read_indexer_entities</span><span class="p">,</span>
@@ -2282,7 +2279,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.structured_search.drift_search.search</span><span class="w"> </span><span class="kn">import</span> <span class="n">DRIFTSearch</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.tokenizer.get_tokenizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_tokenizer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.vector_stores.lancedb</span><span class="w"> </span><span class="kn">import</span> <span class="n">LanceDBVectorStore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag_vectors.lancedb</span><span class="w"> </span><span class="kn">import</span> <span class="n">LanceDBVectorStore</span>
 
 <span class="n">INPUT_DIR</span> <span class="o">=</span> <span class="s2">"./inputs/operation dulce"</span>
 <span class="n">LANCEDB_URI</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/lancedb"</span>
@@ -2307,18 +2304,16 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="c1"># load description embeddings to an in-memory lancedb vectorstore</span>
 <span class="c1"># to connect to a remote db, specify url and port values.</span>
 <span class="n">description_embedding_store</span> <span class="o">=</span> <span class="n">LanceDBVectorStore</span><span class="p">(</span>
-    <span class="n">vector_store_schema_config</span><span class="o">=</span><span class="n">VectorStoreSchemaConfig</span><span class="p">(</span>
-        <span class="n">index_name</span><span class="o">=</span><span class="s2">"default-entity-description"</span>
-    <span class="p">),</span>
+    <span class="n">db_uri</span><span class="o">=</span><span class="n">LANCEDB_URI</span><span class="p">,</span>
+    <span class="n">index_name</span><span class="o">=</span><span class="s2">"entity_description"</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">description_embedding_store</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_uri</span><span class="o">=</span><span class="n">LANCEDB_URI</span><span class="p">)</span>
+<span class="n">description_embedding_store</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 
 <span class="n">full_content_embedding_store</span> <span class="o">=</span> <span class="n">LanceDBVectorStore</span><span class="p">(</span>
-    <span class="n">vector_store_schema_config</span><span class="o">=</span><span class="n">VectorStoreSchemaConfig</span><span class="p">(</span>
-        <span class="n">index_name</span><span class="o">=</span><span class="s2">"default-community-full_content"</span>
-    <span class="p">)</span>
+    <span class="n">db_uri</span><span class="o">=</span><span class="n">LANCEDB_URI</span><span class="p">,</span>
+    <span class="n">index_name</span><span class="o">=</span><span class="s2">"community_full_content"</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">full_content_embedding_store</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_uri</span><span class="o">=</span><span class="n">LANCEDB_URI</span><span class="p">)</span>
+<span class="n">full_content_embedding_store</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Entity count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">entity_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="n">entity_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -2334,16 +2329,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Text unit records: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">text_unit_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="n">text_unit_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+<span class="n">report_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">COMMUNITY_REPORT_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
+<span class="n">reports</span> <span class="o">=</span> <span class="n">read_indexer_reports</span><span class="p">(</span><span class="n">report_df</span><span class="p">,</span> <span class="n">community_df</span><span class="p">,</span> <span class="n">COMMUNITY_LEVEL</span><span class="p">)</span>
+<span class="n">read_indexer_report_embeddings</span><span class="p">(</span><span class="n">reports</span><span class="p">,</span> <span class="n">full_content_embedding_store</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-2">import os
-from pathlib import Path
 
 import pandas as pd
-
 from graphrag.config.enums import ModelType
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
-from graphrag.config.models.vector_store_schema_config import VectorStoreSchemaConfig
 from graphrag.language_model.manager import ModelManager
 from graphrag.query.indexer_adapters import (
     read_indexer_entities,
@@ -2357,7 +2353,7 @@ from graphrag.query.structured_search.drift_search.drift_context import (
 )
 from graphrag.query.structured_search.drift_search.search import DRIFTSearch
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.vector_stores.lancedb import LanceDBVectorStore
+from graphrag_vectors.lancedb import LanceDBVectorStore
 
 INPUT_DIR = "./inputs/operation dulce"
 LANCEDB_URI = f"{INPUT_DIR}/lancedb"
@@ -2382,18 +2378,16 @@ entities = read_indexer_entities(entity_df, community_df, COMMUNITY_LEVEL)
 # load description embeddings to an in-memory lancedb vectorstore
 # to connect to a remote db, specify url and port values.
 description_embedding_store = LanceDBVectorStore(
-    vector_store_schema_config=VectorStoreSchemaConfig(
-        index_name="default-entity-description"
-    ),
+    db_uri=LANCEDB_URI,
+    index_name="entity_description",
 )
-description_embedding_store.connect(db_uri=LANCEDB_URI)
+description_embedding_store.connect()
 
 full_content_embedding_store = LanceDBVectorStore(
-    vector_store_schema_config=VectorStoreSchemaConfig(
-        index_name="default-community-full_content"
-    )
+    db_uri=LANCEDB_URI,
+    index_name="community_full_content",
 )
-full_content_embedding_store.connect(db_uri=LANCEDB_URI)
+full_content_embedding_store.connect()
 
 print(f"Entity count: {len(entity_df)}")
 entity_df.head()
@@ -2408,7 +2402,11 @@ text_unit_df = pd.read_parquet(f"{INPUT_DIR}/{TEXT_UNIT_TABLE}.parquet")
 text_units = read_indexer_text_units(text_unit_df)
 
 print(f"Text unit records: {len(text_unit_df)}")
-text_unit_df.head()</div>
+text_unit_df.head()
+
+report_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_REPORT_TABLE}.parquet")
+reports = read_indexer_reports(report_df, community_df, COMMUNITY_LEVEL)
+read_indexer_report_embeddings(reports, full_content_embedding_store)</div>
 </div>
 </div>
 </div>
@@ -2419,113 +2417,25 @@ text_unit_df.head()</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Entity df columns: Index(['id', 'human_readable_id', 'title', 'type', 'description',
-       'text_unit_ids', 'frequency', 'degree', 'x', 'y'],
-      dtype='object')
-Entity count: 18
-Relationship count: 54
-Text unit records: 5
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 4</span>
+<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">os</span>
+<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">pandas</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">pd</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">enums</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelType
+<span class="ansi-green-fg">      5</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">models</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">drift_search_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> DRIFTSearchConfig
+<span class="ansi-green-fg">      6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">models</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">language_model_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LanguageModelConfig
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>human_readable_id</th>
-<th>text</th>
-<th>n_tokens</th>
-<th>document_ids</th>
-<th>entity_ids</th>
-<th>relationship_ids</th>
-<th>covariate_ids</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>8e938693af886bfd081acbbe8384c3671446bff84a134a...</td>
-<td>1</td>
-<td># Operation: Dulce\n\n## Chapter 1\n\nThe thru...</td>
-<td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[745d28dd-be20-411b-85ff-1c69ca70e7b3, 9cba185...</td>
-</tr>
-<tr>
-<th>1</th>
-<td>fd1f46d32e1df6cd429542aeda3d64ddf3745ccb80f443...</td>
-<td>2</td>
-<td>, the hollow echo of the bay a stark reminder ...</td>
-<td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[4f9b461f-5e8f-465d-9586-e2fc81787062, 0f74618...</td>
-</tr>
-<tr>
-<th>2</th>
-<td>7296d9a1f046854d59079dc183de8a054c27c4843d2979...</td>
-<td>3</td>
-<td>differently than praise from others. This was...</td>
-<td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[3ef1be9c-4080-4fac-99bd-c4a636248904, 8730b20...</td>
-</tr>
-<tr>
-<th>3</th>
-<td>ac72722a02ac71242a2a91fca323198d04197daf60515d...</td>
-<td>4</td>
-<td>contrast to the rigid silence enveloping the ...</td>
-<td>1200</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[425a7862-0aef-4f69-a4c8-8bd42151c9d4, bcdbf1f...</td>
-<td>[2bfad9f4-5abd-48d0-8db3-a9cad9120413, 6cbb838...</td>
-<td>[2c292047-b79a-4958-ab57-7bf7d7a22c92, 3cbd18a...</td>
-</tr>
-<tr>
-<th>4</th>
-<td>4c277337d461a16aaf8f9760ddb8b44ef220e948a2341d...</td>
-<td>5</td>
-<td>a mask of duty.\n\nIn the midst of the descen...</td>
-<td>35</td>
-<td>[6e81f882f89dd5596e1925dd3ae8a4f0a0edcb55b35a8...</td>
-<td>[d084d615-3584-4ec8-9931-90aa6075c764, 4b84859...</td>
-<td>[6efdc42e-69a2-47c0-97ec-4b296cd16d5e]</td>
-<td>[db8da02f-f889-4bb5-8e81-ab2a72e380bb]</td>
-</tr>
-</tbody>
-</table>
+<span class="ansi-red-fg">ImportError</span>: cannot import name 'ModelType' from 'graphrag.config.enums' (/home/runner/work/graphrag/graphrag/packages/graphrag/graphrag/config/enums.py)</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2564,7 +2474,7 @@ Text unit records: 5
     <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
     <span class="nb">type</span><span class="o">=</span><span class="n">ModelType</span><span class="o">.</span><span class="n">Embedding</span><span class="p">,</span>
     <span class="n">model_provider</span><span class="o">=</span><span class="s2">"openai"</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="s2">"text-embedding-3-small"</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">"text-embedding-3-large"</span><span class="p">,</span>
     <span class="n">max_retries</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -2595,7 +2505,7 @@ embedding_config = LanguageModelConfig(
     api_key=api_key,
     type=ModelType.Embedding,
     model_provider="openai",
-    model="text-embedding-3-small",
+    model="text-embedding-3-large",
     max_retries=20,
 )
 
@@ -2608,9 +2518,40 @@ text_embedder = ModelManager().get_or_create_embedding_model(
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 3</span>
+<span class="ansi-green-fg">      1</span> api_key = os.environ[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">GRAPHRAG_API_KEY</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span> chat_config = <span class="ansi-yellow-bg">LanguageModelConfig</span>(
+<span class="ansi-green-fg">      4</span>     api_key=api_key,
+<span class="ansi-green-fg">      5</span>     <span style="color: rgb(0,135,0)">type</span>=ModelType.Chat,
+<span class="ansi-green-fg">      6</span>     model_provider=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">openai</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">      7</span>     model=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">gpt-4.1</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">      8</span>     max_retries=<span class="ansi-green-fg">20</span>,
+<span class="ansi-green-fg">      9</span> )
+<span class="ansi-green-fg">     10</span> chat_model = ModelManager().get_or_create_chat_model(
+<span class="ansi-green-fg">     11</span>     name=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">local_search</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">     12</span>     model_type=ModelType.Chat,
+<span class="ansi-green-fg">     13</span>     config=chat_config,
+<span class="ansi-green-fg">     14</span> )
+<span class="ansi-green-fg">     16</span> tokenizer = get_tokenizer(chat_config)
+
+<span class="ansi-red-fg">NameError</span>: name 'LanguageModelConfig' is not defined</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2628,72 +2569,10 @@ text_embedder = ModelManager().get_or_create_embedding_model(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">read_community_reports</span><span class="p">(</span>
-    <span class="n">input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">community_report_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">COMMUNITY_REPORT_TABLE</span><span class="p">,</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Embeds the full content of the community reports and saves the DataFrame with embeddings to the output path."""</span>
-    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">community_report_table</span><span class="si">}</span><span class="s2">.parquet"</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
-
-
-<span class="n">report_df</span> <span class="o">=</span> <span class="n">read_community_reports</span><span class="p">(</span><span class="n">INPUT_DIR</span><span class="p">)</span>
-<span class="n">reports</span> <span class="o">=</span> <span class="n">read_indexer_reports</span><span class="p">(</span>
-    <span class="n">report_df</span><span class="p">,</span>
-    <span class="n">community_df</span><span class="p">,</span>
-    <span class="n">COMMUNITY_LEVEL</span><span class="p">,</span>
-    <span class="n">content_embedding_col</span><span class="o">=</span><span class="s2">"full_content_embeddings"</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">read_indexer_report_embeddings</span><span class="p">(</span><span class="n">reports</span><span class="p">,</span> <span class="n">full_content_embedding_store</span><span class="p">)</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-4">def read_community_reports(
-    input_dir: str,
-    community_report_table: str = COMMUNITY_REPORT_TABLE,
-):
-    """Embeds the full content of the community reports and saves the DataFrame with embeddings to the output path."""
-    input_path = Path(input_dir) / f"{community_report_table}.parquet"
-    return pd.read_parquet(input_path)
-
-
-report_df = read_community_reports(INPUT_DIR)
-reports = read_indexer_reports(
-    report_df,
-    community_df,
-    COMMUNITY_LEVEL,
-    content_embedding_col="full_content_embeddings",
-)
-read_indexer_report_embeddings(reports, full_content_embedding_store)</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-5">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">drift_params</span> <span class="o">=</span> <span class="n">DRIFTSearchConfig</span><span class="p">(</span>
-    <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">12_000</span><span class="p">,</span>
     <span class="n">primer_folds</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">drift_k_followups</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">n_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">context_builder</span> <span class="o">=</span> <span class="n">DRIFTSearchContextBuilder</span><span class="p">(</span>
@@ -2712,13 +2591,10 @@ read_indexer_report_embeddings(reports, full_content_embedding_store)</div>
     <span class="n">model</span><span class="o">=</span><span class="n">chat_model</span><span class="p">,</span> <span class="n">context_builder</span><span class="o">=</span><span class="n">context_builder</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5">drift_params = DRIFTSearchConfig(
-    temperature=0,
-    max_tokens=12_000,
+<div class="clipboard-copy-txt" id="cell-4">drift_params = DRIFTSearchConfig(
     primer_folds=1,
     drift_k_followups=3,
     n_depth=3,
-    n=1,
 )
 
 context_builder = DRIFTSearchContextBuilder(
@@ -2736,6 +2612,81 @@ context_builder = DRIFTSearchContextBuilder(
 search = DRIFTSearch(
     model=chat_model, context_builder=context_builder, tokenizer=tokenizer
 )</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[4]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> drift_params = <span class="ansi-yellow-bg">DRIFTSearchConfig</span>(
+<span class="ansi-green-fg">      2</span>     primer_folds=<span class="ansi-green-fg">1</span>,
+<span class="ansi-green-fg">      3</span>     drift_k_followups=<span class="ansi-green-fg">3</span>,
+<span class="ansi-green-fg">      4</span>     n_depth=<span class="ansi-green-fg">3</span>,
+<span class="ansi-green-fg">      5</span> )
+<span class="ansi-green-fg">      7</span> context_builder = DRIFTSearchContextBuilder(
+<span class="ansi-green-fg">      8</span>     model=chat_model,
+<span class="ansi-green-fg">      9</span>     text_embedder=text_embedder,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">     16</span>     config=drift_params,
+<span class="ansi-green-fg">     17</span> )
+<span class="ansi-green-fg">     19</span> search = DRIFTSearch(
+<span class="ansi-green-fg">     20</span>     model=chat_model, context_builder=context_builder, tokenizer=tokenizer
+<span class="ansi-green-fg">     21</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'DRIFTSearchConfig' is not defined</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-5">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">"Who is agent Mercer?"</span><span class="p">)</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-5">resp = await search.search("Who is agent Mercer?")</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> resp = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search</span>.search(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Who is agent Mercer?</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'search' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2760,9 +2711,9 @@ search = DRIFTSearch(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">"Who is agent Mercer?"</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">resp</span><span class="o">.</span><span class="n">response</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-6">resp = await search.search("Who is agent Mercer?")</div>
+<div class="clipboard-copy-txt" id="cell-6">resp.response</div>
 </div>
 </div>
 </div>
@@ -2774,204 +2725,13 @@ search = DRIFTSearch(
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>  0%|          | 0/1 [00:00&lt;?, ?it/s]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>100%|██████████| 1/1 [00:10&lt;00:00, 10.57s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                             </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre></pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>  0%|          | 0/3 [00:00&lt;?, ?it/s]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 33%|███▎      | 1/3 [00:11&lt;00:22, 11.39s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 67%|██████▋   | 2/3 [00:12&lt;00:05,  5.38s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>No follow-up actions found for response: {"## Agent Mercer's Interactions with the Paranormal Military Squad  Agent Alex Mercer plays a pivotal role within the Paranormal Military Squad, and his interactions with other team members are characterized by a blend of mentorship, mutual respect, and occasional tension arising from differing approaches to leadership and problem-solving.  ### Mentorship and Support  Mercer is depicted as a mentor, particularly to Sam Rivera, the squad's cybersecurity expert. He offers guidance and emphasizes the importance of intuition and trust, recognizing that technical expertise alone may not be sufficient for the challenges they face. This mentorship is reciprocated with respect and a desire from Sam to prove their worth, highlighting a dynamic where Mercer’s experience and calm support help foster confidence and cohesion within the team [Data: Reports (1); Sources (1, 2, 3)].  ### Collaboration with Dr. Jordan Hayes  Mercer shares a strong professional rapport with Dr. Jordan Hayes, the team's scientist. Their interactions are marked by mutual understanding and a shared commitment to discovery. Both are analytical and reflective, often engaging in thoughtful discussions about the mission's deeper implications. Mercer values Hayes' analytical mind and encourages them to maintain their edge, especially when confronting the unknown. This relationship is built on a foundation of trust and intellectual respect, with both agents recognizing the importance of adaptability and open-mindedness in their work [Data: Reports (1); Sources (1, 2, 3)].  ### Navigating Authority with Taylor Cruz  Mercer's relationship with Taylor Cruz, the squad's authoritative leader, is more complex. While Mercer acknowledges the necessity of protocol and order, he sometimes finds himself at odds with Cruz's rigid adherence to rules. Their exchanges often reveal underlying tensions between compliance and adaptability, with Mercer subtly challenging Cruz’s authority when he believes flexibility is required. Despite these differences, Mercer respects Cruz’s leadership and works to maintain a professional dynamic, understanding that unity is essential for the mission’s success [Data: Reports (1); Sources (1, 2, 3)].  ### Team Dynamics and Camaraderie  Overall, Mercer’s interactions contribute significantly to the squad’s cohesion. He is attentive to the emotional and psychological states of his teammates, offering reassurance and encouragement during moments of uncertainty. His ability to balance mentorship, collaboration, and respect for authority helps the team navigate the high-stress environment of Operation: Dulce. Mercer’s presence is a stabilizing force, fostering camaraderie and a shared sense of purpose among the squad members [Data: Reports (1); Sources (1, 2, 3)].  ### Commentary  Mercer’s leadership style is less about command and more about empowerment, trust, and adaptability. His interactions reflect a nuanced understanding of the strengths and vulnerabilities of his teammates, making him an indispensable member of the Paranormal Military Squad.  ": ', \'score\': 95, \'follow_up_queries\': [     "What specific events highlight Mercer\'s mentorship of Sam Rivera?",     "How does Mercer handle conflicts with Taylor Cruz during the mission?",     "In what ways does Mercer contribute to the team\'s decision-making process?",     "How do other team members perceive Mercer\'s leadership style?",     "Are there moments when Mercer\'s intuition directly impacts the mission\'s outcome?" ]'}
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>100%|██████████| 3/3 [00:14&lt;00:00,  3.60s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                             </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>No follow-up actions for action: How does Agent Mercer interact with other members of the Paranormal Military Squad?
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>  0%|          | 0/3 [00:00&lt;?, ?it/s]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 33%|███▎      | 1/3 [00:12&lt;00:25, 12.77s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 67%|██████▋   | 2/3 [00:13&lt;00:05,  5.81s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>100%|██████████| 3/3 [00:16&lt;00:00,  4.21s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                             </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre></pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>  0%|          | 0/3 [00:00&lt;?, ?it/s]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Reached token limit - reverting to previous context state
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 33%|███▎      | 1/3 [00:09&lt;00:19,  9.67s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre> 67%|██████▋   | 2/3 [00:14&lt;00:06,  6.75s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>100%|██████████| 3/3 [00:14&lt;00:00,  3.80s/it]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                             </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre></pre>
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">resp</span>.response
+
+<span class="ansi-red-fg">NameError</span>: name 'resp' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2996,48 +2756,9 @@ search = DRIFTSearch(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">resp</span><span class="o">.</span><span class="n">response</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-7">resp.response</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>"## Agent Alex Mercer: Overview\n\nAgent Alex Mercer is a central figure in the Paranormal Military Squad, serving as a pivotal leader during Operation: Dulce—a mission focused on investigating the mysterious Dulce base and its alien technology. Mercer is recognized for his leadership qualities, providing guidance and mentorship to other squad members, particularly Sam Rivera, the team's cybersecurity expert. His leadership style emphasizes intuition, trust, and adaptability, which are crucial traits given the unpredictable and dangerous nature of the mission [Data: Reports (1)].\n\n## Role and Leadership Style\n\nMercer’s involvement in Operation: Dulce is hands-on; he is one of the agents actively exploring the depths of the Dulce base alongside Taylor Cruz, Sam Rivera, and Dr. Jordan Hayes, the squad’s expert in alien technology. Mercer’s approach to leadership contrasts with that of Agent Taylor Cruz, who is more protocol-driven and authoritative. Mercer fosters teamwork, supports his colleagues, and helps maintain morale and focus under pressure. His relationships with other agents, especially the professional rapport with Cruz and the supportive dynamic with Rivera, are key to navigating the complexities of the mission [Data: Reports (1)].\n\n## Impact on the Team\n\nWithin the Paranormal Military Squad, Mercer’s role extends beyond tactical leadership—he serves as a mentor and helps maintain the team's unity and resilience. His presence and approach significantly shape the squad’s efforts and effectiveness during Operation: Dulce [Data: Reports (1)].\n\n---\n\n**Summary:**  \nAgent Alex Mercer is a pivotal leader and mentor in the Paranormal Military Squad, known for his intuitive, supportive, and adaptable leadership style, which plays a crucial role in the team's approach to the challenges of Operation: Dulce [Data: Reports (1)]."</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">context_data</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-8">print(resp.context_data)</div>
+<div class="clipboard-copy-txt" id="cell-7">print(resp.context_data)</div>
 </div>
 </div>
 </div>
@@ -3048,108 +2769,14 @@ search = DRIFTSearch(
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>{'How does Agent Mercer interact with other members of the Paranormal Military Squad?': {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-bg">resp</span>.context_data)
 
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  2   differently than praise from others. This was...
-1  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-2  1  , the hollow echo of the bay a stark reminder ...
-3  3   contrast to the rigid silence enveloping the ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, 'What is the outcome of Operation: Dulce for Agent Mercer?': {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  2   differently than praise from others. This was...
-1  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-2  1  , the hollow echo of the bay a stark reminder ...
-3  3   contrast to the rigid silence enveloping the ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, "How does Agent Mercer's leadership style differ from Agent Cruz's?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  4   a mask of duty.\n\nIn the midst of the descen...
-1  2   differently than praise from others. This was...
-2  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-3  1  , the hollow echo of the bay a stark reminder ...
-4  3   contrast to the rigid silence enveloping the ...}, "Are there specific incidents where Mercer's or Cruz's approach proved more effective?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  2   differently than praise from others. This was...
-1  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-2  1  , the hollow echo of the bay a stark reminder ...
-3  3   contrast to the rigid silence enveloping the ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, "How does the mission's outcome reflect on the effectiveness of each leadership style?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-1  2   differently than praise from others. This was...
-2  3   contrast to the rigid silence enveloping the ...
-3  1  , the hollow echo of the bay a stark reminder ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, 'Does Agent Mercer survive Operation: Dulce?': {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  2   differently than praise from others. This was...
-1  4   a mask of duty.\n\nIn the midst of the descen...
-2  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-3  1  , the hollow echo of the bay a stark reminder ...
-4  3   contrast to the rigid silence enveloping the ...}, "How does Agent Mercer's leadership impact the outcome of the mission?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  2   differently than praise from others. This was...
-1  4   a mask of duty.\n\nIn the midst of the descen...
-2  1  , the hollow echo of the bay a stark reminder ...
-3  3   contrast to the rigid silence enveloping the ...
-4  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...}, "How did the team members respond to Taylor Cruz's authoritative leadership during critical moments?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-1  2   differently than praise from others. This was...
-2  3   contrast to the rigid silence enveloping the ...
-3  1  , the hollow echo of the bay a stark reminder ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}, "Are there examples where Cruz's strict adherence to protocol caused friction or problems?": {'reports':   id                                           title  \
-0  1  Paranormal Military Squad and Operation: Dulce   
-
-                                             content  
-0  # Paranormal Military Squad and Operation: Dul...  , 'entities': Empty DataFrame
-Columns: [in_context]
-Index: [], 'sources':   id                                               text
-0  3   contrast to the rigid silence enveloping the ...
-1  0  # Operation: Dulce\n\n## Chapter 1\n\nThe thru...
-2  2   differently than praise from others. This was...
-3  1  , the hollow echo of the bay a stark reminder ...
-4  4   a mask of duty.\n\nIn the midst of the descen...}}
-</pre>
+<span class="ansi-red-fg">NameError</span>: name 'resp' is not defined</pre>
 </div>
 </div>
 </div>

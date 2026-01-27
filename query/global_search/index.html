@@ -1958,7 +1958,7 @@ flowchart LR
 <h2 id="configuration">Configuration</h2>
 <p>Below are the key parameters of the <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/global_search/search.py">GlobalSearch class</a>:</p>
 <ul>
-<li><code>llm</code>: OpenAI model object to be used for response generation</li>
+<li><code>model</code>: Language model chat completion object to be used for response generation</li>
 <li><code>context_builder</code>: <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/global_search/community_context.py">context builder</a> object to be used for preparing context data from community reports</li>
 <li><code>map_system_prompt</code>: prompt template used in the <code>map</code> stage. Default template can be found at <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/prompts/query/global_search_map_system_prompt.py">map_system_prompt</a></li>
 <li><code>reduce_system_prompt</code>: prompt template used in the <code>reduce</code> stage, default template can be found at <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/prompts/query/global_search_reduce_system_prompt.py">reduce_system_prompt</a></li>

@@ -1955,7 +1955,7 @@ flowchart LR
 <h2 id="configuration">Configuration</h2>
 <p>Below are the key parameters of the <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/local_search/search.py">LocalSearch class</a>:</p>
 <ul>
-<li><code>llm</code>: OpenAI model object to be used for response generation</li>
+<li><code>model</code>: Language model chat completion object to be used for response generation</li>
 <li><code>context_builder</code>: <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/local_search/mixed_context.py">context builder</a> object to be used for preparing context data from collections of knowledge model objects</li>
 <li><code>system_prompt</code>: prompt template used to generate the search response. Default template can be found at <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/prompts/query/local_search_system_prompt.py">system_prompt</a></li>
 <li><code>response_type</code>: free-form text describing the desired response type and format (e.g., <code>Multiple Paragraphs</code>, <code>Multi-Page Report</code>)</li>

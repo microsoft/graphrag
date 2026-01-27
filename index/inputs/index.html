@@ -800,6 +800,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#custom-file-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom File Handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#formats" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2018,6 +2029,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#custom-file-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom File Handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#formats" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2246,9 +2268,11 @@
 </table>
 <p>Also see the <a href="../outputs/">outputs</a> documentation for the final documents table schema saved to parquet after pipeline completion.</p>
 <h2 id="bring-your-own-dataframe">Bring-your-own DataFrame</h2>
-<p>As of version 2.6.0, GraphRAG's <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py">indexing API method</a> allows you to pass in your own pandas DataFrame and bypass all of the input loading/parsing described in the next section. This is convenient if you have content in a format or storage location we don't support out-of-the-box. <strong>You must ensure that your input DataFrame conforms to the schema described above.</strong> All of the chunking behavior described later will proceed exactly the same.</p>
+<p>GraphRAG's <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py">indexing API method</a> allows you to pass in your own pandas DataFrame and bypass all of the input loading/parsing described in the next section. This is convenient if you have content in a format or storage location we don't support out-of-the-box. <em>You must ensure that your input DataFrame conforms to the schema described above.</em> All of the chunking behavior described later will proceed exactly the same.</p>
+<h2 id="custom-file-handling">Custom File Handling</h2>
+<p>We use an injectable InputReader provider class. This means you can implement any input file handling you want in a class that extends InputReader and register it with the InputReaderFactory. See the <a href="https://microsoft.github.io/graphrag/index/architecture/">architecture page</a> for more info on our standard provider pattern.</p>
 <h2 id="formats">Formats</h2>
-<p>We support three file formats out-of-the-box. This covers the overwhelming majority of use cases we have encountered. If you have a different format, we recommend writing a script to convert to one of these, which are widely used and supported by many tools and libraries.</p>
+<p>We support three file formats out-of-the-box. This covers the overwhelming majority of use cases we have encountered. If you have a different format, we recommend either implementing your own InputReader or writing a script to convert to one of these, which are widely used and supported by many tools and libraries.</p>
 <h3 id="plain-text">Plain Text</h3>
 <p>Plain text files (typically ending in .txt file extension). With plain text files we import the entire file contents as the <code>text</code> field, and the <code>title</code> is always the filename.</p>
 <h3 id="comma-delimited">Comma-delimited</h3>
@@ -2257,7 +2281,7 @@
 <h3 id="json">JSON</h3>
 <p>JSON files (typically ending in a .json extension) contain <a href="https://www.json.org/">structured objects</a>. These are loaded using python's <a href="https://docs.python.org/3/library/json.html"><code>json.loads</code> method</a>, so your files must be properly compliant. JSON files may contain a single object in the file <em>or</em> the file may contain an array of objects at the root. We will check for and handle either of these cases. As with CSV, multiple files will be concatenated into a final table, and the <code>text_column</code> and <code>title_column</code> config options will be applied to the properties of each loaded object. Note that the specialized jsonl format produced by some libraries (one full JSON object on each line, not in an array) is not currently supported.</p>
 <h2 id="metadata">Metadata</h2>
-<p>With the structured file formats (CSV and JSON) you can configure any number of columns to be added to a persisted <code>metadata</code> field in the DataFrame. This is configured by supplying a list of columns name to collect. If this is configured, the output <code>metadata</code> column will have a dict containing a key for each column, and the value of the column for that document. This metadata can optionally be used later in the GraphRAG pipeline.</p>
+<p>With the structured file formats (CSV and JSON) you can configure any number of columns to be added to a persisted <code>metadata</code> field in the DataFrame. This is configured by supplying a list of column names to collect. If this is configured, the output <code>metadata</code> column will have a dict containing a key for each column, and the value of the column for that document. This metadata can optionally be used later in the GraphRAG pipeline.</p>
 <h3 id="example">Example</h3>
 <p>software.csv</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>text,title,tag
@@ -2297,18 +2321,17 @@
 </tbody>
 </table>
 <h2 id="chunking-and-metadata">Chunking and Metadata</h2>
-<p>As described on the <a href="../default_dataflow/#phase-1-compose-textunits">default dataflow</a> page, documents are <em>chunked</em> into smaller "text units" for processing. This is done because document content size often exceeds the available context window for a given language model. There are a handful of settings you can adjust for this chunking, the most relevant being the <code>chunk_size</code> and <code>overlap</code>. We now also support a metadata processing scheme that can improve indexing results for some use cases. We will describe this feature in detail here.</p>
+<p>As described on the <a href="../default_dataflow/#phase-1-compose-textunits">default dataflow</a> page, documents are <em>chunked</em> into smaller "text units" for processing. This is done because document content size often exceeds the available context window for a given language model. There are a handful of settings you can adjust for this chunking, the most relevant being the <code>chunk_size</code> and <code>overlap</code>. We also support a metadata processing scheme that can improve indexing results for some use cases. We will describe this feature in detail here.</p>
 <p>Imagine the following scenario: you are indexing a collection of news articles. Each article text starts with a headline and author, and then proceeds with the content. When documents are chunked, they are split evenly according to your configured chunk size. In other words, the first <em>n</em> tokens are read into a text unit, and then the next <em>n</em>, until the end of the content. This means that front matter at the beginning of the document (such as the headline and author in this example) <em>is not copied to each chunk</em>. It only exists in the first chunk. When we later retrieve those chunks for summarization, they may therefore be missing shared information about the source document that should always be provided to the model. We have configuration options to copy repeated content into each text unit to address this issue.</p>
 <h3 id="input-config">Input Config</h3>
 <p>As described above, when documents are imported you can specify a list of <code>metadata</code> columns to include with each row. This must be configured for the per-chunk copying to work.</p>
 <h3 id="chunking-config">Chunking Config</h3>
-<p>Next, the <code>chunks</code> block needs to instruct the chunker how to handle this metadata when creating text units. By default, it is ignored. We have two settings to include it:</p>
+<p>Next, the <code>chunks</code> block needs to instruct the chunker how to handle this metadata when creating text units. By default, it is ignored. We have the following setting to include it:</p>
 <ul>
 <li><code>prepend_metadata</code>. This instructs the importer to copy the contents of the <code>metadata</code> column for each row into the start of every single text chunk. This metadata is copied as key: value pairs on new lines.</li>
-<li><code>chunk_size_includes_metadata</code>: This tells the chunker how to compute the chunk size when metadata is included. By default, we create the text units using your specified <code>chunk_size</code> <em>and then</em> prepend the metadata. This means that the final text unit lengths may be longer than your configured <code>chunk_size</code>, and it will vary based on the length of the metadata for each document. When this setting is <code>True</code>, we will compute the raw text using the remainder after measuring the metadata length so that the resulting text units always comply with your configured <code>chunk_size</code>.</li>
 </ul>
 <h3 id="examples">Examples</h3>
-<p>The following are several examples to help illustrate how chunking config and metadate prepending works for each file format. Note that we are using word count here as "tokens" for the illustration, but language model tokens are <a href="https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them">not equivalent to words</a>.</p>
+<p>The following are several examples to help illustrate how chunking config and metadata prepending works for each file format. Note that we are using word count here as "tokens" for the illustration, but language model tokens are <a href="https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them">not equivalent to words</a>.</p>
 <h4 id="text-files">Text files</h4>
 <p>This example uses two individual news article text files.</p>
 <p>--</p>
@@ -2322,14 +2345,13 @@
 <p>--</p>
 <p>settings.yaml</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">input</span><span class="p">:</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">file_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">title</span><span class="p p-Indicator">]</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nt">chunks</span><span class="p">:</span>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nt">overlap</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 <a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nt">prepend_metadata</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">chunk_size_includes_metadata</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 <p>Documents DataFrame</p>
 <table>
@@ -2399,143 +2421,33 @@
 <p>headline,article</p>
 <p>US to lift most federal COVID-19 vaccine mandates,WASHINGTON (AP) The Biden administration will end most of the last remaining federal COVID-19 vaccine requirements next week when the national public health emergency for the coronavirus ends, the White House said Monday. Vaccine requirements for federal workers and federal contractors, as well as foreign air travelers to the U.S., will end May 11. The government is also beginning the process of lifting shot requirements for Head Start educators, healthcare workers, and noncitizens at U.S. land borders. The requirements are among the last vestiges of some of the more coercive measures taken by the federal government to promote vaccination as the deadly virus raged, and their end marks the latest display of how President Joe Biden's administration is moving to treat COVID-19 as a routine, endemic illness. "While I believe that these vaccine mandates had a tremendous beneficial impact, we are now at a point where we think that it makes a lot of sense to pull these requirements down," White House COVID-19 coordinator Dr. Ashish Jha told The Associated Press on Monday.</p>
 <p>NY lawmakers begin debating budget 1 month after due date,ALBANY, N.Y. (AP) New York lawmakers began voting Monday on a $229 billion state budget due a month ago that would raise the minimum wage, crack down on illicit pot shops and ban gas stoves and furnaces in new buildings. Negotiations among Gov. Kathy Hochul and her fellow Democrats in control of the Legislature dragged on past the April 1 budget deadline, largely because of disagreements over changes to the bail law and other policy proposals included in the spending plan. Floor debates on some budget bills began Monday. State Senate Majority Leader Andrea Stewart-Cousins said she expected voting to be wrapped up Tuesday for a budget she said contains "significant wins" for New Yorkers. "I would have liked to have done this sooner. I think we would all agree to that," Cousins told reporters before voting began. "This has been a very policy-laden budget and a lot of the policies had to parsed through." Hochul was able to push through a change to the bail law that will eliminate the standard that requires judges to prescribe the "least restrictive" means to ensure defendants return to court. Hochul said judges needed the extra discretion. Some liberal lawmakers argued that it would undercut the sweeping bail reforms approved in 2019 and result in more people with low incomes and people of color in pretrial detention. Here are some other policy provisions that will be included in the budget, according to state officials. The minimum wage would be raised to $17 in New York City and some of its suburbs and $16 in the rest of the state by 2026. That's up from $15 in the city and $14.20 upstate.</p>
-<p>--</p>
-<p>settings.yaml</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">input</span><span class="p">:</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="nt">file_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csv</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">title_column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">headline</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">text_column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">article</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">headline</span><span class="p p-Indicator">]</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="nt">chunks</span><span class="p">:</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nt">overlap</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="nt">prepend_metadata</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="nt">chunk_size_includes_metadata</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</code></pre></div>
-<p>Documents DataFrame</p>
-<table>
-<thead>
-<tr>
-<th>id</th>
-<th>title</th>
-<th>text</th>
-<th>creation_date</th>
-<th>metadata</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>(generated from text)</td>
-<td>US to lift most federal COVID-19 vaccine mandates</td>
-<td>(article column content)</td>
-<td>(create date of articles.csv)</td>
-<td>{ "headline": "US to lift most federal COVID-19 vaccine mandates" }</td>
-</tr>
-<tr>
-<td>(generated from text)</td>
-<td>NY lawmakers begin debating budget 1 month after due date</td>
-<td>(article column content)</td>
-<td>(create date of articles.csv)</td>
-<td>{ "headline": "NY lawmakers begin debating budget 1 month after due date" }</td>
-</tr>
-</tbody>
-</table>
-<p>Raw Text Chunks</p>
-<table>
-<thead>
-<tr>
-<th>content</th>
-<th style="text-align: right;">length</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>title: US to lift most federal COVID-19 vaccine mandates<br>WASHINGTON (AP) The Biden administration will end most of the last remaining federal COVID-19 vaccine requirements next week when the national public health emergency for the coronavirus ends, the White House said Monday. Vaccine requirements for federal workers and federal contractors,</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: US to lift most federal COVID-19 vaccine mandates<br>federal workers and federal contractors as well as foreign air travelers to the U.S., will end May 11. The government is also beginning the process of lifting shot requirements for Head Start educators, healthcare workers, and noncitizens at U.S. land borders.</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: US to lift most federal COVID-19 vaccine mandates<br>noncitizens at U.S. land borders. The requirements are among the last vestiges of some of the more coercive measures taken by the federal government to promote vaccination as the deadly virus raged, and their end marks the latest display of how</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: US to lift most federal COVID-19 vaccine mandates<br>the latest display of how  President Joe Biden's administration is moving to treat COVID-19 as a routine, endemic illness. "While I believe that these vaccine mandates had a tremendous beneficial impact, we are now at a point where we think that</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: US to lift most federal COVID-19 vaccine mandates<br>point where we think that it makes a lot of sense to pull these requirements down," White House COVID-19 coordinator Dr. Ashish Jha told The Associated Press on Monday.</td>
-<td style="text-align: right;">38</td>
-</tr>
-<tr>
-<td>title: NY lawmakers begin debating budget 1 month after due date<br>ALBANY, N.Y. (AP) New York lawmakers began voting Monday on a $229 billion state budget due a month ago that would raise the minimum wage, crack down on illicit pot shops and ban gas stoves and furnaces in new</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: NY lawmakers begin debating budget 1 month after due date<br>stoves and furnaces in new buildings. Negotiations among Gov. Kathy Hochul and her fellow Democrats in control of the Legislature dragged on past the April 1 budget deadline, largely because of disagreements over changes to the bail law and</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: NY lawmakers begin debating budget 1 month after due date<br>to the bail law and other policy proposals included in the spending plan. Floor debates on some budget bills began Monday. State Senate Majority Leader Andrea Stewart-Cousins said she expected voting to be wrapped up Tuesday for a budget</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: NY lawmakers begin debating budget 1 month after due date<br>up Tuesday for a budget she said contains "significant wins" for New Yorkers. "I would have liked to have done this sooner. I think we would all agree to that," Cousins told reporters before voting began. "This has been</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: NY lawmakers begin debating budget 1 month after due date<br>voting began. "This has been a very policy-laden budget and a lot of the policies had to parsed through." Hochul was able to push through a change to the bail law that will eliminate the standard that requires judges</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: NY lawmakers begin debating budget 1 month after due date<br>the standard that requires judges to prescribe the "least restrictive" means to ensure defendants return to court. Hochul said judges needed the extra discretion. Some liberal lawmakers argued that it would undercut the sweeping bail reforms approved in 2019</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: NY lawmakers begin debating budget 1 month after due date<br>bail reforms approved in 2019 and result in more people with low incomes and people of color in pretrial detention. Here are some other policy provisions that will be included in the budget, according to state officials. The minimum</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: NY lawmakers begin debating budget 1 month after due date<br>to state officials. The minimum  wage would be raised to $17 in be raised to $17 in New York City and some of its suburbs and $16 in the rest of the state by 2026. That's up from $15</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td>title: NY lawmakers begin debating budget 1 month after due date<br>2026. That's up from $15 in the city and $14.20 upstate.</td>
-<td style="text-align: right;">22</td>
-</tr>
-</tbody>
-</table>
-<p>In this example we can see that the two input documents were parsed into fourteen output text chunks. The title (headline) of each document is prepended and included in the computed chunk size, so each chunk matches the configured chunk size (except the last one for each document). We've also configured some overlap in these text chunks, so the last five tokens are shared. Why would you use overlap in your text chunks? Consider that when you are splitting documents based on tokens, it is highly likely that sentences or even related concepts will be split into separate chunks. Each text chunk is processed separately by the language model, so this may result in incomplete "ideas" at the boundaries of the chunk. Overlap ensures that these split concepts are fully contained in at least one of the chunks.</p>
 <h4 id="json-files">JSON files</h4>
 <p>This final example uses a JSON file for each of the same two articles. In this example we'll set the object fields to read, but we will not add metadata to the text chunks.</p>
 <p>--</p>
 <p><strong>File:</strong> article1.json</p>
 <p><strong>Content</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nt">&quot;headline&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;US to lift most federal COVID-19 vaccine mandates&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WASHINGTON (AP) The Biden administration will end most of the last remaining federal COVID-19 vaccine requirements next week when the national public health emergency for the coronavirus ends, the White House said Monday. Vaccine requirements for federal workers and federal contractors, as well as foreign air travelers to the U.S., will end May 11. The government is also beginning the process of lifting shot requirements for Head Start educators, healthcare workers, and noncitizens at U.S. land borders. The requirements are among the last vestiges of some of the more coercive measures taken by the federal government to promote vaccination as the deadly virus raged, and their end marks the latest display of how President Joe Biden&#39;s administration is moving to treat COVID-19 as a routine, endemic illness. &quot;</span><span class="err">While</span><span class="w"> </span><span class="err">I</span><span class="w"> </span><span class="err">believe</span><span class="w"> </span><span class="kc">t</span><span class="err">ha</span><span class="kc">t</span><span class="w"> </span><span class="kc">t</span><span class="err">hese</span><span class="w"> </span><span class="err">vacci</span><span class="kc">ne</span><span class="w"> </span><span class="err">ma</span><span class="kc">n</span><span class="err">da</span><span class="kc">tes</span><span class="w"> </span><span class="err">had</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="kc">tre</span><span class="err">me</span><span class="kc">n</span><span class="err">dous</span><span class="w"> </span><span class="err">be</span><span class="kc">nef</span><span class="err">icial</span><span class="w"> </span><span class="err">impac</span><span class="kc">t</span><span class="p">,</span><span class="w"> </span><span class="err">we</span><span class="w"> </span><span class="err">are</span><span class="w"> </span><span class="kc">n</span><span class="err">ow</span><span class="w"> </span><span class="err">a</span><span class="kc">t</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">poi</span><span class="kc">nt</span><span class="w"> </span><span class="err">where</span><span class="w"> </span><span class="err">we</span><span class="w"> </span><span class="kc">t</span><span class="err">hi</span><span class="kc">n</span><span class="err">k</span><span class="w"> </span><span class="kc">t</span><span class="err">ha</span><span class="kc">t</span><span class="w"> </span><span class="err">i</span><span class="kc">t</span><span class="w"> </span><span class="err">makes</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">lo</span><span class="kc">t</span><span class="w"> </span><span class="err">o</span><span class="kc">f</span><span class="w"> </span><span class="err">se</span><span class="kc">nse</span><span class="w"> </span><span class="kc">t</span><span class="err">o</span><span class="w"> </span><span class="err">pull</span><span class="w"> </span><span class="kc">t</span><span class="err">hese</span><span class="w"> </span><span class="err">requireme</span><span class="kc">nts</span><span class="w"> </span><span class="err">dow</span><span class="kc">n</span><span class="p">,</span><span class="s2">&quot; White House COVID-19 coordinator Dr. Ashish Jha told The Associated Press on Monday.&quot;</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="nt">&quot;headline&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;US to lift most federal COVID-19 vaccine mandates&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WASHINGTON (AP) The Biden administration will end most of the last remaining federal COVID-19 vaccine requirements next week when the national public health emergency for the coronavirus ends, the White House said Monday. Vaccine requirements for federal workers and federal contractors, as well as foreign air travelers to the U.S., will end May 11. The government is also beginning the process of lifting shot requirements for Head Start educators, healthcare workers, and noncitizens at U.S. land borders. The requirements are among the last vestiges of some of the more coercive measures taken by the federal government to promote vaccination as the deadly virus raged, and their end marks the latest display of how President Joe Biden&#39;s administration is moving to treat COVID-19 as a routine, endemic illness. &quot;</span><span class="err">While</span><span class="w"> </span><span class="err">I</span><span class="w"> </span><span class="err">believe</span><span class="w"> </span><span class="kc">t</span><span class="err">ha</span><span class="kc">t</span><span class="w"> </span><span class="kc">t</span><span class="err">hese</span><span class="w"> </span><span class="err">vacci</span><span class="kc">ne</span><span class="w"> </span><span class="err">ma</span><span class="kc">n</span><span class="err">da</span><span class="kc">tes</span><span class="w"> </span><span class="err">had</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="kc">tre</span><span class="err">me</span><span class="kc">n</span><span class="err">dous</span><span class="w"> </span><span class="err">be</span><span class="kc">nef</span><span class="err">icial</span><span class="w"> </span><span class="err">impac</span><span class="kc">t</span><span class="p">,</span><span class="w"> </span><span class="err">we</span><span class="w"> </span><span class="err">are</span><span class="w"> </span><span class="kc">n</span><span class="err">ow</span><span class="w"> </span><span class="err">a</span><span class="kc">t</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">poi</span><span class="kc">nt</span><span class="w"> </span><span class="err">where</span><span class="w"> </span><span class="err">we</span><span class="w"> </span><span class="kc">t</span><span class="err">hi</span><span class="kc">n</span><span class="err">k</span><span class="w"> </span><span class="kc">t</span><span class="err">ha</span><span class="kc">t</span><span class="w"> </span><span class="err">i</span><span class="kc">t</span><span class="w"> </span><span class="err">makes</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">lo</span><span class="kc">t</span><span class="w"> </span><span class="err">o</span><span class="kc">f</span><span class="w"> </span><span class="err">se</span><span class="kc">nse</span><span class="w"> </span><span class="kc">t</span><span class="err">o</span><span class="w"> </span><span class="err">pull</span><span class="w"> </span><span class="kc">t</span><span class="err">hese</span><span class="w"> </span><span class="err">requireme</span><span class="kc">nts</span><span class="w"> </span><span class="err">dow</span><span class="kc">n</span><span class="p">,</span><span class="s2">&quot; White House COVID-19 coordinator Dr. Ashish Jha told The Associated Press on Monday.&quot;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">}</span>
 </code></pre></div>
 <p><strong>File:</strong> article2.json</p>
 <p><strong>Content</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="nt">&quot;headline&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NY lawmakers begin debating budget 1 month after due date&quot;</span><span class="p">,</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ALBANY, N.Y. (AP) New York lawmakers began voting Monday on a $229 billion state budget due a month ago that would raise the minimum wage, crack down on illicit pot shops and ban gas stoves and furnaces in new buildings. Negotiations among Gov. Kathy Hochul and her fellow Democrats in control of the Legislature dragged on past the April 1 budget deadline, largely because of disagreements over changes to the bail law and other policy proposals included in the spending plan. Floor debates on some budget bills began Monday. State Senate Majority Leader Andrea Stewart-Cousins said she expected voting to be wrapped up Tuesday for a budget she said contains &quot;</span><span class="err">sig</span><span class="kc">n</span><span class="err">i</span><span class="kc">f</span><span class="err">ica</span><span class="kc">nt</span><span class="w"> </span><span class="err">wi</span><span class="kc">ns</span><span class="s2">&quot; for New Yorkers. &quot;</span><span class="err">I</span><span class="w"> </span><span class="err">would</span><span class="w"> </span><span class="err">have</span><span class="w"> </span><span class="err">liked</span><span class="w"> </span><span class="kc">t</span><span class="err">o</span><span class="w"> </span><span class="err">have</span><span class="w"> </span><span class="err">do</span><span class="kc">ne</span><span class="w"> </span><span class="kc">t</span><span class="err">his</span><span class="w"> </span><span class="err">soo</span><span class="kc">ner</span><span class="err">.</span><span class="w"> </span><span class="err">I</span><span class="w"> </span><span class="kc">t</span><span class="err">hi</span><span class="kc">n</span><span class="err">k</span><span class="w"> </span><span class="err">we</span><span class="w"> </span><span class="err">would</span><span class="w"> </span><span class="err">all</span><span class="w"> </span><span class="err">agree</span><span class="w"> </span><span class="kc">t</span><span class="err">o</span><span class="w"> </span><span class="kc">t</span><span class="err">ha</span><span class="kc">t</span><span class="p">,</span><span class="s2">&quot; Cousins told reporters before voting began. &quot;</span><span class="err">This</span><span class="w"> </span><span class="err">has</span><span class="w"> </span><span class="err">bee</span><span class="kc">n</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">very</span><span class="w"> </span><span class="err">policy</span><span class="mi">-</span><span class="err">lade</span><span class="kc">n</span><span class="w"> </span><span class="err">budge</span><span class="kc">t</span><span class="w"> </span><span class="err">a</span><span class="kc">n</span><span class="err">d</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">lo</span><span class="kc">t</span><span class="w"> </span><span class="err">o</span><span class="kc">f</span><span class="w"> </span><span class="kc">t</span><span class="err">he</span><span class="w"> </span><span class="err">policies</span><span class="w"> </span><span class="err">had</span><span class="w"> </span><span class="kc">t</span><span class="err">o</span><span class="w"> </span><span class="err">parsed</span><span class="w"> </span><span class="kc">t</span><span class="err">hrough.</span><span class="s2">&quot; Hochul was able to push through a change to the bail law that will eliminate the standard that requires judges to prescribe the &quot;</span><span class="err">leas</span><span class="kc">t</span><span class="w"> </span><span class="err">res</span><span class="kc">tr</span><span class="err">ic</span><span class="kc">t</span><span class="err">ive</span><span class="s2">&quot; means to ensure defendants return to court. Hochul said judges needed the extra discretion. Some liberal lawmakers argued that it would undercut the sweeping bail reforms approved in 2019 and result in more people with low incomes and people of color in pretrial detention. Here are some other policy provisions that will be included in the budget, according to state officials. The minimum wage would be raised to $17 in New York City and some of its suburbs and $16 in the rest of the state by 2026. That&#39;s up from $15 in the city and $14.20 upstate.&quot;</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nt">&quot;headline&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NY lawmakers begin debating budget 1 month after due date&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ALBANY, N.Y. (AP) New York lawmakers began voting Monday on a $229 billion state budget due a month ago that would raise the minimum wage, crack down on illicit pot shops and ban gas stoves and furnaces in new buildings. Negotiations among Gov. Kathy Hochul and her fellow Democrats in control of the Legislature dragged on past the April 1 budget deadline, largely because of disagreements over changes to the bail law and other policy proposals included in the spending plan. Floor debates on some budget bills began Monday. State Senate Majority Leader Andrea Stewart-Cousins said she expected voting to be wrapped up Tuesday for a budget she said contains &quot;</span><span class="err">sig</span><span class="kc">n</span><span class="err">i</span><span class="kc">f</span><span class="err">ica</span><span class="kc">nt</span><span class="w"> </span><span class="err">wi</span><span class="kc">ns</span><span class="s2">&quot; for New Yorkers. &quot;</span><span class="err">I</span><span class="w"> </span><span class="err">would</span><span class="w"> </span><span class="err">have</span><span class="w"> </span><span class="err">liked</span><span class="w"> </span><span class="kc">t</span><span class="err">o</span><span class="w"> </span><span class="err">have</span><span class="w"> </span><span class="err">do</span><span class="kc">ne</span><span class="w"> </span><span class="kc">t</span><span class="err">his</span><span class="w"> </span><span class="err">soo</span><span class="kc">ner</span><span class="err">.</span><span class="w"> </span><span class="err">I</span><span class="w"> </span><span class="kc">t</span><span class="err">hi</span><span class="kc">n</span><span class="err">k</span><span class="w"> </span><span class="err">we</span><span class="w"> </span><span class="err">would</span><span class="w"> </span><span class="err">all</span><span class="w"> </span><span class="err">agree</span><span class="w"> </span><span class="kc">t</span><span class="err">o</span><span class="w"> </span><span class="kc">t</span><span class="err">ha</span><span class="kc">t</span><span class="p">,</span><span class="s2">&quot; Cousins told reporters before voting began. &quot;</span><span class="err">This</span><span class="w"> </span><span class="err">has</span><span class="w"> </span><span class="err">bee</span><span class="kc">n</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">very</span><span class="w"> </span><span class="err">policy</span><span class="mi">-</span><span class="err">lade</span><span class="kc">n</span><span class="w"> </span><span class="err">budge</span><span class="kc">t</span><span class="w"> </span><span class="err">a</span><span class="kc">n</span><span class="err">d</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">lo</span><span class="kc">t</span><span class="w"> </span><span class="err">o</span><span class="kc">f</span><span class="w"> </span><span class="kc">t</span><span class="err">he</span><span class="w"> </span><span class="err">policies</span><span class="w"> </span><span class="err">had</span><span class="w"> </span><span class="kc">t</span><span class="err">o</span><span class="w"> </span><span class="err">parsed</span><span class="w"> </span><span class="kc">t</span><span class="err">hrough.</span><span class="s2">&quot; Hochul was able to push through a change to the bail law that will eliminate the standard that requires judges to prescribe the &quot;</span><span class="err">leas</span><span class="kc">t</span><span class="w"> </span><span class="err">res</span><span class="kc">tr</span><span class="err">ic</span><span class="kc">t</span><span class="err">ive</span><span class="s2">&quot; means to ensure defendants return to court. Hochul said judges needed the extra discretion. Some liberal lawmakers argued that it would undercut the sweeping bail reforms approved in 2019 and result in more people with low incomes and people of color in pretrial detention. Here are some other policy provisions that will be included in the budget, according to state officials. The minimum wage would be raised to $17 in New York City and some of its suburbs and $16 in the rest of the state by 2026. That&#39;s up from $15 in the city and $14.20 upstate.&quot;</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">}</span>
 </code></pre></div>
 <p>--</p>
 <p>settings.yaml</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">input</span><span class="p">:</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="nt">file_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">title_column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">headline</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nt">text_column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">content</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="nt">chunks</span><span class="p">:</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="nt">overlap</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">input</span><span class="p">:</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">title_column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">headline</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">text_column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">content</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="nt">chunks</span><span class="p">:</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="nt">overlap</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 </code></pre></div>
 <p>Documents DataFrame</p>
 <table>

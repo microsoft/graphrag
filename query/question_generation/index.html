@@ -1922,7 +1922,7 @@
 <h2 id="configuration">Configuration</h2>
 <p>Below are the key parameters of the <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/question_gen/local_gen.py">Question Generation class</a>:</p>
 <ul>
-<li><code>llm</code>: OpenAI model object to be used for response generation</li>
+<li><code>model</code>: Language model chat completion object to be used for response generation</li>
 <li><code>context_builder</code>: <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/local_search/mixed_context.py">context builder</a> object to be used for preparing context data from collections of knowledge model objects, using the same context builder class as in local search</li>
 <li><code>system_prompt</code>: prompt template used to generate candidate questions. Default template can be found at <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/prompts/query/question_gen_system_prompt.py">system_prompt</a></li>
 <li><code>llm_params</code>: a dictionary of additional parameters (e.g., temperature, max_tokens) to be passed to the LLM call</li>

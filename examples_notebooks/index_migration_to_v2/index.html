@@ -2341,43 +2341,15 @@ storage = StorageFactory().create_storage(
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 6</span>
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 4</span>
+<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">pathlib</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> Path
 <span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">load_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> load_config
-<span class="ansi-green-fg">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">storage</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> StorageFactory
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">6</span> config = <span class="ansi-yellow-bg">load_config</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">Path</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">PROJECT_DIRECTORY</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">storage</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> StorageFactory
+<span class="ansi-green-fg">      6</span> config = load_config(Path(PROJECT_DIRECTORY))
 <span class="ansi-green-fg">      7</span> storage_config = config.output.model_dump()
-<span class="ansi-green-fg">      8</span> storage = StorageFactory().create_storage(
-<span class="ansi-green-fg">      9</span>     storage_type=storage_config[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">type</span><span class="ansi-yellow-fg">"</span>],
-<span class="ansi-green-fg">     10</span>     kwargs=storage_config,
-<span class="ansi-green-fg">     11</span> )
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:183</span>, in <span class="ansi-cyan-fg">load_config</span><span class="ansi-blue-fg">(root_dir, config_filepath, cli_overrides)</span>
-<span class="ansi-green-fg">    151</span> <span class="ansi-yellow-fg">"""Load configuration from a file.</span>
-<span class="ansi-green-fg">    152</span> 
-<span class="ansi-green-fg">    153</span> <span class="ansi-yellow-fg">Parameters</span>
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    180</span> <span class="ansi-yellow-fg">    If there are pydantic validation errors when instantiating the config.</span>
-<span class="ansi-green-fg">    181</span> <span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    182</span> root = root_dir.resolve()
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">183</span> config_path = <span class="ansi-yellow-bg">_get_config_path</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">root</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">config_filepath</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    184</span> _load_dotenv(config_path)
-<span class="ansi-green-fg">    185</span> config_extension = config_path.suffix
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:106</span>, in <span class="ansi-cyan-fg">_get_config_path</span><span class="ansi-blue-fg">(root_dir, config_filepath)</span>
-<span class="ansi-green-fg">    104</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">FileNotFoundError</span>(msg)
-<span class="ansi-green-fg">    105</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">106</span>     config_path = <span class="ansi-yellow-bg">_search_for_config_in_root_dir</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">root_dir</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    108</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> config_path:
-<span class="ansi-green-fg">    109</span>     msg = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Config file not found in root directory: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>root_dir<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:40</span>, in <span class="ansi-cyan-fg">_search_for_config_in_root_dir</span><span class="ansi-blue-fg">(root)</span>
-<span class="ansi-green-fg">     38</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> root.is_dir():
-<span class="ansi-green-fg">     39</span>     msg = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Invalid config path: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>root<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> is not a directory</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">40</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">FileNotFoundError</span>(msg)
-<span class="ansi-green-fg">     42</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> file <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> _default_config_files:
-<span class="ansi-green-fg">     43</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (root / file).is_file():
-
-<span class="ansi-red-fg">FileNotFoundError</span>: Invalid config path: /home/runner/work/graphrag/graphrag/docs/examples_notebooks/&lt;your project directory&gt; is not a directory</pre>
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'graphrag.storage'</pre>
 </div>
 </div>
 </div>
@@ -2434,7 +2406,6 @@ storage = StorageFactory().create_storage(
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.utils.storage</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">delete_table_from_storage</span><span class="p">,</span>
     <span class="n">load_table_from_storage</span><span class="p">,</span>
@@ -2510,7 +2481,6 @@ storage = StorageFactory().create_storage(
 <span class="k">await</span> <span class="n">delete_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_community_reports"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-5">import numpy as np
-
 from graphrag.utils.storage import (
     delete_table_from_storage,
     load_table_from_storage,
@@ -2598,16 +2568,16 @@ await delete_table_from_storage("create_final_community_reports", storage)</div>
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 9</span>
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 8</span>
 <span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">numpy</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">np</span>
-<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">utils</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">storage</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> (
-<span class="ansi-green-fg">      4</span>     delete_table_from_storage,
-<span class="ansi-green-fg">      5</span>     load_table_from_storage,
-<span class="ansi-green-fg">      6</span>     write_table_to_storage,
-<span class="ansi-green-fg">      7</span> )
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">9</span> final_documents = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_documents</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-bg">storage</span>)
-<span class="ansi-green-fg">     10</span> final_text_units = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_text_units</span><span class="ansi-yellow-fg">"</span>, storage)
-<span class="ansi-green-fg">     11</span> final_entities = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_entities</span><span class="ansi-yellow-fg">"</span>, storage)
+<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">utils</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">storage</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> (
+<span class="ansi-green-fg">      3</span>     delete_table_from_storage,
+<span class="ansi-green-fg">      4</span>     load_table_from_storage,
+<span class="ansi-green-fg">      5</span>     write_table_to_storage,
+<span class="ansi-green-fg">      6</span> )
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">8</span> final_documents = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_documents</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-bg">storage</span>)
+<span class="ansi-green-fg">      9</span> final_text_units = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_text_units</span><span class="ansi-yellow-fg">"</span>, storage)
+<span class="ansi-green-fg">     10</span> final_entities = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_entities</span><span class="ansi-yellow-fg">"</span>, storage)
 
 <span class="ansi-red-fg">NameError</span>: name 'storage' is not defined</pre>
 </div>

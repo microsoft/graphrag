@@ -2423,8 +2423,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2445,7 +2445,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.models.language_model_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LanguageModelConfig</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.language_model.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
@@ -2463,7 +2462,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="clipboard-copy-txt" id="cell-2">import os
 
 import pandas as pd
-
 from graphrag.config.enums import ModelType
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.language_model.manager import ModelManager
@@ -2477,6 +2475,28 @@ from graphrag.query.structured_search.global_search.community_context import (
 )
 from graphrag.query.structured_search.global_search.search import GlobalSearch
 from graphrag.tokenizer.get_tokenizer import get_tokenizer</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 4</span>
+<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">os</span>
+<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">pandas</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">pd</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">enums</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelType
+<span class="ansi-green-fg">      5</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">models</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">language_model_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LanguageModelConfig
+<span class="ansi-green-fg">      6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">language_model</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">manager</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelManager
+
+<span class="ansi-red-fg">ImportError</span>: cannot import name 'ModelType' from 'graphrag.config.enums' (/home/runner/work/graphrag/graphrag/packages/graphrag/graphrag/config/enums.py)</pre>
 </div>
 </div>
 </div>
@@ -2504,8 +2524,8 @@ from graphrag.tokenizer.get_tokenizer import get_tokenizer</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2556,6 +2576,37 @@ model = ModelManager().get_or_create_chat_model(
 )
 
 tokenizer = get_tokenizer(config)</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 3</span>
+<span class="ansi-green-fg">      1</span> api_key = os.environ[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">GRAPHRAG_API_KEY</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span> config = <span class="ansi-yellow-bg">LanguageModelConfig</span>(
+<span class="ansi-green-fg">      4</span>     api_key=api_key,
+<span class="ansi-green-fg">      5</span>     <span style="color: rgb(0,135,0)">type</span>=ModelType.Chat,
+<span class="ansi-green-fg">      6</span>     model_provider=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">openai</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">      7</span>     model=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">gpt-4.1</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">      8</span>     max_retries=<span class="ansi-green-fg">20</span>,
+<span class="ansi-green-fg">      9</span> )
+<span class="ansi-green-fg">     10</span> model = ModelManager().get_or_create_chat_model(
+<span class="ansi-green-fg">     11</span>     name=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">global_search</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">     12</span>     model_type=ModelType.Chat,
+<span class="ansi-green-fg">     13</span>     config=config,
+<span class="ansi-green-fg">     14</span> )
+<span class="ansi-green-fg">     16</span> tokenizer = get_tokenizer(config)
+
+<span class="ansi-red-fg">NameError</span>: name 'LanguageModelConfig' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2677,90 +2728,18 @@ report_df.head()</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Total report count: 2
-Report count after filtering by community level 2: 2
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 5</span>
+<span class="ansi-green-fg">      2</span> entity_df = pd.read_parquet(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>ENTITY_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">.parquet</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      3</span> report_df = pd.read_parquet(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>COMMUNITY_REPORT_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">.parquet</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> communities = <span class="ansi-yellow-bg">read_indexer_communities</span>(community_df, report_df)
+<span class="ansi-green-fg">      6</span> reports = read_indexer_reports(report_df, community_df, COMMUNITY_LEVEL)
+<span class="ansi-green-fg">      7</span> entities = read_indexer_entities(entity_df, community_df, COMMUNITY_LEVEL)
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>human_readable_id</th>
-<th>community</th>
-<th>level</th>
-<th>parent</th>
-<th>children</th>
-<th>title</th>
-<th>summary</th>
-<th>full_content</th>
-<th>rank</th>
-<th>rating_explanation</th>
-<th>findings</th>
-<th>full_content_json</th>
-<th>period</th>
-<th>size</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>6c3a555680d647ac8be866a129c7b0ea</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>-1</td>
-<td>[]</td>
-<td>Operation: Dulce and Dulce Base Exploration</td>
-<td>The community revolves around 'Operation: Dulc...</td>
-<td># Operation: Dulce and Dulce Base Exploration\...</td>
-<td>8.5</td>
-<td>The impact severity rating is high due to the ...</td>
-<td>[{'explanation': 'Operation: Dulce is a signif...</td>
-<td>{\n    "title": "Operation: Dulce and Dulce Ba...</td>
-<td>2025-03-04</td>
-<td>7</td>
-</tr>
-<tr>
-<th>1</th>
-<td>0127331a1ea34b8ba19de2c2a4cb3bc9</td>
-<td>1</td>
-<td>1</td>
-<td>0</td>
-<td>-1</td>
-<td>[]</td>
-<td>Paranormal Military Squad and Operation: Dulce</td>
-<td>The community centers around the Paranormal Mi...</td>
-<td># Paranormal Military Squad and Operation: Dul...</td>
-<td>8.5</td>
-<td>The impact severity rating is high due to the ...</td>
-<td>[{'explanation': 'Agent Alex Mercer is a key f...</td>
-<td>{\n    "title": "Paranormal Military Squad and...</td>
-<td>2025-03-04</td>
-<td>9</td>
-</tr>
-</tbody>
-</table>
-</div>
+<span class="ansi-red-fg">NameError</span>: name 'read_indexer_communities' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2777,8 +2756,8 @@ Report count after filtering by community level 2: 2
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2809,6 +2788,29 @@ Report count after filtering by community level 2: 2
     entities=entities,  # default to None if you don't want to use community weights for ranking
     tokenizer=tokenizer,
 )</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> context_builder = <span class="ansi-yellow-bg">GlobalCommunityContext</span>(
+<span class="ansi-green-fg">      2</span>     community_reports=reports,
+<span class="ansi-green-fg">      3</span>     communities=communities,
+<span class="ansi-green-fg">      4</span>     entities=entities,  <span style="color: rgb(95,135,135)"># default to None if you don't want to use community weights for ranking</span>
+<span class="ansi-green-fg">      5</span>     tokenizer=tokenizer,
+<span class="ansi-green-fg">      6</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'GlobalCommunityContext' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2896,8 +2898,8 @@ reduce_llm_params = {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2946,6 +2948,36 @@ reduce_llm_params = {
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[8]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> search_engine = <span class="ansi-yellow-bg">GlobalSearch</span>(
+<span class="ansi-green-fg">      2</span>     model=model,
+<span class="ansi-green-fg">      3</span>     context_builder=context_builder,
+<span class="ansi-green-fg">      4</span>     tokenizer=tokenizer,
+<span class="ansi-green-fg">      5</span>     max_data_tokens=<span class="ansi-green-fg">12_000</span>,  <span style="color: rgb(95,135,135)"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
+<span class="ansi-green-fg">      6</span>     map_llm_params=map_llm_params,
+<span class="ansi-green-fg">      7</span>     reduce_llm_params=reduce_llm_params,
+<span class="ansi-green-fg">      8</span>     allow_general_knowledge=<span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,  <span style="color: rgb(95,135,135)"># set this to True will add instruction to encourage the LLM to incorporate general knowledge in the response, which may increase hallucinations, but could be useful in some use cases.</span>
+<span class="ansi-green-fg">      9</span>     json_mode=<span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,  <span style="color: rgb(95,135,135)"># set this to False if your LLM model does not support JSON mode.</span>
+<span class="ansi-green-fg">     10</span>     context_builder_params=context_builder_params,
+<span class="ansi-green-fg">     11</span>     concurrent_coroutines=<span class="ansi-green-fg">32</span>,
+<span class="ansi-green-fg">     12</span>     response_type=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">multiple paragraphs</span><span class="ansi-yellow-fg">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
+<span class="ansi-green-fg">     13</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'GlobalSearch' is not defined</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell">
@@ -2983,32 +3015,15 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>## Overview of Operation: Dulce
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[9]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span>.search(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">What is operation dulce?</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      3</span> <span style="color: rgb(0,135,0)">print</span>(result.response)
 
-Operation: Dulce is a major mission conducted by the Paranormal Military Squad, with its primary objective centered on investigating alien technology and understanding its potential implications for humanity. The operation is characterized by its complexity and significance, as it involves navigating and uncovering the secrets of the enigmatic Dulce base. This mission is pivotal within the community, serving as the central thread that connects all key entities and drives their actions [Data: Reports (0, 1)].
-
-## The Dulce Base
-
-The Dulce base is the focal point and primary setting for Operation: Dulce. It is depicted as a mysterious and highly secretive location that the team of agents must explore. The base's importance is underscored by the possibility of discovering alien technology within its confines, which may have profound and far-reaching consequences for humanity [Data: Reports (0, 1)].
-
-## The Paranormal Military Squad
-
-The execution of Operation: Dulce is entrusted to the Paranormal Military Squad, a specialized team comprising agents Alex Mercer, Taylor Cruz, Jordan Hayes, and Sam Rivera. The roles, preparation, and coordination of these agents are described as crucial to the mission's success. Their expertise and teamwork are essential in navigating the challenges posed by the Dulce base and in achieving the operation's objectives [Data: Reports (0, 1)].
-
-## Motivations and Driving Forces
-
-A strong sense of duty is identified as the primary motivation for the individuals involved in Operation: Dulce. This sense of responsibility compels the team members to undertake the mission and persist through the complexities and dangers associated with the Dulce base. The operation is not only a test of skill and resolve but also a reflection of the agents' commitment to their cause [Data: Reports (0)].
-
-## Implications
-
-The potential discovery of alien technology during Operation: Dulce may have significant implications for humanity. The mission's outcome could influence future actions, policies, and the broader understanding of extraterrestrial phenomena. The operation's centrality to the community highlights its importance in shaping the narrative and direction of related activities [Data: Reports (0, 1)].
-
----
-
-**Summary:**  
-Operation: Dulce is a critical and complex mission led by the Paranormal Military Squad, focusing on the exploration of the secretive Dulce base in pursuit of alien technology. The operation is driven by a strong sense of duty among its agents and holds the potential to impact humanity significantly, depending on the discoveries made within the base [Data: Reports (0, 1)].
-</pre>
+<span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3046,54 +3061,17 @@ result.context_data["reports"]</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># inspect the data used to build the context for the LLM responses</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">reports</span><span class="ansi-yellow-fg">"</span>]
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>title</th>
-<th>occurrence weight</th>
-<th>content</th>
-<th>rank</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>1</td>
-<td>Paranormal Military Squad and Operation: Dulce</td>
-<td>1.0</td>
-<td># Paranormal Military Squad and Operation: Dul...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>1</th>
-<td>0</td>
-<td>Operation: Dulce and Dulce Base Exploration</td>
-<td>1.0</td>
-<td># Operation: Dulce and Dulce Base Exploration\...</td>
-<td>8.5</td>
-</tr>
-</tbody>
-</table>
-</div>
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3137,9 +3115,17 @@ print(
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>LLM calls: 2. Prompt tokens: 3471. Output tokens: 825.
-</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 3</span>
+<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># inspect number of LLM calls and tokens</span>
+<span class="ansi-green-fg">      2</span> <span style="color: rgb(0,135,0)">print</span>(
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span>     <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">LLM calls: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">result</span>.llm_calls<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">. Prompt tokens: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>result.prompt_tokens<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">. Output tokens: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>result.output_tokens<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">.</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">      4</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>

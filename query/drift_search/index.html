@@ -1951,7 +1951,7 @@ Figure 1. An entire DRIFT search hierarchy highlighting the three core phases of
 <h2 id="configuration">Configuration</h2>
 <p>Below are the key parameters of the <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/drift_search/search.py">DRIFTSearch class</a>:</p>
 <ul>
-<li><code>llm</code>: OpenAI model object to be used for response generation</li>
+<li><code>model</code>: Language model chat completion object to be used for response generation</li>
 <li><code>context_builder</code>: <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/drift_context.py">context builder</a> object to be used for preparing context data from community reports and query information</li>
 <li><code>config</code>: model to define the DRIFT Search hyperparameters. <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/config/models/drift_search_config.py">DRIFT Config model</a></li>
 <li><code>tokenizer</code>: token encoder for tracking the budget for the algorithm.</li>

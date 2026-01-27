@@ -1937,25 +1937,26 @@
 
 
 <h1 id="query-engine">Query Engine 🔎</h1>
-<p>The Query Engine is the retrieval module of the Graph RAG Library. It is one of the two main components of the Graph RAG library, the other being the Indexing Pipeline (see <a href="../../index/overview/">Indexing Pipeline</a>).
+<p>The Query Engine is the retrieval module of the GraphRAG library, and operates over completed <a href="../../index/overview/">indexes</a>.
 It is responsible for the following tasks:</p>
 <ul>
 <li><a href="#local-search">Local Search</a></li>
 <li><a href="#global-search">Global Search</a></li>
 <li><a href="#drift-search">DRIFT Search</a></li>
+<li>Basic Search</li>
 <li><a href="#question-generation">Question Generation</a></li>
 </ul>
 <h2 id="local-search">Local Search</h2>
-<p>Local search method generates answers by combining relevant data from the AI-extracted knowledge-graph with text chunks of the raw documents. This method is suitable for questions that require an understanding of specific entities mentioned in the documents (e.g. What are the healing properties of chamomile?).</p>
-<p>For more details about how Local Search works please refer to the <a href="../local_search/">Local Search</a> documentation.</p>
+<p>Local search generates answers by combining relevant data from the AI-extracted knowledge-graph with text chunks of the raw documents. This method is suitable for questions that require an understanding of specific entities mentioned in the documents (e.g. What are the healing properties of chamomile?).</p>
+<p>For more details about how Local Search works please refer to the <a href="../local_search/">Local Search</a> page.</p>
 <h2 id="global-search">Global Search</h2>
-<p>Global search method generates answers by searching over all AI-generated community reports in a map-reduce fashion. This is a resource-intensive method, but often gives good responses for questions that require an understanding of the dataset as a whole (e.g. What are the most significant values of the herbs mentioned in this notebook?).</p>
-<p>More about this can be checked at the <a href="../global_search/">Global Search</a> documentation.</p>
+<p>Global search generates answers by searching over all AI-generated community reports in a map-reduce fashion. This is a resource-intensive method, but often gives good responses for questions that require an understanding of the dataset as a whole (e.g. What are the most significant values of the herbs mentioned in this notebook?).</p>
+<p>More about this is provided on the <a href="../global_search/">Global Search</a> page.</p>
 <h2 id="drift-search">DRIFT Search</h2>
-<p>DRIFT Search introduces a new approach to local search queries by including community information in the search process. This greatly expands the breadth of the query’s starting point and leads to retrieval and usage of a far higher variety of facts in the final answer. This addition expands the GraphRAG query engine by providing a more comprehensive option for local search, which uses community insights to refine a query into detailed follow-up questions.</p>
-<p>To learn more about DRIFT Search, please refer to the <a href="../drift_search/">DRIFT Search</a> documentation.</p>
+<p>DRIFT Search introduces a new approach to local search queries by including community information in the search process. This greatly expands the breadth of the query’s starting point and leads to retrieval and usage of a far higher variety of facts in the final answer. This expands the GraphRAG query engine by providing a more comprehensive option for local search, which uses community insights to refine a query into detailed follow-up questions.</p>
+<p>To learn more about DRIFT Search, please refer to the <a href="../drift_search/">DRIFT Search</a> page.</p>
 <h2 id="basic-search">Basic Search</h2>
-<p>GraphRAG includes a rudimentary implementation of basic vector RAG to make it easy to compare different search results based on the type of question you are asking. You can specify the top <code>k</code> txt unit chunks to include in the summarization context.</p>
+<p>GraphRAG includes a rudimentary implementation of basic vector RAG to make it easy to compare different search results based on the type of question you are asking. You can specify the top <code>k</code> text unit chunks to include in the summarization context.</p>
 <h2 id="question-generation">Question Generation</h2>
 <p>This functionality takes a list of user queries and generates the next candidate questions. This is useful for generating follow-up questions in a conversation or for generating a list of questions for the investigator to dive deeper into the dataset.</p>
 <p>Information about how question generation works can be found at the <a href="../question_generation/">Question Generation</a> documentation page.</p>

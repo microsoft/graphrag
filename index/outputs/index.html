@@ -2305,16 +2305,6 @@
 <td>int</td>
 <td>Node degree (connectedness) in the graph.</td>
 </tr>
-<tr>
-<td>x</td>
-<td>float</td>
-<td>X position of the node for visual layouts. If graph embeddings and UMAP are not turned on, this will be 0.</td>
-</tr>
-<tr>
-<td>y</td>
-<td>float</td>
-<td>Y position of the node for visual layouts. If graph embeddings and UMAP are not turned on, this will be 0.</td>
-</tr>
 </tbody>
 </table>
 <h2 id="relationships">relationships</h2>
@@ -2382,9 +2372,9 @@
 <td>Number of tokens in the chunk. This should normally match the <code>chunk_size</code> config parameter, except for the last chunk which is often shorter.</td>
 </tr>
 <tr>
-<td>document_ids</td>
-<td>str[]</td>
-<td>List of document IDs the chunk came from. This is normally only 1 due to our default groupby, but for very short text documents (e.g., microblogs) it can be configured so text units span multiple documents.</td>
+<td>document_id</td>
+<td>str</td>
+<td>ID of the document the chunk came from.</td>
 </tr>
 <tr>
 <td>entity_ids</td>

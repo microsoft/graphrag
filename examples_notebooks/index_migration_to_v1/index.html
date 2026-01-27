@@ -2345,43 +2345,15 @@ storage = StorageFactory().create_storage(
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 6</span>
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 4</span>
+<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">pathlib</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> Path
 <span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">load_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> load_config
-<span class="ansi-green-fg">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">storage</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> StorageFactory
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">6</span> config = <span class="ansi-yellow-bg">load_config</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">Path</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">PROJECT_DIRECTORY</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">storage</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> StorageFactory
+<span class="ansi-green-fg">      6</span> config = load_config(Path(PROJECT_DIRECTORY))
 <span class="ansi-green-fg">      7</span> storage_config = config.output.model_dump()
-<span class="ansi-green-fg">      8</span> storage = StorageFactory().create_storage(
-<span class="ansi-green-fg">      9</span>     storage_type=storage_config[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">type</span><span class="ansi-yellow-fg">"</span>],
-<span class="ansi-green-fg">     10</span>     kwargs=storage_config,
-<span class="ansi-green-fg">     11</span> )
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:183</span>, in <span class="ansi-cyan-fg">load_config</span><span class="ansi-blue-fg">(root_dir, config_filepath, cli_overrides)</span>
-<span class="ansi-green-fg">    151</span> <span class="ansi-yellow-fg">"""Load configuration from a file.</span>
-<span class="ansi-green-fg">    152</span> 
-<span class="ansi-green-fg">    153</span> <span class="ansi-yellow-fg">Parameters</span>
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    180</span> <span class="ansi-yellow-fg">    If there are pydantic validation errors when instantiating the config.</span>
-<span class="ansi-green-fg">    181</span> <span class="ansi-yellow-fg">"""</span>
-<span class="ansi-green-fg">    182</span> root = root_dir.resolve()
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">183</span> config_path = <span class="ansi-yellow-bg">_get_config_path</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">root</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">config_filepath</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    184</span> _load_dotenv(config_path)
-<span class="ansi-green-fg">    185</span> config_extension = config_path.suffix
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:106</span>, in <span class="ansi-cyan-fg">_get_config_path</span><span class="ansi-blue-fg">(root_dir, config_filepath)</span>
-<span class="ansi-green-fg">    104</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">FileNotFoundError</span>(msg)
-<span class="ansi-green-fg">    105</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">106</span>     config_path = <span class="ansi-yellow-bg">_search_for_config_in_root_dir</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">root_dir</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    108</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> config_path:
-<span class="ansi-green-fg">    109</span>     msg = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Config file not found in root directory: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>root_dir<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>
-
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:40</span>, in <span class="ansi-cyan-fg">_search_for_config_in_root_dir</span><span class="ansi-blue-fg">(root)</span>
-<span class="ansi-green-fg">     38</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> root.is_dir():
-<span class="ansi-green-fg">     39</span>     msg = <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Invalid config path: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>root<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> is not a directory</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">40</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">FileNotFoundError</span>(msg)
-<span class="ansi-green-fg">     42</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> file <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> _default_config_files:
-<span class="ansi-green-fg">     43</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (root / file).is_file():
-
-<span class="ansi-red-fg">FileNotFoundError</span>: Invalid config path: /home/runner/work/graphrag/graphrag/docs/examples_notebooks/&lt;your project directory is not a directory</pre>
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'graphrag.storage'</pre>
 </div>
 </div>
 </div>
@@ -2453,7 +2425,8 @@ storage = StorageFactory().create_storage(
     <span class="n">nodes</span><span class="p">[</span><span class="s2">"parent"</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="s2">"parent"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="n">join</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">nodes</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"community"</span><span class="p">,</span> <span class="s2">"level"</span><span class="p">,</span> <span class="s2">"parent"</span><span class="p">])</span>
+        <span class="n">nodes</span>
+        <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"community"</span><span class="p">,</span> <span class="s2">"level"</span><span class="p">,</span> <span class="s2">"parent"</span><span class="p">])</span>
         <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">"title"</span><span class="p">:</span> <span class="nb">list</span><span class="p">})</span>
         <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
     <span class="p">)</span>
@@ -2475,7 +2448,8 @@ storage = StorageFactory().create_storage(
     nodes["parent"] = nodes["parent"].fillna(-1).astype(int)
 
     join = (
-        nodes.groupby(["community", "level", "parent"])
+        nodes
+        .groupby(["community", "level", "parent"])
         .agg({"title": list})
         .reset_index()
     )
@@ -2572,7 +2546,8 @@ storage = StorageFactory().create_storage(
     <span class="n">final_communities</span> <span class="o">=</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">parent_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">"community"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">)</span>
 <span class="k">if</span> <span class="s2">"entity_ids"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
     <span class="n">node_mapping</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">final_nodes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"community"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">]]</span>
+        <span class="n">final_nodes</span>
+        <span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"community"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">]]</span>
         <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"community"</span><span class="p">)</span>
         <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">entity_ids</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
     <span class="p">)</span>
@@ -2667,7 +2642,8 @@ if "parent" not in final_communities.columns:
     final_communities = final_communities.merge(parent_df, on="community", how="left")
 if "entity_ids" not in final_communities.columns:
     node_mapping = (
-        final_nodes.loc[:, ["community", "id"]]
+        final_nodes
+        .loc[:, ["community", "id"]]
         .groupby("community")
         .agg(entity_ids=("id", list))
     )
@@ -2740,72 +2716,84 @@ await write_table_to_storage(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.flows.generate_text_embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_text_embeddings</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.cache.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheFactory</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.cache.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheFactory</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.callbacks.noop_workflow_callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoopWorkflowCallbacks</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_embedded_fields</span><span class="p">,</span> <span class="n">get_embedding_settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.workflows.generate_text_embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_text_embeddings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.language_model.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.tokenizer.get_tokenizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_tokenizer</span>
 
 <span class="c1"># We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place</span>
 <span class="c1"># We'll construct the context and run this function flow directly to avoid everything else</span>
 
-
-<span class="n">embedded_fields</span> <span class="o">=</span> <span class="n">get_embedded_fields</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-<span class="n">text_embed</span> <span class="o">=</span> <span class="n">get_embedding_settings</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">model_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_language_model_config</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">embed_text</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 <span class="n">callbacks</span> <span class="o">=</span> <span class="n">NoopWorkflowCallbacks</span><span class="p">()</span>
 <span class="n">cache_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
 <span class="n">cache</span> <span class="o">=</span> <span class="n">CacheFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create_cache</span><span class="p">(</span>
     <span class="n">cache_type</span><span class="o">=</span><span class="n">cache_config</span><span class="p">[</span><span class="s2">"type"</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
-    <span class="n">root_dir</span><span class="o">=</span><span class="n">PROJECT_DIRECTORY</span><span class="p">,</span>
-    <span class="n">kwargs</span><span class="o">=</span><span class="n">cache_config</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">cache_config</span><span class="p">,</span>
 <span class="p">)</span>
-
-<span class="k">await</span> <span class="n">generate_text_embeddings</span><span class="p">(</span>
-    <span class="n">final_documents</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">final_relationships</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">final_text_units</span><span class="o">=</span><span class="n">final_text_units</span><span class="p">,</span>
-    <span class="n">final_entities</span><span class="o">=</span><span class="n">final_entities</span><span class="p">,</span>
-    <span class="n">final_community_reports</span><span class="o">=</span><span class="n">final_community_reports</span><span class="p">,</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="p">()</span><span class="o">.</span><span class="n">get_or_create_embedding_model</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"text_embedding"</span><span class="p">,</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="n">model_config</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">model_config</span><span class="p">,</span>
     <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
     <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
-    <span class="n">storage</span><span class="o">=</span><span class="n">storage</span><span class="p">,</span>
-    <span class="n">text_embed_config</span><span class="o">=</span><span class="n">text_embed</span><span class="p">,</span>
-    <span class="n">embedded_fields</span><span class="o">=</span><span class="n">embedded_fields</span><span class="p">,</span>
-    <span class="n">snapshot_embeddings_enabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">get_tokenizer</span><span class="p">(</span><span class="n">model_config</span><span class="p">)</span>
+
+<span class="k">await</span> <span class="n">generate_text_embeddings</span><span class="p">(</span>
+    <span class="n">text_units</span><span class="o">=</span><span class="n">final_text_units</span><span class="p">,</span>
+    <span class="n">entities</span><span class="o">=</span><span class="n">final_entities</span><span class="p">,</span>
+    <span class="n">community_reports</span><span class="o">=</span><span class="n">final_community_reports</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">embed_text</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+    <span class="n">batch_max_tokens</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">embed_text</span><span class="o">.</span><span class="n">batch_max_tokens</span><span class="p">,</span>
+    <span class="n">num_threads</span><span class="o">=</span><span class="n">model_config</span><span class="o">.</span><span class="n">concurrent_requests</span><span class="p">,</span>
+    <span class="n">vector_store_config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">vector_store</span><span class="p">,</span>
+    <span class="n">embedded_fields</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">embed_text</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-7">from graphrag.index.flows.generate_text_embeddings import generate_text_embeddings
-
-from graphrag.cache.factory import CacheFactory
+<div class="clipboard-copy-txt" id="cell-7">from graphrag.cache.factory import CacheFactory
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
-from graphrag.config.embeddings import get_embedded_fields, get_embedding_settings
+from graphrag.index.workflows.generate_text_embeddings import generate_text_embeddings
+from graphrag.language_model.manager import ModelManager
+from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 # We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place
 # We'll construct the context and run this function flow directly to avoid everything else
 
-
-embedded_fields = get_embedded_fields(config)
-text_embed = get_embedding_settings(config)
+model_config = config.get_language_model_config(config.embed_text.model_id)
 callbacks = NoopWorkflowCallbacks()
 cache_config = config.cache.model_dump()  # type: ignore
 cache = CacheFactory().create_cache(
     cache_type=cache_config["type"],  # type: ignore
-    root_dir=PROJECT_DIRECTORY,
-    kwargs=cache_config,
+    **cache_config,
 )
-
-await generate_text_embeddings(
-    final_documents=None,
-    final_relationships=None,
-    final_text_units=final_text_units,
-    final_entities=final_entities,
-    final_community_reports=final_community_reports,
+model = ModelManager().get_or_create_embedding_model(
+    name="text_embedding",
+    model_type=model_config.type,
+    config=model_config,
     callbacks=callbacks,
     cache=cache,
-    storage=storage,
-    text_embed_config=text_embed,
-    embedded_fields=embedded_fields,
-    snapshot_embeddings_enabled=False,
+)
+
+tokenizer = get_tokenizer(model_config)
+
+await generate_text_embeddings(
+    text_units=final_text_units,
+    entities=final_entities,
+    community_reports=final_community_reports,
+    callbacks=callbacks,
+    model=model,
+    tokenizer=tokenizer,
+    batch_size=config.embed_text.batch_size,
+    batch_max_tokens=config.embed_text.batch_max_tokens,
+    num_threads=model_config.concurrent_requests,
+    vector_store_config=config.vector_store,
+    embedded_fields=config.embed_text.names,
 )</div>
 </div>
 </div>
@@ -2822,11 +2810,11 @@ await generate_text_embeddings(
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">index</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">flows</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">generate_text_embeddings</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
-<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">cache</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> CacheFactory
-<span class="ansi-green-fg">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">callbacks</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">noop_workflow_callbacks</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> NoopWorkflowCallbacks
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">cache</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> CacheFactory
+<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">callbacks</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">noop_workflow_callbacks</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> NoopWorkflowCallbacks
+<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">index</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">workflows</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">generate_text_embeddings</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
 
-<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'graphrag.index.flows'</pre>
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'graphrag.cache.factory'</pre>
 </div>
 </div>
 </div>
