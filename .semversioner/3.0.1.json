@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "description": "Fix missing dependency.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2026-01-28T14:34:25+00:00",
+  "version": "3.0.1"
+}

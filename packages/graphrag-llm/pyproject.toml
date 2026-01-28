@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-llm"
-version = "3.0.0"
+version = "3.0.1"
 description = "GraphRAG LLM package."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
@@ -32,8 +32,8 @@ classifiers = [
 ]
 dependencies = [
     "azure-identity~=1.19.0",
-    "graphrag-cache==3.0.0",
-    "graphrag-common==3.0.0",
+    "graphrag-cache==3.0.1",
+    "graphrag-common==3.0.1",
     "jinja2~=3.1",
     "litellm~=1.80",
     "nest-asyncio2~=1.7",

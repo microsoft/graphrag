@@ -104,7 +104,7 @@ test_only = "pytest -s -k"
 serve_docs = "mkdocs serve"
 build_docs = "mkdocs build"
 _build_packages = "uv build --all-packages"
-_sync = "uv sync"
+_sync = "uv sync --all-packages"
 
 [[tool.poe.tasks.build]]
 sequence = ['_copy_build_assets', '_build_packages']
