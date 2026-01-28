@@ -1,6 +1,10 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.0.1
+
+- patch: Fix missing dependency.
+
 ## 3.0.0
 
 - major: Monorepo restructure
