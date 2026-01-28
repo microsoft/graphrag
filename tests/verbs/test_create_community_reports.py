@@ -10,7 +10,6 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
 from graphrag.index.workflows.create_community_reports import (
     run_workflow,
 )
-from graphrag.utils.storage import load_table_from_storage
 
 from tests.unit.config.utils import get_default_graphrag_config
 
@@ -56,7 +55,7 @@ async def test_create_community_reports():
 
     await run_workflow(config, context)
 
-    actual = await load_table_from_storage("community_reports", context.output_storage)
+    actual = await context.output_table_provider.read_dataframe("community_reports")
 
     assert len(actual.columns) == len(expected.columns)
 

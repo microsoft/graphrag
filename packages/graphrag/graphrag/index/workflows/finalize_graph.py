@@ -14,7 +14,6 @@ from graphrag.index.operations.finalize_relationships import finalize_relationsh
 from graphrag.index.operations.snapshot_graphml import snapshot_graphml
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -25,19 +24,17 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     logger.info("Workflow started: finalize_graph")
-    entities = await load_table_from_storage("entities", context.output_storage)
-    relationships = await load_table_from_storage(
-        "relationships", context.output_storage
-    )
+    entities = await context.output_table_provider.read_dataframe("entities")
+    relationships = await context.output_table_provider.read_dataframe("relationships")
 
     final_entities, final_relationships = finalize_graph(
         entities,
         relationships,
     )
 
-    await write_table_to_storage(final_entities, "entities", context.output_storage)
-    await write_table_to_storage(
-        final_relationships, "relationships", context.output_storage
+    await context.output_table_provider.write_dataframe("entities", final_entities)
+    await context.output_table_provider.write_dataframe(
+        "relationships", final_relationships
     )
 
     if config.snapshots.graphml:

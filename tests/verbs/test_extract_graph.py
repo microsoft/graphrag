@@ -1,10 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.index.workflows.extract_graph import (
-    run_workflow,
-)
-from graphrag.utils.storage import load_table_from_storage
+from graphrag.index.workflows.extract_graph import run_workflow
 
 from tests.unit.config.utils import get_default_graphrag_config
 
@@ -54,10 +51,8 @@ async def test_extract_graph():
 
     await run_workflow(config, context)
 
-    nodes_actual = await load_table_from_storage("entities", context.output_storage)
-    edges_actual = await load_table_from_storage(
-        "relationships", context.output_storage
-    )
+    nodes_actual = await context.output_table_provider.read_dataframe("entities")
+    edges_actual = await context.output_table_provider.read_dataframe("relationships")
 
     assert len(nodes_actual.columns) == 5
     assert len(edges_actual.columns) == 5

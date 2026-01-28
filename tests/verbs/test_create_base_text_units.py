@@ -2,7 +2,6 @@
 # Licensed under the MIT License
 
 from graphrag.index.workflows.create_base_text_units import run_workflow
-from graphrag.utils.storage import load_table_from_storage
 
 from tests.unit.config.utils import get_default_graphrag_config
 
@@ -23,7 +22,7 @@ async def test_create_base_text_units():
 
     await run_workflow(config, context)
 
-    actual = await load_table_from_storage("text_units", context.output_storage)
+    actual = await context.output_table_provider.read_dataframe("text_units")
 
     print("EXPECTED")
     print(expected.columns)

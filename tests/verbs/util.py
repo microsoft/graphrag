@@ -4,7 +4,6 @@
 import pandas as pd
 from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
-from graphrag.utils.storage import write_table_to_storage
 from pandas.testing import assert_series_equal
 
 pd.set_option("display.max_columns", None)
@@ -17,12 +16,12 @@ async def create_test_context(storage: list[str] | None = None) -> PipelineRunCo
     # always set the input docs, but since our stored table is final, drop what wouldn't be in the original source input
     input = load_test_table("documents")
     input.drop(columns=["text_unit_ids"], inplace=True)
-    await write_table_to_storage(input, "documents", context.output_storage)
+    await context.output_table_provider.write_dataframe("documents", input)
 
     if storage:
         for name in storage:
             table = load_test_table(name)
-            await write_table_to_storage(table, name, context.output_storage)
+            await context.output_table_provider.write_dataframe(name, table)
 
     return context
 

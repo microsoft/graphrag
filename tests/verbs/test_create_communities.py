@@ -5,7 +5,6 @@ from graphrag.data_model.schemas import COMMUNITIES_FINAL_COLUMNS
 from graphrag.index.workflows.create_communities import (
     run_workflow,
 )
-from graphrag.utils.storage import load_table_from_storage
 
 from tests.unit.config.utils import get_default_graphrag_config
 
@@ -33,7 +32,7 @@ async def test_create_communities():
         context,
     )
 
-    actual = await load_table_from_storage("communities", context.output_storage)
+    actual = await context.output_table_provider.read_dataframe("communities")
 
     columns = list(expected.columns.values)
     # don't compare period since it is created with the current date each time

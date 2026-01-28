@@ -7,7 +7,6 @@ from graphrag.config.embeddings import (
 from graphrag.index.workflows.generate_text_embeddings import (
     run_workflow,
 )
-from graphrag.utils.storage import load_table_from_storage
 
 from tests.unit.config.utils import get_default_graphrag_config
 
@@ -45,8 +44,8 @@ async def test_generate_text_embeddings():
         assert f"embeddings.{field}.parquet" in parquet_files
 
     # entity description should always be here, let's assert its format
-    entity_description_embeddings = await load_table_from_storage(
-        "embeddings.entity_description", context.output_storage
+    entity_description_embeddings = await context.output_table_provider.read_dataframe(
+        "embeddings.entity_description"
     )
 
     assert len(entity_description_embeddings.columns) == 2

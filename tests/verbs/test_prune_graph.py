@@ -2,10 +2,7 @@
 # Licensed under the MIT License
 
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
-from graphrag.index.workflows.prune_graph import (
-    run_workflow,
-)
-from graphrag.utils.storage import load_table_from_storage
+from graphrag.index.workflows.prune_graph import run_workflow
 
 from tests.unit.config.utils import get_default_graphrag_config
 
@@ -26,6 +23,6 @@ async def test_prune_graph():
 
     await run_workflow(config, context)
 
-    nodes_actual = await load_table_from_storage("entities", context.output_storage)
+    nodes_actual = await context.output_table_provider.read_dataframe("entities")
 
     assert len(nodes_actual) == 29

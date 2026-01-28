@@ -5,7 +5,6 @@ from graphrag.data_model.schemas import COVARIATES_FINAL_COLUMNS
 from graphrag.index.workflows.extract_covariates import (
     run_workflow,
 )
-from graphrag.utils.storage import load_table_from_storage
 from graphrag_llm.config import LLMProviderType
 from pandas.testing import assert_series_equal
 
@@ -41,7 +40,7 @@ async def test_extract_covariates():
 
     await run_workflow(config, context)
 
-    actual = await load_table_from_storage("covariates", context.output_storage)
+    actual = await context.output_table_provider.read_dataframe("covariates")
 
     for column in COVARIATES_FINAL_COLUMNS:
         assert column in actual.columns

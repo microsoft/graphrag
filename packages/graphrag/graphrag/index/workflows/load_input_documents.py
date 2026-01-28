@@ -11,7 +11,6 @@ from graphrag_input import InputReader, create_input_reader
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +32,7 @@ async def run_workflow(
     logger.info("Final # of rows loaded: %s", len(output))
     context.stats.num_documents = len(output)
 
-    await write_table_to_storage(output, "documents", context.output_storage)
+    await context.output_table_provider.write_dataframe("documents", output)
 
     return WorkflowFunctionOutput(result=output)
 
