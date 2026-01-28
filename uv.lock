@@ -880,7 +880,7 @@ wheels = [
 
 [[package]]
 name = "graphrag"
-version = "3.0.0"
+version = "3.0.1"
 source = { editable = "packages/graphrag" }
 dependencies = [
     { name = "azure-identity" },
@@ -941,7 +941,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-cache"
-version = "3.0.0"
+version = "3.0.1"
 source = { editable = "packages/graphrag-cache" }
 dependencies = [
     { name = "graphrag-common" },
@@ -956,7 +956,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-chunking"
-version = "3.0.0"
+version = "3.0.1"
 source = { editable = "packages/graphrag-chunking" }
 dependencies = [
     { name = "graphrag-common" },
@@ -971,7 +971,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-common"
-version = "3.0.0"
+version = "3.0.1"
 source = { editable = "packages/graphrag-common" }
 dependencies = [
     { name = "python-dotenv" },
@@ -986,7 +986,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-input"
-version = "3.0.0"
+version = "3.0.1"
 source = { editable = "packages/graphrag-input" }
 dependencies = [
     { name = "graphrag-common" },
@@ -1005,7 +1005,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-llm"
-version = "3.0.0"
+version = "3.0.1"
 source = { editable = "packages/graphrag-llm" }
 dependencies = [
     { name = "azure-identity" },
@@ -1087,7 +1087,7 @@ dev = [
 
 [[package]]
 name = "graphrag-storage"
-version = "3.0.0"
+version = "3.0.1"
 source = { editable = "packages/graphrag-storage" }
 dependencies = [
     { name = "aiofiles" },
@@ -1112,7 +1112,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-vectors"
-version = "3.0.0"
+version = "3.0.1"
 source = { editable = "packages/graphrag-vectors" }
 dependencies = [
     { name = "azure-core" },
