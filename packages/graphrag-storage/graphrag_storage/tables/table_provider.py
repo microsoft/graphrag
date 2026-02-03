@@ -3,10 +3,15 @@
 
 """Abstract base class for table providers."""
 
-from abc import ABC, abstractmethod
-from typing import Any
+from __future__ import annotations
 
-import pandas as pd
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import pandas as pd
+
+    from .table import Table
 
 
 class TableProvider(ABC):
@@ -72,4 +77,36 @@ class TableProvider(ABC):
         -------
             list[str]:
                 List of table names (without file extensions).
+        """
+
+    @abstractmethod
+    def open(
+        self, table_name: str, context: dict[str, Any] | None = None
+    ) -> Table:
+        """Open a table for streaming row-by-row access.
+
+        Args
+        ----
+            table_name: str
+                The name of the table to open.
+            context: dict[str, Any] | None
+                Optional context for multi-dataset scenarios. Can include
+                tenant_id, dataset_id, or other provider-specific metadata.
+
+        Examples
+        --------
+                    {"dataset_id": "abc123", "tenant_id": "tenant_x"}
+                    {"database": "production", "schema": "public"}
+
+        Returns
+        -------
+            Table:
+                Table instance supporting iteration and row writes.
+                Should be used with async context manager for automatic cleanup.
+
+        Examples
+        --------
+            >>> async with provider.open("documents") as table:
+            ...     for row in table:
+            ...         print(row["id"])
         """

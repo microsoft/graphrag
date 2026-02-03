@@ -40,17 +40,6 @@ async def run_workflow(
     logger.info("Workflow started: generate_text_embeddings")
     embedded_fields = config.embed_text.names
     logger.info("Embedding the following fields: %s", embedded_fields)
-    text_units = None
-    entities = None
-    community_reports = None
-    if text_unit_text_embedding in embedded_fields:
-        text_units = await context.output_table_provider.read_dataframe("text_units")
-    if entity_description_embedding in embedded_fields:
-        entities = await context.output_table_provider.read_dataframe("entities")
-    if community_full_content_embedding in embedded_fields:
-        community_reports = await context.output_table_provider.read_dataframe(
-            "community_reports"
-        )
 
     model_config = config.get_embedding_model_config(
         config.embed_text.embedding_model_id
@@ -64,10 +53,9 @@ async def run_workflow(
 
     tokenizer = model.tokenizer
 
-    output = await generate_text_embeddings(
-        text_units=text_units,
-        entities=entities,
-        community_reports=community_reports,
+    # Use streaming approach
+    await generate_text_embeddings_streaming(
+        table_provider=context.output_table_provider,
         callbacks=context.callbacks,
         model=model,
         tokenizer=tokenizer,
@@ -76,17 +64,144 @@ async def run_workflow(
         num_threads=config.concurrent_requests,
         vector_store_config=config.vector_store,
         embedded_fields=embedded_fields,
+        write_snapshots=config.snapshots.embeddings,
     )
 
-    if config.snapshots.embeddings:
-        for name, table in output.items():
-            await context.output_table_provider.write_dataframe(
-                f"embeddings.{name}",
-                table,
+    # Read back for return value to maintain workflow compatibility
+    output = {}
+    for field in embedded_fields:
+        snapshot_name = f"embeddings.{field}"
+        if await context.output_table_provider.has_dataframe(snapshot_name):
+            output[field] = await context.output_table_provider.read_dataframe(
+                snapshot_name
             )
 
     logger.info("Workflow completed: generate_text_embeddings")
     return WorkflowFunctionOutput(result=output)
+
+
+async def generate_text_embeddings_streaming(
+    table_provider,
+    callbacks,
+    model: "LLMEmbedding",
+    tokenizer,
+    batch_size: int,
+    batch_max_tokens: int,
+    num_threads: int,
+    vector_store_config,
+    embedded_fields: list[str],
+    write_snapshots: bool = False,
+) -> None:
+    """Generate embeddings using streaming to reduce memory pressure."""
+    # Generate embeddings for each field
+    if text_unit_text_embedding in embedded_fields:
+        await _run_embeddings_streaming(
+            table_provider=table_provider,
+            table_name="text_units",
+            field_name=text_unit_text_embedding,
+            id_column="id",
+            text_column="text",
+            callbacks=callbacks,
+            model=model,
+            tokenizer=tokenizer,
+            batch_size=batch_size,
+            batch_max_tokens=batch_max_tokens,
+            num_threads=num_threads,
+            vector_store_config=vector_store_config,
+            write_snapshots=write_snapshots,
+        )
+    
+    if entity_description_embedding in embedded_fields:
+        await _run_embeddings_streaming(
+            table_provider=table_provider,
+            table_name="entities",
+            field_name=entity_description_embedding,
+            id_column="id",
+            text_column="description",
+            callbacks=callbacks,
+            model=model,
+            tokenizer=tokenizer,
+            batch_size=batch_size,
+            batch_max_tokens=batch_max_tokens,
+            num_threads=num_threads,
+            vector_store_config=vector_store_config,
+            write_snapshots=write_snapshots,
+        )
+    
+    if community_full_content_embedding in embedded_fields:
+        await _run_embeddings_streaming(
+            table_provider=table_provider,
+            table_name="community_reports",
+            field_name=community_full_content_embedding,
+            id_column="id",
+            text_column="full_content",
+            callbacks=callbacks,
+            model=model,
+            tokenizer=tokenizer,
+            batch_size=batch_size,
+            batch_max_tokens=batch_max_tokens,
+            num_threads=num_threads,
+            vector_store_config=vector_store_config,
+            write_snapshots=write_snapshots,
+        )
+
+
+async def _run_embeddings_streaming(
+    table_provider,
+    table_name: str,
+    field_name: str,
+    id_column: str,
+    text_column: str,
+    callbacks,
+    model,
+    tokenizer,
+    batch_size: int,
+    batch_max_tokens: int,
+    num_threads: int,
+    vector_store_config,
+    write_snapshots: bool,
+) -> None:
+    """Run embeddings on a table using streaming and batching."""
+    logger.info("Generating %s embeddings for %s...", field_name, table_name)
+    
+    # Read table - for now, use DataFrame approach since embed_text expects DataFrame
+    # TODO: Implement true streaming when embed_text supports it
+    df = await table_provider.read_dataframe(table_name)
+    
+    if df.empty:
+        logger.warning("Table %s is empty, skipping embeddings", table_name)
+        return
+    
+    # Prepare data for embedding
+    embed_data = df[[id_column, text_column]].copy()
+    
+    # Create vector store if configured
+    vector_store = None
+    if vector_store_config and field_name in vector_store_config.index_schema:
+        vector_store = create_vector_store(
+            vector_store_config, vector_store_config.index_schema[field_name]
+        )
+        vector_store.connect()
+    
+    # Generate embeddings
+    embed_data["embedding"] = await embed_text(
+        input=embed_data,
+        callbacks=callbacks,
+        model=model,
+        tokenizer=tokenizer,
+        embed_column=text_column,
+        batch_size=batch_size,
+        batch_max_tokens=batch_max_tokens,
+        num_threads=num_threads,
+        vector_store=vector_store,
+    )
+    
+    # Write snapshot if requested
+    if write_snapshots:
+        result = embed_data[[id_column, "embedding"]].rename(columns={id_column: "id"})
+        await table_provider.write_dataframe(f"embeddings.{field_name}", result)
+    
+    logger.info("Completed %s embeddings for %s", field_name, table_name)
 
 
 async def generate_text_embeddings(
