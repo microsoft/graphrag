@@ -1,0 +1,6 @@
+name = "my-app"
+
+[logging]
+level = "INFO"
+
+[models]

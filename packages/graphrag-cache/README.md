@@ -6,80 +6,13 @@ This package contains a collection of utilities to handle GraphRAG caching imple
 
 This example shows how to create a JSON cache with file storage using the GraphRAG cache package's configuration system. 
 
-```python
-import asyncio
-from graphrag_storage import StorageConfig, create_storage, StorageType
-from graphrag_cache import CacheConfig, create_cache, CacheType, create_cache_key
-
-async def run():
-    cache = create_cache()
-
-    # The above is equivalent to the following:
-    cache = create_cache(
-        CacheConfig(
-            type=CacheType.Json,
-            storage=StorageConfig(
-                type=StorageType.File,
-                base_dir="cache"
-            )
-        ),
-    )
-
-    await cache.set("my_key", {"some": "object to cache"})
-    print(await cache.get("my_key"))
-
-    # create cache key from data dict.
-    cache_key = create_cache_key({
-        "some_arg": "some_value",
-        "something_else": 5
-    })
-    await cache.set(cache_key, {"some": "object to cache"})
-    print(await cache.get(cache_key))
-
-if __name__ == "__main__":
-    asyncio.run(run())
-```
+[Open the notebook to explore the basic example code](example-notebooks/basic_cache_example.ipynb)
 
 ### Custom Cache
 
 This demonstrates how to create a custom cache implementation by extending the base Cache class and registering it with the GraphRAG cache system. Once registered, the custom cache can be instantiated through the factory pattern using either CacheConfig or directly via cache_factory, allowing for extensible caching solutions tailored to specific needs.
 
-```python
-import asyncio
-from typing import Any
-from graphrag_storage import Storage
-from graphrag_cache import Cache, CacheConfig, create_cache, register_cache
-
-class MyCache(Cache):
-    def __init__(self, some_setting: str, optional_setting: str = "default setting", **kwargs: Any):
-        # Validate settings and initialize
-        # View the JsonCache implementation to see how to create a cache that relies on a Storage provider.
-        ...
-
-    #Implement rest of interface
-    ...
-
-register_cache("MyCache", MyCache)
-
-async def run():
-    cache = create_cache(
-        CacheConfig(
-            type="MyCache",
-            some_setting="My Setting"
-        )
-    )
-
-    # Or use the factory directly to instantiate with a dict instead of using
-    # CacheConfig + create_factory
-    # from graphrag_cache.cache_factory import cache_factory
-    # cache = cache_factory.create(strategy="MyCache", init_args={"some_setting": "My Setting"})
-
-    await cache.set("my_key", {"some": "object to cache"})
-    print(await cache.get("my_key"))
-
-if __name__ == "__main__":
-    asyncio.run(run())
-```
+[Open the notebook to explore the basic custom example code](example-notebooks/custom_cache_example.ipynb)
 
 #### Details
 
