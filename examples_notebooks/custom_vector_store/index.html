@@ -2489,9 +2489,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">IndexSchema</span><span class="p">,</span>
     <span class="n">TextEmbedder</span><span class="p">,</span>
     <span class="n">VectorStore</span><span class="p">,</span>
+    <span class="n">VectorStoreConfig</span><span class="p">,</span>
     <span class="n">VectorStoreDocument</span><span class="p">,</span>
-    <span class="n">VectorStoreFactory</span><span class="p">,</span>
     <span class="n">VectorStoreSearchResult</span><span class="p">,</span>
+    <span class="n">create_vector_store</span><span class="p">,</span>
+    <span class="n">register_vector_store</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">"VectorStore Abstract Methods:"</span><span class="p">)</span>
@@ -2517,9 +2519,11 @@ from graphrag_vectors import (
     IndexSchema,
     TextEmbedder,
     VectorStore,
+    VectorStoreConfig,
     VectorStoreDocument,
-    VectorStoreFactory,
     VectorStoreSearchResult,
+    create_vector_store,
+    register_vector_store,
 )
 
 print("VectorStore Abstract Methods:")
@@ -2620,9 +2624,13 @@ Total abstract methods to implement: 5
     <span class="n">vectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
     <span class="n">connected</span><span class="p">:</span> <span class="nb">bool</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_config_option</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the in-memory vector store."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Not actually used in this simple implementation, but included to show</span>
+        <span class="c1"># how custom configuration options can be passed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">custom_config_option</span> <span class="o">=</span> <span class="n">custom_config_option</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">documents</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VectorStoreDocument</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -2652,6 +2660,9 @@ Total abstract methods to implement: 5
         <span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">VectorStoreDocument</span><span class="p">],</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Load documents into the vector store."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Vector store is not connected. Call connect() first."</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">"Clearing existing documents..."</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">documents</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -2669,6 +2680,9 @@ Total abstract methods to implement: 5
         <span class="bp">self</span><span class="p">,</span> <span class="n">query_embedding</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">VectorStoreSearchResult</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Search for similar documents using a query vector."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Vector store is not connected. Call connect() first."</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
@@ -2709,9 +2723,9 @@ Total abstract methods to implement: 5
         <span class="c1"># Use vector search</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity_search_by_vector</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">search_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VectorStoreDocument</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VectorStoreDocument</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Retrieve a document by its ID."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">documents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">documents</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-3">class SimpleInMemoryVectorStore(VectorStore):
     """A simple in-memory vector store implementation for demonstration purposes.
@@ -2729,9 +2743,13 @@ Total abstract methods to implement: 5
     vectors: dict[str, np.ndarray]
     connected: bool
 
-    def __init__(self, **kwargs: Any):
+    def __init__(self, custom_config_option: str, **kwargs: Any):
         """Initialize the in-memory vector store."""
         super().__init__(**kwargs)
+
+        # Not actually used in this simple implementation, but included to show
+        # how custom configuration options can be passed.
+        self.custom_config_option = custom_config_option
 
         self.documents: dict[str, VectorStoreDocument] = {}
         self.vectors: dict[str, np.ndarray] = {}
@@ -2761,6 +2779,9 @@ Total abstract methods to implement: 5
         self, documents: list[VectorStoreDocument], overwrite: bool = False
     ) -&gt; None:
         """Load documents into the vector store."""
+        if not self.connected:
+            msg = "Vector store is not connected. Call connect() first."
+            raise RuntimeError(msg)
         if overwrite:
             print("Clearing existing documents...")
             self.documents.clear()
@@ -2778,6 +2799,9 @@ Total abstract methods to implement: 5
         self, query_embedding: list[float], k: int = 10, **kwargs: Any
     ) -&gt; list[VectorStoreSearchResult]:
         """Search for similar documents using a query vector."""
+        if not self.connected:
+            msg = "Vector store is not connected. Call connect() first."
+            raise RuntimeError(msg)
         if not self.vectors:
             return []
 
@@ -2818,9 +2842,9 @@ Total abstract methods to implement: 5
         # Use vector search
         return self.similarity_search_by_vector(query_embedding, k, **kwargs)
 
-    def search_by_id(self, id: str) -&gt; VectorStoreDocument | None:
+    def search_by_id(self, id: str) -&gt; VectorStoreDocument:
         """Retrieve a document by its ID."""
-        return self.documents.get(id)</div>
+        return self.documents[id]</div>
 </div>
 </div>
 </div>
@@ -2860,31 +2884,17 @@ Total abstract methods to implement: 5
 <span class="n">CUSTOM_VECTOR_STORE_TYPE</span> <span class="o">=</span> <span class="s2">"simple_memory"</span>
 
 <span class="c1"># Register the vector store class</span>
-<span class="n">VectorStoreFactory</span><span class="p">()</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span> <span class="n">SimpleInMemoryVectorStore</span><span class="p">)</span>
+<span class="n">register_vector_store</span><span class="p">(</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span> <span class="n">SimpleInMemoryVectorStore</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✅ Registered custom vector store with type: '</span><span class="si">{</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
-
-<span class="c1"># Verify registration</span>
-<span class="n">available_types</span> <span class="o">=</span> <span class="n">VectorStoreFactory</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">📋 Available vector store types: </span><span class="si">{</span><span class="n">available_types</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"🔍 Is our custom type supported? </span><span class="si">{</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">VectorStoreFactory</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
-<span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-4"># Register our custom vector store with a unique identifier
 CUSTOM_VECTOR_STORE_TYPE = "simple_memory"
 
 # Register the vector store class
-VectorStoreFactory().register(CUSTOM_VECTOR_STORE_TYPE, SimpleInMemoryVectorStore)
+register_vector_store(CUSTOM_VECTOR_STORE_TYPE, SimpleInMemoryVectorStore)
 
-print(f"✅ Registered custom vector store with type: '{CUSTOM_VECTOR_STORE_TYPE}'")
-
-# Verify registration
-available_types = VectorStoreFactory().keys()
-print(f"\n📋 Available vector store types: {available_types}")
-print(
-    f"🔍 Is our custom type supported? {CUSTOM_VECTOR_STORE_TYPE in VectorStoreFactory()}"
-)</div>
+print(f"✅ Registered custom vector store with type: '{CUSTOM_VECTOR_STORE_TYPE}'")</div>
 </div>
 </div>
 </div>
@@ -2897,9 +2907,6 @@ print(
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>✅ Registered custom vector store with type: 'simple_memory'
-
-📋 Available vector store types: ['simple_memory']
-🔍 Is our custom type supported? True
 </pre>
 </div>
 </div>
@@ -3032,23 +3039,29 @@ print(f"📝 Created {len(sample_documents)} sample documents")</div>
 <span class="n">schema</span> <span class="o">=</span> <span class="n">IndexSchema</span><span class="p">(</span><span class="n">index_name</span><span class="o">=</span><span class="s2">"test_collection"</span><span class="p">)</span>
 
 <span class="c1"># Create vector store instance using factory</span>
-<span class="n">vector_store</span> <span class="o">=</span> <span class="n">VectorStoreFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-    <span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span> <span class="p">{</span><span class="s2">"index_schema"</span><span class="p">:</span> <span class="n">schema</span><span class="p">}</span>
+<span class="n">vector_store</span><span class="p">:</span> <span class="n">VectorStore</span> <span class="o">=</span> <span class="n">create_vector_store</span><span class="p">(</span>
+    <span class="n">VectorStoreConfig</span><span class="p">(</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span>
+        <span class="n">custom_config_option</span><span class="o">=</span><span class="s2">"example_value"</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+    <span class="p">),</span>
+    <span class="n">schema</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✅ Created vector store instance: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">vector_store</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"📊 Initial stats: </span><span class="si">{</span><span class="n">vector_store</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-6"># Test creating vector store using the factory
 schema = IndexSchema(index_name="test_collection")
 
 # Create vector store instance using factory
-vector_store = VectorStoreFactory().create(
-    CUSTOM_VECTOR_STORE_TYPE, {"index_schema": schema}
+vector_store: VectorStore = create_vector_store(
+    VectorStoreConfig(
+        type=CUSTOM_VECTOR_STORE_TYPE,
+        custom_config_option="example_value",  # type: ignore
+    ),
+    schema,
 )
 
-print(f"✅ Created vector store instance: {type(vector_store).__name__}")
-print(f"📊 Initial stats: {vector_store.get_stats()}")</div>
+print(f"✅ Created vector store instance: {type(vector_store).__name__}")</div>
 </div>
 </div>
 </div>
@@ -3064,49 +3077,6 @@ print(f"📊 Initial stats: {vector_store.get_stats()}")</div>
 </pre>
 </div>
 </div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 10</span>
-<span class="ansi-green-fg">      5</span> vector_store = VectorStoreFactory().create(
-<span class="ansi-green-fg">      6</span>     CUSTOM_VECTOR_STORE_TYPE, {<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">index_schema</span><span class="ansi-yellow-fg">"</span>: schema}
-<span class="ansi-green-fg">      7</span> )
-<span class="ansi-green-fg">      9</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">✅ Created vector store instance: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">type</span>(vector_store).<span class="ansi-blue-fg">__name__</span><span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">10</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">📊 Initial stats: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">vector_store</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_stats</span>()<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
-
-<span class="ansi-red-fg">AttributeError</span>: 'SimpleInMemoryVectorStore' object has no attribute 'get_stats'</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-7">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-7"></div>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -3119,7 +3089,7 @@ print(f"📊 Initial stats: {vector_store.get_stats()}")</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-7">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -3133,15 +3103,11 @@ print(f"📊 Initial stats: {vector_store.get_stats()}")</div>
 <span class="n">vector_store</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 <span class="n">vector_store</span><span class="o">.</span><span class="n">create_index</span><span class="p">()</span>
 <span class="n">vector_store</span><span class="o">.</span><span class="n">load_documents</span><span class="p">(</span><span class="n">sample_documents</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"📊 Updated stats: </span><span class="si">{</span><span class="n">vector_store</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-8"># Connect and load documents
+<div class="clipboard-copy-txt" id="cell-7"># Connect and load documents
 vector_store.connect()
 vector_store.create_index()
-vector_store.load_documents(sample_documents)
-
-print(f"📊 Updated stats: {vector_store.get_stats()}")</div>
+vector_store.load_documents(sample_documents)</div>
 </div>
 </div>
 </div>
@@ -3155,25 +3121,11 @@ print(f"📊 Updated stats: {vector_store.get_stats()}")</div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Connecting to in-memory vector store...
 Connected successfully!
-Creating index: vector_index
+Creating index: test_collection
 Index created successfully!
 Loading 4 documents...
 Successfully loaded 4 documents!
 </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 6</span>
-<span class="ansi-green-fg">      3</span> vector_store.create_index()
-<span class="ansi-green-fg">      4</span> vector_store.load_documents(sample_documents)
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">6</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">📊 Updated stats: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">vector_store</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_stats</span>()<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
-
-<span class="ansi-red-fg">AttributeError</span>: 'SimpleInMemoryVectorStore' object has no attribute 'get_stats'</pre>
 </div>
 </div>
 </div>
@@ -3188,7 +3140,7 @@ Successfully loaded 4 documents!
 <div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-9">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -3214,7 +3166,7 @@ Successfully loaded 4 documents!
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   Similarity Score: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">score</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">()</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-9"># Test similarity search
+<div class="clipboard-copy-txt" id="cell-8"># Test similarity search
 query_vector = create_mock_embedding()  # Random query vector for testing
 
 search_results = vector_store.similarity_search_by_vector(
@@ -3242,14 +3194,14 @@ for i, result in enumerate(search_results, 1):
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>🔍 Found 3 similar documents:
 
-1. ID: doc_3
-   Similarity Score: 0.0225
+1. ID: doc_1
+   Similarity Score: 0.0348
 
 2. ID: doc_2
-   Similarity Score: 0.0144
+   Similarity Score: 0.0337
 
-3. ID: doc_1
-   Similarity Score: -0.0016
+3. ID: doc_4
+   Similarity Score: -0.0081
 
 </pre>
 </div>
@@ -3266,7 +3218,7 @@ for i, result in enumerate(search_results, 1):
 <div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-10">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-9">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -3284,7 +3236,7 @@ for i, result in enumerate(search_results, 1):
 <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"❌ Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-10"># Test search by ID
+<div class="clipboard-copy-txt" id="cell-9"># Test search by ID
 try:
     found_doc = vector_store.search_by_id("doc_2")
     print("✅ Found document by ID:")
@@ -3330,7 +3282,7 @@ except KeyError as e:
 <div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-11">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-10">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -3343,12 +3295,9 @@ except KeyError as e:
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Example GraphRAG yaml settings</span>
 <span class="n">example_settings</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">"vector_store"</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">"default_vector_store"</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">"type"</span><span class="p">:</span> <span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span>  <span class="c1"># "simple_memory"</span>
-            <span class="s2">"collection_name"</span><span class="p">:</span> <span class="s2">"graphrag_entities"</span><span class="p">,</span>
-            <span class="c1"># Add any custom parameters your vector store needs</span>
-            <span class="s2">"custom_parameter"</span><span class="p">:</span> <span class="s2">"custom_value"</span><span class="p">,</span>
-        <span class="p">}</span>
+        <span class="s2">"type"</span><span class="p">:</span> <span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span>  <span class="c1"># "simple_memory"</span>
+        <span class="c1"># Add any custom parameters your vector store needs</span>
+        <span class="s2">"custom_config_option"</span><span class="p">:</span> <span class="s2">"example_value"</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="c1"># Other GraphRAG configuration...</span>
     <span class="s2">"models"</span><span class="p">:</span> <span class="p">{</span>
@@ -3367,15 +3316,12 @@ except KeyError as e:
 <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">yaml_config</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-11"># Example GraphRAG yaml settings
+<div class="clipboard-copy-txt" id="cell-10"># Example GraphRAG yaml settings
 example_settings = {
     "vector_store": {
-        "default_vector_store": {
-            "type": CUSTOM_VECTOR_STORE_TYPE,  # "simple_memory"
-            "collection_name": "graphrag_entities",
-            # Add any custom parameters your vector store needs
-            "custom_parameter": "custom_value",
-        }
+        "type": CUSTOM_VECTOR_STORE_TYPE,  # "simple_memory"
+        # Add any custom parameters your vector store needs
+        "custom_config_option": "example_value",
     },
     # Other GraphRAG configuration...
     "models": {
@@ -3412,10 +3358,8 @@ models:
     model_provider: openai
     type: embedding
 vector_store:
-  default_vector_store:
-    collection_name: graphrag_entities
-    custom_parameter: custom_value
-    type: simple_memory
+  custom_config_option: example_value
+  type: simple_memory
 
 </pre>
 </div>
@@ -3443,7 +3387,7 @@ vector_store:
 <div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-12">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-11">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -3461,9 +3405,12 @@ vector_store:
     <span class="c1"># 1. GraphRAG creates vector store using factory</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="n">IndexSchema</span><span class="p">(</span><span class="n">index_name</span><span class="o">=</span><span class="s2">"graphrag_entities"</span><span class="p">)</span>
 
-    <span class="n">store</span> <span class="o">=</span> <span class="n">VectorStoreFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-        <span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span>
-        <span class="p">{</span><span class="s2">"index_schema"</span><span class="p">:</span> <span class="n">schema</span><span class="p">,</span> <span class="s2">"similarity_threshold"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">},</span>
+    <span class="n">store</span> <span class="o">=</span> <span class="n">create_vector_store</span><span class="p">(</span>
+        <span class="n">VectorStoreConfig</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span>
+            <span class="n">custom_config_option</span><span class="o">=</span><span class="s2">"example_value"</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="p">),</span>
+        <span class="n">schema</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">store</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
     <span class="n">store</span><span class="o">.</span><span class="n">create_index</span><span class="p">()</span>
@@ -3491,7 +3438,6 @@ vector_store:
     <span class="n">context_entities</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">document</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">relevant_entities</span><span class="p">]</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Step 4: Context built using retrieved entities"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"📊 Final stats: </span><span class="si">{</span><span class="n">store</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">context_entities</span>
 
@@ -3500,7 +3446,7 @@ vector_store:
 <span class="n">context</span> <span class="o">=</span> <span class="n">simulate_graphrag_pipeline</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">🎯 Retrieved </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="si">}</span><span class="s2"> entities for context building"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-12"># Example of how GraphRAG would use your custom vector store
+<div class="clipboard-copy-txt" id="cell-11"># Example of how GraphRAG would use your custom vector store
 def simulate_graphrag_pipeline():
     """Simulate how GraphRAG would use the custom vector store."""
     print("🚀 Simulating GraphRAG pipeline with custom vector store...\n")
@@ -3508,9 +3454,12 @@ def simulate_graphrag_pipeline():
     # 1. GraphRAG creates vector store using factory
     schema = IndexSchema(index_name="graphrag_entities")
 
-    store = VectorStoreFactory().create(
-        CUSTOM_VECTOR_STORE_TYPE,
-        {"index_schema": schema, "similarity_threshold": 0.3},
+    store = create_vector_store(
+        VectorStoreConfig(
+            type=CUSTOM_VECTOR_STORE_TYPE,
+            custom_config_option="example_value",  # type: ignore
+        ),
+        schema,
     )
     store.connect()
     store.create_index()
@@ -3538,7 +3487,6 @@ def simulate_graphrag_pipeline():
     context_entities = [result.document for result in relevant_entities]
 
     print("✅ Step 4: Context built using retrieved entities")
-    print(f"📊 Final stats: {store.get_stats()}")
 
     return context_entities
 
@@ -3561,7 +3509,7 @@ print(f"\n🎯 Retrieved {len(context)} entities for context building")</div>
 
 Connecting to in-memory vector store...
 Connected successfully!
-Creating index: vector_index
+Creating index: graphrag_entities
 Index created successfully!
 ✅ Step 1: Vector store created and connected
 Loading 10 documents...
@@ -3569,28 +3517,9 @@ Successfully loaded 10 documents!
 ✅ Step 2: Loaded 10 entity documents
 ✅ Step 3: Found 5 relevant entities for query
 ✅ Step 4: Context built using retrieved entities
+
+🎯 Retrieved 5 entities for context building
 </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 45</span>
-<span class="ansi-green-fg">     41</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> context_entities
-<span class="ansi-green-fg">     44</span> <span style="color: rgb(95,135,135)"># Run the simulation</span>
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">45</span> context = <span class="ansi-yellow-bg">simulate_graphrag_pipeline</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">     46</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-fg">🎯 Retrieved </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">len</span>(context)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> entities for context building</span><span class="ansi-yellow-fg">"</span>)
-
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 39</span>, in <span class="ansi-cyan-fg">simulate_graphrag_pipeline</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-fg">     36</span> context_entities = [result.document <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> relevant_entities]
-<span class="ansi-green-fg">     38</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">✅ Step 4: Context built using retrieved entities</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">39</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">📊 Final stats: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">store</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_stats</span>()<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">     41</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> context_entities
-
-<span class="ansi-red-fg">AttributeError</span>: 'SimpleInMemoryVectorStore' object has no attribute 'get_stats'</pre>
 </div>
 </div>
 </div>
@@ -3616,7 +3545,7 @@ Successfully loaded 10 documents!
 <div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-13">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-12">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -3632,9 +3561,12 @@ Successfully loaded 10 documents!
 
     <span class="c1"># Test 1: Basic functionality</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Test 1: Basic functionality"</span><span class="p">)</span>
-    <span class="n">store</span> <span class="o">=</span> <span class="n">VectorStoreFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-        <span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span>
-        <span class="p">{</span><span class="s2">"index_schema"</span><span class="p">:</span> <span class="n">IndexSchema</span><span class="p">(</span><span class="n">index_name</span><span class="o">=</span><span class="s2">"test"</span><span class="p">)},</span>
+    <span class="n">store</span> <span class="o">=</span> <span class="n">create_vector_store</span><span class="p">(</span>
+        <span class="n">VectorStoreConfig</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span>
+            <span class="n">custom_config_option</span><span class="o">=</span><span class="s2">"example_value"</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="p">),</span>
+        <span class="n">schema</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">store</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
     <span class="n">store</span><span class="o">.</span><span class="n">create_index</span><span class="p">()</span>
@@ -3675,9 +3607,12 @@ Successfully loaded 10 documents!
 
     <span class="c1"># Test 4: Error handling</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Test 5: Error handling"</span><span class="p">)</span>
-    <span class="n">disconnected_store</span> <span class="o">=</span> <span class="n">VectorStoreFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-        <span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span>
-        <span class="p">{</span><span class="s2">"index_schema"</span><span class="p">:</span> <span class="n">IndexSchema</span><span class="p">(</span><span class="n">index_name</span><span class="o">=</span><span class="s2">"test2"</span><span class="p">)},</span>
+    <span class="n">disconnected_store</span> <span class="o">=</span> <span class="n">create_vector_store</span><span class="p">(</span>
+        <span class="n">VectorStoreConfig</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">CUSTOM_VECTOR_STORE_TYPE</span><span class="p">,</span>
+            <span class="n">custom_config_option</span><span class="o">=</span><span class="s2">"example_value"</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="p">),</span>
+        <span class="n">IndexSchema</span><span class="p">(</span><span class="n">index_name</span><span class="o">=</span><span class="s2">"test2"</span><span class="p">),</span>
     <span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -3700,15 +3635,18 @@ Successfully loaded 10 documents!
 <span class="c1"># Run the tests</span>
 <span class="n">test_custom_vector_store</span><span class="p">()</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-13">def test_custom_vector_store():
+<div class="clipboard-copy-txt" id="cell-12">def test_custom_vector_store():
     """Comprehensive test suite for the custom vector store."""
     print("🧪 Running comprehensive vector store tests...\n")
 
     # Test 1: Basic functionality
     print("Test 1: Basic functionality")
-    store = VectorStoreFactory().create(
-        CUSTOM_VECTOR_STORE_TYPE,
-        {"index_schema": IndexSchema(index_name="test")},
+    store = create_vector_store(
+        VectorStoreConfig(
+            type=CUSTOM_VECTOR_STORE_TYPE,
+            custom_config_option="example_value",  # type: ignore
+        ),
+        schema,
     )
     store.connect()
     store.create_index()
@@ -3749,9 +3687,12 @@ Successfully loaded 10 documents!
 
     # Test 4: Error handling
     print("\nTest 5: Error handling")
-    disconnected_store = VectorStoreFactory().create(
-        CUSTOM_VECTOR_STORE_TYPE,
-        {"index_schema": IndexSchema(index_name="test2")},
+    disconnected_store = create_vector_store(
+        VectorStoreConfig(
+            type=CUSTOM_VECTOR_STORE_TYPE,
+            custom_config_option="example_value",  # type: ignore
+        ),
+        IndexSchema(index_name="test2"),
     )
 
     try:
@@ -3789,7 +3730,7 @@ test_custom_vector_store()</div>
 Test 1: Basic functionality
 Connecting to in-memory vector store...
 Connected successfully!
-Creating index: vector_index
+Creating index: test_collection
 Index created successfully!
 Loading 2 documents...
 Successfully loaded 2 documents!
@@ -3799,28 +3740,13 @@ Test 2: Search functionality
 ✅ Search functionality test passed
 
 Test 3: Search by ID
+✅ Search by ID test passed
+
+Test 5: Error handling
+✅ Error handling test passed
+
+🎉 All tests passed! Your custom vector store is working correctly.
 </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AssertionError</span>                            Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 73</span>
-<span class="ansi-green-fg">     69</span>     <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-fg">🎉 All tests passed! Your custom vector store is working correctly.</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">     72</span> <span style="color: rgb(95,135,135)"># Run the tests</span>
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">73</span> <span class="ansi-yellow-bg">test_custom_vector_store</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 42</span>, in <span class="ansi-cyan-fg">test_custom_vector_store</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-fg">     40</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-fg">     41</span>     store.search_by_id(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">nonexistent</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">42</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">assert</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Should raise KeyError for nonexistent ID</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">     43</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">KeyError</span>:
-<span class="ansi-green-fg">     44</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">pass</span>  <span style="color: rgb(95,135,135)"># Expected</span>
-
-<span class="ansi-red-fg">AssertionError</span>: Should raise KeyError for nonexistent ID</pre>
 </div>
 </div>
 </div>
