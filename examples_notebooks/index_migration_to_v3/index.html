@@ -2427,29 +2427,29 @@ storage = create_storage(config.output_storage)</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.utils.storage</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">load_table_from_storage</span><span class="p">,</span>
-    <span class="n">write_table_to_storage</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag_storage.tables.parquet_table_provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetTableProvider</span>
 
-<span class="n">text_units</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"text_units"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="c1"># Create table provider from storage</span>
+<span class="n">table_provider</span> <span class="o">=</span> <span class="n">ParquetTableProvider</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span>
+
+<span class="n">text_units</span> <span class="o">=</span> <span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">read_dataframe</span><span class="p">(</span><span class="s2">"text_units"</span><span class="p">)</span>
 
 <span class="n">text_units</span><span class="p">[</span><span class="s2">"document_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_units</span><span class="p">[</span><span class="s2">"document_ids"</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ids</span><span class="p">:</span> <span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="n">remove_columns</span><span class="p">(</span><span class="n">text_units</span><span class="p">,</span> <span class="p">[</span><span class="s2">"document_ids"</span><span class="p">])</span>
 
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">text_units</span><span class="p">,</span> <span class="s2">"text_units"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="s2">"text_units"</span><span class="p">,</span> <span class="n">text_units</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5">from graphrag.utils.storage import (
-    load_table_from_storage,
-    write_table_to_storage,
-)
+<div class="clipboard-copy-txt" id="cell-5">from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
 
-text_units = await load_table_from_storage("text_units", storage)
+# Create table provider from storage
+table_provider = ParquetTableProvider(storage)
+
+text_units = await table_provider.read_dataframe("text_units")
 
 text_units["document_id"] = text_units["document_ids"].apply(lambda ids: ids[0])
 remove_columns(text_units, ["document_ids"])
 
-await write_table_to_storage(text_units, "text_units", storage)</div>
+await table_provider.write_dataframe("text_units", text_units)</div>
 </div>
 </div>
 </div>
@@ -2464,14 +2464,12 @@ await write_table_to_storage(text_units, "text_units", storage)</div>
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 6</span>
-<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">utils</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">storage</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> (
-<span class="ansi-green-fg">      2</span>     load_table_from_storage,
-<span class="ansi-green-fg">      3</span>     write_table_to_storage,
-<span class="ansi-green-fg">      4</span> )
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">6</span> text_units = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">text_units</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-bg">storage</span>)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 4</span>
+<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag_storage</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">tables</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">parquet_table_provider</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ParquetTableProvider
+<span class="ansi-green-fg">      3</span> <span style="color: rgb(95,135,135)"># Create table provider from storage</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> table_provider = ParquetTableProvider(<span class="ansi-yellow-bg">storage</span>)
+<span class="ansi-green-fg">      6</span> text_units = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> table_provider.read_dataframe(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">text_units</span><span class="ansi-yellow-fg">"</span>)
 <span class="ansi-green-fg">      8</span> text_units[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">document_id</span><span class="ansi-yellow-fg">"</span>] = text_units[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">document_ids</span><span class="ansi-yellow-fg">"</span>].apply(<span class="ansi-bold" style="color: rgb(0,135,0)">lambda</span> ids: ids[<span class="ansi-green-fg">0</span>])
-<span class="ansi-green-fg">      9</span> remove_columns(text_units, [<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">document_ids</span><span class="ansi-yellow-fg">"</span>])
 
 <span class="ansi-red-fg">NameError</span>: name 'storage' is not defined</pre>
 </div>

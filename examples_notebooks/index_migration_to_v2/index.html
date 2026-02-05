@@ -2406,23 +2406,20 @@ storage = StorageFactory().create_storage(
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.utils.storage</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">delete_table_from_storage</span><span class="p">,</span>
-    <span class="n">load_table_from_storage</span><span class="p">,</span>
-    <span class="n">write_table_to_storage</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag_storage.tables.parquet_table_provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetTableProvider</span>
 
-<span class="n">final_documents</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_documents"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="n">final_text_units</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_text_units"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="n">final_entities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_entities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="n">final_covariates</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_covariates"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="n">final_nodes</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_nodes"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="n">final_relationships</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
-    <span class="s2">"create_final_relationships"</span><span class="p">,</span> <span class="n">storage</span>
-<span class="p">)</span>
-<span class="n">final_communities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_communities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="n">final_community_reports</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
-    <span class="s2">"create_final_community_reports"</span><span class="p">,</span> <span class="n">storage</span>
+<span class="c1"># Create table provider from storage</span>
+<span class="n">table_provider</span> <span class="o">=</span> <span class="n">ParquetTableProvider</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span>
+
+<span class="n">final_documents</span> <span class="o">=</span> <span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">read_dataframe</span><span class="p">(</span><span class="s2">"create_final_documents"</span><span class="p">)</span>
+<span class="n">final_text_units</span> <span class="o">=</span> <span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">read_dataframe</span><span class="p">(</span><span class="s2">"create_final_text_units"</span><span class="p">)</span>
+<span class="n">final_entities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">read_dataframe</span><span class="p">(</span><span class="s2">"create_final_entities"</span><span class="p">)</span>
+<span class="n">final_covariates</span> <span class="o">=</span> <span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">read_dataframe</span><span class="p">(</span><span class="s2">"create_final_covariates"</span><span class="p">)</span>
+<span class="n">final_nodes</span> <span class="o">=</span> <span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">read_dataframe</span><span class="p">(</span><span class="s2">"create_final_nodes"</span><span class="p">)</span>
+<span class="n">final_relationships</span> <span class="o">=</span> <span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">read_dataframe</span><span class="p">(</span><span class="s2">"create_final_relationships"</span><span class="p">)</span>
+<span class="n">final_communities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">read_dataframe</span><span class="p">(</span><span class="s2">"create_final_communities"</span><span class="p">)</span>
+<span class="n">final_community_reports</span> <span class="o">=</span> <span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">read_dataframe</span><span class="p">(</span>
+    <span class="s2">"create_final_community_reports"</span>
 <span class="p">)</span>
 
 <span class="c1"># we've renamed document attributes as metadata</span>
@@ -2462,42 +2459,39 @@ storage = StorageFactory().create_storage(
 <span class="p">)</span>
 
 <span class="c1"># we renamed all the output files for better clarity now that we don't have workflow naming constraints from DataShaper</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_documents</span><span class="p">,</span> <span class="s2">"documents"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_text_units</span><span class="p">,</span> <span class="s2">"text_units"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_entities</span><span class="p">,</span> <span class="s2">"entities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_relationships</span><span class="p">,</span> <span class="s2">"relationships"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_covariates</span><span class="p">,</span> <span class="s2">"covariates"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_communities</span><span class="p">,</span> <span class="s2">"communities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_community_reports</span><span class="p">,</span> <span class="s2">"community_reports"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="s2">"documents"</span><span class="p">,</span> <span class="n">final_documents</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="s2">"text_units"</span><span class="p">,</span> <span class="n">final_text_units</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="s2">"entities"</span><span class="p">,</span> <span class="n">final_entities</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="s2">"relationships"</span><span class="p">,</span> <span class="n">final_relationships</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="s2">"covariates"</span><span class="p">,</span> <span class="n">final_covariates</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="s2">"communities"</span><span class="p">,</span> <span class="n">final_communities</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">table_provider</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="s2">"community_reports"</span><span class="p">,</span> <span class="n">final_community_reports</span><span class="p">)</span>
 
 <span class="c1"># delete all the old versions</span>
-<span class="k">await</span> <span class="n">delete_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_documents"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">delete_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_text_units"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">delete_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_entities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">delete_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_nodes"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">delete_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_relationships"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">delete_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_covariates"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">delete_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_communities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">delete_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_community_reports"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">storage</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"create_final_documents.parquet"</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">storage</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"create_final_text_units.parquet"</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">storage</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"create_final_entities.parquet"</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">storage</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"create_final_nodes.parquet"</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">storage</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"create_final_relationships.parquet"</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">storage</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"create_final_covariates.parquet"</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">storage</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"create_final_communities.parquet"</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">storage</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"create_final_community_reports.parquet"</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-5">import numpy as np
-from graphrag.utils.storage import (
-    delete_table_from_storage,
-    load_table_from_storage,
-    write_table_to_storage,
-)
+from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
 
-final_documents = await load_table_from_storage("create_final_documents", storage)
-final_text_units = await load_table_from_storage("create_final_text_units", storage)
-final_entities = await load_table_from_storage("create_final_entities", storage)
-final_covariates = await load_table_from_storage("create_final_covariates", storage)
-final_nodes = await load_table_from_storage("create_final_nodes", storage)
-final_relationships = await load_table_from_storage(
-    "create_final_relationships", storage
-)
-final_communities = await load_table_from_storage("create_final_communities", storage)
-final_community_reports = await load_table_from_storage(
-    "create_final_community_reports", storage
+# Create table provider from storage
+table_provider = ParquetTableProvider(storage)
+
+final_documents = await table_provider.read_dataframe("create_final_documents")
+final_text_units = await table_provider.read_dataframe("create_final_text_units")
+final_entities = await table_provider.read_dataframe("create_final_entities")
+final_covariates = await table_provider.read_dataframe("create_final_covariates")
+final_nodes = await table_provider.read_dataframe("create_final_nodes")
+final_relationships = await table_provider.read_dataframe("create_final_relationships")
+final_communities = await table_provider.read_dataframe("create_final_communities")
+final_community_reports = await table_provider.read_dataframe(
+    "create_final_community_reports"
 )
 
 # we've renamed document attributes as metadata
@@ -2537,23 +2531,23 @@ final_community_reports = final_community_reports.merge(
 )
 
 # we renamed all the output files for better clarity now that we don't have workflow naming constraints from DataShaper
-await write_table_to_storage(final_documents, "documents", storage)
-await write_table_to_storage(final_text_units, "text_units", storage)
-await write_table_to_storage(final_entities, "entities", storage)
-await write_table_to_storage(final_relationships, "relationships", storage)
-await write_table_to_storage(final_covariates, "covariates", storage)
-await write_table_to_storage(final_communities, "communities", storage)
-await write_table_to_storage(final_community_reports, "community_reports", storage)
+await table_provider.write_dataframe("documents", final_documents)
+await table_provider.write_dataframe("text_units", final_text_units)
+await table_provider.write_dataframe("entities", final_entities)
+await table_provider.write_dataframe("relationships", final_relationships)
+await table_provider.write_dataframe("covariates", final_covariates)
+await table_provider.write_dataframe("communities", final_communities)
+await table_provider.write_dataframe("community_reports", final_community_reports)
 
 # delete all the old versions
-await delete_table_from_storage("create_final_documents", storage)
-await delete_table_from_storage("create_final_text_units", storage)
-await delete_table_from_storage("create_final_entities", storage)
-await delete_table_from_storage("create_final_nodes", storage)
-await delete_table_from_storage("create_final_relationships", storage)
-await delete_table_from_storage("create_final_covariates", storage)
-await delete_table_from_storage("create_final_communities", storage)
-await delete_table_from_storage("create_final_community_reports", storage)</div>
+await storage.delete("create_final_documents.parquet")
+await storage.delete("create_final_text_units.parquet")
+await storage.delete("create_final_entities.parquet")
+await storage.delete("create_final_nodes.parquet")
+await storage.delete("create_final_relationships.parquet")
+await storage.delete("create_final_covariates.parquet")
+await storage.delete("create_final_communities.parquet")
+await storage.delete("create_final_community_reports.parquet")</div>
 </div>
 </div>
 </div>
@@ -2568,16 +2562,12 @@ await delete_table_from_storage("create_final_community_reports", storage)</div>
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 8</span>
-<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">numpy</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">np</span>
-<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">utils</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">storage</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> (
-<span class="ansi-green-fg">      3</span>     delete_table_from_storage,
-<span class="ansi-green-fg">      4</span>     load_table_from_storage,
-<span class="ansi-green-fg">      5</span>     write_table_to_storage,
-<span class="ansi-green-fg">      6</span> )
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">8</span> final_documents = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_documents</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-bg">storage</span>)
-<span class="ansi-green-fg">      9</span> final_text_units = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_text_units</span><span class="ansi-yellow-fg">"</span>, storage)
-<span class="ansi-green-fg">     10</span> final_entities = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_entities</span><span class="ansi-yellow-fg">"</span>, storage)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 5</span>
+<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag_storage</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">tables</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">parquet_table_provider</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ParquetTableProvider
+<span class="ansi-green-fg">      4</span> <span style="color: rgb(95,135,135)"># Create table provider from storage</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> table_provider = ParquetTableProvider(<span class="ansi-yellow-bg">storage</span>)
+<span class="ansi-green-fg">      7</span> final_documents = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> table_provider.read_dataframe(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_documents</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">      8</span> final_text_units = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> table_provider.read_dataframe(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_text_units</span><span class="ansi-yellow-fg">"</span>)
 
 <span class="ansi-red-fg">NameError</span>: name 'storage' is not defined</pre>
 </div>
