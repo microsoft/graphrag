@@ -11,7 +11,6 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.schemas import DOCUMENTS_FINAL_COLUMNS
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -22,12 +21,12 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final documents."""
     logger.info("Workflow started: create_final_documents")
-    documents = await load_table_from_storage("documents", context.output_storage)
-    text_units = await load_table_from_storage("text_units", context.output_storage)
+    documents = await context.output_table_provider.read_dataframe("documents")
+    text_units = await context.output_table_provider.read_dataframe("text_units")
 
     output = create_final_documents(documents, text_units)
 
-    await write_table_to_storage(output, "documents", context.output_storage)
+    await context.output_table_provider.write_dataframe("documents", output)
 
     logger.info("Workflow completed: create_final_documents")
     return WorkflowFunctionOutput(result=output)
