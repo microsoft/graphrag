@@ -7,17 +7,12 @@ import logging
 
 import numpy as np
 import pandas as pd
-from graphrag_storage import Storage
+from graphrag_storage.tables.table_provider import TableProvider
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.run.utils import get_update_storages
+from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import (
-    load_table_from_storage,
-    storage_has_table,
-    write_table_to_storage,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -28,31 +23,33 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """Update the covariates from a incremental index run."""
     logger.info("Workflow started: update_covariates")
-    output_storage, previous_storage, delta_storage = get_update_storages(
-        config, context.state["update_timestamp"]
+    output_table_provider, previous_table_provider, delta_table_provider = (
+        get_update_table_providers(config, context.state["update_timestamp"])
     )
 
-    if await storage_has_table(
-        "covariates", previous_storage
-    ) and await storage_has_table("covariates", delta_storage):
+    if await previous_table_provider.has_dataframe(
+        "covariates"
+    ) and await delta_table_provider.has_dataframe("covariates"):
         logger.info("Updating Covariates")
-        await _update_covariates(previous_storage, delta_storage, output_storage)
+        await _update_covariates(
+            previous_table_provider, delta_table_provider, output_table_provider
+        )
 
     logger.info("Workflow completed: update_covariates")
     return WorkflowFunctionOutput(result=None)
 
 
 async def _update_covariates(
-    previous_storage: Storage,
-    delta_storage: Storage,
-    output_storage: Storage,
+    previous_table_provider: TableProvider,
+    delta_table_provider: TableProvider,
+    output_table_provider: TableProvider,
 ) -> None:
     """Update the covariates output."""
-    old_covariates = await load_table_from_storage("covariates", previous_storage)
-    delta_covariates = await load_table_from_storage("covariates", delta_storage)
+    old_covariates = await previous_table_provider.read_dataframe("covariates")
+    delta_covariates = await delta_table_provider.read_dataframe("covariates")
     merged_covariates = _merge_covariates(old_covariates, delta_covariates)
 
-    await write_table_to_storage(merged_covariates, "covariates", output_storage)
+    await output_table_provider.write_dataframe("covariates", merged_covariates)
 
 
 def _merge_covariates(
