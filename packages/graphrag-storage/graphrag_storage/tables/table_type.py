@@ -11,3 +11,4 @@ class TableType(StrEnum):
     """Enum for table storage types."""
 
     Parquet = "parquet"
+    CSV = "csv"
