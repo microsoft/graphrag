@@ -48,9 +48,8 @@ async def run_workflow(
     communities = await context.output_table_provider.read_dataframe("communities")
 
     claims = None
-    if (
-        config.extract_claims.enabled
-        and await context.output_table_provider.has_dataframe("covariates")
+    if config.extract_claims.enabled and await context.output_table_provider.has(
+        "covariates"
     ):
         claims = await context.output_table_provider.read_dataframe("covariates")
 

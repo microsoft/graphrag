@@ -28,9 +28,8 @@ async def run_workflow(
     )
 
     final_covariates = None
-    if (
-        config.extract_claims.enabled
-        and await context.output_table_provider.has_dataframe("covariates")
+    if config.extract_claims.enabled and await context.output_table_provider.has(
+        "covariates"
     ):
         final_covariates = await context.output_table_provider.read_dataframe(
             "covariates"

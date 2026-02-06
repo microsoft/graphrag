@@ -50,7 +50,7 @@ class TableProvider(ABC):
         """
 
     @abstractmethod
-    async def has_dataframe(self, table_name: str) -> bool:
+    async def has(self, table_name: str) -> bool:
         """Check if a table exists in the provider.
 
         Args
@@ -65,8 +65,8 @@ class TableProvider(ABC):
         """
 
     @abstractmethod
-    def find_tables(self) -> list[str]:
-        """Find all table names in the provider.
+    def list_tables(self) -> list[str]:
+        """List all table names in the provider.
 
         Returns
         -------

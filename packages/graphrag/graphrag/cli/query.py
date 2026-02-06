@@ -386,7 +386,7 @@ def _resolve_output_files(
     # for optional output files, set the dict entry to None instead of erroring out if it does not exist
     if optional_list:
         for optional_file in optional_list:
-            file_exists = asyncio.run(table_provider.has_dataframe(optional_file))
+            file_exists = asyncio.run(table_provider.has(optional_file))
             if file_exists:
                 df_value = asyncio.run(table_provider.read_dataframe(optional_file))
                 dataframe_dict[optional_file] = df_value
