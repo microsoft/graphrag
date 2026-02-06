@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Remove unnecessary response format check. Fixes: #2203"
+}

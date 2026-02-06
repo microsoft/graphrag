@@ -78,17 +78,6 @@ class LLMCompletion(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def supports_structured_response(self) -> bool:
-        """Whether the completion supports structured responses.
-
-        Returns
-        -------
-            bool:
-                True if structured responses are supported, False otherwise.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
     def completion(
         self,
         /,

@@ -87,10 +87,6 @@ class MockLLMCompletion(LLMCompletion):
 
         self._mock_responses = mock_responses  # type: ignore
 
-    def supports_structured_response(self) -> bool:
-        """Check if the model supports structured response."""
-        return True
-
     def completion(
         self,
         /,

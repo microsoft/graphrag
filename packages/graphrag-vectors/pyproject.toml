@@ -32,7 +32,7 @@ classifiers = [
 dependencies = [
     "azure-core~=1.32",
     "azure-cosmos~=4.9",
-    "azure-identity~=1.19",
+    "azure-identity~=1.25",
     "azure-search-documents~=11.6",
     "graphrag-common==3.0.1",
     "lancedb~=0.24.1",
