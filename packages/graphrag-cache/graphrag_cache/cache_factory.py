@@ -5,19 +5,13 @@
 """Cache factory implementation."""
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING
 
-from graphrag_common.factory import Factory
-from graphrag_storage import create_storage
+from graphrag_common.factory import Factory, ServiceScope
+from graphrag_storage import Storage, create_storage
 
+from graphrag_cache.cache import Cache
 from graphrag_cache.cache_config import CacheConfig
 from graphrag_cache.cache_type import CacheType
-
-if TYPE_CHECKING:
-    from graphrag_common.factory import ServiceScope
-    from graphrag_storage import Storage
-
-    from graphrag_cache.cache import Cache
 
 
 class CacheFactory(Factory["Cache"]):
@@ -29,8 +23,8 @@ cache_factory = CacheFactory()
 
 def register_cache(
     cache_type: str,
-    cache_initializer: Callable[..., "Cache"],
-    scope: "ServiceScope" = "transient",
+    cache_initializer: Callable[..., Cache],
+    scope: ServiceScope = "transient",
 ) -> None:
     """Register a custom cache implementation.
 
@@ -45,7 +39,7 @@ def register_cache(
 
 
 def create_cache(
-    config: CacheConfig | None = None, storage: "Storage | None" = None
+    config: CacheConfig | None = None, storage: Storage | None = None
 ) -> "Cache":
     """Create a cache implementation based on the given configuration.
 

@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from graphrag_storage import create_storage
-from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
+from graphrag_storage.tables.table_provider_factory import create_table_provider
 
 import graphrag.api as api
 from graphrag.callbacks.noop_query_callbacks import NoopQueryCallbacks
@@ -378,7 +378,7 @@ def _resolve_output_files(
     """Read indexing output files to a dataframe dict."""
     dataframe_dict = {}
     storage_obj = create_storage(config.output_storage)
-    table_provider = ParquetTableProvider(storage_obj)
+    table_provider = create_table_provider(config.table_provider, storage=storage_obj)
     for name in output_list:
         df_value = asyncio.run(table_provider.read_dataframe(name))
         dataframe_dict[name] = df_value
