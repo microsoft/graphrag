@@ -61,6 +61,7 @@ This will create two files, `.env` and `settings.yaml`, and a directory `input`,
 Get a copy of A Christmas Carol by Charles Dickens from a trusted source:
 
 ```sh
+mkdir input
 curl https://www.gutenberg.org/cache/epub/24022/pg24022.txt -o ./input/book.txt
 ```
 
