@@ -32,7 +32,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "azure-identity~=1.19",
+    "azure-identity~=1.25",
     "azure-search-documents~=11.5",
     "azure-storage-blob~=12.24",
     "devtools~=0.12",

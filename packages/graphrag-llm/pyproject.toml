@@ -32,7 +32,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "azure-identity~=1.19.0",
+    "azure-identity~=1.25",
     "graphrag-cache==3.0.1",
     "graphrag-common==3.0.1",
     "jinja2~=3.1",

@@ -38,9 +38,6 @@ def test_create_custom_chat_model():
         def __init__(self, **kwargs):
             pass
 
-        def supports_structured_response(self) -> bool:
-            return True
-
         def completion(
             self,
             /,
