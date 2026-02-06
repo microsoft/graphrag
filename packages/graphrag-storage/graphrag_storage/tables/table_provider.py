@@ -65,7 +65,7 @@ class TableProvider(ABC):
         """
 
     @abstractmethod
-    def list_tables(self) -> list[str]:
+    def list(self) -> list[str]:
         """List all table names in the provider.
 
         Returns

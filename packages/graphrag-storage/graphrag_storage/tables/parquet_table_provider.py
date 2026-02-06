@@ -94,7 +94,7 @@ class ParquetTableProvider(TableProvider):
         """
         return await self._storage.has(f"{table_name}.parquet")
 
-    def list_tables(self) -> list[str]:
+    def list(self) -> list[str]:
         """List all table names in storage.
 
         Returns

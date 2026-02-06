@@ -172,6 +172,6 @@ async def _copy_previous_output(
     previous_table_provider: TableProvider,
 ) -> None:
     """Copy all parquet tables from output to previous storage for backup."""
-    for table_name in output_table_provider.list_tables():
+    for table_name in output_table_provider.list():
         table = await output_table_provider.read_dataframe(table_name)
         await previous_table_provider.write_dataframe(table_name, table)

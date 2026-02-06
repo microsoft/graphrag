@@ -99,10 +99,10 @@ class TestCSVTableProvider(unittest.IsolatedAsyncioTestCase):
         # Now it exists
         assert await self.table_provider.has("test_table")
 
-    async def test_list_tables(self):
+    async def test_list(self):
         """Test listing all tables in storage."""
         # Initially empty
-        assert self.table_provider.list_tables() == []
+        assert self.table_provider.list() == []
 
         # Create some tables
         df1 = pd.DataFrame({"a": [1, 2, 3]})
@@ -114,6 +114,6 @@ class TestCSVTableProvider(unittest.IsolatedAsyncioTestCase):
         await self.table_provider.write_dataframe("table3", df3)
 
         # List tables
-        tables = self.table_provider.list_tables()
+        tables = self.table_provider.list()
         assert len(tables) == 3
         assert set(tables) == {"table1", "table2", "table3"}
