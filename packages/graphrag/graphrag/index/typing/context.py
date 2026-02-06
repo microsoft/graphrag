@@ -20,8 +20,6 @@ class PipelineRunContext:
     stats: PipelineRunStats
     input_storage: Storage
     "Storage for reading input documents."
-    input_table_provider: TableProvider
-    "Table provider for reading input tables."
     output_storage: Storage
     "Long-term storage for pipeline verbs to use. Items written here will be written to the storage provider."
     output_table_provider: TableProvider

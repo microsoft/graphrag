@@ -13,8 +13,8 @@ from typing import Any
 import pandas as pd
 from graphrag_cache import create_cache
 from graphrag_storage import create_storage
-from graphrag_storage.tables.parquet_table_provider import ParquetTableProvider
 from graphrag_storage.tables.table_provider import TableProvider
+from graphrag_storage.tables.table_provider_factory import create_table_provider
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -36,9 +36,10 @@ async def run_pipeline(
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
     input_storage = create_storage(config.input_storage)
-    input_table_provider = ParquetTableProvider(input_storage)
 
     output_storage = create_storage(config.output_storage)
+    output_table_provider = create_table_provider(config.table_provider, output_storage)
+
     cache = create_cache(config.cache)
 
     # load existing state in case any workflows are stateful
@@ -56,13 +57,16 @@ async def run_pipeline(
         update_timestamp = time.strftime("%Y%m%d-%H%M%S")
         timestamped_storage = update_storage.child(update_timestamp)
         delta_storage = timestamped_storage.child("delta")
-        delta_table_provider = ParquetTableProvider(delta_storage)
+        delta_table_provider = create_table_provider(
+            config.table_provider, delta_storage
+        )
         # copy the previous output to a backup folder, so we can replace it with the update
         # we'll read from this later when we merge the old and new indexes
         previous_storage = timestamped_storage.child("previous")
-        previous_table_provider = ParquetTableProvider(previous_storage)
+        previous_table_provider = create_table_provider(
+            config.table_provider, previous_storage
+        )
 
-        output_table_provider = ParquetTableProvider(output_storage)
         await _copy_previous_output(output_table_provider, previous_table_provider)
 
         state["update_timestamp"] = update_timestamp
@@ -74,7 +78,6 @@ async def run_pipeline(
 
         context = create_run_context(
             input_storage=input_storage,
-            input_table_provider=input_table_provider,
             output_storage=delta_storage,
             output_table_provider=delta_table_provider,
             previous_table_provider=previous_table_provider,
@@ -88,15 +91,13 @@ async def run_pipeline(
 
         # if the user passes in a df directly, write directly to storage so we can skip finding/parsing later
         if input_documents is not None:
-            output_table_provider = ParquetTableProvider(output_storage)
             await output_table_provider.write_dataframe("documents", input_documents)
             pipeline.remove("load_input_documents")
 
         context = create_run_context(
             input_storage=input_storage,
-            input_table_provider=input_table_provider,
             output_storage=output_storage,
-            output_table_provider=ParquetTableProvider(storage=output_storage),
+            output_table_provider=output_table_provider,
             cache=cache,
             callbacks=callbacks,
             state=state,
