@@ -65,5 +65,5 @@ docsite/
 packages/*/LICENSE
 
 # Notebooks outputs
-packages/graphrag-storage/example_notebooks/output
-packages/graphrag-cache/example-notebooks/cache
+packages/graphrag-*/example_notebooks/**/output
+packages/graphrag-*/example_notebooks/**/cache
