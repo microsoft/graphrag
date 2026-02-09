@@ -70,6 +70,7 @@ async def run_workflow(
         max_input_tokens=config.summarize_descriptions.max_input_tokens,
         summarization_prompt=summarization_prompts.summarize_prompt,
         summarization_num_threads=config.concurrent_requests,
+        skip_errors=config.skip_workflow_errors,
     )
 
     await context.output_table_provider.write_dataframe("entities", entities)
@@ -106,6 +107,7 @@ async def extract_graph(
     max_input_tokens: int,
     summarization_prompt: str,
     summarization_num_threads: int,
+    skip_errors: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
@@ -120,6 +122,7 @@ async def extract_graph(
         max_gleanings=max_gleanings,
         num_threads=extraction_num_threads,
         async_type=extraction_async_type,
+        skip_errors=skip_errors,
     )
 
     if len(extracted_entities) == 0:
@@ -147,6 +150,7 @@ async def extract_graph(
         max_input_tokens=max_input_tokens,
         summarization_prompt=summarization_prompt,
         num_threads=summarization_num_threads,
+        skip_errors=skip_errors,
     )
 
     return (entities, relationships, raw_entities, raw_relationships)
@@ -161,6 +165,7 @@ async def get_summarized_entities_relationships(
     max_input_tokens: int,
     summarization_prompt: str,
     num_threads: int,
+    skip_errors: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Summarize the entities and relationships."""
     entity_summaries, relationship_summaries = await summarize_descriptions(
@@ -172,6 +177,7 @@ async def get_summarized_entities_relationships(
         max_input_tokens=max_input_tokens,
         prompt=summarization_prompt,
         num_threads=num_threads,
+        skip_errors=skip_errors,
     )
 
     relationships = extracted_relationships.drop(columns=["description"]).merge(

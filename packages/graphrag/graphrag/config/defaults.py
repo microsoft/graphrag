@@ -346,6 +346,7 @@ class GraphRagConfigDefaults:
     embedding_models: dict = field(default_factory=dict)
     concurrent_requests: int = 25
     async_mode: AsyncType = AsyncType.Threaded
+    skip_workflow_errors: bool = False
     reporting: ReportingDefaults = field(default_factory=ReportingDefaults)
     input_storage: InputStorageDefaults = field(default_factory=InputStorageDefaults)
     output_storage: OutputStorageDefaults = field(default_factory=OutputStorageDefaults)

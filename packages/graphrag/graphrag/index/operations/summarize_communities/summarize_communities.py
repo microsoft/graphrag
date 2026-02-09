@@ -47,6 +47,7 @@ async def summarize_communities(
     max_report_length: int,
     num_threads: int,
     async_type: AsyncType,
+    skip_errors: bool = False,
 ):
     """Generate community summaries."""
     reports: list[CommunityReport | None] = []
@@ -94,6 +95,7 @@ async def summarize_communities(
             num_threads=num_threads,
             async_type=async_type,
             progress_msg=f"level {levels[i]} summarize communities progress: ",
+            skip_errors=skip_errors,
         )
         reports.extend([lr for lr in local_reports if lr is not None])
 

@@ -33,6 +33,7 @@ async def summarize_descriptions(
     max_input_tokens: int,
     prompt: str,
     num_threads: int,
+    skip_errors: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Summarize entity and relationship descriptions from an entity graph, using a language model."""
 
@@ -99,14 +100,28 @@ async def summarize_descriptions(
         semaphore: asyncio.Semaphore,
     ):
         async with semaphore:
-            results = await run_summarize_descriptions(
-                id,
-                descriptions,
-                model,
-                max_summary_length,
-                max_input_tokens,
-                prompt,
-            )
+            try:
+                results = await run_summarize_descriptions(
+                    id,
+                    descriptions,
+                    model,
+                    max_summary_length,
+                    max_input_tokens,
+                    prompt,
+                )
+            except Exception:  # noqa: BLE001
+                if not skip_errors:
+                    raise
+                logger.warning(
+                    "Failed to summarize descriptions for %s, "
+                    "skipping and using first description.",
+                    id,
+                    exc_info=True,
+                )
+                results = SummarizedDescriptionResult(
+                    id=id,
+                    description=descriptions[0] if descriptions else "",
+                )
             ticker(1)
         return results
 

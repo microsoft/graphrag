@@ -4,10 +4,14 @@
 """A module containing 'SummarizationResult' and 'SummarizeExtractor' models."""
 
 import json
+import logging
+import traceback
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from graphrag.index.typing.error_handler import ErrorHandlerFn
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion

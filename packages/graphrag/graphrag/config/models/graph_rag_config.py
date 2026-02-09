@@ -68,6 +68,11 @@ class GraphRagConfig(BaseModel):
         default=graphrag_config_defaults.async_mode,
     )
 
+    skip_workflow_errors: bool = Field(
+        description="If true, skip non-fatal LLM errors (e.g. content filter violations) instead of aborting the workflow.",
+        default=graphrag_config_defaults.skip_workflow_errors,
+    )
+
     input: InputConfig = Field(
         description="The input configuration.", default=InputConfig()
     )

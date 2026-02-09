@@ -80,6 +80,7 @@ async def run_workflow(
         max_report_length=config.community_reports.max_length,
         num_threads=config.concurrent_requests,
         async_type=config.async_mode,
+        skip_errors=config.skip_workflow_errors,
     )
 
     await context.output_table_provider.write_dataframe("community_reports", output)
@@ -101,6 +102,7 @@ async def create_community_reports(
     max_report_length: int,
     num_threads: int,
     async_type: AsyncType,
+    skip_errors: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
     nodes = explode_communities(communities, entities)
@@ -134,6 +136,7 @@ async def create_community_reports(
         max_report_length=max_report_length,
         num_threads=num_threads,
         async_type=async_type,
+        skip_errors=skip_errors,
     )
 
     return finalize_community_reports(community_reports, communities)

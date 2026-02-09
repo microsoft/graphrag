@@ -30,6 +30,7 @@ async def extract_graph(
     max_gleanings: int,
     num_threads: int,
     async_type: AsyncType,
+    skip_errors: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Extract a graph from a piece of text using a language model."""
     num_started = 0
@@ -56,6 +57,7 @@ async def extract_graph(
         num_threads=num_threads,
         async_type=async_type,
         progress_msg="extract graph progress: ",
+        skip_errors=skip_errors,
     )
 
     entity_dfs = []
