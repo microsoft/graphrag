@@ -27,9 +27,9 @@ async def run_workflow(
         get_update_table_providers(config, context.state["update_timestamp"])
     )
 
-    if await previous_table_provider.has_dataframe(
+    if await previous_table_provider.has(
         "covariates"
-    ) and await delta_table_provider.has_dataframe("covariates"):
+    ) and await delta_table_provider.has("covariates"):
         logger.info("Updating Covariates")
         await _update_covariates(
             previous_table_provider, delta_table_provider, output_table_provider

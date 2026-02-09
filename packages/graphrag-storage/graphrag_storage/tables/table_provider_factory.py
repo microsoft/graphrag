@@ -66,6 +66,12 @@ def create_table_provider(
                 )
 
                 register_table_provider(TableType.Parquet, ParquetTableProvider)
+            case TableType.CSV:
+                from graphrag_storage.tables.csv_table_provider import (
+                    CSVTableProvider,
+                )
+
+                register_table_provider(TableType.CSV, CSVTableProvider)
             case _:
                 msg = f"TableProviderConfig.type '{table_type}' is not registered in the TableProviderFactory. Registered types: {', '.join(table_provider_factory.keys())}."
                 raise ValueError(msg)
