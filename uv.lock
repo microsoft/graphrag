@@ -266,7 +266,7 @@ wheels = [
 
 [[package]]
 name = "azure-identity"
-version = "1.19.0"
+version = "1.25.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "azure-core" },
@@ -275,9 +275,9 @@ dependencies = [
     { name = "msal-extensions" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/aa/91/cbaeff9eb0b838f0d35b4607ac1c6195c735c8eb17db235f8f60e622934c/azure_identity-1.19.0.tar.gz", hash = "sha256:500144dc18197d7019b81501165d4fa92225f03778f17d7ca8a2a180129a9c83", size = 263058, upload-time = "2024-10-08T15:41:33.554Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/06/8d/1a6c41c28a37eab26dc85ab6c86992c700cd3f4a597d9ed174b0e9c69489/azure_identity-1.25.1.tar.gz", hash = "sha256:87ca8328883de6036443e1c37b40e8dc8fb74898240f61071e09d2e369361456", size = 279826, upload-time = "2025-10-06T20:30:02.194Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f0/d5/3995ed12f941f4a41a273d9b1709282e825ef87ed8eab3833038fee54d59/azure_identity-1.19.0-py3-none-any.whl", hash = "sha256:e3f6558c181692d7509f09de10cca527c7dce426776454fb97df512a46527e81", size = 187587, upload-time = "2024-10-08T15:41:36.423Z" },
+    { url = "https://files.pythonhosted.org/packages/83/7b/5652771e24fff12da9dde4c20ecf4682e606b104f26419d139758cc935a6/azure_identity-1.25.1-py3-none-any.whl", hash = "sha256:e9edd720af03dff020223cd269fa3a61e8f345ea75443858273bcb44844ab651", size = 191317, upload-time = "2025-10-06T20:30:04.251Z" },
 ]
 
 [[package]]
@@ -1054,7 +1054,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "azure-identity", specifier = "~=1.19" },
+    { name = "azure-identity", specifier = "~=1.25" },
     { name = "azure-search-documents", specifier = "~=11.5" },
     { name = "azure-storage-blob", specifier = "~=12.24" },
     { name = "blis", specifier = "~=1.0" },
@@ -1162,7 +1162,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "azure-identity", specifier = "~=1.19.0" },
+    { name = "azure-identity", specifier = "~=1.25" },
     { name = "graphrag-cache", editable = "packages/graphrag-cache" },
     { name = "graphrag-common", editable = "packages/graphrag-common" },
     { name = "jinja2", specifier = "~=3.1" },
@@ -1245,7 +1245,7 @@ dependencies = [
 requires-dist = [
     { name = "aiofiles", specifier = "~=24.1" },
     { name = "azure-cosmos", specifier = "~=4.9" },
-    { name = "azure-identity", specifier = "~=1.19" },
+    { name = "azure-identity", specifier = "~=1.25" },
     { name = "azure-storage-blob", specifier = "~=12.24" },
     { name = "graphrag-common", editable = "packages/graphrag-common" },
     { name = "pandas", specifier = "~=2.3" },
@@ -1272,7 +1272,7 @@ dependencies = [
 requires-dist = [
     { name = "azure-core", specifier = "~=1.32" },
     { name = "azure-cosmos", specifier = "~=4.9" },
-    { name = "azure-identity", specifier = "~=1.19" },
+    { name = "azure-identity", specifier = "~=1.25" },
     { name = "azure-search-documents", specifier = "~=11.6" },
     { name = "graphrag-common", editable = "packages/graphrag-common" },
     { name = "lancedb", specifier = "~=0.24.1" },
