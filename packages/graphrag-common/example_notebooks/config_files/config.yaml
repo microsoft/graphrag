@@ -1,5 +1,4 @@
-name: "my-app"
+name: "my-app-config"
 logging:
   # whatever fields your Logging model requires
-  level: "INFO"
-  # (add other required logging fields here)
+  directory: "output/logs"

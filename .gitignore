@@ -63,3 +63,7 @@ docsite/
 
 # Root build assets
 packages/*/LICENSE
+
+# Notebooks outputs
+packages/graphrag-storage/example_notebooks/output
+packages/graphrag-cache/example-notebooks/cache

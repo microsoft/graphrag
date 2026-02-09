@@ -10,7 +10,7 @@ This example shows how to create a JSON cache with file storage using the GraphR
 
 ### Custom Cache
 
-This demonstrates how to create a custom cache implementation by extending the base Cache class and registering it with the GraphRAG cache system. Once registered, the custom cache can be instantiated through the factory pattern using either CacheConfig or directly via cache_factory, allowing for extensible caching solutions tailored to specific needs.
+This example demonstrates how to create a custom cache implementation by extending the base Cache class and registering it with the GraphRAG cache system. Once registered, the custom cache can be instantiated through the factory pattern using either CacheConfig or directly via cache_factory, allowing for extensible caching solutions tailored to specific needs.
 
 [Open the notebook to explore the basic custom example code](example-notebooks/custom_cache_example.ipynb)
 
