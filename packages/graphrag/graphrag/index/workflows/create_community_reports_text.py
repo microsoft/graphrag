@@ -14,6 +14,7 @@ from graphrag.cache.cache_key_creator import cache_key_creator
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.operations.finalize_community_reports import (
     finalize_community_reports,
 )
@@ -42,9 +43,10 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
     logger.info("Workflow started: create_community_reports_text")
-    entities = await context.output_table_provider.read_dataframe("entities")
-    communities = await context.output_table_provider.read_dataframe("communities")
-    text_units = await context.output_table_provider.read_dataframe("text_units")
+    reader = DataReader(context.output_table_provider)
+    entities = await reader.entities()
+    communities = await reader.communities()
+    text_units = await reader.text_units()
 
     model_config = config.get_completion_model_config(
         config.community_reports.completion_model_id

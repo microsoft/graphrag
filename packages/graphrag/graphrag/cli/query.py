@@ -15,6 +15,7 @@ import graphrag.api as api
 from graphrag.callbacks.noop_query_callbacks import NoopQueryCallbacks
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -375,12 +376,13 @@ def _resolve_output_files(
     output_list: list[str],
     optional_list: list[str] | None = None,
 ) -> dict[str, Any]:
-    """Read indexing output files to a dataframe dict."""
+    """Read indexing output files to a dataframe dict, with correct column types."""
     dataframe_dict = {}
     storage_obj = create_storage(config.output_storage)
     table_provider = create_table_provider(config.table_provider, storage=storage_obj)
+    reader = DataReader(table_provider)
     for name in output_list:
-        df_value = asyncio.run(table_provider.read_dataframe(name))
+        df_value = asyncio.run(getattr(reader, name)())
         dataframe_dict[name] = df_value
 
     # for optional output files, set the dict entry to None instead of erroring out if it does not exist
@@ -388,7 +390,7 @@ def _resolve_output_files(
         for optional_file in optional_list:
             file_exists = asyncio.run(table_provider.has(optional_file))
             if file_exists:
-                df_value = asyncio.run(table_provider.read_dataframe(optional_file))
+                df_value = asyncio.run(getattr(reader, optional_file)())
                 dataframe_dict[optional_file] = df_value
             else:
                 dataframe_dict[optional_file] = None

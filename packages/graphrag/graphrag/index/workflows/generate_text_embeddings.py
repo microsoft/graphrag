@@ -22,6 +22,7 @@ from graphrag.config.embeddings import (
     text_unit_text_embedding,
 )
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -40,17 +41,16 @@ async def run_workflow(
     logger.info("Workflow started: generate_text_embeddings")
     embedded_fields = config.embed_text.names
     logger.info("Embedding the following fields: %s", embedded_fields)
+    reader = DataReader(context.output_table_provider)
     text_units = None
     entities = None
     community_reports = None
     if text_unit_text_embedding in embedded_fields:
-        text_units = await context.output_table_provider.read_dataframe("text_units")
+        text_units = await reader.text_units()
     if entity_description_embedding in embedded_fields:
-        entities = await context.output_table_provider.read_dataframe("entities")
+        entities = await reader.entities()
     if community_full_content_embedding in embedded_fields:
-        community_reports = await context.output_table_provider.read_dataframe(
-            "community_reports"
-        )
+        community_reports = await reader.community_reports()
 
     model_config = config.get_embedding_model_config(
         config.embed_text.embedding_model_id

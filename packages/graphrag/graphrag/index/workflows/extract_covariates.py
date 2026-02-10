@@ -15,6 +15,7 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.defaults import DEFAULT_ENTITY_TYPES
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.data_model.schemas import COVARIATES_FINAL_COLUMNS
 from graphrag.index.operations.extract_covariates.extract_covariates import (
     extract_covariates as extractor,
@@ -36,7 +37,8 @@ async def run_workflow(
     logger.info("Workflow started: extract_covariates")
     output = None
     if config.extract_claims.enabled:
-        text_units = await context.output_table_provider.read_dataframe("text_units")
+        reader = DataReader(context.output_table_provider)
+        text_units = await reader.text_units()
 
         model_config = config.get_completion_model_config(
             config.extract_claims.completion_model_id

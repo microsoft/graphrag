@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.data_model.schemas import COMMUNITIES_FINAL_COLUMNS
 from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.operations.create_graph import create_graph
@@ -27,8 +28,9 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final communities."""
     logger.info("Workflow started: create_communities")
-    entities = await context.output_table_provider.read_dataframe("entities")
-    relationships = await context.output_table_provider.read_dataframe("relationships")
+    reader = DataReader(context.output_table_provider)
+    entities = await reader.entities()
+    relationships = await reader.relationships()
 
     max_cluster_size = config.cluster_graph.max_cluster_size
     use_lcc = config.cluster_graph.use_lcc

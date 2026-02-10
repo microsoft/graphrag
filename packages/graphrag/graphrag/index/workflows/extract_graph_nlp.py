@@ -10,6 +10,7 @@ from graphrag_cache import Cache
 
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.operations.build_noun_graph.build_noun_graph import build_noun_graph
 from graphrag.index.operations.build_noun_graph.np_extractors.base import (
     BaseNounPhraseExtractor,
@@ -29,7 +30,8 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     logger.info("Workflow started: extract_graph_nlp")
-    text_units = await context.output_table_provider.read_dataframe("text_units")
+    reader = DataReader(context.output_table_provider)
+    text_units = await reader.text_units()
 
     text_analyzer_config = config.extract_graph_nlp.text_analyzer
     text_analyzer = create_noun_phrase_extractor(text_analyzer_config)
