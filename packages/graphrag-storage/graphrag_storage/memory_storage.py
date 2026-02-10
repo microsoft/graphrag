@@ -3,6 +3,8 @@
 
 """In-memory storage implementation."""
 
+import re
+from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any
 
 from graphrag_storage.file_storage import FileStorage
@@ -81,3 +83,20 @@ class MemoryStorage(FileStorage):
     def keys(self) -> list[str]:
         """Return the keys in the storage."""
         return list(self._storage.keys())
+
+    def find(self, file_pattern: re.Pattern[str]) -> Iterator[str]:
+        """Find keys in memory storage matching the given pattern.
+
+        Args
+        ----
+            file_pattern: re.Pattern[str]
+                Regular expression pattern to match against keys.
+
+        Yields
+        ------
+            str:
+                Keys that match the pattern.
+        """
+        for key in self._storage:
+            if file_pattern.search(key):
+                yield key

@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add TableProvider abstraction for table-based storage operations"
+}

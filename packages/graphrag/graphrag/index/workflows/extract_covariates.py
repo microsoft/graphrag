@@ -21,7 +21,6 @@ from graphrag.index.operations.extract_covariates.extract_covariates import (
 )
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
@@ -37,7 +36,7 @@ async def run_workflow(
     logger.info("Workflow started: extract_covariates")
     output = None
     if config.extract_claims.enabled:
-        text_units = await load_table_from_storage("text_units", context.output_storage)
+        text_units = await context.output_table_provider.read_dataframe("text_units")
 
         model_config = config.get_completion_model_config(
             config.extract_claims.completion_model_id
@@ -64,7 +63,7 @@ async def run_workflow(
             async_type=config.async_mode,
         )
 
-        await write_table_to_storage(output, "covariates", context.output_storage)
+        await context.output_table_provider.write_dataframe("covariates", output)
 
     logger.info("Workflow completed: extract_covariates")
     return WorkflowFunctionOutput(result=output)

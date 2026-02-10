@@ -30,11 +30,6 @@ from graphrag.index.operations.summarize_communities.summarize_communities impor
 )
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import (
-    load_table_from_storage,
-    storage_has_table,
-    write_table_to_storage,
-)
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
@@ -48,14 +43,15 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
     logger.info("Workflow started: create_community_reports")
-    edges = await load_table_from_storage("relationships", context.output_storage)
-    entities = await load_table_from_storage("entities", context.output_storage)
-    communities = await load_table_from_storage("communities", context.output_storage)
+    edges = await context.output_table_provider.read_dataframe("relationships")
+    entities = await context.output_table_provider.read_dataframe("entities")
+    communities = await context.output_table_provider.read_dataframe("communities")
+
     claims = None
-    if config.extract_claims.enabled and await storage_has_table(
-        "covariates", context.output_storage
+    if config.extract_claims.enabled and await context.output_table_provider.has(
+        "covariates"
     ):
-        claims = await load_table_from_storage("covariates", context.output_storage)
+        claims = await context.output_table_provider.read_dataframe("covariates")
 
     model_config = config.get_completion_model_config(
         config.community_reports.completion_model_id
@@ -85,7 +81,7 @@ async def run_workflow(
         async_type=config.async_mode,
     )
 
-    await write_table_to_storage(output, "community_reports", context.output_storage)
+    await context.output_table_provider.write_dataframe("community_reports", output)
 
     logger.info("Workflow completed: create_community_reports")
     return WorkflowFunctionOutput(result=output)

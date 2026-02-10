@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Unpack
 
 import litellm
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-from litellm import ModelResponse, supports_response_schema  # type: ignore
+from litellm import ModelResponse  # type: ignore
 
 from graphrag_llm.completion.completion import LLMCompletion
 from graphrag_llm.config.types import AuthMethod
@@ -128,10 +128,6 @@ class LiteLLMCompletion(LLMCompletion):
             retrier=self._retrier,
         )
 
-    def supports_structured_response(self) -> bool:
-        """Check if the model supports structured response."""
-        return supports_response_schema(self._model_id)
-
     def completion(
         self,
         /,
@@ -140,9 +136,6 @@ class LiteLLMCompletion(LLMCompletion):
         """Sync completion method."""
         messages: LLMCompletionMessagesParam = kwargs.pop("messages")
         response_format = kwargs.pop("response_format", None)
-        if response_format and not self.supports_structured_response():
-            msg = f"Model '{self._model_id}' does not support response schemas."
-            raise ValueError(msg)
 
         is_streaming = kwargs.get("stream") or False
 
@@ -182,11 +175,6 @@ class LiteLLMCompletion(LLMCompletion):
         """Async completion method."""
         messages: LLMCompletionMessagesParam = kwargs.pop("messages")
         response_format = kwargs.pop("response_format", None)
-        if response_format and not supports_response_schema(
-            self._model_id,
-        ):
-            msg = f"Model '{self._model_id}' does not support response schemas."
-            raise ValueError(msg)
 
         is_streaming = kwargs.get("stream") or False
 

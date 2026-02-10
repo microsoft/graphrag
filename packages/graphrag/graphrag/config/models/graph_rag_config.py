@@ -12,6 +12,7 @@ from graphrag_chunking.chunking_config import ChunkingConfig
 from graphrag_input import InputConfig
 from graphrag_llm.config import ModelConfig
 from graphrag_storage import StorageConfig, StorageType
+from graphrag_storage.tables.table_provider_config import TableProviderConfig
 from graphrag_vectors import IndexSchema, VectorStoreConfig, VectorStoreType
 from pydantic import BaseModel, Field, model_validator
 
@@ -137,6 +138,11 @@ class GraphRagConfig(BaseModel):
             self.update_output_storage.base_dir = str(
                 Path(self.update_output_storage.base_dir).resolve()
             )
+
+    table_provider: TableProviderConfig = Field(
+        description="The table provider configuration.", default=TableProviderConfig()
+    )
+    """The table provider configuration. By default we read/write parquet to disk. You can register custom output table storage."""
 
     cache: CacheConfig = Field(
         description="The cache configuration.",
