@@ -17,6 +17,7 @@ from graphrag_storage.tables.table_provider import TableProvider
 
 logger = logging.getLogger(__name__)
 
+
 class CSVTableProvider(TableProvider):
     """Table provider that stores tables as CSV files using an underlying Storage instance.
 
