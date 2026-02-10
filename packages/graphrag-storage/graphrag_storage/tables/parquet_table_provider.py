@@ -10,6 +10,7 @@ from io import BytesIO
 import pandas as pd
 
 from graphrag_storage.storage import Storage
+from graphrag_storage.tables.parquet_table import ParquetTable
 from graphrag_storage.tables.table import RowTransformer, Table
 from graphrag_storage.tables.table_provider import TableProvider
 
@@ -111,16 +112,19 @@ class ParquetTableProvider(TableProvider):
     def open(self, table_name: str, transformer: RowTransformer | None = None) -> Table:
         """Open a table for streaming row operations.
 
-        Not yet implemented for Parquet tables. Parquet format requires
-        loading data in chunks rather than true row-by-row streaming.
+        Returns a ParquetTable that simulates streaming by loading the
+        DataFrame and iterating rows, or accumulating writes for batch output.
 
-        Raises
-        ------
-            NotImplementedError:
-                Streaming access is not yet supported for Parquet tables.
+        Args
+        ----
+            table_name: str
+                The name of the table to open.
+            transformer: RowTransformer | None
+                Optional callable to transform each row on read.
+
+        Returns
+        -------
+            Table:
+                A ParquetTable instance for row-by-row access.
         """
-        msg = (
-            "Streaming access not yet implemented for ParquetTableProvider. "
-            "Use read_dataframe() for bulk access."
-        )
-        raise NotImplementedError(msg)
+        return ParquetTable(self._storage, table_name, transformer)

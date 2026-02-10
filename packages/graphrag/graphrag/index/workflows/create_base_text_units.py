@@ -115,6 +115,8 @@ async def create_base_text_units(
             doc_index,
             total_rows,
         )
+
+
 def chunk_document(
     doc: dict[str, Any],
     chunker: Chunker,
