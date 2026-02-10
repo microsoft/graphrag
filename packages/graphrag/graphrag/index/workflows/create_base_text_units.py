@@ -6,7 +6,6 @@
 import logging
 from typing import Any
 
-import pandas as pd
 from graphrag_chunking.chunker import Chunker
 from graphrag_chunking.chunker_factory import create_chunker
 from graphrag_chunking.transformers import add_metadata
@@ -35,10 +34,14 @@ async def run_workflow(
     tokenizer = get_tokenizer(encoding_model=config.chunking.encoding_model)
     chunker = create_chunker(config.chunking, tokenizer.encode, tokenizer.decode)
 
-    async with context.output_table_provider.open("documents") as documents_table:
+    async with (
+        context.output_table_provider.open("documents") as documents_table,
+        context.output_table_provider.open("text_units") as text_units_table,
+    ):
         total_rows = await documents_table.length()
-        output = await create_base_text_units(
+        await create_base_text_units(
             documents_table,
+            text_units_table,
             total_rows,
             context.callbacks,
             tokenizer=tokenizer,
@@ -46,30 +49,30 @@ async def run_workflow(
             prepend_metadata=config.chunking.prepend_metadata,
         )
 
-    await context.output_table_provider.write_dataframe("text_units", output)
-
     logger.info("Workflow completed: create_base_text_units")
-    return WorkflowFunctionOutput(result=output)
+    return WorkflowFunctionOutput(result=None)
 
 
 async def create_base_text_units(
     documents_table: Table,
+    text_units_table: Table,
     total_rows: int,
     callbacks: WorkflowCallbacks,
     tokenizer: Tokenizer,
     chunker: Chunker,
     prepend_metadata: list[str] | None = None,
-) -> pd.DataFrame:
-    """Transform documents into chunked text units via streaming read.
+) -> None:
+    """Transform documents into chunked text units via streaming read/write.
 
-    Reads documents row-by-row from an async iterable to avoid loading the
-    entire documents table into memory at once. Chunks each document
-    individually and collects the resulting text units into a DataFrame.
+    Reads documents row-by-row from an async iterable and writes text units
+    directly to the output table, avoiding loading all data into memory.
 
     Args
     ----
         documents_table: Table
-            Table instance representing the documents. Supports async iteration over document rows.
+            Table instance for reading documents. Supports async iteration.
+        text_units_table: Table
+            Table instance for writing text units row by row.
         total_rows: int
             Total number of documents for progress reporting.
         callbacks: WorkflowCallbacks
@@ -81,12 +84,6 @@ async def create_base_text_units(
         prepend_metadata: list[str] | None
             Optional list of metadata fields to prepend to
             each chunk.
-
-    Returns
-    -------
-        pd.DataFrame:
-            DataFrame with columns: id, document_id, text,
-            n_tokens.
     """
     tick = progress_ticker(callbacks.progress, total_rows)
 
@@ -95,7 +92,6 @@ async def create_base_text_units(
         total_rows,
     )
 
-    rows: list[dict[str, Any]] = []
     doc_index = 0
 
     async for doc in documents_table:
@@ -104,12 +100,13 @@ async def create_base_text_units(
             if chunk_text is None:
                 continue
             row = {
+                "id": "",
                 "document_id": doc["id"],
                 "text": chunk_text,
+                "n_tokens": len(tokenizer.encode(chunk_text)),
             }
             row["id"] = gen_sha512_hash(row, ["text"])
-            row["n_tokens"] = len(tokenizer.encode(chunk_text))
-            rows.append(row)
+            await text_units_table.write(row)
 
         doc_index += 1
         tick()
@@ -118,12 +115,6 @@ async def create_base_text_units(
             doc_index,
             total_rows,
         )
-        # //write
-
-    df = pd.DataFrame(rows, columns=["id", "document_id", "text", "n_tokens"])
-    return df.sort_values(by=["document_id", "id"]).reset_index(drop=True)
-
-
 def chunk_document(
     doc: dict[str, Any],
     chunker: Chunker,

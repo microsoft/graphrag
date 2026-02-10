@@ -82,6 +82,15 @@ class Table(ABC):
         """
 
     @abstractmethod
+    async def write(self, row: dict[str, Any]) -> None:
+        """Write a single row to the table.
+
+        Args
+        ----
+            row: Dictionary representing a single row to write.
+        """
+
+    @abstractmethod
     async def close(self) -> None:
         """Flush buffered writes and release resources.
 

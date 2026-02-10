@@ -3,17 +3,23 @@
 
 """A CSV-based implementation of the Table abstraction for streaming row access."""
 
+from __future__ import annotations
+
 import csv
 import inspect
-from collections.abc import AsyncIterator
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import aiofiles
 
-from graphrag_storage import Storage
 from graphrag_storage.file_storage import FileStorage
 from graphrag_storage.tables.table import RowTransformer, Table
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
+    from io import TextIOWrapper
+
+    from graphrag_storage import Storage
 
 
 def _identity(row: dict[str, Any]) -> Any:
@@ -54,6 +60,9 @@ class CSVTable(Table):
         self._table_name = table_name
         self._file_key = f"{table_name}.csv"
         self._transformer = transformer or _identity
+        self._write_file: TextIOWrapper | None = None
+        self._writer: csv.DictWriter | None = None
+        self._header_written = False
 
     def __aiter__(self) -> AsyncIterator[Any]:
         """Iterate through rows one at a time.
@@ -102,9 +111,34 @@ class CSVTable(Table):
                 return True
         return False
 
+    async def write(self, row: dict[str, Any]) -> None:
+        """Write a single row to the CSV file.
+
+        On first write, opens the file and writes the header row.
+        Subsequent writes append rows to the file.
+
+        Args
+        ----
+            row: Dictionary representing a single row to write.
+        """
+        if isinstance(self._storage, FileStorage) and self._write_file is None:
+            file_path = self._storage.get_path(self._file_key)
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            self._write_file = Path.open(file_path, "w", encoding="utf-8", newline="")
+            self._writer = csv.DictWriter(self._write_file, fieldnames=list(row.keys()))
+            self._writer.writeheader()
+            self._header_written = True
+
+        if self._writer is not None:
+            self._writer.writerow(row)
+
     async def close(self) -> None:
         """Flush buffered writes and release resources.
 
-        No-op for CSV tables since rows are read on demand
-        and no persistent connections are held open.
+        Closes the file handle if writing was performed.
         """
+        if self._write_file is not None:
+            self._write_file.close()
+            self._write_file = None
+            self._writer = None
+            self._header_written = False
