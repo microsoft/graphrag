@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add DataReader class for typed dataframe loading from TableProvider across indexing workflows and query CLI"
+}

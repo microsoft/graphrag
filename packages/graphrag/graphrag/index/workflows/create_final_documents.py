@@ -8,6 +8,7 @@ import logging
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.data_model.schemas import DOCUMENTS_FINAL_COLUMNS
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -21,8 +22,9 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final documents."""
     logger.info("Workflow started: create_final_documents")
-    documents = await context.output_table_provider.read_dataframe("documents")
-    text_units = await context.output_table_provider.read_dataframe("text_units")
+    reader = DataReader(context.output_table_provider)
+    documents = await reader.documents()
+    text_units = await reader.text_units()
 
     output = create_final_documents(documents, text_units)
 

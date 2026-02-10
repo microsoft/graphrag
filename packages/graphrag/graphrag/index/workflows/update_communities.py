@@ -8,6 +8,7 @@ import logging
 from graphrag_storage.tables.table_provider import TableProvider
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -42,8 +43,8 @@ async def _update_communities(
     output_table_provider: TableProvider,
 ) -> dict:
     """Update the communities output."""
-    old_communities = await previous_table_provider.read_dataframe("communities")
-    delta_communities = await delta_table_provider.read_dataframe("communities")
+    old_communities = await DataReader(previous_table_provider).communities()
+    delta_communities = await DataReader(delta_table_provider).communities()
     merged_communities, community_id_mapping = _update_and_merge_communities(
         old_communities, delta_communities
     )
