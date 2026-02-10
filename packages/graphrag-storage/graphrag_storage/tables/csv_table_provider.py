@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation.
+# Copyright (c) 2025 Microsoft Corporation.
 # Licensed under the MIT License
 
 """CSV-based table provider implementation."""
@@ -9,11 +9,13 @@ from io import StringIO
 
 import pandas as pd
 
+from graphrag_storage.file_storage import FileStorage
 from graphrag_storage.storage import Storage
+from graphrag_storage.tables.csv_table import CSVTable
+from graphrag_storage.tables.table import RowTransformer
 from graphrag_storage.tables.table_provider import TableProvider
 
 logger = logging.getLogger(__name__)
-
 
 class CSVTableProvider(TableProvider):
     """Table provider that stores tables as CSV files using an underlying Storage instance.
@@ -32,6 +34,9 @@ class CSVTableProvider(TableProvider):
             **kwargs: Any
                 Additional keyword arguments (currently unused).
         """
+        if not isinstance(storage, FileStorage):
+            msg = "CSVTableProvider only works with FileStorage backends for now. "
+            raise TypeError(msg)
         self._storage = storage
 
     async def read_dataframe(self, table_name: str) -> pd.DataFrame:
@@ -108,3 +113,9 @@ class CSVTableProvider(TableProvider):
             file.replace(".csv", "")
             for file in self._storage.find(re.compile(r"\.csv$"))
         ]
+
+    def open(
+        self, table_name: str, transformer: RowTransformer | None = None
+    ) -> CSVTable:
+        """Open table for streaming."""
+        return CSVTable(self._storage, table_name, transformer=transformer)

@@ -8,6 +8,8 @@ from typing import Any
 
 import pandas as pd
 
+from graphrag_storage.tables.table import RowTransformer, Table
+
 
 class TableProvider(ABC):
     """Provide a table-based storage interface with support for DataFrames and row dictionaries."""
@@ -72,4 +74,23 @@ class TableProvider(ABC):
         -------
             list[str]:
                 List of table names (without file extensions).
+        """
+
+    @abstractmethod
+    def open(
+        self, table_name: str, transformer: RowTransformer | None = None
+    ) -> Table:  # Returns Table instance
+        """Open a table for row-by-row streaming operations.
+
+        Args
+        ----
+            table_name: str
+                The name of the table to open.
+            transformer: RowTransformer | None
+                Optional transformer function to apply to each row.
+
+        Returns
+        -------
+            Table:
+                A Table instance for streaming row operations.
         """

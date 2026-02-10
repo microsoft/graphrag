@@ -7,6 +7,9 @@
 from graphrag.index.workflows.factory import PipelineFactory
 
 from .create_base_text_units import (
+    chunk_document,
+)
+from .create_base_text_units import (
     run_workflow as run_create_base_text_units,
 )
 from .create_communities import (
