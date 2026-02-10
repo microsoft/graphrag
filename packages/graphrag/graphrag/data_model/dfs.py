@@ -123,6 +123,7 @@ def documents_typed(df: pd.DataFrame) -> pd.DataFrame:
     """Return the documents dataframe with correct types, in case it was stored in a weakly-typed format."""
     if SHORT_ID in df.columns:
         df[SHORT_ID] = df[SHORT_ID].astype(int)
+    if TEXT_UNIT_IDS in df.columns:
         df[TEXT_UNIT_IDS] = df[TEXT_UNIT_IDS].apply(_split_list_column)
 
     return df
