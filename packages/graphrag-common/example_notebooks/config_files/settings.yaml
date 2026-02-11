@@ -1,0 +1,10 @@
+### This config file contains required core defaults that must be set, along with a handful of common optional settings.
+### For a full list of available settings, see https://microsoft.github.io/graphrag/config/yaml/
+
+### LLM settings ###
+## There are a number of settings to tune the threading and token limits for LLM calls - check the docs.
+name: "my-app"
+logging:
+  # whatever fields your Logging model requires
+  directory: "output/logs"
+  filename: "app.log"

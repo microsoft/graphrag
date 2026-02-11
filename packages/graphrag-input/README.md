@@ -20,40 +20,16 @@ Additionally, we support the `InputType.MarkItDown` format, which uses the [Mark
 ## Examples
 
 Basic usage with the factory:
-```python
-from graphrag_input import create_input_reader, InputConfig, InputType
-from graphrag_storage import StorageConfig, create_storage
 
-config = InputConfig(
-    type=InputType.Csv,
-    text_column="content",
-    title_column="title",
-)
-storage = create_storage(StorageConfig(base_dir="./input"))
-reader = create_input_reader(config, storage)
-documents = await reader.read_files()
-```
 
-Import a pdf with MarkItDown:
+1. Import a pdf with MarkItDown:
 
 ```bash
 pip install 'markitdown[pdf]' # required dependency for pdf processing
 ```
 
-```python
-from graphrag_input import create_input_reader, InputConfig, InputType
-from graphrag_storage import StorageConfig, create_storage
 
-config = InputConfig(
-    type=InputType.MarkitDown,
-    file_pattern=".*\\.pdf$"
-)
-storage = create_storage(StorageConfig(base_dir="./input"))
-reader = create_input_reader(config, storage)
-documents = await reader.read_files()
-```
-
-YAML config example for above:
+2. YAML config example for above:
 ```yaml
 input:
   type: markitdown
@@ -63,10 +39,4 @@ input_storage:
     base_dir: "input"
 ```
 
-Note that when specifying column names for data extraction, we can handle nested objects (e.g., in JSON) with dot notation:
-```python
-from graphrag_input import get_property
-
-data = {"user": {"profile": {"name": "Alice"}}}
-name = get_property(data, "user.profile.name")  # Returns "Alice"
-```
+[Open the notebook to explore the input example code](example_notebooks/input_example.ipynb)
