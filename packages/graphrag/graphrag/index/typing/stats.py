@@ -7,6 +7,23 @@ from dataclasses import dataclass, field
 
 
 @dataclass
+class WorkflowMetrics:
+    """Metrics collected for a single workflow execution."""
+
+    time_seconds: float
+    """Wall-clock time in seconds."""
+
+    peak_memory_bytes: int
+    """Peak memory usage during workflow execution (tracemalloc)."""
+
+    memory_delta_bytes: int
+    """Net memory change after workflow completion (tracemalloc)."""
+
+    tracemalloc_overhead_bytes: int
+    """Memory used by tracemalloc itself for tracking allocations."""
+
+
+@dataclass
 class PipelineRunStats:
     """Pipeline running stats."""
 
@@ -21,5 +38,5 @@ class PipelineRunStats:
     input_load_time: float = field(default=0)
     """Float representing the input load time."""
 
-    workflows: dict[str, dict[str, float]] = field(default_factory=dict)
-    """A dictionary of workflows."""
+    workflows: dict[str, WorkflowMetrics] = field(default_factory=dict)
+    """Metrics for each workflow execution."""
