@@ -13,6 +13,7 @@ from graphrag_storage.tables.table_provider import TableProvider
 from graphrag.cache.cache_key_creator import cache_key_creator
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -63,16 +64,16 @@ async def _update_entities_and_relationships(
     callbacks: WorkflowCallbacks,
 ) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     """Update Final Entities  and Relationships output."""
-    old_entities = await previous_table_provider.read_dataframe("entities")
-    delta_entities = await delta_table_provider.read_dataframe("entities")
+    old_entities = await DataReader(previous_table_provider).entities()
+    delta_entities = await DataReader(delta_table_provider).entities()
 
     merged_entities_df, entity_id_mapping = _group_and_resolve_entities(
         old_entities, delta_entities
     )
 
     # Update Relationships
-    old_relationships = await previous_table_provider.read_dataframe("relationships")
-    delta_relationships = await delta_table_provider.read_dataframe("relationships")
+    old_relationships = await DataReader(previous_table_provider).relationships()
+    delta_relationships = await DataReader(delta_table_provider).relationships()
     merged_relationships_df = _update_and_merge_relationships(
         old_relationships,
         delta_relationships,

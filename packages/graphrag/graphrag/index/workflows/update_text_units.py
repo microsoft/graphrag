@@ -10,6 +10,7 @@ import pandas as pd
 from graphrag_storage.tables.table_provider import TableProvider
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -48,8 +49,8 @@ async def _update_text_units(
     entity_id_mapping: dict,
 ) -> pd.DataFrame:
     """Update the text units output."""
-    old_text_units = await previous_table_provider.read_dataframe("text_units")
-    delta_text_units = await delta_table_provider.read_dataframe("text_units")
+    old_text_units = await DataReader(previous_table_provider).text_units()
+    delta_text_units = await DataReader(delta_table_provider).text_units()
     merged_text_units = _update_and_merge_text_units(
         old_text_units, delta_text_units, entity_id_mapping
     )

@@ -8,6 +8,7 @@ import logging
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.operations.finalize_entities import finalize_entities
 from graphrag.index.operations.finalize_relationships import finalize_relationships
@@ -24,8 +25,9 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     logger.info("Workflow started: finalize_graph")
-    entities = await context.output_table_provider.read_dataframe("entities")
-    relationships = await context.output_table_provider.read_dataframe("relationships")
+    reader = DataReader(context.output_table_provider)
+    entities = await reader.entities()
+    relationships = await reader.relationships()
 
     final_entities, final_relationships = finalize_graph(
         entities,

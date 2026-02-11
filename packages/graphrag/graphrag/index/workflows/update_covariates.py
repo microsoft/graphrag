@@ -10,6 +10,7 @@ import pandas as pd
 from graphrag_storage.tables.table_provider import TableProvider
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -45,8 +46,8 @@ async def _update_covariates(
     output_table_provider: TableProvider,
 ) -> None:
     """Update the covariates output."""
-    old_covariates = await previous_table_provider.read_dataframe("covariates")
-    delta_covariates = await delta_table_provider.read_dataframe("covariates")
+    old_covariates = await DataReader(previous_table_provider).covariates()
+    delta_covariates = await DataReader(delta_table_provider).covariates()
     merged_covariates = _merge_covariates(old_covariates, delta_covariates)
 
     await output_table_provider.write_dataframe("covariates", merged_covariates)

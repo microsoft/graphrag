@@ -8,6 +8,7 @@ import logging
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.data_model.schemas import TEXT_UNITS_FINAL_COLUMNS
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -21,19 +22,16 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform the text units."""
     logger.info("Workflow started: create_final_text_units")
-    text_units = await context.output_table_provider.read_dataframe("text_units")
-    final_entities = await context.output_table_provider.read_dataframe("entities")
-    final_relationships = await context.output_table_provider.read_dataframe(
-        "relationships"
-    )
+    reader = DataReader(context.output_table_provider)
+    text_units = await reader.text_units()
+    final_entities = await reader.entities()
+    final_relationships = await reader.relationships()
 
     final_covariates = None
     if config.extract_claims.enabled and await context.output_table_provider.has(
         "covariates"
     ):
-        final_covariates = await context.output_table_provider.read_dataframe(
-            "covariates"
-        )
+        final_covariates = await reader.covariates()
 
     output = create_final_text_units(
         text_units,
