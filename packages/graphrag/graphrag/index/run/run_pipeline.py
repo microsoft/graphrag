@@ -18,6 +18,7 @@ from graphrag_storage.tables.table_provider_factory import create_table_provider
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.run.profiling import WorkflowProfiler
 from graphrag.index.run.utils import create_run_context
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.pipeline import Pipeline
@@ -127,13 +128,15 @@ async def _run_pipeline(
         for name, workflow_function in pipeline.run():
             last_workflow = name
             context.callbacks.workflow_start(name, None)
-            work_time = time.time()
-            result = await workflow_function(config, context)
+
+            with WorkflowProfiler() as profiler:
+                result = await workflow_function(config, context)
+
             context.callbacks.workflow_end(name, result)
             yield PipelineRunResult(
                 workflow=name, result=result.result, state=context.state, error=None
             )
-            context.stats.workflows[name] = {"overall": time.time() - work_time}
+            context.stats.workflows[name] = profiler.metrics
             if result.stop:
                 logger.info("Halting pipeline at workflow request")
                 break
