@@ -18,8 +18,8 @@ class TestWorkflowProfiler:
             time.sleep(0.05)  # Sleep 50ms
 
         metrics = profiler.metrics
-        assert metrics.time_seconds >= 0.05
-        assert metrics.time_seconds < 0.5  # Should not take too long
+        assert metrics.overall >= 0.05
+        assert metrics.overall < 0.5  # Should not take too long
 
     def test_captures_peak_memory(self):
         """Verify profiler captures peak memory from allocations."""
@@ -62,7 +62,7 @@ class TestWorkflowProfiler:
             _ = list(range(100))
 
         metrics = profiler.metrics
-        assert metrics.time_seconds >= 0
+        assert metrics.overall >= 0
         assert metrics.peak_memory_bytes >= 0
         assert metrics.memory_delta_bytes >= 0
         assert metrics.tracemalloc_overhead_bytes >= 0
@@ -80,7 +80,7 @@ class TestWorkflowProfiler:
 
         assert profiler is not None
         metrics = profiler.metrics
-        assert metrics.time_seconds > 0
+        assert metrics.overall > 0
         assert metrics.peak_memory_bytes > 0
 
     def test_multiple_profilers_independent(self):
@@ -92,4 +92,4 @@ class TestWorkflowProfiler:
             time.sleep(0.04)
 
         # profiler2 should have longer time
-        assert profiler2.metrics.time_seconds > profiler1.metrics.time_seconds
+        assert profiler2.metrics.overall > profiler1.metrics.overall

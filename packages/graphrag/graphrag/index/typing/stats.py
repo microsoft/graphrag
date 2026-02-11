@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 class WorkflowMetrics:
     """Metrics collected for a single workflow execution."""
 
-    time_seconds: float
+    overall: float
     """Wall-clock time in seconds."""
 
     peak_memory_bytes: int

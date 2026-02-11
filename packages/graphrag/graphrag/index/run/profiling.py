@@ -53,7 +53,7 @@ class WorkflowProfiler:
     def metrics(self) -> WorkflowMetrics:
         """Return collected metrics as a WorkflowMetrics dataclass."""
         return WorkflowMetrics(
-            time_seconds=self._elapsed,
+            overall=self._elapsed,
             peak_memory_bytes=self._peak_memory,
             memory_delta_bytes=self._current_memory,
             tracemalloc_overhead_bytes=self._tracemalloc_overhead,
