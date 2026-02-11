@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add async iterator support to InputReader and use it in load_input_documents and load_update_documents workflows."
+}
