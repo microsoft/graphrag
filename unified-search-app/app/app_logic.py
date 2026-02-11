@@ -7,7 +7,6 @@ import asyncio
 import logging
 from typing import TYPE_CHECKING
 
-import graphrag.api as api
 import streamlit as st
 from knowledge_loader.data_sources.loader import (
     create_datasource,
@@ -17,6 +16,8 @@ from knowledge_loader.model import load_model
 from rag.typing import SearchResult, SearchType
 from state.session_variables import SessionVariables
 from ui.search import display_search_result
+
+import graphrag.api as api
 
 if TYPE_CHECKING:
     import pandas as pd
