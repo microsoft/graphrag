@@ -4,6 +4,7 @@
 """A module containing run_workflow method definition."""
 
 import logging
+from dataclasses import asdict
 
 import pandas as pd
 from graphrag_input import InputReader, create_input_reader
@@ -39,8 +40,9 @@ async def run_workflow(
 
 async def load_input_documents(input_reader: InputReader) -> pd.DataFrame:
     """Load and parse input documents into a standard format."""
-    output = pd.DataFrame(await input_reader.read_files())
-    output["human_readable_id"] = output.index
-    if "raw_data" not in output.columns:
-        output["raw_data"] = pd.Series(dtype="object")
-    return output
+    documents = [asdict(doc) async for doc in input_reader]
+    documents = pd.DataFrame(documents)
+    documents["human_readable_id"] = documents.index
+    if "raw_data" not in documents.columns:
+        documents["raw_data"] = pd.Series(dtype="object")
+    return documents
