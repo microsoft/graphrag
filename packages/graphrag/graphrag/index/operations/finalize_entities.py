@@ -8,8 +8,7 @@ from uuid import uuid4
 import pandas as pd
 
 from graphrag.data_model.schemas import ENTITIES_FINAL_COLUMNS
-from graphrag.index.operations.compute_degree import compute_degree
-from graphrag.index.operations.create_graph import create_graph
+from graphrag.graphs.compute_degree import compute_degree
 
 
 def finalize_entities(
@@ -17,8 +16,7 @@ def finalize_entities(
     relationships: pd.DataFrame,
 ) -> pd.DataFrame:
     """All the steps to transform final entities."""
-    graph = create_graph(relationships, edge_attr=["weight"])
-    degrees = compute_degree(graph)
+    degrees = compute_degree(relationships)
     final_entities = entities.merge(degrees, on="title", how="left").drop_duplicates(
         subset="title"
     )

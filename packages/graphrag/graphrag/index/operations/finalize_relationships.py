@@ -8,19 +8,17 @@ from uuid import uuid4
 import pandas as pd
 
 from graphrag.data_model.schemas import RELATIONSHIPS_FINAL_COLUMNS
-from graphrag.index.operations.compute_degree import compute_degree
+from graphrag.graphs.compute_degree import compute_degree
 from graphrag.index.operations.compute_edge_combined_degree import (
     compute_edge_combined_degree,
 )
-from graphrag.index.operations.create_graph import create_graph
 
 
 def finalize_relationships(
     relationships: pd.DataFrame,
 ) -> pd.DataFrame:
     """All the steps to transform final relationships."""
-    graph = create_graph(relationships, edge_attr=["weight"])
-    degrees = compute_degree(graph)
+    degrees = compute_degree(relationships)
 
     final_relationships = relationships.drop_duplicates(subset=["source", "target"])
     final_relationships["combined_degree"] = compute_edge_combined_degree(
