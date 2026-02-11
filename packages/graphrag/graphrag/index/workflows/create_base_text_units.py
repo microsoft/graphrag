@@ -39,7 +39,7 @@ async def run_workflow(
         context.output_table_provider.open("text_units") as text_units_table,
     ):
         total_rows = await documents_table.length()
-        await create_base_text_units(
+        sample_rows = await create_base_text_units(
             documents_table,
             text_units_table,
             total_rows,
@@ -50,7 +50,7 @@ async def run_workflow(
         )
 
     logger.info("Workflow completed: create_base_text_units")
-    return WorkflowFunctionOutput(result=None)
+    return WorkflowFunctionOutput(result=sample_rows)
 
 
 async def create_base_text_units(
@@ -61,7 +61,7 @@ async def create_base_text_units(
     tokenizer: Tokenizer,
     chunker: Chunker,
     prepend_metadata: list[str] | None = None,
-) -> None:
+) -> list[dict[str, Any]]:
     """Transform documents into chunked text units via streaming read/write.
 
     Reads documents row-by-row from an async iterable and writes text units
@@ -93,6 +93,8 @@ async def create_base_text_units(
     )
 
     doc_index = 0
+    sample_rows: list[dict[str, Any]] = []
+    sample_size = 5
 
     async for doc in documents_table:
         chunks = chunk_document(doc, chunker, prepend_metadata)
@@ -108,6 +110,9 @@ async def create_base_text_units(
             row["id"] = gen_sha512_hash(row, ["text"])
             await text_units_table.write(row)
 
+            if len(sample_rows) < sample_size:
+                sample_rows.append(row)
+
         doc_index += 1
         tick()
         logger.info(
@@ -115,6 +120,8 @@ async def create_base_text_units(
             doc_index,
             total_rows,
         )
+
+    return sample_rows
 
 
 def chunk_document(
