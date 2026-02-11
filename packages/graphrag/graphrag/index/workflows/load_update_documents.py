@@ -51,9 +51,7 @@ async def load_update_documents(
     previous_table_provider: TableProvider,
 ) -> pd.DataFrame:
     """Load and parse update-only input documents into a standard format."""
-    input_documents = []
-    async for doc in input_reader:
-        input_documents.append(asdict(doc))
+    input_documents = [asdict(doc) async for doc in input_reader]
     input_documents = pd.DataFrame(input_documents)
     # previous table provider has the output of the previous run
     # we'll use this to diff the input from the prior
