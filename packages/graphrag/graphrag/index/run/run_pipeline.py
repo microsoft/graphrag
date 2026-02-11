@@ -73,6 +73,10 @@ async def run_pipeline(
 
         # if the user passes in a df directly, write directly to storage so we can skip finding/parsing later
         if input_documents is not None:
+            input_documents["id"] = input_documents["id"].astype(str)
+            input_documents["human_readable_id"] = input_documents.index
+            if "raw_data" not in input_documents.columns:
+                input_documents["raw_data"] = pd.Series(dtype="object")
             await delta_table_provider.write_dataframe("documents", input_documents)
             pipeline.remove("load_update_documents")
 
@@ -91,6 +95,10 @@ async def run_pipeline(
 
         # if the user passes in a df directly, write directly to storage so we can skip finding/parsing later
         if input_documents is not None:
+            input_documents["id"] = input_documents["id"].astype(str)
+            input_documents["human_readable_id"] = input_documents.index
+            if "raw_data" not in input_documents.columns:
+                input_documents["raw_data"] = pd.Series(dtype="object")
             await output_table_provider.write_dataframe("documents", input_documents)
             pipeline.remove("load_input_documents")
 
