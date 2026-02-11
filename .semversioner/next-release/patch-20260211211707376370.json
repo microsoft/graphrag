@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Move document ID, human_readable_id, and raw_data initialization from create_final_documents into load_input_documents and load_update_documents."
+}

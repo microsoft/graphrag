@@ -39,4 +39,8 @@ async def run_workflow(
 
 async def load_input_documents(input_reader: InputReader) -> pd.DataFrame:
     """Load and parse input documents into a standard format."""
-    return pd.DataFrame(await input_reader.read_files())
+    output = pd.DataFrame(await input_reader.read_files())
+    output["human_readable_id"] = output.index
+    if "raw_data" not in output.columns:
+        output["raw_data"] = pd.Series(dtype="object")
+    return output
