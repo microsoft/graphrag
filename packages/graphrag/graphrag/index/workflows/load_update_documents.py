@@ -53,6 +53,9 @@ async def load_update_documents(
     """Load and parse update-only input documents into a standard format."""
     input_documents = [asdict(doc) async for doc in input_reader]
     input_documents = pd.DataFrame(input_documents)
+    input_documents["human_readable_id"] = input_documents.index
+    if "raw_data" not in input_documents.columns:
+        input_documents["raw_data"] = pd.Series(dtype="object")
     # previous table provider has the output of the previous run
     # we'll use this to diff the input from the prior
     delta_documents = await get_delta_docs(input_documents, previous_table_provider)
