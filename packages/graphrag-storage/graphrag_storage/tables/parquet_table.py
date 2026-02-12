@@ -52,6 +52,7 @@ class ParquetTable(Table):
         storage: Storage,
         table_name: str,
         transformer: RowTransformer | None = None,
+        truncate: bool = True,
     ):
         """Initialize with storage backend and table name.
 
@@ -61,11 +62,14 @@ class ParquetTable(Table):
             transformer: Optional callable to transform each row before
                 yielding. Receives a dict, returns a transformed dict.
                 Defaults to identity (no transformation).
+            truncate: If True (default), overwrite file on close.
+                If False, append to existing file.
         """
         self._storage = storage
         self._table_name = table_name
         self._file_key = f"{table_name}.parquet"
         self._transformer = transformer or _identity
+        self._truncate = truncate
         self._df: pd.DataFrame | None = None
         self._write_rows: list[dict[str, Any]] = []
 
@@ -131,11 +135,16 @@ class ParquetTable(Table):
         """Flush accumulated rows to Parquet file and release resources.
 
         Converts all accumulated rows to a DataFrame and writes
-        to storage as a Parquet file.
+        to storage as a Parquet file. If truncate=False and file exists,
+        appends to existing data.
         """
         if self._write_rows:
-            df = pd.DataFrame(self._write_rows)
-            await self._storage.set(self._file_key, df.to_parquet())
+            new_df = pd.DataFrame(self._write_rows)
+            if not self._truncate and await self._storage.has(self._file_key):
+                existing_data = await self._storage.get(self._file_key, as_bytes=True)
+                existing_df = pd.read_parquet(BytesIO(existing_data))
+                new_df = pd.concat([existing_df, new_df], ignore_index=True)
+            await self._storage.set(self._file_key, new_df.to_parquet())
             self._write_rows = []
 
         self._df = None

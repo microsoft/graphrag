@@ -109,7 +109,12 @@ class ParquetTableProvider(TableProvider):
             for file in self._storage.find(re.compile(r"\.parquet$"))
         ]
 
-    def open(self, table_name: str, transformer: RowTransformer | None = None) -> Table:
+    def open(
+        self,
+        table_name: str,
+        transformer: RowTransformer | None = None,
+        truncate: bool = True,
+    ) -> Table:
         """Open a table for streaming row operations.
 
         Returns a ParquetTable that simulates streaming by loading the
@@ -121,10 +126,13 @@ class ParquetTableProvider(TableProvider):
                 The name of the table to open.
             transformer: RowTransformer | None
                 Optional callable to transform each row on read.
+            truncate: bool
+                If True (default), overwrite existing file on close.
+                If False, append new rows to existing file.
 
         Returns
         -------
             Table:
                 A ParquetTable instance for row-by-row access.
         """
-        return ParquetTable(self._storage, table_name, transformer)
+        return ParquetTable(self._storage, table_name, transformer, truncate=truncate)

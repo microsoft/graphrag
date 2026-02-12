@@ -78,7 +78,10 @@ class TableProvider(ABC):
 
     @abstractmethod
     def open(
-        self, table_name: str, transformer: RowTransformer | None = None
+        self,
+        table_name: str,
+        transformer: RowTransformer | None = None,
+        truncate: bool = True,
     ) -> Table:  # Returns Table instance
         """Open a table for row-by-row streaming operations.
 
@@ -88,6 +91,9 @@ class TableProvider(ABC):
                 The name of the table to open.
             transformer: RowTransformer | None
                 Optional transformer function to apply to each row.
+            truncate: bool
+                If True (default), truncate existing file on first write.
+                If False, append rows to existing file (DB-like behavior).
 
         Returns
         -------

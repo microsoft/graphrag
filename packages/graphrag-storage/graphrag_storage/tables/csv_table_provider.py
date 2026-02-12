@@ -116,7 +116,12 @@ class CSVTableProvider(TableProvider):
         ]
 
     def open(
-        self, table_name: str, transformer: RowTransformer | None = None
+        self,
+        table_name: str,
+        transformer: RowTransformer | None = None,
+        truncate: bool = True,
     ) -> CSVTable:
         """Open table for streaming."""
-        return CSVTable(self._storage, table_name, transformer=transformer)
+        return CSVTable(
+            self._storage, table_name, transformer=transformer, truncate=truncate
+        )
