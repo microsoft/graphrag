@@ -45,6 +45,7 @@ PROPN
 Syntatic
 ents
 INTJ
+rels
 
 # Libraries
 Langchain

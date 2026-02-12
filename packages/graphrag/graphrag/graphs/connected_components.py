@@ -32,7 +32,7 @@ def connected_components(
     """
     edges = relationships.drop_duplicates(subset=[source_column, target_column])
 
-    # Initialise every node as its own parent
+    # Initialize every node as its own parent
     all_nodes = pd.concat(
         [edges[source_column], edges[target_column]], ignore_index=True
     ).unique()

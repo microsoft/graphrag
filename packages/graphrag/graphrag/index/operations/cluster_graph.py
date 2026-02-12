@@ -61,7 +61,7 @@ def _compute_leiden_communities(
 
     # Normalize edge direction and deduplicate (undirected graph).
     # NX deduplicates reversed pairs keeping the last row's attributes,
-    # so we replicate that by normalising direction then keeping last.
+    # so we replicate that by normalizing direction then keeping last.
     lo = edge_df[["source", "target"]].min(axis=1)
     hi = edge_df[["source", "target"]].max(axis=1)
     edge_df = edge_df.assign(source=lo, target=hi)

@@ -7,7 +7,7 @@
 regardless of the original row order.  This is achieved by:
 
 1. Filtering to the largest connected component.
-2. Normalising node names (HTML unescape, uppercase, strip).
+2. Normalizing node names (HTML unescape, uppercase, strip).
 3. Sorting edges so the lesser node is always the source.
 4. Sorting edges alphabetically for deterministic row order.
 """
@@ -57,7 +57,7 @@ def stable_lcc(
         edges[source_column].isin(lcc_nodes) & edges[target_column].isin(lcc_nodes)
     ]
 
-    # 3. Stabilise edge direction: lesser node always first
+    # 3. Stabilize edge direction: lesser node always first
     swapped = edges[source_column] > edges[target_column]
     edges.loc[swapped, [source_column, target_column]] = edges.loc[
         swapped, [target_column, source_column]
