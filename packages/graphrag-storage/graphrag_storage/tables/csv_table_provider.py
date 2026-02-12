@@ -64,7 +64,7 @@ class CSVTableProvider(TableProvider):
             # Handle empty CSV (pandas can't parse files with no columns)
             if not csv_data or csv_data.strip() == "":
                 return pd.DataFrame()
-            return pd.read_csv(StringIO(csv_data))
+            return pd.read_csv(StringIO(csv_data), keep_default_na=False)
         except Exception:
             logger.exception("error loading table from storage: %s", filename)
             raise
