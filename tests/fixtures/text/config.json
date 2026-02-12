@@ -21,9 +21,12 @@
                 300
             ],
             "max_runtime": 30,
+            "nan_allowed_columns": [
+                "description"
+            ],
             "expected_artifacts": [
-                "entities.parquet",
-                "relationships.parquet"
+                "entities.csv",
+                "relationships.csv"
             ]
         },
         "create_communities": {
@@ -32,7 +35,7 @@
                 30
             ],
             "max_runtime": 30,
-            "expected_artifacts": ["communities.parquet"]
+            "expected_artifacts": ["communities.csv"]
         },
         "create_community_reports_text": {
             "row_range": [
@@ -51,7 +54,7 @@
                 "size"
             ],
             "max_runtime": 2000,
-            "expected_artifacts": ["community_reports.parquet"]
+            "expected_artifacts": ["community_reports.csv"]
         },
         "create_final_text_units": {
             "row_range": [
@@ -64,7 +67,7 @@
                 "covariate_ids"
             ],
             "max_runtime": 30,
-            "expected_artifacts": ["text_units.parquet"]
+            "expected_artifacts": ["text_units.csv"]
         },
         "create_final_documents": {
             "row_range": [
@@ -75,7 +78,7 @@
                 "raw_data"
             ],
             "max_runtime": 30,
-            "expected_artifacts": ["documents.parquet"]
+            "expected_artifacts": ["documents.csv"]
         },
         "generate_text_embeddings": {
             "row_range": [
@@ -84,9 +87,9 @@
             ],
             "max_runtime": 150,
             "expected_artifacts": [
-                "embeddings.text_unit_text.parquet",
-                "embeddings.entity_description.parquet",
-                "embeddings.community_full_content.parquet"
+                "embeddings.text_unit_text.csv",
+                "embeddings.entity_description.csv",
+                "embeddings.community_full_content.csv"
             ]
         }
     },

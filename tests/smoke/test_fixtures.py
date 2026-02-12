@@ -222,17 +222,11 @@ class TestIndexer:
     @mock.patch.dict(
         os.environ,
         {
-            k: v
-            for k, v in {
-                **os.environ,
-                "BLOB_STORAGE_CONNECTION_STRING": WELL_KNOWN_AZURITE_CONNECTION_STRING,
-                "LOCAL_BLOB_STORAGE_CONNECTION_STRING": WELL_KNOWN_AZURITE_CONNECTION_STRING,
-                "AZURE_AI_SEARCH_URL_ENDPOINT": os.getenv(
-                    "AZURE_AI_SEARCH_URL_ENDPOINT"
-                ),
-                "AZURE_AI_SEARCH_API_KEY": os.getenv("AZURE_AI_SEARCH_API_KEY"),
-            }.items()
-            if v is not None
+            **os.environ,
+            "BLOB_STORAGE_CONNECTION_STRING": WELL_KNOWN_AZURITE_CONNECTION_STRING,
+            "LOCAL_BLOB_STORAGE_CONNECTION_STRING": WELL_KNOWN_AZURITE_CONNECTION_STRING,
+            "AZURE_AI_SEARCH_URL_ENDPOINT": os.getenv("AZURE_AI_SEARCH_URL_ENDPOINT"),
+            "AZURE_AI_SEARCH_API_KEY": os.getenv("AZURE_AI_SEARCH_API_KEY"),
         },
         clear=True,
     )
