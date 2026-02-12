@@ -37,7 +37,7 @@ class AzureCosmosStorage(Storage):
     _database_name: str
     _container_name: str
     _encoding: str
-    _no_id_prefixes: list[str]
+    _no_id_prefixes: set[str] = set()
 
     def __init__(
         self,
@@ -81,7 +81,7 @@ class AzureCosmosStorage(Storage):
         self._cosmosdb_account_name = (
             account_url.split("//")[1].split(".")[0] if account_url else None
         )
-        self._no_id_prefixes = []
+        self._no_id_prefixes = set()
         logger.debug(
             "Creating cosmosdb storage with account [%s] and database [%s] and container [%s]",
             self._cosmosdb_account_name,
@@ -185,79 +185,105 @@ class AzureCosmosStorage(Storage):
                 "An error occurred while searching for documents in Cosmos DB."
             )
 
-    async def get(
-        self, key: str, as_bytes: bool | None = None, encoding: str | None = None
-    ) -> Any:
-        """Fetch all items in a container that match the given key."""
-        try:
-            if not self._database_client or not self._container_client:
+    async def get(self, key: str, as_bytes: bool | None = None, encoding: str | None = None) -> Any:
+        """Fetch all items in a container that match the given key.""" 
+        try: 
+            if not self._database_client or not self._container_client: 
                 return None
-            if as_bytes:
-                prefix = self._get_prefix(key)
-                query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
-                queried_items = self._container_client.query_items(
-                    query=query, enable_cross_partition_query=True
-                )
-                items_list = list(queried_items)
-                for item in items_list:
-                    item["id"] = item["id"].split(":")[1]
 
-                items_json_str = json.dumps(items_list)
+            if as_bytes: 
+                prefix = self._get_prefix(key) 
+                logger.info(f"Test Prefix: {prefix}")
+                query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}:')" # noqa: S608
 
-                items_df = pd.read_json(
-                    StringIO(items_json_str), orient="records", lines=False
-                )
+                queried_items = self._container_client.query_items( query=query, enable_cross_partition_query=True ) 
+                items_list = list(queried_items) 
+                
+                logger.info("Cosmos load prefix=%s count=%d", prefix, len(items_list))
 
-                # Drop the "id" column if the original dataframe does not include it
-                # TODO: Figure out optimal way to handle missing id keys in input dataframes
-                if prefix in self._no_id_prefixes:
-                    items_df.drop(columns=["id"], axis=1, inplace=True)
+                if not items_list: 
+                    logger.warning("No items found for prefix %s (key=%s)", prefix, key) 
+                    return None
 
-                return items_df.to_parquet()
-            item = self._container_client.read_item(item=key, partition_key=key)
-            item_body = item.get("body")
-            return json.dumps(item_body)
-        except Exception:  # noqa: BLE001
-            logger.warning("Error reading item %s", key)
+                for item in items_list: 
+                    item["id"] = item["id"].split(":",1)[1] 
+                    
+                items_json_str = json.dumps(items_list) 
+                items_df = pd.read_json( StringIO(items_json_str), orient="records", lines=False)
+
+                if prefix == "entities": 
+                    # Always preserve the Cosmos suffix for debugging/migrations 
+                    items_df["cosmos_id"] = items_df["id"] 
+                    items_df["id"] = items_df["id"].astype(int) # Only restore pipeline UUID id if we actually have it 
+                    
+                    if "human_readable_id" in items_df.columns: 
+                        items_df["human_readable_id"] = items_df["human_readable_id"].astype(int) 
+                    else: 
+                        # Fresh run case: extract_graph entities may not have entity_id yet 
+                        # Keep id as the suffix (stable_key/index) for now. 
+                        logger.info("Entities loaded without entity_id; leaving id as cosmos suffix.") 
+                        
+                if items_df.empty: 
+                    logger.warning("No rows returned for prefix %s (key=%s)", prefix, key) 
+                    return None 
+                return items_df.to_parquet() 
+            item = self._container_client.read_item(item=key, partition_key=key) 
+            item_body = item.get("body") 
+            return json.dumps(item_body) 
+        except Exception: # noqa: BLE001 
+            logger.warning("Error reading item %s", key) 
             return None
 
-    async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
-        """Insert the contents of a file into a cosmosdb container for the given filename key.
 
-        For better optimization, the file is destructured such that each row is a unique cosmosdb item.
-        """
+    async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         try:
             if not self._database_client or not self._container_client:
-                msg = "Database or container not initialized"
-                raise ValueError(msg)  # noqa: TRY301
-            # value represents a parquet file
+                raise ValueError("Database or container not initialized")
+    
             if isinstance(value, bytes):
                 prefix = self._get_prefix(key)
                 value_df = pd.read_parquet(BytesIO(value))
-                value_json = value_df.to_json(
-                    orient="records", lines=False, force_ascii=False
-                )
-                if value_json is None:
-                    logger.error("Error converting output %s to json", key)
+    
+                # Decide once per dataframe
+                df_has_id = "id" in value_df.columns
+    
+                # IMPORTANT: if we now have ids, undo the earlier "no id" marking
+                if df_has_id:
+                    self._no_id_prefixes.discard(prefix)
                 else:
-                    cosmosdb_item_list = json.loads(value_json)
-                    for index, cosmosdb_item in enumerate(cosmosdb_item_list):
-                        # If the id key does not exist in the input dataframe json, create a unique id using the prefix and item index
-                        # TODO: Figure out optimal way to handle missing id keys in input dataframes
-                        if "id" not in cosmosdb_item:
-                            prefixed_id = f"{prefix}:{index}"
-                            self._no_id_prefixes.append(prefix)
+                    self._no_id_prefixes.add(prefix)
+    
+                cosmosdb_item_list = json.loads(
+                    value_df.to_json(orient="records", lines=False, force_ascii=False)
+                )
+    
+                for index, cosmosdb_item in enumerate(cosmosdb_item_list):
+                    if prefix == "entities":
+                        # Stable key for Cosmos identity
+                        stable_key = cosmosdb_item.get("human_readable_id", index)
+                        cosmos_id = f"{prefix}:{stable_key}"
+                
+                        # If the pipeline provided a final UUID, store it separately
+                        if "id" in cosmosdb_item:
+                            cosmosdb_item["entity_id"] = cosmosdb_item["id"]
+                
+                        # Cosmos identity must be stable and NEVER change
+                        cosmosdb_item["id"] = cosmos_id
+                        logger.info("Print ids")
+                        logger.info(f"{cosmos_id}")
+
+                    else:
+                        # Original behavior for non-entity prefixes
+                        if df_has_id:
+                            cosmosdb_item["id"] = f"{prefix}:{cosmosdb_item['id']}"
                         else:
-                            prefixed_id = f"{prefix}:{cosmosdb_item['id']}"
-                        cosmosdb_item["id"] = prefixed_id
-                        self._container_client.upsert_item(body=cosmosdb_item)
-            # value represents a cache output or stats.json
+                            cosmosdb_item["id"] = f"{prefix}:{index}"
+                
+                    self._container_client.upsert_item(body=cosmosdb_item)
             else:
-                cosmosdb_item = {
-                    "id": key,
-                    "body": json.loads(value),
-                }
+                cosmosdb_item = {"id": key, "body": json.loads(value)}
                 self._container_client.upsert_item(body=cosmosdb_item)
+    
         except Exception:
             logger.exception("Error writing item %s", key)
 
@@ -267,7 +293,7 @@ class AzureCosmosStorage(Storage):
             return False
         if ".parquet" in key:
             prefix = self._get_prefix(key)
-            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
+            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}:')"  # noqa: S608
             queried_items = self._container_client.query_items(
                 query=query, enable_cross_partition_query=True
             )
@@ -285,7 +311,7 @@ class AzureCosmosStorage(Storage):
         try:
             if ".parquet" in key:
                 prefix = self._get_prefix(key)
-                query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
+                query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}:')" # noqa: S608
                 queried_items = self._container_client.query_items(
                     query=query, enable_cross_partition_query=True
                 )

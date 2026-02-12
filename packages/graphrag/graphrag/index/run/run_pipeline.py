@@ -41,6 +41,8 @@ async def run_pipeline(
 
     # load existing state in case any workflows are stateful
     state_json = await output_storage.get("context.json")
+    logger.info("Printing state json")
+    logger.info(state_json)
     state = json.loads(state_json) if state_json else {}
 
     if additional_context:
