@@ -1,13 +1,17 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module for producing a stable largest connected component, i.e. same input graph == same output lcc."""
+"""NetworkX-based stable LCC utility, kept for side-by-side test comparisons.
+
+This was originally at graphrag.index.utils.stable_lcc and has been moved here
+because production code no longer uses it (superseded by the DataFrame-based
+graphrag.graphs.stable_lcc).
+"""
 
 import html
 from typing import Any, cast
 
 import networkx as nx
-
 from graphrag.index.utils.graphs import largest_connected_component
 
 
@@ -29,16 +33,6 @@ def _stabilize_graph(graph: nx.Graph) -> nx.Graph:
     fixed_graph.add_nodes_from(sorted_nodes)
     edges = list(graph.edges(data=True))
 
-    # If the graph is undirected, we create the edges in a stable way, so we get the same results
-    # for example:
-    # A -> B
-    # in graph theory is the same as
-    # B -> A
-    # in an undirected graph
-    # however, this can lead to downstream issues because sometimes
-    # consumers read graph.nodes() which ends up being [A, B] and sometimes it's [B, A]
-    # but they base some of their logic on the order of the nodes, so the order ends up being important
-    # so we sort the nodes in the edge in a stable way, so that we always get the same order
     if not graph.is_directed():
 
         def _sort_source_target(edge):

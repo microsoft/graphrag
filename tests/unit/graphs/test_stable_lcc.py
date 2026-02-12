@@ -9,8 +9,9 @@ from pathlib import Path
 import networkx as nx
 import pandas as pd
 from graphrag.graphs.stable_lcc import stable_lcc
-from graphrag.index.utils.stable_lcc import stable_largest_connected_component
 from pandas.testing import assert_frame_equal
+
+from tests.unit.graphs.nx_stable_lcc import stable_largest_connected_component
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
