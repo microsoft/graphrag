@@ -30,11 +30,14 @@ def compute_degree(
     pd.DataFrame
         DataFrame with columns ["title", "degree"].
     """
-    source_counts = relationships.drop_duplicates(
-        subset=[source_column, target_column]
-    )[source_column].value_counts()
-    target_counts = relationships.drop_duplicates(
-        subset=[source_column, target_column]
-    )[target_column].value_counts()
+    # Normalize edge direction so (A,B) and (B,A) are treated as the same
+    # undirected edge, matching NetworkX Graph behaviour.
+    edges = relationships[[source_column, target_column]].copy()
+    edges["_lo"] = edges.min(axis=1)
+    edges["_hi"] = edges.max(axis=1)
+    edges = edges.drop_duplicates(subset=["_lo", "_hi"])
+
+    source_counts = edges[source_column].value_counts()
+    target_counts = edges[target_column].value_counts()
     degree = source_counts.add(target_counts, fill_value=0).astype(int)
     return pd.DataFrame({"title": degree.index, "degree": degree.to_numpy()})

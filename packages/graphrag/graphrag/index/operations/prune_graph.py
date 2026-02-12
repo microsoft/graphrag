@@ -9,7 +9,8 @@ import networkx as nx
 import numpy as np
 
 import graphrag.data_model.schemas as schemas
-from graphrag.index.utils.graphs import largest_connected_component
+from graphrag.graphs.connected_components import largest_connected_component
+from graphrag.index.operations.graph_to_dataframes import graph_to_dataframes
 
 if TYPE_CHECKING:
     from networkx.classes.reportviews import DegreeView
@@ -82,7 +83,9 @@ def prune_graph(
         ])
 
     if lcc_only:
-        return largest_connected_component(graph)
+        _, edges = graph_to_dataframes(graph, edge_columns=["source", "target"])
+        lcc_nodes = largest_connected_component(edges)
+        graph = graph.subgraph(lcc_nodes).copy()
 
     return graph
 

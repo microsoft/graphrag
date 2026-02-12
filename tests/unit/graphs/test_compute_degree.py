@@ -3,10 +3,15 @@
 
 """Side-by-side tests comparing NetworkX compute_degree with DataFrame-based compute_degree_df."""
 
+import json
+from pathlib import Path
+
 import networkx as nx
 import pandas as pd
 from graphrag.graphs.compute_degree import compute_degree as compute_degree_df
 from pandas.testing import assert_frame_equal
+
+FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 
 def _make_relationships(*edges: tuple[str, str, float]) -> pd.DataFrame:
@@ -112,3 +117,14 @@ def test_larger_graph():
     nx_result = _normalize(_compute_degree_via_nx(rels))
     df_result = _normalize(compute_degree_df(rels))
     assert_frame_equal(nx_result, df_result)
+
+
+def test_fixture_graph():
+    """Degree computation on the realistic A Christmas Carol fixture should match NetworkX."""
+    with open(FIXTURES_DIR / "graph.json") as f:
+        data = json.load(f)
+    rels = pd.DataFrame(data["edges"])
+    nx_result = _normalize(_compute_degree_via_nx(rels))
+    df_result = _normalize(compute_degree_df(rels))
+    assert_frame_equal(nx_result, df_result)
+    assert len(df_result) > 500  # sanity: realistic graph has 500+ nodes
