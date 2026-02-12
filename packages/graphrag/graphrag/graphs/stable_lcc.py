@@ -63,7 +63,10 @@ def stable_lcc(
         swapped, [target_column, source_column]
     ].to_numpy()
 
-    # 4. Sort for deterministic order
+    # 4. Deduplicate edges that were reversed pairs in the original data
+    edges = edges.drop_duplicates(subset=[source_column, target_column])
+
+    # 5. Sort for deterministic order
     return edges.sort_values([source_column, target_column]).reset_index(drop=True)
 
 

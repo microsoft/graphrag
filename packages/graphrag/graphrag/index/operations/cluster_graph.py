@@ -7,8 +7,9 @@ import logging
 
 import networkx as nx
 
+from graphrag.graphs.stable_lcc import stable_lcc
+from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.utils.graphs import hierarchical_leiden
-from graphrag.index.utils.stable_lcc import stable_largest_connected_component
 
 Communities = list[tuple[int, int, int, list[str]]]
 
@@ -62,7 +63,18 @@ def _compute_leiden_communities(
 ) -> tuple[dict[int, dict[str, int]], dict[int, int]]:
     """Return Leiden root communities and their hierarchy mapping."""
     if use_lcc:
-        graph = stable_largest_connected_component(graph)
+        edges = nx.to_pandas_edgelist(graph)
+        lcc_edges = stable_lcc(edges)
+        edge_attrs: list[str | int] = [
+            c for c in lcc_edges.columns if c not in ("source", "target")
+        ]
+        graph = create_graph(lcc_edges, edge_attr=edge_attrs or None)
+
+        # Rebuild with sorted nodes so Leiden iterates them deterministically
+        sorted_graph = nx.Graph()
+        sorted_graph.add_nodes_from(sorted(graph.nodes(data=True), key=lambda x: x[0]))
+        sorted_graph.add_edges_from(graph.edges(data=True))
+        graph = sorted_graph
 
     community_mapping = hierarchical_leiden(
         graph, max_cluster_size=max_cluster_size, random_seed=seed
