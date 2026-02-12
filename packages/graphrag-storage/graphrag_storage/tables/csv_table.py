@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import csv
 import inspect
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -20,6 +21,11 @@ if TYPE_CHECKING:
     from io import TextIOWrapper
 
     from graphrag_storage import Storage
+
+try:
+    csv.field_size_limit(sys.maxsize)
+except OverflowError:
+    csv.field_size_limit(100 * 1024 * 1024)
 
 
 def _identity(row: dict[str, Any]) -> Any:
