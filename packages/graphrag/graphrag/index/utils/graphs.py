@@ -55,13 +55,13 @@ def _nx_to_edge_list(
 
 
 def hierarchical_leiden(
-    graph: nx.Graph,
+    edges: list[tuple[str, str, float]],
     max_cluster_size: int = 10,
     random_seed: int | None = 0xDEADBEEF,
 ) -> list[gn.HierarchicalCluster]:
-    """Run hierarchical leiden on the graph."""
+    """Run hierarchical leiden on an edge list."""
     return gn.hierarchical_leiden(
-        edges=_nx_to_edge_list(graph),
+        edges=edges,
         max_cluster_size=max_cluster_size,
         seed=random_seed,
         starting_communities=None,
@@ -138,7 +138,9 @@ def calculate_root_modularity(
 ) -> float:
     """Calculate distance between the modularity of the graph's root clusters and the target modularity."""
     hcs = hierarchical_leiden(
-        graph, max_cluster_size=max_cluster_size, random_seed=random_seed
+        _nx_to_edge_list(graph),
+        max_cluster_size=max_cluster_size,
+        random_seed=random_seed,
     )
     root_clusters = first_level_hierarchical_clustering(hcs)
     return modularity(graph, root_clusters)
@@ -151,7 +153,9 @@ def calculate_leaf_modularity(
 ) -> float:
     """Calculate distance between the modularity of the graph's leaf clusters and the target modularity."""
     hcs = hierarchical_leiden(
-        graph, max_cluster_size=max_cluster_size, random_seed=random_seed
+        _nx_to_edge_list(graph),
+        max_cluster_size=max_cluster_size,
+        random_seed=random_seed,
     )
     leaf_clusters = final_level_hierarchical_clustering(hcs)
     return modularity(graph, leaf_clusters)
