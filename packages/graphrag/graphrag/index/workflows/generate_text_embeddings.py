@@ -111,9 +111,10 @@ async def generate_text_embeddings(
             "embed_column": "text",
         },
         entity_description_embedding: {
-            "data": entities.loc[:, ["id", "title", "description"]].fillna("").assign(
-                title_description=lambda df: df["title"] + ":" + df["description"]
-            )
+            "data": entities
+            .loc[:, ["id", "title", "description"]]
+            .fillna("")
+            .assign(title_description=lambda df: df["title"] + ":" + df["description"])
             if entities is not None
             else None,
             "embed_column": "title_description",

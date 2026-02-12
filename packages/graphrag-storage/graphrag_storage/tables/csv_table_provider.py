@@ -123,7 +123,7 @@ class CSVTableProvider(TableProvider):
         encoding: str = "utf-8",
     ) -> CSVTable:
         """Open table for streaming.
-        
+
         Args:
             table_name: Name of the table to open
             transformer: Optional callable to transform each row
@@ -132,5 +132,9 @@ class CSVTableProvider(TableProvider):
                 Defaults to "utf-8".
         """
         return CSVTable(
-            self._storage, table_name, transformer=transformer, truncate=truncate, encoding=encoding
+            self._storage,
+            table_name,
+            transformer=transformer,
+            truncate=truncate,
+            encoding=encoding,
         )

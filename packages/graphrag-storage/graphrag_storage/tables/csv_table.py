@@ -136,7 +136,9 @@ class CSVTable(Table):
             file_exists = file_path.exists() and file_path.stat().st_size > 0
             mode = "w" if self._truncate else "a"
             write_header = self._truncate or not file_exists
-            self._write_file = Path.open(file_path, mode, encoding=self._encoding, newline="")
+            self._write_file = Path.open(
+                file_path, mode, encoding=self._encoding, newline=""
+            )
             self._writer = csv.DictWriter(self._write_file, fieldnames=list(row.keys()))
             if write_header:
                 self._writer.writeheader()

@@ -17,6 +17,7 @@ try:
 except OverflowError:
     csv.field_size_limit(100 * 1024 * 1024)
 
+
 class CSVFileReader(StructuredFileReader):
     """Reader implementation for csv files."""
 
