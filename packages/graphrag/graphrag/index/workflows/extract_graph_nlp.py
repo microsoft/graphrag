@@ -10,6 +10,7 @@ from graphrag_cache import Cache
 
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.operations.build_noun_graph.build_noun_graph import build_noun_graph
 from graphrag.index.operations.build_noun_graph.np_extractors.base import (
     BaseNounPhraseExtractor,
@@ -19,7 +20,6 @@ from graphrag.index.operations.build_noun_graph.np_extractors.factory import (
 )
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,8 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     logger.info("Workflow started: extract_graph_nlp")
-    text_units = await load_table_from_storage("text_units", context.output_storage)
+    reader = DataReader(context.output_table_provider)
+    text_units = await reader.text_units()
 
     text_analyzer_config = config.extract_graph_nlp.text_analyzer
     text_analyzer = create_noun_phrase_extractor(text_analyzer_config)
@@ -44,8 +45,8 @@ async def run_workflow(
         async_type=config.extract_graph_nlp.async_mode,
     )
 
-    await write_table_to_storage(entities, "entities", context.output_storage)
-    await write_table_to_storage(relationships, "relationships", context.output_storage)
+    await context.output_table_provider.write_dataframe("entities", entities)
+    await context.output_table_provider.write_dataframe("relationships", relationships)
 
     logger.info("Workflow completed: extract_graph_nlp")
 

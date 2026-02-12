@@ -11,6 +11,8 @@ from abc import ABCMeta, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
+
     from graphrag_storage import Storage
 
     from graphrag_input.text_document import TextDocument
@@ -33,34 +35,44 @@ class InputReader(metaclass=ABCMeta):
         self._file_pattern = file_pattern
 
     async def read_files(self) -> list[TextDocument]:
-        """Load files from storage and apply a loader function based on file type. Process metadata on the results if needed."""
+        """Load all files from storage and return them as a single list."""
+        return [doc async for doc in self]
+
+    def __aiter__(self) -> AsyncIterator[TextDocument]:
+        """Return the async iterator, enabling `async for doc in reader`."""
+        return self._iterate_files()
+
+    async def _iterate_files(self) -> AsyncIterator[TextDocument]:
+        """Async generator that yields documents one at a time as files are loaded."""
         files = list(self._storage.find(re.compile(self._file_pattern)))
         if len(files) == 0:
             msg = f"No {self._file_pattern} matches found in storage"
             logger.warning(msg)
-            files = []
+            return
 
-        documents: list[TextDocument] = []
+        file_count = len(files)
+        doc_count = 0
 
         for file in files:
             try:
-                documents.extend(await self.read_file(file))
+                for doc in await self.read_file(file):
+                    doc_count += 1
+                    yield doc
             except Exception as e:  # noqa: BLE001 (catching Exception is fine here)
                 logger.warning("Warning! Error loading file %s. Skipping...", file)
                 logger.warning("Error: %s", e)
 
         logger.info(
             "Found %d %s files, loading %d",
-            len(files),
+            file_count,
             self._file_pattern,
-            len(documents),
+            doc_count,
         )
-        total_files_log = (
-            f"Total number of unfiltered {self._file_pattern} rows: {len(documents)}"
+        logger.info(
+            "Total number of unfiltered %s rows: %d",
+            self._file_pattern,
+            doc_count,
         )
-        logger.info(total_files_log)
-
-        return documents
 
     @abstractmethod
     async def read_file(self, path: str) -> list[TextDocument]:

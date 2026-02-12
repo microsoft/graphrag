@@ -13,6 +13,7 @@ from graphrag.cache.cache_key_creator import cache_key_creator
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.operations.extract_graph.extract_graph import (
     extract_graph as extractor,
 )
@@ -21,7 +22,6 @@ from graphrag.index.operations.summarize_descriptions.summarize_descriptions imp
 )
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
@@ -35,7 +35,8 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     logger.info("Workflow started: extract_graph")
-    text_units = await load_table_from_storage("text_units", context.output_storage)
+    reader = DataReader(context.output_table_provider)
+    text_units = await reader.text_units()
 
     extraction_model_config = config.get_completion_model_config(
         config.extract_graph.completion_model_id
@@ -73,15 +74,15 @@ async def run_workflow(
         summarization_num_threads=config.concurrent_requests,
     )
 
-    await write_table_to_storage(entities, "entities", context.output_storage)
-    await write_table_to_storage(relationships, "relationships", context.output_storage)
+    await context.output_table_provider.write_dataframe("entities", entities)
+    await context.output_table_provider.write_dataframe("relationships", relationships)
 
     if config.snapshots.raw_graph:
-        await write_table_to_storage(
-            raw_entities, "raw_entities", context.output_storage
+        await context.output_table_provider.write_dataframe(
+            "raw_entities", raw_entities
         )
-        await write_table_to_storage(
-            raw_relationships, "raw_relationships", context.output_storage
+        await context.output_table_provider.write_dataframe(
+            "raw_relationships", raw_relationships
         )
 
     logger.info("Workflow completed: extract_graph")

@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "add profiling to get memory usage"
+}

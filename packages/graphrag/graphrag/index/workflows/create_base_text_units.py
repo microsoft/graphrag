@@ -15,12 +15,12 @@ from graphrag_llm.tokenizer import Tokenizer
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logger.progress import progress_ticker
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,8 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform base text_units."""
     logger.info("Workflow started: create_base_text_units")
-    documents = await load_table_from_storage("documents", context.output_storage)
+    reader = DataReader(context.output_table_provider)
+    documents = await reader.documents()
 
     tokenizer = get_tokenizer(encoding_model=config.chunking.encoding_model)
     chunker = create_chunker(config.chunking, tokenizer.encode, tokenizer.decode)
@@ -43,7 +44,7 @@ async def run_workflow(
         prepend_metadata=config.chunking.prepend_metadata,
     )
 
-    await write_table_to_storage(output, "text_units", context.output_storage)
+    await context.output_table_provider.write_dataframe("text_units", output)
 
     logger.info("Workflow completed: create_base_text_units")
     return WorkflowFunctionOutput(result=output)

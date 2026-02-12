@@ -6,14 +6,14 @@
 import logging
 
 import pandas as pd
-from graphrag_storage import Storage
+from graphrag_storage.tables.table_provider import TableProvider
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.run.utils import get_update_storages
+from graphrag.data_model.data_reader import DataReader
+from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.update.communities import _update_and_merge_community_reports
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -24,14 +24,17 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """Update the community reports from a incremental index run."""
     logger.info("Workflow started: update_community_reports")
-    output_storage, previous_storage, delta_storage = get_update_storages(
-        config, context.state["update_timestamp"]
+    output_table_provider, previous_table_provider, delta_table_provider = (
+        get_update_table_providers(config, context.state["update_timestamp"])
     )
 
     community_id_mapping = context.state["incremental_update_community_id_mapping"]
 
     merged_community_reports = await _update_community_reports(
-        previous_storage, delta_storage, output_storage, community_id_mapping
+        previous_table_provider,
+        delta_table_provider,
+        output_table_provider,
+        community_id_mapping,
     )
 
     context.state["incremental_update_merged_community_reports"] = (
@@ -43,24 +46,22 @@ async def run_workflow(
 
 
 async def _update_community_reports(
-    previous_storage: Storage,
-    delta_storage: Storage,
-    output_storage: Storage,
+    previous_table_provider: TableProvider,
+    delta_table_provider: TableProvider,
+    output_table_provider: TableProvider,
     community_id_mapping: dict,
 ) -> pd.DataFrame:
     """Update the community reports output."""
-    old_community_reports = await load_table_from_storage(
-        "community_reports", previous_storage
-    )
-    delta_community_reports = await load_table_from_storage(
-        "community_reports", delta_storage
-    )
+    old_community_reports = await DataReader(
+        previous_table_provider
+    ).community_reports()
+    delta_community_reports = await DataReader(delta_table_provider).community_reports()
     merged_community_reports = _update_and_merge_community_reports(
         old_community_reports, delta_community_reports, community_id_mapping
     )
 
-    await write_table_to_storage(
-        merged_community_reports, "community_reports", output_storage
+    await output_table_provider.write_dataframe(
+        "community_reports", merged_community_reports
     )
 
     return merged_community_reports

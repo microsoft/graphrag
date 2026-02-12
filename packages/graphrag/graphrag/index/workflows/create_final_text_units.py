@@ -8,14 +8,10 @@ import logging
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.data_model.schemas import TEXT_UNITS_FINAL_COLUMNS
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import (
-    load_table_from_storage,
-    storage_has_table,
-    write_table_to_storage,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -26,18 +22,16 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform the text units."""
     logger.info("Workflow started: create_final_text_units")
-    text_units = await load_table_from_storage("text_units", context.output_storage)
-    final_entities = await load_table_from_storage("entities", context.output_storage)
-    final_relationships = await load_table_from_storage(
-        "relationships", context.output_storage
-    )
+    reader = DataReader(context.output_table_provider)
+    text_units = await reader.text_units()
+    final_entities = await reader.entities()
+    final_relationships = await reader.relationships()
+
     final_covariates = None
-    if config.extract_claims.enabled and await storage_has_table(
-        "covariates", context.output_storage
+    if config.extract_claims.enabled and await context.output_table_provider.has(
+        "covariates"
     ):
-        final_covariates = await load_table_from_storage(
-            "covariates", context.output_storage
-        )
+        final_covariates = await reader.covariates()
 
     output = create_final_text_units(
         text_units,
@@ -46,7 +40,7 @@ async def run_workflow(
         final_covariates,
     )
 
-    await write_table_to_storage(output, "text_units", context.output_storage)
+    await context.output_table_provider.write_dataframe("text_units", output)
 
     logger.info("Workflow completed: create_final_text_units")
     return WorkflowFunctionOutput(result=output)

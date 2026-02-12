@@ -8,10 +8,10 @@ import logging
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.data_model.schemas import DOCUMENTS_FINAL_COLUMNS
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -22,12 +22,13 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final documents."""
     logger.info("Workflow started: create_final_documents")
-    documents = await load_table_from_storage("documents", context.output_storage)
-    text_units = await load_table_from_storage("text_units", context.output_storage)
+    reader = DataReader(context.output_table_provider)
+    documents = await reader.documents()
+    text_units = await reader.text_units()
 
     output = create_final_documents(documents, text_units)
 
-    await write_table_to_storage(output, "documents", context.output_storage)
+    await context.output_table_provider.write_dataframe("documents", output)
 
     logger.info("Workflow completed: create_final_documents")
     return WorkflowFunctionOutput(result=output)
@@ -63,11 +64,5 @@ def create_final_documents(
         how="right",
         copy=False,
     ).reset_index(drop=True)
-
-    rejoined["id"] = rejoined["id"].astype(str)
-    rejoined["human_readable_id"] = rejoined.index
-
-    if "raw_data" not in rejoined.columns:
-        rejoined["raw_data"] = pd.Series(dtype="object")
 
     return rejoined.loc[:, DOCUMENTS_FINAL_COLUMNS]

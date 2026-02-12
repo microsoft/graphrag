@@ -6,7 +6,7 @@
 import logging
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.run.utils import get_update_storages
+from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.update.incremental_index import concat_dataframes
@@ -20,12 +20,15 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """Update the documents from a incremental index run."""
     logger.info("Workflow started: update_final_documents")
-    output_storage, previous_storage, delta_storage = get_update_storages(
-        config, context.state["update_timestamp"]
+    output_table_provider, previous_table_provider, delta_table_provider = (
+        get_update_table_providers(config, context.state["update_timestamp"])
     )
 
     final_documents = await concat_dataframes(
-        "documents", previous_storage, delta_storage, output_storage
+        "documents",
+        previous_table_provider,
+        delta_table_provider,
+        output_table_provider,
     )
 
     context.state["incremental_update_final_documents"] = final_documents

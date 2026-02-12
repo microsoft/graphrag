@@ -5,14 +5,14 @@
 
 import logging
 
-from graphrag_storage import Storage
+from graphrag_storage.tables.table_provider import TableProvider
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.run.utils import get_update_storages
+from graphrag.data_model.data_reader import DataReader
+from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.update.communities import _update_and_merge_communities
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +23,12 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """Update the communities from a incremental index run."""
     logger.info("Workflow started: update_communities")
-    output_storage, previous_storage, delta_storage = get_update_storages(
-        config, context.state["update_timestamp"]
+    output_table_provider, previous_table_provider, delta_table_provider = (
+        get_update_table_providers(config, context.state["update_timestamp"])
     )
 
     community_id_mapping = await _update_communities(
-        previous_storage, delta_storage, output_storage
+        previous_table_provider, delta_table_provider, output_table_provider
     )
 
     context.state["incremental_update_community_id_mapping"] = community_id_mapping
@@ -38,17 +38,17 @@ async def run_workflow(
 
 
 async def _update_communities(
-    previous_storage: Storage,
-    delta_storage: Storage,
-    output_storage: Storage,
+    previous_table_provider: TableProvider,
+    delta_table_provider: TableProvider,
+    output_table_provider: TableProvider,
 ) -> dict:
     """Update the communities output."""
-    old_communities = await load_table_from_storage("communities", previous_storage)
-    delta_communities = await load_table_from_storage("communities", delta_storage)
+    old_communities = await DataReader(previous_table_provider).communities()
+    delta_communities = await DataReader(delta_table_provider).communities()
     merged_communities, community_id_mapping = _update_and_merge_communities(
         old_communities, delta_communities
     )
 
-    await write_table_to_storage(merged_communities, "communities", output_storage)
+    await output_table_provider.write_dataframe("communities", merged_communities)
 
     return community_id_mapping

@@ -22,13 +22,10 @@ from graphrag.config.embeddings import (
     text_unit_text_embedding,
 )
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import (
-    load_table_from_storage,
-    write_table_to_storage,
-)
 
 if TYPE_CHECKING:
     from graphrag_llm.embedding import LLMEmbedding
@@ -44,17 +41,16 @@ async def run_workflow(
     logger.info("Workflow started: generate_text_embeddings")
     embedded_fields = config.embed_text.names
     logger.info("Embedding the following fields: %s", embedded_fields)
+    reader = DataReader(context.output_table_provider)
     text_units = None
     entities = None
     community_reports = None
     if text_unit_text_embedding in embedded_fields:
-        text_units = await load_table_from_storage("text_units", context.output_storage)
+        text_units = await reader.text_units()
     if entity_description_embedding in embedded_fields:
-        entities = await load_table_from_storage("entities", context.output_storage)
+        entities = await reader.entities()
     if community_full_content_embedding in embedded_fields:
-        community_reports = await load_table_from_storage(
-            "community_reports", context.output_storage
-        )
+        community_reports = await reader.community_reports()
 
     model_config = config.get_embedding_model_config(
         config.embed_text.embedding_model_id
@@ -84,10 +80,9 @@ async def run_workflow(
 
     if config.snapshots.embeddings:
         for name, table in output.items():
-            await write_table_to_storage(
-                table,
+            await context.output_table_provider.write_dataframe(
                 f"embeddings.{name}",
-                context.output_storage,
+                table,
             )
 
     logger.info("Workflow completed: generate_text_embeddings")

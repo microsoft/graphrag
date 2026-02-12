@@ -6,62 +6,13 @@ This package provides vector store implementations for GraphRAG with support for
 
 This demonstrates the recommended approach to create a vector store using the create_vector_store convenience function with configuration objects that specify the store type and index schema. The example shows setting up a LanceDB vector store with a defined index configuration, then connecting to it and creating the index for vector operations.
 
-```python
-from graphrag_vectors import (
-    create_vector_store,
-    VectorStoreType,
-    IndexSchema,
-)
-
-# Create a vector store using the convenience function
-store_config = VectorStoreConfig(
-    type="lancedb",
-    db_uri="lance"
-)
-
-schema_config = IndexSchema(
-    index_name="my_index",
-    vector_size=1536,
-)
-
-vector_store = create_vector_store(
-    config=store_config
-    index_schema=schema_config,
-)
-
-vector_store.connect()
-vector_store.create_index()
-```
+[Open the notebook to explore the basic usage with utility function example code](example_notebooks/basic_usage_with_utility_function_example.ipynb)
 
 ## Basic usage implementing the factory directly
 
 This example shows a different approach to create vector stores by directly using the vector_store_factory with enum types and dictionary-based initialization arguments. This method provides more direct control over the factory creation process while bypassing the convenience function layer.
 
-```python
-from graphrag_vectors import (
-    VectorStoreFactory,
-    vector_store_factory,
-    VectorStoreType,
-    IndexSchema,
-)
-
-# Create a vector store using the factory
-schema_config = IndexSchema(
-    index_name="my_index",
-    vector_size=1536,
-)
-
-vector_store = vector_store_factory.create(
-    VectorStoreType.LanceDB,
-    {
-        "index_schema": schema_config,
-        "db_uri": "./lancedb"
-    }
-)
-
-vector_store.connect()
-vector_store.create_index()
-```
+[Open the notebook to explore the basic usage using factory directly example code](example_notebooks/basic_usage_factory_example.ipynb)
 
 ## Supported Vector Stores
 
@@ -73,36 +24,7 @@ vector_store.create_index()
 
 You can register custom vector store implementations:
 
-```python
-from graphrag_vectors import VectorStore, register_vector_store, create_vector_store
-
-class MyCustomVectorStore(VectorStore):
-    def __init__(self, my_param):
-        self.my_param = my_param
-
-    def connect(self):
-        # Implementation
-        pass
-    
-    def create_index(self):
-        # Implementation
-        pass
-    
-    # ... implement other required methods
-
-# Register your custom implementation
-register_vector_store("my_custom_store", MyCustomVectorStore)
-
-# Use your custom vector store
-config = VectorStoreConfig(
-    type="my_custom_store",
-    my_param="something"
-)
-custom_store = create_vector_store(
-    config=config,
-    index_schema=schema_config,
-)
-```
+[Open the notebook to explore the custom vector example code](example_notebooks/basic_usage_factory_example.ipynb)
 
 ## Configuration
 

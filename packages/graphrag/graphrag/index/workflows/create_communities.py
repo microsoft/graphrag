@@ -12,12 +12,12 @@ import numpy as np
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.data_model.schemas import COMMUNITIES_FINAL_COLUMNS
 from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -28,14 +28,9 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final communities."""
     logger.info("Workflow started: create_communities")
-    logger.info("Amount of relationships:")
-    relationships = await load_table_from_storage(
-        "relationships", context.output_storage
-    )
-    logger.info(len(relationships))
-    entities = await load_table_from_storage("entities", context.output_storage)
-    logger.info(entities)
-
+    reader = DataReader(context.output_table_provider)
+    entities = await reader.entities()
+    relationships = await reader.relationships()
     max_cluster_size = config.cluster_graph.max_cluster_size
     use_lcc = config.cluster_graph.use_lcc
     seed = config.cluster_graph.seed
@@ -48,7 +43,7 @@ async def run_workflow(
         seed=seed,
     )
 
-    await write_table_to_storage(output, "communities", context.output_storage)
+    await context.output_table_provider.write_dataframe("communities", output)
 
     logger.info("Workflow completed: create_communities")
     return WorkflowFunctionOutput(result=output)

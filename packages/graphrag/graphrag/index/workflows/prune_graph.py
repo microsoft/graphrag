@@ -9,12 +9,12 @@ import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
+from graphrag.data_model.data_reader import DataReader
 from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.operations.graph_to_dataframes import graph_to_dataframes
 from graphrag.index.operations.prune_graph import prune_graph as prune_graph_operation
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 logger = logging.getLogger(__name__)
 
@@ -25,10 +25,9 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     logger.info("Workflow started: prune_graph")
-    entities = await load_table_from_storage("entities", context.output_storage)
-    relationships = await load_table_from_storage(
-        "relationships", context.output_storage
-    )
+    reader = DataReader(context.output_table_provider)
+    entities = await reader.entities()
+    relationships = await reader.relationships()
 
     pruned_entities, pruned_relationships = prune_graph(
         entities,
@@ -36,9 +35,9 @@ async def run_workflow(
         pruning_config=config.prune_graph,
     )
 
-    await write_table_to_storage(pruned_entities, "entities", context.output_storage)
-    await write_table_to_storage(
-        pruned_relationships, "relationships", context.output_storage
+    await context.output_table_provider.write_dataframe("entities", pruned_entities)
+    await context.output_table_provider.write_dataframe(
+        "relationships", pruned_relationships
     )
 
     logger.info("Workflow completed: prune_graph")

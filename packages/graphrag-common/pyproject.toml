@@ -32,6 +32,7 @@ classifiers = [
 dependencies = [
     "python-dotenv~=1.0",
     "pyyaml~=6.0",
+    "toml",
 ]
 
 [project.urls]

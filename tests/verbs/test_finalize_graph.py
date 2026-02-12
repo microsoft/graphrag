@@ -5,10 +5,7 @@ from graphrag.data_model.schemas import (
     ENTITIES_FINAL_COLUMNS,
     RELATIONSHIPS_FINAL_COLUMNS,
 )
-from graphrag.index.workflows.finalize_graph import (
-    run_workflow,
-)
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+from graphrag.index.workflows.finalize_graph import run_workflow
 
 from tests.unit.config.utils import get_default_graphrag_config
 
@@ -25,10 +22,8 @@ async def test_finalize_graph():
 
     await run_workflow(config, context)
 
-    nodes_actual = await load_table_from_storage("entities", context.output_storage)
-    edges_actual = await load_table_from_storage(
-        "relationships", context.output_storage
-    )
+    nodes_actual = await context.output_table_provider.read_dataframe("entities")
+    edges_actual = await context.output_table_provider.read_dataframe("relationships")
 
     for column in ENTITIES_FINAL_COLUMNS:
         assert column in nodes_actual.columns
@@ -44,8 +39,8 @@ async def _prep_tables():
     # edit the tables to eliminate final fields that wouldn't be on the inputs
     entities = load_test_table("entities")
     entities.drop(columns=["degree"], inplace=True)
-    await write_table_to_storage(entities, "entities", context.output_storage)
+    await context.output_table_provider.write_dataframe("entities", entities)
     relationships = load_test_table("relationships")
     relationships.drop(columns=["combined_degree"], inplace=True)
-    await write_table_to_storage(relationships, "relationships", context.output_storage)
+    await context.output_table_provider.write_dataframe("relationships", relationships)
     return context
