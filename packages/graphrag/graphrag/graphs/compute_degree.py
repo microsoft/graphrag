@@ -31,7 +31,7 @@ def compute_degree(
         DataFrame with columns ["title", "degree"].
     """
     # Normalize edge direction so (A,B) and (B,A) are treated as the same
-    # undirected edge, matching NetworkX Graph behaviour.
+    # undirected edge, matching NetworkX Graph behavior.
     edges = relationships[[source_column, target_column]].copy()
     edges["_lo"] = edges.min(axis=1)
     edges["_hi"] = edges.max(axis=1)

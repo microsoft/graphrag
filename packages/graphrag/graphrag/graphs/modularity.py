@@ -31,8 +31,8 @@ def _df_to_edge_list(
 ) -> list[tuple[str, str, float]]:
     """Convert a relationships DataFrame to a sorted edge list.
 
-    Normalises direction and deduplicates so each undirected edge appears
-    once, keeping the last occurrence's weight (matching NX behaviour).
+    Normalizes direction and deduplicates so each undirected edge appears
+    once, keeping the last occurrence's weight (matching NX behavior).
     """
     df = edges[[source_column, target_column, weight_column]].copy()
     lo = df[[source_column, target_column]].min(axis=1)
@@ -106,10 +106,10 @@ def _modularity_components(
 ) -> dict[int, float]:
     """Calculate per-community modularity components from an edge list.
 
-    Edges are treated as undirected: direction is normalised and duplicates
-    are removed (keeping the last occurrence's weight, matching NX behaviour).
+    Edges are treated as undirected: direction is normalized and duplicates
+    are removed (keeping the last occurrence's weight, matching NX behavior).
     """
-    # Normalise direction and deduplicate so each undirected edge is counted once
+    # Normalize direction and deduplicate so each undirected edge is counted once
     df = edges[[source_column, target_column, weight_column]].copy()
     lo = df[[source_column, target_column]].min(axis=1)
     hi = df[[source_column, target_column]].max(axis=1)

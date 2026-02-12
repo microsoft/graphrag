@@ -38,13 +38,13 @@ def stable_lcc(
     Returns
     -------
     pd.DataFrame
-        A copy of the input filtered to the LCC with normalised node names
+        A copy of the input filtered to the LCC with normalized node names
         and deterministic edge ordering.
     """
     if relationships.empty:
         return relationships.copy()
 
-    # 1. Normalise node names
+    # 1. Normalize node names
     edges = relationships.copy()
     edges[source_column] = edges[source_column].apply(_normalize_name)
     edges[target_column] = edges[target_column].apply(_normalize_name)
@@ -71,5 +71,5 @@ def stable_lcc(
 
 
 def _normalize_name(name: str) -> str:
-    """Normalise a node name: HTML unescape, uppercase, strip whitespace."""
+    """Normalize a node name: HTML unescape, uppercase, strip whitespace."""
     return html.unescape(name).upper().strip()

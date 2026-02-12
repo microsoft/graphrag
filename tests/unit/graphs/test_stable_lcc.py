@@ -94,11 +94,11 @@ def test_shuffled_rows_produce_same_result():
 
 
 # ---------------------------------------------------------------------------
-# Name normalisation tests
+# Name normalization tests
 # ---------------------------------------------------------------------------
 
 
-def test_normalises_node_names():
+def test_normalizes_node_names():
     """Node names should be uppercased, stripped, and HTML-unescaped."""
     rels = _make_relationships(
         ("  alice  ", "bob", 1.0),
