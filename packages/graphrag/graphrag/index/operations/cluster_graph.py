@@ -7,8 +7,8 @@ import logging
 
 import pandas as pd
 
+from graphrag.graphs.hierarchical_leiden import hierarchical_leiden
 from graphrag.graphs.stable_lcc import stable_lcc
-from graphrag.index.utils.graphs import hierarchical_leiden
 
 Communities = list[tuple[int, int, int, list[str]]]
 

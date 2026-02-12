@@ -12,13 +12,19 @@ import html
 from typing import Any, cast
 
 import networkx as nx
-from graphrag.index.utils.graphs import largest_connected_component
+
+
+def _largest_connected_component(graph: nx.Graph) -> nx.Graph:
+    """Return the largest connected component of the graph (NX-based)."""
+    graph = graph.copy()
+    lcc_nodes = max(nx.connected_components(graph), key=len)
+    return graph.subgraph(lcc_nodes).copy()
 
 
 def stable_largest_connected_component(graph: nx.Graph) -> nx.Graph:
     """Return the largest connected component of the graph, with nodes and edges sorted in a stable way."""
     graph = graph.copy()
-    graph = cast("nx.Graph", largest_connected_component(graph))
+    graph = cast("nx.Graph", _largest_connected_component(graph))
     graph = normalize_node_names(graph)
     return _stabilize_graph(graph)
 
