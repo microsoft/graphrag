@@ -105,13 +105,13 @@ async def generate_text_embeddings(
     """All the steps to generate all embeddings."""
     embedding_param_map = {
         text_unit_text_embedding: {
-            "data": text_units.loc[:, ["id", "text"]]
+            "data": text_units.loc[:, ["id", "text"]].fillna("")
             if text_units is not None
             else None,
             "embed_column": "text",
         },
         entity_description_embedding: {
-            "data": entities.loc[:, ["id", "title", "description"]].assign(
+            "data": entities.loc[:, ["id", "title", "description"]].fillna("").assign(
                 title_description=lambda df: df["title"] + ":" + df["description"]
             )
             if entities is not None
@@ -119,7 +119,7 @@ async def generate_text_embeddings(
             "embed_column": "title_description",
         },
         community_full_content_embedding: {
-            "data": community_reports.loc[:, ["id", "full_content"]]
+            "data": community_reports.loc[:, ["id", "full_content"]].fillna("")
             if community_reports is not None
             else None,
             "embed_column": "full_content",

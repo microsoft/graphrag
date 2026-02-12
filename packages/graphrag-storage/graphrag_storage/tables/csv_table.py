@@ -47,6 +47,7 @@ class CSVTable(Table):
         table_name: str,
         transformer: RowTransformer | None = None,
         truncate: bool = True,
+        encoding: str = "utf-8",
     ):
         """Initialize with storage backend and table name.
 
@@ -58,12 +59,15 @@ class CSVTable(Table):
                 Defaults to identity (no transformation).
             truncate: If True (default), truncate file on first write.
                 If False, append to existing file.
+            encoding: Character encoding for reading/writing CSV files.
+                Defaults to "utf-8".
         """
         self._storage = storage
         self._table_name = table_name
         self._file_key = f"{table_name}.csv"
         self._transformer = transformer or _identity
         self._truncate = truncate
+        self._encoding = encoding
         self._write_file: TextIOWrapper | None = None
         self._writer: csv.DictWriter | None = None
         self._header_written = False
@@ -85,7 +89,7 @@ class CSVTable(Table):
         """Implement async iteration over rows."""
         if isinstance(self._storage, FileStorage):
             file_path = self._storage.get_path(self._file_key)
-            with Path.open(file_path, "r", encoding="utf-8") as f:
+            with Path.open(file_path, "r", encoding=self._encoding) as f:
                 reader = csv.DictReader(f)
                 for row in reader:
                     yield _apply_transformer(self._transformer, row)
@@ -132,7 +136,7 @@ class CSVTable(Table):
             file_exists = file_path.exists() and file_path.stat().st_size > 0
             mode = "w" if self._truncate else "a"
             write_header = self._truncate or not file_exists
-            self._write_file = Path.open(file_path, mode, encoding="utf-8", newline="")
+            self._write_file = Path.open(file_path, mode, encoding=self._encoding, newline="")
             self._writer = csv.DictWriter(self._write_file, fieldnames=list(row.keys()))
             if write_header:
                 self._writer.writeheader()

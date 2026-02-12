@@ -120,8 +120,17 @@ class CSVTableProvider(TableProvider):
         table_name: str,
         transformer: RowTransformer | None = None,
         truncate: bool = True,
+        encoding: str = "utf-8",
     ) -> CSVTable:
-        """Open table for streaming."""
+        """Open table for streaming.
+        
+        Args:
+            table_name: Name of the table to open
+            transformer: Optional callable to transform each row
+            truncate: If True, truncate file on first write
+            encoding: Character encoding for reading/writing CSV files.
+                Defaults to "utf-8".
+        """
         return CSVTable(
-            self._storage, table_name, transformer=transformer, truncate=truncate
+            self._storage, table_name, transformer=transformer, truncate=truncate, encoding=encoding
         )
