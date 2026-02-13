@@ -66,6 +66,8 @@ We use [semversioner](https://github.com/raulgomis/semversioner) to automate and
 uv run semversioner add-change -t patch -d "<a small sentence describing changes made>."
 ```
 
+For the full end-to-end release process (version bumping, publishing to PyPI, etc.), see [RELEASE.md](RELEASE.md).
+
 # Azurite
 
 Some unit and smoke tests use Azurite to emulate Azure resources. This can be started by running:
