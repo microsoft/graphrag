@@ -179,7 +179,9 @@ class TestIndexer:
                 if artifact.endswith(".parquet"):
                     output_df = pd.read_parquet(output_path / artifact)
                 elif artifact.endswith(".csv"):
-                    output_df = pd.read_csv(output_path / artifact, keep_default_na=False)
+                    output_df = pd.read_csv(
+                        output_path / artifact, keep_default_na=False
+                    )
                 else:
                     continue
 
