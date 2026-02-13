@@ -15,7 +15,6 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.data_reader import DataReader
 from graphrag.data_model.schemas import COMMUNITIES_FINAL_COLUMNS
 from graphrag.index.operations.cluster_graph import cluster_graph
-from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 
@@ -58,10 +57,8 @@ def create_communities(
     seed: int | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final communities."""
-    graph = create_graph(relationships, edge_attr=["weight"])
-
     clusters = cluster_graph(
-        graph,
+        relationships,
         max_cluster_size,
         use_lcc,
         seed=seed,
