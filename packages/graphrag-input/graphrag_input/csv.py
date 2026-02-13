@@ -5,11 +5,17 @@
 
 import csv
 import logging
+import sys
 
 from graphrag_input.structured_file_reader import StructuredFileReader
 from graphrag_input.text_document import TextDocument
 
 logger = logging.getLogger(__name__)
+
+try:
+    csv.field_size_limit(sys.maxsize)
+except OverflowError:
+    csv.field_size_limit(100 * 1024 * 1024)
 
 
 class CSVFileReader(StructuredFileReader):
