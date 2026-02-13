@@ -1,0 +1,7012 @@
+{
+  "nodes": [
+    {
+      "title": "PROJECT GUTENBERG",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "CHARLES DICKENS",
+      "type": "PERSON"
+    },
+    {
+      "title": "ARTHUR RACKHAM",
+      "type": "PERSON"
+    },
+    {
+      "title": "J. B. LIPPINCOTT COMPANY",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "UNITED STATES",
+      "type": "GEO"
+    },
+    {
+      "title": "PHILADELPHIA",
+      "type": "GEO"
+    },
+    {
+      "title": "NEW YORK",
+      "type": "GEO"
+    },
+    {
+      "title": "A CHRISTMAS CAROL",
+      "type": "EVENT"
+    },
+    {
+      "title": "BOB CRATCHIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "PETER CRATCHIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "TIM CRATCHIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "MR. FEZZIWIG",
+      "type": "PERSON"
+    },
+    {
+      "title": "FRED",
+      "type": "PERSON"
+    },
+    {
+      "title": "GHOST OF CHRISTMAS PAST",
+      "type": "PERSON"
+    },
+    {
+      "title": "GHOST OF CHRISTMAS PRESENT",
+      "type": "PERSON"
+    },
+    {
+      "title": "GHOST OF CHRISTMAS YET TO COME",
+      "type": "PERSON"
+    },
+    {
+      "title": "GHOST OF JACOB MARLEY",
+      "type": "PERSON"
+    },
+    {
+      "title": "JOE",
+      "type": "PERSON"
+    },
+    {
+      "title": "EBENEZER SCROOGE",
+      "type": "PERSON"
+    },
+    {
+      "title": "SCROOGE AND MARLEY",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "MR. TOPPER",
+      "type": "PERSON"
+    },
+    {
+      "title": "DICK WILKINS",
+      "type": "PERSON"
+    },
+    {
+      "title": "BELLE",
+      "type": "PERSON"
+    },
+    {
+      "title": "CAROLINE",
+      "type": "PERSON"
+    },
+    {
+      "title": "MRS. CRATCHIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "BELINDA CRATCHIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "MARTHA CRATCHIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "MRS. DILBER",
+      "type": "PERSON"
+    },
+    {
+      "title": "FAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "MRS. FEZZIWIG",
+      "type": "PERSON"
+    },
+    {
+      "title": "JANET BLENKINSHIP",
+      "type": "PERSON"
+    },
+    {
+      "title": "ONLINE DISTRIBUTED PROOFREADING TEAM",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "GREAT BRITAIN",
+      "type": "GEO"
+    },
+    {
+      "title": "MARLEY'S GHOST",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE FIRST OF THE THREE SPIRITS",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE SECOND OF THE THREE SPIRITS",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE LAST OF THE SPIRITS",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE END OF IT",
+      "type": "EVENT"
+    },
+    {
+      "title": "MARLEY",
+      "type": "PERSON"
+    },
+    {
+      "title": "SCROOGE",
+      "type": "PERSON"
+    },
+    {
+      "title": "ST. PAUL'S CHURCHYARD",
+      "type": "GEO"
+    },
+    {
+      "title": "MARLEY'S FUNERAL",
+      "type": "EVENT"
+    },
+    {
+      "title": "FEZZIWIG",
+      "type": "PERSON"
+    },
+    {
+      "title": "TIM",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE CLERGYMAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE CLERK",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE UNDERTAKER",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE CHIEF MOURNER",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE WOMAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "OLD SCRATCH",
+      "type": "PERSON"
+    },
+    {
+      "title": "LONDON",
+      "type": "GEO"
+    },
+    {
+      "title": "CHRISTMAS",
+      "type": "EVENT"
+    },
+    {
+      "title": "SCROOGE'S FUNERAL",
+      "type": "EVENT"
+    },
+    {
+      "title": "SCROOGE'S NEPHEW",
+      "type": "PERSON"
+    },
+    {
+      "title": "SCROOGE'S CLERK",
+      "type": "PERSON"
+    },
+    {
+      "title": "COUNTING-HOUSE",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "THE CITY",
+      "type": "GEO"
+    },
+    {
+      "title": "CHRISTMAS EVE",
+      "type": "EVENT"
+    },
+    {
+      "title": "BLIND MEN'S DOGS",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE COURT",
+      "type": "GEO"
+    },
+    {
+      "title": "NEIGHBOURING OFFICES",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "THE HOUSES OPPOSITE",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "NATURE",
+      "type": "PERSON"
+    },
+    {
+      "title": "JACOB MARLEY",
+      "type": "PERSON"
+    },
+    {
+      "title": "PORTLY GENTLEMEN",
+      "type": "PERSON"
+    },
+    {
+      "title": "NEW YEAR",
+      "type": "EVENT"
+    },
+    {
+      "title": "BEDLAM",
+      "type": "GEO"
+    },
+    {
+      "title": "SCROOGE'S WIFE",
+      "type": "PERSON"
+    },
+    {
+      "title": "SCROOGE'S FAMILY",
+      "type": "PERSON"
+    },
+    {
+      "title": "PARLIAMENT",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "CREDENTIALS",
+      "type": "EVENT"
+    },
+    {
+      "title": "POOR AND DESTITUTE",
+      "type": "PERSON"
+    },
+    {
+      "title": "FESTIVE SEASON",
+      "type": "EVENT"
+    },
+    {
+      "title": "GENTLEMAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "LORD MAYOR",
+      "type": "PERSON"
+    },
+    {
+      "title": "TAILOR",
+      "type": "PERSON"
+    },
+    {
+      "title": "ST. DUNSTAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "EVIL SPIRIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "SINGER",
+      "type": "PERSON"
+    },
+    {
+      "title": "CLERK",
+      "type": "PERSON"
+    },
+    {
+      "title": "UNION WORKHOUSES",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "PRISONS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "TREADMILL",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "POOR LAW",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "MANSION HOUSE",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "CHURCH",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "MAIN STREET",
+      "type": "GEO"
+    },
+    {
+      "title": "COURT",
+      "type": "GEO"
+    },
+    {
+      "title": "GARRET",
+      "type": "GEO"
+    },
+    {
+      "title": "CHRISTMAS CAROL",
+      "type": "EVENT"
+    },
+    {
+      "title": "DESTIUTE",
+      "type": "PERSON"
+    },
+    {
+      "title": "LABOURERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "RAGGED MEN AND BOYS",
+      "type": "PERSON"
+    },
+    {
+      "title": "PEOPLE",
+      "type": "PERSON"
+    },
+    {
+      "title": "FIFTY COOKS AND BUTLERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "TAILOR'S WIFE",
+      "type": "PERSON"
+    },
+    {
+      "title": "BABY",
+      "type": "PERSON"
+    },
+    {
+      "title": "SHOPS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "POULTERERS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "GROCERS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "ESTABLISHMENTS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "CITY",
+      "type": "GEO"
+    },
+    {
+      "title": "MONDAY",
+      "type": "EVENT"
+    },
+    {
+      "title": "PREVIOUS MONDAY",
+      "type": "EVENT"
+    },
+    {
+      "title": "CITY OF LONDON",
+      "type": "GEO"
+    },
+    {
+      "title": "CORNHILL",
+      "type": "GEO"
+    },
+    {
+      "title": "CAMDEN TOWN",
+      "type": "GEO"
+    },
+    {
+      "title": "CORPORATION, ALDERMEN, AND LIVERY",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "SCROOGE'S CHAMBERS",
+      "type": "GEO"
+    },
+    {
+      "title": "YARD (SCROOGE'S HOUSE)",
+      "type": "GEO"
+    },
+    {
+      "title": "TAVERN",
+      "type": "GEO"
+    },
+    {
+      "title": "WINE-MERCHANT'S CELLARS",
+      "type": "GEO"
+    },
+    {
+      "title": "BANKER'S BOOK",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "WINE-MERCHANT'S CELLAR",
+      "type": "GEO"
+    },
+    {
+      "title": "DUTCH MERCHANT",
+      "type": "PERSON"
+    },
+    {
+      "title": "SCROOGE'S HOUSE",
+      "type": "GEO"
+    },
+    {
+      "title": "SCRIPTURES",
+      "type": "EVENT"
+    },
+    {
+      "title": "ABEL",
+      "type": "PERSON"
+    },
+    {
+      "title": "PHARAOH'S DAUGHTERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "QUEENS OF SHEBA",
+      "type": "PERSON"
+    },
+    {
+      "title": "ANGELIC MESSENGERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "ABRAHAM",
+      "type": "PERSON"
+    },
+    {
+      "title": "BELSHAZZAR",
+      "type": "PERSON"
+    },
+    {
+      "title": "APOSTLES",
+      "type": "PERSON"
+    },
+    {
+      "title": "STREET",
+      "type": "GEO"
+    },
+    {
+      "title": "ACT OF PARLIAMENT",
+      "type": "EVENT"
+    },
+    {
+      "title": "HEARSE",
+      "type": "EVENT"
+    },
+    {
+      "title": "BEDROOM",
+      "type": "GEO"
+    },
+    {
+      "title": "SITTING-ROOM",
+      "type": "GEO"
+    },
+    {
+      "title": "LUMBER-ROOM",
+      "type": "GEO"
+    },
+    {
+      "title": "CLOSET",
+      "type": "GEO"
+    },
+    {
+      "title": "CHAMBER",
+      "type": "GEO"
+    },
+    {
+      "title": "BUILDING",
+      "type": "GEO"
+    },
+    {
+      "title": "FIREPLACE",
+      "type": "GEO"
+    },
+    {
+      "title": "CHAIR",
+      "type": "GEO"
+    },
+    {
+      "title": "CHAIN",
+      "type": "EVENT"
+    },
+    {
+      "title": "BANDAGE",
+      "type": "EVENT"
+    },
+    {
+      "title": "SPECTRE'S CRY",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE GHOST OF JACOB MARLEY",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE COUNTING-HOUSE",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "THE WARD",
+      "type": "GEO"
+    },
+    {
+      "title": "THE STAR",
+      "type": "EVENT"
+    },
+    {
+      "title": "FELLOW-MEN",
+      "type": "PERSON"
+    },
+    {
+      "title": "MANKIND",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "CHRISTIAN SPIRIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "POOR HOMES",
+      "type": "GEO"
+    },
+    {
+      "title": "EARTH",
+      "type": "GEO"
+    },
+    {
+      "title": "ETERNITY",
+      "type": "EVENT"
+    },
+    {
+      "title": "THREE SPIRITS",
+      "type": "PERSON"
+    },
+    {
+      "title": "PHANTOMS",
+      "type": "PERSON"
+    },
+    {
+      "title": "INVISIBLE WORLD",
+      "type": "EVENT"
+    },
+    {
+      "title": "INFANT",
+      "type": "PERSON"
+    },
+    {
+      "title": "OLD GHOST IN WHITE WAISTCOAT",
+      "type": "PERSON"
+    },
+    {
+      "title": "GUILTY GOVERNMENTS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "SCROOGE'S CHAMBER",
+      "type": "GEO"
+    },
+    {
+      "title": "WINDOW",
+      "type": "GEO"
+    },
+    {
+      "title": "DOOR",
+      "type": "GEO"
+    },
+    {
+      "title": "NIGHT",
+      "type": "EVENT"
+    },
+    {
+      "title": "BELL",
+      "type": "EVENT"
+    },
+    {
+      "title": "CLOCK",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE FIRST OF EXCHANGE",
+      "type": "EVENT"
+    },
+    {
+      "title": "UNITED STATES SECURITY",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE GHOST OF CHRISTMAS PAST",
+      "type": "PERSON"
+    },
+    {
+      "title": "SCROOGE'S BEDROOM",
+      "type": "GEO"
+    },
+    {
+      "title": "THE WORLD",
+      "type": "GEO"
+    },
+    {
+      "title": "THE CLOCK",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE BELL",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE CURTAINS",
+      "type": "EVENT"
+    },
+    {
+      "title": "MARKET-TOWN",
+      "type": "GEO"
+    },
+    {
+      "title": "SCHOOL",
+      "type": "GEO"
+    },
+    {
+      "title": "FARMERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "FRIENDS",
+      "type": "PERSON"
+    },
+    {
+      "title": "ROAD",
+      "type": "GEO"
+    },
+    {
+      "title": "LANE",
+      "type": "GEO"
+    },
+    {
+      "title": "FIELDS",
+      "type": "GEO"
+    },
+    {
+      "title": "BRIDGE",
+      "type": "GEO"
+    },
+    {
+      "title": "RIVER",
+      "type": "GEO"
+    },
+    {
+      "title": "GHOST",
+      "type": "PERSON"
+    },
+    {
+      "title": "ALI BABA",
+      "type": "PERSON"
+    },
+    {
+      "title": "VALENTINE",
+      "type": "PERSON"
+    },
+    {
+      "title": "ORSON",
+      "type": "PERSON"
+    },
+    {
+      "title": "SULTAN'S GROOM",
+      "type": "PERSON"
+    },
+    {
+      "title": "GENII",
+      "type": "PERSON"
+    },
+    {
+      "title": "PRINCESS",
+      "type": "PERSON"
+    },
+    {
+      "title": "ROBIN CRUSOE",
+      "type": "PERSON"
+    },
+    {
+      "title": "PARROT",
+      "type": "PERSON"
+    },
+    {
+      "title": "FRIDAY",
+      "type": "PERSON"
+    },
+    {
+      "title": "DAMASCUS",
+      "type": "GEO"
+    },
+    {
+      "title": "MANSION",
+      "type": "GEO"
+    },
+    {
+      "title": "JOLLY HOLIDAYS",
+      "type": "EVENT"
+    },
+    {
+      "title": "BOY SINGING AT SCROOGE'S DOOR",
+      "type": "PERSON"
+    },
+    {
+      "title": "SPIRIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "OFFICES",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "STABLES",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "COACH-HOUSES",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "SHEDS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "STOREHOUSE",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "HIGH-ROAD",
+      "type": "GEO"
+    },
+    {
+      "title": "YARD",
+      "type": "GEO"
+    },
+    {
+      "title": "HALL",
+      "type": "GEO"
+    },
+    {
+      "title": "ROOM",
+      "type": "GEO"
+    },
+    {
+      "title": "ISLAND",
+      "type": "GEO"
+    },
+    {
+      "title": "CREEK",
+      "type": "GEO"
+    },
+    {
+      "title": "SCHOOLMASTER",
+      "type": "PERSON"
+    },
+    {
+      "title": "WAREHOUSE",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "SERVANT",
+      "type": "PERSON"
+    },
+    {
+      "title": "FATHER",
+      "type": "PERSON"
+    },
+    {
+      "title": "GARDEN SWEEP",
+      "type": "GEO"
+    },
+    {
+      "title": "CHAIR/COACH",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "PARLOUR",
+      "type": "GEO"
+    },
+    {
+      "title": "MISS FEZZIWIGS",
+      "type": "PERSON"
+    },
+    {
+      "title": "FEZZIWIG'S WAREHOUSE",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE FIDDLER",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE HOUSEMAID",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE BAKER",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE COOK",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE MILKMAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE BOY FROM OVER THE WAY",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE GIRL FROM NEXT DOOR BUT ONE",
+      "type": "PERSON"
+    },
+    {
+      "title": "YOUNG MEN AND WOMEN EMPLOYED IN THE BUSINESS",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE THREE MISS FEZZIWIGS' SIX YOUNG FOLLOWERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "DICK",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE TWO APPRENTICES",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE FAIR YOUNG GIRL",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE DOMESTIC BALL",
+      "type": "EVENT"
+    },
+    {
+      "title": "BACK-SHOP",
+      "type": "GEO"
+    },
+    {
+      "title": "YOUNG SCROOGE",
+      "type": "PERSON"
+    },
+    {
+      "title": "OLDER SCROOGE",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE SHOP",
+      "type": "GEO"
+    },
+    {
+      "title": "THE DOOR",
+      "type": "GEO"
+    },
+    {
+      "title": "THE GIRL",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE GHOST",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE MATRON",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE DAUGHTER",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE FATHER",
+      "type": "PERSON"
+    },
+    {
+      "title": "HOME",
+      "type": "GEO"
+    },
+    {
+      "title": "PORTER",
+      "type": "PERSON"
+    },
+    {
+      "title": "WINTER FIRE",
+      "type": "EVENT"
+    },
+    {
+      "title": "SCROOGE'S OFFICE",
+      "type": "GEO"
+    },
+    {
+      "title": "CHRISTMAS TOYS AND PRESENTS",
+      "type": "EVENT"
+    },
+    {
+      "title": "BELLE'S DAUGHTER",
+      "type": "PERSON"
+    },
+    {
+      "title": "BELLE'S FAMILY",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "THE PORTER",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE CHILDREN",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE BABY",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE HOUSE",
+      "type": "GEO"
+    },
+    {
+      "title": "THE PARLOUR",
+      "type": "GEO"
+    },
+    {
+      "title": "THE TOP OF THE HOUSE",
+      "type": "GEO"
+    },
+    {
+      "title": "THE FIRESIDE",
+      "type": "GEO"
+    },
+    {
+      "title": "THE EXTINQUISHER-CAP",
+      "type": "EVENT"
+    },
+    {
+      "title": "SCROOGE'S ROOM",
+      "type": "GEO"
+    },
+    {
+      "title": "MISTLETOE",
+      "type": "GEO"
+    },
+    {
+      "title": "IVY",
+      "type": "GEO"
+    },
+    {
+      "title": "PLENTY'S HORN",
+      "type": "EVENT"
+    },
+    {
+      "title": "CHIMNEY",
+      "type": "GEO"
+    },
+    {
+      "title": "BED",
+      "type": "GEO"
+    },
+    {
+      "title": "LOCK",
+      "type": "GEO"
+    },
+    {
+      "title": "HEARTH",
+      "type": "GEO"
+    },
+    {
+      "title": "THRONE",
+      "type": "GEO"
+    },
+    {
+      "title": "ANTIQUE SCABBARD",
+      "type": "GEO"
+    },
+    {
+      "title": "SPIRIT'S FAMILY",
+      "type": "PERSON"
+    },
+    {
+      "title": "YOUNGER MEMBERS OF SPIRIT'S FAMILY",
+      "type": "PERSON"
+    },
+    {
+      "title": "ELDER BROTHERS OF SPIRIT'S FAMILY",
+      "type": "PERSON"
+    },
+    {
+      "title": "CHRISTMAS MORNING",
+      "type": "EVENT"
+    },
+    {
+      "title": "FRUITERERS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "HOUSE-TOPS",
+      "type": "GEO"
+    },
+    {
+      "title": "POULTERERS' SHOPS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "FRUITERERS' SHOPS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "SHOPKEEPERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "GROCER",
+      "type": "PERSON"
+    },
+    {
+      "title": "CUSTOMERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "BOYS",
+      "type": "PERSON"
+    },
+    {
+      "title": "CRATCHIT FAMILY",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "BAKERS' SHOPS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "SUBURBS OF THE TOWN",
+      "type": "GEO"
+    },
+    {
+      "title": "PARKS",
+      "type": "GEO"
+    },
+    {
+      "title": "CHRISTMAS DAY",
+      "type": "EVENT"
+    },
+    {
+      "title": "SEVENTH DAY",
+      "type": "EVENT"
+    },
+    {
+      "title": "DINNER-CARRIERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "GROCER'S PEOPLE",
+      "type": "PERSON"
+    },
+    {
+      "title": "CHAPEL",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "TOWN",
+      "type": "GEO"
+    },
+    {
+      "title": "BOY CRATCHIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "GIRL CRATCHIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "TINY TIM",
+      "type": "PERSON"
+    },
+    {
+      "title": "YOUNG CRATCHITS",
+      "type": "PERSON"
+    },
+    {
+      "title": "CHRISTMAS DINNER",
+      "type": "EVENT"
+    },
+    {
+      "title": "BAKER'S SHOP",
+      "type": "GEO"
+    },
+    {
+      "title": "GOOSE",
+      "type": "EVENT"
+    },
+    {
+      "title": "BACK-YARD",
+      "type": "GEO"
+    },
+    {
+      "title": "POOR CHIMNEY CORNER",
+      "type": "GEO"
+    },
+    {
+      "title": "FUTURE",
+      "type": "EVENT"
+    },
+    {
+      "title": "FOUNDER OF THE FEAST",
+      "type": "PERSON"
+    },
+    {
+      "title": "COPPER",
+      "type": "GEO"
+    },
+    {
+      "title": "EATING-HOUSE",
+      "type": "GEO"
+    },
+    {
+      "title": "PASTRY-COOK'S",
+      "type": "GEO"
+    },
+    {
+      "title": "LAUNDRESS'S",
+      "type": "GEO"
+    },
+    {
+      "title": "CHRISTMAS HOLLY",
+      "type": "GEO"
+    },
+    {
+      "title": "JUG",
+      "type": "GEO"
+    },
+    {
+      "title": "GLASS",
+      "type": "GEO"
+    },
+    {
+      "title": "CUSTARD CUP",
+      "type": "GEO"
+    },
+    {
+      "title": "CHESTNUTS",
+      "type": "GEO"
+    },
+    {
+      "title": "APPLE SAUCE",
+      "type": "GEO"
+    },
+    {
+      "title": "MASHED POTATOES",
+      "type": "GEO"
+    },
+    {
+      "title": "CHRISTMAS PUDDING",
+      "type": "EVENT"
+    },
+    {
+      "title": "CHRISTMAS GOOSE",
+      "type": "EVENT"
+    },
+    {
+      "title": "SURPLUS POPULATION",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE SPIRIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE CRATCHIT FAMILY",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "THE FEAST",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE MILLINER'S",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "THE LAMPLIGHTER",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE STREET",
+      "type": "GEO"
+    },
+    {
+      "title": "LORD",
+      "type": "PERSON"
+    },
+    {
+      "title": "MASTER PETER",
+      "type": "PERSON"
+    },
+    {
+      "title": "GUESTS",
+      "type": "PERSON"
+    },
+    {
+      "title": "HANDSOME GIRLS",
+      "type": "PERSON"
+    },
+    {
+      "title": "NEIGHBOUR",
+      "type": "PERSON"
+    },
+    {
+      "title": "SINGLE MAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "SPIRIT'S TORCH",
+      "type": "EVENT"
+    },
+    {
+      "title": "SONG ABOUT A LOST CHILD",
+      "type": "EVENT"
+    },
+    {
+      "title": "PAWNBROKER'S",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "KITCHENS",
+      "type": "GEO"
+    },
+    {
+      "title": "PARLOURS",
+      "type": "GEO"
+    },
+    {
+      "title": "ROOMS",
+      "type": "GEO"
+    },
+    {
+      "title": "HOUSE",
+      "type": "GEO"
+    },
+    {
+      "title": "WINDOW-BLINDS",
+      "type": "GEO"
+    },
+    {
+      "title": "SNOW",
+      "type": "GEO"
+    },
+    {
+      "title": "EVENING",
+      "type": "EVENT"
+    },
+    {
+      "title": "FIRE",
+      "type": "EVENT"
+    },
+    {
+      "title": "MINERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "OLD MAN MINER",
+      "type": "PERSON"
+    },
+    {
+      "title": "LIGHTHOUSE KEEPERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "ELDER LIGHTHOUSE KEEPER",
+      "type": "PERSON"
+    },
+    {
+      "title": "SHIP CREW",
+      "type": "PERSON"
+    },
+    {
+      "title": "MOOR",
+      "type": "GEO"
+    },
+    {
+      "title": "LIGHTHOUSE",
+      "type": "GEO"
+    },
+    {
+      "title": "SHIP",
+      "type": "GEO"
+    },
+    {
+      "title": "OLD WOMAN MINER",
+      "type": "PERSON"
+    },
+    {
+      "title": "OFFICERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "HELMSMAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "LOOK-OUT",
+      "type": "PERSON"
+    },
+    {
+      "title": "BURIAL-PLACE OF GIANTS",
+      "type": "GEO"
+    },
+    {
+      "title": "WEST",
+      "type": "GEO"
+    },
+    {
+      "title": "REEF OF SUNKEN ROCKS",
+      "type": "GEO"
+    },
+    {
+      "title": "SEA",
+      "type": "GEO"
+    },
+    {
+      "title": "CHRISTMAS SONG",
+      "type": "EVENT"
+    },
+    {
+      "title": "SCROOGE'S NIECE",
+      "type": "PERSON"
+    },
+    {
+      "title": "SCROOGE'S NIECE'S SISTERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "TOPPER",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE LADIES",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE PLUMP SISTER",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE SISTER WITH ROSES",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE HOUSEKEEPERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE DINNER",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE DESSERT",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE MUSIC",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE TEA",
+      "type": "EVENT"
+    },
+    {
+      "title": "PLUMP SISTER",
+      "type": "PERSON"
+    },
+    {
+      "title": "SEXT\u00d3N",
+      "type": "PERSON"
+    },
+    {
+      "title": "WHITECHAPEL",
+      "type": "GEO"
+    },
+    {
+      "title": "BOARDING-SCHOOL",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "PIANO",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "FIRE-IRONS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "CURTAINS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "CHAIRS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "RING",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "GAME OF YES AND NO",
+      "type": "EVENT"
+    },
+    {
+      "title": "GAME OF BLIND MAN'S-BUFF",
+      "type": "EVENT"
+    },
+    {
+      "title": "GAME OF FORFEITS",
+      "type": "EVENT"
+    },
+    {
+      "title": "GAME OF HOW, WHEN, AND WHERE",
+      "type": "EVENT"
+    },
+    {
+      "title": "BOY (IGNORANCE)",
+      "type": "PERSON"
+    },
+    {
+      "title": "GIRL",
+      "type": "PERSON"
+    },
+    {
+      "title": "ALMSHOUSE",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "HOSPITAL",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "GAOL",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "CHRISTMAS HOLIDAYS",
+      "type": "EVENT"
+    },
+    {
+      "title": "TWELFTH-NIGHT PARTY",
+      "type": "EVENT"
+    },
+    {
+      "title": "COMPANY AT FRED'S PARTY",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "FOREIGN LANDS",
+      "type": "GEO"
+    },
+    {
+      "title": "SICK-BEDS",
+      "type": "GEO"
+    },
+    {
+      "title": "MIDNIGHT",
+      "type": "EVENT"
+    },
+    {
+      "title": "THREE-QUARTERS PAST ELEVEN",
+      "type": "EVENT"
+    },
+    {
+      "title": "CHIMES",
+      "type": "EVENT"
+    },
+    {
+      "title": "POVERTY",
+      "type": "EVENT"
+    },
+    {
+      "title": "MISERY'S REFUGE",
+      "type": "GEO"
+    },
+    {
+      "title": "AUTHORITY",
+      "type": "PERSON"
+    },
+    {
+      "title": "MAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "IGNORANCE",
+      "type": "PERSON"
+    },
+    {
+      "title": "WANT",
+      "type": "PERSON"
+    },
+    {
+      "title": "WORKHOUSES",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "CHANGE",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "MERCHANTS",
+      "type": "PERSON"
+    },
+    {
+      "title": "GREAT FAT MAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "RED-FACED GENTLEMAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "MAN WITH LARGE CHIN",
+      "type": "PERSON"
+    },
+    {
+      "title": "CITY HEART",
+      "type": "GEO"
+    },
+    {
+      "title": "DEATH OF UNNAMED MAN",
+      "type": "EVENT"
+    },
+    {
+      "title": "JACOB",
+      "type": "PERSON"
+    },
+    {
+      "title": "PHANTOM",
+      "type": "PERSON"
+    },
+    {
+      "title": "BUSINESSMEN",
+      "type": "PERSON"
+    },
+    {
+      "title": "BUSINESS COMPANY",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "DEN OF INFAMOUS RESORT",
+      "type": "GEO"
+    },
+    {
+      "title": "RAG-AND-BONE SHOP",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "GREY-HAIRED RASCAL",
+      "type": "PERSON"
+    },
+    {
+      "title": "BUSINESS DISTRICT",
+      "type": "GEO"
+    },
+    {
+      "title": "OBSCURE PART OF TOWN",
+      "type": "GEO"
+    },
+    {
+      "title": "ALLEYS AND ARCHWAYS",
+      "type": "GEO"
+    },
+    {
+      "title": "CHRISTMAS-TIME",
+      "type": "EVENT"
+    },
+    {
+      "title": "DEATH OF OLD SCRATCH",
+      "type": "EVENT"
+    },
+    {
+      "title": "CHANGE OF LIFE",
+      "type": "EVENT"
+    },
+    {
+      "title": "GROUP OF SPEAKERS AND LISTENERS",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "OLD JOE",
+      "type": "PERSON"
+    },
+    {
+      "title": "CHARWOMAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "UNDERTAKER'S MAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "SHOP",
+      "type": "GEO"
+    },
+    {
+      "title": "DEAD MAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE DEAD MAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE PHANTOM",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE ROOM",
+      "type": "GEO"
+    },
+    {
+      "title": "DEATH",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE OLD MAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE BED",
+      "type": "GEO"
+    },
+    {
+      "title": "THE SHEET",
+      "type": "GEO"
+    },
+    {
+      "title": "THE BLANKETS",
+      "type": "GEO"
+    },
+    {
+      "title": "THE SHIRT",
+      "type": "GEO"
+    },
+    {
+      "title": "THE BUNDLE",
+      "type": "GEO"
+    },
+    {
+      "title": "THE FLANNEL BAG",
+      "type": "GEO"
+    },
+    {
+      "title": "THE LAMP",
+      "type": "GEO"
+    },
+    {
+      "title": "CAROLINE'S HUSBAND",
+      "type": "PERSON"
+    },
+    {
+      "title": "CRATCHIT'S WIFE",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE CREDITOR",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE TOWN",
+      "type": "GEO"
+    },
+    {
+      "title": "BOB CRATCHIT'S HOUSE",
+      "type": "GEO"
+    },
+    {
+      "title": "THE EVENT OF THE CREDITOR'S DEATH",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE EVENT OF TINY TIM'S DEATH",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE MOTHER IN THE FIRST SCENE",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE CHILDREN IN THE FIRST SCENE",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE HALF-DRUNKEN WOMAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE DARK CHAMBER",
+      "type": "GEO"
+    },
+    {
+      "title": "THE ROOM BY DAYLIGHT",
+      "type": "GEO"
+    },
+    {
+      "title": "SEVERAL STREETS",
+      "type": "GEO"
+    },
+    {
+      "title": "THE DINNER BY THE FIRE",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE LONG-EXPECTED KNOCK",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE SCENE OF THE DEAD MAN",
+      "type": "EVENT"
+    },
+    {
+      "title": "MR. SCROOGE'S NEPHEW",
+      "type": "PERSON"
+    },
+    {
+      "title": "MR. SCROOGE",
+      "type": "PERSON"
+    },
+    {
+      "title": "SUNDAY",
+      "type": "EVENT"
+    },
+    {
+      "title": "CRATCHIT CHILDREN",
+      "type": "PERSON"
+    },
+    {
+      "title": "ROBERT CRATCHIT",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE ROOM ABOVE",
+      "type": "GEO"
+    },
+    {
+      "title": "THE FIRE",
+      "type": "GEO"
+    },
+    {
+      "title": "THE TABLE",
+      "type": "GEO"
+    },
+    {
+      "title": "CHURCHYARD",
+      "type": "GEO"
+    },
+    {
+      "title": "THE GRAVE",
+      "type": "GEO"
+    },
+    {
+      "title": "THE BEDPOST",
+      "type": "GEO"
+    },
+    {
+      "title": "THE PAST",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE PRESENT",
+      "type": "EVENT"
+    },
+    {
+      "title": "THE FUTURE",
+      "type": "EVENT"
+    },
+    {
+      "title": "SPIRITS",
+      "type": "PERSON"
+    },
+    {
+      "title": "THE BOY",
+      "type": "PERSON"
+    },
+    {
+      "title": "POULTERER",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "CHURCHES",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "NEXT STREET",
+      "type": "GEO"
+    },
+    {
+      "title": "JOE MILLER",
+      "type": "PERSON"
+    },
+    {
+      "title": "PRIZE TURKEY",
+      "type": "EVENT"
+    },
+    {
+      "title": "STREET-DOOR",
+      "type": "GEO"
+    },
+    {
+      "title": "CORNER",
+      "type": "GEO"
+    },
+    {
+      "title": "HEAVEN",
+      "type": "GEO"
+    },
+    {
+      "title": "POULTERER'S MAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "PORTLY GENTLEMAN",
+      "type": "PERSON"
+    },
+    {
+      "title": "SCROOGE'S NEPHEW (FRED)",
+      "type": "PERSON"
+    },
+    {
+      "title": "FRED'S HOUSE",
+      "type": "GEO"
+    },
+    {
+      "title": "SCROOGE'S NIECE BY MARRIAGE",
+      "type": "PERSON"
+    },
+    {
+      "title": "CAB",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "DINING-ROOM",
+      "type": "GEO"
+    },
+    {
+      "title": "KITCHENS OF HOUSES",
+      "type": "GEO"
+    },
+    {
+      "title": "WINDOWS",
+      "type": "GEO"
+    },
+    {
+      "title": "BEGGARS",
+      "type": "PERSON"
+    },
+    {
+      "title": "CHILDREN",
+      "type": "PERSON"
+    },
+    {
+      "title": "HOUSEKEEPERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "MISTRESS",
+      "type": "PERSON"
+    },
+    {
+      "title": "SCROOGE'S HAND",
+      "type": "PERSON"
+    },
+    {
+      "title": "CHRISTMAS DINNER AT FRED'S",
+      "type": "EVENT"
+    },
+    {
+      "title": "SCROOGE'S TRANSFORMATION",
+      "type": "EVENT"
+    },
+    {
+      "title": "BOB CRATCHIT'S FAMILY",
+      "type": "PERSON"
+    },
+    {
+      "title": "GOOD OLD WORLD",
+      "type": "GEO"
+    },
+    {
+      "title": "BOROUGH",
+      "type": "GEO"
+    },
+    {
+      "title": "FOUNDATION",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "TRANSCRIBER",
+      "type": "PERSON"
+    },
+    {
+      "title": "WWW.GUTENBERG.ORG",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "GENERAL TERMS OF USE",
+      "type": "EVENT"
+    },
+    {
+      "title": "FULL PROJECT GUTENBERG LICENSE",
+      "type": "EVENT"
+    },
+    {
+      "title": "PROJECT GUTENBERG TRADEMARK LICENSE",
+      "type": "EVENT"
+    },
+    {
+      "title": "PROJECT GUTENBERG EBOOK",
+      "type": "EVENT"
+    },
+    {
+      "title": "COPYRIGHT HOLDER",
+      "type": "PERSON"
+    },
+    {
+      "title": "PROJECT GUTENBERG VOLUNTEERS AND EMPLOYEES",
+      "type": "PERSON"
+    },
+    {
+      "title": "PROJECT GUTENBERG\u2122 TRADEMARK",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "SECTION 4",
+      "type": "EVENT"
+    },
+    {
+      "title": "PARAGRAPH 1.E.1",
+      "type": "EVENT"
+    },
+    {
+      "title": "PARAGRAPH 1.E.7",
+      "type": "EVENT"
+    },
+    {
+      "title": "PARAGRAPH 1.E.8",
+      "type": "EVENT"
+    },
+    {
+      "title": "PARAGRAPH 1.E.9",
+      "type": "EVENT"
+    },
+    {
+      "title": "PARAGRAPH 1.F.3",
+      "type": "EVENT"
+    },
+    {
+      "title": "PLAIN VANILLA ASCII",
+      "type": "EVENT"
+    },
+    {
+      "title": "COUNTRY",
+      "type": "GEO"
+    },
+    {
+      "title": "INTERNAL REVENUE SERVICE",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "MISSISSIPPI",
+      "type": "GEO"
+    },
+    {
+      "title": "SALT LAKE CITY",
+      "type": "GEO"
+    },
+    {
+      "title": "VOLUNTEERS",
+      "type": "PERSON"
+    },
+    {
+      "title": "DISTRIBUTOR",
+      "type": "PERSON"
+    },
+    {
+      "title": "TRADEMARK OWNER",
+      "type": "PERSON"
+    },
+    {
+      "title": "STATE",
+      "type": "GEO"
+    },
+    {
+      "title": "AGENT",
+      "type": "PERSON"
+    },
+    {
+      "title": "EMPLOYEE",
+      "type": "PERSON"
+    },
+    {
+      "title": "EIN",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "BUSINESS OFFICE",
+      "type": "GEO"
+    },
+    {
+      "title": "STATE OF MISSISSIPPI",
+      "type": "GEO"
+    },
+    {
+      "title": "SALT LAKE CITY, UT",
+      "type": "GEO"
+    },
+    {
+      "title": "PROFESSOR MICHAEL S. HART",
+      "type": "PERSON"
+    },
+    {
+      "title": "CHARITIES",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "DONORS",
+      "type": "PERSON"
+    },
+    {
+      "title": "VOLUNTEER SUPPORT",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "PG SEARCH FACILITY",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "EMAIL NEWSLETTER",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "WWW.GUTENBERG.ORG/CONTACT",
+      "type": "ORGANIZATION"
+    },
+    {
+      "title": "WWW.GUTENBERG.ORG/DONATE",
+      "type": "ORGANIZATION"
+    }
+  ],
+  "edges": [
+    {
+      "source": "CHARLES DICKENS",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 20.0
+    },
+    {
+      "source": "ARTHUR RACKHAM",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 8.0
+    },
+    {
+      "source": "J. B. LIPPINCOTT COMPANY",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 8.0
+    },
+    {
+      "source": "J. B. LIPPINCOTT COMPANY",
+      "target": "PHILADELPHIA",
+      "weight": 7.0
+    },
+    {
+      "source": "J. B. LIPPINCOTT COMPANY",
+      "target": "NEW YORK",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 24.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "UNITED STATES",
+      "weight": 22.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "EBENEZER SCROOGE",
+      "weight": 9.0
+    },
+    {
+      "source": "PETER CRATCHIT",
+      "target": "BOB CRATCHIT",
+      "weight": 9.0
+    },
+    {
+      "source": "TIM CRATCHIT",
+      "target": "BOB CRATCHIT",
+      "weight": 9.0
+    },
+    {
+      "source": "MRS. CRATCHIT",
+      "target": "BOB CRATCHIT",
+      "weight": 9.0
+    },
+    {
+      "source": "BELINDA CRATCHIT",
+      "target": "MRS. CRATCHIT",
+      "weight": 9.0
+    },
+    {
+      "source": "MARTHA CRATCHIT",
+      "target": "MRS. CRATCHIT",
+      "weight": 9.0
+    },
+    {
+      "source": "BELINDA CRATCHIT",
+      "target": "BOB CRATCHIT",
+      "weight": 9.0
+    },
+    {
+      "source": "MARTHA CRATCHIT",
+      "target": "BOB CRATCHIT",
+      "weight": 9.0
+    },
+    {
+      "source": "MR. FEZZIWIG",
+      "target": "MRS. FEZZIWIG",
+      "weight": 9.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "SCROOGE AND MARLEY",
+      "weight": 19.0
+    },
+    {
+      "source": "JACOB MARLEY",
+      "target": "SCROOGE AND MARLEY",
+      "weight": 19.0
+    },
+    {
+      "source": "GHOST OF JACOB MARLEY",
+      "target": "EBENEZER SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "FRED",
+      "target": "EBENEZER SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "FAN",
+      "target": "EBENEZER SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "DICK WILKINS",
+      "target": "EBENEZER SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "BELLE",
+      "target": "EBENEZER SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "CAROLINE",
+      "target": "EBENEZER SCROOGE",
+      "weight": 6.0
+    },
+    {
+      "source": "GHOST OF CHRISTMAS PAST",
+      "target": "EBENEZER SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "GHOST OF CHRISTMAS PRESENT",
+      "target": "EBENEZER SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "GHOST OF CHRISTMAS YET TO COME",
+      "target": "EBENEZER SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "MRS. DILBER",
+      "target": "EBENEZER SCROOGE",
+      "weight": 6.0
+    },
+    {
+      "source": "MR. FEZZIWIG",
+      "target": "EBENEZER SCROOGE",
+      "weight": 1.0
+    },
+    {
+      "source": "SUZANNE SHELL",
+      "target": "PROJECT GUTENBERG",
+      "weight": 7.0
+    },
+    {
+      "source": "JANET BLENKINSHIP",
+      "target": "PROJECT GUTENBERG",
+      "weight": 7.0
+    },
+    {
+      "source": "ONLINE DISTRIBUTED PROOFREADING TEAM",
+      "target": "PROJECT GUTENBERG",
+      "weight": 7.0
+    },
+    {
+      "source": "MARLEY'S GHOST",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 9.0
+    },
+    {
+      "source": "THE FIRST OF THE THREE SPIRITS",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 9.0
+    },
+    {
+      "source": "THE SECOND OF THE THREE SPIRITS",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 9.0
+    },
+    {
+      "source": "THE LAST OF THE SPIRITS",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 9.0
+    },
+    {
+      "source": "THE END OF IT",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 9.0
+    },
+    {
+      "source": "PHILADELPHIA",
+      "target": "GREAT BRITAIN",
+      "weight": 6.0
+    },
+    {
+      "source": "NEW YORK",
+      "target": "GREAT BRITAIN",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "MARLEY",
+      "weight": 32.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE AND MARLEY",
+      "weight": 18.0
+    },
+    {
+      "source": "MARLEY",
+      "target": "SCROOGE AND MARLEY",
+      "weight": 9.0
+    },
+    {
+      "source": "MARLEY'S FUNERAL",
+      "target": "MARLEY",
+      "weight": 10.0
+    },
+    {
+      "source": "MARLEY'S FUNERAL",
+      "target": "SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "ST. PAUL'S CHURCHYARD",
+      "target": "MARLEY",
+      "weight": 1.0
+    },
+    {
+      "source": "FEZZIWIG",
+      "target": "MRS. FEZZIWIG",
+      "weight": 27.0
+    },
+    {
+      "source": "FEZZIWIG",
+      "target": "SCROOGE",
+      "weight": 15.0
+    },
+    {
+      "source": "FRED",
+      "target": "SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "TIM",
+      "target": "BOB CRATCHIT",
+      "weight": 9.0
+    },
+    {
+      "source": "TIM",
+      "target": "SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "JOE",
+      "target": "THE WOMAN",
+      "weight": 15.0
+    },
+    {
+      "source": "JOE",
+      "target": "SCROOGE",
+      "weight": 6.0
+    },
+    {
+      "source": "THE WOMAN",
+      "target": "SCROOGE",
+      "weight": 6.0
+    },
+    {
+      "source": "THE CLERGYMAN",
+      "target": "MARLEY'S FUNERAL",
+      "weight": 7.0
+    },
+    {
+      "source": "THE CLERK",
+      "target": "MARLEY'S FUNERAL",
+      "weight": 7.0
+    },
+    {
+      "source": "THE UNDERTAKER",
+      "target": "MARLEY'S FUNERAL",
+      "weight": 7.0
+    },
+    {
+      "source": "THE CHIEF MOURNER",
+      "target": "MARLEY'S FUNERAL",
+      "weight": 7.0
+    },
+    {
+      "source": "OLD SCRATCH",
+      "target": "SCROOGE",
+      "weight": 5.0
+    },
+    {
+      "source": "LONDON",
+      "target": "SCROOGE",
+      "weight": 15.0
+    },
+    {
+      "source": "LONDON",
+      "target": "SCROOGE AND MARLEY",
+      "weight": 8.0
+    },
+    {
+      "source": "CHRISTMAS",
+      "target": "SCROOGE",
+      "weight": 17.0
+    },
+    {
+      "source": "CHRISTMAS",
+      "target": "FRED",
+      "weight": 8.0
+    },
+    {
+      "source": "CHRISTMAS",
+      "target": "FEZZIWIG",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE'S FUNERAL",
+      "target": "SCROOGE",
+      "weight": 1.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "SCROOGE'S NEPHEW",
+      "weight": 15.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "SCROOGE'S CLERK",
+      "weight": 8.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "COUNTING-HOUSE",
+      "weight": 9.0
+    },
+    {
+      "source": "COUNTING-HOUSE",
+      "target": "SCROOGE'S CLERK",
+      "weight": 7.0
+    },
+    {
+      "source": "COUNTING-HOUSE",
+      "target": "THE CITY",
+      "weight": 5.0
+    },
+    {
+      "source": "CHRISTMAS EVE",
+      "target": "EBENEZER SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "CHRISTMAS EVE",
+      "target": "SCROOGE'S NEPHEW",
+      "weight": 1.0
+    },
+    {
+      "source": "BLIND MEN",
+      "target": "BLIND MEN'S DOGS",
+      "weight": 8.0
+    },
+    {
+      "source": "BLIND MEN",
+      "target": "EBENEZER SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "BLIND MEN'S DOGS",
+      "target": "EBENEZER SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "THE COURT",
+      "target": "COUNTING-HOUSE",
+      "weight": 6.0
+    },
+    {
+      "source": "NEIGHBOURING OFFICES",
+      "target": "COUNTING-HOUSE",
+      "weight": 6.0
+    },
+    {
+      "source": "THE HOUSES OPPOSITE",
+      "target": "COUNTING-HOUSE",
+      "weight": 5.0
+    },
+    {
+      "source": "NATURE",
+      "target": "THE COURT",
+      "weight": 1.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "JACOB MARLEY",
+      "weight": 43.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "BOB CRATCHIT",
+      "weight": 26.0
+    },
+    {
+      "source": "SCROOGE'S NEPHEW",
+      "target": "CHRISTMAS",
+      "weight": 16.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "CHRISTMAS",
+      "weight": 6.0
+    },
+    {
+      "source": "PORTLY GENTLEMEN",
+      "target": "EBENEZER SCROOGE",
+      "weight": 6.0
+    },
+    {
+      "source": "PORTLY GENTLEMEN",
+      "target": "CHRISTMAS",
+      "weight": 6.0
+    },
+    {
+      "source": "BEDLAM",
+      "target": "EBENEZER SCROOGE",
+      "weight": 3.0
+    },
+    {
+      "source": "SCROOGE'S NEPHEW",
+      "target": "NEW YEAR",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE'S OFFICE",
+      "target": "SCROOGE AND MARLEY",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE'S CLERK",
+      "target": "BOB CRATCHIT",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE'S CLERK",
+      "target": "SCROOGE'S WIFE",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE'S CLERK",
+      "target": "SCROOGE'S FAMILY",
+      "weight": 8.0
+    },
+    {
+      "source": "PORTLY GENTLEMEN",
+      "target": "CREDENTIALS",
+      "weight": 7.0
+    },
+    {
+      "source": "PORTLY GENTLEMEN",
+      "target": "POOR AND DESTITUTE",
+      "weight": 9.0
+    },
+    {
+      "source": "FESTIVE SEASON",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "FESTIVE SEASON",
+      "target": "NEW YEAR",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE'S NEPHEW",
+      "target": "PARLIAMENT",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "GENTLEMAN",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CLERK",
+      "weight": 9.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "COUNTING-HOUSE",
+      "weight": 27.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "UNION WORKHOUSES",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "PRISONS",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "TREADMILL",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "POOR LAW",
+      "weight": 6.0
+    },
+    {
+      "source": "LORD MAYOR",
+      "target": "MANSION HOUSE",
+      "weight": 9.0
+    },
+    {
+      "source": "LORD MAYOR",
+      "target": "TAILOR",
+      "weight": 7.0
+    },
+    {
+      "source": "TAILOR",
+      "target": "GARRET",
+      "weight": 8.0
+    },
+    {
+      "source": "SINGER",
+      "target": "SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "CHRISTMAS",
+      "target": "CHRISTMAS CAROL",
+      "weight": 8.0
+    },
+    {
+      "source": "MAIN STREET",
+      "target": "COURT",
+      "weight": 7.0
+    },
+    {
+      "source": "CHURCH",
+      "target": "SCROOGE",
+      "weight": 5.0
+    },
+    {
+      "source": "ST. DUNSTAN",
+      "target": "EVIL SPIRIT",
+      "weight": 1.0
+    },
+    {
+      "source": "POOR",
+      "target": "DESTIUTE",
+      "weight": 9.0
+    },
+    {
+      "source": "GENTLEMAN",
+      "target": "POOR",
+      "weight": 8.0
+    },
+    {
+      "source": "GENTLEMAN",
+      "target": "DESTIUTE",
+      "weight": 8.0
+    },
+    {
+      "source": "LABOURERS",
+      "target": "MAIN STREET",
+      "weight": 9.0
+    },
+    {
+      "source": "RAGGED MEN AND BOYS",
+      "target": "LABOURERS",
+      "weight": 8.0
+    },
+    {
+      "source": "RAGGED MEN AND BOYS",
+      "target": "MAIN STREET",
+      "weight": 8.0
+    },
+    {
+      "source": "PEOPLE",
+      "target": "MAIN STREET",
+      "weight": 7.0
+    },
+    {
+      "source": "FIFTY COOKS AND BUTLERS",
+      "target": "LORD MAYOR",
+      "weight": 9.0
+    },
+    {
+      "source": "TAILOR'S WIFE",
+      "target": "TAILOR",
+      "weight": 9.0
+    },
+    {
+      "source": "BABY",
+      "target": "TAILOR'S WIFE",
+      "weight": 9.0
+    },
+    {
+      "source": "TAILOR'S WIFE",
+      "target": "BABY",
+      "weight": 9.0
+    },
+    {
+      "source": "TAILOR'S WIFE",
+      "target": "GARRET",
+      "weight": 8.0
+    },
+    {
+      "source": "SHOPS",
+      "target": "MAIN STREET",
+      "weight": 7.0
+    },
+    {
+      "source": "POULTERERS",
+      "target": "SHOPS",
+      "weight": 8.0
+    },
+    {
+      "source": "GROCERS",
+      "target": "SHOPS",
+      "weight": 8.0
+    },
+    {
+      "source": "ESTABLISHMENTS",
+      "target": "SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "CITY",
+      "target": "MAIN STREET",
+      "weight": 8.0
+    },
+    {
+      "source": "CITY",
+      "target": "COURT",
+      "weight": 8.0
+    },
+    {
+      "source": "MONDAY",
+      "target": "TAILOR",
+      "weight": 8.0
+    },
+    {
+      "source": "PREVIOUS MONDAY",
+      "target": "TAILOR",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "BOB CRATCHIT",
+      "weight": 34.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "COUNTING-HOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CITY OF LONDON",
+      "weight": 6.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "CORNHILL",
+      "weight": 5.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "CAMDEN TOWN",
+      "weight": 6.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "CHRISTMAS EVE",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CHRISTMAS EVE",
+      "weight": 6.0
+    },
+    {
+      "source": "CITY OF LONDON",
+      "target": "CORPORATION, ALDERMEN, AND LIVERY",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "GENIUS OF THE WEATHER",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S CHAMBERS",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE'S CHAMBERS",
+      "target": "YARD (SCROOGE'S HOUSE)",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "TAVERN",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE'S CHAMBERS",
+      "target": "WINE-MERCHANT'S CELLARS",
+      "weight": 5.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "BANKER'S BOOK",
+      "weight": 5.0
+    },
+    {
+      "source": "SCROOGE'S CHAMBERS",
+      "target": "COUNTING-HOUSE",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE'S CHAMBERS",
+      "target": "CITY OF LONDON",
+      "weight": 7.0
+    },
+    {
+      "source": "TAVERN",
+      "target": "CITY OF LONDON",
+      "weight": 4.0
+    },
+    {
+      "source": "YARD (SCROOGE'S HOUSE)",
+      "target": "CITY OF LONDON",
+      "weight": 4.0
+    },
+    {
+      "source": "WINE-MERCHANT'S CELLARS",
+      "target": "CITY OF LONDON",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S HOUSE",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "MARLEY'S GHOST",
+      "weight": 10.0
+    },
+    {
+      "source": "MARLEY",
+      "target": "MARLEY'S GHOST",
+      "weight": 10.0
+    },
+    {
+      "source": "MARLEY'S GHOST",
+      "target": "WINE-MERCHANT'S CELLAR",
+      "weight": 7.0
+    },
+    {
+      "source": "DUTCH MERCHANT",
+      "target": "SCROOGE'S HOUSE",
+      "weight": 5.0
+    },
+    {
+      "source": "SCRIPTURES",
+      "target": "SCROOGE'S HOUSE",
+      "weight": 6.0
+    },
+    {
+      "source": "DUTCH MERCHANT",
+      "target": "SCRIPTURES",
+      "weight": 1.0
+    },
+    {
+      "source": "CAIN",
+      "target": "ABEL",
+      "weight": 8.0
+    },
+    {
+      "source": "PHARAOH'S DAUGHTERS",
+      "target": "SCRIPTURES",
+      "weight": 7.0
+    },
+    {
+      "source": "QUEENS OF SHEBA",
+      "target": "SCRIPTURES",
+      "weight": 7.0
+    },
+    {
+      "source": "ANGELIC MESSENGERS",
+      "target": "SCRIPTURES",
+      "weight": 7.0
+    },
+    {
+      "source": "ABRAHAM",
+      "target": "SCRIPTURES",
+      "weight": 7.0
+    },
+    {
+      "source": "BELSHAZZAR",
+      "target": "SCRIPTURES",
+      "weight": 7.0
+    },
+    {
+      "source": "APOSTLES",
+      "target": "SCRIPTURES",
+      "weight": 7.0
+    },
+    {
+      "source": "STREET",
+      "target": "SCROOGE'S HOUSE",
+      "weight": 6.0
+    },
+    {
+      "source": "ACT OF PARLIAMENT",
+      "target": "SCROOGE",
+      "weight": 3.0
+    },
+    {
+      "source": "HEARSE",
+      "target": "SCROOGE",
+      "weight": 5.0
+    },
+    {
+      "source": "BEDROOM",
+      "target": "SCROOGE'S HOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "SITTING-ROOM",
+      "target": "SCROOGE'S HOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "LUMBER-ROOM",
+      "target": "SCROOGE'S HOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "CLOSET",
+      "target": "SCROOGE'S HOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "CHAMBER",
+      "target": "BUILDING",
+      "weight": 7.0
+    },
+    {
+      "source": "BUILDING",
+      "target": "SCROOGE'S HOUSE",
+      "weight": 1.0
+    },
+    {
+      "source": "JACOB MARLEY",
+      "target": "MARLEY'S GHOST",
+      "weight": 20.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "MARLEY'S GHOST",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE'S ROOM",
+      "target": "EBENEZER SCROOGE",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE'S ROOM",
+      "target": "JACOB MARLEY",
+      "weight": 8.0
+    },
+    {
+      "source": "FIREPLACE",
+      "target": "EBENEZER SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "FIREPLACE",
+      "target": "JACOB MARLEY",
+      "weight": 7.0
+    },
+    {
+      "source": "CHAIR",
+      "target": "JACOB MARLEY",
+      "weight": 6.0
+    },
+    {
+      "source": "CHAIN",
+      "target": "JACOB MARLEY",
+      "weight": 10.0
+    },
+    {
+      "source": "BANDAGE",
+      "target": "JACOB MARLEY",
+      "weight": 8.0
+    },
+    {
+      "source": "SPECTRE'S CRY",
+      "target": "JACOB MARLEY",
+      "weight": 8.0
+    },
+    {
+      "source": "SPECTRE'S CRY",
+      "target": "EBENEZER SCROOGE",
+      "weight": 1.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE GHOST OF JACOB MARLEY",
+      "weight": 10.0
+    },
+    {
+      "source": "JACOB MARLEY",
+      "target": "THE GHOST OF JACOB MARLEY",
+      "weight": 10.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE COUNTING-HOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "JACOB MARLEY",
+      "target": "THE COUNTING-HOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "THE GHOST OF JACOB MARLEY",
+      "target": "CHRISTMAS EVE",
+      "weight": 7.0
+    },
+    {
+      "source": "THE GHOST OF JACOB MARLEY",
+      "target": "THE STAR",
+      "weight": 6.0
+    },
+    {
+      "source": "THE GHOST OF JACOB MARLEY",
+      "target": "THE WARD",
+      "weight": 1.0
+    },
+    {
+      "source": "WISE MEN",
+      "target": "THE STAR",
+      "weight": 8.0
+    },
+    {
+      "source": "FELLOW-MEN",
+      "target": "EBENEZER SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "MANKIND",
+      "target": "JACOB MARLEY",
+      "weight": 8.0
+    },
+    {
+      "source": "CHRISTIAN SPIRIT",
+      "target": "FELLOW-MEN",
+      "weight": 7.0
+    },
+    {
+      "source": "POOR HOMES",
+      "target": "THE STAR",
+      "weight": 6.0
+    },
+    {
+      "source": "EARTH",
+      "target": "THE GHOST OF JACOB MARLEY",
+      "weight": 9.0
+    },
+    {
+      "source": "ETERNITY",
+      "target": "THE GHOST OF JACOB MARLEY",
+      "weight": 1.0
+    },
+    {
+      "source": "JACOB MARLEY",
+      "target": "EBENEZER SCROOGE",
+      "weight": 9.0
+    },
+    {
+      "source": "MARLEY'S GHOST",
+      "target": "EBENEZER SCROOGE",
+      "weight": 9.0
+    },
+    {
+      "source": "THREE SPIRITS",
+      "target": "EBENEZER SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "PHANTOMS",
+      "target": "EBENEZER SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "CHURCH",
+      "target": "EBENEZER SCROOGE",
+      "weight": 3.0
+    },
+    {
+      "source": "INVISIBLE WORLD",
+      "target": "EBENEZER SCROOGE",
+      "weight": 6.0
+    },
+    {
+      "source": "THE FIRST OF THE THREE SPIRITS",
+      "target": "EBENEZER SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "THREE SPIRITS",
+      "target": "THE FIRST OF THE THREE SPIRITS",
+      "weight": 1.0
+    },
+    {
+      "source": "OLD GHOST IN WHITE WAISTCOAT",
+      "target": "WRETCHED WOMAN",
+      "weight": 7.0
+    },
+    {
+      "source": "WRETCHED WOMAN",
+      "target": "INFANT",
+      "weight": 8.0
+    },
+    {
+      "source": "OLD GHOST IN WHITE WAISTCOAT",
+      "target": "SCROOGE",
+      "weight": 5.0
+    },
+    {
+      "source": "PHANTOMS",
+      "target": "GUILTY GOVERNMENTS",
+      "weight": 6.0
+    },
+    {
+      "source": "PHANTOMS",
+      "target": "WINDOW",
+      "weight": 7.0
+    },
+    {
+      "source": "MARLEY'S GHOST",
+      "target": "DOOR",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S CHAMBER",
+      "weight": 8.0
+    },
+    {
+      "source": "MARLEY'S GHOST",
+      "target": "NIGHT",
+      "weight": 7.0
+    },
+    {
+      "source": "BELL",
+      "target": "THREE SPIRITS",
+      "weight": 8.0
+    },
+    {
+      "source": "CLOCK",
+      "target": "SCROOGE",
+      "weight": 1.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE GHOST OF CHRISTMAS PAST",
+      "weight": 10.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "SCROOGE'S BEDROOM",
+      "weight": 8.0
+    },
+    {
+      "source": "THE GHOST OF CHRISTMAS PAST",
+      "target": "SCROOGE'S BEDROOM",
+      "weight": 8.0
+    },
+    {
+      "source": "THE FIRST OF EXCHANGE",
+      "target": "UNITED STATES SECURITY",
+      "weight": 5.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE FIRST OF EXCHANGE",
+      "weight": 1.0
+    },
+    {
+      "source": "THE CLOCK",
+      "target": "EBENEZER SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "THE BELL",
+      "target": "EBENEZER SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "THE CURTAINS",
+      "target": "THE GHOST OF CHRISTMAS PAST",
+      "weight": 9.0
+    },
+    {
+      "source": "THE SUN",
+      "target": "EBENEZER SCROOGE",
+      "weight": 5.0
+    },
+    {
+      "source": "THE WORLD",
+      "target": "EBENEZER SCROOGE",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "GHOST OF CHRISTMAS PAST",
+      "weight": 19.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CITY",
+      "weight": 24.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "MARKET-TOWN",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCHOOL",
+      "weight": 24.0
+    },
+    {
+      "source": "MARKET-TOWN",
+      "target": "SCHOOL",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CHRISTMAS",
+      "weight": 61.0
+    },
+    {
+      "source": "GHOST OF CHRISTMAS PAST",
+      "target": "CHRISTMAS",
+      "weight": 1.0
+    },
+    {
+      "source": "BOYS",
+      "target": "FARMERS",
+      "weight": 6.0
+    },
+    {
+      "source": "BOYS",
+      "target": "MARKET-TOWN",
+      "weight": 7.0
+    },
+    {
+      "source": "BOYS",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "FRIENDS",
+      "target": "SCHOOL",
+      "weight": 7.0
+    },
+    {
+      "source": "ROAD",
+      "target": "FIELDS",
+      "weight": 8.0
+    },
+    {
+      "source": "ROAD",
+      "target": "LANE",
+      "weight": 7.0
+    },
+    {
+      "source": "MARKET-TOWN",
+      "target": "BRIDGE",
+      "weight": 8.0
+    },
+    {
+      "source": "MARKET-TOWN",
+      "target": "CHURCH",
+      "weight": 8.0
+    },
+    {
+      "source": "MARKET-TOWN",
+      "target": "RIVER",
+      "weight": 8.0
+    },
+    {
+      "source": "NIGHT",
+      "target": "SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "NIGHT",
+      "target": "GHOST OF CHRISTMAS PAST",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "GHOST",
+      "weight": 34.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "MANSION",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "ALI BABA",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "VALENTINE",
+      "weight": 5.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "ORSON",
+      "weight": 5.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SULTAN'S GROOM",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "GENII",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "PRINCESS",
+      "weight": 3.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "ROBIN CRUSOE",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "PARROT",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "FRIDAY",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "DAMASCUS",
+      "weight": 3.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CHRISTMAS CAROL",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "JOLLY HOLIDAYS",
+      "weight": 6.0
+    },
+    {
+      "source": "VALENTINE",
+      "target": "ORSON",
+      "weight": 8.0
+    },
+    {
+      "source": "SULTAN'S GROOM",
+      "target": "GENII",
+      "weight": 7.0
+    },
+    {
+      "source": "SULTAN'S GROOM",
+      "target": "PRINCESS",
+      "weight": 6.0
+    },
+    {
+      "source": "ROBIN CRUSOE",
+      "target": "PARROT",
+      "weight": 8.0
+    },
+    {
+      "source": "ROBIN CRUSOE",
+      "target": "FRIDAY",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SOLITARY CHILD",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "BOY SINGING AT SCROOGE'S DOOR",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SPIRIT",
+      "weight": 36.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "OFFICES",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "STABLES",
+      "weight": 5.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "COACH-HOUSES",
+      "weight": 5.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SHEDS",
+      "weight": 5.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "STOREHOUSE",
+      "weight": 5.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "HIGH-ROAD",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "LANE",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "YARD",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "HALL",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "ROOM",
+      "weight": 8.0
+    },
+    {
+      "source": "ROBIN CRUSOE",
+      "target": "ISLAND",
+      "weight": 7.0
+    },
+    {
+      "source": "FRIDAY",
+      "target": "CREEK",
+      "weight": 7.0
+    },
+    {
+      "source": "MANSION",
+      "target": "OFFICES",
+      "weight": 8.0
+    },
+    {
+      "source": "MANSION",
+      "target": "STABLES",
+      "weight": 8.0
+    },
+    {
+      "source": "MANSION",
+      "target": "COACH-HOUSES",
+      "weight": 8.0
+    },
+    {
+      "source": "MANSION",
+      "target": "SHEDS",
+      "weight": 8.0
+    },
+    {
+      "source": "MANSION",
+      "target": "STOREHOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "MANSION",
+      "target": "YARD",
+      "weight": 8.0
+    },
+    {
+      "source": "MANSION",
+      "target": "HALL",
+      "weight": 8.0
+    },
+    {
+      "source": "MANSION",
+      "target": "ROOM",
+      "weight": 8.0
+    },
+    {
+      "source": "SCHOOL",
+      "target": "SOLITARY CHILD",
+      "weight": 9.0
+    },
+    {
+      "source": "SPIRIT",
+      "target": "GHOST",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "FAN",
+      "weight": 9.0
+    },
+    {
+      "source": "FAN",
+      "target": "SCROOGE'S NEPHEW",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S NEPHEW",
+      "weight": 23.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCHOOLMASTER",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "DICK WILKINS",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "FEZZIWIG",
+      "weight": 8.0
+    },
+    {
+      "source": "FEZZIWIG",
+      "target": "WAREHOUSE",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "WAREHOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "DICK WILKINS",
+      "target": "WAREHOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "SCHOOLMASTER",
+      "target": "SCHOOL",
+      "weight": 10.0
+    },
+    {
+      "source": "FAN",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "FEZZIWIG",
+      "target": "CHRISTMAS",
+      "weight": 1.0
+    },
+    {
+      "source": "SCHOOLMASTER",
+      "target": "SERVANT",
+      "weight": 7.0
+    },
+    {
+      "source": "SERVANT",
+      "target": "POSTBOY",
+      "weight": 6.0
+    },
+    {
+      "source": "FATHER",
+      "target": "FAN",
+      "weight": 9.0
+    },
+    {
+      "source": "FATHER",
+      "target": "SCROOGE",
+      "weight": 9.0
+    },
+    {
+      "source": "POSTBOY",
+      "target": "CHAIR/COACH",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CHAIR/COACH",
+      "weight": 7.0
+    },
+    {
+      "source": "FAN",
+      "target": "CHAIR/COACH",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "PARLOUR",
+      "weight": 6.0
+    },
+    {
+      "source": "FAN",
+      "target": "PARLOUR",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "GARDEN SWEEP",
+      "weight": 5.0
+    },
+    {
+      "source": "FAN",
+      "target": "GARDEN SWEEP",
+      "weight": 1.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "DICK WILKINS",
+      "weight": 8.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "FEZZIWIG",
+      "weight": 9.0
+    },
+    {
+      "source": "DICK WILKINS",
+      "target": "FEZZIWIG",
+      "weight": 8.0
+    },
+    {
+      "source": "FEZZIWIG",
+      "target": "MISS FEZZIWIGS",
+      "weight": 7.0
+    },
+    {
+      "source": "FEZZIWIG",
+      "target": "FEZZIWIG'S WAREHOUSE",
+      "weight": 10.0
+    },
+    {
+      "source": "FEZZIWIG'S WAREHOUSE",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 10.0
+    },
+    {
+      "source": "FEZZIWIG",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 10.0
+    },
+    {
+      "source": "MRS. FEZZIWIG",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 8.0
+    },
+    {
+      "source": "MISS FEZZIWIGS",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 7.0
+    },
+    {
+      "source": "THE FIDDLER",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 8.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 8.0
+    },
+    {
+      "source": "DICK WILKINS",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 1.0
+    },
+    {
+      "source": "THE GHOST",
+      "target": "EBENEZER SCROOGE",
+      "weight": 18.0
+    },
+    {
+      "source": "THE HOUSEMAID",
+      "target": "THE BAKER",
+      "weight": 7.0
+    },
+    {
+      "source": "THE COOK",
+      "target": "THE MILKMAN",
+      "weight": 7.0
+    },
+    {
+      "source": "THE BOY FROM OVER THE WAY",
+      "target": "THE GIRL FROM NEXT DOOR BUT ONE",
+      "weight": 6.0
+    },
+    {
+      "source": "YOUNG MEN AND WOMEN EMPLOYED IN THE BUSINESS",
+      "target": "FEZZIWIG'S WAREHOUSE",
+      "weight": 10.0
+    },
+    {
+      "source": "THE THREE MISS FEZZIWIGS' SIX YOUNG FOLLOWERS",
+      "target": "MISS FEZZIWIGS",
+      "weight": 7.0
+    },
+    {
+      "source": "THE HOUSEMAID",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 7.0
+    },
+    {
+      "source": "THE BAKER",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 7.0
+    },
+    {
+      "source": "THE COOK",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 7.0
+    },
+    {
+      "source": "THE MILKMAN",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 7.0
+    },
+    {
+      "source": "THE BOY FROM OVER THE WAY",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 7.0
+    },
+    {
+      "source": "THE GIRL FROM NEXT DOOR BUT ONE",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 7.0
+    },
+    {
+      "source": "YOUNG MEN AND WOMEN EMPLOYED IN THE BUSINESS",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 10.0
+    },
+    {
+      "source": "THE THREE MISS FEZZIWIGS' SIX YOUNG FOLLOWERS",
+      "target": "CHRISTMAS EVE PARTY AT FEZZIWIG'S",
+      "weight": 1.0
+    },
+    {
+      "source": "FEZZIWIG",
+      "target": "THE TWO APPRENTICES",
+      "weight": 8.0
+    },
+    {
+      "source": "FEZZIWIG",
+      "target": "DICK",
+      "weight": 7.0
+    },
+    {
+      "source": "FEZZIWIG",
+      "target": "THE DOMESTIC BALL",
+      "weight": 9.0
+    },
+    {
+      "source": "MRS. FEZZIWIG",
+      "target": "THE DOMESTIC BALL",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "DICK",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "THE GHOST OF CHRISTMAS PAST",
+      "weight": 9.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "THE FAIR YOUNG GIRL",
+      "weight": 8.0
+    },
+    {
+      "source": "THE DOMESTIC BALL",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "THE TWO APPRENTICES",
+      "target": "BACK-SHOP",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "BACK-SHOP",
+      "weight": 6.0
+    },
+    {
+      "source": "DICK",
+      "target": "BACK-SHOP",
+      "weight": 1.0
+    },
+    {
+      "source": "MR. FEZZIWIG",
+      "target": "YOUNG SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "MR. FEZZIWIG",
+      "target": "OLDER SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "MR. FEZZIWIG",
+      "target": "SPIRIT",
+      "weight": 6.0
+    },
+    {
+      "source": "YOUNG SCROOGE",
+      "target": "OLDER SCROOGE",
+      "weight": 9.0
+    },
+    {
+      "source": "OLDER SCROOGE",
+      "target": "SPIRIT",
+      "weight": 9.0
+    },
+    {
+      "source": "OLDER SCROOGE",
+      "target": "SCROOGE'S CLERK",
+      "weight": 7.0
+    },
+    {
+      "source": "MR. FEZZIWIG",
+      "target": "THE SHOP",
+      "weight": 8.0
+    },
+    {
+      "source": "MR. FEZZIWIG",
+      "target": "THE DOOR",
+      "weight": 7.0
+    },
+    {
+      "source": "MRS. FEZZIWIG",
+      "target": "THE DOOR",
+      "weight": 7.0
+    },
+    {
+      "source": "THE SHOP",
+      "target": "BACK-SHOP",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "THE GIRL",
+      "weight": 9.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "THE GHOST",
+      "weight": 17.0
+    },
+    {
+      "source": "THE GIRL",
+      "target": "THE MATRON",
+      "weight": 10.0
+    },
+    {
+      "source": "THE MATRON",
+      "target": "THE DAUGHTER",
+      "weight": 10.0
+    },
+    {
+      "source": "THE MATRON",
+      "target": "THE FATHER",
+      "weight": 9.0
+    },
+    {
+      "source": "THE FATHER",
+      "target": "CHRISTMAS",
+      "weight": 7.0
+    },
+    {
+      "source": "THE MATRON",
+      "target": "HOME",
+      "weight": 7.0
+    },
+    {
+      "source": "THE DAUGHTER",
+      "target": "HOME",
+      "weight": 7.0
+    },
+    {
+      "source": "THE MATRON",
+      "target": "CHRISTMAS",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "HOME",
+      "weight": 1.0
+    },
+    {
+      "source": "CHILDREN",
+      "target": "THE MATRON",
+      "weight": 9.0
+    },
+    {
+      "source": "CHILDREN",
+      "target": "THE DAUGHTER",
+      "weight": 8.0
+    },
+    {
+      "source": "CHILDREN",
+      "target": "THE FATHER",
+      "weight": 9.0
+    },
+    {
+      "source": "CHILDREN",
+      "target": "PORTER",
+      "weight": 7.0
+    },
+    {
+      "source": "PORTER",
+      "target": "THE FATHER",
+      "weight": 6.0
+    },
+    {
+      "source": "WINTER FIRE",
+      "target": "HOME",
+      "weight": 7.0
+    },
+    {
+      "source": "WINTER FIRE",
+      "target": "CHRISTMAS",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "BELLE",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "JACOB MARLEY",
+      "weight": 20.0
+    },
+    {
+      "source": "JACOB MARLEY",
+      "target": "THE SECOND OF THE THREE SPIRITS",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "THE SECOND OF THE THREE SPIRITS",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S OFFICE",
+      "weight": 13.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S BEDROOM",
+      "weight": 7.0
+    },
+    {
+      "source": "CHRISTMAS",
+      "target": "CHRISTMAS TOYS AND PRESENTS",
+      "weight": 8.0
+    },
+    {
+      "source": "BELLE",
+      "target": "BELLE'S HUSBAND",
+      "weight": 9.0
+    },
+    {
+      "source": "BELLE'S HUSBAND",
+      "target": "BELLE'S DAUGHTER",
+      "weight": 9.0
+    },
+    {
+      "source": "BELLE",
+      "target": "BELLE'S DAUGHTER",
+      "weight": 9.0
+    },
+    {
+      "source": "BELLE",
+      "target": "BELLE'S FAMILY",
+      "weight": 9.0
+    },
+    {
+      "source": "BELLE'S HUSBAND",
+      "target": "BELLE'S FAMILY",
+      "weight": 9.0
+    },
+    {
+      "source": "BELLE'S DAUGHTER",
+      "target": "BELLE'S FAMILY",
+      "weight": 9.0
+    },
+    {
+      "source": "THE PORTER",
+      "target": "THE CHILDREN",
+      "weight": 8.0
+    },
+    {
+      "source": "THE BABY",
+      "target": "THE CHILDREN",
+      "weight": 7.0
+    },
+    {
+      "source": "THE HOUSE",
+      "target": "THE PARLOUR",
+      "weight": 7.0
+    },
+    {
+      "source": "THE HOUSE",
+      "target": "THE TOP OF THE HOUSE",
+      "weight": 7.0
+    },
+    {
+      "source": "THE FIRESIDE",
+      "target": "BELLE'S FAMILY",
+      "weight": 8.0
+    },
+    {
+      "source": "THE EXTINQUISHER-CAP",
+      "target": "GHOST",
+      "weight": 8.0
+    },
+    {
+      "source": "THE BELL",
+      "target": "THE SECOND OF THE THREE SPIRITS",
+      "weight": 8.0
+    },
+    {
+      "source": "THE PARLOUR",
+      "target": "THE CHILDREN",
+      "weight": 7.0
+    },
+    {
+      "source": "THE TOP OF THE HOUSE",
+      "target": "THE CHILDREN",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "GHOST OF CHRISTMAS PRESENT",
+      "weight": 23.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S ROOM",
+      "weight": 8.0
+    },
+    {
+      "source": "GHOST OF CHRISTMAS PRESENT",
+      "target": "SCROOGE'S ROOM",
+      "weight": 7.0
+    },
+    {
+      "source": "GHOST OF CHRISTMAS PRESENT",
+      "target": "CHRISTMAS",
+      "weight": 10.0
+    },
+    {
+      "source": "CITY",
+      "target": "SCROOGE",
+      "weight": 5.0
+    },
+    {
+      "source": "CITY",
+      "target": "GHOST OF CHRISTMAS PRESENT",
+      "weight": 1.0
+    },
+    {
+      "source": "HOLLY",
+      "target": "SCROOGE'S ROOM",
+      "weight": 7.0
+    },
+    {
+      "source": "MISTLETOE",
+      "target": "SCROOGE'S ROOM",
+      "weight": 7.0
+    },
+    {
+      "source": "IVY",
+      "target": "SCROOGE'S ROOM",
+      "weight": 7.0
+    },
+    {
+      "source": "PLENTY'S HORN",
+      "target": "GHOST OF CHRISTMAS PRESENT",
+      "weight": 6.0
+    },
+    {
+      "source": "CHIMNEY",
+      "target": "SCROOGE'S ROOM",
+      "weight": 6.0
+    },
+    {
+      "source": "BED",
+      "target": "SCROOGE'S ROOM",
+      "weight": 6.0
+    },
+    {
+      "source": "LOCK",
+      "target": "DOOR",
+      "weight": 5.0
+    },
+    {
+      "source": "DOOR",
+      "target": "SCROOGE'S ROOM",
+      "weight": 6.0
+    },
+    {
+      "source": "HEARTH",
+      "target": "SCROOGE'S ROOM",
+      "weight": 6.0
+    },
+    {
+      "source": "THRONE",
+      "target": "SCROOGE'S ROOM",
+      "weight": 6.0
+    },
+    {
+      "source": "ANTIQUE SCABBARD",
+      "target": "GHOST OF CHRISTMAS PRESENT",
+      "weight": 6.0
+    },
+    {
+      "source": "SPIRIT'S FAMILY",
+      "target": "GHOST OF CHRISTMAS PRESENT",
+      "weight": 8.0
+    },
+    {
+      "source": "YOUNGER MEMBERS OF SPIRIT'S FAMILY",
+      "target": "SPIRIT'S FAMILY",
+      "weight": 7.0
+    },
+    {
+      "source": "ELDER BROTHERS OF SPIRIT'S FAMILY",
+      "target": "SPIRIT'S FAMILY",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SPIRIT'S FAMILY",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CHRISTMAS MORNING",
+      "weight": 8.0
+    },
+    {
+      "source": "GROCERS",
+      "target": "CHRISTMAS MORNING",
+      "weight": 7.0
+    },
+    {
+      "source": "POULTERERS",
+      "target": "CHRISTMAS MORNING",
+      "weight": 7.0
+    },
+    {
+      "source": "FRUITERERS",
+      "target": "CHRISTMAS MORNING",
+      "weight": 7.0
+    },
+    {
+      "source": "GREAT BRITAIN",
+      "target": "CHRISTMAS MORNING",
+      "weight": 1.0
+    },
+    {
+      "source": "CITY STREETS",
+      "target": "GREAT BRITAIN",
+      "weight": 7.0
+    },
+    {
+      "source": "HOUSE-TOPS",
+      "target": "CITY STREETS",
+      "weight": 6.0
+    },
+    {
+      "source": "POULTERERS' SHOPS",
+      "target": "POULTERERS",
+      "weight": 8.0
+    },
+    {
+      "source": "FRUITERERS' SHOPS",
+      "target": "FRUITERERS",
+      "weight": 8.0
+    },
+    {
+      "source": "SHOPKEEPERS",
+      "target": "GROCERS",
+      "weight": 8.0
+    },
+    {
+      "source": "GROCER",
+      "target": "GROCERS",
+      "weight": 9.0
+    },
+    {
+      "source": "CUSTOMERS",
+      "target": "GROCERS",
+      "weight": 8.0
+    },
+    {
+      "source": "CUSTOMERS",
+      "target": "POULTERERS' SHOPS",
+      "weight": 7.0
+    },
+    {
+      "source": "CUSTOMERS",
+      "target": "FRUITERERS' SHOPS",
+      "weight": 7.0
+    },
+    {
+      "source": "BOYS",
+      "target": "CITY STREETS",
+      "weight": 7.0
+    },
+    {
+      "source": "CHRISTMAS MORNING",
+      "target": "CHRISTMAS",
+      "weight": 9.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CITY STREETS",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SHOPKEEPERS",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CUSTOMERS",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "BOYS",
+      "weight": 1.0
+    },
+    {
+      "source": "SPIRIT",
+      "target": "BOB CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "MRS. CRATCHIT",
+      "weight": 57.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "BELINDA CRATCHIT",
+      "weight": 22.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "PETER CRATCHIT",
+      "weight": 50.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "CRATCHIT FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "MRS. CRATCHIT",
+      "target": "CRATCHIT FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "BELINDA CRATCHIT",
+      "target": "CRATCHIT FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "PETER CRATCHIT",
+      "target": "CRATCHIT FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "BAKERS' SHOPS",
+      "weight": 7.0
+    },
+    {
+      "source": "BAKERS' SHOPS",
+      "target": "CHRISTMAS DAY",
+      "weight": 7.0
+    },
+    {
+      "source": "CHURCH",
+      "target": "CHRISTMAS DAY",
+      "weight": 7.0
+    },
+    {
+      "source": "SUBURBS OF THE TOWN",
+      "target": "CRATCHIT FAMILY",
+      "weight": 6.0
+    },
+    {
+      "source": "PARKS",
+      "target": "PETER CRATCHIT",
+      "weight": 5.0
+    },
+    {
+      "source": "SEVENTH DAY",
+      "target": "BAKERS' SHOPS",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CRATCHIT FAMILY",
+      "weight": 8.0
+    },
+    {
+      "source": "GHOST OF CHRISTMAS PRESENT",
+      "target": "SPIRIT",
+      "weight": 10.0
+    },
+    {
+      "source": "DINNER-CARRIERS",
+      "target": "BAKERS' SHOPS",
+      "weight": 8.0
+    },
+    {
+      "source": "GROCER",
+      "target": "GROCER'S PEOPLE",
+      "weight": 9.0
+    },
+    {
+      "source": "GROCER",
+      "target": "TOWN",
+      "weight": 7.0
+    },
+    {
+      "source": "GROCER'S PEOPLE",
+      "target": "TOWN",
+      "weight": 7.0
+    },
+    {
+      "source": "CHAPEL",
+      "target": "CHURCH",
+      "weight": 8.0
+    },
+    {
+      "source": "CHAPEL",
+      "target": "TOWN",
+      "weight": 7.0
+    },
+    {
+      "source": "CHURCH",
+      "target": "TOWN",
+      "weight": 7.0
+    },
+    {
+      "source": "BOY CRATCHIT",
+      "target": "CRATCHIT FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "GIRL CRATCHIT",
+      "target": "CRATCHIT FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "BOY CRATCHIT",
+      "target": "GIRL CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "BOY CRATCHIT",
+      "target": "PETER CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "GIRL CRATCHIT",
+      "target": "PETER CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "BOY CRATCHIT",
+      "target": "BELINDA CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "GIRL CRATCHIT",
+      "target": "BELINDA CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "BOY CRATCHIT",
+      "target": "MRS. CRATCHIT",
+      "weight": 10.0
+    },
+    {
+      "source": "GIRL CRATCHIT",
+      "target": "MRS. CRATCHIT",
+      "weight": 10.0
+    },
+    {
+      "source": "GHOST OF CHRISTMAS PRESENT",
+      "target": "DINNER-CARRIERS",
+      "weight": 8.0
+    },
+    {
+      "source": "GHOST OF CHRISTMAS PRESENT",
+      "target": "CRATCHIT FAMILY",
+      "weight": 8.0
+    },
+    {
+      "source": "TOWN",
+      "target": "SUBURBS OF THE TOWN",
+      "weight": 1.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "TINY TIM",
+      "weight": 78.0
+    },
+    {
+      "source": "MRS. CRATCHIT",
+      "target": "TINY TIM",
+      "weight": 35.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "MARTHA CRATCHIT",
+      "weight": 16.0
+    },
+    {
+      "source": "MRS. CRATCHIT",
+      "target": "MARTHA CRATCHIT",
+      "weight": 16.0
+    },
+    {
+      "source": "MRS. CRATCHIT",
+      "target": "PETER CRATCHIT",
+      "weight": 23.0
+    },
+    {
+      "source": "MRS. CRATCHIT",
+      "target": "BELINDA CRATCHIT",
+      "weight": 7.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "YOUNG CRATCHITS",
+      "weight": 15.0
+    },
+    {
+      "source": "MRS. CRATCHIT",
+      "target": "YOUNG CRATCHITS",
+      "weight": 7.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "CHRISTMAS DAY",
+      "weight": 10.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "CHRISTMAS DINNER",
+      "weight": 20.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "CHURCH",
+      "weight": 13.0
+    },
+    {
+      "source": "TINY TIM",
+      "target": "CHURCH",
+      "weight": 13.0
+    },
+    {
+      "source": "CHRISTMAS DAY",
+      "target": "CHRISTMAS DINNER",
+      "weight": 1.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "LONDON",
+      "weight": 8.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "BAKER'S SHOP",
+      "weight": 7.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "GOOSE",
+      "weight": 9.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "CHRISTMAS",
+      "weight": 18.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "PARKS",
+      "weight": 4.0
+    },
+    {
+      "source": "BAKER'S SHOP",
+      "target": "GOOSE",
+      "weight": 8.0
+    },
+    {
+      "source": "LONDON",
+      "target": "CHURCH",
+      "weight": 7.0
+    },
+    {
+      "source": "CHRISTMAS",
+      "target": "CHURCH",
+      "weight": 7.0
+    },
+    {
+      "source": "GOOSE",
+      "target": "CHRISTMAS DINNER",
+      "weight": 9.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "CHURCH",
+      "weight": 1.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "BOB CRATCHIT",
+      "weight": 29.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "MRS. CRATCHIT",
+      "weight": 29.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "TINY TIM",
+      "weight": 29.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "BELINDA CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "YOUNG CRATCHITS",
+      "weight": 8.0
+    },
+    {
+      "source": "CHRISTMAS DINNER",
+      "target": "CHRISTMAS",
+      "weight": 9.0
+    },
+    {
+      "source": "MRS. CRATCHIT",
+      "target": "BACK-YARD",
+      "weight": 5.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "HEARTH",
+      "weight": 8.0
+    },
+    {
+      "source": "TINY TIM",
+      "target": "POOR CHIMNEY CORNER",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "TINY TIM",
+      "weight": 9.0
+    },
+    {
+      "source": "THE GHOST",
+      "target": "TINY TIM",
+      "weight": 8.0
+    },
+    {
+      "source": "THE GHOST",
+      "target": "FUTURE",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "FUTURE",
+      "weight": 1.0
+    },
+    {
+      "source": "MR. SCROOGE",
+      "target": "FOUNDER OF THE FEAST",
+      "weight": 8.0
+    },
+    {
+      "source": "COPPER",
+      "target": "CHRISTMAS PUDDING",
+      "weight": 7.0
+    },
+    {
+      "source": "EATING-HOUSE",
+      "target": "PASTRY-COOK'S",
+      "weight": 5.0
+    },
+    {
+      "source": "PASTRY-COOK'S",
+      "target": "LAUNDRESS'S",
+      "weight": 5.0
+    },
+    {
+      "source": "CHRISTMAS HOLLY",
+      "target": "CHRISTMAS PUDDING",
+      "weight": 7.0
+    },
+    {
+      "source": "JUG",
+      "target": "GLASS",
+      "weight": 6.0
+    },
+    {
+      "source": "GLASS",
+      "target": "CUSTARD CUP",
+      "weight": 6.0
+    },
+    {
+      "source": "CHESTNUTS",
+      "target": "HEARTH",
+      "weight": 7.0
+    },
+    {
+      "source": "APPLE SAUCE",
+      "target": "CHRISTMAS GOOSE",
+      "weight": 6.0
+    },
+    {
+      "source": "MASHED POTATOES",
+      "target": "CHRISTMAS GOOSE",
+      "weight": 6.0
+    },
+    {
+      "source": "CHRISTMAS PUDDING",
+      "target": "CHRISTMAS DINNER",
+      "weight": 8.0
+    },
+    {
+      "source": "CHRISTMAS GOOSE",
+      "target": "CHRISTMAS DINNER",
+      "weight": 8.0
+    },
+    {
+      "source": "SURPLUS POPULATION",
+      "target": "SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "SURPLUS POPULATION",
+      "target": "THE GHOST",
+      "weight": 1.0
+    },
+    {
+      "source": "TINY TIM",
+      "target": "THE CRATCHIT FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "PETER CRATCHIT",
+      "target": "THE CRATCHIT FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "MARTHA CRATCHIT",
+      "target": "THE CRATCHIT FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "THE CRATCHIT FAMILY",
+      "target": "THE FEAST",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "THE CRATCHIT FAMILY",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CHRISTMAS DAY",
+      "weight": 7.0
+    },
+    {
+      "source": "THE SPIRIT",
+      "target": "SCROOGE",
+      "weight": 10.0
+    },
+    {
+      "source": "THE SPIRIT",
+      "target": "THE CRATCHIT FAMILY",
+      "weight": 8.0
+    },
+    {
+      "source": "MARTHA CRATCHIT",
+      "target": "THE MILLINER'S",
+      "weight": 7.0
+    },
+    {
+      "source": "THE LAMPLIGHTER",
+      "target": "THE STREET",
+      "weight": 6.0
+    },
+    {
+      "source": "THE STREET",
+      "target": "CHRISTMAS DAY",
+      "weight": 1.0
+    },
+    {
+      "source": "MARTHA CRATCHIT",
+      "target": "COUNTESS",
+      "weight": 3.0
+    },
+    {
+      "source": "MARTHA CRATCHIT",
+      "target": "LORD",
+      "weight": 3.0
+    },
+    {
+      "source": "LORD",
+      "target": "PETER CRATCHIT",
+      "weight": 2.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "MASTER PETER",
+      "weight": 8.0
+    },
+    {
+      "source": "THE CHILDREN",
+      "target": "THE CRATCHIT FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "GUESTS",
+      "target": "HOUSE",
+      "weight": 7.0
+    },
+    {
+      "source": "HANDSOME GIRLS",
+      "target": "NEIGHBOUR",
+      "weight": 6.0
+    },
+    {
+      "source": "HANDSOME GIRLS",
+      "target": "SINGLE MAN",
+      "weight": 2.0
+    },
+    {
+      "source": "SPIRIT'S TORCH",
+      "target": "THE CRATCHIT FAMILY",
+      "weight": 7.0
+    },
+    {
+      "source": "TINY TIM",
+      "target": "SONG ABOUT A LOST CHILD",
+      "weight": 7.0
+    },
+    {
+      "source": "PETER CRATCHIT",
+      "target": "PAWNBROKER'S",
+      "weight": 3.0
+    },
+    {
+      "source": "KITCHENS",
+      "target": "THE STREET",
+      "weight": 5.0
+    },
+    {
+      "source": "PARLOURS",
+      "target": "THE STREET",
+      "weight": 5.0
+    },
+    {
+      "source": "ROOMS",
+      "target": "THE STREET",
+      "weight": 5.0
+    },
+    {
+      "source": "HOUSE",
+      "target": "THE STREET",
+      "weight": 5.0
+    },
+    {
+      "source": "WINDOW-BLINDS",
+      "target": "HOUSE",
+      "weight": 4.0
+    },
+    {
+      "source": "SNOW",
+      "target": "THE STREET",
+      "weight": 5.0
+    },
+    {
+      "source": "EVENING",
+      "target": "THE LAMPLIGHTER",
+      "weight": 6.0
+    },
+    {
+      "source": "FIRE",
+      "target": "KITCHENS",
+      "weight": 5.0
+    },
+    {
+      "source": "FIRE",
+      "target": "PARLOURS",
+      "weight": 5.0
+    },
+    {
+      "source": "FIRE",
+      "target": "ROOMS",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "THE SPIRIT",
+      "weight": 9.0
+    },
+    {
+      "source": "THE SPIRIT",
+      "target": "MINERS",
+      "weight": 6.0
+    },
+    {
+      "source": "MINERS",
+      "target": "OLD MAN MINER",
+      "weight": 8.0
+    },
+    {
+      "source": "MINERS",
+      "target": "MOOR",
+      "weight": 8.0
+    },
+    {
+      "source": "THE SPIRIT",
+      "target": "LIGHTHOUSE KEEPERS",
+      "weight": 6.0
+    },
+    {
+      "source": "LIGHTHOUSE KEEPERS",
+      "target": "ELDER LIGHTHOUSE KEEPER",
+      "weight": 8.0
+    },
+    {
+      "source": "LIGHTHOUSE KEEPERS",
+      "target": "LIGHTHOUSE",
+      "weight": 9.0
+    },
+    {
+      "source": "THE SPIRIT",
+      "target": "SHIP CREW",
+      "weight": 6.0
+    },
+    {
+      "source": "SHIP CREW",
+      "target": "SHIP",
+      "weight": 9.0
+    },
+    {
+      "source": "MINERS",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "LIGHTHOUSE KEEPERS",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "SHIP CREW",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "OLD MAN MINER",
+      "target": "OLD WOMAN MINER",
+      "weight": 9.0
+    },
+    {
+      "source": "OLD MAN MINER",
+      "target": "CHILDREN OF MINERS",
+      "weight": 8.0
+    },
+    {
+      "source": "OLD WOMAN MINER",
+      "target": "CHILDREN OF MINERS",
+      "weight": 8.0
+    },
+    {
+      "source": "MINERS",
+      "target": "CHILDREN OF MINERS",
+      "weight": 8.0
+    },
+    {
+      "source": "MINERS",
+      "target": "OLD WOMAN MINER",
+      "weight": 8.0
+    },
+    {
+      "source": "MINERS",
+      "target": "BURIAL-PLACE OF GIANTS",
+      "weight": 7.0
+    },
+    {
+      "source": "MOOR",
+      "target": "BURIAL-PLACE OF GIANTS",
+      "weight": 8.0
+    },
+    {
+      "source": "MOOR",
+      "target": "WEST",
+      "weight": 5.0
+    },
+    {
+      "source": "LIGHTHOUSE",
+      "target": "REEF OF SUNKEN ROCKS",
+      "weight": 9.0
+    },
+    {
+      "source": "LIGHTHOUSE",
+      "target": "SEA",
+      "weight": 8.0
+    },
+    {
+      "source": "LIGHTHOUSE KEEPERS",
+      "target": "SEA",
+      "weight": 8.0
+    },
+    {
+      "source": "SHIP",
+      "target": "SEA",
+      "weight": 9.0
+    },
+    {
+      "source": "SHIP CREW",
+      "target": "OFFICERS",
+      "weight": 8.0
+    },
+    {
+      "source": "SHIP CREW",
+      "target": "HELMSMAN",
+      "weight": 8.0
+    },
+    {
+      "source": "SHIP CREW",
+      "target": "LOOK-OUT",
+      "weight": 8.0
+    },
+    {
+      "source": "OFFICERS",
+      "target": "CHRISTMAS DAY",
+      "weight": 7.0
+    },
+    {
+      "source": "HELMSMAN",
+      "target": "CHRISTMAS DAY",
+      "weight": 7.0
+    },
+    {
+      "source": "LOOK-OUT",
+      "target": "CHRISTMAS DAY",
+      "weight": 7.0
+    },
+    {
+      "source": "MINERS",
+      "target": "CHRISTMAS SONG",
+      "weight": 8.0
+    },
+    {
+      "source": "OLD MAN MINER",
+      "target": "CHRISTMAS SONG",
+      "weight": 8.0
+    },
+    {
+      "source": "CHRISTMAS SONG",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "CHRISTMAS DAY",
+      "target": "CHRISTMAS",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "FRED",
+      "weight": 17.0
+    },
+    {
+      "source": "FRED",
+      "target": "SCROOGE'S NIECE",
+      "weight": 16.0
+    },
+    {
+      "source": "SCROOGE'S NIECE",
+      "target": "SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE'S NIECE'S SISTERS",
+      "target": "SCROOGE'S NIECE",
+      "weight": 7.0
+    },
+    {
+      "source": "TOPPER",
+      "target": "SCROOGE'S NIECE'S SISTERS",
+      "weight": 6.0
+    },
+    {
+      "source": "FRED",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE'S FRIENDS",
+      "target": "FRED",
+      "weight": 7.0
+    },
+    {
+      "source": "THE LADIES",
+      "target": "SCROOGE'S NIECE",
+      "weight": 7.0
+    },
+    {
+      "source": "THE PLUMP SISTER",
+      "target": "TOPPER",
+      "weight": 8.0
+    },
+    {
+      "source": "THE SISTER WITH ROSES",
+      "target": "SCROOGE'S NIECE'S SISTERS",
+      "weight": 7.0
+    },
+    {
+      "source": "THE HOUSEKEEPERS",
+      "target": "FRED",
+      "weight": 5.0
+    },
+    {
+      "source": "THE CLERK",
+      "target": "SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "THE DINNER",
+      "target": "FRED",
+      "weight": 7.0
+    },
+    {
+      "source": "THE DESSERT",
+      "target": "THE DINNER",
+      "weight": 6.0
+    },
+    {
+      "source": "THE MUSIC",
+      "target": "FRED",
+      "weight": 6.0
+    },
+    {
+      "source": "THE TEA",
+      "target": "THE MUSIC",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S NIECE",
+      "weight": 7.0
+    },
+    {
+      "source": "TOPPER",
+      "target": "PLUMP SISTER",
+      "weight": 13.0
+    },
+    {
+      "source": "SCROOGE'S NEPHEW",
+      "target": "SCROOGE'S NIECE",
+      "weight": 7.0
+    },
+    {
+      "source": "LONDON",
+      "target": "SCROOGE'S NEPHEW",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE'S FAMILY",
+      "target": "GUESTS",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S FAMILY",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE'S NEPHEW",
+      "target": "GUESTS",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE'S NIECE",
+      "target": "BOARDING-SCHOOL",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "BOARDING-SCHOOL",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SEXT\u00d3N",
+      "weight": 6.0
+    },
+    {
+      "source": "JACOB MARLEY",
+      "target": "SEXT\u00d3N",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE'S NIECE",
+      "target": "PIANO",
+      "weight": 7.0
+    },
+    {
+      "source": "GUESTS",
+      "target": "PIANO",
+      "weight": 6.0
+    },
+    {
+      "source": "TOPPER",
+      "target": "FIRE-IRONS",
+      "weight": 6.0
+    },
+    {
+      "source": "TOPPER",
+      "target": "CURTAINS",
+      "weight": 6.0
+    },
+    {
+      "source": "TOPPER",
+      "target": "CHAIRS",
+      "weight": 6.0
+    },
+    {
+      "source": "TOPPER",
+      "target": "RING",
+      "weight": 7.0
+    },
+    {
+      "source": "TOPPER",
+      "target": "CHAIN",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE'S NEPHEW",
+      "target": "GAME OF YES AND NO",
+      "weight": 8.0
+    },
+    {
+      "source": "GUESTS",
+      "target": "GAME OF YES AND NO",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE'S NIECE",
+      "target": "GAME OF HOW, WHEN, AND WHERE",
+      "weight": 7.0
+    },
+    {
+      "source": "GUESTS",
+      "target": "GAME OF BLIND MAN'S-BUFF",
+      "weight": 8.0
+    },
+    {
+      "source": "GUESTS",
+      "target": "GAME OF FORFEITS",
+      "weight": 8.0
+    },
+    {
+      "source": "WHITECHAPEL",
+      "target": "LONDON",
+      "weight": 7.0
+    },
+    {
+      "source": "SPIRIT",
+      "target": "SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "GAME OF YES AND NO",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "GAME OF BLIND MAN'S-BUFF",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "GAME OF FORFEITS",
+      "target": "CHRISTMAS",
+      "weight": 8.0
+    },
+    {
+      "source": "GAME OF HOW, WHEN, AND WHERE",
+      "target": "CHRISTMAS",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "PLUMP SISTER",
+      "weight": 5.0
+    },
+    {
+      "source": "GHOST",
+      "target": "BOY (IGNORANCE)",
+      "weight": 8.0
+    },
+    {
+      "source": "GHOST",
+      "target": "GIRL",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "LONDON",
+      "weight": 16.0
+    },
+    {
+      "source": "GHOST",
+      "target": "ALMSHOUSE",
+      "weight": 6.0
+    },
+    {
+      "source": "GHOST",
+      "target": "HOSPITAL",
+      "weight": 6.0
+    },
+    {
+      "source": "GHOST",
+      "target": "GAOL",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CHRISTMAS HOLIDAYS",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "TWELFTH-NIGHT PARTY",
+      "weight": 5.0
+    },
+    {
+      "source": "GHOST",
+      "target": "CHRISTMAS HOLIDAYS",
+      "weight": 7.0
+    },
+    {
+      "source": "BOY (IGNORANCE)",
+      "target": "GIRL",
+      "weight": 1.0
+    },
+    {
+      "source": "SPIRIT OF CHRISTMAS PRESENT",
+      "target": "SCROOGE",
+      "weight": 9.0
+    },
+    {
+      "source": "COMPANY AT FRED'S PARTY",
+      "target": "FRED",
+      "weight": 8.0
+    },
+    {
+      "source": "COMPANY AT FRED'S PARTY",
+      "target": "SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "FOREIGN LANDS",
+      "target": "SPIRIT OF CHRISTMAS PRESENT",
+      "weight": 6.0
+    },
+    {
+      "source": "SICK-BEDS",
+      "target": "SPIRIT OF CHRISTMAS PRESENT",
+      "weight": 6.0
+    },
+    {
+      "source": "MIDNIGHT",
+      "target": "SPIRIT OF CHRISTMAS PRESENT",
+      "weight": 8.0
+    },
+    {
+      "source": "THREE-QUARTERS PAST ELEVEN",
+      "target": "MIDNIGHT",
+      "weight": 7.0
+    },
+    {
+      "source": "CHIMES",
+      "target": "MIDNIGHT",
+      "weight": 6.0
+    },
+    {
+      "source": "POVERTY",
+      "target": "SPIRIT OF CHRISTMAS PRESENT",
+      "weight": 6.0
+    },
+    {
+      "source": "MISERY'S REFUGE",
+      "target": "SPIRIT OF CHRISTMAS PRESENT",
+      "weight": 6.0
+    },
+    {
+      "source": "AUTHORITY",
+      "target": "MISERY'S REFUGE",
+      "weight": 5.0
+    },
+    {
+      "source": "MAN",
+      "target": "BOY (IGNORANCE)",
+      "weight": 8.0
+    },
+    {
+      "source": "MAN",
+      "target": "GIRL",
+      "weight": 1.0
+    },
+    {
+      "source": "SPIRIT",
+      "target": "IGNORANCE",
+      "weight": 8.0
+    },
+    {
+      "source": "SPIRIT",
+      "target": "WANT",
+      "weight": 8.0
+    },
+    {
+      "source": "IGNORANCE",
+      "target": "WANT",
+      "weight": 7.0
+    },
+    {
+      "source": "SPIRIT",
+      "target": "CITY",
+      "weight": 7.0
+    },
+    {
+      "source": "CITY",
+      "target": "CHANGE",
+      "weight": 6.0
+    },
+    {
+      "source": "PRISONS",
+      "target": "CITY",
+      "weight": 5.0
+    },
+    {
+      "source": "WORKHOUSES",
+      "target": "CITY",
+      "weight": 5.0
+    },
+    {
+      "source": "THE LAST OF THE SPIRITS",
+      "target": "GHOST OF CHRISTMAS YET TO COME",
+      "weight": 9.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "THE LAST OF THE SPIRITS",
+      "weight": 1.0
+    },
+    {
+      "source": "BUSINESS MEN",
+      "target": "MERCHANTS",
+      "weight": 7.0
+    },
+    {
+      "source": "BUSINESS MEN",
+      "target": "CITY HEART",
+      "weight": 7.0
+    },
+    {
+      "source": "BUSINESS MEN",
+      "target": "DEATH OF UNNAMED MAN",
+      "weight": 8.0
+    },
+    {
+      "source": "GREAT FAT MAN",
+      "target": "BUSINESS MEN",
+      "weight": 8.0
+    },
+    {
+      "source": "RED-FACED GENTLEMAN",
+      "target": "BUSINESS MEN",
+      "weight": 8.0
+    },
+    {
+      "source": "MAN WITH LARGE CHIN",
+      "target": "BUSINESS MEN",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "BUSINESS MEN",
+      "weight": 7.0
+    },
+    {
+      "source": "NIGHT",
+      "target": "THE LAST OF THE SPIRITS",
+      "weight": 7.0
+    },
+    {
+      "source": "DEATH OF UNNAMED MAN",
+      "target": "CITY",
+      "weight": 7.0
+    },
+    {
+      "source": "DEATH OF UNNAMED MAN",
+      "target": "SCROOGE",
+      "weight": 9.0
+    },
+    {
+      "source": "GHOST OF CHRISTMAS YET TO COME",
+      "target": "DEATH OF UNNAMED MAN",
+      "weight": 9.0
+    },
+    {
+      "source": "CHANGE",
+      "target": "MERCHANTS",
+      "weight": 8.0
+    },
+    {
+      "source": "CITY HEART",
+      "target": "CHANGE",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "JACOB",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "PHANTOM",
+      "weight": 18.0
+    },
+    {
+      "source": "BUSINESSMEN",
+      "target": "SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "RED-FACED GENTLEMAN",
+      "target": "MAN WITH LARGE CHIN",
+      "weight": 6.0
+    },
+    {
+      "source": "BUSINESS COMPANY",
+      "target": "SCROOGE",
+      "weight": 5.0
+    },
+    {
+      "source": "TOWN",
+      "target": "DEN OF INFAMOUS RESORT",
+      "weight": 8.0
+    },
+    {
+      "source": "DEN OF INFAMOUS RESORT",
+      "target": "RAG-AND-BONE SHOP",
+      "weight": 9.0
+    },
+    {
+      "source": "RAG-AND-BONE SHOP",
+      "target": "GREY-HAIRED RASCAL",
+      "weight": 9.0
+    },
+    {
+      "source": "FUNERAL OF THE DECEASED",
+      "target": "BUSINESSMEN",
+      "weight": 7.0
+    },
+    {
+      "source": "CONVERSATION ABOUT DEATH",
+      "target": "BUSINESSMEN",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "FUNERAL OF THE DECEASED",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CONVERSATION ABOUT DEATH",
+      "weight": 1.0
+    },
+    {
+      "source": "PORCH",
+      "target": "BUSINESS DISTRICT",
+      "weight": 8.0
+    },
+    {
+      "source": "BUSINESS DISTRICT",
+      "target": "TOWN",
+      "weight": 9.0
+    },
+    {
+      "source": "OBSCURE PART OF TOWN",
+      "target": "TOWN",
+      "weight": 9.0
+    },
+    {
+      "source": "ALLEYS AND ARCHWAYS",
+      "target": "OBSCURE PART OF TOWN",
+      "weight": 8.0
+    },
+    {
+      "source": "CHRISTMAS-TIME",
+      "target": "CONVERSATION ABOUT DEATH",
+      "weight": 7.0
+    },
+    {
+      "source": "DEATH OF OLD SCRATCH",
+      "target": "FUNERAL OF THE DECEASED",
+      "weight": 9.0
+    },
+    {
+      "source": "CHANGE OF LIFE",
+      "target": "SCROOGE",
+      "weight": 9.0
+    },
+    {
+      "source": "GROUP OF SPEAKERS AND LISTENERS",
+      "target": "BUSINESSMEN",
+      "weight": 8.0
+    },
+    {
+      "source": "GROUP OF SPEAKERS AND LISTENERS",
+      "target": "RED-FACED GENTLEMAN",
+      "weight": 8.0
+    },
+    {
+      "source": "GROUP OF SPEAKERS AND LISTENERS",
+      "target": "MAN WITH LARGE CHIN",
+      "weight": 1.0
+    },
+    {
+      "source": "OLD JOE",
+      "target": "SHOP",
+      "weight": 10.0
+    },
+    {
+      "source": "CHARWOMAN",
+      "target": "OLD JOE",
+      "weight": 8.0
+    },
+    {
+      "source": "MRS. DILBER",
+      "target": "OLD JOE",
+      "weight": 8.0
+    },
+    {
+      "source": "UNDERTAKER'S MAN",
+      "target": "OLD JOE",
+      "weight": 8.0
+    },
+    {
+      "source": "CHARWOMAN",
+      "target": "MRS. DILBER",
+      "weight": 7.0
+    },
+    {
+      "source": "CHARWOMAN",
+      "target": "UNDERTAKER'S MAN",
+      "weight": 7.0
+    },
+    {
+      "source": "MRS. DILBER",
+      "target": "UNDERTAKER'S MAN",
+      "weight": 7.0
+    },
+    {
+      "source": "CHARWOMAN",
+      "target": "DEAD MAN",
+      "weight": 8.0
+    },
+    {
+      "source": "MRS. DILBER",
+      "target": "DEAD MAN",
+      "weight": 8.0
+    },
+    {
+      "source": "UNDERTAKER'S MAN",
+      "target": "DEAD MAN",
+      "weight": 8.0
+    },
+    {
+      "source": "SELLING OF THE DEAD MAN'S POSSESSIONS",
+      "target": "CHARWOMAN",
+      "weight": 10.0
+    },
+    {
+      "source": "SELLING OF THE DEAD MAN'S POSSESSIONS",
+      "target": "MRS. DILBER",
+      "weight": 10.0
+    },
+    {
+      "source": "SELLING OF THE DEAD MAN'S POSSESSIONS",
+      "target": "UNDERTAKER'S MAN",
+      "weight": 10.0
+    },
+    {
+      "source": "SELLING OF THE DEAD MAN'S POSSESSIONS",
+      "target": "OLD JOE",
+      "weight": 10.0
+    },
+    {
+      "source": "SELLING OF THE DEAD MAN'S POSSESSIONS",
+      "target": "SHOP",
+      "weight": 10.0
+    },
+    {
+      "source": "SELLING OF THE DEAD MAN'S POSSESSIONS",
+      "target": "DEAD MAN",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "DEAD MAN",
+      "weight": 10.0
+    },
+    {
+      "source": "PHANTOM",
+      "target": "MEETING IN OLD JOE'S SHOP",
+      "weight": 9.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "MEETING IN OLD JOE'S SHOP",
+      "weight": 8.0
+    },
+    {
+      "source": "PARLOUR",
+      "target": "SHOP",
+      "weight": 10.0
+    },
+    {
+      "source": "MEETING IN OLD JOE'S SHOP",
+      "target": "PARLOUR",
+      "weight": 1.0
+    },
+    {
+      "source": "THE WOMAN",
+      "target": "THE DEAD MAN",
+      "weight": 7.0
+    },
+    {
+      "source": "JOE",
+      "target": "THE DEAD MAN",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "THE PHANTOM",
+      "weight": 9.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "THE DEAD MAN",
+      "weight": 8.0
+    },
+    {
+      "source": "THE DEAD MAN",
+      "target": "THE ROOM",
+      "weight": 9.0
+    },
+    {
+      "source": "DEATH",
+      "target": "THE DEAD MAN",
+      "weight": 9.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "DEATH",
+      "weight": 7.0
+    },
+    {
+      "source": "THE PHANTOM",
+      "target": "DEATH",
+      "weight": 1.0
+    },
+    {
+      "source": "THE FIRST WOMAN",
+      "target": "JOE",
+      "weight": 8.0
+    },
+    {
+      "source": "THE FIRST WOMAN",
+      "target": "THE BUNDLE",
+      "weight": 8.0
+    },
+    {
+      "source": "THE FIRST WOMAN",
+      "target": "THE SHIRT",
+      "weight": 8.0
+    },
+    {
+      "source": "THE FIRST WOMAN",
+      "target": "THE BLANKETS",
+      "weight": 8.0
+    },
+    {
+      "source": "THE FIRST WOMAN",
+      "target": "THE BED",
+      "weight": 8.0
+    },
+    {
+      "source": "THE FIRST WOMAN",
+      "target": "THE DEAD MAN",
+      "weight": 7.0
+    },
+    {
+      "source": "THE OLD MAN",
+      "target": "THE LAMP",
+      "weight": 7.0
+    },
+    {
+      "source": "THE OLD MAN",
+      "target": "THE DEAD MAN",
+      "weight": 6.0
+    },
+    {
+      "source": "THE HOUSE",
+      "target": "THE DEAD MAN",
+      "weight": 9.0
+    },
+    {
+      "source": "THE BED",
+      "target": "THE DEAD MAN",
+      "weight": 9.0
+    },
+    {
+      "source": "THE SHEET",
+      "target": "THE DEAD MAN",
+      "weight": 8.0
+    },
+    {
+      "source": "THE BLANKETS",
+      "target": "THE DEAD MAN",
+      "weight": 8.0
+    },
+    {
+      "source": "THE SHIRT",
+      "target": "THE DEAD MAN",
+      "weight": 8.0
+    },
+    {
+      "source": "THE BUNDLE",
+      "target": "THE DEAD MAN",
+      "weight": 8.0
+    },
+    {
+      "source": "THE FLANNEL BAG",
+      "target": "JOE",
+      "weight": 7.0
+    },
+    {
+      "source": "THE LAMP",
+      "target": "THE ROOM",
+      "weight": 7.0
+    },
+    {
+      "source": "THE ROOM",
+      "target": "THE HOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "THE BED",
+      "target": "THE ROOM",
+      "weight": 8.0
+    },
+    {
+      "source": "THE SHEET",
+      "target": "THE BED",
+      "weight": 8.0
+    },
+    {
+      "source": "THE BLANKETS",
+      "target": "THE BED",
+      "weight": 8.0
+    },
+    {
+      "source": "THE SHIRT",
+      "target": "THE BED",
+      "weight": 1.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE GHOST",
+      "weight": 9.0
+    },
+    {
+      "source": "CAROLINE",
+      "target": "CAROLINE'S HUSBAND",
+      "weight": 10.0
+    },
+    {
+      "source": "CAROLINE",
+      "target": "THE CREDITOR",
+      "weight": 8.0
+    },
+    {
+      "source": "CAROLINE'S HUSBAND",
+      "target": "THE CREDITOR",
+      "weight": 8.0
+    },
+    {
+      "source": "CAROLINE",
+      "target": "THE EVENT OF THE CREDITOR'S DEATH",
+      "weight": 8.0
+    },
+    {
+      "source": "CAROLINE'S HUSBAND",
+      "target": "THE EVENT OF THE CREDITOR'S DEATH",
+      "weight": 8.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "CRATCHIT'S WIFE",
+      "weight": 10.0
+    },
+    {
+      "source": "CRATCHIT'S WIFE",
+      "target": "TINY TIM",
+      "weight": 10.0
+    },
+    {
+      "source": "PETER CRATCHIT",
+      "target": "TINY TIM",
+      "weight": 18.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "BOB CRATCHIT'S HOUSE",
+      "weight": 10.0
+    },
+    {
+      "source": "CRATCHIT'S WIFE",
+      "target": "BOB CRATCHIT'S HOUSE",
+      "weight": 10.0
+    },
+    {
+      "source": "PETER CRATCHIT",
+      "target": "BOB CRATCHIT'S HOUSE",
+      "weight": 10.0
+    },
+    {
+      "source": "TINY TIM",
+      "target": "BOB CRATCHIT'S HOUSE",
+      "weight": 10.0
+    },
+    {
+      "source": "THE EVENT OF TINY TIM'S DEATH",
+      "target": "BOB CRATCHIT",
+      "weight": 10.0
+    },
+    {
+      "source": "THE EVENT OF TINY TIM'S DEATH",
+      "target": "CRATCHIT'S WIFE",
+      "weight": 10.0
+    },
+    {
+      "source": "THE EVENT OF TINY TIM'S DEATH",
+      "target": "PETER CRATCHIT",
+      "weight": 10.0
+    },
+    {
+      "source": "THE EVENT OF TINY TIM'S DEATH",
+      "target": "TINY TIM",
+      "weight": 10.0
+    },
+    {
+      "source": "THE TOWN",
+      "target": "CAROLINE",
+      "weight": 5.0
+    },
+    {
+      "source": "THE TOWN",
+      "target": "CAROLINE'S HUSBAND",
+      "weight": 5.0
+    },
+    {
+      "source": "THE TOWN",
+      "target": "BOB CRATCHIT",
+      "weight": 5.0
+    },
+    {
+      "source": "THE TOWN",
+      "target": "CRATCHIT'S WIFE",
+      "weight": 5.0
+    },
+    {
+      "source": "THE TOWN",
+      "target": "PETER CRATCHIT",
+      "weight": 5.0
+    },
+    {
+      "source": "THE TOWN",
+      "target": "TINY TIM",
+      "weight": 5.0
+    },
+    {
+      "source": "THE TOWN",
+      "target": "THE CREDITOR",
+      "weight": 5.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE EVENT OF THE CREDITOR'S DEATH",
+      "weight": 7.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE EVENT OF TINY TIM'S DEATH",
+      "weight": 1.0
+    },
+    {
+      "source": "THE PHANTOM",
+      "target": "EBENEZER SCROOGE",
+      "weight": 18.0
+    },
+    {
+      "source": "THE SPIRIT",
+      "target": "EBENEZER SCROOGE",
+      "weight": 9.0
+    },
+    {
+      "source": "THE PHANTOM",
+      "target": "THE SPIRIT",
+      "weight": 10.0
+    },
+    {
+      "source": "THE MOTHER IN THE FIRST SCENE",
+      "target": "CAROLINE",
+      "weight": 10.0
+    },
+    {
+      "source": "THE CHILDREN IN THE FIRST SCENE",
+      "target": "CAROLINE",
+      "weight": 10.0
+    },
+    {
+      "source": "THE HALF-DRUNKEN WOMAN",
+      "target": "CAROLINE'S HUSBAND",
+      "weight": 7.0
+    },
+    {
+      "source": "THE DARK CHAMBER",
+      "target": "THE SCENE OF THE DEAD MAN",
+      "weight": 8.0
+    },
+    {
+      "source": "THE ROOM BY DAYLIGHT",
+      "target": "THE DINNER BY THE FIRE",
+      "weight": 7.0
+    },
+    {
+      "source": "SEVERAL STREETS",
+      "target": "EBENEZER SCROOGE",
+      "weight": 6.0
+    },
+    {
+      "source": "THE LONG-EXPECTED KNOCK",
+      "target": "THE DINNER BY THE FIRE",
+      "weight": 8.0
+    },
+    {
+      "source": "THE SCENE OF THE DEAD MAN",
+      "target": "EBENEZER SCROOGE",
+      "weight": 8.0
+    },
+    {
+      "source": "THE SCENE OF THE DEAD MAN",
+      "target": "THE PHANTOM",
+      "weight": 8.0
+    },
+    {
+      "source": "THE SCENE OF THE DEAD MAN",
+      "target": "THE DARK CHAMBER",
+      "weight": 1.0
+    },
+    {
+      "source": "CRATCHIT FAMILY",
+      "target": "PETER CRATCHIT",
+      "weight": 19.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "MR. SCROOGE'S NEPHEW",
+      "weight": 7.0
+    },
+    {
+      "source": "MR. SCROOGE'S NEPHEW",
+      "target": "CRATCHIT FAMILY",
+      "weight": 6.0
+    },
+    {
+      "source": "MR. SCROOGE'S NEPHEW",
+      "target": "MR. SCROOGE",
+      "weight": 10.0
+    },
+    {
+      "source": "CHRISTMAS",
+      "target": "CRATCHIT FAMILY",
+      "weight": 8.0
+    },
+    {
+      "source": "SUNDAY",
+      "target": "BOB CRATCHIT",
+      "weight": 7.0
+    },
+    {
+      "source": "SUNDAY",
+      "target": "CRATCHIT FAMILY",
+      "weight": 1.0
+    },
+    {
+      "source": "CRATCHIT GIRLS",
+      "target": "MRS. CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "CRATCHIT GIRLS",
+      "target": "BOB CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "CRATCHIT CHILDREN",
+      "target": "BOB CRATCHIT",
+      "weight": 10.0
+    },
+    {
+      "source": "CRATCHIT CHILDREN",
+      "target": "MRS. CRATCHIT",
+      "weight": 10.0
+    },
+    {
+      "source": "CRATCHIT CHILDREN",
+      "target": "TINY TIM",
+      "weight": 10.0
+    },
+    {
+      "source": "ROBERT CRATCHIT",
+      "target": "BOB CRATCHIT",
+      "weight": 10.0
+    },
+    {
+      "source": "THE STREET",
+      "target": "BOB CRATCHIT",
+      "weight": 7.0
+    },
+    {
+      "source": "THE ROOM ABOVE",
+      "target": "BOB CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "THE ROOM ABOVE",
+      "target": "TINY TIM",
+      "weight": 9.0
+    },
+    {
+      "source": "THE FIRE",
+      "target": "CRATCHIT FAMILY",
+      "weight": 8.0
+    },
+    {
+      "source": "THE TABLE",
+      "target": "MRS. CRATCHIT",
+      "weight": 7.0
+    },
+    {
+      "source": "THE TABLE",
+      "target": "CRATCHIT FAMILY",
+      "weight": 1.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "SCROOGE'S OFFICE",
+      "weight": 9.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "GHOST OF CHRISTMAS YET TO COME",
+      "weight": 18.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "CHURCHYARD",
+      "weight": 9.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "CHRISTMAS",
+      "weight": 9.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "CRATCHIT FAMILY",
+      "weight": 1.0
+    },
+    {
+      "source": "SPIRIT OF TINY TIM",
+      "target": "TINY TIM",
+      "weight": 8.0
+    },
+    {
+      "source": "THE GRAVE",
+      "target": "CHURCHYARD",
+      "weight": 9.0
+    },
+    {
+      "source": "THE HOUSE",
+      "target": "SCROOGE'S OFFICE",
+      "weight": 7.0
+    },
+    {
+      "source": "THE COURT",
+      "target": "SCROOGE'S OFFICE",
+      "weight": 7.0
+    },
+    {
+      "source": "THE BEDPOST",
+      "target": "THE ROOM",
+      "weight": 8.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE BEDPOST",
+      "weight": 8.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE ROOM",
+      "weight": 8.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE PAST",
+      "weight": 7.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE PRESENT",
+      "weight": 7.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE FUTURE",
+      "weight": 7.0
+    },
+    {
+      "source": "THE GHOST",
+      "target": "THE PHANTOM",
+      "weight": 1.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "GHOST OF CHRISTMAS PRESENT",
+      "weight": 8.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "SPIRITS",
+      "weight": 9.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "TINY TIM",
+      "weight": 18.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "THE BOY",
+      "weight": 7.0
+    },
+    {
+      "source": "THE BOY",
+      "target": "POULTERER",
+      "weight": 7.0
+    },
+    {
+      "source": "POULTERER",
+      "target": "BOB CRATCHIT",
+      "weight": 6.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "POULTERER",
+      "weight": 7.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "CHURCHES",
+      "weight": 5.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "CHRISTMAS DAY",
+      "weight": 9.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "NEW YEAR",
+      "weight": 5.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "SCROOGE'S HOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE'S HOUSE",
+      "target": "FIREPLACE",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE'S HOUSE",
+      "target": "WINDOW",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE'S HOUSE",
+      "target": "NEXT STREET",
+      "weight": 5.0
+    },
+    {
+      "source": "POULTERER",
+      "target": "NEXT STREET",
+      "weight": 6.0
+    },
+    {
+      "source": "POULTERER",
+      "target": "BOB CRATCHIT'S HOUSE",
+      "weight": 6.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "BOB CRATCHIT'S HOUSE",
+      "weight": 1.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "GHOST OF CHRISTMAS PAST",
+      "weight": 8.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "JOE MILLER",
+      "weight": 4.0
+    },
+    {
+      "source": "THE BOY",
+      "target": "SUNDAY",
+      "weight": 3.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "PRIZE TURKEY",
+      "weight": 8.0
+    },
+    {
+      "source": "PRIZE TURKEY",
+      "target": "BOB CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "STREET-DOOR",
+      "target": "SCROOGE'S HOUSE",
+      "weight": 6.0
+    },
+    {
+      "source": "CORNER",
+      "target": "NEXT STREET",
+      "weight": 5.0
+    },
+    {
+      "source": "POULTERER",
+      "target": "CORNER",
+      "weight": 6.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "HEAVEN",
+      "weight": 1.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "PORTLY GENTLEMAN",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CAMDEN TOWN",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CHURCH",
+      "weight": 5.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S NEPHEW (FRED)",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "FRED'S HOUSE",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S TRANSFORMATION",
+      "weight": 10.0
+    },
+    {
+      "source": "POULTERER'S MAN",
+      "target": "SCROOGE",
+      "weight": 5.0
+    },
+    {
+      "source": "TINY TIM",
+      "target": "BOB CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "JOE MILLER",
+      "target": "SCROOGE",
+      "weight": 2.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "BOB'S FAMILY",
+      "weight": 9.0
+    },
+    {
+      "source": "BOB'S FAMILY",
+      "target": "TINY TIM",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "BOB'S FAMILY",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S NIECE BY MARRIAGE",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "STREET-DOOR",
+      "weight": 5.0
+    },
+    {
+      "source": "PORTLY GENTLEMAN",
+      "target": "COUNTING-HOUSE",
+      "weight": 8.0
+    },
+    {
+      "source": "POULTERER'S MAN",
+      "target": "CAB",
+      "weight": 7.0
+    },
+    {
+      "source": "CAB",
+      "target": "CAMDEN TOWN",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "DINING-ROOM",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "KITCHENS OF HOUSES",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "WINDOWS",
+      "weight": 4.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "BEGGARS",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "CHILDREN",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "HOUSEKEEPERS",
+      "weight": 5.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "MISTRESS",
+      "weight": 7.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "GIRL",
+      "weight": 6.0
+    },
+    {
+      "source": "SCROOGE",
+      "target": "SCROOGE'S HAND",
+      "weight": 1.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "FRED",
+      "weight": 9.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "SCROOGE'S NIECE",
+      "weight": 7.0
+    },
+    {
+      "source": "FRED",
+      "target": "TOPPER",
+      "weight": 6.0
+    },
+    {
+      "source": "FRED",
+      "target": "PLUMP SISTER",
+      "weight": 6.0
+    },
+    {
+      "source": "EBENEZER SCROOGE",
+      "target": "SCROOGE'S TRANSFORMATION",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE'S TRANSFORMATION",
+      "target": "BOB CRATCHIT",
+      "weight": 9.0
+    },
+    {
+      "source": "SCROOGE'S TRANSFORMATION",
+      "target": "TINY TIM",
+      "weight": 9.0
+    },
+    {
+      "source": "CHRISTMAS DINNER AT FRED'S",
+      "target": "FRED",
+      "weight": 10.0
+    },
+    {
+      "source": "CHRISTMAS DINNER AT FRED'S",
+      "target": "EBENEZER SCROOGE",
+      "weight": 9.0
+    },
+    {
+      "source": "CHRISTMAS DINNER AT FRED'S",
+      "target": "SCROOGE'S NIECE",
+      "weight": 8.0
+    },
+    {
+      "source": "CHRISTMAS DINNER AT FRED'S",
+      "target": "TOPPER",
+      "weight": 7.0
+    },
+    {
+      "source": "CHRISTMAS DINNER AT FRED'S",
+      "target": "PLUMP SISTER",
+      "weight": 7.0
+    },
+    {
+      "source": "CHRISTMAS DAY",
+      "target": "EBENEZER SCROOGE",
+      "weight": 10.0
+    },
+    {
+      "source": "CHRISTMAS DAY",
+      "target": "BOB CRATCHIT",
+      "weight": 8.0
+    },
+    {
+      "source": "SCROOGE'S OFFICE",
+      "target": "EBENEZER SCROOGE",
+      "weight": 10.0
+    },
+    {
+      "source": "SCROOGE'S OFFICE",
+      "target": "BOB CRATCHIT",
+      "weight": 10.0
+    },
+    {
+      "source": "CITY",
+      "target": "EBENEZER SCROOGE",
+      "weight": 7.0
+    },
+    {
+      "source": "SPIRITS",
+      "target": "EBENEZER SCROOGE",
+      "weight": 10.0
+    },
+    {
+      "source": "BOB CRATCHIT",
+      "target": "BOB CRATCHIT'S FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "TINY TIM",
+      "target": "BOB CRATCHIT'S FAMILY",
+      "weight": 10.0
+    },
+    {
+      "source": "CITY",
+      "target": "TOWN",
+      "weight": 6.0
+    },
+    {
+      "source": "CITY",
+      "target": "BOROUGH",
+      "weight": 6.0
+    },
+    {
+      "source": "GOOD OLD WORLD",
+      "target": "CITY",
+      "weight": 7.0
+    },
+    {
+      "source": "GOOD OLD WORLD",
+      "target": "TOWN",
+      "weight": 7.0
+    },
+    {
+      "source": "GOOD OLD WORLD",
+      "target": "BOROUGH",
+      "weight": 7.0
+    },
+    {
+      "source": "COURT",
+      "target": "SCROOGE'S OFFICE",
+      "weight": 5.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "FOUNDATION",
+      "weight": 9.0
+    },
+    {
+      "source": "FOUNDATION",
+      "target": "UNITED STATES",
+      "weight": 1.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "weight": 27.0
+    },
+    {
+      "source": "UNITED STATES",
+      "target": "PROJECT GUTENBERG",
+      "weight": 7.0
+    },
+    {
+      "source": "UNITED STATES",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 6.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "UNITED STATES",
+      "weight": 15.0
+    },
+    {
+      "source": "TRANSCRIBER",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 8.0
+    },
+    {
+      "source": "WWW.GUTENBERG.ORG",
+      "target": "PROJECT GUTENBERG",
+      "weight": 9.0
+    },
+    {
+      "source": "GENERAL TERMS OF USE",
+      "target": "FULL PROJECT GUTENBERG LICENSE",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG TRADEMARK LICENSE",
+      "target": "PROJECT GUTENBERG",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG EBOOK",
+      "target": "PROJECT GUTENBERG",
+      "weight": 10.0
+    },
+    {
+      "source": "PROJECT GUTENBERG EBOOK",
+      "target": "A CHRISTMAS CAROL",
+      "weight": 10.0
+    },
+    {
+      "source": "PROJECT GUTENBERG EBOOK",
+      "target": "FULL PROJECT GUTENBERG LICENSE",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG EBOOK",
+      "target": "PROJECT GUTENBERG TRADEMARK LICENSE",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "FULL PROJECT GUTENBERG LICENSE",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "GENERAL TERMS OF USE",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "PROJECT GUTENBERG TRADEMARK LICENSE",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "TRANSCRIBER",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "WWW.GUTENBERG.ORG",
+      "weight": 15.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "FULL PROJECT GUTENBERG LICENSE",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "PROJECT GUTENBERG TRADEMARK LICENSE",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "GENERAL TERMS OF USE",
+      "weight": 1.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "WWW.GUTENBERG.ORG",
+      "weight": 24.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "COPYRIGHT HOLDER",
+      "weight": 6.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "PROJECT GUTENBERG VOLUNTEERS AND EMPLOYEES",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "DISTRIBUTION OF PROJECT GUTENBERG ELECTRONIC WORKS",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "ROYALTY PAYMENT TO PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "PERMISSION FOR USE OF PROJECT GUTENBERG TRADEMARK",
+      "weight": 8.0
+    },
+    {
+      "source": "COPYRIGHT HOLDER",
+      "target": "PERMISSION FOR USE OF PROJECT GUTENBERG TRADEMARK",
+      "weight": 6.0
+    },
+    {
+      "source": "PROJECT GUTENBERG VOLUNTEERS AND EMPLOYEES",
+      "target": "DISTRIBUTION OF PROJECT GUTENBERG ELECTRONIC WORKS",
+      "weight": 1.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "PROJECT GUTENBERG LICENSE",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LICENSE",
+      "target": "PROJECT GUTENBERG\u2122 TRADEMARK",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LICENSE",
+      "target": "SECTION 4",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LICENSE",
+      "target": "PARAGRAPH 1.E.1",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LICENSE",
+      "target": "PARAGRAPH 1.E.7",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LICENSE",
+      "target": "PARAGRAPH 1.E.8",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LICENSE",
+      "target": "PARAGRAPH 1.E.9",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LICENSE",
+      "target": "PARAGRAPH 1.F.3",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LICENSE",
+      "target": "PLAIN VANILLA ASCII",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "COUNTRY",
+      "weight": 1.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "MISSISSIPPI",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "INTERNAL REVENUE SERVICE",
+      "weight": 15.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "SALT LAKE CITY",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "VOLUNTEERS",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "TRADEMARK OWNER",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "DISTRIBUTOR",
+      "weight": 6.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "VOLUNTEERS",
+      "weight": 1.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "STATE",
+      "weight": 6.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "AGENT",
+      "weight": 6.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "EMPLOYEE",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "EIN",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "BUSINESS OFFICE",
+      "weight": 16.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "EMPLOYEE",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "AGENT",
+      "weight": 1.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "STATE OF MISSISSIPPI",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "SALT LAKE CITY, UT",
+      "weight": 6.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "PROJECT GUTENBERG",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "PROFESSOR MICHAEL S. HART",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "EIN 64-6221541",
+      "weight": 9.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "CHARITIES",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "DONORS",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "VOLUNTEER SUPPORT",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "PG SEARCH FACILITY",
+      "weight": 8.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "EMAIL NEWSLETTER",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "WWW.GUTENBERG.ORG/CONTACT",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "WWW.GUTENBERG.ORG/DONATE",
+      "weight": 8.0
+    },
+    {
+      "source": "DONORS",
+      "target": "UNITED STATES",
+      "weight": 6.0
+    },
+    {
+      "source": "DONORS",
+      "target": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "weight": 8.0
+    },
+    {
+      "source": "DONORS",
+      "target": "CHARITIES",
+      "weight": 6.0
+    },
+    {
+      "source": "DONORS",
+      "target": "WWW.GUTENBERG.ORG/DONATE",
+      "weight": 7.0
+    },
+    {
+      "source": "DONORS",
+      "target": "WWW.GUTENBERG.ORG/CONTACT",
+      "weight": 6.0
+    },
+    {
+      "source": "PROJECT GUTENBERG LITERARY ARCHIVE FOUNDATION",
+      "target": "VOLUNTEER SUPPORT",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "WWW.GUTENBERG.ORG/CONTACT",
+      "weight": 7.0
+    },
+    {
+      "source": "PROJECT GUTENBERG",
+      "target": "WWW.GUTENBERG.ORG/DONATE",
+      "weight": 1.0
+    }
+  ]
+}

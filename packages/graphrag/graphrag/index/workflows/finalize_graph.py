@@ -9,7 +9,6 @@ import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.data_reader import DataReader
-from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.operations.finalize_entities import finalize_entities
 from graphrag.index.operations.finalize_relationships import finalize_relationships
 from graphrag.index.operations.snapshot_graphml import snapshot_graphml
@@ -40,10 +39,8 @@ async def run_workflow(
     )
 
     if config.snapshots.graphml:
-        graph = create_graph(final_relationships, edge_attr=["weight"])
-
         await snapshot_graphml(
-            graph,
+            final_relationships,
             name="graph",
             storage=context.output_storage,
         )
