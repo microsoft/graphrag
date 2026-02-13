@@ -1,0 +1,50 @@
+{
+  "changes": [
+    {
+      "description": "Add CSVTableProvider",
+      "type": "patch"
+    },
+    {
+      "description": "Add DataReader class for typed dataframe loading from TableProvider across indexing workflows and query CLI",
+      "type": "patch"
+    },
+    {
+      "description": "Add TableProvider abstraction for table-based storage operations",
+      "type": "patch"
+    },
+    {
+      "description": "Add async iterator support to InputReader and use it in load_input_documents and load_update_documents workflows.",
+      "type": "patch"
+    },
+    {
+      "description": "Add table provider factory.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix missed py 3.13.",
+      "type": "patch"
+    },
+    {
+      "description": "Move document ID, human_readable_id, and raw_data initialization from create_final_documents into load_input_documents and load_update_documents.",
+      "type": "patch"
+    },
+    {
+      "description": "Remove NetworkX dependency from graph utilities; move to DataFrame-based implementations in graphrag.graphs package.",
+      "type": "patch"
+    },
+    {
+      "description": "Remove unnecessary response format check. Fixes: #2203",
+      "type": "patch"
+    },
+    {
+      "description": "add profiling to get memory usage",
+      "type": "patch"
+    },
+    {
+      "description": "update notebooks",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2026-02-13T18:01:44+00:00",
+  "version": "3.0.2"
+}
