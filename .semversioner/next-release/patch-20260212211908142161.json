@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Remove NetworkX dependency from graph utilities; move to DataFrame-based implementations in graphrag.graphs package."
-}
