@@ -144,6 +144,10 @@ class FileStorage(Storage):
 
         return get_timestamp_formatted_with_local_tz(creation_time_utc)
 
+    def get_path(self, key: str) -> Path:
+        """Get the full file path for a key (for streaming access)."""
+        return _join_path(self._base_dir, key)
+
 
 def _join_path(file_path: Path, file_name: str) -> Path:
     """Join a path and a file. Independent of the OS."""

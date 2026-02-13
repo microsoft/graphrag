@@ -10,6 +10,8 @@ from io import BytesIO
 import pandas as pd
 
 from graphrag_storage.storage import Storage
+from graphrag_storage.tables.parquet_table import ParquetTable
+from graphrag_storage.tables.table import RowTransformer, Table
 from graphrag_storage.tables.table_provider import TableProvider
 
 logger = logging.getLogger(__name__)
@@ -106,3 +108,31 @@ class ParquetTableProvider(TableProvider):
             file.replace(".parquet", "")
             for file in self._storage.find(re.compile(r"\.parquet$"))
         ]
+
+    def open(
+        self,
+        table_name: str,
+        transformer: RowTransformer | None = None,
+        truncate: bool = True,
+    ) -> Table:
+        """Open a table for streaming row operations.
+
+        Returns a ParquetTable that simulates streaming by loading the
+        DataFrame and iterating rows, or accumulating writes for batch output.
+
+        Args
+        ----
+            table_name: str
+                The name of the table to open.
+            transformer: RowTransformer | None
+                Optional callable to transform each row on read.
+            truncate: bool
+                If True (default), overwrite existing file on close.
+                If False, append new rows to existing file.
+
+        Returns
+        -------
+            Table:
+                A ParquetTable instance for row-by-row access.
+        """
+        return ParquetTable(self._storage, table_name, transformer, truncate=truncate)
