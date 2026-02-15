@@ -13,10 +13,8 @@ from typing import Any
 import pandas as pd
 from graphrag_cache import create_cache
 from graphrag_storage import create_storage
-from graphrag_storage.storage_type import StorageType
 from graphrag_storage.tables.table_provider import TableProvider
 from graphrag_storage.tables.table_provider_factory import create_table_provider
-from graphrag_storage.tables.table_type import TableType
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -41,10 +39,6 @@ async def run_pipeline(
     input_storage = create_storage(config.input_storage)
 
     output_storage = create_storage(config.output_storage)
-
-    # Workaround to fix cosmosdb incompatibilities using a new provider
-    if config.output_storage.type == StorageType.AzureCosmos:
-        config.table_provider.type = TableType.CosmosDB
 
     output_table_provider = create_table_provider(config.table_provider, output_storage)
 

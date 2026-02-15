@@ -12,4 +12,3 @@ class TableType(StrEnum):
 
     Parquet = "parquet"
     CSV = "csv"
-    CosmosDB = "cosmosdb"
