@@ -3,6 +3,7 @@
 
 """Input loading module."""
 
+import dataclasses
 import logging
 from typing import Any
 
@@ -18,7 +19,7 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.embed_text.run_embed_text import (
     run_embed_text,
 )
-from graphrag.index.workflows.create_base_text_units import create_base_text_units
+from graphrag.index.workflows.create_base_text_units import chunk_document
 from graphrag.prompt_tune.defaults import (
     LIMIT,
     N_SUBSET_MAX,
@@ -58,12 +59,14 @@ async def load_docs_in_chunks(
     input_storage = create_storage(config.input_storage)
     input_reader = create_input_reader(config.input, input_storage)
     dataset = await input_reader.read_files()
-    chunks_df = create_base_text_units(
-        documents=pd.DataFrame(dataset),
-        callbacks=NoopWorkflowCallbacks(),
-        tokenizer=tokenizer,
-        chunker=chunker,
-    )
+
+    all_chunks: list[str] = []
+    for doc in dataset:
+        doc_dict = dataclasses.asdict(doc)
+        chunks = chunk_document(doc_dict, chunker)
+        all_chunks.extend(chunks)
+
+    chunks_df = pd.DataFrame({"text": all_chunks})
 
     # Depending on the select method, build the dataset
     if limit <= 0 or limit > len(chunks_df):

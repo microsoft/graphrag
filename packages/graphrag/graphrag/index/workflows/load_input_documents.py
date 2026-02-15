@@ -8,6 +8,7 @@ from dataclasses import asdict
 
 import pandas as pd
 from graphrag_input import InputReader, create_input_reader
+from graphrag_storage.tables.table import Table
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.context import PipelineRunContext
@@ -23,26 +24,37 @@ async def run_workflow(
     """Load and parse input documents into a standard format."""
     input_reader = create_input_reader(config.input, context.input_storage)
 
-    output = await load_input_documents(input_reader)
+    async with (
+        context.output_table_provider.open("documents") as documents_table,
+    ):
+        sample, total_count = await load_input_documents(input_reader, documents_table)
 
-    if len(output) == 0:
-        msg = "Error reading documents, please see logs."
-        logger.error(msg)
-        raise ValueError(msg)
+        if total_count == 0:
+            msg = "Error reading documents, please see logs."
+            logger.error(msg)
+            raise ValueError(msg)
 
-    logger.info("Final # of rows loaded: %s", len(output))
-    context.stats.num_documents = len(output)
+        logger.info("Final # of rows loaded: %s", total_count)
+        context.stats.num_documents = total_count
 
-    await context.output_table_provider.write_dataframe("documents", output)
-
-    return WorkflowFunctionOutput(result=output)
+    return WorkflowFunctionOutput(result=sample)
 
 
-async def load_input_documents(input_reader: InputReader) -> pd.DataFrame:
+async def load_input_documents(
+    input_reader: InputReader, documents_table: Table, sample_size: int = 5
+) -> tuple[pd.DataFrame, int]:
     """Load and parse input documents into a standard format."""
-    documents = [asdict(doc) async for doc in input_reader]
-    documents = pd.DataFrame(documents)
-    documents["human_readable_id"] = documents.index
-    if "raw_data" not in documents.columns:
-        documents["raw_data"] = pd.Series(dtype="object")
-    return documents
+    sample: list[dict] = []
+    idx = 0
+
+    async for doc in input_reader:
+        row = asdict(doc)
+        row["human_readable_id"] = idx
+        if "raw_data" not in row:
+            row["raw_data"] = None
+        await documents_table.write(row)
+        if len(sample) < sample_size:
+            sample.append(row)
+        idx += 1
+
+    return pd.DataFrame(sample), idx

@@ -178,25 +178,29 @@ class TestIndexer:
             for artifact in workflow_artifacts:
                 if artifact.endswith(".parquet"):
                     output_df = pd.read_parquet(output_path / artifact)
-
-                    # Check number of rows between range
-                    assert (
-                        config["row_range"][0]
-                        <= len(output_df)
-                        <= config["row_range"][1]
-                    ), (
-                        f"Expected between {config['row_range'][0]} and {config['row_range'][1]}, found: {len(output_df)} for file: {artifact}"
+                elif artifact.endswith(".csv"):
+                    output_df = pd.read_csv(
+                        output_path / artifact, keep_default_na=False
                     )
+                else:
+                    continue
 
-                    # Get non-nan rows
-                    nan_df = output_df.loc[
-                        :,
-                        ~output_df.columns.isin(config.get("nan_allowed_columns", [])),
-                    ]
-                    nan_df = nan_df[nan_df.isna().any(axis=1)]
-                    assert len(nan_df) == 0, (
-                        f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
-                    )
+                # Check number of rows between range
+                assert (
+                    config["row_range"][0] <= len(output_df) <= config["row_range"][1]
+                ), (
+                    f"Expected between {config['row_range'][0]} and {config['row_range'][1]}, found: {len(output_df)} for file: {artifact}"
+                )
+
+                # Get non-nan rows
+                nan_df = output_df.loc[
+                    :,
+                    ~output_df.columns.isin(config.get("nan_allowed_columns", [])),
+                ]
+                nan_df = nan_df[nan_df.isna().any(axis=1)]
+                assert len(nan_df) == 0, (
+                    f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
+                )
 
     def __run_query(self, root: Path, query_config: dict[str, str]):
         command = [

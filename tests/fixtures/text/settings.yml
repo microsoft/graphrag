@@ -29,6 +29,9 @@ vector_store:
   api_key: ${AZURE_AI_SEARCH_API_KEY}
   container_name: "simple_text_ci"
 
+table_provider:
+  type: csv
+
 community_reports:
   prompt: "prompts/community_report.txt"
   max_length: 2000

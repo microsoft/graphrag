@@ -3,20 +3,17 @@
 
 """Graph pruning."""
 
-from typing import TYPE_CHECKING, cast
-
-import networkx as nx
 import numpy as np
+import pandas as pd
 
 import graphrag.data_model.schemas as schemas
-from graphrag.index.utils.graphs import largest_connected_component
-
-if TYPE_CHECKING:
-    from networkx.classes.reportviews import DegreeView
+from graphrag.graphs.compute_degree import compute_degree
+from graphrag.graphs.connected_components import largest_connected_component
 
 
 def prune_graph(
-    graph: nx.Graph,
+    entities: pd.DataFrame,
+    relationships: pd.DataFrame,
     min_node_freq: int = 1,
     max_node_freq_std: float | None = None,
     min_node_degree: int = 1,
@@ -24,67 +21,89 @@ def prune_graph(
     min_edge_weight_pct: float = 40,
     remove_ego_nodes: bool = False,
     lcc_only: bool = False,
-) -> nx.Graph:
-    """Prune graph by removing nodes that are out of frequency/degree ranges and edges with low weights."""
-    # remove ego nodes if needed
-    degree = cast("DegreeView", graph.degree)
-    degrees = list(degree())  # type: ignore
-    if remove_ego_nodes:
-        # ego node is one with highest degree
-        ego_node = max(degrees, key=lambda x: x[1])
-        graph.remove_nodes_from([ego_node[0]])
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Prune graph by removing out-of-range nodes and low-weight edges.
 
-    # remove nodes that are not within the predefined degree range
-    graph.remove_nodes_from([
-        node for node, degree in degrees if degree < min_node_degree
-    ])
-    if max_node_degree_std is not None:
-        upper_threshold = _get_upper_threshold_by_std(
-            [degree for _, degree in degrees], max_node_degree_std
+    Returns the pruned *entities* and *relationships* DataFrames.
+    """
+    # -- Compute degrees from the original edge list --------------------------
+    degree_df = compute_degree(relationships)
+    degree_map: dict[str, int] = dict(
+        zip(degree_df["title"], degree_df["degree"], strict=True)
+    )
+
+    # Entity-only nodes (isolated, degree 0) must also be present so that
+    # degree thresholds are computed over the same population as before.
+    entity_titles: set[str] = set(entities["title"])
+    for t in entity_titles:
+        degree_map.setdefault(t, 0)
+
+    degree_values = list(degree_map.values())
+    nodes_to_remove: set[str] = set()
+
+    # -- Ego node removal (highest degree) ------------------------------------
+    if remove_ego_nodes and degree_map:
+        ego_node = max(degree_map, key=lambda n: degree_map[n])
+        nodes_to_remove.add(ego_node)
+
+    # -- Degree-based removal -------------------------------------------------
+    for node, deg in degree_map.items():
+        if deg < min_node_degree:
+            nodes_to_remove.add(node)
+
+    if max_node_degree_std is not None and degree_values:
+        upper = _get_upper_threshold_by_std(degree_values, max_node_degree_std)
+        for node, deg in degree_map.items():
+            if deg > upper:
+                nodes_to_remove.add(node)
+
+    # -- Apply degree removals before frequency filtering ---------------------
+    # NX mutates sequentially, so frequency thresholds are computed over the
+    # set of entity nodes that survived degree-based removal.
+    remaining = entities[~entities["title"].isin(nodes_to_remove)]
+
+    # -- Frequency-based removal ----------------------------------------------
+    freq_col = schemas.NODE_FREQUENCY
+    if freq_col in remaining.columns:
+        low_freq = remaining.loc[remaining[freq_col] < min_node_freq, "title"]
+        nodes_to_remove.update(low_freq)
+        remaining = remaining[~remaining["title"].isin(nodes_to_remove)]
+
+        if max_node_freq_std is not None and len(remaining) > 0:
+            freq_values = remaining[freq_col].tolist()
+            upper = _get_upper_threshold_by_std(freq_values, max_node_freq_std)
+            high_freq = remaining.loc[remaining[freq_col] > upper, "title"]
+            nodes_to_remove.update(high_freq)
+
+    # -- Filter to surviving entity nodes -------------------------------------
+    kept_titles = entity_titles - nodes_to_remove
+    pruned_entities = entities[entities["title"].isin(kept_titles)]
+    pruned_rels = relationships[
+        relationships["source"].isin(kept_titles)
+        & relationships["target"].isin(kept_titles)
+    ]
+
+    # -- Edge weight filtering ------------------------------------------------
+    if (
+        len(pruned_rels) > 0
+        and min_edge_weight_pct > 0
+        and schemas.EDGE_WEIGHT in pruned_rels.columns
+    ):
+        min_weight = np.percentile(
+            pruned_rels[schemas.EDGE_WEIGHT].to_numpy(), min_edge_weight_pct
         )
-        graph.remove_nodes_from([
-            node for node, degree in degrees if degree > upper_threshold
-        ])
+        pruned_rels = pruned_rels[pruned_rels[schemas.EDGE_WEIGHT] >= min_weight]
 
-    # remove nodes that are not within the predefined frequency range
-    graph.remove_nodes_from([
-        node
-        for node, data in graph.nodes(data=True)
-        if schemas.NODE_FREQUENCY not in data
-        or data[schemas.NODE_FREQUENCY] < min_node_freq
-    ])
-    if max_node_freq_std is not None:
-        upper_threshold = _get_upper_threshold_by_std(
-            [data[schemas.NODE_FREQUENCY] for _, data in graph.nodes(data=True)],
-            max_node_freq_std,
-        )
-        graph.remove_nodes_from([
-            node
-            for node, data in graph.nodes(data=True)
-            if data[schemas.NODE_FREQUENCY] > upper_threshold
-        ])
+    # -- LCC ------------------------------------------------------------------
+    if lcc_only and len(pruned_rels) > 0:
+        lcc_nodes = largest_connected_component(pruned_rels)
+        pruned_entities = pruned_entities[pruned_entities["title"].isin(lcc_nodes)]
+        pruned_rels = pruned_rels[
+            pruned_rels["source"].isin(lcc_nodes)
+            & pruned_rels["target"].isin(lcc_nodes)
+        ]
 
-    # remove edges by min weight
-    if len(graph.edges) == 0:
-        return graph
-
-    if min_edge_weight_pct > 0:
-        min_edge_weight = np.percentile(
-            [data[schemas.EDGE_WEIGHT] for _, _, data in graph.edges(data=True)],
-            min_edge_weight_pct,
-        )
-        graph.remove_edges_from([
-            (source, target)
-            for source, target, data in graph.edges(data=True)
-            if source in graph.nodes()
-            and target in graph.nodes()
-            and data[schemas.EDGE_WEIGHT] < min_edge_weight
-        ])
-
-    if lcc_only:
-        return largest_connected_component(graph)
-
-    return graph
+    return pruned_entities.reset_index(drop=True), pruned_rels.reset_index(drop=True)
 
 
 def _get_upper_threshold_by_std(

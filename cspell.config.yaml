@@ -21,7 +21,7 @@ ignorePaths:
   - pyproject.toml
   - entity_extraction.txt
   - package.json
-  - tests/fixtures/
+  - tests/
   - examples_notebooks/inputs/
   - docs/examples_notebooks/inputs/
   - "*.csv"

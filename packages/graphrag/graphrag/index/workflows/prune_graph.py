@@ -10,8 +10,6 @@ import pandas as pd
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.data_model.data_reader import DataReader
-from graphrag.index.operations.create_graph import create_graph
-from graphrag.index.operations.graph_to_dataframes import graph_to_dataframes
 from graphrag.index.operations.prune_graph import prune_graph as prune_graph_operation
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -55,11 +53,9 @@ def prune_graph(
     pruning_config: PruneGraphConfig,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Prune a full graph based on graph statistics."""
-    # create a temporary graph to prune, then turn it back into dataframes
-    graph = create_graph(relationships, edge_attr=["weight"], nodes=entities)
-
-    pruned = prune_graph_operation(
-        graph,
+    pruned_entities, pruned_relationships = prune_graph_operation(
+        entities,
+        relationships,
         min_node_freq=pruning_config.min_node_freq,
         max_node_freq_std=pruning_config.max_node_freq_std,
         min_node_degree=pruning_config.min_node_degree,
@@ -69,24 +65,14 @@ def prune_graph(
         lcc_only=pruning_config.lcc_only,
     )
 
-    if len(pruned.nodes) == 0:
+    if len(pruned_entities) == 0:
         error_msg = "Graph Pruning failed. No entities remain."
         logger.error(error_msg)
         raise ValueError(error_msg)
 
-    if len(pruned.edges) == 0:
+    if len(pruned_relationships) == 0:
         error_msg = "Graph Pruning failed. No relationships remain."
         logger.error(error_msg)
         raise ValueError(error_msg)
 
-    pruned_nodes, pruned_edges = graph_to_dataframes(
-        pruned, node_columns=["title"], edge_columns=["source", "target"]
-    )
-
-    # subset the full nodes and edges to only include the pruned remainders
-    subset_entities = pruned_nodes.merge(entities, on="title", how="inner")
-    subset_relationships = pruned_edges.merge(
-        relationships, on=["source", "target"], how="inner"
-    )
-
-    return (subset_entities, subset_relationships)
+    return (pruned_entities, pruned_relationships)

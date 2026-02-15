@@ -1,7 +1,7 @@
 [project]
 name = "graphrag"
 # Maintainers: do not change the version here manually
-version = "3.0.1"
+version = "3.0.2"
 description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
@@ -36,13 +36,13 @@ dependencies = [
     "azure-search-documents~=11.5",
     "azure-storage-blob~=12.24",
     "devtools~=0.12",
-    "graphrag-cache==3.0.1",
-    "graphrag-chunking==3.0.1",
-    "graphrag-common==3.0.1",
-    "graphrag-input==3.0.1",
-    "graphrag-llm==3.0.1",
-    "graphrag-storage==3.0.1",
-    "graphrag-vectors==3.0.1",
+    "graphrag-cache==3.0.2",
+    "graphrag-chunking==3.0.2",
+    "graphrag-common==3.0.2",
+    "graphrag-input==3.0.2",
+    "graphrag-llm==3.0.2",
+    "graphrag-storage==3.0.2",
+    "graphrag-vectors==3.0.2",
     "graspologic-native~=1.2",
     "json-repair~=0.30",
     "networkx~=3.4",

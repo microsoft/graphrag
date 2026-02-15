@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation.
+# Copyright (c) 2025 Microsoft Corporation.
 # Licensed under the MIT License
 
 """CSV-based table provider implementation."""
@@ -9,7 +9,10 @@ from io import StringIO
 
 import pandas as pd
 
+from graphrag_storage.file_storage import FileStorage
 from graphrag_storage.storage import Storage
+from graphrag_storage.tables.csv_table import CSVTable
+from graphrag_storage.tables.table import RowTransformer
 from graphrag_storage.tables.table_provider import TableProvider
 
 logger = logging.getLogger(__name__)
@@ -32,6 +35,9 @@ class CSVTableProvider(TableProvider):
             **kwargs: Any
                 Additional keyword arguments (currently unused).
         """
+        if not isinstance(storage, FileStorage):
+            msg = "CSVTableProvider only works with FileStorage backends for now. "
+            raise TypeError(msg)
         self._storage = storage
 
     async def read_dataframe(self, table_name: str) -> pd.DataFrame:
@@ -64,7 +70,7 @@ class CSVTableProvider(TableProvider):
             # Handle empty CSV (pandas can't parse files with no columns)
             if not csv_data or csv_data.strip() == "":
                 return pd.DataFrame()
-            return pd.read_csv(StringIO(csv_data))
+            return pd.read_csv(StringIO(csv_data), keep_default_na=False)
         except Exception:
             logger.exception("error loading table from storage: %s", filename)
             raise
@@ -108,3 +114,27 @@ class CSVTableProvider(TableProvider):
             file.replace(".csv", "")
             for file in self._storage.find(re.compile(r"\.csv$"))
         ]
+
+    def open(
+        self,
+        table_name: str,
+        transformer: RowTransformer | None = None,
+        truncate: bool = True,
+        encoding: str = "utf-8",
+    ) -> CSVTable:
+        """Open table for streaming.
+
+        Args:
+            table_name: Name of the table to open
+            transformer: Optional callable to transform each row
+            truncate: If True, truncate file on first write
+            encoding: Character encoding for reading/writing CSV files.
+                Defaults to "utf-8".
+        """
+        return CSVTable(
+            self._storage,
+            table_name,
+            transformer=transformer,
+            truncate=truncate,
+            encoding=encoding,
+        )
