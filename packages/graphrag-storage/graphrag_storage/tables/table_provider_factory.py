@@ -60,6 +60,13 @@ def create_table_provider(
 
     if table_type not in table_provider_factory:
         match table_type:
+            case TableType.CosmosDB:
+                from graphrag_storage.tables.cosmosdb_table_provider import (
+                    CosmosDBTableProvider,
+                )
+
+                register_table_provider(TableType.CosmosDB, CosmosDBTableProvider)
+
             case TableType.Parquet:
                 from graphrag_storage.tables.parquet_table_provider import (
                     ParquetTableProvider,
