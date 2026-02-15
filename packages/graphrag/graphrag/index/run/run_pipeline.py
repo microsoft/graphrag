@@ -39,6 +39,7 @@ async def run_pipeline(
     input_storage = create_storage(config.input_storage)
 
     output_storage = create_storage(config.output_storage)
+
     output_table_provider = create_table_provider(config.table_provider, output_storage)
 
     cache = create_cache(config.cache)
