@@ -284,8 +284,6 @@ class AzureCosmosStorage(Storage):
 
                         # Cosmos identity must be stable and NEVER change
                         cosmosdb_item["id"] = cosmos_id
-                        logger.info("Print ids")
-                        logger.info("%s", cosmos_id)
 
                     else:
                         # Original behavior for non-entity prefixes
