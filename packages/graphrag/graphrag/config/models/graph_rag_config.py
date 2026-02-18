@@ -24,6 +24,7 @@ from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.config.models.embed_text_config import EmbedTextConfig
+from graphrag.config.models.entity_resolution_config import EntityResolutionConfig
 from graphrag.config.models.extract_claims_config import ExtractClaimsConfig
 from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
@@ -186,6 +187,12 @@ class GraphRagConfig(BaseModel):
     )
     """The entity extraction configuration to use."""
 
+    entity_resolution: EntityResolutionConfig = Field(
+        description="The entity resolution configuration to use.",
+        default=EntityResolutionConfig(),
+    )
+    """The entity resolution configuration to use."""
+
     summarize_descriptions: SummarizeDescriptionsConfig = Field(
         description="The description summarization configuration to use.",
         default=SummarizeDescriptionsConfig(),
@@ -268,11 +275,9 @@ class GraphRagConfig(BaseModel):
         """Validate the vector store configuration."""
         store = self.vector_store
         if store.type == VectorStoreType.LanceDB:
-            if not store.db_uri or store.db_uri.strip() == "":
+            if not store.db_uri or store.db_uri.strip == "":
                 store.db_uri = graphrag_config_defaults.vector_store.db_uri
-            # Don't resolve cloud storage URIs as local paths
-            if not store.db_uri.startswith(("gs://", "s3://", "az://", "abfs://")):
-                store.db_uri = str(Path(store.db_uri).resolve())
+            store.db_uri = str(Path(store.db_uri).resolve())
 
     def get_completion_model_config(self, model_id: str) -> ModelConfig:
         """Get a completion model configuration by ID.

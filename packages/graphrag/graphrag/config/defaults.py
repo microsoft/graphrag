@@ -312,6 +312,17 @@ class SnapshotsDefaults:
 
 
 @dataclass
+class EntityResolutionDefaults:
+    """Default values for entity resolution."""
+
+    enabled: bool = False
+    prompt: None = None
+    batch_size: int = 200
+    completion_model_id: str = DEFAULT_COMPLETION_MODEL_ID
+    model_instance_name: str = "entity_resolution"
+
+
+@dataclass
 class SummarizeDescriptionsDefaults:
     """Default values for summarizing descriptions."""
 
@@ -359,6 +370,9 @@ class GraphRagConfigDefaults:
     chunking: ChunkingDefaults = field(default_factory=ChunkingDefaults)
     snapshots: SnapshotsDefaults = field(default_factory=SnapshotsDefaults)
     extract_graph: ExtractGraphDefaults = field(default_factory=ExtractGraphDefaults)
+    entity_resolution: EntityResolutionDefaults = field(
+        default_factory=EntityResolutionDefaults
+    )
     extract_graph_nlp: ExtractGraphNLPDefaults = field(
         default_factory=ExtractGraphNLPDefaults
     )
