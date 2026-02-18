@@ -30,7 +30,6 @@ async def run_workflow(
     reader = DataReader(context.output_table_provider)
     entities = await reader.entities()
     relationships = await reader.relationships()
-
     max_cluster_size = config.cluster_graph.max_cluster_size
     use_lcc = config.cluster_graph.use_lcc
     seed = config.cluster_graph.seed
