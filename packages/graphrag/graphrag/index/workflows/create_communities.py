@@ -10,6 +10,7 @@ from uuid import uuid4
 
 import numpy as np
 import pandas as pd
+from graphrag_storage.tables.table import Table
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.data_reader import DataReader
@@ -39,37 +40,34 @@ async def run_workflow(
     use_lcc = config.cluster_graph.use_lcc
     seed = config.cluster_graph.seed
 
-    output = create_communities(
-        title_to_entity_id,
-        relationships,
-        max_cluster_size=max_cluster_size,
-        use_lcc=use_lcc,
-        seed=seed,
-    )
-
-    rows = output.to_dict("records")
-    sample_size = min(5, len(rows))
-    sample_rows = rows[:sample_size]
-
-    async with context.output_table_provider.open("communities") as table:
-        for row in rows:
-            await table.write(cast("dict[str, Any]", row))
+    async with context.output_table_provider.open("communities") as communities_table:
+        sample_rows = await create_communities(
+            communities_table,
+            title_to_entity_id,
+            relationships,
+            max_cluster_size=max_cluster_size,
+            use_lcc=use_lcc,
+            seed=seed,
+        )
 
     logger.info("Workflow completed: create_communities")
     return WorkflowFunctionOutput(result=sample_rows)
 
 
-def create_communities(
+async def create_communities(
+    communities_table: Table,
     title_to_entity_id: dict[str, str],
     relationships: pd.DataFrame,
     max_cluster_size: int,
     use_lcc: bool,
     seed: int | None = None,
-) -> pd.DataFrame:
-    """Build community DataFrame from clustered relationships.
+) -> list[dict[str, Any]]:
+    """Build communities from clustered relationships and stream rows to the table.
 
     Args
     ----
+        communities_table: Table
+            Output table to write community rows to.
         title_to_entity_id: dict[str, str]
             Mapping of entity title to entity id.
         relationships: pd.DataFrame
@@ -84,8 +82,8 @@ def create_communities(
 
     Returns
     -------
-        pd.DataFrame
-            Communities DataFrame with COMMUNITIES_FINAL_COLUMNS schema.
+        list[dict[str, Any]]
+            Sample of up to 5 community rows for logging.
     """
     clusters = cluster_graph(
         relationships,
@@ -181,7 +179,27 @@ def create_communities(
     final_communities["period"] = datetime.now(timezone.utc).date().isoformat()
     final_communities["size"] = final_communities.loc[:, "entity_ids"].apply(len)
 
-    return final_communities.loc[
-        :,
-        COMMUNITIES_FINAL_COLUMNS,
-    ]
+    output = final_communities.loc[:, COMMUNITIES_FINAL_COLUMNS]
+    rows = output.to_dict("records")
+    sample_rows: list[dict[str, Any]] = []
+    for row in rows:
+        row = _sanitize_row(row)
+        await communities_table.write(row)
+        if len(sample_rows) < 5:
+            sample_rows.append(row)
+    return sample_rows
+
+
+def _sanitize_row(row: dict[str, Any]) -> dict[str, Any]:
+    """Convert numpy types to native Python types for table serialization."""
+    sanitized = {}
+    for key, value in row.items():
+        if isinstance(value, np.ndarray):
+            sanitized[key] = value.tolist()
+        elif isinstance(value, np.integer):
+            sanitized[key] = int(value)
+        elif isinstance(value, np.floating):
+            sanitized[key] = float(value)
+        else:
+            sanitized[key] = value
+    return sanitized

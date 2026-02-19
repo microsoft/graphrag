@@ -9,11 +9,39 @@ can be verified against known output.
 """
 
 import uuid
+from typing import Any
 
+import numpy as np
 import pandas as pd
 import pytest
 from graphrag.data_model.schemas import COMMUNITIES_FINAL_COLUMNS
-from graphrag.index.workflows.create_communities import create_communities
+from graphrag.index.workflows.create_communities import (
+    _sanitize_row,
+    create_communities,
+)
+from graphrag_storage.tables.csv_table import CSVTable
+
+
+class FakeTable(CSVTable):
+    """In-memory table that collects written rows for test assertions."""
+
+    def __init__(self) -> None:
+        self.rows: list[dict[str, Any]] = []
+
+    async def write(self, row: dict[str, Any]) -> None:
+        """Append a row to the in-memory store."""
+        self.rows.append(row)
+
+
+async def _run_create_communities(
+    title_to_entity_id: dict[str, str],
+    relationships: pd.DataFrame,
+    **kwargs: Any,
+) -> pd.DataFrame:
+    """Helper that runs create_communities with a FakeTable and returns all rows as a DataFrame."""
+    table = FakeTable()
+    await create_communities(table, title_to_entity_id, relationships, **kwargs)
+    return pd.DataFrame(table.rows)
 
 
 def _make_title_to_entity_id(
@@ -73,10 +101,10 @@ def two_triangles():
 class TestOutputSchema:
     """Verify the output DataFrame has the expected column schema."""
 
-    def test_has_all_final_columns(self, two_triangles):
+    async def test_has_all_final_columns(self, two_triangles):
         """Output must have exactly the COMMUNITIES_FINAL_COLUMNS."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -85,10 +113,10 @@ class TestOutputSchema:
         )
         assert list(result.columns) == COMMUNITIES_FINAL_COLUMNS
 
-    def test_column_order_matches_schema(self, two_triangles):
+    async def test_column_order_matches_schema(self, two_triangles):
         """Column order must match the schema constant exactly."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -107,10 +135,10 @@ class TestOutputSchema:
 class TestMetadataFields:
     """Verify computed metadata fields like id, title, size, period."""
 
-    def test_uuid_ids(self, two_triangles):
+    async def test_uuid_ids(self, two_triangles):
         """Each community id should be a valid UUID4."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -121,10 +149,10 @@ class TestMetadataFields:
             parsed = uuid.UUID(row["id"])
             assert parsed.version == 4
 
-    def test_title_format(self, two_triangles):
+    async def test_title_format(self, two_triangles):
         """Title should be 'Community N' where N is the community id."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -134,10 +162,10 @@ class TestMetadataFields:
         for _, row in result.iterrows():
             assert row["title"] == f"Community {row['community']}"
 
-    def test_human_readable_id_equals_community(self, two_triangles):
+    async def test_human_readable_id_equals_community(self, two_triangles):
         """human_readable_id should equal the community integer id."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -146,10 +174,10 @@ class TestMetadataFields:
         )
         assert (result["human_readable_id"] == result["community"]).all()
 
-    def test_size_equals_entity_count(self, two_triangles):
+    async def test_size_equals_entity_count(self, two_triangles):
         """size should equal the length of entity_ids."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -159,10 +187,10 @@ class TestMetadataFields:
         for _, row in result.iterrows():
             assert row["size"] == len(row["entity_ids"])
 
-    def test_period_is_iso_date(self, two_triangles):
+    async def test_period_is_iso_date(self, two_triangles):
         """period should be a valid ISO date string."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -183,11 +211,11 @@ class TestMetadataFields:
 class TestEntityAggregation:
     """Verify that entity_ids are correctly aggregated per community."""
 
-    def test_entity_ids_per_community(self, two_triangles):
+    async def test_entity_ids_per_community(self, two_triangles):
         """Each community should contain exactly the entities matching
         its cluster nodes."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -200,10 +228,10 @@ class TestEntityAggregation:
         assert sorted(comm_0["entity_ids"]) == ["e1", "e2", "e3"]
         assert sorted(comm_1["entity_ids"]) == ["e4", "e5", "e6"]
 
-    def test_entity_ids_are_lists(self, two_triangles):
+    async def test_entity_ids_are_lists(self, two_triangles):
         """entity_ids should be Python lists, not numpy arrays."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -223,11 +251,11 @@ class TestRelationshipAggregation:
     """Verify that relationship_ids and text_unit_ids are correctly
     aggregated (intra-community only) and deduplicated."""
 
-    def test_relationship_ids_per_community(self, two_triangles):
+    async def test_relationship_ids_per_community(self, two_triangles):
         """Each community should only include relationships where both
         endpoints are in the same community."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -240,11 +268,11 @@ class TestRelationshipAggregation:
         assert sorted(comm_0["relationship_ids"]) == ["r1", "r2", "r3"]
         assert sorted(comm_1["relationship_ids"]) == ["r4", "r5", "r6"]
 
-    def test_text_unit_ids_per_community(self, two_triangles):
+    async def test_text_unit_ids_per_community(self, two_triangles):
         """text_unit_ids should be the deduplicated union of text units
         from the community's intra-community relationships."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -257,11 +285,11 @@ class TestRelationshipAggregation:
         assert sorted(comm_0["text_unit_ids"]) == ["t1", "t2"]
         assert sorted(comm_1["text_unit_ids"]) == ["t3", "t4"]
 
-    def test_lists_are_sorted_and_deduplicated(self, two_triangles):
+    async def test_lists_are_sorted_and_deduplicated(self, two_triangles):
         """relationship_ids and text_unit_ids should be sorted with
         no duplicates."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -272,7 +300,7 @@ class TestRelationshipAggregation:
             assert row["relationship_ids"] == sorted(set(row["relationship_ids"]))
             assert row["text_unit_ids"] == sorted(set(row["text_unit_ids"]))
 
-    def test_cross_community_relationships_excluded(self):
+    async def test_cross_community_relationships_excluded(self):
         """A relationship spanning two communities must not appear in
         either community's relationship_ids."""
         title_to_entity_id = _make_title_to_entity_id([
@@ -292,7 +320,7 @@ class TestRelationshipAggregation:
             ("r5", "D", "F", 1.0, ["t2"]),
             ("r6", "E", "F", 1.0, ["t2"]),
         ])
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -316,10 +344,10 @@ class TestRelationshipAggregation:
 class TestParentChildTree:
     """Verify the parent-child tree structure is consistent."""
 
-    def test_level_zero_parent_is_minus_one(self, two_triangles):
+    async def test_level_zero_parent_is_minus_one(self, two_triangles):
         """All level-0 communities should have parent == -1."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -329,10 +357,10 @@ class TestParentChildTree:
         lvl0 = result[result["level"] == 0]
         assert (lvl0["parent"] == -1).all()
 
-    def test_leaf_communities_have_empty_children(self, two_triangles):
+    async def test_leaf_communities_have_empty_children(self, two_triangles):
         """Communities that are nobody's parent should have children=[]."""
         title_to_entity_id, relationships = two_triangles
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -345,7 +373,7 @@ class TestParentChildTree:
                 child_rows = result[result["parent"] == row["community"]]
                 assert len(child_rows) == 0
 
-    def test_parent_child_bidirectional_consistency_real_data(self):
+    async def test_parent_child_bidirectional_consistency_real_data(self):
         """For real test data: if community X lists Y as child,
         then Y's parent must be X."""
         entities_df = pd.read_parquet("tests/verbs/data/entities.parquet")
@@ -353,7 +381,7 @@ class TestParentChildTree:
             zip(entities_df["title"], entities_df["id"], strict=False)
         )
         relationships = pd.read_parquet("tests/verbs/data/relationships.parquet")
-        result = create_communities(
+        result = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -379,7 +407,7 @@ class TestParentChildTree:
 class TestLccFiltering:
     """Verify LCC filtering interaction with create_communities."""
 
-    def test_lcc_reduces_community_count(self):
+    async def test_lcc_reduces_community_count(self):
         """With use_lcc=True and two disconnected components, only the
         larger component's communities should appear."""
         title_to_entity_id = _make_title_to_entity_id([
@@ -398,14 +426,14 @@ class TestLccFiltering:
             ("r5", "D", "F", 1.0, ["t2"]),
             ("r6", "E", "F", 1.0, ["t2"]),
         ])
-        result_no_lcc = create_communities(
+        result_no_lcc = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
             use_lcc=False,
             seed=42,
         )
-        result_lcc = create_communities(
+        result_lcc = await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -429,14 +457,14 @@ class TestRealDataRegression:
     """
 
     @pytest.fixture
-    def real_result(self) -> pd.DataFrame:
+    async def real_result(self) -> pd.DataFrame:
         """Run create_communities on the test fixture data."""
         entities_df = pd.read_parquet("tests/verbs/data/entities.parquet")
         title_to_entity_id = dict(
             zip(entities_df["title"], entities_df["id"], strict=False)
         )
         relationships = pd.read_parquet("tests/verbs/data/relationships.parquet")
-        return create_communities(
+        return await _run_create_communities(
             title_to_entity_id,
             relationships,
             max_cluster_size=10,
@@ -444,18 +472,18 @@ class TestRealDataRegression:
             seed=0xDEADBEEF,
         )
 
-    def test_row_count(self, real_result: pd.DataFrame):
+    async def test_row_count(self, real_result: pd.DataFrame):
         """Pin the expected number of communities."""
         assert len(real_result) == 122
 
-    def test_level_distribution(self, real_result: pd.DataFrame):
+    async def test_level_distribution(self, real_result: pd.DataFrame):
         """Pin the expected number of communities per level."""
         from collections import Counter
 
         counts = Counter(real_result["level"].tolist())
         assert counts == {0: 23, 1: 65, 2: 32, 3: 2}
 
-    def test_values_match_golden_file(self, real_result: pd.DataFrame):
+    async def test_values_match_golden_file(self, real_result: pd.DataFrame):
         """The output should match the golden Parquet file for all
         columns except id (UUID) and period (date-dependent)."""
         expected = pd.read_parquet("tests/verbs/data/communities.parquet")
@@ -484,9 +512,68 @@ class TestRealDataRegression:
                 f"Row {i} children mismatch: {actual_children} != {expected_children}"
             )
 
-    def test_communities_with_children(self, real_result: pd.DataFrame):
+    async def test_communities_with_children(self, real_result: pd.DataFrame):
         """Pin the expected number of communities that have children."""
         has_children = real_result["children"].apply(
             lambda x: hasattr(x, "__len__") and len(x) > 0
         )
         assert has_children.sum() == 24
+
+
+# -------------------------------------------------------------------
+# Row sanitization
+# -------------------------------------------------------------------
+
+
+class TestSanitizeRow:
+    """Verify numpy types are converted to native Python types."""
+
+    def test_ndarray_to_list(self):
+        """np.ndarray values should become plain lists."""
+        row = {"children": np.array([1, 2, 3])}
+        result = _sanitize_row(row)
+        assert result["children"] == [1, 2, 3]
+        assert isinstance(result["children"], list)
+
+    def test_empty_ndarray_to_empty_list(self):
+        """An empty np.ndarray should become an empty list."""
+        row = {"children": np.array([])}
+        assert _sanitize_row(row)["children"] == []
+
+    def test_np_integer_to_int(self):
+        """np.integer values should become native int."""
+        row = {"community": np.int64(42)}
+        result = _sanitize_row(row)
+        assert result["community"] == 42
+        assert type(result["community"]) is int
+
+    def test_np_floating_to_float(self):
+        """np.floating values should become native float."""
+        row = {"weight": np.float64(3.14)}
+        result = _sanitize_row(row)
+        assert result["weight"] == pytest.approx(3.14)
+        assert type(result["weight"]) is float
+
+    def test_native_types_pass_through(self):
+        """Native Python types should pass through unchanged."""
+        row = {"id": "abc", "size": 5, "tags": ["a", "b"]}
+        assert _sanitize_row(row) == row
+
+    def test_mixed_row(self):
+        """A row with a mix of numpy and native types."""
+        row = {
+            "community": np.int64(7),
+            "children": np.array([1, 2]),
+            "title": "Community 7",
+            "weight": np.float64(0.5),
+        }
+        result = _sanitize_row(row)
+        assert result == {
+            "community": 7,
+            "children": [1, 2],
+            "title": "Community 7",
+            "weight": pytest.approx(0.5),
+        }
+        assert type(result["community"]) is int
+        assert type(result["children"]) is list
+        assert type(result["weight"]) is float
