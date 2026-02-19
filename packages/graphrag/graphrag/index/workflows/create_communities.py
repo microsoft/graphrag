@@ -31,19 +31,17 @@ async def run_workflow(
     reader = DataReader(context.output_table_provider)
     relationships = await reader.relationships()
 
-    title_to_entity_id: dict[str, str] = {}
-    async with context.output_table_provider.open("entities") as entities_table:
-        async for row in entities_table:
-            title_to_entity_id[row["title"]] = row["id"]
-
     max_cluster_size = config.cluster_graph.max_cluster_size
     use_lcc = config.cluster_graph.use_lcc
     seed = config.cluster_graph.seed
 
-    async with context.output_table_provider.open("communities") as communities_table:
+    async with (
+        context.output_table_provider.open("entities") as entities_table,
+        context.output_table_provider.open("communities") as communities_table,
+    ):
         sample_rows = await create_communities(
             communities_table,
-            title_to_entity_id,
+            entities_table,
             relationships,
             max_cluster_size=max_cluster_size,
             use_lcc=use_lcc,
@@ -56,7 +54,7 @@ async def run_workflow(
 
 async def create_communities(
     communities_table: Table,
-    title_to_entity_id: dict[str, str],
+    entities_table: Table,
     relationships: pd.DataFrame,
     max_cluster_size: int,
     use_lcc: bool,
@@ -68,8 +66,8 @@ async def create_communities(
     ----
         communities_table: Table
             Output table to write community rows to.
-        title_to_entity_id: dict[str, str]
-            Mapping of entity title to entity id.
+        entities_table: Table
+            Table containing entity rows.
         relationships: pd.DataFrame
             Relationships DataFrame with source, target, weight,
             text_unit_ids columns.
@@ -91,6 +89,10 @@ async def create_communities(
         use_lcc,
         seed=seed,
     )
+
+    title_to_entity_id: dict[str, str] = {}
+    async for row in entities_table:
+        title_to_entity_id[row["title"]] = row["id"]
 
     communities = pd.DataFrame(
         clusters, columns=pd.Index(["level", "community", "parent", "title"])

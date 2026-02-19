@@ -20,6 +20,7 @@ from graphrag.index.workflows.create_communities import (
     create_communities,
 )
 from graphrag_storage.tables.csv_table import CSVTable
+from graphrag_storage.tables.table import Table
 
 
 class FakeTable(CSVTable):
@@ -33,15 +34,55 @@ class FakeTable(CSVTable):
         self.rows.append(row)
 
 
+class FakeEntitiesTable(Table):
+    """In-memory read-only table that supports async iteration."""
+
+    def __init__(self, rows: list[dict[str, Any]]) -> None:
+        self._rows = rows
+        self._index = 0
+
+    def __aiter__(self):
+        """Return an async iterator over the rows."""
+        self._index = 0
+        return self
+
+    async def __anext__(self) -> dict[str, Any]:
+        """Yield the next row or stop."""
+        if self._index >= len(self._rows):
+            raise StopAsyncIteration
+        row = self._rows[self._index]
+        self._index += 1
+        return row
+
+    async def length(self) -> int:
+        """Return number of rows."""
+        return len(self._rows)
+
+    async def has(self, row_id: str) -> bool:
+        """Check if a row with the given ID exists."""
+        return any(r.get("id") == row_id for r in self._rows)
+
+    async def write(self, row: dict[str, Any]) -> None:
+        """Not supported for read-only table."""
+        raise NotImplementedError
+
+    async def close(self) -> None:
+        """No-op."""
+
+
 async def _run_create_communities(
     title_to_entity_id: dict[str, str],
     relationships: pd.DataFrame,
     **kwargs: Any,
 ) -> pd.DataFrame:
-    """Helper that runs create_communities with a FakeTable and returns all rows as a DataFrame."""
-    table = FakeTable()
-    await create_communities(table, title_to_entity_id, relationships, **kwargs)
-    return pd.DataFrame(table.rows)
+    """Helper that runs create_communities with fake tables and returns all rows as a DataFrame."""
+    communities_table = FakeTable()
+    entity_rows = [
+        {"id": eid, "title": title} for title, eid in title_to_entity_id.items()
+    ]
+    entities_table = FakeEntitiesTable(entity_rows)
+    await create_communities(communities_table, entities_table, relationships, **kwargs)
+    return pd.DataFrame(communities_table.rows)
 
 
 def _make_title_to_entity_id(
