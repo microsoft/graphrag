@@ -28,6 +28,11 @@ from graphrag.data_model.schemas import (
 )
 
 
+def _safe_int(series: pd.Series, fill: int = -1) -> pd.Series:
+    """Convert a series to int, filling NaN values first."""
+    return series.fillna(fill).astype(int)
+
+
 def _split_list_column(value: Any) -> list[Any]:
     """Split a column containing a list string into an actual list."""
     if isinstance(value, str):
@@ -38,13 +43,13 @@ def _split_list_column(value: Any) -> list[Any]:
 def entities_typed(df: pd.DataFrame) -> pd.DataFrame:
     """Return the entities dataframe with correct types, in case it was stored in a weakly-typed format."""
     if SHORT_ID in df.columns:
-        df[SHORT_ID] = df[SHORT_ID].astype(int)
+        df[SHORT_ID] = _safe_int(df[SHORT_ID])
     if TEXT_UNIT_IDS in df.columns:
         df[TEXT_UNIT_IDS] = df[TEXT_UNIT_IDS].apply(_split_list_column)
     if NODE_FREQUENCY in df.columns:
-        df[NODE_FREQUENCY] = df[NODE_FREQUENCY].astype(int)
+        df[NODE_FREQUENCY] = _safe_int(df[NODE_FREQUENCY], 0)
     if NODE_DEGREE in df.columns:
-        df[NODE_DEGREE] = df[NODE_DEGREE].astype(int)
+        df[NODE_DEGREE] = _safe_int(df[NODE_DEGREE], 0)
 
     return df
 
@@ -52,11 +57,11 @@ def entities_typed(df: pd.DataFrame) -> pd.DataFrame:
 def relationships_typed(df: pd.DataFrame) -> pd.DataFrame:
     """Return the relationships dataframe with correct types, in case it was stored in a weakly-typed format."""
     if SHORT_ID in df.columns:
-        df[SHORT_ID] = df[SHORT_ID].astype(int)
+        df[SHORT_ID] = _safe_int(df[SHORT_ID])
     if EDGE_WEIGHT in df.columns:
         df[EDGE_WEIGHT] = df[EDGE_WEIGHT].astype(float)
     if EDGE_DEGREE in df.columns:
-        df[EDGE_DEGREE] = df[EDGE_DEGREE].astype(int)
+        df[EDGE_DEGREE] = _safe_int(df[EDGE_DEGREE], 0)
     if TEXT_UNIT_IDS in df.columns:
         df[TEXT_UNIT_IDS] = df[TEXT_UNIT_IDS].apply(_split_list_column)
 
