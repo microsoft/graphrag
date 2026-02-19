@@ -103,7 +103,7 @@ uv sync --all-packages
 uv run poe build
 ```
 
-All wheels and sdists will be placed in the `dist/` directory.
+All wheels and source distributions will be placed in the `dist/` directory.
 
 ### Publish all packages at once
 
