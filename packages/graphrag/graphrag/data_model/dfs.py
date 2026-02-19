@@ -33,11 +33,15 @@ def _safe_int(series: pd.Series, fill: int = -1) -> pd.Series:
     return series.fillna(fill).astype(int)
 
 
-def _split_list_column(value: Any) -> list[Any]:
+def split_list_column(value: Any) -> list[Any]:
     """Split a column containing a list string into an actual list."""
     if isinstance(value, str):
         return [item.strip("[] '") for item in value.split(",")] if value else []
     return value
+
+
+# Backward-compatible alias so internal callers keep working.
+_split_list_column = split_list_column
 
 
 def entities_typed(df: pd.DataFrame) -> pd.DataFrame:
