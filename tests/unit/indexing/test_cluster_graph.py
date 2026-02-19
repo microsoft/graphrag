@@ -41,7 +41,7 @@ class TestClusterGraphBasic:
         clusters = cluster_graph(edges, max_cluster_size=10, use_lcc=False, seed=42)
 
         assert len(clusters) == 1
-        level, cid, parent, nodes = clusters[0]
+        level, _cid, parent, nodes = clusters[0]
         assert level == 0
         assert parent == -1
         assert set(nodes) == {"X", "Y", "Z"}

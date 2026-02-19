@@ -349,7 +349,9 @@ class TestParentChildTree:
         """For real test data: if community X lists Y as child,
         then Y's parent must be X."""
         entities_df = pd.read_parquet("tests/verbs/data/entities.parquet")
-        title_to_entity_id = dict(zip(entities_df["title"], entities_df["id"]))
+        title_to_entity_id = dict(
+            zip(entities_df["title"], entities_df["id"], strict=False)
+        )
         relationships = pd.read_parquet("tests/verbs/data/relationships.parquet")
         result = create_communities(
             title_to_entity_id,
@@ -430,7 +432,9 @@ class TestRealDataRegression:
     def real_result(self) -> pd.DataFrame:
         """Run create_communities on the test fixture data."""
         entities_df = pd.read_parquet("tests/verbs/data/entities.parquet")
-        title_to_entity_id = dict(zip(entities_df["title"], entities_df["id"]))
+        title_to_entity_id = dict(
+            zip(entities_df["title"], entities_df["id"], strict=False)
+        )
         relationships = pd.read_parquet("tests/verbs/data/relationships.parquet")
         return create_communities(
             title_to_entity_id,
