@@ -149,8 +149,7 @@ class CosmosDBVectorStore(VectorStore):
     def _container_exists(self) -> bool:
         """Check if the container name exists in the database."""
         existing_container_names = [
-            container["id"]
-            for container in self._database_client.list_containers()
+            container["id"] for container in self._database_client.list_containers()
         ]
         return self.index_name in existing_container_names
 
@@ -236,11 +235,7 @@ class CosmosDBVectorStore(VectorStore):
             case Operator.endswith:
                 return f"ENDSWITH({field}, '{value}')"
             case Operator.exists:
-                return (
-                    f"IS_DEFINED({field})"
-                    if value
-                    else f"NOT IS_DEFINED({field})"
-                )
+                return f"IS_DEFINED({field})" if value else f"NOT IS_DEFINED({field})"
             case _:
                 msg = f"Unsupported operator for CosmosDB: {cond.operator}"
                 raise ValueError(msg)
@@ -249,9 +244,7 @@ class CosmosDBVectorStore(VectorStore):
         self, doc: dict[str, Any], select: list[str] | None = None
     ) -> dict[str, Any]:
         """Extract additional field data from a document response."""
-        fields_to_extract = (
-            select if select is not None else list(self.fields.keys())
-        )
+        fields_to_extract = select if select is not None else list(self.fields.keys())
         return {
             field_name: doc[field_name]
             for field_name in fields_to_extract
@@ -272,12 +265,8 @@ class CosmosDBVectorStore(VectorStore):
             raise ValueError(msg)
 
         # Build field selection for query based on select parameter
-        fields_to_select = (
-            select if select is not None else list(self.fields.keys())
-        )
-        field_selections = ", ".join(
-            [f"c.{field}" for field in fields_to_select]
-        )
+        fields_to_select = select if select is not None else list(self.fields.keys())
+        field_selections = ", ".join([f"c.{field}" for field in fields_to_select])
         if field_selections:
             field_selections = ", " + field_selections
         # Always include timestamps
@@ -296,12 +285,12 @@ class CosmosDBVectorStore(VectorStore):
 
         try:
             query = (
-                f"SELECT TOP {k} c.{self.id_field}{vector_select}"
+                f"SELECT TOP {k} c.{self.id_field}{vector_select}"  # noqa: S608
                 f"{field_selections},"
                 f" VectorDistance(c.{self.vector_field}, @embedding)"
                 f" AS SimilarityScore FROM c{where_clause}"
                 f" ORDER BY VectorDistance(c.{self.vector_field}, @embedding)"
-            )  # noqa: S608
+            )
             query_params = [{"name": "@embedding", "value": query_embedding}]
             items = list(
                 self._container_client.query_items(
@@ -314,9 +303,9 @@ class CosmosDBVectorStore(VectorStore):
             # Currently, the CosmosDB emulator does not support the VectorDistance function.
             # For emulator or test environments - fetch all items and calculate distance locally
             query = (
-                f"SELECT c.{self.id_field}, c.{self.vector_field}"
+                f"SELECT c.{self.id_field}, c.{self.vector_field}"  # noqa: S608
                 f"{field_selections} FROM c{where_clause}"
-            )  # noqa: S608
+            )
             items = list(
                 self._container_client.query_items(
                     query=query,
@@ -350,9 +339,7 @@ class CosmosDBVectorStore(VectorStore):
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
                     id=item.get(self.id_field, ""),
-                    vector=item.get(self.vector_field, [])
-                    if include_vectors
-                    else None,
+                    vector=item.get(self.vector_field, []) if include_vectors else None,
                     data=self._extract_data(item, select),
                     create_date=item.get(self.create_date_field),
                     update_date=item.get(self.update_date_field),
@@ -376,9 +363,7 @@ class CosmosDBVectorStore(VectorStore):
         item = self._container_client.read_item(item=id, partition_key=id)
         return VectorStoreDocument(
             id=item[self.id_field],
-            vector=item.get(self.vector_field, [])
-            if include_vectors
-            else None,
+            vector=item.get(self.vector_field, []) if include_vectors else None,
             data=self._extract_data(item, select),
             create_date=item.get(self.create_date_field),
             update_date=item.get(self.update_date_field),
@@ -398,9 +383,7 @@ class CosmosDBVectorStore(VectorStore):
     def remove(self, ids: list[str]) -> None:
         """Remove documents by their IDs."""
         for doc_id in ids:
-            self._container_client.delete_item(
-                item=doc_id, partition_key=doc_id
-            )
+            self._container_client.delete_item(item=doc_id, partition_key=doc_id)
 
     def update(self, document: VectorStoreDocument) -> None:
         """Update an existing document in the store."""

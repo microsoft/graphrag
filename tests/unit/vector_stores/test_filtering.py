@@ -5,7 +5,6 @@
 
 import json
 
-import pytest
 from graphrag_vectors.filtering import (
     AndExpr,
     Condition,
@@ -15,7 +14,6 @@ from graphrag_vectors.filtering import (
     Operator,
     OrExpr,
 )
-
 
 # ── Condition.evaluate ──────────────────────────────────────────────────────
 
@@ -257,11 +255,11 @@ class TestJsonRoundtrip:
         # Determine which type to deserialize based on the model's discriminator
         if isinstance(expr, Condition):
             return Condition.model_validate(parsed)
-        elif isinstance(expr, AndExpr):
+        if isinstance(expr, AndExpr):
             return AndExpr.model_validate(parsed)
-        elif isinstance(expr, OrExpr):
+        if isinstance(expr, OrExpr):
             return OrExpr.model_validate(parsed)
-        elif isinstance(expr, NotExpr):
+        if isinstance(expr, NotExpr):
             return NotExpr.model_validate(parsed)
         msg = f"Unknown type: {type(expr)}"
         raise TypeError(msg)
@@ -314,11 +312,7 @@ class TestJsonRoundtrip:
                         Condition(field="b", operator=Operator.eq, value=2),
                     ]
                 ),
-                NotExpr(
-                    not_=Condition(
-                        field="c", operator=Operator.gt, value=10
-                    )
-                ),
+                NotExpr(not_=Condition(field="c", operator=Operator.gt, value=10)),
             ]
         )
         restored = self._roundtrip(original)

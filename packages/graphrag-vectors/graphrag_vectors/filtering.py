@@ -36,7 +36,7 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import Annotated, Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Operator(StrEnum):
@@ -135,21 +135,27 @@ class Condition(BaseModel):
                 except TypeError:
                     return False
             case Operator.startswith:
-                return (
-                    actual.startswith(expected) if isinstance(actual, str) else False
-                )
+                return actual.startswith(expected) if isinstance(actual, str) else False
             case Operator.endswith:
-                return (
-                    actual.endswith(expected) if isinstance(actual, str) else False
-                )
+                return actual.endswith(expected) if isinstance(actual, str) else False
             case Operator.in_:
                 return actual in expected if isinstance(expected, list) else False
             case Operator.not_in:
-                return (
-                    actual not in expected if isinstance(expected, list) else False
-                )
+                return actual not in expected if isinstance(expected, list) else False
             case _:
                 return False
+
+    def __and__(self, other: FilterExpr) -> AndExpr:
+        """Combine with AND."""
+        return _make_and(self, other)
+
+    def __or__(self, other: FilterExpr) -> OrExpr:
+        """Combine with OR."""
+        return _make_or(self, other)
+
+    def __invert__(self) -> NotExpr:
+        """Negate this condition."""
+        return NotExpr(not_=self)
 
 
 class AndExpr(BaseModel):
@@ -165,13 +171,25 @@ class AndExpr(BaseModel):
         ])
     """
 
-    and_: list[FilterExpr] = Field(alias="and")
+    model_config = ConfigDict(populate_by_name=True)
 
-    model_config = {"populate_by_name": True}
+    and_: list[FilterExpr] = Field(validation_alias="and", serialization_alias="and")
 
     def evaluate(self, obj: Any) -> bool:
         """Evaluate AND expression - all must match."""
         return all(expr.evaluate(obj) for expr in self.and_)
+
+    def __and__(self, other: FilterExpr) -> AndExpr:
+        """Combine with AND."""
+        return _make_and(self, other)
+
+    def __or__(self, other: FilterExpr) -> OrExpr:
+        """Combine with OR."""
+        return _make_or(self, other)
+
+    def __invert__(self) -> NotExpr:
+        """Negate this expression."""
+        return NotExpr(not_=self)
 
 
 class OrExpr(BaseModel):
@@ -187,13 +205,25 @@ class OrExpr(BaseModel):
         ])
     """
 
-    or_: list[FilterExpr] = Field(alias="or")
+    model_config = ConfigDict(populate_by_name=True)
 
-    model_config = {"populate_by_name": True}
+    or_: list[FilterExpr] = Field(validation_alias="or", serialization_alias="or")
 
     def evaluate(self, obj: Any) -> bool:
         """Evaluate OR expression - at least one must match."""
         return any(expr.evaluate(obj) for expr in self.or_)
+
+    def __and__(self, other: FilterExpr) -> AndExpr:
+        """Combine with AND."""
+        return _make_and(self, other)
+
+    def __or__(self, other: FilterExpr) -> OrExpr:
+        """Combine with OR."""
+        return _make_or(self, other)
+
+    def __invert__(self) -> NotExpr:
+        """Negate this expression."""
+        return NotExpr(not_=self)
 
 
 class NotExpr(BaseModel):
@@ -206,13 +236,25 @@ class NotExpr(BaseModel):
         NotExpr(not_=Condition(field="deleted", operator="eq", value=True))
     """
 
-    not_: FilterExpr = Field(alias="not")
+    model_config = ConfigDict(populate_by_name=True)
 
-    model_config = {"populate_by_name": True}
+    not_: FilterExpr = Field(validation_alias="not", serialization_alias="not")
 
     def evaluate(self, obj: Any) -> bool:
         """Evaluate NOT expression - invert the inner expression."""
         return not self.not_.evaluate(obj)
+
+    def __and__(self, other: FilterExpr) -> AndExpr:
+        """Combine with AND."""
+        return _make_and(self, other)
+
+    def __or__(self, other: FilterExpr) -> OrExpr:
+        """Combine with OR."""
+        return _make_or(self, other)
+
+    def __invert__(self) -> FilterExpr:
+        """Double negation returns the inner expression."""
+        return self.not_
 
 
 # Union type for all filter expressions
@@ -245,46 +287,52 @@ class FieldRef:
         self.name = name
 
     def __eq__(self, other: object) -> Condition:  # type: ignore[override]
-        return Condition(field=self.name, operator="eq", value=other)
+        """Create an equality condition."""
+        return Condition(field=self.name, operator=Operator.eq, value=other)
 
     def __ne__(self, other: object) -> Condition:  # type: ignore[override]
-        return Condition(field=self.name, operator="ne", value=other)
+        """Create a not-equal condition."""
+        return Condition(field=self.name, operator=Operator.ne, value=other)
 
     def __gt__(self, other: Any) -> Condition:
-        return Condition(field=self.name, operator="gt", value=other)
+        """Create a greater-than condition."""
+        return Condition(field=self.name, operator=Operator.gt, value=other)
 
     def __ge__(self, other: Any) -> Condition:
-        return Condition(field=self.name, operator="gte", value=other)
+        """Create a greater-than-or-equal condition."""
+        return Condition(field=self.name, operator=Operator.gte, value=other)
 
     def __lt__(self, other: Any) -> Condition:
-        return Condition(field=self.name, operator="lt", value=other)
+        """Create a less-than condition."""
+        return Condition(field=self.name, operator=Operator.lt, value=other)
 
     def __le__(self, other: Any) -> Condition:
-        return Condition(field=self.name, operator="lte", value=other)
+        """Create a less-than-or-equal condition."""
+        return Condition(field=self.name, operator=Operator.lte, value=other)
 
     def contains(self, value: str) -> Condition:
         """Create a 'contains' condition."""
-        return Condition(field=self.name, operator="contains", value=value)
+        return Condition(field=self.name, operator=Operator.contains, value=value)
 
     def startswith(self, value: str) -> Condition:
         """Create a 'startswith' condition."""
-        return Condition(field=self.name, operator="startswith", value=value)
+        return Condition(field=self.name, operator=Operator.startswith, value=value)
 
     def endswith(self, value: str) -> Condition:
         """Create a 'endswith' condition."""
-        return Condition(field=self.name, operator="endswith", value=value)
+        return Condition(field=self.name, operator=Operator.endswith, value=value)
 
     def in_(self, values: list[Any]) -> Condition:
         """Create an 'in' condition."""
-        return Condition(field=self.name, operator="in", value=values)
+        return Condition(field=self.name, operator=Operator.in_, value=values)
 
     def not_in(self, values: list[Any]) -> Condition:
         """Create a 'not_in' condition."""
-        return Condition(field=self.name, operator="not_in", value=values)
+        return Condition(field=self.name, operator=Operator.not_in, value=values)
 
     def exists(self, value: bool = True) -> Condition:
         """Create an 'exists' condition."""
-        return Condition(field=self.name, operator="exists", value=value)
+        return Condition(field=self.name, operator=Operator.exists, value=value)
 
 
 class _FieldBuilder:
@@ -336,76 +384,3 @@ def _make_or(left: FilterExpr, right: FilterExpr) -> OrExpr:
     else:
         expressions.append(right)
     return OrExpr(or_=expressions)
-
-
-# Condition overloads
-def _condition_and(self: Condition, other: FilterExpr) -> AndExpr:
-    return _make_and(self, other)
-
-
-def _condition_or(self: Condition, other: FilterExpr) -> OrExpr:
-    return _make_or(self, other)
-
-
-def _condition_invert(self: Condition) -> NotExpr:
-    return NotExpr(not_=self)
-
-
-Condition.__and__ = _condition_and  # type: ignore[method-assign]
-Condition.__or__ = _condition_or  # type: ignore[method-assign]
-Condition.__invert__ = _condition_invert  # type: ignore[method-assign]
-
-
-# AndExpr overloads
-def _and_expr_and(self: AndExpr, other: FilterExpr) -> AndExpr:
-    return _make_and(self, other)
-
-
-def _and_expr_or(self: AndExpr, other: FilterExpr) -> OrExpr:
-    return _make_or(self, other)
-
-
-def _and_expr_invert(self: AndExpr) -> NotExpr:
-    return NotExpr(not_=self)
-
-
-AndExpr.__and__ = _and_expr_and  # type: ignore[method-assign]
-AndExpr.__or__ = _and_expr_or  # type: ignore[method-assign]
-AndExpr.__invert__ = _and_expr_invert  # type: ignore[method-assign]
-
-
-# OrExpr overloads
-def _or_expr_and(self: OrExpr, other: FilterExpr) -> AndExpr:
-    return _make_and(self, other)
-
-
-def _or_expr_or(self: OrExpr, other: FilterExpr) -> OrExpr:
-    return _make_or(self, other)
-
-
-def _or_expr_invert(self: OrExpr) -> NotExpr:
-    return NotExpr(not_=self)
-
-
-OrExpr.__and__ = _or_expr_and  # type: ignore[method-assign]
-OrExpr.__or__ = _or_expr_or  # type: ignore[method-assign]
-OrExpr.__invert__ = _or_expr_invert  # type: ignore[method-assign]
-
-
-# NotExpr overloads
-def _not_expr_and(self: NotExpr, other: FilterExpr) -> AndExpr:
-    return _make_and(self, other)
-
-
-def _not_expr_or(self: NotExpr, other: FilterExpr) -> OrExpr:
-    return _make_or(self, other)
-
-
-def _not_expr_invert(self: NotExpr) -> FilterExpr:
-    # Double negation returns the inner expression
-    return self.not_
-
-
-NotExpr.__and__ = _not_expr_and  # type: ignore[method-assign]
-NotExpr.__or__ = _not_expr_or  # type: ignore[method-assign]
-NotExpr.__invert__ = _not_expr_invert  # type: ignore[method-assign]

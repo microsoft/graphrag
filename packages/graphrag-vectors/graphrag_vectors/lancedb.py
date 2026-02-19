@@ -36,17 +36,13 @@ class LanceDBVectorStore(VectorStore):
         self.db_connection = lancedb.connect(self.db_uri)
 
         if self.index_name and self.index_name in self.db_connection.table_names():
-            self.document_collection = self.db_connection.open_table(
-                self.index_name
-            )
+            self.document_collection = self.db_connection.open_table(self.index_name)
 
     def create_index(self) -> None:
         """Create index."""
         dummy_vector = np.zeros(self.vector_size, dtype=np.float32)
         flat_array = pa.array(dummy_vector, type=pa.float32())
-        vector_column = pa.FixedSizeListArray.from_arrays(
-            flat_array, self.vector_size
-        )
+        vector_column = pa.FixedSizeListArray.from_arrays(flat_array, self.vector_size)
 
         types = {
             "str": (pa.string, "___DUMMY___"),
@@ -59,19 +55,13 @@ class LanceDBVectorStore(VectorStore):
             pa_type, dummy_value = types[field_type]
             others[field_name] = pa.array([dummy_value], type=pa_type())
 
-        data = pa.table(
-            {
-                self.id_field: pa.array(["__DUMMY__"], type=pa.string()),
-                self.vector_field: vector_column,
-                self.create_date_field: pa.array(
-                    ["___DUMMY___"], type=pa.string()
-                ),
-                self.update_date_field: pa.array(
-                    ["___DUMMY___"], type=pa.string()
-                ),
-                **others,
-            }
-        )
+        data = pa.table({
+            self.id_field: pa.array(["__DUMMY__"], type=pa.string()),
+            self.vector_field: vector_column,
+            self.create_date_field: pa.array(["___DUMMY___"], type=pa.string()),
+            self.update_date_field: pa.array(["___DUMMY___"], type=pa.string()),
+            **others,
+        })
 
         self.document_collection = self.db_connection.create_table(
             self.index_name if self.index_name else "",
@@ -104,22 +94,20 @@ class LanceDBVectorStore(VectorStore):
                     document.data.get(field_name) if document.data else None
                 )
 
-            data = pa.table(
-                {
-                    self.id_field: pa.array([document.id], type=pa.string()),
-                    self.vector_field: vector_column,
-                    self.create_date_field: pa.array(
-                        [document.create_date], type=pa.string()
-                    ),
-                    self.update_date_field: pa.array(
-                        [document.update_date], type=pa.string()
-                    ),
-                    **{
-                        field_name: pa.array([value])
-                        for field_name, value in others.items()
-                    },
-                }
-            )
+            data = pa.table({
+                self.id_field: pa.array([document.id], type=pa.string()),
+                self.vector_field: vector_column,
+                self.create_date_field: pa.array(
+                    [document.create_date], type=pa.string()
+                ),
+                self.update_date_field: pa.array(
+                    [document.update_date], type=pa.string()
+                ),
+                **{
+                    field_name: pa.array([value])
+                    for field_name, value in others.items()
+                },
+            })
 
             self.document_collection.add(data)
 
@@ -127,9 +115,7 @@ class LanceDBVectorStore(VectorStore):
         self, doc: dict[str, Any], select: list[str] | None = None
     ) -> dict[str, Any]:
         """Extract additional field data from a document response."""
-        fields_to_extract = (
-            select if select is not None else list(self.fields.keys())
-        )
+        fields_to_extract = select if select is not None else list(self.fields.keys())
         return {
             field_name: doc[field_name]
             for field_name in fields_to_extract
@@ -188,9 +174,7 @@ class LanceDBVectorStore(VectorStore):
             case Operator.endswith:
                 return f"{field} LIKE '%{value}'"
             case Operator.exists:
-                return (
-                    f"{field} IS NOT NULL" if value else f"{field} IS NULL"
-                )
+                return f"{field} IS NOT NULL" if value else f"{field} IS NULL"
             case _:
                 msg = f"Unsupported operator for LanceDB: {cond.operator}"
                 raise ValueError(msg)
@@ -236,7 +220,8 @@ class LanceDBVectorStore(VectorStore):
     ) -> VectorStoreDocument:
         """Search for a document by id."""
         result = (
-            self.document_collection.search()
+            self.document_collection
+            .search()
             .where(f"{self.id_field} == '{id}'", prefilter=True)
             .to_list()
         )
@@ -270,9 +255,7 @@ class LanceDBVectorStore(VectorStore):
             self.update_date_field: document.update_date,
         }
         if document.vector is not None:
-            updates[self.vector_field] = np.array(
-                document.vector, dtype=np.float32
-            )
+            updates[self.vector_field] = np.array(document.vector, dtype=np.float32)
         if document.data:
             for field_name in self.fields:
                 if field_name in document.data:

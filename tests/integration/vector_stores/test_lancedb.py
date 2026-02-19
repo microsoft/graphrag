@@ -85,8 +85,7 @@ class TestLanceDBVectorStore:
 
             if vector_store.index_name:
                 assert (
-                    vector_store.index_name
-                    in vector_store.db_connection.table_names()
+                    vector_store.index_name in vector_store.db_connection.table_names()
                 )
 
             doc = vector_store.search_by_id("1")
@@ -240,9 +239,7 @@ class TestLanceDBVectorStore:
         store = store_with_fields
         store.load_documents(sample_documents_with_metadata)
 
-        results = store.similarity_search_by_vector(
-            [0.1, 0.2, 0.3, 0.4, 0.5], k=3
-        )
+        results = store.similarity_search_by_vector([0.1, 0.2, 0.3, 0.4, 0.5], k=3)
         assert len(results) == 3
         # First result should be most similar (doc "1" has the same vector)
         assert results[0].document.id == "1"
@@ -268,9 +265,7 @@ class TestLanceDBVectorStore:
         store = store_with_fields
         store.load_documents(sample_documents_with_metadata)
 
-        results = store.similarity_search_by_vector(
-            [0.1, 0.2, 0.3, 0.4, 0.5], k=1
-        )
+        results = store.similarity_search_by_vector([0.1, 0.2, 0.3, 0.4, 0.5], k=1)
         assert len(results) == 1
 
     def test_fields_returned_in_search(
@@ -280,9 +275,7 @@ class TestLanceDBVectorStore:
         store = store_with_fields
         store.load_documents(sample_documents_with_metadata)
 
-        results = store.similarity_search_by_vector(
-            [0.1, 0.2, 0.3, 0.4, 0.5], k=1
-        )
+        results = store.similarity_search_by_vector([0.1, 0.2, 0.3, 0.4, 0.5], k=1)
         assert results[0].document.data["os"] == "windows"
         assert results[0].document.data["category"] == "bug"
         assert results[0].document.data["priority"] == 1
@@ -571,8 +564,7 @@ class TestLanceDBVectorStore:
 
             if vector_store.index_name:
                 assert (
-                    vector_store.index_name
-                    in vector_store.db_connection.table_names()
+                    vector_store.index_name in vector_store.db_connection.table_names()
                 )
 
             doc = vector_store.search_by_id("1")

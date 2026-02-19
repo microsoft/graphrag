@@ -70,9 +70,7 @@ class AzureAISearchVectorStore(VectorStore):
     def connect(self) -> Any:
         """Connect to AI search vector storage."""
         audience_arg = (
-            {"audience": self.audience}
-            if self.audience and not self.api_key
-            else {}
+            {"audience": self.audience} if self.audience and not self.api_key else {}
         )
         self.db_connection = SearchClient(
             endpoint=self.url,
@@ -129,9 +127,7 @@ class AzureAISearchVectorStore(VectorStore):
             ),
             SearchField(
                 name=self.vector_field,
-                type=SearchFieldDataType.Collection(
-                    SearchFieldDataType.Single
-                ),
+                type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                 searchable=True,
                 hidden=False,  # DRIFT needs to return the vector for client-side similarity
                 vector_search_dimensions=self.vector_size,
@@ -253,9 +249,7 @@ class AzureAISearchVectorStore(VectorStore):
         self, doc: dict[str, Any], select: list[str] | None = None
     ) -> dict[str, Any]:
         """Extract additional field data from a document response."""
-        fields_to_extract = (
-            select if select is not None else list(self.fields.keys())
-        )
+        fields_to_extract = select if select is not None else list(self.fields.keys())
         return {
             field_name: doc[field_name]
             for field_name in fields_to_extract
@@ -291,9 +285,7 @@ class AzureAISearchVectorStore(VectorStore):
             fields_to_select.extend(self.fields.keys())
 
         # Build OData filter string
-        filter_str = (
-            self._compile_filter(filters) if filters is not None else None
-        )
+        filter_str = self._compile_filter(filters) if filters is not None else None
 
         response = self.db_connection.search(
             vector_queries=[vectorized_query],
@@ -305,9 +297,7 @@ class AzureAISearchVectorStore(VectorStore):
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
                     id=doc.get(self.id_field, ""),
-                    vector=doc.get(self.vector_field, [])
-                    if include_vectors
-                    else None,
+                    vector=doc.get(self.vector_field, []) if include_vectors else None,
                     data=self._extract_data(doc, select),
                     create_date=doc.get(self.create_date_field),
                     update_date=doc.get(self.update_date_field),
@@ -339,14 +329,10 @@ class AzureAISearchVectorStore(VectorStore):
         else:
             fields_to_select.extend(self.fields.keys())
 
-        response = self.db_connection.get_document(
-            id, selected_fields=fields_to_select
-        )
+        response = self.db_connection.get_document(id, selected_fields=fields_to_select)
         return VectorStoreDocument(
             id=response[self.id_field],
-            vector=response.get(self.vector_field, [])
-            if include_vectors
-            else None,
+            vector=response.get(self.vector_field, []) if include_vectors else None,
             data=self._extract_data(response, select),
             create_date=response.get(self.create_date_field),
             update_date=response.get(self.update_date_field),
@@ -358,9 +344,7 @@ class AzureAISearchVectorStore(VectorStore):
 
     def remove(self, ids: list[str]) -> None:
         """Remove documents by their IDs."""
-        batch = [
-            {"@search.action": "delete", self.id_field: id} for id in ids
-        ]
+        batch = [{"@search.action": "delete", self.id_field: id} for id in ids]
         self.db_connection.upload_documents(batch)
 
     def update(self, document: VectorStoreDocument) -> None:

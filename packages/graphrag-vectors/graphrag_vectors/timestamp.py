@@ -67,7 +67,10 @@ def explode_timestamp(
 
     Example
     -------
-        >>> explode_timestamp("2024-03-15T14:30:00", "create_date")
+        >>> explode_timestamp(
+        ...     "2024-03-15T14:30:00",
+        ...     "create_date",
+        ... )
         {
             'create_date_year': 2024,
             'create_date_month': 3,

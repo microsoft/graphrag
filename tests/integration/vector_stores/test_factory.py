@@ -118,16 +118,43 @@ def test_register_class_directly_works():
         def load_documents(self, documents):
             pass
 
-        def similarity_search_by_vector(self, query_embedding, k=10, **kwargs):
+        def insert(self, document):
+            pass
+
+        def similarity_search_by_vector(
+            self,
+            query_embedding,
+            k=10,
+            select=None,
+            filters=None,
+            include_vectors=True,
+        ):
             return []
 
-        def similarity_search_by_text(self, text, text_embedder, k=10, **kwargs):
+        def similarity_search_by_text(
+            self,
+            text,
+            text_embedder,
+            k=10,
+            select=None,
+            filters=None,
+            include_vectors=True,
+        ):
             return []
 
-        def search_by_id(self, id):
+        def search_by_id(self, id, select=None, include_vectors=True):
             from graphrag_vectors import VectorStoreDocument
 
             return VectorStoreDocument(id=id, vector=None)
+
+        def count(self):
+            return 0
+
+        def remove(self, ids):
+            pass
+
+        def update(self, document):
+            pass
 
     # VectorStoreFactory() allows registering classes directly (no TypeError)
     VectorStoreFactory().register("custom_class", CustomVectorStore)
