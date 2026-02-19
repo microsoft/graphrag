@@ -12,7 +12,6 @@ from typing import Any, cast
 import pandas as pd
 
 from graphrag.index.operations.chunk_text.typing import TextChunk
-from graphrag.logger.progress import ProgressTicker
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 from graphrag.tokenizer.tokenizer import Tokenizer
 
@@ -140,7 +139,7 @@ def split_single_text_on_tokens(text: str, tokenizer: TokenChunkerOptions) -> li
 # Adapted from - https://github.com/langchain-ai/langchain/blob/77b359edf5df0d37ef0d539f678cf64f5557cb54/libs/langchain/langchain/text_splitter.py#L471
 # So we could have better control over the chunking process
 def split_multiple_texts_on_tokens(
-    texts: list[str], tokenizer: TokenChunkerOptions, tick: ProgressTicker
+    texts: list[str], tokenizer: TokenChunkerOptions
 ) -> list[TextChunk]:
     """Split multiple texts and return chunks with metadata using the tokenizer."""
     result = []
@@ -148,8 +147,6 @@ def split_multiple_texts_on_tokens(
 
     for source_doc_idx, text in enumerate(texts):
         encoded = tokenizer.encode(text)
-        if tick:
-            tick(1)  # Track progress if tick callback is provided
         mapped_ids.append((source_doc_idx, encoded))
 
     input_ids = [

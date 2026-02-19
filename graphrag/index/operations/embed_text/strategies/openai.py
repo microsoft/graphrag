@@ -17,7 +17,6 @@ from graphrag.index.text_splitting.text_splitting import TokenTextSplitter
 from graphrag.index.utils.is_null import is_null
 from graphrag.language_model.manager import ModelManager
 from graphrag.language_model.protocol.base import EmbeddingModel
-from graphrag.logger.progress import ProgressTicker, progress_ticker
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 logger = logging.getLogger(__name__)
@@ -63,14 +62,9 @@ async def run(
         batch_size,
         batch_max_tokens,
     )
-    ticker = progress_ticker(
-        callbacks.progress,
-        len(text_batches),
-        description="generate embeddings progress: ",
-    )
 
     # Embed each chunk of snippets
-    embeddings = await _execute(model, text_batches, ticker, semaphore)
+    embeddings = await _execute(model, text_batches, semaphore)
     embeddings = _reconstitute_embeddings(embeddings, input_sizes)
 
     return TextEmbeddingResult(embeddings=embeddings)
@@ -88,14 +82,12 @@ def _get_splitter(
 async def _execute(
     model: EmbeddingModel,
     chunks: list[list[str]],
-    tick: ProgressTicker,
     semaphore: asyncio.Semaphore,
 ) -> list[list[float]]:
     async def embed(chunk: list[str]):
         async with semaphore:
             chunk_embeddings = await model.aembed_batch(chunk)
             result = np.array(chunk_embeddings)
-            tick(1)
         return result
 
     futures = [embed(chunk) for chunk in chunks]

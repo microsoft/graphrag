@@ -20,30 +20,26 @@ class TestRunSentences:
     def test_basic_functionality(self):
         """Test basic sentence splitting without metadata"""
         input = ["This is a test. Another sentence."]
-        tick = Mock()
-        chunks = list(run_sentences(input, ChunkingConfig(), tick))
+        chunks = list(run_sentences(input, ChunkingConfig()))
 
         assert len(chunks) == 2
         assert chunks[0].text_chunk == "This is a test."
         assert chunks[1].text_chunk == "Another sentence."
         assert all(c.source_doc_indices == [0] for c in chunks)
-        tick.assert_called_once_with(1)
 
     def test_multiple_documents(self):
         """Test processing multiple input documents"""
         input = ["First. Document.", "Second. Doc."]
-        tick = Mock()
-        chunks = list(run_sentences(input, ChunkingConfig(), tick))
+        chunks = list(run_sentences(input, ChunkingConfig()))
 
         assert len(chunks) == 4
         assert chunks[0].source_doc_indices == [0]
         assert chunks[2].source_doc_indices == [1]
-        assert tick.call_count == 2
 
     def test_mixed_whitespace_handling(self):
         """Test input with irregular whitespace"""
         input = ["   Sentence with spaces.  Another one!   "]
-        chunks = list(run_sentences(input, ChunkingConfig(), Mock()))
+        chunks = list(run_sentences(input, ChunkingConfig()))
         assert chunks[0].text_chunk == "   Sentence with spaces."
         assert chunks[1].text_chunk == "Another one!"
 
@@ -61,15 +57,13 @@ class TestRunTokens:
             "Marley was dead: to begin with. There is no doubt whatever about that. The register of his burial was signed by the clergyman, the clerk, the undertaker, and the chief mourner. Scrooge signed it. And Scrooge's name was good upon 'Change, for anything he chose to put his hand to."
         ]
         config = ChunkingConfig(size=5, overlap=1, encoding_model="fake-encoding")
-        tick = Mock()
 
         # Run the function
-        chunks = list(run_tokens(input, config, tick))
+        chunks = list(run_tokens(input, config))
 
         # Verify output
         assert len(chunks) > 0
         assert all(isinstance(chunk, TextChunk) for chunk in chunks)
-        tick.assert_called_once_with(1)
 
     @patch("tiktoken.get_encoding")
     def test_non_string_input(self, mock_get_encoding):
@@ -81,9 +75,8 @@ class TestRunTokens:
 
         input = [123]  # Non-string input
         config = ChunkingConfig(size=5, overlap=1, encoding_model="fake-encoding")
-        tick = Mock()
 
-        chunks = list(run_tokens(input, config, tick))  # type: ignore
+        chunks = list(run_tokens(input, config))  # type: ignore
 
         # Verify non-string input is handled
         assert len(chunks) > 0

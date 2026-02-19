@@ -117,7 +117,6 @@ def test_split_multiple_texts_on_tokens():
     ]
 
     mocked_tokenizer = MockTokenizer()
-    mock_tick = MagicMock()
     tokenizer = TokenChunkerOptions(
         chunk_overlap=5,
         tokens_per_chunk=10,
@@ -125,8 +124,7 @@ def test_split_multiple_texts_on_tokens():
         encode=lambda text: mocked_tokenizer.encode(text),
     )
 
-    split_multiple_texts_on_tokens(texts, tokenizer, tick=mock_tick)
-    mock_tick.assert_called()
+    split_multiple_texts_on_tokens(texts, tokenizer)
 
 
 def test_split_single_text_on_tokens_no_overlap():

@@ -14,8 +14,6 @@ from graphrag.index.text_splitting.text_splitting import (
     TokenChunkerOptions,
     split_multiple_texts_on_tokens,
 )
-from graphrag.logger.progress import ProgressTicker
-
 
 def get_encoding_fn(encoding_name):
     """Get the encoding model."""
@@ -34,8 +32,7 @@ def get_encoding_fn(encoding_name):
 
 def run_tokens(
     input: list[str],
-    config: ChunkingConfig,
-    tick: ProgressTicker,
+    config: ChunkingConfig
 ) -> Iterable[TextChunk]:
     """Chunks text into chunks based on encoding tokens."""
     tokens_per_chunk = config.size
@@ -51,12 +48,11 @@ def run_tokens(
             encode=encode,
             decode=decode,
         ),
-        tick,
     )
 
 
 def run_sentences(
-    input: list[str], _config: ChunkingConfig, tick: ProgressTicker
+    input: list[str], _config: ChunkingConfig
 ) -> Iterable[TextChunk]:
     """Chunks text into multiple parts by sentence."""
     for doc_idx, text in enumerate(input):
@@ -66,4 +62,3 @@ def run_sentences(
                 text_chunk=sentence,
                 source_doc_indices=[doc_idx],
             )
-        tick(1)

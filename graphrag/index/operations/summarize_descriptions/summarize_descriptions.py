@@ -15,8 +15,6 @@ from graphrag.index.operations.summarize_descriptions.typing import (
     SummarizationStrategy,
     SummarizeStrategyType,
 )
-from graphrag.logger.progress import ProgressTicker, progress_ticker
-
 logger = logging.getLogger(__name__)
 
 
@@ -39,19 +37,10 @@ async def summarize_descriptions(
     async def get_summarized(
         nodes: pd.DataFrame, edges: pd.DataFrame, semaphore: asyncio.Semaphore
     ):
-        ticker_length = len(nodes) + len(edges)
-
-        ticker = progress_ticker(
-            callbacks.progress,
-            ticker_length,
-            description="Summarize entity/relationship description progress: ",
-        )
-
         node_futures = [
             do_summarize_descriptions(
                 str(row.title),  # type: ignore
                 sorted(set(row.description)),  # type: ignore
-                ticker,
                 semaphore,
             )
             for row in nodes.itertuples(index=False)
@@ -71,7 +60,6 @@ async def summarize_descriptions(
             do_summarize_descriptions(
                 (str(row.source), str(row.target)),  # type: ignore
                 sorted(set(row.description)),  # type: ignore
-                ticker,
                 semaphore,
             )
             for row in edges.itertuples(index=False)
@@ -95,12 +83,10 @@ async def summarize_descriptions(
     async def do_summarize_descriptions(
         id: str | tuple[str, str],
         descriptions: list[str],
-        ticker: ProgressTicker,
         semaphore: asyncio.Semaphore,
     ):
         async with semaphore:
             results = await strategy_exec(id, descriptions, cache, strategy_config)
-            ticker(1)
         return results
 
     semaphore = asyncio.Semaphore(num_threads)

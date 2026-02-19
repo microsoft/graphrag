@@ -22,7 +22,6 @@ from graphrag.index.operations.summarize_communities.utils import (
     get_levels,
 )
 from graphrag.index.utils.derive_from_rows import derive_from_rows
-from graphrag.logger.progress import progress_ticker
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +40,6 @@ async def summarize_communities(
 ):
     """Generate community summaries."""
     reports: list[CommunityReport | None] = []
-    tick = progress_ticker(callbacks.progress, len(local_contexts))
     strategy_exec = load_strategy(strategy["type"])
     strategy_config = {**strategy}
 
@@ -76,7 +74,6 @@ async def summarize_communities(
                 cache=cache,
                 strategy=strategy_config,
             )
-            tick()
             return result
 
         local_reports = await derive_from_rows(
