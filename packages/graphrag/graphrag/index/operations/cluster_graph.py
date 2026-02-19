@@ -4,6 +4,7 @@
 """A module containing cluster_graph method definition."""
 
 import logging
+from collections import defaultdict
 
 import pandas as pd
 
@@ -34,12 +35,9 @@ def cluster_graph(
 
     clusters: dict[int, dict[int, list[str]]] = {}
     for level in levels:
-        result = {}
+        result: dict[int, list[str]] = defaultdict(list)
         clusters[level] = result
-        for node_id, raw_community_id in node_id_to_community_map[level].items():
-            community_id = raw_community_id
-            if community_id not in result:
-                result[community_id] = []
+        for node_id, community_id in node_id_to_community_map[level].items():
             result[community_id].append(node_id)
 
     results: Communities = []
@@ -64,15 +62,25 @@ def _compute_leiden_communities(
     # so we replicate that by normalizing direction then keeping last.
     lo = edge_df[["source", "target"]].min(axis=1)
     hi = edge_df[["source", "target"]].max(axis=1)
-    edge_df = edge_df.assign(source=lo, target=hi)
-    edge_df = edge_df.drop_duplicates(subset=["source", "target"], keep="last")
+    edge_df["source"] = lo
+    edge_df["target"] = hi
+    edge_df.drop_duplicates(subset=["source", "target"], keep="last", inplace=True)
 
     if use_lcc:
         edge_df = stable_lcc(edge_df)
 
+    weights = (
+        edge_df["weight"].astype(float)
+        if "weight" in edge_df.columns
+        else pd.Series(1.0, index=edge_df.index)
+    )
     edge_list: list[tuple[str, str, float]] = sorted(
-        (str(row["source"]), str(row["target"]), float(row.get("weight", 1.0)))
-        for _, row in edge_df.iterrows()
+        zip(
+            edge_df["source"].astype(str),
+            edge_df["target"].astype(str),
+            weights,
+            strict=True,
+        )
     )
 
     community_mapping = hierarchical_leiden(

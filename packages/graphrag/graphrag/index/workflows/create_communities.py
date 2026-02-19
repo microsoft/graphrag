@@ -5,11 +5,12 @@
 
 import logging
 from datetime import datetime, timezone
-from typing import cast
+from typing import Any, cast
 from uuid import uuid4
 
 import numpy as np
 import pandas as pd
+from graphrag_storage.tables.table import Table
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.data_reader import DataReader
@@ -28,34 +29,60 @@ async def run_workflow(
     """All the steps to transform final communities."""
     logger.info("Workflow started: create_communities")
     reader = DataReader(context.output_table_provider)
-    entities = await reader.entities()
     relationships = await reader.relationships()
+
     max_cluster_size = config.cluster_graph.max_cluster_size
     use_lcc = config.cluster_graph.use_lcc
     seed = config.cluster_graph.seed
 
-    output = create_communities(
-        entities,
-        relationships,
-        max_cluster_size=max_cluster_size,
-        use_lcc=use_lcc,
-        seed=seed,
-    )
-
-    await context.output_table_provider.write_dataframe("communities", output)
+    async with (
+        context.output_table_provider.open("entities") as entities_table,
+        context.output_table_provider.open("communities") as communities_table,
+    ):
+        sample_rows = await create_communities(
+            communities_table,
+            entities_table,
+            relationships,
+            max_cluster_size=max_cluster_size,
+            use_lcc=use_lcc,
+            seed=seed,
+        )
 
     logger.info("Workflow completed: create_communities")
-    return WorkflowFunctionOutput(result=output)
+    return WorkflowFunctionOutput(result=sample_rows)
 
 
-def create_communities(
-    entities: pd.DataFrame,
+async def create_communities(
+    communities_table: Table,
+    entities_table: Table,
     relationships: pd.DataFrame,
     max_cluster_size: int,
     use_lcc: bool,
     seed: int | None = None,
-) -> pd.DataFrame:
-    """All the steps to transform final communities."""
+) -> list[dict[str, Any]]:
+    """Build communities from clustered relationships and stream rows to the table.
+
+    Args
+    ----
+        communities_table: Table
+            Output table to write community rows to.
+        entities_table: Table
+            Table containing entity rows.
+        relationships: pd.DataFrame
+            Relationships DataFrame with source, target, weight,
+            text_unit_ids columns.
+        max_cluster_size: int
+            Maximum cluster size for hierarchical Leiden.
+        use_lcc: bool
+            Whether to restrict to the largest connected component.
+        seed: int | None
+            Random seed for deterministic clustering.
+
+    Returns
+    -------
+        list[dict[str, Any]]
+            Sample of up to 5 community rows for logging.
+    """
     clusters = cluster_graph(
         relationships,
         max_cluster_size,
@@ -63,53 +90,61 @@ def create_communities(
         seed=seed,
     )
 
+    title_to_entity_id: dict[str, str] = {}
+    async for row in entities_table:
+        title_to_entity_id[row["title"]] = row["id"]
+
     communities = pd.DataFrame(
         clusters, columns=pd.Index(["level", "community", "parent", "title"])
     ).explode("title")
     communities["community"] = communities["community"].astype(int)
 
     # aggregate entity ids for each community
-    entity_ids = communities.merge(entities, on="title", how="inner")
+    entity_map = communities[["community", "title"]].copy()
+    entity_map["entity_id"] = entity_map["title"].map(title_to_entity_id)
     entity_ids = (
-        entity_ids.groupby("community").agg(entity_ids=("id", list)).reset_index()
+        entity_map
+        .dropna(subset=["entity_id"])
+        .groupby("community")
+        .agg(entity_ids=("entity_id", list))
+        .reset_index()
     )
 
-    # aggregate relationships ids for each community
-    # these are limited to only those where the source and target are in the same community
-    max_level = communities["level"].max()
-    all_grouped = pd.DataFrame(
-        columns=["community", "level", "relationship_ids", "text_unit_ids"]  # type: ignore
-    )
-    for level in range(max_level + 1):
-        communities_at_level = communities.loc[communities["level"] == level]
-        sources = relationships.merge(
-            communities_at_level, left_on="source", right_on="title", how="inner"
+    # aggregate relationship ids per community, limited to
+    # intra-community edges (source and target in the same community).
+    # Process one hierarchy level at a time to keep intermediate
+    # DataFrames small, then concat the grouped results once at the end.
+    level_results = []
+    for level in communities["level"].unique():
+        level_comms = communities[communities["level"] == level]
+        with_source = relationships.merge(
+            level_comms, left_on="source", right_on="title", how="inner"
         )
-        targets = sources.merge(
-            communities_at_level, left_on="target", right_on="title", how="inner"
+        with_both = with_source.merge(
+            level_comms, left_on="target", right_on="title", how="inner"
         )
-        matched = targets.loc[targets["community_x"] == targets["community_y"]]
-        text_units = matched.explode("text_unit_ids")
+        intra = with_both[with_both["community_x"] == with_both["community_y"]]
+        if intra.empty:
+            continue
         grouped = (
-            text_units
-            .groupby(["community_x", "level_x", "parent_x"])
-            .agg(relationship_ids=("id", list), text_unit_ids=("text_unit_ids", list))
+            intra
+            .explode("text_unit_ids")
+            .groupby(["community_x", "parent_x"])
+            .agg(
+                relationship_ids=("id", list),
+                text_unit_ids=("text_unit_ids", list),
+            )
             .reset_index()
         )
-        grouped.rename(
-            columns={
-                "community_x": "community",
-                "level_x": "level",
-                "parent_x": "parent",
-            },
-            inplace=True,
-        )
-        all_grouped = pd.concat([
-            all_grouped,
-            grouped.loc[
-                :, ["community", "level", "parent", "relationship_ids", "text_unit_ids"]
-            ],
-        ])
+        grouped["level"] = level
+        level_results.append(grouped)
+
+    all_grouped = pd.concat(level_results, ignore_index=True).rename(
+        columns={
+            "community_x": "community",
+            "parent_x": "parent",
+        }
+    )
 
     # deduplicate the lists
     all_grouped["relationship_ids"] = all_grouped["relationship_ids"].apply(
@@ -146,7 +181,27 @@ def create_communities(
     final_communities["period"] = datetime.now(timezone.utc).date().isoformat()
     final_communities["size"] = final_communities.loc[:, "entity_ids"].apply(len)
 
-    return final_communities.loc[
-        :,
-        COMMUNITIES_FINAL_COLUMNS,
-    ]
+    output = final_communities.loc[:, COMMUNITIES_FINAL_COLUMNS]
+    rows = output.to_dict("records")
+    sample_rows: list[dict[str, Any]] = []
+    for row in rows:
+        row = _sanitize_row(row)
+        await communities_table.write(row)
+        if len(sample_rows) < 5:
+            sample_rows.append(row)
+    return sample_rows
+
+
+def _sanitize_row(row: dict[str, Any]) -> dict[str, Any]:
+    """Convert numpy types to native Python types for table serialization."""
+    sanitized = {}
+    for key, value in row.items():
+        if isinstance(value, np.ndarray):
+            sanitized[key] = value.tolist()
+        elif isinstance(value, np.integer):
+            sanitized[key] = int(value)
+        elif isinstance(value, np.floating):
+            sanitized[key] = float(value)
+        else:
+            sanitized[key] = value
+    return sanitized
