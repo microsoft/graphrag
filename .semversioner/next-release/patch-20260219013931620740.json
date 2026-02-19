@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add filtering, timestamp explosion, insert/count/remove/update operations to vector store API. Add top-level vector_size config to VectorStoreConfig."
+}
