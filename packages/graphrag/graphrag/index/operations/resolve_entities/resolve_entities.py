@@ -72,8 +72,8 @@ async def resolve_entities(
     formatted_prompt = prompt.format(entity_list=entity_list)
 
     try:
-        response = await model(formatted_prompt)
-        raw = (response or "").strip()
+        response = await model.completion_async(messages=formatted_prompt)
+        raw = (response.content or "").strip()
     except Exception as e:
         logger.warning("Entity resolution LLM call failed, skipping resolution: %s", e, exc_info=True)
         return entities, relationships
