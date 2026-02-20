@@ -89,6 +89,16 @@ def transform_entity_row(row: dict[str, Any]) -> dict[str, Any]:
     return row
 
 
+def transform_entity_row_for_embedding(
+    row: dict[str, Any],
+) -> dict[str, Any]:
+    """Add a title_description column for embedding generation."""
+    title = row.get("title") or ""
+    description = row.get("description") or ""
+    row["title_description"] = f"{title}:{description}"
+    return row
+
+
 # -- relationships (mirrors relationships_typed) --------------------------
 
 
