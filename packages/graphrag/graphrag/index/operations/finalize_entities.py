@@ -1,34 +1,56 @@
-# Copyright (c) 2024 Microsoft Corporation.
+# Copyright (C) 2026 Microsoft
 # Licensed under the MIT License
 
-"""All the steps to transform final entities."""
+"""Stream-finalize entity rows into an output Table."""
 
+from typing import Any
 from uuid import uuid4
 
-import pandas as pd
+from graphrag_storage.tables.table import Table
 
 from graphrag.data_model.schemas import ENTITIES_FINAL_COLUMNS
-from graphrag.graphs.compute_degree import compute_degree
 
 
-def finalize_entities(
-    entities: pd.DataFrame,
-    relationships: pd.DataFrame,
-) -> pd.DataFrame:
-    """All the steps to transform final entities."""
-    degrees = compute_degree(relationships)
-    final_entities = entities.merge(degrees, on="title", how="left").drop_duplicates(
-        subset="title"
-    )
-    final_entities = final_entities.loc[entities["title"].notna()].reset_index()
-    # disconnected nodes and those with no community even at level 0 can be missing degree
-    final_entities["degree"] = final_entities["degree"].fillna(0).astype(int)
-    final_entities.reset_index(inplace=True)
-    final_entities["human_readable_id"] = final_entities.index
-    final_entities["id"] = final_entities["human_readable_id"].apply(
-        lambda _x: str(uuid4())
-    )
-    return final_entities.loc[
-        :,
-        ENTITIES_FINAL_COLUMNS,
-    ]
+async def finalize_entities(
+    entities_table: Table,
+    degree_map: dict[str, int],
+) -> list[dict[str, Any]]:
+    """Read entity rows, enrich with degree, and write back.
+
+    Streams through the entities table, deduplicates by title,
+    assigns degree from the pre-computed degree map, and writes
+    each finalized row back to the same table (safe when using
+    truncate=True, which reads from the original and writes to
+    a temp file).
+
+    Args
+    ----
+        entities_table: Table
+            Opened table for both reading input and writing output.
+        degree_map: dict[str, int]
+            Pre-computed mapping of entity title to node degree.
+
+    Returns
+    -------
+        list[dict[str, Any]]
+            Sample of up to 5 entity rows for logging.
+    """
+    sample_rows: list[dict[str, Any]] = []
+    seen_titles: set[str] = set()
+    human_readable_id = 0
+
+    async for row in entities_table:
+        title = row.get("title")
+        if not title or title in seen_titles:
+            continue
+        seen_titles.add(title)
+        row["degree"] = degree_map.get(title, 0)
+        row["human_readable_id"] = human_readable_id
+        row["id"] = str(uuid4())
+        human_readable_id += 1
+        out = {col: row.get(col) for col in ENTITIES_FINAL_COLUMNS}
+        await entities_table.write(out)
+        if len(sample_rows) < 5:
+            sample_rows.append(out)
+
+    return sample_rows
