@@ -10,6 +10,14 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
 
+from graphrag_vectors.filtering import (
+    AndExpr,
+    Condition,
+    FilterExpr,
+    NotExpr,
+    Operator,
+    OrExpr,
+)
 from graphrag_vectors.vector_store import (
     VectorStore,
     VectorStoreDocument,
@@ -155,27 +163,134 @@ class CosmosDBVectorStore(VectorStore):
             msg = "Container client is not initialized."
             raise ValueError(msg)
 
-    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
-        """Load documents into CosmosDB."""
-        # Upload documents to CosmosDB
-        for doc in documents:
-            if doc.vector is not None:
-                doc_json = {
-                    self.id_field: doc.id,
-                    self.vector_field: doc.vector,
-                }
-                self._container_client.upsert_item(doc_json)
+    def insert(self, document: VectorStoreDocument) -> None:
+        """Insert a single document into CosmosDB."""
+        self._prepare_document(document)
+        if document.vector is not None:
+            doc_json: dict[str, Any] = {
+                self.id_field: document.id,
+                self.vector_field: document.vector,
+                self.create_date_field: document.create_date,
+                self.update_date_field: document.update_date,
+            }
+            # Add additional fields if they exist in the document data
+            if document.data:
+                for field_name in self.fields:
+                    if field_name in document.data:
+                        doc_json[field_name] = document.data[field_name]
+            self._container_client.upsert_item(doc_json)
+
+    def _compile_filter(self, expr: FilterExpr) -> str:
+        """Compile a FilterExpr into a CosmosDB SQL WHERE clause.
+
+        All field references are prefixed with 'c.' for Cosmos SQL.
+        """
+        match expr:
+            case Condition():
+                return self._compile_condition(expr)
+            case AndExpr():
+                parts = [self._compile_filter(e) for e in expr.and_]
+                return " AND ".join(f"({p})" for p in parts)
+            case OrExpr():
+                parts = [self._compile_filter(e) for e in expr.or_]
+                return " OR ".join(f"({p})" for p in parts)
+            case NotExpr():
+                inner = self._compile_filter(expr.not_)
+                return f"NOT ({inner})"
+            case _:
+                msg = f"Unsupported filter expression type: {type(expr)}"
+                raise ValueError(msg)
+
+    def _compile_condition(self, cond: Condition) -> str:
+        """Compile a single Condition to CosmosDB SQL syntax."""
+        field = f"c.{cond.field}"
+        value = cond.value
+
+        def quote(v: Any) -> str:
+            return f"'{v}'" if isinstance(v, str) else str(v)
+
+        match cond.operator:
+            case Operator.eq:
+                return f"{field} = {quote(value)}"
+            case Operator.ne:
+                return f"{field} != {quote(value)}"
+            case Operator.gt:
+                return f"{field} > {quote(value)}"
+            case Operator.gte:
+                return f"{field} >= {quote(value)}"
+            case Operator.lt:
+                return f"{field} < {quote(value)}"
+            case Operator.lte:
+                return f"{field} <= {quote(value)}"
+            case Operator.in_:
+                items = ", ".join(quote(v) for v in value)
+                return f"{field} IN ({items})"
+            case Operator.not_in:
+                items = ", ".join(quote(v) for v in value)
+                return f"{field} NOT IN ({items})"
+            case Operator.contains:
+                return f"CONTAINS({field}, '{value}')"
+            case Operator.startswith:
+                return f"STARTSWITH({field}, '{value}')"
+            case Operator.endswith:
+                return f"ENDSWITH({field}, '{value}')"
+            case Operator.exists:
+                return f"IS_DEFINED({field})" if value else f"NOT IS_DEFINED({field})"
+            case _:
+                msg = f"Unsupported operator for CosmosDB: {cond.operator}"
+                raise ValueError(msg)
+
+    def _extract_data(
+        self, doc: dict[str, Any], select: list[str] | None = None
+    ) -> dict[str, Any]:
+        """Extract additional field data from a document response."""
+        fields_to_extract = select if select is not None else list(self.fields.keys())
+        return {
+            field_name: doc[field_name]
+            for field_name in fields_to_extract
+            if field_name in doc
+        }
 
     def similarity_search_by_vector(
-        self, query_embedding: list[float], k: int = 10
+        self,
+        query_embedding: list[float],
+        k: int = 10,
+        select: list[str] | None = None,
+        filters: FilterExpr | None = None,
+        include_vectors: bool = True,
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
         if self._container_client is None:
             msg = "Container client is not initialized."
             raise ValueError(msg)
 
+        # Build field selection for query based on select parameter
+        fields_to_select = select if select is not None else list(self.fields.keys())
+        field_selections = ", ".join([f"c.{field}" for field in fields_to_select])
+        if field_selections:
+            field_selections = ", " + field_selections
+        # Always include timestamps
+        field_selections = (
+            f", c.{self.create_date_field}, c.{self.update_date_field}"
+            f"{field_selections}"
+        )
+
+        # Optionally include vector
+        vector_select = f", c.{self.vector_field}" if include_vectors else ""
+
+        # Build WHERE clause from filters
+        where_clause = ""
+        if filters is not None:
+            where_clause = f" WHERE {self._compile_filter(filters)}"
+
         try:
-            query = f"SELECT TOP {k} c.{self.id_field}, c.{self.vector_field}, VectorDistance(c.{self.vector_field}, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.{self.vector_field}, @embedding)"  # noqa: S608
+            query = (
+                f"SELECT TOP {k} c.{self.id_field}{vector_select}"  # noqa: S608
+                f"{field_selections},"
+                f" VectorDistance(c.{self.vector_field}, @embedding)"
+                f" AS SimilarityScore FROM c{where_clause}"
+                f" ORDER BY VectorDistance(c.{self.vector_field}, @embedding)"
+            )
             query_params = [{"name": "@embedding", "value": query_embedding}]
             items = list(
                 self._container_client.query_items(
@@ -187,7 +302,10 @@ class CosmosDBVectorStore(VectorStore):
         except (CosmosHttpResponseError, ValueError):
             # Currently, the CosmosDB emulator does not support the VectorDistance function.
             # For emulator or test environments - fetch all items and calculate distance locally
-            query = f"SELECT c.{self.id_field}, c.{self.vector_field} FROM c"  # noqa: S608
+            query = (
+                f"SELECT c.{self.id_field}, c.{self.vector_field}"  # noqa: S608
+                f"{field_selections} FROM c{where_clause}"
+            )
             items = list(
                 self._container_client.query_items(
                     query=query,
@@ -212,21 +330,31 @@ class CosmosDBVectorStore(VectorStore):
 
             # Sort by similarity score (higher is better) and take top k
             items = sorted(
-                items, key=lambda x: x.get("SimilarityScore", 0.0), reverse=True
+                items,
+                key=lambda x: x.get("SimilarityScore", 0.0),
+                reverse=True,
             )[:k]
 
         return [
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
                     id=item.get(self.id_field, ""),
-                    vector=item.get(self.vector_field, []),
+                    vector=item.get(self.vector_field, []) if include_vectors else None,
+                    data=self._extract_data(item, select),
+                    create_date=item.get(self.create_date_field),
+                    update_date=item.get(self.update_date_field),
                 ),
                 score=item.get("SimilarityScore", 0.0),
             )
             for item in items
         ]
 
-    def search_by_id(self, id: str) -> VectorStoreDocument:
+    def search_by_id(
+        self,
+        id: str,
+        select: list[str] | None = None,
+        include_vectors: bool = True,
+    ) -> VectorStoreDocument:
         """Search for a document by id."""
         if self._container_client is None:
             msg = "Container client is not initialized."
@@ -234,9 +362,53 @@ class CosmosDBVectorStore(VectorStore):
 
         item = self._container_client.read_item(item=id, partition_key=id)
         return VectorStoreDocument(
-            id=item.get(self.id_field, ""),
-            vector=item.get(self.vector_field, []),
+            id=item[self.id_field],
+            vector=item.get(self.vector_field, []) if include_vectors else None,
+            data=self._extract_data(item, select),
+            create_date=item.get(self.create_date_field),
+            update_date=item.get(self.update_date_field),
         )
+
+    def count(self) -> int:
+        """Return the total number of documents in the store."""
+        query = "SELECT VALUE COUNT(1) FROM c"
+        result = list(
+            self._container_client.query_items(
+                query=query,
+                enable_cross_partition_query=True,
+            )
+        )
+        return result[0] if result else 0
+
+    def remove(self, ids: list[str]) -> None:
+        """Remove documents by their IDs."""
+        for doc_id in ids:
+            self._container_client.delete_item(item=doc_id, partition_key=doc_id)
+
+    def update(self, document: VectorStoreDocument) -> None:
+        """Update an existing document in the store."""
+        self._prepare_update(document)
+
+        # Read the existing document
+        existing = self._container_client.read_item(
+            item=document.id, partition_key=document.id
+        )
+
+        # Set update_date
+        existing[self.update_date_field] = document.update_date
+
+        # Update vector if provided
+        if document.vector is not None:
+            existing[self.vector_field] = document.vector
+
+        # Update data fields if provided
+        if document.data:
+            for field_name in self.fields:
+                if field_name in document.data:
+                    existing[field_name] = document.data[field_name]
+
+        # Upsert the updated document
+        self._container_client.upsert_item(existing)
 
     def clear(self) -> None:
         """Clear the vector store."""

@@ -27,6 +27,8 @@ dtypes
 ints
 genid
 isinstance
+ismatch
+ftype
 
 # Azure
 abfs

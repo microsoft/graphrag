@@ -41,8 +41,16 @@ class MockVectorStore(VectorStore):
     def load_documents(self, documents: list[VectorStoreDocument]) -> None:
         raise NotImplementedError
 
+    def insert(self, document: VectorStoreDocument) -> None:
+        raise NotImplementedError
+
     def similarity_search_by_vector(
-        self, query_embedding: list[float], k: int = 10, **kwargs: Any
+        self,
+        query_embedding: list[float],
+        k: int = 10,
+        select: list[str] | None = None,
+        filters: Any = None,
+        include_vectors: bool = True,
     ) -> list[VectorStoreSearchResult]:
         return [
             VectorStoreSearchResult(document=document, score=1)
@@ -50,7 +58,13 @@ class MockVectorStore(VectorStore):
         ]
 
     def similarity_search_by_text(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+        self,
+        text: str,
+        text_embedder: TextEmbedder,
+        k: int = 10,
+        select: list[str] | None = None,
+        filters: Any = None,
+        include_vectors: bool = True,
     ) -> list[VectorStoreSearchResult]:
         return sorted(
             [
@@ -63,10 +77,21 @@ class MockVectorStore(VectorStore):
             key=lambda x: x.score,
         )[:k]
 
-    def search_by_id(self, id: str) -> VectorStoreDocument:
+    def search_by_id(
+        self, id: str, select: list[str] | None = None, include_vectors: bool = True
+    ) -> VectorStoreDocument:
         result = self.documents[0]
         result.id = id
         return result
+
+    def count(self) -> int:
+        return len(self.documents)
+
+    def remove(self, ids: list[str]) -> None:
+        raise NotImplementedError
+
+    def update(self, document: VectorStoreDocument) -> None:
+        raise NotImplementedError
 
 
 def test_map_query_to_entities():

@@ -258,10 +258,12 @@ class GraphRagConfig(BaseModel):
         # the embed_text block has the list of actual embeddings
         if not self.vector_store.index_schema:
             self.vector_store.index_schema = {}
+        default_vector_size = self.vector_store.vector_size
         for embedding in all_embeddings:
             if embedding not in self.vector_store.index_schema:
                 self.vector_store.index_schema[embedding] = IndexSchema(
                     index_name=embedding,
+                    vector_size=default_vector_size,
                 )
 
     def _validate_vector_store_db_uri(self) -> None:
