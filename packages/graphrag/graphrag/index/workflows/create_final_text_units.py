@@ -42,8 +42,8 @@ async def run_workflow(
     )
 
     # The read and write handles for text_units share the same file.
-    # Input rows are buffered in create_final_text_units before
-    # any writes occur, so the write-side truncation is safe.
+    # CSVTable writes to a temp file and moves it on close(), so
+    # reads from the original remain safe throughout.
     async with (
         context.output_table_provider.open(
             "text_units",
@@ -92,13 +92,9 @@ async def create_final_text_units(
         else {}
     )
 
-    # Buffer all input rows before writing.  The read and write handles
-    # share the same underlying file; writing truncates it, which would
-    # corrupt any in-progress read.
-    input_rows: list[dict[str, Any]] = [row async for row in text_units_table]
-
     sample_rows: list[dict[str, Any]] = []
-    for human_readable_id, row in enumerate(input_rows):
+    human_readable_id = 0
+    async for row in text_units_table:
         fields = {
             "id": row["id"],
             "human_readable_id": human_readable_id,
@@ -113,6 +109,7 @@ async def create_final_text_units(
         await output_table.write(out)
         if len(sample_rows) < 5:
             sample_rows.append(out)
+        human_readable_id += 1
 
     return sample_rows
 
