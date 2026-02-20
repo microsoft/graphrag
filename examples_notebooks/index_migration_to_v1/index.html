@@ -3003,84 +3003,42 @@ await table_provider.write_dataframe(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.cache.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheFactory</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.callbacks.noop_workflow_callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoopWorkflowCallbacks</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.callbacks.noop_workflow_callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoopWorkflowCallbacks</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.workflows.generate_text_embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_text_embeddings</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.language_model.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.tokenizer.get_tokenizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_tokenizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag_cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_cache</span>
 
-<span class="c1"># We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place</span>
-<span class="c1"># We'll construct the context and run this function flow directly to avoid everything else</span>
+<span class="c1"># We only need to re-run the embeddings workflow, to ensure that embeddings</span>
+<span class="c1"># for all required search fields are in place.</span>
+<span class="c1"># We pass in the table_provider created earlier so that generate_text_embeddings</span>
+<span class="c1"># reads the migrated tables we just wrote.</span>
 
-<span class="n">model_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_language_model_config</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">embed_text</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 <span class="n">callbacks</span> <span class="o">=</span> <span class="n">NoopWorkflowCallbacks</span><span class="p">()</span>
-<span class="n">cache_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
-<span class="n">cache</span> <span class="o">=</span> <span class="n">CacheFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create_cache</span><span class="p">(</span>
-    <span class="n">cache_type</span><span class="o">=</span><span class="n">cache_config</span><span class="p">[</span><span class="s2">"type"</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
-    <span class="o">**</span><span class="n">cache_config</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="p">()</span><span class="o">.</span><span class="n">get_or_create_embedding_model</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">"text_embedding"</span><span class="p">,</span>
-    <span class="n">model_type</span><span class="o">=</span><span class="n">model_config</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
-    <span class="n">config</span><span class="o">=</span><span class="n">model_config</span><span class="p">,</span>
-    <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
-    <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">get_tokenizer</span><span class="p">(</span><span class="n">model_config</span><span class="p">)</span>
+<span class="n">cache</span> <span class="o">=</span> <span class="n">create_cache</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="p">)</span>
 
 <span class="k">await</span> <span class="n">generate_text_embeddings</span><span class="p">(</span>
-    <span class="n">text_units</span><span class="o">=</span><span class="n">final_text_units</span><span class="p">,</span>
-    <span class="n">entities</span><span class="o">=</span><span class="n">final_entities</span><span class="p">,</span>
-    <span class="n">community_reports</span><span class="o">=</span><span class="n">final_community_reports</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+    <span class="n">table_provider</span><span class="o">=</span><span class="n">table_provider</span><span class="p">,</span>
+    <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
     <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-    <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span>
-    <span class="n">batch_size</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">embed_text</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
-    <span class="n">batch_max_tokens</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">embed_text</span><span class="o">.</span><span class="n">batch_max_tokens</span><span class="p">,</span>
-    <span class="n">num_threads</span><span class="o">=</span><span class="n">model_config</span><span class="o">.</span><span class="n">concurrent_requests</span><span class="p">,</span>
-    <span class="n">vector_store_config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">vector_store</span><span class="p">,</span>
-    <span class="n">embedded_fields</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">embed_text</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-7">from graphrag.cache.factory import CacheFactory
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
+<div class="clipboard-copy-txt" id="cell-7">from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.index.workflows.generate_text_embeddings import generate_text_embeddings
-from graphrag.language_model.manager import ModelManager
-from graphrag.tokenizer.get_tokenizer import get_tokenizer
+from graphrag_cache import create_cache
 
-# We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place
-# We'll construct the context and run this function flow directly to avoid everything else
+# We only need to re-run the embeddings workflow, to ensure that embeddings
+# for all required search fields are in place.
+# We pass in the table_provider created earlier so that generate_text_embeddings
+# reads the migrated tables we just wrote.
 
-model_config = config.get_language_model_config(config.embed_text.model_id)
 callbacks = NoopWorkflowCallbacks()
-cache_config = config.cache.model_dump()  # type: ignore
-cache = CacheFactory().create_cache(
-    cache_type=cache_config["type"],  # type: ignore
-    **cache_config,
-)
-model = ModelManager().get_or_create_embedding_model(
-    name="text_embedding",
-    model_type=model_config.type,
-    config=model_config,
-    callbacks=callbacks,
-    cache=cache,
-)
-
-tokenizer = get_tokenizer(model_config)
+cache = create_cache(config.cache)
 
 await generate_text_embeddings(
-    text_units=final_text_units,
-    entities=final_entities,
-    community_reports=final_community_reports,
+    config=config,
+    table_provider=table_provider,
+    cache=cache,
     callbacks=callbacks,
-    model=model,
-    tokenizer=tokenizer,
-    batch_size=config.embed_text.batch_size,
-    batch_max_tokens=config.embed_text.batch_max_tokens,
-    num_threads=model_config.concurrent_requests,
-    vector_store_config=config.vector_store,
-    embedded_fields=config.embed_text.names,
 )</div>
 </div>
 </div>
@@ -3095,13 +3053,22 @@ await generate_text_embeddings(
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">cache</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> CacheFactory
-<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">callbacks</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">noop_workflow_callbacks</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> NoopWorkflowCallbacks
-<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">index</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">workflows</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">generate_text_embeddings</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 11</span>
+<span class="ansi-green-fg">      5</span> <span style="color: rgb(95,135,135)"># We only need to re-run the embeddings workflow, to ensure that embeddings</span>
+<span class="ansi-green-fg">      6</span> <span style="color: rgb(95,135,135)"># for all required search fields are in place.</span>
+<span class="ansi-green-fg">      7</span> <span style="color: rgb(95,135,135)"># We pass in the table_provider created earlier so that generate_text_embeddings</span>
+<span class="ansi-green-fg">      8</span> <span style="color: rgb(95,135,135)"># reads the migrated tables we just wrote.</span>
+<span class="ansi-green-fg">     10</span> callbacks = NoopWorkflowCallbacks()
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">11</span> cache = create_cache(<span class="ansi-yellow-bg">config</span>.cache)
+<span class="ansi-green-fg">     13</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> generate_text_embeddings(
+<span class="ansi-green-fg">     14</span>     config=config,
+<span class="ansi-green-fg">     15</span>     table_provider=table_provider,
+<span class="ansi-green-fg">     16</span>     cache=cache,
+<span class="ansi-green-fg">     17</span>     callbacks=callbacks,
+<span class="ansi-green-fg">     18</span> )
 
-<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'graphrag.cache.factory'</pre>
+<span class="ansi-red-fg">NameError</span>: name 'config' is not defined</pre>
 </div>
 </div>
 </div>
