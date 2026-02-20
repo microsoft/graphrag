@@ -317,7 +317,6 @@ class EntityResolutionDefaults:
 
     enabled: bool = False
     prompt: None = None
-    batch_size: int = 200
     completion_model_id: str = DEFAULT_COMPLETION_MODEL_ID
     model_instance_name: str = "entity_resolution"
 

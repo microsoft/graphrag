@@ -28,6 +28,9 @@ def finalize_entities(
     final_entities["id"] = final_entities["human_readable_id"].apply(
         lambda _x: str(uuid4())
     )
+    # Ensure alternative_names column exists (empty when resolution is disabled)
+    if "alternative_names" not in final_entities.columns:
+        final_entities["alternative_names"] = [[] for _ in range(len(final_entities))]
     return final_entities.loc[
         :,
         ENTITIES_FINAL_COLUMNS,

@@ -36,9 +36,6 @@ from .extract_graph_nlp import (
 from .finalize_graph import (
     run_workflow as run_finalize_graph,
 )
-from .resolve_entities import (
-    run_workflow as run_resolve_entities,
-)
 from .generate_text_embeddings import (
     run_workflow as run_generate_text_embeddings,
 )
@@ -89,7 +86,6 @@ PipelineFactory.register_all({  # noqa: RUF067
     "create_final_text_units": run_create_final_text_units,
     "extract_graph_nlp": run_extract_graph_nlp,
     "extract_graph": run_extract_graph,
-    "resolve_entities": run_resolve_entities,
     "finalize_graph": run_finalize_graph,
     "generate_text_embeddings": run_generate_text_embeddings,
     "prune_graph": run_prune_graph,

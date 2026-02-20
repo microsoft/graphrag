@@ -85,7 +85,6 @@ extract_graph:
 entity_resolution:
   enabled: {graphrag_config_defaults.entity_resolution.enabled}
   completion_model_id: {graphrag_config_defaults.entity_resolution.completion_model_id}
-  batch_size: {graphrag_config_defaults.entity_resolution.batch_size}
 
 summarize_descriptions:
   completion_model_id: {graphrag_config_defaults.summarize_descriptions.completion_model_id}

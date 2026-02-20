@@ -38,10 +38,6 @@ class EntityResolutionConfig(BaseModel):
         description="The entity resolution prompt to use.",
         default=graphrag_config_defaults.entity_resolution.prompt,
     )
-    batch_size: int = Field(
-        description="Maximum number of entity names to send to the LLM in each batch.",
-        default=graphrag_config_defaults.entity_resolution.batch_size,
-    )
 
     def resolved_prompts(self) -> EntityResolutionPrompts:
         """Get the resolved entity resolution prompts."""
