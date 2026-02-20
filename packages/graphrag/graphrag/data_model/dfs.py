@@ -36,7 +36,7 @@ def _safe_int(series: pd.Series, fill: int = -1) -> pd.Series:
 def split_list_column(value: Any) -> list[Any]:
     r"""Split a column containing a list string into an actual list.
 
-    Handles two CSV serialisation formats:
+    Handles two CSV serialization formats:
     - Comma-separated (standard ``str(list)``): ``"['a', 'b']"``
     - Newline-separated (pandas ``to_csv`` of numpy arrays):
       ``"['a'\\n 'b']"``
@@ -48,8 +48,8 @@ def split_list_column(value: Any) -> list[Any]:
     if isinstance(value, str):
         if not value:
             return []
-        normalised = value.replace("\n", ",")
-        items = [item.strip("[] '\"") for item in normalised.split(",")]
+        normalized = value.replace("\n", ",")
+        items = [item.strip("[] '\"") for item in normalized.split(",")]
         return [item for item in items if item]
     return value
 
