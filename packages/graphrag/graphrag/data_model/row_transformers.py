@@ -34,7 +34,7 @@ def _safe_float(value: Any, fill: float = 0.0) -> float:
     """Coerce a value to float, returning *fill* when missing or empty.
 
     Also applies *fill* when the value is NaN (e.g. from Parquet
-    nullable columns), keeping behaviour consistent with the
+    nullable columns), keeping behavior consistent with the
     DataFrame-level ``fillna(fill).astype(float)`` pattern.
     """
     if value is None or value == "":
