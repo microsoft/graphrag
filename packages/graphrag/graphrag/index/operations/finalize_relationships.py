@@ -1,42 +1,55 @@
-# Copyright (c) 2024 Microsoft Corporation.
+# Copyright (C) 2026 Microsoft
 # Licensed under the MIT License
 
-"""All the steps to transform final relationships."""
+"""Stream-finalize relationship rows into an output Table."""
 
+from typing import Any
 from uuid import uuid4
 
-import pandas as pd
+from graphrag_storage.tables.table import Table
 
 from graphrag.data_model.schemas import RELATIONSHIPS_FINAL_COLUMNS
-from graphrag.graphs.compute_degree import compute_degree
-from graphrag.index.operations.compute_edge_combined_degree import (
-    compute_edge_combined_degree,
-)
 
 
-def finalize_relationships(
-    relationships: pd.DataFrame,
-) -> pd.DataFrame:
-    """All the steps to transform final relationships."""
-    degrees = compute_degree(relationships)
+async def finalize_relationships(
+    relationships_table: Table,
+    degree_map: dict[str, int],
+) -> list[dict[str, Any]]:
+    """Deduplicate relationships, enrich with combined degree, and write.
 
-    final_relationships = relationships.drop_duplicates(subset=["source", "target"])
-    final_relationships["combined_degree"] = compute_edge_combined_degree(
-        final_relationships,
-        degrees,
-        node_name_column="title",
-        node_degree_column="degree",
-        edge_source_column="source",
-        edge_target_column="target",
-    )
+    Streams through the relationships table, deduplicates by
+    (source, target) pair, computes combined_degree as the sum of
+    source and target node degrees, and writes each finalized row
+    back to the table.
 
-    final_relationships.reset_index(inplace=True)
-    final_relationships["human_readable_id"] = final_relationships.index
-    final_relationships["id"] = final_relationships["human_readable_id"].apply(
-        lambda _x: str(uuid4())
-    )
+    Args
+    ----
+        relationships_table: Table
+            Opened table for reading and writing relationship rows.
+        degree_map: dict[str, int]
+            Pre-computed mapping of entity title to node degree.
 
-    return final_relationships.loc[
-        :,
-        RELATIONSHIPS_FINAL_COLUMNS,
-    ]
+    Returns
+    -------
+        list[dict[str, Any]]
+            Sample of up to 5 relationship rows for logging.
+    """
+    sample_rows: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+    hrid = 0
+
+    async for row in relationships_table:
+        key = (row.get("source", ""), row.get("target", ""))
+        if key in seen:
+            continue
+        seen.add(key)
+        row["combined_degree"] = degree_map.get(key[0], 0) + degree_map.get(key[1], 0)
+        row["human_readable_id"] = hrid
+        row["id"] = str(uuid4())
+        hrid += 1
+        final = {col: row.get(col) for col in RELATIONSHIPS_FINAL_COLUMNS}
+        await relationships_table.write(final)
+        if len(sample_rows) < 5:
+            sample_rows.append(final)
+
+    return sample_rows
