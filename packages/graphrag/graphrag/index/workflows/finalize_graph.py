@@ -4,9 +4,9 @@
 """A module containing run_workflow method definition."""
 
 import logging
+from collections import Counter
 from typing import Any
 
-import pandas as pd
 from graphrag_storage.tables.table import Table
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -14,7 +14,6 @@ from graphrag.data_model.row_transformers import (
     transform_entity_row,
     transform_relationship_row,
 )
-from graphrag.graphs.compute_degree import compute_degree
 from graphrag.index.operations.finalize_entities import finalize_entities
 from graphrag.index.operations.finalize_relationships import (
     finalize_relationships,
@@ -66,9 +65,10 @@ async def finalize_graph(
 ) -> dict[str, list[dict[str, Any]]]:
     """Compute degrees and finalize entities and relationships.
 
-    Reads all relationship rows into a DataFrame for degree
-    computation, then delegates to the individual finalize operations
-    for streaming row-by-row enrichment and writing.
+    Streams relationship rows to build a degree map without
+    materializing a DataFrame, then delegates to the individual
+    finalize operations for streaming row-by-row enrichment and
+    writing.
 
     Args
     ----
@@ -84,9 +84,7 @@ async def finalize_graph(
             Sample rows keyed by ``"entities"`` and
             ``"relationships"``, up to 5 each.
     """
-    relationships = pd.DataFrame([row async for row in relationships_table])
-
-    degree_map = _build_degree_map(relationships)
+    degree_map = await _build_degree_map(relationships_table)
 
     entity_samples = await finalize_entities(entities_table, degree_map)
     relationship_samples = await finalize_relationships(relationships_table, degree_map)
@@ -97,20 +95,31 @@ async def finalize_graph(
     }
 
 
-def _build_degree_map(
-    relationships: pd.DataFrame,
+async def _build_degree_map(
+    relationships_table: Table,
 ) -> dict[str, int]:
-    """Compute node degrees and return as a title-to-degree dict.
+    """Stream relationship rows to compute node degrees.
+
+    Normalizes each edge to an undirected pair and deduplicates
+    on the fly, matching the behavior of ``compute_degree`` but
+    without materializing a DataFrame.
 
     Args
     ----
-        relationships: pd.DataFrame
-            Full relationships DataFrame with source/target columns.
+        relationships_table: Table
+            Opened table to stream relationship rows from.
 
     Returns
     -------
         dict[str, int]
             Mapping of entity title to its node degree.
     """
-    degrees = compute_degree(relationships)
-    return dict(zip(degrees["title"], degrees["degree"], strict=True))
+    seen: set[tuple[str, str]] = set()
+    degree: Counter[str] = Counter()
+    async for row in relationships_table:
+        lo, hi = sorted((row["source"], row["target"]))
+        if (lo, hi) not in seen:
+            seen.add((lo, hi))
+            degree[lo] += 1
+            degree[hi] += 1
+    return dict(degree)
