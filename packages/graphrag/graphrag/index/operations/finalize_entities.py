@@ -37,7 +37,7 @@ async def finalize_entities(
     """
     sample_rows: list[dict[str, Any]] = []
     seen_titles: set[str] = set()
-    hrid = 0
+    human_readable_id = 0
 
     async for row in entities_table:
         title = row.get("title")
@@ -45,9 +45,9 @@ async def finalize_entities(
             continue
         seen_titles.add(title)
         row["degree"] = degree_map.get(title, 0)
-        row["human_readable_id"] = hrid
+        row["human_readable_id"] = human_readable_id
         row["id"] = str(uuid4())
-        hrid += 1
+        human_readable_id += 1
         out = {col: row.get(col) for col in ENTITIES_FINAL_COLUMNS}
         await entities_table.write(out)
         if len(sample_rows) < 5:

@@ -36,7 +36,7 @@ async def finalize_relationships(
     """
     sample_rows: list[dict[str, Any]] = []
     seen: set[tuple[str, str]] = set()
-    hrid = 0
+    human_readable_id = 0
 
     async for row in relationships_table:
         key = (row.get("source", ""), row.get("target", ""))
@@ -44,9 +44,9 @@ async def finalize_relationships(
             continue
         seen.add(key)
         row["combined_degree"] = degree_map.get(key[0], 0) + degree_map.get(key[1], 0)
-        row["human_readable_id"] = hrid
+        row["human_readable_id"] = human_readable_id
         row["id"] = str(uuid4())
-        hrid += 1
+        human_readable_id += 1
         final = {col: row.get(col) for col in RELATIONSHIPS_FINAL_COLUMNS}
         await relationships_table.write(final)
         if len(sample_rows) < 5:
