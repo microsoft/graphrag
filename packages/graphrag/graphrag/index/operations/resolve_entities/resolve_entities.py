@@ -74,8 +74,8 @@ async def resolve_entities(
     try:
         response = await model(formatted_prompt)
         raw = (response or "").strip()
-    except Exception:
-        logger.warning("Entity resolution LLM call failed, skipping resolution")
+    except Exception as e:
+        logger.warning("Entity resolution LLM call failed, skipping resolution: %s", e, exc_info=True)
         return entities, relationships
 
     if "NO_DUPLICATES" in raw:
