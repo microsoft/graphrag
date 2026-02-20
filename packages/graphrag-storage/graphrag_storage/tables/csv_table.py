@@ -7,7 +7,10 @@ from __future__ import annotations
 
 import csv
 import inspect
+import os
+import shutil
 import sys
+import tempfile
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -63,8 +66,10 @@ class CSVTable(Table):
             transformer: Optional callable to transform each row before
                 yielding. Receives a dict, returns a transformed dict.
                 Defaults to identity (no transformation).
-            truncate: If True (default), truncate file on first write.
-                If False, append to existing file.
+            truncate: If True (default), writes go to a temporary file
+                which is moved over the original on close(). This allows
+                safe concurrent reads from the original while writes
+                accumulate. If False, append to existing file.
             encoding: Character encoding for reading/writing CSV files.
                 Defaults to "utf-8".
         """
@@ -77,6 +82,8 @@ class CSVTable(Table):
         self._write_file: TextIOWrapper | None = None
         self._writer: csv.DictWriter | None = None
         self._header_written = False
+        self._temp_path: Path | None = None
+        self._final_path: Path | None = None
 
     def __aiter__(self) -> AsyncIterator[Any]:
         """Iterate through rows one at a time.
@@ -128,9 +135,11 @@ class CSVTable(Table):
     async def write(self, row: dict[str, Any]) -> None:
         """Write a single row to the CSV file.
 
-        On first write, opens the file. If truncate=True, overwrites any existing
-        file and writes header. If truncate=False, appends to existing file
-        (skips header if file exists).
+        On first write, opens a file handle. When truncate=True, writes
+        go to a temporary file in the same directory; the temp file is
+        moved over the original in close(), making it safe to read from
+        the original while writes are in progress. When truncate=False,
+        rows are appended directly to the existing file.
 
         Args
         ----
@@ -139,13 +148,36 @@ class CSVTable(Table):
         if isinstance(self._storage, FileStorage) and self._write_file is None:
             file_path = self._storage.get_path(self._file_key)
             file_path.parent.mkdir(parents=True, exist_ok=True)
-            file_exists = file_path.exists() and file_path.stat().st_size > 0
-            mode = "w" if self._truncate else "a"
-            write_header = self._truncate or not file_exists
-            self._write_file = Path.open(
-                file_path, mode, encoding=self._encoding, newline=""
+
+            if self._truncate:
+                fd, tmp = tempfile.mkstemp(
+                    suffix=".csv",
+                    dir=file_path.parent,
+                )
+                os.close(fd)
+                self._temp_path = Path(tmp)
+                self._final_path = file_path
+                self._write_file = Path.open(
+                    self._temp_path,
+                    "w",
+                    encoding=self._encoding,
+                    newline="",
+                )
+                write_header = True
+            else:
+                file_exists = file_path.exists() and file_path.stat().st_size > 0
+                write_header = not file_exists
+                self._write_file = Path.open(
+                    file_path,
+                    "a",
+                    encoding=self._encoding,
+                    newline="",
+                )
+
+            self._writer = csv.DictWriter(
+                self._write_file,
+                fieldnames=list(row.keys()),
             )
-            self._writer = csv.DictWriter(self._write_file, fieldnames=list(row.keys()))
             if write_header:
                 self._writer.writeheader()
             self._header_written = write_header
@@ -156,10 +188,16 @@ class CSVTable(Table):
     async def close(self) -> None:
         """Flush buffered writes and release resources.
 
-        Closes the file handle if writing was performed.
+        When truncate=True, the temp file is moved over the original
+        so that readers never see a partially-written file.
         """
         if self._write_file is not None:
             self._write_file.close()
             self._write_file = None
             self._writer = None
             self._header_written = False
+
+        if self._temp_path is not None and self._final_path is not None:
+            shutil.move(str(self._temp_path), str(self._final_path))
+            self._temp_path = None
+            self._final_path = None
