@@ -34,9 +34,23 @@ def _safe_int(series: pd.Series, fill: int = -1) -> pd.Series:
 
 
 def split_list_column(value: Any) -> list[Any]:
-    """Split a column containing a list string into an actual list."""
+    r"""Split a column containing a list string into an actual list.
+
+    Handles two CSV serialisation formats:
+    - Comma-separated (standard ``str(list)``): ``"['a', 'b']"``
+    - Newline-separated (pandas ``to_csv`` of numpy arrays):
+      ``"['a'\\n 'b']"``
+
+    Both formats are stripped of brackets, quotes, and whitespace so
+    that existing indexes produced by the old pandas-based indexer
+    remain readable.
+    """
     if isinstance(value, str):
-        return [item.strip("[] '") for item in value.split(",")] if value else []
+        if not value:
+            return []
+        normalised = value.replace("\n", ",")
+        items = [item.strip("[] '\"") for item in normalised.split(",")]
+        return [item for item in items if item]
     return value
 
 

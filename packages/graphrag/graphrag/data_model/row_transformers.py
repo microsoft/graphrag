@@ -16,25 +16,54 @@ from graphrag.data_model.dfs import split_list_column
 
 
 def _safe_int(value: Any, fill: int = -1) -> int:
-    """Coerce a value to int, returning *fill* when missing or empty."""
+    """Coerce a value to int, returning *fill* when missing or empty.
+
+    Handles NaN from Parquet float-promoted nullable int columns
+    (``row.to_dict()`` yields ``numpy.float64(nan)``) and any other
+    non-convertible type.
+    """
     if value is None or value == "":
         return fill
-    return int(value)
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return fill
 
 
 def _safe_float(value: Any, fill: float = 0.0) -> float:
-    """Coerce a value to float, returning *fill* when missing or empty."""
+    """Coerce a value to float, returning *fill* when missing or empty.
+
+    Also applies *fill* when the value is NaN (e.g. from Parquet
+    nullable columns), keeping behaviour consistent with the
+    DataFrame-level ``fillna(fill).astype(float)`` pattern.
+    """
     if value is None or value == "":
         return fill
-    return float(value)
+    try:
+        result = float(value)
+    except (ValueError, TypeError):
+        return fill
+    # math.isnan without importing math
+    if result != result:
+        return fill
+    return result
 
 
 def _coerce_list(value: Any) -> list[Any]:
-    """Parse a value into a list, handling CSV string encoding."""
+    """Parse a value into a list, handling CSV string and array types.
+
+    Handles three cases:
+    - str: CSV-encoded list (e.g. from CSVTable rows)
+    - list: already a Python list (pass-through)
+    - array-like with ``tolist`` (e.g. numpy.ndarray from ParquetTable
+      ``row.to_dict()``)
+    """
     if isinstance(value, str):
         return split_list_column(value)
     if isinstance(value, list):
         return value
+    if hasattr(value, "tolist"):
+        return value.tolist()
     return []
 
 
@@ -210,5 +239,4 @@ def transform_document_row(
         )
     if "text_unit_ids" in row:
         row["text_unit_ids"] = _coerce_list(row["text_unit_ids"])
-    return row
     return row
