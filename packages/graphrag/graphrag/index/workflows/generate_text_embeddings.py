@@ -88,8 +88,8 @@ async def run_workflow(
 
 async def generate_text_embeddings(
     config: GraphRagConfig,
-    table_provider: TableProvider,
-    cache: Cache,
+    table_provider: "TableProvider",
+    cache: "Cache",
     callbacks: WorkflowCallbacks,
 ) -> None:
     """Generate text embeddings for all configured fields."""

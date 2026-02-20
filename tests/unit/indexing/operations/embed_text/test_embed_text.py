@@ -328,13 +328,20 @@ async def test_embed_text_numpy_array_vectors():
     output_table = FakeOutputTable()
     vector_store = _make_mock_vector_store()
 
-    numpy_embeddings = [np.array([1.0, 2.0]), np.array([3.0, 4.0])]
+    numpy_embeddings: list[list[float] | None] = [
+        np.array([1.0, 2.0]).tolist(),
+        np.array([3.0, 4.0]).tolist(),
+    ]
 
     with patch(
         "graphrag.index.operations.embed_text.embed_text.run_embed_text",
         new_callable=AsyncMock,
     ) as mock_run:
-        mock_run.return_value = TextEmbeddingResult(embeddings=numpy_embeddings)
+        # Simulate run_embed_text returning np.ndarray objects at runtime
+        # by replacing the result embeddings after construction.
+        result = TextEmbeddingResult(embeddings=numpy_embeddings)
+        result.embeddings = [np.array([1.0, 2.0]), np.array([3.0, 4.0])]  # type: ignore[list-item]
+        mock_run.return_value = result
 
         count = await embed_text(
             input_table=input_table,
