@@ -28,7 +28,8 @@ from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 
 if TYPE_CHECKING:
-    from graphrag_cache import Cache
+    from graphrag_llm.embedding import LLMEmbedding
+    from graphrag_llm.tokenizer import Tokenizer
     from graphrag_storage.tables.table_provider import TableProvider
 
 logger = logging.getLogger(__name__)
@@ -75,11 +76,22 @@ async def run_workflow(
     """Generate text embeddings for configured fields via streaming Tables."""
     logger.info("Workflow started: generate_text_embeddings")
 
+    model_config = config.get_embedding_model_config(
+        config.embed_text.embedding_model_id
+    )
+    model = create_embedding(
+        model_config,
+        cache=context.cache.child(config.embed_text.model_instance_name),
+        cache_key_creator=cache_key_creator,
+    )
+    tokenizer = model.tokenizer
+
     await generate_text_embeddings(
         config=config,
         table_provider=context.output_table_provider,
-        cache=context.cache,
         callbacks=context.callbacks,
+        model=model,
+        tokenizer=tokenizer,
     )
 
     logger.info("Workflow completed: generate_text_embeddings")
@@ -89,22 +101,13 @@ async def run_workflow(
 async def generate_text_embeddings(
     config: GraphRagConfig,
     table_provider: "TableProvider",
-    cache: "Cache",
     callbacks: WorkflowCallbacks,
+    model: "LLMEmbedding",
+    tokenizer: "Tokenizer",
 ) -> None:
     """Generate text embeddings for all configured fields."""
     embedded_fields = config.embed_text.names
     logger.info("Embedding the following fields: %s", embedded_fields)
-
-    model_config = config.get_embedding_model_config(
-        config.embed_text.embedding_model_id
-    )
-    model = create_embedding(
-        model_config,
-        cache=cache.child(config.embed_text.model_instance_name),
-        cache_key_creator=cache_key_creator,
-    )
-    tokenizer = model.tokenizer
 
     for field_name in embedded_fields:
         field_config = EMBEDDING_FIELDS[field_name]
