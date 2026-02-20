@@ -4,11 +4,17 @@
 """A module containing run_workflow method definition."""
 
 import logging
+from contextlib import nullcontext
+from typing import Any
 
-import pandas as pd
+from graphrag_storage.tables.table import Table
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.data_model.data_reader import DataReader
+from graphrag.data_model.row_transformers import (
+    transform_entity_row,
+    transform_relationship_row,
+    transform_text_unit_row,
+)
 from graphrag.data_model.schemas import TEXT_UNITS_FINAL_COLUMNS
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -22,103 +28,108 @@ async def run_workflow(
 ) -> WorkflowFunctionOutput:
     """All the steps to transform the text units."""
     logger.info("Workflow started: create_final_text_units")
-    reader = DataReader(context.output_table_provider)
-    text_units = await reader.text_units()
-    final_entities = await reader.entities()
-    final_relationships = await reader.relationships()
 
-    final_covariates = None
-    if config.extract_claims.enabled and await context.output_table_provider.has(
-        "covariates"
-    ):
-        final_covariates = await reader.covariates()
-
-    output = create_final_text_units(
-        text_units,
-        final_entities,
-        final_relationships,
-        final_covariates,
+    has_covariates = (
+        config.extract_claims.enabled
+        and await context.output_table_provider.has("covariates")
+    )
+    # nullcontext() stands in when covariates are disabled so we can use
+    # a single async with block regardless.
+    cov_ctx = (
+        context.output_table_provider.open("covariates")
+        if has_covariates
+        else nullcontext()
     )
 
-    await context.output_table_provider.write_dataframe("text_units", output)
+    # The read and write handles for text_units share the same file.
+    # CSVTable writes to a temp file and moves it on close(), so
+    # reads from the original remain safe throughout.
+    async with (
+        context.output_table_provider.open(
+            "text_units",
+            transformer=transform_text_unit_row,
+        ) as text_units_table,
+        context.output_table_provider.open(
+            "entities",
+            transformer=transform_entity_row,
+        ) as entities_table,
+        context.output_table_provider.open(
+            "relationships",
+            transformer=transform_relationship_row,
+        ) as relationships_table,
+        context.output_table_provider.open("text_units") as output_table,
+        cov_ctx as covariates_table,
+    ):
+        sample = await create_final_text_units(
+            text_units_table,
+            entities_table,
+            relationships_table,
+            output_table,
+            covariates_table,
+        )
 
     logger.info("Workflow completed: create_final_text_units")
-    return WorkflowFunctionOutput(result=output)
+    return WorkflowFunctionOutput(result=sample)
 
 
-def create_final_text_units(
-    text_units: pd.DataFrame,
-    final_entities: pd.DataFrame,
-    final_relationships: pd.DataFrame,
-    final_covariates: pd.DataFrame | None,
-) -> pd.DataFrame:
-    """All the steps to transform the text units."""
-    selected = text_units.loc[:, ["id", "text", "document_id", "n_tokens"]]
-    selected["human_readable_id"] = selected.index
+async def create_final_text_units(
+    text_units_table: Table,
+    entities_table: Table,
+    relationships_table: Table,
+    output_table: Table,
+    covariates_table: Table | None,
+) -> list[dict[str, Any]]:
+    """Enrich text units with entity, relationship, and covariate id lookups.
 
-    entity_join = _entities(final_entities)
-    relationship_join = _relationships(final_relationships)
-
-    entity_joined = _join(selected, entity_join)
-    relationship_joined = _join(entity_joined, relationship_join)
-    final_joined = relationship_joined
-
-    if final_covariates is not None:
-        covariate_join = _covariates(final_covariates)
-        final_joined = _join(relationship_joined, covariate_join)
-    else:
-        final_joined["covariate_ids"] = [[] for i in range(len(final_joined))]
-
-    aggregated = final_joined.groupby("id", sort=False).agg("first").reset_index()
-
-    return aggregated.loc[
-        :,
-        TEXT_UNITS_FINAL_COLUMNS,
-    ]
-
-
-def _entities(df: pd.DataFrame) -> pd.DataFrame:
-    selected = df.loc[:, ["id", "text_unit_ids"]]
-    unrolled = selected.explode(["text_unit_ids"]).reset_index(drop=True)
-
-    return (
-        unrolled
-        .groupby("text_unit_ids", sort=False)
-        .agg(entity_ids=("id", "unique"))
-        .reset_index()
-        .rename(columns={"text_unit_ids": "id"})
+    Streams text units, looks up related ids from pre-built maps, writes
+    each enriched row to output_table, and returns up to 5 sample rows.
+    """
+    entity_map = await _build_multi_ref_map(entities_table)
+    relationship_map = await _build_multi_ref_map(relationships_table)
+    covariate_map: dict[str, list[str]] = (
+        await _build_covariate_map(covariates_table)
+        if covariates_table is not None
+        else {}
     )
 
+    sample_rows: list[dict[str, Any]] = []
+    human_readable_id = 0
+    async for row in text_units_table:
+        fields = {
+            "id": row["id"],
+            "human_readable_id": human_readable_id,
+            "text": row["text"],
+            "n_tokens": row["n_tokens"],
+            "document_id": row["document_id"],
+            "entity_ids": entity_map.get(row["id"], []),
+            "relationship_ids": relationship_map.get(row["id"], []),
+            "covariate_ids": covariate_map.get(row["id"], []),
+        }
+        out = {c: fields[c] for c in TEXT_UNITS_FINAL_COLUMNS}
+        await output_table.write(out)
+        if len(sample_rows) < 5:
+            sample_rows.append(out)
+        human_readable_id += 1
 
-def _relationships(df: pd.DataFrame) -> pd.DataFrame:
-    selected = df.loc[:, ["id", "text_unit_ids"]]
-    unrolled = selected.explode(["text_unit_ids"]).reset_index(drop=True)
-
-    return (
-        unrolled
-        .groupby("text_unit_ids", sort=False)
-        .agg(relationship_ids=("id", "unique"))
-        .reset_index()
-        .rename(columns={"text_unit_ids": "id"})
-    )
-
-
-def _covariates(df: pd.DataFrame) -> pd.DataFrame:
-    selected = df.loc[:, ["id", "text_unit_id"]]
-
-    return (
-        selected
-        .groupby("text_unit_id", sort=False)
-        .agg(covariate_ids=("id", "unique"))
-        .reset_index()
-        .rename(columns={"text_unit_id": "id"})
-    )
+    return sample_rows
 
 
-def _join(left, right):
-    return left.merge(
-        right,
-        on="id",
-        how="left",
-        suffixes=["_1", "_2"],
-    )
+async def _build_multi_ref_map(table: Table) -> dict[str, list[str]]:
+    """Build a text_unit_id -> [row_id] reverse lookup from a table with a text_unit_ids list field.
+
+    Expects the table to have been opened with a transformer that
+    already parsed ``text_unit_ids`` into a Python list.
+    """
+    result: dict[str, list[str]] = {}
+    async for row in table:
+        for tuid in row["text_unit_ids"]:
+            result.setdefault(tuid, []).append(row["id"])
+    return result
+
+
+async def _build_covariate_map(table: Table) -> dict[str, list[str]]:
+    """Build a text_unit_id -> [covariate_id] reverse lookup from the covariate table."""
+    result: dict[str, list[str]] = {}
+    async for row in table:
+        result.setdefault(row["text_unit_id"], []).append(row["id"])
+    return result

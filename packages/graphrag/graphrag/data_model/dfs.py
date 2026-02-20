@@ -33,11 +33,29 @@ def _safe_int(series: pd.Series, fill: int = -1) -> pd.Series:
     return series.fillna(fill).astype(int)
 
 
-def _split_list_column(value: Any) -> list[Any]:
-    """Split a column containing a list string into an actual list."""
+def split_list_column(value: Any) -> list[Any]:
+    r"""Split a column containing a list string into an actual list.
+
+    Handles two CSV serialization formats:
+    - Comma-separated (standard ``str(list)``): ``"['a', 'b']"``
+    - Newline-separated (pandas ``to_csv`` of numpy arrays):
+      ``"['a'\\n 'b']"``
+
+    Both formats are stripped of brackets, quotes, and whitespace so
+    that existing indexes produced by the old pandas-based indexer
+    remain readable.
+    """
     if isinstance(value, str):
-        return [item.strip("[] '") for item in value.split(",")] if value else []
+        if not value:
+            return []
+        normalized = value.replace("\n", ",")
+        items = [item.strip("[] '\"") for item in normalized.split(",")]
+        return [item for item in items if item]
     return value
+
+
+# Backward-compatible alias so internal callers keep working.
+_split_list_column = split_list_column
 
 
 def entities_typed(df: pd.DataFrame) -> pd.DataFrame:
