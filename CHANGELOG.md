@@ -410,6 +410,6 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 - patch: support non-open ai model config to prompt tune
 - patch: use binary io processing for all file io operations
 
-## 0.1.0
+## 0.1.1
 
 - minor: Initial Release
