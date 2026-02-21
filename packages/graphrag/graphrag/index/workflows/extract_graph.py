@@ -17,6 +17,9 @@ from graphrag.data_model.data_reader import DataReader
 from graphrag.index.operations.extract_graph.extract_graph import (
     extract_graph as extractor,
 )
+from graphrag.index.operations.resolve_entities.resolve_entities import (
+    resolve_entities,
+)
 from graphrag.index.operations.summarize_descriptions.summarize_descriptions import (
     summarize_descriptions,
 )
@@ -58,6 +61,24 @@ async def run_workflow(
         cache_key_creator=cache_key_creator,
     )
 
+    # Entity resolution model (optional)
+    resolution_enabled = config.entity_resolution.enabled
+    resolution_model = None
+    resolution_prompt = ""
+    if resolution_enabled:
+        resolution_model_config = config.get_completion_model_config(
+            config.entity_resolution.completion_model_id
+        )
+        resolution_prompts = config.entity_resolution.resolved_prompts()
+        resolution_prompt = resolution_prompts.resolution_prompt
+        resolution_model = create_completion(
+            resolution_model_config,
+            cache=context.cache.child(
+                config.entity_resolution.model_instance_name
+            ),
+            cache_key_creator=cache_key_creator,
+        )
+
     entities, relationships, raw_entities, raw_relationships = await extract_graph(
         text_units=text_units,
         callbacks=context.callbacks,
@@ -72,6 +93,10 @@ async def run_workflow(
         max_input_tokens=config.summarize_descriptions.max_input_tokens,
         summarization_prompt=summarization_prompts.summarize_prompt,
         summarization_num_threads=config.concurrent_requests,
+        resolution_enabled=resolution_enabled,
+        resolution_model=resolution_model,
+        resolution_prompt=resolution_prompt,
+        resolution_num_threads=config.concurrent_requests,
     )
 
     await context.output_table_provider.write_dataframe("entities", entities)
@@ -108,6 +133,10 @@ async def extract_graph(
     max_input_tokens: int,
     summarization_prompt: str,
     summarization_num_threads: int,
+    resolution_enabled: bool = False,
+    resolution_model: "LLMCompletion | None" = None,
+    resolution_prompt: str = "",
+    resolution_num_threads: int = 1,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
@@ -136,9 +165,20 @@ async def extract_graph(
         logger.error(error_msg)
         raise ValueError(error_msg)
 
-    # copy these as is before any summarization
+    # copy these as is before any resolution or summarization
     raw_entities = extracted_entities.copy()
     raw_relationships = extracted_relationships.copy()
+
+    # Resolve duplicate entity names before grouping by title
+    if resolution_enabled and resolution_model is not None:
+        extracted_entities, extracted_relationships = await resolve_entities(
+            entities=extracted_entities,
+            relationships=extracted_relationships,
+            callbacks=callbacks,
+            model=resolution_model,
+            prompt=resolution_prompt,
+            num_threads=resolution_num_threads,
+        )
 
     entities, relationships = await get_summarized_entities_relationships(
         extracted_entities=extracted_entities,

@@ -44,6 +44,11 @@ def _group_and_resolve_entities(
     delta_entities_df["human_readable_id"] = np.arange(
         initial_id, initial_id + len(delta_entities_df)
     )
+    # Ensure alternative_names column exists (may be absent in older indexes)
+    for df in [old_entities_df, delta_entities_df]:
+        if "alternative_names" not in df.columns:
+            df["alternative_names"] = [[] for _ in range(len(df))]
+
     # Concat A and B
     combined = pd.concat(
         [old_entities_df, delta_entities_df], ignore_index=True, copy=False
@@ -60,6 +65,9 @@ def _group_and_resolve_entities(
             "description": lambda x: list(x.astype(str)),  # Ensure str
             # Concatenate nd.array into a single list
             "text_unit_ids": lambda x: list(itertools.chain(*x.tolist())),
+            "alternative_names": lambda x: sorted(
+                set(itertools.chain(*x.tolist()))
+            ),
             "degree": "first",  # todo: we could probably re-compute this with the entire new graph
         })
         .reset_index()

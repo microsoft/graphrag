@@ -82,6 +82,10 @@ extract_graph:
   entity_types: [{",".join(graphrag_config_defaults.extract_graph.entity_types)}]
   max_gleanings: {graphrag_config_defaults.extract_graph.max_gleanings}
 
+entity_resolution:
+  enabled: {graphrag_config_defaults.entity_resolution.enabled}
+  completion_model_id: {graphrag_config_defaults.entity_resolution.completion_model_id}
+
 summarize_descriptions:
   completion_model_id: {graphrag_config_defaults.summarize_descriptions.completion_model_id}
   prompt: "prompts/summarize_descriptions.txt"
