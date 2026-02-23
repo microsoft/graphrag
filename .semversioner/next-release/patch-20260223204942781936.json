@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "write stats.json per workflow"
+}

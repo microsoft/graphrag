@@ -123,7 +123,8 @@ async def _run_pipeline(
     last_workflow = "<startup>"
 
     try:
-        await _dump_json(context)
+        await _dump_stats_json(context)
+        await _dump_context_json(context)
 
         logger.info("Executing pipeline...")
         for name, workflow_function in pipeline.run():
@@ -138,13 +139,15 @@ async def _run_pipeline(
                 workflow=name, result=result.result, state=context.state, error=None
             )
             context.stats.workflows[name] = profiler.metrics
+            await _dump_stats_json(context)
             if result.stop:
                 logger.info("Halting pipeline at workflow request")
                 break
 
         context.stats.total_runtime = time.time() - start_time
         logger.info("Indexing pipeline complete.")
-        await _dump_json(context)
+        await _dump_stats_json(context)
+        await _dump_context_json(context)
 
     except Exception as e:
         logger.exception("error running workflow %s", last_workflow)
@@ -153,11 +156,15 @@ async def _run_pipeline(
         )
 
 
-async def _dump_json(context: PipelineRunContext) -> None:
-    """Dump the stats and context state to the storage."""
+async def _dump_stats_json(context: PipelineRunContext) -> None:
+    """Dump stats state to storage."""
     await context.output_storage.set(
         "stats.json", json.dumps(asdict(context.stats), indent=4, ensure_ascii=False)
     )
+
+
+async def _dump_context_json(context: PipelineRunContext) -> None:
+    """Dump context state to storage."""
     # Dump context state, excluding additional_context
     temp_context = context.state.pop(
         "additional_context", None
