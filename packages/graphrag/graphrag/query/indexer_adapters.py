@@ -109,7 +109,12 @@ def read_indexer_report_embeddings(
 ):
     """Read in the Community Reports from the raw indexing outputs."""
     for report in community_reports:
-        report.full_content_embedding = embeddings_store.search_by_id(report.id).vector
+        try:
+            report.full_content_embedding = embeddings_store.search_by_id(
+                report.id
+            ).vector
+        except (IndexError, Exception):  # noqa: BLE001
+            report.full_content_embedding = None
 
 
 def read_indexer_entities(

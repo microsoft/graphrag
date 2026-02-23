@@ -3,7 +3,17 @@
 
 """GraphRAG vector store implementations."""
 
+from graphrag_vectors.filtering import (
+    AndExpr,
+    Condition,
+    F,
+    FilterExpr,
+    NotExpr,
+    Operator,
+    OrExpr,
+)
 from graphrag_vectors.index_schema import IndexSchema
+from graphrag_vectors.timestamp import explode_timestamp
 from graphrag_vectors.types import TextEmbedder
 from graphrag_vectors.vector_store import (
     VectorStore,
@@ -20,7 +30,14 @@ from graphrag_vectors.vector_store_factory import (
 from graphrag_vectors.vector_store_type import VectorStoreType
 
 __all__ = [
+    "AndExpr",
+    "Condition",
+    "F",
+    "FilterExpr",
     "IndexSchema",
+    "NotExpr",
+    "Operator",
+    "OrExpr",
     "TextEmbedder",
     "VectorStore",
     "VectorStoreConfig",
@@ -29,6 +46,7 @@ __all__ = [
     "VectorStoreSearchResult",
     "VectorStoreType",
     "create_vector_store",
+    "explode_timestamp",
     "register_vector_store",
     "vector_store_factory",
 ]

@@ -5,7 +5,7 @@
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from graphrag_vectors.index_schema import IndexSchema
+from graphrag_vectors.index_schema import DEFAULT_VECTOR_SIZE, IndexSchema
 from graphrag_vectors.vector_store_type import VectorStoreType
 
 
@@ -48,6 +48,11 @@ class VectorStoreConfig(BaseModel):
     database_name: str | None = Field(
         description="The database name to use when type == cosmosdb.",
         default=None,
+    )
+
+    vector_size: int = Field(
+        description="Default vector size for all index schemas. Individual index schemas can override this value.",
+        default=DEFAULT_VECTOR_SIZE,
     )
 
     index_schema: dict[str, IndexSchema] = {}
