@@ -20,30 +20,17 @@ Pull the latest changes on `main` and run the release task:
 ```sh
 git checkout main
 git pull
-uv run poe release
 ```
 
-This runs the following steps automatically:
+You need to run the following commands:
 
-1. `semversioner release` -- consumes all pending change files and bumps the
-   version.
-2. Regenerates `CHANGELOG.md`.
-3. Updates `project.version` in every package's `pyproject.toml`.
-4. Updates cross-package dependency version pins (e.g. `graphrag-common==X.Y.Z`
-   in all packages that depend on it).
-5. Runs `uv sync --all-packages` to update the lockfile.
-
-### Cutting a release on Windows
-
-`uv run poe release` does not work on Windows unless you are using WSL. Poe
-defaults to `cmd.exe` and there is no straightforward way to force it to use
-PowerShell. Run each step manually in PowerShell instead:
-
-```powershell
+```zsh
 uv run semversioner release
 uv run semversioner changelog > CHANGELOG.md
 
+# verify if the version is correct 
 $version = uv run semversioner current-version
+# check this only on Windows:
 if (-not $version) { Write-Error "Failed to get version"; exit 1 }
 
 uv run update-toml update --file packages/graphrag/pyproject.toml --path project.version --value $version
@@ -65,11 +52,11 @@ Check `CHANGELOG.md` or any package's `pyproject.toml` to find the new version,
 then move the changes to a release branch:
 
 ```sh
-git switch -c release/vVERSION
+git switch -c release/v<VERSION>
 git add .
-git commit -m "Release vVERSION"
-git tag -a vVERSION -m "Release vVERSION"
-git push origin release/vVERSION -u
+git commit -m "Release v<VERSION>"
+git tag -a v<VERSION> -m "Release v<VERSION>"
+git push origin release/v<VERSION> -u
 ```
 
 Open a PR targeting `main`. CI checks (semver, linting, tests) will run
