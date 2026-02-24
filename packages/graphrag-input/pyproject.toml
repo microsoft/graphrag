@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-input"
-version = "3.0.2"
+version = "3.0.3"
 description = "Input document loading utilities for GraphRAG"
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},

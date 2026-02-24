@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-cache"
-version = "3.0.2"
+version = "3.0.3"
 description = "GraphRAG cache package."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
