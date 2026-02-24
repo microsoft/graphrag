@@ -1,6 +1,10 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.0.4
+
+- patch: fix versions release
+
 ## 3.0.3
 
 - patch: Add filtering, timestamp explosion, insert/count/remove/update operations to vector store API. Add top-level vector_size config to VectorStoreConfig.
