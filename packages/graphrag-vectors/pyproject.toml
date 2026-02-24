@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-vectors"
-version = "3.0.2"
+version = "3.0.3"
 description = "GraphRAG vector store package."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},

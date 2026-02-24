@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-llm"
-version = "3.0.2"
+version = "3.0.3"
 description = "GraphRAG LLM package."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},

@@ -1,6 +1,20 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.0.3
+
+- patch: Add filtering, timestamp explosion, insert/count/remove/update operations to vector store API. Add top-level vector_size config to VectorStoreConfig.
+- patch: add csv table smoke tests
+- patch: add manual release instructions
+- patch: add streamming to the two first workflows
+- patch: add support for cosmosdb output
+- patch: create_communities streaming
+- patch: create_final_documents streaming
+- patch: create_final_text_units streaming
+- patch: finalize_graph streaming
+- patch: generate_text_embeddings streaming
+- patch: write stats.json per workflow
+
 ## 3.0.2
 
 - patch: Add CSVTableProvider

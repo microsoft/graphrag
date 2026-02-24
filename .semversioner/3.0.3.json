@@ -1,0 +1,50 @@
+{
+  "changes": [
+    {
+      "description": "Add filtering, timestamp explosion, insert/count/remove/update operations to vector store API. Add top-level vector_size config to VectorStoreConfig.",
+      "type": "patch"
+    },
+    {
+      "description": "add csv table smoke tests",
+      "type": "patch"
+    },
+    {
+      "description": "add manual release instructions",
+      "type": "patch"
+    },
+    {
+      "description": "add streamming to the two first workflows",
+      "type": "patch"
+    },
+    {
+      "description": "add support for cosmosdb output",
+      "type": "patch"
+    },
+    {
+      "description": "create_communities streaming",
+      "type": "patch"
+    },
+    {
+      "description": "create_final_documents streaming",
+      "type": "patch"
+    },
+    {
+      "description": "create_final_text_units streaming",
+      "type": "patch"
+    },
+    {
+      "description": "finalize_graph streaming",
+      "type": "patch"
+    },
+    {
+      "description": "generate_text_embeddings streaming",
+      "type": "patch"
+    },
+    {
+      "description": "write stats.json per workflow",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2026-02-24T20:13:49+00:00",
+  "version": "3.0.3"
+}
