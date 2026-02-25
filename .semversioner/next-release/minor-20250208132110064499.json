@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Add support for CSV format input in graphrag_import_neo4j"
+}
