@@ -59,11 +59,11 @@ async def test_csv_loader_multiple_files():
 async def test_csv_loader_preserves_multiline_fields(tmp_path):
     """Multiline quoted CSV fields must retain their internal newlines."""
     csv_content = (
-        'title,text\r\n'
+        "title,text\r\n"
         '"Post 1","Line one.\nLine two.\nLine three."\r\n'
         '"Post 2","Single line."\r\n'
     )
-    (tmp_path / "input.csv").write_text(csv_content, encoding="utf-8", newline="")
+    (tmp_path / "input.csv").write_text(csv_content, encoding="utf-8")
     config = InputConfig(
         type=InputType.Csv,
         text_column="text",
