@@ -56,18 +56,20 @@ async def test_csv_loader_multiple_files():
     assert len(documents) == 4
 
 
-async def test_csv_loader_preserves_multiline_fields():
+async def test_csv_loader_preserves_multiline_fields(tmp_path):
     """Multiline quoted CSV fields must retain their internal newlines."""
+    csv_content = (
+        'title,text\r\n'
+        '"Post 1","Line one.\nLine two.\nLine three."\r\n'
+        '"Post 2","Single line."\r\n'
+    )
+    (tmp_path / "input.csv").write_text(csv_content, encoding="utf-8", newline="")
     config = InputConfig(
         type=InputType.Csv,
         text_column="text",
         title_column="title",
     )
-    storage = create_storage(
-        StorageConfig(
-            base_dir="tests/unit/indexing/input/data/multiline-csv",
-        )
-    )
+    storage = create_storage(StorageConfig(base_dir=str(tmp_path)))
     reader = create_input_reader(config, storage)
     documents = await reader.read_files()
     assert len(documents) == 2
