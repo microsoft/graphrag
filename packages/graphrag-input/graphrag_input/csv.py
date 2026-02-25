@@ -4,6 +4,7 @@
 """A module containing 'CSVFileReader' model."""
 
 import csv
+import io
 import logging
 import sys
 
@@ -39,6 +40,6 @@ class CSVFileReader(StructuredFileReader):
         """
         file = await self._storage.get(path, encoding=self._encoding)
 
-        reader = csv.DictReader(file.splitlines())
+        reader = csv.DictReader(io.StringIO(file))
         rows = list(reader)
         return await self.process_data_columns(rows, path)
