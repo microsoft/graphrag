@@ -163,17 +163,22 @@ class CosmosDBVectorStore(VectorStore):
             msg = "Container client is not initialized."
             raise ValueError(msg)
 
-    def insert(self, document: VectorStoreDocument) -> None:
-        """Insert a single document into CosmosDB."""
-        self._prepare_document(document)
-        if document.vector is not None:
+    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
+        """Load documents into CosmosDB.
+
+        CosmosDB does not support native batch upsert, so each
+        document is upserted individually after preparation.
+        """
+        for document in documents:
+            self._prepare_document(document)
+            if document.vector is None:
+                continue
             doc_json: dict[str, Any] = {
                 self.id_field: document.id,
                 self.vector_field: document.vector,
                 self.create_date_field: document.create_date,
                 self.update_date_field: document.update_date,
             }
-            # Add additional fields if they exist in the document data
             if document.data:
                 for field_name in self.fields:
                     if field_name in document.data:

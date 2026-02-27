@@ -165,22 +165,27 @@ class AzureAISearchVectorStore(VectorStore):
             index,
         )
 
-    def insert(self, document: VectorStoreDocument) -> None:
-        """Insert a single document into Azure AI Search."""
-        self._prepare_document(document)
-        if document.vector is not None:
-            doc_dict = {
+    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
+        """Load documents into Azure AI Search as a single batch upload."""
+        batch: list[dict[str, Any]] = []
+        for document in documents:
+            self._prepare_document(document)
+            if document.vector is None:
+                continue
+            doc_dict: dict[str, Any] = {
                 self.id_field: document.id,
                 self.vector_field: document.vector,
                 self.create_date_field: document.create_date,
                 self.update_date_field: document.update_date,
             }
-            # Add additional fields if they exist in the document data
             if document.data:
                 for field_name in self.fields:
                     if field_name in document.data:
                         doc_dict[field_name] = document.data[field_name]
-            self.db_connection.upload_documents([doc_dict])
+            batch.append(doc_dict)
+
+        if batch:
+            self.db_connection.upload_documents(batch)
 
     def _compile_filter(self, expr: FilterExpr) -> str:
         """Compile a FilterExpr into an Azure AI Search OData filter string."""

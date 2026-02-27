@@ -78,38 +78,43 @@ class LanceDBVectorStore(VectorStore):
         # Remove the dummy document used to set up the schema
         self.document_collection.delete(f"{self.id_field} = '__DUMMY__'")
 
-    def insert(self, document: VectorStoreDocument) -> None:
-        """Insert a single document into LanceDB."""
-        self._prepare_document(document)
-        if document.vector is not None:
-            vector = np.array(document.vector, dtype=np.float32)
-            flat_array = pa.array(vector, type=pa.float32())
-            vector_column = pa.FixedSizeListArray.from_arrays(
-                flat_array, self.vector_size
-            )
+    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
+        """Load documents into LanceDB as a single batch write."""
+        ids: list[str] = []
+        vectors: list[np.ndarray] = []
+        create_dates: list[str | None] = []
+        update_dates: list[str | None] = []
+        field_columns: dict[str, list[Any]] = {name: [] for name in self.fields}
 
-            others = {}
+        for document in documents:
+            self._prepare_document(document)
+            if document.vector is None:
+                continue
+
+            ids.append(str(document.id))
+            vectors.append(np.array(document.vector, dtype=np.float32))
+            create_dates.append(document.create_date)
+            update_dates.append(document.update_date)
             for field_name in self.fields:
-                others[field_name] = (
-                    document.data.get(field_name) if document.data else None
-                )
+                value = document.data.get(field_name) if document.data else None
+                field_columns[field_name].append(value)
 
-            data = pa.table({
-                self.id_field: pa.array([document.id], type=pa.string()),
-                self.vector_field: vector_column,
-                self.create_date_field: pa.array(
-                    [document.create_date], type=pa.string()
-                ),
-                self.update_date_field: pa.array(
-                    [document.update_date], type=pa.string()
-                ),
-                **{
-                    field_name: pa.array([value])
-                    for field_name, value in others.items()
-                },
-            })
+        if not ids:
+            return
 
-            self.document_collection.add(data)
+        flat_vector = np.concatenate(vectors).astype(np.float32)
+        flat_array = pa.array(flat_vector, type=pa.float32())
+        vector_column = pa.FixedSizeListArray.from_arrays(flat_array, self.vector_size)
+
+        data = pa.table({
+            self.id_field: pa.array(ids, type=pa.string()),
+            self.vector_field: vector_column,
+            self.create_date_field: pa.array(create_dates, type=pa.string()),
+            self.update_date_field: pa.array(update_dates, type=pa.string()),
+            **{name: pa.array(values) for name, values in field_columns.items()},
+        })
+
+        self.document_collection.add(data)
 
     def _extract_data(
         self, doc: dict[str, Any], select: list[str] | None = None
