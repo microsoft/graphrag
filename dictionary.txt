@@ -133,6 +133,7 @@ retryer
 agenerate
 dropna
 notna
+upsert
 
 # LLM Terms
 AOAI
