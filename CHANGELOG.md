@@ -1,6 +1,12 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.0.5
+
+- patch: fix csv reader
+- patch: update version
+- patch: vector load_documents in batches
+
 ## 3.0.4
 
 - patch: fix versions release

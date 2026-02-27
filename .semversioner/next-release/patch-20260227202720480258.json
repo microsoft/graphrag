@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "vector load_documents in batches"
-}
