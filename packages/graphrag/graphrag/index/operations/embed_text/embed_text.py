@@ -38,6 +38,7 @@ async def embed_text(
 
     buffer: list[dict[str, Any]] = []
     total_rows = 0
+    flush_size = batch_size * 4
 
     async for row in input_table:
         text = row.get(embed_column)
@@ -49,7 +50,7 @@ async def embed_text(
             embed_column: text,
         })
 
-        if len(buffer) >= batch_size:
+        if len(buffer) >= flush_size:
             total_rows += await _flush_embedding_buffer(
                 buffer,
                 embed_column,

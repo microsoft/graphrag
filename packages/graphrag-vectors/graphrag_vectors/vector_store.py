@@ -140,14 +140,13 @@ class VectorStore(ABC):
     def create_index(self) -> None:
         """Create index."""
 
+    @abstractmethod
     def load_documents(self, documents: list[VectorStoreDocument]) -> None:
         """Load documents into the vector-store."""
-        for doc in documents:
-            self.insert(doc)
 
-    @abstractmethod
     def insert(self, document: VectorStoreDocument) -> None:
-        """Insert a single document into the vector-store."""
+        """Insert a single document by delegating to load_documents."""
+        self.load_documents([document])
 
     @abstractmethod
     def similarity_search_by_vector(
