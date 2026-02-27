@@ -150,8 +150,8 @@ async def test_embed_text_basic():
 
 @pytest.mark.asyncio
 async def test_embed_text_batching():
-    """Verify rows are flushed in batches when batch_size < total rows."""
-    rows = [{"id": str(i), "text": f"text {i}"} for i in range(5)]
+    """Verify rows are flushed in batches when buffer exceeds batch_size * 4."""
+    rows = [{"id": str(i), "text": f"text {i}"} for i in range(10)]
     input_table = FakeInputTable(rows)
     vector_store = _make_mock_vector_store()
 
@@ -160,9 +160,8 @@ async def test_embed_text_batching():
         new_callable=AsyncMock,
     ) as mock_run:
         mock_run.side_effect = [
-            _make_embedding_result(2, [1.0]),
+            _make_embedding_result(8, [1.0]),
             _make_embedding_result(2, [2.0]),
-            _make_embedding_result(1, [3.0]),
         ]
 
         count = await embed_text(
@@ -177,9 +176,9 @@ async def test_embed_text_batching():
             vector_store=vector_store,
         )
 
-    assert count == 5
-    assert mock_run.call_count == 3
-    assert vector_store.load_documents.call_count == 3
+    assert count == 10
+    assert mock_run.call_count == 2
+    assert vector_store.load_documents.call_count == 2
 
 
 @pytest.mark.asyncio
