@@ -19,8 +19,8 @@ def get_candidate_text_units(
     selected_text_ids = [
         entity.text_unit_ids for entity in selected_entities if entity.text_unit_ids
     ]
-    selected_text_ids = [item for sublist in selected_text_ids for item in sublist]
-    selected_text_units = [unit for unit in text_units if unit.id in selected_text_ids]
+    selected_text_ids_set = {item for sublist in selected_text_ids for item in sublist}
+    selected_text_units = [unit for unit in text_units if unit.id in selected_text_ids_set]
     return to_text_unit_dataframe(selected_text_units)
 
 
