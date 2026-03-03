@@ -1,17 +1,20 @@
-# Copyright (c) 2024 Microsoft Corporation.
+# Copyright (C) 2026 Microsoft
 # Licensed under the MIT License
 
-"""A module containing run_workflow method definition."""
+"""NLP-based graph extraction workflow."""
 
 import logging
+from typing import Any
 
 import pandas as pd
 from graphrag_cache import Cache
+from graphrag_storage.tables.table import Table
 
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.data_model.data_reader import DataReader
-from graphrag.index.operations.build_noun_graph.build_noun_graph import build_noun_graph
+from graphrag.index.operations.build_noun_graph.build_noun_graph import (
+    build_noun_graph,
+)
 from graphrag.index.operations.build_noun_graph.np_extractors.base import (
     BaseNounPhraseExtractor,
 )
@@ -28,47 +31,49 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
 ) -> WorkflowFunctionOutput:
-    """All the steps to create the base entity graph."""
+    """Run the NLP graph-extraction pipeline."""
     logger.info("Workflow started: extract_graph_nlp")
-    reader = DataReader(context.output_table_provider)
-    text_units = await reader.text_units()
 
     text_analyzer_config = config.extract_graph_nlp.text_analyzer
     text_analyzer = create_noun_phrase_extractor(text_analyzer_config)
 
-    entities, relationships = await extract_graph_nlp(
-        text_units,
-        context.cache,
-        text_analyzer=text_analyzer,
-        normalize_edge_weights=config.extract_graph_nlp.normalize_edge_weights,
-        num_threads=config.extract_graph_nlp.concurrent_requests,
-        async_type=config.extract_graph_nlp.async_mode,
-    )
-
-    await context.output_table_provider.write_dataframe("entities", entities)
-    await context.output_table_provider.write_dataframe("relationships", relationships)
+    async with (
+        context.output_table_provider.open(
+            "text_units", truncate=False
+        ) as text_units_table,
+        context.output_table_provider.open("entities") as entities_table,
+        context.output_table_provider.open(
+            "relationships",
+        ) as relationships_table,
+    ):
+        result = await extract_graph_nlp(
+            text_units_table,
+            context.cache,
+            entities_table=entities_table,
+            relationships_table=relationships_table,
+            text_analyzer=text_analyzer,
+            normalize_edge_weights=(config.extract_graph_nlp.normalize_edge_weights),
+            num_threads=config.extract_graph_nlp.concurrent_requests,
+            async_type=config.extract_graph_nlp.async_mode,
+        )
 
     logger.info("Workflow completed: extract_graph_nlp")
-
-    return WorkflowFunctionOutput(
-        result={
-            "entities": entities,
-            "relationships": relationships,
-        }
-    )
+    return WorkflowFunctionOutput(result=result)
 
 
 async def extract_graph_nlp(
-    text_units: pd.DataFrame,
+    text_units_table: Table,
     cache: Cache,
+    entities_table: Table,
+    relationships_table: Table,
     text_analyzer: BaseNounPhraseExtractor,
     normalize_edge_weights: bool,
     num_threads: int,
     async_type: AsyncType,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """All the steps to create the base entity graph."""
+) -> dict[str, list[dict[str, Any]]]:
+    """Extract noun-phrase graph and stream results to output tables."""
     extracted_nodes, extracted_edges = await build_noun_graph(
-        text_units,
+        text_units_table,
         text_analyzer=text_analyzer,
         normalize_edge_weights=normalize_edge_weights,
         num_threads=num_threads,
@@ -89,9 +94,56 @@ async def extract_graph_nlp(
         )
         logger.error(error_msg)
 
-    # add in any other columns required by downstream workflows
-    extracted_nodes["type"] = "NOUN PHRASE"
-    extracted_nodes["description"] = ""
-    extracted_edges["description"] = ""
+    entity_samples = await _write_entities(
+        extracted_nodes,
+        entities_table,
+    )
+    relationship_samples = await _write_relationships(
+        extracted_edges,
+        relationships_table,
+    )
 
-    return (extracted_nodes, extracted_edges)
+    return {
+        "entities": entity_samples,
+        "relationships": relationship_samples,
+    }
+
+
+async def _write_entities(
+    nodes_df: pd.DataFrame,
+    table: Table,
+) -> list[dict[str, Any]]:
+    """Stream entity rows into the output table."""
+    samples: list[dict[str, Any]] = []
+    for row_tuple in nodes_df.itertuples(index=False):
+        row = {
+            "title": row_tuple.title,
+            "frequency": row_tuple.frequency,
+            "text_unit_ids": row_tuple.text_unit_ids,
+            "type": "NOUN PHRASE",
+            "description": "",
+        }
+        await table.write(row)
+        if len(samples) < 5:
+            samples.append(row)
+    return samples
+
+
+async def _write_relationships(
+    edges_df: pd.DataFrame,
+    table: Table,
+) -> list[dict[str, Any]]:
+    """Stream relationship rows into the output table."""
+    samples: list[dict[str, Any]] = []
+    for row_tuple in edges_df.itertuples(index=False):
+        row = {
+            "source": row_tuple.source,
+            "target": row_tuple.target,
+            "weight": row_tuple.weight,
+            "text_unit_ids": row_tuple.text_unit_ids,
+            "description": "",
+        }
+        await table.write(row)
+        if len(samples) < 5:
+            samples.append(row)
+    return samples
