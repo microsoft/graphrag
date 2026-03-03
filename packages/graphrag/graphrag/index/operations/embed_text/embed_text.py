@@ -33,12 +33,18 @@ async def embed_text(
     id_column: str = "id",
     output_table: Table | None = None,
 ) -> int:
-    """Embed text from a streaming Table into a vector store."""
+    """Embed text from a streaming Table into a vector store.
+
+    Rows are buffered before flushing to ``run_embed_text``,
+    which dispatches API batches concurrently up to
+    ``num_threads``.  The buffer is sized so each flush produces
+    enough batches to saturate the concurrency limit.
+    """
     vector_store.create_index()
 
     buffer: list[dict[str, Any]] = []
     total_rows = 0
-    flush_size = batch_size * 4
+    flush_size = batch_size * num_threads
 
     async for row in input_table:
         text = row.get(embed_column)

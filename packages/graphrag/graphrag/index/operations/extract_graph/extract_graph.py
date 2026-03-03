@@ -11,6 +11,7 @@ import pandas as pd
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.extract_graph.graph_extractor import GraphExtractor
+from graphrag.index.operations.extract_graph.utils import filter_orphan_relationships
 from graphrag.index.utils.derive_from_rows import derive_from_rows
 
 if TYPE_CHECKING:
@@ -67,6 +68,7 @@ async def extract_graph(
 
     entities = _merge_entities(entity_dfs)
     relationships = _merge_relationships(relationship_dfs)
+    relationships = filter_orphan_relationships(relationships, entities)
 
     return (entities, relationships)
 
