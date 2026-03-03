@@ -14,6 +14,9 @@ from graphrag.cache.cache_key_creator import cache_key_creator
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.data_reader import DataReader
+from graphrag.index.operations.extract_graph.utils import (
+    filter_orphan_relationships,
+)
 from graphrag.index.run.utils import get_update_table_providers
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
@@ -77,6 +80,10 @@ async def _update_entities_and_relationships(
     merged_relationships_df = _update_and_merge_relationships(
         old_relationships,
         delta_relationships,
+    )
+
+    merged_relationships_df = filter_orphan_relationships(
+        merged_relationships_df, merged_entities_df
     )
 
     summarization_model_config = config.get_completion_model_config(
