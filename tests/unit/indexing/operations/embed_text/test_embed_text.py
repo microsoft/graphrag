@@ -150,7 +150,13 @@ async def test_embed_text_basic():
 
 @pytest.mark.asyncio
 async def test_embed_text_batching():
-    """Verify rows are flushed in batches when buffer exceeds batch_size * 4."""
+    """Verify rows are flushed in batches sized by batch_size * num_threads.
+
+    With batch_size=2 and num_threads=4, each flush holds up to
+    8 rows (enough to produce 4 API batches that saturate the
+    concurrency limit).  10 rows should produce 2 flushes:
+    one of 8 rows and a final remainder of 2.
+    """
     rows = [{"id": str(i), "text": f"text {i}"} for i in range(10)]
     input_table = FakeInputTable(rows)
     vector_store = _make_mock_vector_store()
@@ -172,7 +178,7 @@ async def test_embed_text_batching():
             embed_column="text",
             batch_size=2,
             batch_max_tokens=8191,
-            num_threads=1,
+            num_threads=4,
             vector_store=vector_store,
         )
 
