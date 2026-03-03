@@ -10,7 +10,6 @@ import pandas as pd
 from graphrag_cache import Cache
 from graphrag_storage.tables.table import Table
 
-from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.build_noun_graph.build_noun_graph import (
     build_noun_graph,
@@ -53,8 +52,6 @@ async def run_workflow(
             relationships_table=relationships_table,
             text_analyzer=text_analyzer,
             normalize_edge_weights=(config.extract_graph_nlp.normalize_edge_weights),
-            num_threads=config.extract_graph_nlp.concurrent_requests,
-            async_type=config.extract_graph_nlp.async_mode,
         )
 
     logger.info("Workflow completed: extract_graph_nlp")
@@ -68,16 +65,12 @@ async def extract_graph_nlp(
     relationships_table: Table,
     text_analyzer: BaseNounPhraseExtractor,
     normalize_edge_weights: bool,
-    num_threads: int,
-    async_type: AsyncType,
 ) -> dict[str, list[dict[str, Any]]]:
     """Extract noun-phrase graph and stream results to output tables."""
     extracted_nodes, extracted_edges = await build_noun_graph(
         text_units_table,
         text_analyzer=text_analyzer,
         normalize_edge_weights=normalize_edge_weights,
-        num_threads=num_threads,
-        async_mode=async_type,
         cache=cache,
     )
 

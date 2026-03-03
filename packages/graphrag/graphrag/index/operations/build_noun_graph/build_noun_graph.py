@@ -3,7 +3,6 @@
 
 """Graph extraction using NLP."""
 
-import asyncio
 import logging
 from collections import defaultdict
 from itertools import combinations
@@ -12,7 +11,6 @@ import pandas as pd
 from graphrag_cache import Cache
 from graphrag_storage.tables.table import Table
 
-from graphrag.config.enums import AsyncType
 from graphrag.graphs.edge_weights import calculate_pmi_edge_weights
 from graphrag.index.operations.build_noun_graph.np_extractors.base import (
     BaseNounPhraseExtractor,
@@ -26,16 +24,12 @@ async def build_noun_graph(
     text_unit_table: Table,
     text_analyzer: BaseNounPhraseExtractor,
     normalize_edge_weights: bool,
-    num_threads: int,
-    async_mode: AsyncType,
     cache: Cache,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Build a noun graph from text units."""
     title_to_ids = await _extract_nodes(
         text_unit_table,
         text_analyzer,
-        num_threads=num_threads,
-        async_mode=async_mode,
         cache=cache,
     )
 
@@ -62,73 +56,42 @@ async def build_noun_graph(
 async def _extract_nodes(
     text_unit_table: Table,
     text_analyzer: BaseNounPhraseExtractor,
-    num_threads: int,
-    async_mode: AsyncType,
     cache: Cache,
 ) -> dict[str, list[str]]:
     """Extract noun-phrase nodes from text units.
 
+    NLP extraction is CPU-bound (spaCy/TextBlob), so threading
+    provides no benefit under the GIL. We process rows
+    sequentially, relying on the cache to skip repeated work.
+
     Returns a mapping of noun-phrase title to text-unit ids.
     """
     extraction_cache = cache.child("extract_noun_phrases")
-    semaphore = asyncio.Semaphore(num_threads)
-    use_threads = async_mode == AsyncType.Threaded
-
-    async def _extract_one(
-        text_unit_id: str,
-        text: str,
-    ) -> tuple[str, list[str]]:
-        """Return ``(text_unit_id, noun_phrases)`` for one row."""
-        async with semaphore:
-            attrs = {"text": text, "analyzer": str(text_analyzer)}
-            key = gen_sha512_hash(attrs, attrs.keys())
-            result = await extraction_cache.get(key)
-            if not result:
-                if use_threads:
-                    result = await asyncio.to_thread(
-                        text_analyzer.extract,
-                        text,
-                    )
-                else:
-                    result = text_analyzer.extract(text)
-                await extraction_cache.set(key, result)
-            return (text_unit_id, result)
-
     total = await text_unit_table.length()
     title_to_ids: dict[str, list[str]] = defaultdict(list)
     completed = 0
-    chunk_size = num_threads * 4
-    chunk: list[asyncio.Task[tuple[str, list[str]]]] = []
-
-    async def _drain(
-        tasks: list[asyncio.Task[tuple[str, list[str]]]],
-    ) -> None:
-        """Await every task in the chunk and accumulate results."""
-        nonlocal completed
-        for coro in asyncio.as_completed(tasks):
-            text_unit_id, noun_phrases = await coro
-            completed += 1
-            if completed % 100 == 0 or completed == total:
-                logger.info(
-                    "extract noun phrases progress: %d/%d",
-                    completed,
-                    total,
-                )
-            for phrase in noun_phrases:
-                title_to_ids[phrase].append(text_unit_id)
 
     async for row in text_unit_table:
-        chunk.append(
-            asyncio.create_task(
-                _extract_one(row["id"], row["text"]),
-            ),
-        )
-        if len(chunk) >= chunk_size:
-            await _drain(chunk)
-            chunk.clear()
+        text_unit_id = row["id"]
+        text = row["text"]
 
-    if chunk:
-        await _drain(chunk)
+        attrs = {"text": text, "analyzer": str(text_analyzer)}
+        key = gen_sha512_hash(attrs, attrs.keys())
+        result = await extraction_cache.get(key)
+        if not result:
+            result = text_analyzer.extract(text)
+            await extraction_cache.set(key, result)
+
+        for phrase in result:
+            title_to_ids[phrase].append(text_unit_id)
+
+        completed += 1
+        if completed % 100 == 0 or completed == total:
+            logger.info(
+                "extract noun phrases progress: %d/%d",
+                completed,
+                total,
+            )
 
     return dict(title_to_ids)
 
