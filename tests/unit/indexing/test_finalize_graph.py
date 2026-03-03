@@ -191,12 +191,12 @@ class TestFinalizeEntities:
         assert len(table.written) == 1
         assert table.written[0]["degree"] == 0
 
-    async def test_deduplicates_by_title(self):
-        """Duplicate titles should be skipped."""
+    async def test_deduplicates_by_title_and_type(self):
+        """Duplicate title and type combinations should be skipped."""
         table = FakeTable([
-            _make_entity_row("A"),
-            _make_entity_row("A"),
-            _make_entity_row("B"),
+            _make_entity_row("A", "PERSON"),
+            _make_entity_row("A", "PERSON"),
+            _make_entity_row("B", "ORGANIZATION"),
         ])
         degree_map = {"A": 1, "B": 2}
         await finalize_entities(table, degree_map)
@@ -204,6 +204,22 @@ class TestFinalizeEntities:
         assert len(table.written) == 2
         titles = [r["title"] for r in table.written]
         assert titles == ["A", "B"]
+
+    async def test_preserves_entities_with_same_title_different_type(self):
+        """Entities with same title but different types should not be deduplicated."""
+        table = FakeTable([
+            _make_entity_row("PARENT AREA", "PERSON"),
+            _make_entity_row("PARENT AREA", "ORGANIZATION"),
+            _make_entity_row("B", "ENTITY"),
+        ])
+        degree_map = {"PARENT AREA": 1, "B": 2}
+        await finalize_entities(table, degree_map)
+
+        assert len(table.written) == 3
+        titles = [r["title"] for r in table.written]
+        types = [r["type"] for r in table.written]
+        assert titles == ["PARENT AREA", "PARENT AREA", "B"]
+        assert types == ["PERSON", "ORGANIZATION", "ENTITY"]
 
     async def test_skips_empty_title(self):
         """Rows with empty or missing title should be skipped."""
