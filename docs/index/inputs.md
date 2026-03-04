@@ -18,7 +18,7 @@ Also see the [outputs](outputs.md) documentation for the final documents table s
 
 ## Bring-your-own DataFrame
 
-GraphRAG's [indexing API method](https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py) allows you to pass in your own pandas DataFrame and bypass all of the input loading/parsing described in the next section. This is convenient if you have content in a format or storage location we don't support out-of-the-box. _You must ensure that your input DataFrame conforms to the schema described above._ All of the chunking behavior described later will proceed exactly the same.
+GraphRAG's [indexing API method](https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/api/index.py) allows you to pass in your own pandas DataFrame and bypass all of the input loading/parsing described in the next section. This is convenient if you have content in a format or storage location we don't support out-of-the-box. _You must ensure that your input DataFrame conforms to the schema described above._ All of the chunking behavior described later will proceed exactly the same.
 
 ## Custom File Handling
 
