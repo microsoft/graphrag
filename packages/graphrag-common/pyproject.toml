@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-common"
-version = "3.0.5"
+version = "3.0.6"
 description = "Common utilities and types for GraphRAG"
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},

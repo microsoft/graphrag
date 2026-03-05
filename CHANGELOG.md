@@ -1,6 +1,11 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.0.6
+
+- patch: extract_graph_nlp streaming
+- patch: filter phantom relationships in graph
+
 ## 3.0.5
 
 - patch: fix csv reader
