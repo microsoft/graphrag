@@ -46,7 +46,7 @@ dependencies = [
     "graspologic-native~=1.2",
     "json-repair~=0.30",
     "networkx~=3.4",
-    "nltk==3.9.1",
+    "nltk==3.9.3",
     "numpy~=2.1",
     "pandas~=2.3",
     "pyarrow~=22.0",
