@@ -102,6 +102,15 @@ class LanceDBVectorStore(VectorStore):
         if not ids:
             return
 
+        actual_vector_size = len(vectors[0])
+        if actual_vector_size != self.vector_size:
+            msg = (
+                f"Embedding dimension {actual_vector_size} does not match "
+                f"configured vector_size {self.vector_size} for index '{self.index_name}'. "
+                f"Please update vector_size in your vector_store configuration."
+            )
+            raise ValueError(msg)
+
         flat_vector = np.concatenate(vectors).astype(np.float32)
         flat_array = pa.array(flat_vector, type=pa.float32())
         vector_column = pa.FixedSizeListArray.from_arrays(flat_array, self.vector_size)

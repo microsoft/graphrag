@@ -547,6 +547,29 @@ class TestLanceDBVectorStore:
         finally:
             shutil.rmtree(temp_dir)
 
+    def test_load_documents_vector_dimension_mismatch(self):
+        """Test that load_documents raises ValueError when vector dimension does not match vector_size."""
+        temp_dir = tempfile.mkdtemp()
+        try:
+            vector_store = LanceDBVectorStore(
+                db_uri=temp_dir, index_name="dim_mismatch", vector_size=10
+            )
+            vector_store.connect()
+            vector_store.create_index()
+
+            documents = [
+                VectorStoreDocument(id="1", vector=[0.1, 0.2, 0.3, 0.4, 0.5]),
+                VectorStoreDocument(id="2", vector=[0.2, 0.3, 0.4, 0.5, 0.6]),
+            ]
+
+            with pytest.raises(
+                ValueError,
+                match="Embedding dimension 5 does not match configured vector_size 10",
+            ):
+                vector_store.load_documents(documents)
+        finally:
+            shutil.rmtree(temp_dir)
+
     def test_vector_store_customization(self, sample_documents):
         """Test vector store customization with LanceDB."""
         temp_dir = tempfile.mkdtemp()
