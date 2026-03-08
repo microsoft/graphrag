@@ -60,7 +60,6 @@ async def summarize_communities(
 
     levels = get_levels(nodes)
 
-    level_contexts = []
     for level in levels:
         level_context = level_context_builder(
             pd.DataFrame(reports),
@@ -70,9 +69,6 @@ async def summarize_communities(
             tokenizer=tokenizer,
             max_context_tokens=max_input_length,
         )
-        level_contexts.append(level_context)
-
-    for i, level_context in enumerate(level_contexts):
 
         async def run_generate(record):
             result = await _generate_report(
@@ -93,7 +89,7 @@ async def summarize_communities(
             callbacks=NoopWorkflowCallbacks(),
             num_threads=num_threads,
             async_type=async_type,
-            progress_msg=f"level {levels[i]} summarize communities progress: ",
+            progress_msg=f"level {level} summarize communities progress: ",
         )
         reports.extend([lr for lr in local_reports if lr is not None])
 
