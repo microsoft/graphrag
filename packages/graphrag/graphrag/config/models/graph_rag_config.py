@@ -270,9 +270,11 @@ class GraphRagConfig(BaseModel):
         """Validate the vector store configuration."""
         store = self.vector_store
         if store.type == VectorStoreType.LanceDB:
-            if not store.db_uri or store.db_uri.strip == "":
+            if not store.db_uri or store.db_uri.strip() == "":
                 store.db_uri = graphrag_config_defaults.vector_store.db_uri
-            store.db_uri = str(Path(store.db_uri).resolve())
+            # Don't resolve cloud storage URIs as local paths
+            if not store.db_uri.startswith(("gs://", "s3://", "az://", "abfs://")):
+                store.db_uri = str(Path(store.db_uri).resolve())
 
     def get_completion_model_config(self, model_id: str) -> ModelConfig:
         """Get a completion model configuration by ID.
