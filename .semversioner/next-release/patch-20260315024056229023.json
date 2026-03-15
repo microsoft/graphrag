@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "reconfigure vector store size by embedding model"
+}
