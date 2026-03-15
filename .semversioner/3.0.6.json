@@ -1,0 +1,14 @@
+{
+  "changes": [
+    {
+      "description": "extract_graph_nlp streaming",
+      "type": "patch"
+    },
+    {
+      "description": "filter phantom relationships in graph",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2026-03-05T17:22:13+00:00",
+  "version": "3.0.6"
+}
