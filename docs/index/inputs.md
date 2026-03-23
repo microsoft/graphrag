@@ -27,7 +27,7 @@ Also see the [outputs](outputs.md) documentation for the final documents table s
 | `turn_timestamp` | no | Uses the input value if present. Otherwise, uses `creation_date`; if that is missing, uses the current UTC timestamp. |
 | `turn_role` | no | Uses the input value if present. Otherwise, defaults to `"unknown"`. |
 
-These normalized values are always written to the internal `documents` rows while preserving the original input payload.
+These normalized values are always written to the internal `documents` rows while preserving the original input payload. Empty-string values are treated as missing and defaulted using the same rules above.
 
 ## Bring-your-own DataFrame
 
@@ -235,5 +235,4 @@ Raw Text Chunks
 
 
 In this example the two input documents were parsed into five output text chunks. There is no metadata prepended, so each chunk matches the configured chunk size (except the last one for each document). We've also configured some overlap in these text chunks, so the last ten tokens are shared.
-
 

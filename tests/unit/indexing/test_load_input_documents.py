@@ -108,6 +108,24 @@ class TestNormalizeConversationMetadata:
             ["seed"],
         )
 
+    def test_treats_blank_values_as_missing(self):
+        row = {
+            "title": "conversation B",
+            "creation_date": "2025-01-02T00:00:00Z",
+            "conversation_id": " ",
+            "turn_index": " ",
+            "turn_timestamp": " ",
+            "turn_role": " ",
+            "raw_data": {},
+        }
+
+        normalize_conversation_metadata(row, {})
+
+        assert row["conversation_id"] == gen_sha512_hash({"seed": "conversation B"}, ["seed"])
+        assert row["turn_index"] == 0
+        assert row["turn_timestamp"] == "2025-01-02T00:00:00Z"
+        assert row["turn_role"] == "unknown"
+
 
 class TestLoadInputDocuments:
     def test_assigns_incremental_turn_index_per_conversation(self):
