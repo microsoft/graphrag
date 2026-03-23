@@ -22,7 +22,7 @@ Also see the [outputs](outputs.md) documentation for the final documents table s
 
 | name | required in input | defaulting behavior in `documents` rows |
 | --- | --- | --- |
-| `conversation_id` | no | Uses the input value if present. Otherwise, GraphRAG generates a stable hash from `title` or `source_path`. |
+| `conversation_id` | no | Uses the input value if present. Otherwise, GraphRAG generates a stable hash from `title` or `source_path` (and falls back to `id` if both are missing). |
 | `turn_index` | no | Uses the input value if present. Otherwise, GraphRAG assigns an incrementing sequence number within each `conversation_id`. |
 | `turn_timestamp` | no | Uses the input value if present. Otherwise, uses `creation_date`; if that is missing, uses the current UTC timestamp. |
 | `turn_role` | no | Uses the input value if present. Otherwise, defaults to `"unknown"`. |
@@ -235,4 +235,3 @@ Raw Text Chunks
 
 
 In this example the two input documents were parsed into five output text chunks. There is no metadata prepended, so each chunk matches the configured chunk size (except the last one for each document). We've also configured some overlap in these text chunks, so the last ten tokens are shared.
-

@@ -110,10 +110,13 @@ def _get_source_identifier(row: dict[str, Any]) -> str:
     raw_data = row.get("raw_data") if isinstance(row.get("raw_data"), dict) else {}
     title = row.get("title") or raw_data.get("title")
     source_path = row.get("source_path") or raw_data.get("source_path")
+    document_id = row.get("id") or raw_data.get("id")
     if title:
         return str(title)
     if source_path:
         return str(source_path)
+    if document_id:
+        return str(document_id)
     return "__missing_conversation_identifier__"
 
 

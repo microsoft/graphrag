@@ -126,6 +126,18 @@ class TestNormalizeConversationMetadata:
         assert row["turn_timestamp"] == "2025-01-02T00:00:00Z"
         assert row["turn_role"] == "unknown"
 
+    def test_conversation_id_falls_back_to_document_id(self):
+        row = {
+            "id": "doc-001",
+            "title": "",
+            "creation_date": "2025-01-03T00:00:00Z",
+            "raw_data": {},
+        }
+
+        normalize_conversation_metadata(row, {})
+
+        assert row["conversation_id"] == gen_sha512_hash({"seed": "doc-001"}, ["seed"])
+
 
 class TestLoadInputDocuments:
     def test_assigns_incremental_turn_index_per_conversation(self):
