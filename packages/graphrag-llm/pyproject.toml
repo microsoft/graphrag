@@ -36,7 +36,7 @@ dependencies = [
     "graphrag-cache==3.0.6",
     "graphrag-common==3.0.6",
     "jinja2~=3.1",
-    "litellm~=1.80",
+    "litellm==1.82.6",
     "nest-asyncio2~=1.7",
     "pydantic~=2.10",
     "typing-extensions~=4.12"
