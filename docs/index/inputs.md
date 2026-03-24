@@ -27,7 +27,7 @@ Also see the [outputs](outputs.md) documentation for the final documents table s
 | `turn_timestamp` | no | Uses the input value if present. Otherwise, uses `creation_date`; if that is missing, uses the current UTC timestamp. |
 | `turn_role` | no | Uses the input value if present. Otherwise, defaults to `"unknown"`. |
 
-These normalized values are always written to the internal `documents` rows while preserving the original input payload. Empty-string values are treated as missing and defaulted using the same rules above.
+For CSV/JSON input rows, GraphRAG reads these fields from either top-level document columns or `raw_data` when available. These normalized values are always written to the internal `documents` rows while preserving the original input payload. Empty-string values are treated as missing and defaulted using the same rules above.
 
 ## Bring-your-own DataFrame
 

@@ -138,6 +138,26 @@ class TestNormalizeConversationMetadata:
 
         assert row["conversation_id"] == gen_sha512_hash({"seed": "doc-001"}, ["seed"])
 
+    def test_reads_conversation_fields_from_raw_data(self):
+        row = {
+            "id": "doc-002",
+            "title": "fallback title",
+            "creation_date": "2025-01-04T00:00:00Z",
+            "raw_data": {
+                "conversation_id": "csv-conv-1",
+                "turn_index": 42,
+                "turn_timestamp": "2025-01-04T09:00:00Z",
+                "turn_role": "user",
+            },
+        }
+
+        normalize_conversation_metadata(row, {})
+
+        assert row["conversation_id"] == "csv-conv-1"
+        assert row["turn_index"] == 42
+        assert row["turn_timestamp"] == "2025-01-04T09:00:00Z"
+        assert row["turn_role"] == "user"
+
 
 class TestLoadInputDocuments:
     def test_assigns_incremental_turn_index_per_conversation(self):
@@ -178,3 +198,31 @@ class TestLoadInputDocuments:
         assert all("conversation_id" in row for row in table.written)
         assert all("turn_timestamp" in row for row in table.written)
         assert all("turn_role" in row for row in table.written)
+
+    def test_prefers_raw_data_conversation_values(self):
+        docs = [
+            FakeDocument(
+                id="1",
+                text="hello",
+                title="fallback convo",
+                creation_date="2025-01-01T00:00:00Z",
+                raw_data={
+                    "conversation_id": "thread-7",
+                    "turn_index": 10,
+                    "turn_timestamp": "2025-01-01T12:00:00Z",
+                    "turn_role": "assistant",
+                },
+            )
+        ]
+
+        table = FakeTable()
+        sample, count = asyncio.run(
+            load_input_documents(FakeInputReader(docs), table, sample_size=5)
+        )
+
+        assert count == 1
+        assert len(sample) == 1
+        assert table.written[0]["conversation_id"] == "thread-7"
+        assert table.written[0]["turn_index"] == 10
+        assert table.written[0]["turn_timestamp"] == "2025-01-01T12:00:00Z"
+        assert table.written[0]["turn_role"] == "assistant"

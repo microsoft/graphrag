@@ -71,13 +71,13 @@ def normalize_conversation_metadata(
     """Normalize optional conversation metadata on a documents row."""
     counters = turn_counters if turn_counters is not None else {}
 
-    conversation_id = row.get("conversation_id")
+    conversation_id = _get_metadata_value(row, "conversation_id")
     if _is_missing_value(conversation_id):
         source_identifier = _get_source_identifier(row)
         conversation_id = gen_sha512_hash({"seed": source_identifier}, ["seed"])
     row["conversation_id"] = conversation_id
 
-    turn_index = row.get("turn_index")
+    turn_index = _get_metadata_value(row, "turn_index")
     if _is_missing_value(turn_index):
         turn_index = counters.get(conversation_id, 0)
         counters[conversation_id] = turn_index + 1
@@ -89,9 +89,9 @@ def normalize_conversation_metadata(
         )
     row["turn_index"] = turn_index
 
-    turn_timestamp = row.get("turn_timestamp")
+    turn_timestamp = _get_metadata_value(row, "turn_timestamp")
     if _is_missing_value(turn_timestamp):
-        creation_date = row.get("creation_date")
+        creation_date = _get_metadata_value(row, "creation_date")
         turn_timestamp = (
             creation_date
             if not _is_missing_value(creation_date)
@@ -99,7 +99,7 @@ def normalize_conversation_metadata(
         )
     row["turn_timestamp"] = turn_timestamp
 
-    turn_role = row.get("turn_role")
+    turn_role = _get_metadata_value(row, "turn_role")
     if _is_missing_value(turn_role):
         turn_role = "unknown"
     row["turn_role"] = turn_role
@@ -129,3 +129,13 @@ def _parse_turn_index(turn_index: int | str) -> int:
 
 def _is_missing_value(value: Any) -> bool:
     return value is None or (isinstance(value, str) and value.strip() == "")
+
+
+def _get_metadata_value(row: dict[str, Any], key: str) -> Any:
+    top_level_value = row.get(key)
+    if not _is_missing_value(top_level_value):
+        return top_level_value
+    raw_data = row.get("raw_data")
+    if isinstance(raw_data, dict):
+        return raw_data.get(key)
+    return None
