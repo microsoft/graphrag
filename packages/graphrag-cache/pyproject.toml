@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-cache"
-version = "3.0.6"
+version = "3.0.7"
 description = "GraphRAG cache package."
 authors = [
     {name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com"},
@@ -31,8 +31,8 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "graphrag-common==3.0.6",
-    "graphrag-storage==3.0.6",
+    "graphrag-common==3.0.7",
+    "graphrag-storage==3.0.7",
 ]
 
 [project.urls]

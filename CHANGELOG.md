@@ -1,6 +1,11 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.0.7
+
+- patch: Pin litellm dependency.
+- patch: reconfigure vector store size by embedding model
+
 ## 3.0.6
 
 - patch: extract_graph_nlp streaming
