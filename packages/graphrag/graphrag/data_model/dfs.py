@@ -8,6 +8,7 @@ from typing import Any
 import pandas as pd
 
 from graphrag.data_model.schemas import (
+    CONVERSATION_ID,
     COMMUNITY_CHILDREN,
     COMMUNITY_ID,
     COMMUNITY_LEVEL,
@@ -25,6 +26,9 @@ from graphrag.data_model.schemas import (
     SHORT_ID,
     SIZE,
     TEXT_UNIT_IDS,
+    TURN_INDEX,
+    TURN_ROLE,
+    TURN_TIMESTAMP,
 )
 
 
@@ -138,6 +142,14 @@ def text_units_typed(df: pd.DataFrame) -> pd.DataFrame:
         df[RELATIONSHIP_IDS] = df[RELATIONSHIP_IDS].apply(_split_list_column)
     if COVARIATE_IDS in df.columns:
         df[COVARIATE_IDS] = df[COVARIATE_IDS].apply(_split_list_column)
+    if TURN_INDEX in df.columns:
+        df[TURN_INDEX] = _safe_int(df[TURN_INDEX], 0)
+    if TURN_TIMESTAMP in df.columns:
+        df[TURN_TIMESTAMP] = df[TURN_TIMESTAMP].astype(str)
+    if TURN_ROLE in df.columns:
+        df[TURN_ROLE] = df[TURN_ROLE].astype(str)
+    if CONVERSATION_ID in df.columns:
+        df[CONVERSATION_ID] = df[CONVERSATION_ID].astype(str)
 
     return df
 
@@ -148,5 +160,13 @@ def documents_typed(df: pd.DataFrame) -> pd.DataFrame:
         df[SHORT_ID] = df[SHORT_ID].astype(int)
     if TEXT_UNIT_IDS in df.columns:
         df[TEXT_UNIT_IDS] = df[TEXT_UNIT_IDS].apply(_split_list_column)
+    if TURN_INDEX in df.columns:
+        df[TURN_INDEX] = _safe_int(df[TURN_INDEX], 0)
+    if TURN_TIMESTAMP in df.columns:
+        df[TURN_TIMESTAMP] = df[TURN_TIMESTAMP].astype(str)
+    if TURN_ROLE in df.columns:
+        df[TURN_ROLE] = df[TURN_ROLE].astype(str)
+    if CONVERSATION_ID in df.columns:
+        df[CONVERSATION_ID] = df[CONVERSATION_ID].astype(str)
 
     return df

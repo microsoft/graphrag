@@ -65,6 +65,10 @@ N_TOKENS = "n_tokens"
 
 CREATION_DATE = "creation_date"
 RAW_DATA = "raw_data"
+CONVERSATION_ID = "conversation_id"
+TURN_INDEX = "turn_index"
+TURN_TIMESTAMP = "turn_timestamp"
+TURN_ROLE = "turn_role"
 
 # the following lists define the final content and ordering of columns in the data model parquet outputs
 ENTITIES_FINAL_COLUMNS = [
@@ -143,6 +147,10 @@ TEXT_UNITS_FINAL_COLUMNS = [
     TEXT,
     N_TOKENS,
     DOCUMENT_ID,
+    CONVERSATION_ID,
+    TURN_INDEX,
+    TURN_TIMESTAMP,
+    TURN_ROLE,
     ENTITY_IDS,
     RELATIONSHIP_IDS,
     COVARIATE_IDS,
@@ -153,6 +161,10 @@ DOCUMENTS_FINAL_COLUMNS = [
     SHORT_ID,
     TITLE,
     TEXT,
+    CONVERSATION_ID,
+    TURN_INDEX,
+    TURN_TIMESTAMP,
+    TURN_ROLE,
     TEXT_UNIT_IDS,
     CREATION_DATE,
     RAW_DATA,

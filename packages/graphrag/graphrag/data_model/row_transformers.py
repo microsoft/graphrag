@@ -229,6 +229,14 @@ def transform_text_unit_row(
         row["covariate_ids"] = _coerce_list(
             row["covariate_ids"],
         )
+    if "turn_index" in row:
+        row["turn_index"] = _safe_int(row.get("turn_index"), 0)
+    if "turn_timestamp" in row and row["turn_timestamp"] is not None:
+        row["turn_timestamp"] = str(row["turn_timestamp"])
+    if "turn_role" in row and row["turn_role"] is not None:
+        row["turn_role"] = str(row["turn_role"])
+    if "conversation_id" in row and row["conversation_id"] is not None:
+        row["conversation_id"] = str(row["conversation_id"])
     return row
 
 
@@ -249,4 +257,12 @@ def transform_document_row(
         )
     if "text_unit_ids" in row:
         row["text_unit_ids"] = _coerce_list(row["text_unit_ids"])
+    if "turn_index" in row:
+        row["turn_index"] = _safe_int(row.get("turn_index"), 0)
+    if "turn_timestamp" in row and row["turn_timestamp"] is not None:
+        row["turn_timestamp"] = str(row["turn_timestamp"])
+    if "turn_role" in row and row["turn_role"] is not None:
+        row["turn_role"] = str(row["turn_role"])
+    if "conversation_id" in row and row["conversation_id"] is not None:
+        row["conversation_id"] = str(row["conversation_id"])
     return row
