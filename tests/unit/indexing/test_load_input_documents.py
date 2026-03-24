@@ -89,7 +89,7 @@ class TestNormalizeConversationMetadata:
 
         normalize_conversation_metadata(row, {})
 
-        assert row["conversation_id"] == gen_sha512_hash({"seed": "conversation A"}, ["seed"])
+        assert row["conversation_id"] == gen_sha512_hash({"seed": "conversation"}, ["seed"])
         assert row["turn_index"] == 0
         assert row["turn_timestamp"] == "2025-01-01T00:00:00Z"
         assert row["turn_role"] == "unknown"
@@ -104,9 +104,26 @@ class TestNormalizeConversationMetadata:
         normalize_conversation_metadata(row, {})
 
         assert row["conversation_id"] == gen_sha512_hash(
-            {"seed": "./a/b/chat.jsonl"},
+            {"seed": "chat"},
             ["seed"],
         )
+
+    def test_source_path_prefix_is_case_sensitive(self):
+        upper = {
+            "title": "",
+            "creation_date": "",
+            "raw_data": {"source_path": "./a/b/Chat_file.json"},
+        }
+        lower = {
+            "title": "",
+            "creation_date": "",
+            "raw_data": {"source_path": "./a/b/chat_file.json"},
+        }
+
+        normalize_conversation_metadata(upper, {})
+        normalize_conversation_metadata(lower, {})
+
+        assert upper["conversation_id"] != lower["conversation_id"]
 
     def test_treats_blank_values_as_missing(self):
         row = {
@@ -121,7 +138,7 @@ class TestNormalizeConversationMetadata:
 
         normalize_conversation_metadata(row, {})
 
-        assert row["conversation_id"] == gen_sha512_hash({"seed": "conversation B"}, ["seed"])
+        assert row["conversation_id"] == gen_sha512_hash({"seed": "conversation"}, ["seed"])
         assert row["turn_index"] == 0
         assert row["turn_timestamp"] == "2025-01-02T00:00:00Z"
         assert row["turn_role"] == "unknown"
@@ -226,3 +243,31 @@ class TestLoadInputDocuments:
         assert table.written[0]["turn_index"] == 10
         assert table.written[0]["turn_timestamp"] == "2025-01-01T12:00:00Z"
         assert table.written[0]["turn_role"] == "assistant"
+
+    def test_default_titles_from_same_file_share_conversation_id(self):
+        docs = [
+            FakeDocument(
+                id="1",
+                text="hello",
+                title="sample_data.json (0)",
+                creation_date="2025-01-01T00:00:00Z",
+                raw_data={},
+            ),
+            FakeDocument(
+                id="2",
+                text="world",
+                title="sample_data.json (1)",
+                creation_date="2025-01-01T00:00:01Z",
+                raw_data={},
+            ),
+        ]
+
+        table = FakeTable()
+        sample, count = asyncio.run(
+            load_input_documents(FakeInputReader(docs), table, sample_size=5)
+        )
+
+        assert count == 2
+        assert len(sample) == 2
+        assert table.written[0]["conversation_id"] == table.written[1]["conversation_id"]
+        assert [row["turn_index"] for row in table.written] == [0, 1]

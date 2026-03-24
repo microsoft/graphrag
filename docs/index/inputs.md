@@ -22,7 +22,7 @@ Also see the [outputs](outputs.md) documentation for the final documents table s
 
 | name | required in input | defaulting behavior in `documents` rows |
 | --- | --- | --- |
-| `conversation_id` | no | Uses the input value if present. Otherwise, GraphRAG generates a stable hash from `title` or `source_path` (and falls back to `id` if both are missing). |
+| `conversation_id` | no | Uses the input value if present. Otherwise, GraphRAG generates a stable hash from a filename prefix extracted from `source_path` (or `title` if `source_path` is missing). Prefix matching is case-sensitive. |
 | `turn_index` | no | Uses the input value if present. Otherwise, GraphRAG assigns an incrementing sequence number within each `conversation_id`. |
 | `turn_timestamp` | no | Uses the input value if present. Otherwise, uses `creation_date`; if that is missing, uses the current UTC timestamp. |
 | `turn_role` | no | Uses the input value if present. Otherwise, defaults to `"unknown"`. |

@@ -4,8 +4,10 @@
 """A module containing run_workflow method definition."""
 
 import logging
+import re
 from dataclasses import asdict
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -108,13 +110,13 @@ def normalize_conversation_metadata(
 
 def _get_source_identifier(row: dict[str, Any]) -> str:
     raw_data = row.get("raw_data") if isinstance(row.get("raw_data"), dict) else {}
-    title = row.get("title") or raw_data.get("title")
     source_path = row.get("source_path") or raw_data.get("source_path")
+    title = row.get("title") or raw_data.get("title")
     document_id = row.get("id") or raw_data.get("id")
-    if title:
-        return str(title)
     if source_path:
-        return str(source_path)
+        return _extract_conversation_prefix(str(source_path))
+    if title:
+        return _extract_conversation_prefix(str(title))
     if document_id:
         return str(document_id)
     return "__missing_conversation_identifier__"
@@ -139,3 +141,9 @@ def _get_metadata_value(row: dict[str, Any], key: str) -> Any:
     if isinstance(raw_data, dict):
         return raw_data.get(key)
     return None
+
+
+def _extract_conversation_prefix(value: str) -> str:
+    file_stem = Path(value).stem
+    match = re.match(r"[A-Za-z]+", file_stem)
+    return match.group(0) if match else file_stem
