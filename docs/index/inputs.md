@@ -16,6 +16,19 @@ All input formats are loaded within GraphRAG and passed to the indexing pipeline
 
 Also see the [outputs](outputs.md) documentation for the final documents table schema saved to parquet after pipeline completion.
 
+### Optional conversation metadata (internal defaulting)
+
+`load_input_documents` supports conversation-style metadata fields without requiring input schema changes. The policy is **optional input + internal defaulting**:
+
+| name | required in input | defaulting behavior in `documents` rows |
+| --- | --- | --- |
+| `conversation_id` | no | Uses the input value if present. Otherwise, GraphRAG generates a stable hash from `title` or `source_path` (and falls back to `id` if both are missing). |
+| `turn_index` | no | Uses the input value if present. Otherwise, GraphRAG assigns an incrementing sequence number within each `conversation_id`. |
+| `turn_timestamp` | no | Uses the input value if present. Otherwise, uses `creation_date`; if that is missing, uses the current UTC timestamp. |
+| `turn_role` | no | Uses the input value if present. Otherwise, defaults to `"unknown"`. |
+
+These normalized values are always written to the internal `documents` rows while preserving the original input payload. Empty-string values are treated as missing and defaulted using the same rules above.
+
 ## Bring-your-own DataFrame
 
 GraphRAG's [indexing API method](https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py) allows you to pass in your own pandas DataFrame and bypass all of the input loading/parsing described in the next section. This is convenient if you have content in a format or storage location we don't support out-of-the-box. _You must ensure that your input DataFrame conforms to the schema described above._ All of the chunking behavior described later will proceed exactly the same.
@@ -222,6 +235,3 @@ Raw Text Chunks
 
 
 In this example the two input documents were parsed into five output text chunks. There is no metadata prepended, so each chunk matches the configured chunk size (except the last one for each document). We've also configured some overlap in these text chunks, so the last ten tokens are shared.
-
-
-
