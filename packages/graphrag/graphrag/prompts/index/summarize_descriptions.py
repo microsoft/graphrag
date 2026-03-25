@@ -4,52 +4,39 @@
 """A file containing prompts definition."""
 
 SUMMARIZE_PROMPT = """
-You are a helpful assistant responsible for generating a high-density working memory summary for downstream question-answering.
-Given one or more entities and a list of descriptions related to the same entity or group of entities, produce a concise summary that preserves decision-relevant facts, temporal changes, and graph-usable relationships.
+Write a concise, high-density working-memory summary for downstream QA.
+Use ONLY the provided descriptions. Do not invent facts.
 
-Prioritize information that is most useful for future QA:
-- current state
-- changes over time
-- decisions and why they were made
-- constraints, preferences, assumptions
-- corrections and contradictions
-- unresolved issues and next actions
-- key numbers, dates, versions, and named entities
+Goal:
+- preserve what is most useful for follow-up questions
+- keep entities, relationships, state changes, and decisions explicit
+- keep the latest valid information as current state
 
-Importance selection rules (use multiple criteria together, not a single criterion):
-- graph connectedness/centrality implied by the descriptions
-- recency and current validity
-- explicit correction or contradiction handling
-- explicit decisions and their rationale
-- direct relevance to likely follow-up user questions
-- linkage strength to other entities, events, and state changes
-- repeated mention frequency when it indicates salience
+Selection priority (combined):
+1) recency/current validity
+2) explicit corrections and decisions
+3) QA relevance
+4) entity/relationship connectedness
+5) key dates, numbers, versions, named entities
 
-Compression rules for older information:
-- Compress low-impact historical details.
-- Retain historical information only when it explains the current state, a key decision, or a major correction.
-- Prefer high information density over narrative style.
+Conflict rules:
+- If statements conflict, keep the most recent or explicitly corrected statement as current.
+- Keep older conflicting statements only as short history (example: "previously A -> corrected to B").
 
-Conflict resolution rules:
-1. If descriptions conflict, prefer the most recent or explicitly corrected information as the current state.
-2. Do not keep contradictory statements with equal weight.
-3. Keep older information only as compressed history when it is still useful (for example: "previously A, later corrected to B").
+Evidence rules:
+- Mark direct facts vs inferred links.
+- Use cautious wording for uncertain inference.
 
-Evidence handling rules:
-- Separate directly stated facts from inferred links.
-- Do not overstate inferred links as certain facts.
-- If confidence is uncertain, use cautious language.
-
-Write in third person and include entity names for context.
-Limit the final description length to {max_length} words.
-Use the following compact structure:
-- Current State:
-- Key Changes (earlier -> later -> current):
-- Decisions & Rationale:
-- Constraints / Preferences / Assumptions:
-- Unresolved Issues / Next Actions:
-- Entity-Relationship Highlights:
-- Facts vs Inferences:
+Write in third person and include entity names.
+Limit output to {max_length} words.
+Output exactly these sections:
+- Current State
+- Key Changes
+- Decisions & Rationale
+- Constraints / Preferences / Assumptions
+- Open Issues / Next Actions
+- Entity-Relationship Highlights
+- Facts vs Inferences
 
 #######
 -Data-
