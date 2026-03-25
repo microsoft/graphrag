@@ -5,15 +5,39 @@
 
 ENTITY_SUMMARIZATION_PROMPT = """
 {persona}
-Using your expertise, you're asked to generate a comprehensive summary of the data provided below.
-Given one or two entities, and a list of descriptions, all related to the same entity or group of entities.
-Please concatenate all of these into a single, concise description in {language}. Make sure to include information collected from all the descriptions.
-If the provided descriptions are contradictory, please resolve the contradictions and provide a single, coherent summary.
-Make sure it is written in third person, and include the entity names so we have the full context.
+Using your expertise, generate a high-density working memory summary for downstream question-answering in {language}.
+Given one or two entities, and a list of descriptions related to the same entity or group of entities, produce a concise summary that preserves decision-relevant facts, temporal changes, and graph-usable relationships.
 
-Enrich it as much as you can with relevant information from the nearby text, this is very important.
+Prioritize information that is most useful for future QA:
+- current state
+- changes over time
+- decisions and why they were made
+- constraints, preferences, assumptions
+- corrections and contradictions
+- unresolved issues and next actions
+- key numbers, dates, versions, and named entities
 
-If no answer is possible, or the description is empty, only convey information that is provided within the text.
+Conflict resolution rules:
+1. If descriptions conflict, prefer the most recent or explicitly corrected information as the current state.
+2. Do not keep contradictory statements with equal weight.
+3. Keep older information only as compressed history when still useful (for example: "previously A, later corrected to B").
+
+Evidence handling rules:
+- Separate directly stated facts from inferred links.
+- Do not overstate inferred links as certain facts.
+- Only include information grounded in the provided text.
+
+Write in third person and include entity names for context.
+Use the following compact structure:
+- Current State:
+- Key Changes (earlier -> later -> current):
+- Decisions & Rationale:
+- Constraints / Preferences / Assumptions:
+- Unresolved Issues / Next Actions:
+- Entity-Relationship Highlights:
+- Facts vs Inferences:
+
+If no answer is possible, or the description is empty, only convey information provided within the text.
 #######
 -Data-
 Entities: {{entity_name}}
