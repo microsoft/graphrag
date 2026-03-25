@@ -40,6 +40,13 @@ def prep_text_units(
             schemas.SHORT_ID: x[schemas.SHORT_ID],
             schemas.TEXT: x[schemas.TEXT],
             schemas.ENTITY_DEGREE: x[schemas.NODE_DEGREE],
+            schemas.START_TURN_INDEX: x.get(schemas.START_TURN_INDEX),
+            schemas.END_TURN_INDEX: x.get(schemas.END_TURN_INDEX),
+            schemas.TURN_TIMESTAMP_START: x.get(schemas.TURN_TIMESTAMP_START),
+            schemas.TURN_TIMESTAMP_END: x.get(schemas.TURN_TIMESTAMP_END),
+            schemas.CHUNK_INDEX_IN_CONVERSATION: x.get(
+                schemas.CHUNK_INDEX_IN_CONVERSATION
+            ),
         },
         axis=1,
     )

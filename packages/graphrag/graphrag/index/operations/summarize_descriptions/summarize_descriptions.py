@@ -24,6 +24,18 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def _stable_unique(values: list[str]) -> list[str]:
+    """Deduplicate values while preserving first-seen order."""
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for value in values:
+        if value in seen:
+            continue
+        seen.add(value)
+        ordered.append(value)
+    return ordered
+
+
 async def summarize_descriptions(
     entities_df: pd.DataFrame,
     relationships_df: pd.DataFrame,
@@ -50,7 +62,7 @@ async def summarize_descriptions(
         node_futures = [
             do_summarize_descriptions(
                 str(row.title),  # type: ignore
-                sorted(set(row.description)),  # type: ignore
+                _stable_unique(row.description),  # type: ignore
                 ticker,
                 semaphore,
             )
@@ -70,7 +82,7 @@ async def summarize_descriptions(
         edge_futures = [
             do_summarize_descriptions(
                 (str(row.source), str(row.target)),  # type: ignore
-                sorted(set(row.description)),  # type: ignore
+                _stable_unique(row.description),  # type: ignore
                 ticker,
                 semaphore,
             )

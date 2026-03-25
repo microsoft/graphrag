@@ -113,7 +113,17 @@ def read_indexer_reports(
             filtered_community_df, on="community", how="inner"
         )
 
-    return read_community_reports(df=reports_df, id_col="id", short_id_col="community")
+    return read_community_reports(
+        df=reports_df,
+        id_col="id",
+        short_id_col="community",
+        attributes_cols=[
+            "current_state",
+            "timeline_events",
+            "superseded_facts",
+            "date_range",
+        ],
+    )
 
 
 def read_indexer_report_embeddings(

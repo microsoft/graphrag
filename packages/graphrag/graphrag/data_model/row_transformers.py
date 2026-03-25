@@ -189,7 +189,8 @@ def transform_community_report_row(
 
     Mirrors ``community_reports_typed``: ``human_readable_id`` -> int,
     ``community`` -> int, ``level`` -> int, ``children`` -> list,
-    ``rank`` -> float, ``findings`` -> list, ``size`` -> int.
+    ``rank`` -> float, ``findings`` -> list, ``timeline_events`` -> list,
+    ``superseded_facts`` -> list, ``date_range`` -> list, ``size`` -> int.
     """
     if "human_readable_id" in row:
         row["human_readable_id"] = _safe_int(
@@ -200,6 +201,14 @@ def transform_community_report_row(
     row["children"] = _coerce_list(row.get("children"))
     row["rank"] = _safe_float(row.get("rank"))
     row["findings"] = _coerce_list(row.get("findings"))
+    if "timeline_events" in row:
+        row["timeline_events"] = _coerce_list(row.get("timeline_events"))
+    if "superseded_facts" in row:
+        row["superseded_facts"] = _coerce_list(row.get("superseded_facts"))
+    if "date_range" in row:
+        row["date_range"] = _coerce_list(row.get("date_range"))
+    if "current_state" in row and row["current_state"] is not None:
+        row["current_state"] = str(row["current_state"])
     row["size"] = _safe_int(row.get("size"), 0)
     return row
 

@@ -82,10 +82,6 @@ class SummarizeExtractor:
         if not isinstance(descriptions, list):
             descriptions = [descriptions]
 
-        # Sort description lists
-        if len(descriptions) > 1:
-            descriptions = sorted(descriptions)
-
         # Iterate over descriptions, adding all until the max input tokens is reached
         usable_tokens = self._max_input_tokens - self._tokenizer.num_tokens(
             self._summarization_prompt
@@ -124,9 +120,7 @@ class SummarizeExtractor:
         response: LLMCompletionResponse = await self._model.completion_async(
             messages=self._summarization_prompt.format(**{
                 ENTITY_NAME_KEY: json.dumps(id, ensure_ascii=False),
-                DESCRIPTION_LIST_KEY: json.dumps(
-                    sorted(descriptions), ensure_ascii=False
-                ),
+                DESCRIPTION_LIST_KEY: json.dumps(descriptions, ensure_ascii=False),
                 MAX_LENGTH_KEY: self._max_summary_length,
             }),
         )  # type: ignore

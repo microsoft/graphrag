@@ -47,6 +47,10 @@ RATING = "rank"
 EXPLANATION = "rating_explanation"
 FULL_CONTENT = "full_content"
 FULL_CONTENT_JSON = "full_content_json"
+CURRENT_STATE = "current_state"
+TIMELINE_EVENTS = "timeline_events"
+SUPERSEDED_FACTS = "superseded_facts"
+DATE_RANGE = "date_range"
 
 ENTITY_IDS = "entity_ids"
 RELATIONSHIP_IDS = "relationship_ids"
@@ -149,6 +153,10 @@ COMMUNITY_REPORTS_FINAL_COLUMNS = [
     RATING,
     EXPLANATION,
     FINDINGS,
+    CURRENT_STATE,
+    TIMELINE_EVENTS,
+    SUPERSEDED_FACTS,
+    DATE_RANGE,
     FULL_CONTENT_JSON,
     PERIOD,
     SIZE,

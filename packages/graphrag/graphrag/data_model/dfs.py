@@ -8,6 +8,8 @@ from typing import Any
 import pandas as pd
 
 from graphrag.data_model.schemas import (
+    CURRENT_STATE,
+    DATE_RANGE,
     CONVERSATION_ID,
     COMMUNITY_CHILDREN,
     COMMUNITY_ID,
@@ -33,6 +35,8 @@ from graphrag.data_model.schemas import (
     RELATIONSHIP_IDS,
     SHORT_ID,
     SIZE,
+    SUPERSEDED_FACTS,
+    TIMELINE_EVENTS,
     CHUNK_INDEX_IN_CONVERSATION,
     CHUNK_INDEX_IN_DOCUMENT,
     TEXT_UNIT_IDS,
@@ -153,6 +157,14 @@ def community_reports_typed(df: pd.DataFrame) -> pd.DataFrame:
     df[COMMUNITY_CHILDREN] = df[COMMUNITY_CHILDREN].apply(_split_list_column)
     df[RATING] = df[RATING].astype(float)
     df[FINDINGS] = df[FINDINGS].apply(_split_list_column)
+    if CURRENT_STATE in df.columns:
+        df[CURRENT_STATE] = df[CURRENT_STATE].astype(str)
+    if TIMELINE_EVENTS in df.columns:
+        df[TIMELINE_EVENTS] = df[TIMELINE_EVENTS].apply(_split_list_column)
+    if SUPERSEDED_FACTS in df.columns:
+        df[SUPERSEDED_FACTS] = df[SUPERSEDED_FACTS].apply(_split_list_column)
+    if DATE_RANGE in df.columns:
+        df[DATE_RANGE] = df[DATE_RANGE].apply(_split_list_column)
     df[SIZE] = df[SIZE].astype(int)
 
     return df

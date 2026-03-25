@@ -13,6 +13,21 @@ import graphrag.data_model.schemas as schemas
 logger = logging.getLogger(__name__)
 
 
+def _sortable_int(value) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 10**12
+
+
+def _temporal_sort_key(unit: dict) -> tuple[int, str, int]:
+    return (
+        _sortable_int(unit.get(schemas.START_TURN_INDEX)),
+        str(unit.get(schemas.TURN_TIMESTAMP_START) or "~"),
+        _sortable_int(unit.get(schemas.CHUNK_INDEX_IN_CONVERSATION)),
+    )
+
+
 def get_context_string(
     text_units: list[dict],
     sub_community_reports: list[dict] | None = None,
@@ -61,9 +76,14 @@ def sort_context(
     sub_community_reports: list[dict] | None = None,
     max_context_tokens: int | None = None,
 ) -> str:
-    """Sort local context (list of text units) by total degree of associated nodes in descending order."""
+    """Sort local context (list of text units) by time first, then degree."""
     sorted_text_units = sorted(
-        local_context, key=lambda x: x[schemas.ENTITY_DEGREE], reverse=True
+        local_context,
+        key=lambda x: (
+            _temporal_sort_key(x),
+            -float(x.get(schemas.ENTITY_DEGREE) or 0),
+            str(x.get("id") or ""),
+        ),
     )
 
     current_text_units = []
