@@ -122,6 +122,44 @@ class TestMergeEntities:
         assert merged.iloc[0]["last_seen_turn_index"] == 2
         assert merged.iloc[0]["evidence_count"] == 2
 
+    def test_turn_index_zero_is_not_treated_as_missing_in_sort(self):
+        text_units = pd.DataFrame(
+            [
+                {
+                    "id": "tu0",
+                    "conversation_id": "conv-1",
+                    "start_turn_index": 0,
+                    "end_turn_index": 0,
+                    "turn_timestamp_start": "2026-01-01T00:00:00Z",
+                    "turn_timestamp_end": "2026-01-01T00:00:59Z",
+                    "chunk_index_in_conversation": 0,
+                    "chunk_index_in_document": 0,
+                },
+                {
+                    "id": "tu1",
+                    "conversation_id": "conv-1",
+                    "start_turn_index": 1,
+                    "end_turn_index": 1,
+                    "turn_timestamp_start": "2026-01-01T00:01:00Z",
+                    "turn_timestamp_end": "2026-01-01T00:01:59Z",
+                    "chunk_index_in_conversation": 1,
+                    "chunk_index_in_document": 1,
+                },
+            ]
+        )
+        temporal_index = _build_temporal_index(text_units, "id")
+        df = pd.DataFrame(
+            [
+                _entity_row("A", "PERSON", source_id="tu1"),
+                _entity_row("A", "PERSON", source_id="tu0"),
+            ]
+        )
+        merged = _merge_entities([df], temporal_index)
+
+        assert merged.iloc[0]["text_unit_ids"] == ["tu0", "tu1"]
+        assert merged.iloc[0]["first_seen_turn_index"] == 0
+        assert merged.iloc[0]["last_seen_turn_index"] == 1
+
 
 class TestMergeRelationships:
     """Tests for the _merge_relationships aggregation helper."""

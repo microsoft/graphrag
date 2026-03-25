@@ -308,12 +308,18 @@ def _temporal_sort_key(
     metadata = temporal_index.get(text_unit_id, {})
     return (
         str(metadata.get(CONVERSATION_ID) or "~"),
-        int(metadata.get(START_TURN_INDEX) or 10**12),
+        _sortable_int(metadata.get(START_TURN_INDEX)),
         str(metadata.get(TURN_TIMESTAMP_START) or "~"),
-        int(metadata.get(CHUNK_INDEX_IN_CONVERSATION) or 10**12),
-        int(metadata.get(CHUNK_INDEX_IN_DOCUMENT) or 10**12),
+        _sortable_int(metadata.get(CHUNK_INDEX_IN_CONVERSATION)),
+        _sortable_int(metadata.get(CHUNK_INDEX_IN_DOCUMENT)),
         text_unit_id,
     )
+
+
+def _sortable_int(value: object) -> int:
+    """Return integer for sorting while preserving zero as a valid value."""
+    parsed = _safe_int(value)
+    return parsed if parsed is not None else 10**12
 
 
 def _safe_int(value: object) -> int | None:
