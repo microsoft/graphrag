@@ -28,6 +28,7 @@ For each pair of related entities, extract the following information:
  
 3. Return output in English as a single list of all the entities and relationships identified in steps 1 and 2. Use **##** as the list delimiter.
 When temporal context, status, or change type is available, encode it directly in entity_description or relationship_description using compact tags such as [time: ...], [status: ...], [change: ...], [order: ...].
+If temporal/status/change information exists in the text, the corresponding tags must be included; omit tags only when the information is unavailable.
  
 4. When finished, output <|COMPLETE|>
  

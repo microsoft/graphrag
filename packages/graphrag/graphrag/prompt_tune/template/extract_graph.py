@@ -28,6 +28,7 @@ Format each relationship as ("relationship"<|><source_entity><|><target_entity><
 
 3. Return output in {language} as a single list of all the entities and relationships identified in steps 1 and 2. Use **##** as the list delimiter.
 When temporal context, status, or change type is available, encode it directly in entity_description or relationship_description using compact tags such as [time: ...], [status: ...], [change: ...], [order: ...].
+If temporal/status/change information exists in the text, the corresponding tags must be included; omit tags only when the information is unavailable.
 
 4. If you have to translate into {language}, just translate the descriptions, nothing else!
 
@@ -72,6 +73,7 @@ Format each relationship as a JSON entry with the following format:
 {{"source": <source_entity>, "target": <target_entity>, "relationship": <relationship_description>, "relationship_strength": <relationship_strength>, "temporal_context": <temporal context>, "change_type": <change type>}}
 
 3. Return output in {language} as a single list of all JSON entities and relationships identified in steps 1 and 2.
+If temporal/status/change information exists in the text, populate the corresponding JSON fields; leave them empty only when unavailable.
 
 4. If you have to translate into {language}, just translate the descriptions, nothing else!
 
@@ -138,6 +140,7 @@ Format each relationship as ("relationship"<|><source_entity><|><target_entity><
 
 3. Return output in {language} as a single list of all the entities and relationships identified in steps 1 and 2. Use **##** as the list delimiter.
 When temporal context, status, or change type is available, encode it directly in entity_description or relationship_description using compact tags such as [time: ...], [status: ...], [change: ...], [order: ...].
+If temporal/status/change information exists in the text, the corresponding tags must be included; omit tags only when the information is unavailable.
 
 4. If you have to translate into {language}, just translate the descriptions, nothing else!
 

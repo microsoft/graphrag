@@ -23,6 +23,7 @@ Selection priority (combined):
 Conflict rules:
 - If statements conflict, keep the most recent or explicitly corrected statement as current.
 - Keep older conflicting statements only as short history (example: "previously A -> corrected to B").
+- For time ordering, use metadata timestamp first, then turn/order index, then textual cues.
 
 Evidence rules:
 - Mark direct facts vs inferred links.
@@ -46,6 +47,10 @@ Section rules:
   - key relations
   - notable events/state changes
   - cross-topic links (only if supported by the text)
+- Use compact slots when possible:
+  - Current State: [entity] [status=current] [time] [fact]
+  - Key Changes: [entity] [from] -> [to] [time] [reason(optional)]
+  - Facts vs Inferences: FACT: ... / INFERENCE: ...
 
 #######
 -Data-
