@@ -1,0 +1,23 @@
+{
+  "conversation_id": "conv-order-77",
+  "messages": [
+    {
+      "turn_index": 1,
+      "timestamp": "2026-02-03T09:00:00Z",
+      "role": "user",
+      "content": "Order-77 is pending. Payment System is linked with Carrier Alpha for pickup."
+    },
+    {
+      "turn_index": 2,
+      "timestamp": "2026-02-03T09:12:00Z",
+      "role": "assistant",
+      "content": "Carrier Alpha reports pickup delay. Order-77 remains pending."
+    },
+    {
+      "turn_index": 3,
+      "timestamp": "2026-02-03T09:25:00Z",
+      "role": "user",
+      "content": "Correction: pickup completed by Carrier Beta. Payment System updated Order-77 to shipped."
+    }
+  ]
+}
