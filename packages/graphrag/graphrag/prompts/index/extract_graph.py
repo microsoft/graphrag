@@ -12,6 +12,8 @@ Given a text document that is potentially relevant to this activity and a list o
 - entity_name: Name of the entity, capitalized
 - entity_type: One of the following types: [{entity_types}]
 - entity_description: Comprehensive description of the entity's attributes and activities
+- entity_temporal_context: If available, include when this information is valid (e.g., exact date/time, turn order, or relative time such as earlier/later/current). If unavailable, state "time unspecified".
+- entity_status: Mark whether the information is current, historical, proposed, corrected, or retracted when this can be inferred from the text.
 Format each entity as ("entity"<|><entity_name><|><entity_type><|><entity_description>)
  
 2. From the entities identified in step 1, identify all pairs of (source_entity, target_entity) that are *clearly related* to each other.
@@ -20,9 +22,12 @@ For each pair of related entities, extract the following information:
 - target_entity: name of the target entity, as identified in step 1
 - relationship_description: explanation as to why you think the source entity and the target entity are related to each other
 - relationship_strength: a numeric score indicating strength of the relationship between the source entity and target entity
+- relationship_temporal_context: If available, include time markers and update order in the relationship description (e.g., "previously", "later updated", "current").
+- relationship_change_type: If applicable, label the relationship as decision, correction, update, plan, unresolved_issue, constraint, or assumption.
  Format each relationship as ("relationship"<|><source_entity><|><target_entity><|><relationship_description><|><relationship_strength>)
  
 3. Return output in English as a single list of all the entities and relationships identified in steps 1 and 2. Use **##** as the list delimiter.
+When temporal context, status, or change type is available, encode it directly in entity_description or relationship_description using compact tags such as [time: ...], [status: ...], [change: ...], [order: ...].
  
 4. When finished, output <|COMPLETE|>
  
