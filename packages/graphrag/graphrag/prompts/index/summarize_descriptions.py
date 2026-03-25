@@ -11,6 +11,7 @@ Goal:
 - preserve what is most useful for follow-up questions
 - keep entities, relationships, state changes, and decisions explicit
 - keep the latest valid information as current state
+- separate multiple topics, but keep cross-topic links when they matter
 
 Selection priority (combined):
 1) recency/current validity
@@ -37,6 +38,14 @@ Output exactly these sections:
 - Open Issues / Next Actions
 - Entity-Relationship Highlights
 - Facts vs Inferences
+
+Section rules:
+- If multiple topics exist, group bullets by topic label inside each section.
+- In "Entity-Relationship Highlights", include:
+  - key entities
+  - key relations
+  - notable events/state changes
+  - cross-topic links (only if supported by the text)
 
 #######
 -Data-
