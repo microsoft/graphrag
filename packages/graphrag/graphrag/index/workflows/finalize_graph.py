@@ -21,6 +21,7 @@ from graphrag.index.operations.finalize_relationships import (
 from graphrag.index.operations.snapshot_graphml import snapshot_graphml
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
+from graphrag.index.utils.temporal_trace import trace_event
 
 logger = logging.getLogger(__name__)
 
@@ -85,9 +86,27 @@ async def finalize_graph(
             ``"relationships"``, up to 5 each.
     """
     degree_map = await _build_degree_map(relationships_table)
+    trace_event(
+        logger,
+        stage="graph_merge_finalize",
+        event="degree_map_built",
+        unique_nodes=len(degree_map),
+        max_degree=max(degree_map.values()) if degree_map else 0,
+    )
 
     entity_samples = await finalize_entities(entities_table, degree_map)
     relationship_samples = await finalize_relationships(relationships_table, degree_map)
+    trace_event(
+        logger,
+        stage="graph_merge_finalize",
+        event="finalize_complete",
+        entity_sample_count=len(entity_samples),
+        relationship_sample_count=len(relationship_samples),
+        preview_fields={
+            "entity_sample": entity_samples[0] if entity_samples else {},
+            "relationship_sample": relationship_samples[0] if relationship_samples else {},
+        },
+    )
 
     return {
         "entities": entity_samples,

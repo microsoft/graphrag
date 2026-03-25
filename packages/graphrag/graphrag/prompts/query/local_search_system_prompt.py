@@ -15,6 +15,13 @@ Generate a response of the target length and format that responds to the user's 
 
 If you don't know the answer, just say so. Do not make anything up.
 
+When temporal evidence exists, separate your answer into:
+1) CURRENT STATE (latest evidence first)
+2) TIMELINE / HISTORY (older events in chronological order)
+3) SUPERSEDED FACTS (older facts that conflict with current state)
+
+If CURRENT and HISTORY conflict, prioritize CURRENT in direct answers and explicitly mention the superseded history.
+
 Points supported by data should list their data references as follows:
 
 "This is an example sentence supported by multiple data references [Data: <dataset name> (record ids); <dataset name> (record ids)]."

@@ -9,6 +9,9 @@ from uuid import uuid4
 from graphrag_storage.tables.table import Table
 
 from graphrag.data_model.schemas import RELATIONSHIPS_FINAL_COLUMNS
+from graphrag.index.operations.temporal_evidence import (
+    fill_temporal_evidence_defaults,
+)
 
 
 async def finalize_relationships(
@@ -46,6 +49,7 @@ async def finalize_relationships(
         row["combined_degree"] = degree_map.get(key[0], 0) + degree_map.get(key[1], 0)
         row["human_readable_id"] = human_readable_id
         row["id"] = str(uuid4())
+        fill_temporal_evidence_defaults(row)
         human_readable_id += 1
         final = {col: row.get(col) for col in RELATIONSHIPS_FINAL_COLUMNS}
         await relationships_table.write(final)

@@ -69,6 +69,20 @@ CONVERSATION_ID = "conversation_id"
 TURN_INDEX = "turn_index"
 TURN_TIMESTAMP = "turn_timestamp"
 TURN_ROLE = "turn_role"
+START_TURN_INDEX = "start_turn_index"
+END_TURN_INDEX = "end_turn_index"
+TURN_TIMESTAMP_START = "turn_timestamp_start"
+TURN_TIMESTAMP_END = "turn_timestamp_end"
+INCLUDED_ROLES = "included_roles"
+CHUNK_INDEX_IN_DOCUMENT = "chunk_index_in_document"
+CHUNK_INDEX_IN_CONVERSATION = "chunk_index_in_conversation"
+FIRST_SEEN_TURN_INDEX = "first_seen_turn_index"
+LAST_SEEN_TURN_INDEX = "last_seen_turn_index"
+FIRST_SEEN_TIMESTAMP = "first_seen_timestamp"
+LAST_SEEN_TIMESTAMP = "last_seen_timestamp"
+FIRST_SEEN_TEXT_UNIT_ID = "first_seen_text_unit_id"
+LAST_SEEN_TEXT_UNIT_ID = "last_seen_text_unit_id"
+EVIDENCE_COUNT = "evidence_count"
 
 # the following lists define the final content and ordering of columns in the data model parquet outputs
 ENTITIES_FINAL_COLUMNS = [
@@ -80,6 +94,13 @@ ENTITIES_FINAL_COLUMNS = [
     TEXT_UNIT_IDS,
     NODE_FREQUENCY,
     NODE_DEGREE,
+    FIRST_SEEN_TURN_INDEX,
+    LAST_SEEN_TURN_INDEX,
+    FIRST_SEEN_TIMESTAMP,
+    LAST_SEEN_TIMESTAMP,
+    FIRST_SEEN_TEXT_UNIT_ID,
+    LAST_SEEN_TEXT_UNIT_ID,
+    EVIDENCE_COUNT,
 ]
 
 RELATIONSHIPS_FINAL_COLUMNS = [
@@ -91,6 +112,13 @@ RELATIONSHIPS_FINAL_COLUMNS = [
     EDGE_WEIGHT,
     EDGE_DEGREE,
     TEXT_UNIT_IDS,
+    FIRST_SEEN_TURN_INDEX,
+    LAST_SEEN_TURN_INDEX,
+    FIRST_SEEN_TIMESTAMP,
+    LAST_SEEN_TIMESTAMP,
+    FIRST_SEEN_TEXT_UNIT_ID,
+    LAST_SEEN_TEXT_UNIT_ID,
+    EVIDENCE_COUNT,
 ]
 
 COMMUNITIES_FINAL_COLUMNS = [
@@ -151,6 +179,13 @@ TEXT_UNITS_FINAL_COLUMNS = [
     TURN_INDEX,
     TURN_TIMESTAMP,
     TURN_ROLE,
+    START_TURN_INDEX,
+    END_TURN_INDEX,
+    TURN_TIMESTAMP_START,
+    TURN_TIMESTAMP_END,
+    INCLUDED_ROLES,
+    CHUNK_INDEX_IN_DOCUMENT,
+    CHUNK_INDEX_IN_CONVERSATION,
     ENTITY_IDS,
     RELATIONSHIP_IDS,
     COVARIATE_IDS,

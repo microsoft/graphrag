@@ -18,6 +18,7 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash
+from graphrag.index.utils.temporal_trace import trace_event
 
 logger = logging.getLogger(__name__)
 
@@ -52,18 +53,49 @@ async def load_input_documents(
     sample: list[dict] = []
     idx = 0
     turn_counters: dict[str, int] = {}
+    missing_summary = {
+        "conversation_id": 0,
+        "turn_index": 0,
+        "turn_timestamp": 0,
+        "turn_role": 0,
+    }
 
     async for doc in input_reader:
         row = asdict(doc)
         row["human_readable_id"] = idx
         if "raw_data" not in row:
             row["raw_data"] = None
+        missing_before = {
+            key: _is_missing_value(_get_metadata_value(row, key)) for key in missing_summary
+        }
+        for key, missing in missing_before.items():
+            if missing:
+                missing_summary[key] += 1
         normalize_conversation_metadata(row, turn_counters)
         await documents_table.write(row)
+        trace_event(
+            logger,
+            stage="document_ingest",
+            event="document_normalized",
+            doc_id=row.get("id"),
+            conversation_id=row.get("conversation_id"),
+            turn_index=row.get("turn_index"),
+            turn_timestamp=row.get("turn_timestamp"),
+            turn_role=row.get("turn_role"),
+            missing_before=[k for k, missing in missing_before.items() if missing],
+            preview_fields={"text": row.get("text", "")},
+        )
         if len(sample) < sample_size:
             sample.append(row)
         idx += 1
 
+    trace_event(
+        logger,
+        stage="document_ingest",
+        event="ingest_summary",
+        total_rows=idx,
+        missing_metadata=missing_summary,
+    )
     return pd.DataFrame(sample), idx
 
 

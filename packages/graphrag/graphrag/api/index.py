@@ -20,6 +20,12 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.run_pipeline import run_pipeline
 from graphrag.index.run.utils import create_callback_chain
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
+from graphrag.index.utils.temporal_trace import (
+    clear_trace_id,
+    ensure_trace_id,
+    temporal_trace_enabled,
+    trace_event,
+)
 from graphrag.index.workflows.factory import PipelineFactory
 from graphrag.logger.standard_logging import init_loggers
 
@@ -58,6 +64,16 @@ async def build_index(
         The list of pipeline run results
     """
     init_loggers(config=config, verbose=verbose)
+    if temporal_trace_enabled():
+        ensure_trace_id()
+        trace_event(
+            logger,
+            stage="pipeline",
+            event="index_start",
+            method=str(method),
+            is_update_run=is_update_run,
+            workflows_hint="index pipeline initialization",
+        )
 
     # Create callbacks for pipeline lifecycle events if provided
     workflow_callbacks = (
@@ -90,6 +106,15 @@ async def build_index(
         logger.debug(str(output.result))
 
     workflow_callbacks.pipeline_end(outputs)
+    if temporal_trace_enabled():
+        trace_event(
+            logger,
+            stage="pipeline",
+            event="index_end",
+            workflow_count=len(outputs),
+            error_count=sum(1 for output in outputs if output.error is not None),
+        )
+        clear_trace_id()
     return outputs
 
 

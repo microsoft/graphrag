@@ -11,6 +11,8 @@ target has no corresponding entity.
 
 import pandas as pd
 from graphrag.index.operations.extract_graph.extract_graph import (
+    _attach_temporal_header,
+    _build_temporal_index,
     _merge_entities,
     _merge_relationships,
 )
@@ -81,6 +83,45 @@ class TestMergeEntities:
 
         assert len(merged) == 0
 
+    def test_temporal_evidence_fields_are_derived(self):
+        text_units = pd.DataFrame(
+            [
+                {
+                    "id": "tu2",
+                    "conversation_id": "conv-1",
+                    "start_turn_index": 2,
+                    "end_turn_index": 2,
+                    "turn_timestamp_start": "2026-01-01T00:02:00Z",
+                    "turn_timestamp_end": "2026-01-01T00:02:59Z",
+                    "chunk_index_in_conversation": 2,
+                    "chunk_index_in_document": 2,
+                },
+                {
+                    "id": "tu1",
+                    "conversation_id": "conv-1",
+                    "start_turn_index": 1,
+                    "end_turn_index": 1,
+                    "turn_timestamp_start": "2026-01-01T00:01:00Z",
+                    "turn_timestamp_end": "2026-01-01T00:01:59Z",
+                    "chunk_index_in_conversation": 1,
+                    "chunk_index_in_document": 1,
+                },
+            ]
+        )
+        temporal_index = _build_temporal_index(text_units, "id")
+        df = pd.DataFrame(
+            [
+                _entity_row("A", "PERSON", source_id="tu2"),
+                _entity_row("A", "PERSON", source_id="tu1"),
+            ]
+        )
+        merged = _merge_entities([df], temporal_index)
+
+        assert merged.iloc[0]["text_unit_ids"] == ["tu1", "tu2"]
+        assert merged.iloc[0]["first_seen_turn_index"] == 1
+        assert merged.iloc[0]["last_seen_turn_index"] == 2
+        assert merged.iloc[0]["evidence_count"] == 2
+
 
 class TestMergeRelationships:
     """Tests for the _merge_relationships aggregation helper."""
@@ -112,6 +153,24 @@ class TestMergeRelationships:
         merged = _merge_relationships([df])
 
         assert len(merged) == 0
+
+
+class TestTemporalHeader:
+    def test_temporal_header_attached_when_fields_exist(self):
+        row = pd.Series(
+            {
+                "conversation_id": "conv-1",
+                "start_turn_index": 1,
+                "end_turn_index": 2,
+                "turn_timestamp_start": "2026-01-01T00:01:00Z",
+                "turn_timestamp_end": "2026-01-01T00:02:00Z",
+                "included_roles": ["user", "assistant"],
+            }
+        )
+        wrapped = _attach_temporal_header("hello", row)
+        assert wrapped.startswith("[TEMPORAL_CONTEXT]")
+        assert "turn_range: 1-2" in wrapped
+        assert wrapped.endswith("hello")
 
 
 class TestFilterOrphanRelationships:

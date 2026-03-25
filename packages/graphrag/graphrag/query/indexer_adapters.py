@@ -39,6 +39,19 @@ def read_indexer_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
         df=final_text_units,
         # expects a covariate map of type -> ids
         covariates_col=None,
+        attributes_cols=[
+            "conversation_id",
+            "turn_index",
+            "turn_timestamp",
+            "turn_role",
+            "start_turn_index",
+            "end_turn_index",
+            "turn_timestamp_start",
+            "turn_timestamp_end",
+            "included_roles",
+            "chunk_index_in_document",
+            "chunk_index_in_conversation",
+        ],
     )
 
 

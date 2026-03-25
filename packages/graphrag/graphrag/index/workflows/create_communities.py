@@ -18,6 +18,7 @@ from graphrag.data_model.schemas import COMMUNITIES_FINAL_COLUMNS
 from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.typing.context import PipelineRunContext
 from graphrag.index.typing.workflow import WorkflowFunctionOutput
+from graphrag.index.utils.temporal_trace import trace_event
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +89,15 @@ async def create_communities(
         max_cluster_size,
         use_lcc,
         seed=seed,
+    )
+    trace_event(
+        logger,
+        stage="community_build",
+        event="cluster_graph_complete",
+        relationship_rows=len(relationships),
+        cluster_rows=len(clusters),
+        max_cluster_size=max_cluster_size,
+        use_lcc=use_lcc,
     )
 
     title_to_entity_id: dict[str, str] = {}
@@ -182,6 +192,14 @@ async def create_communities(
     final_communities["size"] = final_communities.loc[:, "entity_ids"].apply(len)
 
     output = final_communities.loc[:, COMMUNITIES_FINAL_COLUMNS]
+    trace_event(
+        logger,
+        stage="community_build",
+        event="communities_materialized",
+        community_count=len(output),
+        period=output["period"].iloc[0] if len(output) else None,
+        preview_fields={"community_sample": output.iloc[0].to_dict() if len(output) else {}},
+    )
     rows = output.to_dict("records")
     sample_rows: list[dict[str, Any]] = []
     for row in rows:

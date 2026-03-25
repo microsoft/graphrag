@@ -37,6 +37,22 @@ class CommunityReportResponse(BaseModel):
     findings: list[FindingModel] = Field(
         description="A list of findings in the report."
     )
+    current_state: str = Field(
+        default="",
+        description="Most up-to-date consolidated state of the community.",
+    )
+    timeline_events: list[FindingModel] = Field(
+        default_factory=list,
+        description="Chronological events that describe how the community evolved.",
+    )
+    superseded_facts: list[FindingModel] = Field(
+        default_factory=list,
+        description="Older facts that were superseded by more recent evidence.",
+    )
+    date_range: list[str] = Field(
+        default_factory=list,
+        description="Temporal range [start_date, end_date] represented by report evidence.",
+    )
     rating: float = Field(description="The rating of the report.")
     rating_explanation: str = Field(description="An explanation of the rating.")
 
@@ -99,4 +115,24 @@ class CommunityReportsExtractor:
         report_sections = "\n\n".join(
             f"## {f.summary}\n\n{f.explanation}" for f in report.findings
         )
-        return f"# {report.title}\n\n{report.summary}\n\n{report_sections}"
+        timeline_sections = "\n".join(
+            f"- {event.summary}: {event.explanation}" for event in report.timeline_events
+        )
+        superseded_sections = "\n".join(
+            f"- {fact.summary}: {fact.explanation}" for fact in report.superseded_facts
+        )
+        date_range_section = ""
+        if len(report.date_range) == 2:
+            date_range_section = (
+                "## Date Range\n\n"
+                f"{report.date_range[0]} -> {report.date_range[1]}\n\n"
+            )
+        return (
+            f"# {report.title}\n\n"
+            f"{report.summary}\n\n"
+            f"## Current State\n\n{report.current_state}\n\n"
+            f"## Timeline\n{timeline_sections}\n\n"
+            f"## Superseded Facts\n{superseded_sections}\n\n"
+            f"{date_range_section}"
+            f"{report_sections}"
+        )

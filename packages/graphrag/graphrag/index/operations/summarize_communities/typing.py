@@ -34,6 +34,10 @@ class CommunityReport(TypedDict):
     level: int
     rating_explanation: str
     findings: list[Finding]
+    current_state: str
+    timeline_events: list[Finding]
+    superseded_facts: list[Finding]
+    date_range: list[str]
 
 
 CommunityReportsStrategy = Callable[

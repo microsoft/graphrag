@@ -26,6 +26,7 @@ from graphrag.index.operations.summarize_communities.utils import (
     get_levels,
 )
 from graphrag.index.utils.derive_from_rows import derive_from_rows
+from graphrag.index.utils.temporal_trace import trace_event
 from graphrag.logger.progress import progress_ticker
 
 if TYPE_CHECKING:
@@ -59,6 +60,13 @@ async def summarize_communities(
     ).dropna()
 
     levels = get_levels(nodes)
+    trace_event(
+        logger,
+        stage="community_summarization",
+        event="summarization_start",
+        levels=levels,
+        local_context_count=len(local_contexts),
+    )
 
     level_contexts = []
     for level in levels:
@@ -73,6 +81,13 @@ async def summarize_communities(
         level_contexts.append(level_context)
 
     for i, level_context in enumerate(level_contexts):
+        trace_event(
+            logger,
+            stage="community_summarization",
+            event="level_start",
+            level=levels[i],
+            context_rows=len(level_context),
+        )
 
         async def run_generate(record):
             result = await _generate_report(
@@ -96,7 +111,20 @@ async def summarize_communities(
             progress_msg=f"level {levels[i]} summarize communities progress: ",
         )
         reports.extend([lr for lr in local_reports if lr is not None])
+        trace_event(
+            logger,
+            stage="community_summarization",
+            event="level_complete",
+            level=levels[i],
+            generated_reports=len([lr for lr in local_reports if lr is not None]),
+        )
 
+    trace_event(
+        logger,
+        stage="community_summarization",
+        event="summarization_complete",
+        total_reports=len(reports),
+    )
     return pd.DataFrame(reports)
 
 
@@ -145,6 +173,17 @@ async def run_extractor(
             logger.warning("No report found for community: %s", community)
             return None
 
+        trace_event(
+            logger,
+            stage="community_summarization",
+            event="community_report_generated",
+            community=community,
+            level=level,
+            current_state_present=bool(report.current_state),
+            timeline_events=len(report.timeline_events),
+            superseded_facts=len(report.superseded_facts),
+            date_range=report.date_range,
+        )
         return CommunityReport(
             community=community,
             full_content=results.output,
@@ -157,6 +196,16 @@ async def run_extractor(
                 Finding(explanation=f.explanation, summary=f.summary)
                 for f in report.findings
             ],
+            current_state=report.current_state,
+            timeline_events=[
+                Finding(explanation=f.explanation, summary=f.summary)
+                for f in report.timeline_events
+            ],
+            superseded_facts=[
+                Finding(explanation=f.explanation, summary=f.summary)
+                for f in report.superseded_facts
+            ],
+            date_range=list(report.date_range),
             full_content_json=report.model_dump_json(indent=4),
         )
     except Exception:

@@ -67,6 +67,25 @@ def _coerce_list(value: Any) -> list[Any]:
     return []
 
 
+def _coerce_temporal_evidence_row(row: dict[str, Any]) -> dict[str, Any]:
+    """Coerce shared temporal evidence columns on a single row."""
+    if "first_seen_turn_index" in row:
+        row["first_seen_turn_index"] = _safe_int(row["first_seen_turn_index"], 0)
+    if "last_seen_turn_index" in row:
+        row["last_seen_turn_index"] = _safe_int(row["last_seen_turn_index"], 0)
+    if "evidence_count" in row:
+        row["evidence_count"] = _safe_int(row["evidence_count"], 0)
+    if "first_seen_timestamp" in row and row["first_seen_timestamp"] is not None:
+        row["first_seen_timestamp"] = str(row["first_seen_timestamp"])
+    if "last_seen_timestamp" in row and row["last_seen_timestamp"] is not None:
+        row["last_seen_timestamp"] = str(row["last_seen_timestamp"])
+    if "first_seen_text_unit_id" in row and row["first_seen_text_unit_id"] is not None:
+        row["first_seen_text_unit_id"] = str(row["first_seen_text_unit_id"])
+    if "last_seen_text_unit_id" in row and row["last_seen_text_unit_id"] is not None:
+        row["last_seen_text_unit_id"] = str(row["last_seen_text_unit_id"])
+    return row
+
+
 # -- entities (mirrors entities_typed) ------------------------------------
 
 
@@ -86,7 +105,7 @@ def transform_entity_row(row: dict[str, Any]) -> dict[str, Any]:
         row["frequency"] = _safe_int(row["frequency"], 0)
     if "degree" in row:
         row["degree"] = _safe_int(row["degree"], 0)
-    return row
+    return _coerce_temporal_evidence_row(row)
 
 
 def transform_entity_row_for_embedding(
@@ -124,7 +143,7 @@ def transform_relationship_row(
         )
     if "text_unit_ids" in row:
         row["text_unit_ids"] = _coerce_list(row["text_unit_ids"])
-    return row
+    return _coerce_temporal_evidence_row(row)
 
 
 # -- communities (mirrors communities_typed) ------------------------------
@@ -231,10 +250,27 @@ def transform_text_unit_row(
         )
     if "turn_index" in row:
         row["turn_index"] = _safe_int(row.get("turn_index"), 0)
+    if "start_turn_index" in row:
+        row["start_turn_index"] = _safe_int(row.get("start_turn_index"), 0)
+    if "end_turn_index" in row:
+        row["end_turn_index"] = _safe_int(row.get("end_turn_index"), 0)
     if "turn_timestamp" in row and row["turn_timestamp"] is not None:
         row["turn_timestamp"] = str(row["turn_timestamp"])
+    if "turn_timestamp_start" in row and row["turn_timestamp_start"] is not None:
+        row["turn_timestamp_start"] = str(row["turn_timestamp_start"])
+    if "turn_timestamp_end" in row and row["turn_timestamp_end"] is not None:
+        row["turn_timestamp_end"] = str(row["turn_timestamp_end"])
     if "turn_role" in row and row["turn_role"] is not None:
         row["turn_role"] = str(row["turn_role"])
+    if "included_roles" in row:
+        row["included_roles"] = _coerce_list(row["included_roles"])
+    if "chunk_index_in_document" in row:
+        row["chunk_index_in_document"] = _safe_int(row.get("chunk_index_in_document"), 0)
+    if "chunk_index_in_conversation" in row:
+        row["chunk_index_in_conversation"] = _safe_int(
+            row.get("chunk_index_in_conversation"),
+            0,
+        )
     if "conversation_id" in row and row["conversation_id"] is not None:
         row["conversation_id"] = str(row["conversation_id"])
     return row

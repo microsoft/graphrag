@@ -1,0 +1,23 @@
+{
+  "conversation_id": "sample-conv-001",
+  "messages": [
+    {
+      "turn_index": 1,
+      "role": "user",
+      "timestamp": "2026-01-01T09:00:00Z",
+      "content": "내 배송 상태 알려줘."
+    },
+    {
+      "turn_index": 2,
+      "role": "assistant",
+      "timestamp": "2026-01-01T09:01:00Z",
+      "content": "현재 배송 상태는 준비중이야."
+    },
+    {
+      "turn_index": 3,
+      "role": "assistant",
+      "timestamp": "2026-01-01T10:10:00Z",
+      "content": "업데이트: 방금 출고 완료되었어."
+    }
+  ]
+}

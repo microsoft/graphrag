@@ -9,6 +9,9 @@ from uuid import uuid4
 from graphrag_storage.tables.table import Table
 
 from graphrag.data_model.schemas import ENTITIES_FINAL_COLUMNS
+from graphrag.index.operations.temporal_evidence import (
+    fill_temporal_evidence_defaults,
+)
 
 
 async def finalize_entities(
@@ -47,6 +50,7 @@ async def finalize_entities(
         row["degree"] = degree_map.get(title, 0)
         row["human_readable_id"] = human_readable_id
         row["id"] = str(uuid4())
+        fill_temporal_evidence_defaults(row)
         human_readable_id += 1
         out = {col: row.get(col) for col in ENTITIES_FINAL_COLUMNS}
         await entities_table.write(out)

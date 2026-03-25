@@ -20,12 +20,18 @@ The report should include the following sections:
 - IMPORTANCE RATING: A float score between 0-10 that represents the importance of entities within the community..
 - RATING EXPLANATION: Give a single sentence explanation of the importance rating.
 - DETAILED FINDINGS: A list of 5-10 key insights about the community. Each insight should have a short summary followed by multiple paragraphs of explanatory text grounded according to the grounding rules below. Be comprehensive.
+- CURRENT STATE: A concise statement of the latest known status, prioritizing newer evidence over older conflicting evidence.
+- TIMELINE EVENTS: A chronological list of important events/facts.
+- SUPERSEDED FACTS: Older facts that were replaced or contradicted by newer evidence. Keep them explicit instead of deleting.
 - DATE RANGE: A range of dates (YYYY-MM-DD) with the format [START, END] which corresponds to the date range of text units and intermediate reports used to build the report.
 
 Return output as a well-formed JSON-formatted string with the following format. Don't use any unnecessary escape sequences. The output should be a single JSON object that can be parsed by json.loads.
     {{
         "title": "<report_title>",
         "summary": "<executive_summary>",
+        "current_state": "<latest consolidated state>",
+        "timeline_events": [{{"summary":"<event_1_summary>", "explanation": "<event_1_explanation"}}, {{"summary":"<event_2_summary>", "explanation": "<event_2_explanation"}}],
+        "superseded_facts": [{{"summary":"<superseded_fact_1>", "explanation": "<why it was superseded>"}}, {{"summary":"<superseded_fact_2>", "explanation": "<why it was superseded>"}}],
         "rating": <importance_rating>,
         "rating_explanation": "<rating_explanation>",
         "findings": [{{"summary":"<insight_1_summary>", "explanation": "<insight_1_explanation"}}, {{"summary":"<insight_2_summary>", "explanation": "<insight_2_explanation"}}],

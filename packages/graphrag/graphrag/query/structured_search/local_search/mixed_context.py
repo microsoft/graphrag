@@ -15,6 +15,7 @@ from graphrag.data_model.covariate import Covariate
 from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
+from graphrag.index.utils.temporal_trace import trace_event
 from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
     build_community_context,
@@ -339,14 +340,45 @@ class LocalSearchMixedContext(LocalContextBuilder):
         unit_info_list.sort(key=lambda x: (x[1], -x[2]))
 
         selected_text_units = [unit[0] for unit in unit_info_list]
+        selected_text_units = self._sort_text_units_by_temporal(selected_text_units)
+        current_units, history_units = self._split_current_and_history(selected_text_units)
+        trace_event(
+            logger,
+            stage="query_context",
+            event="sources_split_current_history",
+            selected_text_units=len(selected_text_units),
+            current_units=len(current_units),
+            history_units=len(history_units),
+            split_rule="max(end_turn_index) == CURRENT",
+        )
 
-        context_text, context_data = build_text_unit_context(
-            text_units=selected_text_units,
+        current_text, current_data = build_text_unit_context(
+            text_units=current_units or selected_text_units,
             tokenizer=self.tokenizer,
-            max_context_tokens=max_context_tokens,
+            max_context_tokens=max_context_tokens // 2 if history_units else max_context_tokens,
             shuffle_data=False,
-            context_name=context_name,
+            context_name=f"{context_name}_CURRENT",
             column_delimiter=column_delimiter,
+        )
+        history_text, history_data = ("", {})
+        if history_units:
+            history_text, history_data = build_text_unit_context(
+                text_units=history_units,
+                tokenizer=self.tokenizer,
+                max_context_tokens=max_context_tokens // 2,
+                shuffle_data=False,
+                context_name=f"{context_name}_TIMELINE",
+                column_delimiter=column_delimiter,
+            )
+
+        context_text = "\n\n".join([text for text in [current_text, history_text] if text.strip()])
+        context_data = {**current_data, **history_data}
+        trace_event(
+            logger,
+            stage="query_context",
+            event="sources_context_built",
+            context_keys=list(context_data.keys()),
+            preview_fields={"context_text_preview": context_text},
         )
 
         if return_candidate_context:
@@ -355,22 +387,83 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 text_units=list(self.text_units.values()),
             )
             context_key = context_name.lower()
-            if context_key not in context_data:
+            context_variant_keys = [
+                key
+                for key in [
+                    context_key,
+                    f"{context_key}_current",
+                    f"{context_key}_timeline",
+                ]
+                if key in context_data
+            ]
+            if not context_variant_keys:
                 candidate_context_data["in_context"] = False
                 context_data[context_key] = candidate_context_data
             else:
-                if (
-                    "id" in candidate_context_data.columns
-                    and "id" in context_data[context_key].columns
-                ):
-                    candidate_context_data["in_context"] = candidate_context_data[
-                        "id"
-                    ].isin(context_data[context_key]["id"])
-                    context_data[context_key] = candidate_context_data
+                if "id" in candidate_context_data.columns:
+                    in_context_ids: set[str] = set()
+                    for key in context_variant_keys:
+                        if "id" in context_data[key].columns:
+                            in_context_ids.update(
+                                str(value) for value in context_data[key]["id"].tolist()
+                            )
+                    if in_context_ids:
+                        candidate_context_data["in_context"] = candidate_context_data[
+                            "id"
+                        ].astype(str).isin(in_context_ids)
+                    else:
+                        candidate_context_data["in_context"] = False
                 else:
-                    context_data[context_key]["in_context"] = True
+                    candidate_context_data["in_context"] = False
+                context_data[context_key] = candidate_context_data
 
         return (str(context_text), context_data)
+
+    def _sort_text_units_by_temporal(self, text_units: list[TextUnit]) -> list[TextUnit]:
+        def _safe_int(value: Any) -> int:
+            try:
+                return int(value)
+            except (TypeError, ValueError):
+                return -1
+
+        return sorted(
+            text_units,
+            key=lambda unit: (
+                _safe_int((unit.attributes or {}).get("start_turn_index")),
+                _safe_int((unit.attributes or {}).get("chunk_index_in_conversation")),
+                str(unit.id),
+            ),
+        )
+
+    def _split_current_and_history(
+        self, text_units: list[TextUnit]
+    ) -> tuple[list[TextUnit], list[TextUnit]]:
+        if not text_units:
+            return [], []
+
+        def _safe_int(value: Any) -> int:
+            try:
+                return int(value)
+            except (TypeError, ValueError):
+                return -1
+
+        max_end_turn = max(
+            _safe_int((unit.attributes or {}).get("end_turn_index")) for unit in text_units
+        )
+        if max_end_turn < 0:
+            return text_units, []
+
+        current = [
+            unit
+            for unit in text_units
+            if _safe_int((unit.attributes or {}).get("end_turn_index")) == max_end_turn
+        ]
+        history = [
+            unit
+            for unit in text_units
+            if _safe_int((unit.attributes or {}).get("end_turn_index")) < max_end_turn
+        ]
+        return current, history
 
     def _build_local_context(
         self,

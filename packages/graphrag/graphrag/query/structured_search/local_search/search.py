@@ -12,6 +12,7 @@ from graphrag_llm.tokenizer import Tokenizer
 from graphrag_llm.utils import CompletionMessagesBuilder
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
+from graphrag.index.utils.temporal_trace import ensure_trace_id, trace_event
 from graphrag.prompts.query.local_search_system_prompt import (
     LOCAL_SEARCH_SYSTEM_PROMPT,
 )
@@ -61,6 +62,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
     ) -> SearchResult:
         """Build local search context that fits a single context window and generate answer for the user query."""
         start_time = time.time()
+        ensure_trace_id()
         search_prompt = ""
         llm_calls, prompt_tokens, output_tokens = {}, {}, {}
         context_result = self.context_builder.build_context(
@@ -72,6 +74,14 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         llm_calls["build_context"] = context_result.llm_calls
         prompt_tokens["build_context"] = context_result.prompt_tokens
         output_tokens["build_context"] = context_result.output_tokens
+        trace_event(
+            logger,
+            stage="query_context",
+            event="context_ready_for_answer",
+            context_record_keys=list(context_result.context_records.keys()),
+            llm_calls=context_result.llm_calls,
+            prompt_tokens=context_result.prompt_tokens,
+        )
 
         logger.debug("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         try:
@@ -88,6 +98,13 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
                     context_data=context_result.context_chunks,
                     response_type=self.response_type,
                 )
+            trace_event(
+                logger,
+                stage="final_answer",
+                event="prompt_built",
+                response_type=self.response_type,
+                preview_fields={"system_prompt_preview": search_prompt, "query": query},
+            )
 
             messages_builder = (
                 CompletionMessagesBuilder()
@@ -117,6 +134,13 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
 
             for callback in self.callbacks:
                 callback.on_context(context_result.context_records)
+            trace_event(
+                logger,
+                stage="final_answer",
+                event="answer_generated",
+                output_tokens=output_tokens["response"],
+                preview_fields={"answer_preview": full_response},
+            )
 
             return SearchResult(
                 response=full_response,
