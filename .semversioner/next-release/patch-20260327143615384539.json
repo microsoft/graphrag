@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "bump nltk to resolve [CVE-2025-14009](https://github.com/advisories/GHSA-7p94-766c-hgjp)"
-}
