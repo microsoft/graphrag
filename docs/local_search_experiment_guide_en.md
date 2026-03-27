@@ -201,76 +201,14 @@ If your query contains shell-sensitive characters (quotes, pipes, `$`, backticks
 
 ## 9) Total evaluation script template (simple, bash)
 
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
+Use the bundled script directly:
 
+```bash
 OUTPUT_DIR="/path/to/output"
 ROOT="/path/to/project"
 LOG_BASE="./eval_logs"
 QUERY_FILE="./queries.txt"
-
-policies=("leaf_only" "leaf_then_parent_mix" "pyramid" "flat_ranked")
-histories=(0 1)
-covs=(0 1)
-
-mkdir -p "$LOG_BASE"
-
-# Backup settings once
-cp "${ROOT}/settings.yaml" "${ROOT}/settings.yaml.bak"
-trap 'mv -f "${ROOT}/settings.yaml.bak" "${ROOT}/settings.yaml"' EXIT
-
-set_local_search_flags() {
-  local policy="$1"
-  local history_enabled="$2"
-  local covariate_enabled="$3"
-  python - "$ROOT/settings.yaml" "$policy" "$history_enabled" "$covariate_enabled" <<'PY'
-import sys, yaml
-path, policy, history, cov = sys.argv[1:]
-with open(path, "r", encoding="utf-8") as f:
-    data = yaml.safe_load(f) or {}
-local = data.setdefault("local_search", {})
-local["experiment_enabled"] = True
-local["community_selection_policy"] = policy
-local["experiment_history_enabled"] = history == "1"
-local["experiment_covariate_enabled"] = cov == "1"
-local["experiment_history_max_turns"] = 3
-local["prompt_logging_enabled"] = True
-with open(path, "w", encoding="utf-8") as f:
-    yaml.safe_dump(data, f, sort_keys=False, allow_unicode=True)
-PY
-}
-
-while IFS= read -r q; do
-  [[ -z "$q" ]] && continue
-  qid=$(echo "$q" | md5sum | awk '{print $1}')
-
-  for p in "${policies[@]}"; do
-    for h in "${histories[@]}"; do
-      for c in "${covs[@]}"; do
-        cond="${p}:h${h}:c${c}"
-        run_log_dir="${LOG_BASE}/${qid}/${cond}"
-        mkdir -p "$run_log_dir"
-
-        # Update settings in place (simple mode)
-        set_local_search_flags "$p" "$h" "$c"
-
-        # Replace with your execution command in your environment
-        # graphrag query "$q" --method local --root "$ROOT" --data "$OUTPUT_DIR" --streaming --verbose \
-        #   > "${run_log_dir}/stdout.txt" 2> "${run_log_dir}/stderr.txt" || true
-
-        if [[ -f "${ROOT}/logs/query.log" ]]; then
-          cp "${ROOT}/logs/query.log" "${run_log_dir}/query.log"
-        fi
-      done
-    done
-  done
-done < "$QUERY_FILE"
-```
-
-You can also use the ready-to-run script in this repository:
-
-```bash
+QUERY_EXEC_TEMPLATE='graphrag query "__QUERY__" --method local --root "__ROOT__" --data "__OUTPUT__" --streaming --verbose'
 bash scripts/eval_local_experiment_simple.sh
 ```
 
@@ -278,7 +216,7 @@ Note:
 
 - This is intentionally simple and sequential.
 - Do not run multiple copies of this script concurrently on the same `ROOT` (it edits one shared `settings.yaml`).
-- This version uses Python + PyYAML and does not require `yq`.
+- The helper script uses Python + PyYAML and does not require `yq`.
 
 ---
 

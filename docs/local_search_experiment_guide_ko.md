@@ -202,76 +202,14 @@ graphrag query \"What are the top risks this quarter?\" --method local ...
 
 ## 9) 토탈 평가 스크립트 템플릿 (심플 버전, bash)
 
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
+레포에 포함된 실행 스크립트를 그대로 사용합니다:
 
+```bash
 OUTPUT_DIR="/path/to/output"
 ROOT="/path/to/project"
 LOG_BASE="./eval_logs"
 QUERY_FILE="./queries.txt"
-
-policies=("leaf_only" "leaf_then_parent_mix" "pyramid" "flat_ranked")
-histories=(0 1)
-covs=(0 1)
-
-mkdir -p "$LOG_BASE"
-
-# settings 백업 1회
-cp "${ROOT}/settings.yaml" "${ROOT}/settings.yaml.bak"
-trap 'mv -f "${ROOT}/settings.yaml.bak" "${ROOT}/settings.yaml"' EXIT
-
-set_local_search_flags() {
-  local policy="$1"
-  local history_enabled="$2"
-  local covariate_enabled="$3"
-  python - "$ROOT/settings.yaml" "$policy" "$history_enabled" "$covariate_enabled" <<'PY'
-import sys, yaml
-path, policy, history, cov = sys.argv[1:]
-with open(path, "r", encoding="utf-8") as f:
-    data = yaml.safe_load(f) or {}
-local = data.setdefault("local_search", {})
-local["experiment_enabled"] = True
-local["community_selection_policy"] = policy
-local["experiment_history_enabled"] = history == "1"
-local["experiment_covariate_enabled"] = cov == "1"
-local["experiment_history_max_turns"] = 3
-local["prompt_logging_enabled"] = True
-with open(path, "w", encoding="utf-8") as f:
-    yaml.safe_dump(data, f, sort_keys=False, allow_unicode=True)
-PY
-}
-
-while IFS= read -r q; do
-  [[ -z "$q" ]] && continue
-  qid=$(echo "$q" | md5sum | awk '{print $1}')
-
-  for p in "${policies[@]}"; do
-    for h in "${histories[@]}"; do
-      for c in "${covs[@]}"; do
-        cond="${p}:h${h}:c${c}"
-        run_log_dir="${LOG_BASE}/${qid}/${cond}"
-        mkdir -p "$run_log_dir"
-
-        # settings를 제자리에서 간단히 변경
-        set_local_search_flags "$p" "$h" "$c"
-
-        # 환경에 맞는 실제 실행 명령으로 교체
-        # graphrag query "$q" --method local --root "$ROOT" --data "$OUTPUT_DIR" --streaming --verbose \
-        #   > "${run_log_dir}/stdout.txt" 2> "${run_log_dir}/stderr.txt" || true
-
-        if [[ -f "${ROOT}/logs/query.log" ]]; then
-          cp "${ROOT}/logs/query.log" "${run_log_dir}/query.log"
-        fi
-      done
-    done
-  done
-done < "$QUERY_FILE"
-```
-
-레포에 포함된 실행 스크립트를 바로 사용해도 됩니다:
-
-```bash
+QUERY_EXEC_TEMPLATE='graphrag query "__QUERY__" --method local --root "__ROOT__" --data "__OUTPUT__" --streaming --verbose'
 bash scripts/eval_local_experiment_simple.sh
 ```
 
@@ -279,7 +217,7 @@ bash scripts/eval_local_experiment_simple.sh
 
 - 이 스크립트는 의도적으로 단순/순차 실행용입니다.
 - 같은 `ROOT`를 대상으로 병렬 실행하면 안 됩니다 (`settings.yaml` 하나를 공유해 수정하기 때문).
-- 이 버전은 Python + PyYAML 기반이며 `yq`가 필요 없습니다.
+- 헬퍼 스크립트는 Python + PyYAML 기반이며 `yq`가 필요 없습니다.
 
 ---
 

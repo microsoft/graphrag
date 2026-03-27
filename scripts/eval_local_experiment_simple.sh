@@ -6,7 +6,7 @@
 #   ROOT=/path/to/project \
 #   LOG_BASE=./eval_logs \
 #   QUERY_FILE=./queries.txt \
-#   QUERY_CMD='graphrag query "__QUERY__" --method local --root "__ROOT__" --data "__OUTPUT__" --streaming --verbose' \
+#   QUERY_EXEC_TEMPLATE='graphrag query "__QUERY__" --method local --root "__ROOT__" --data "__OUTPUT__" --streaming --verbose' \
 #   bash scripts/eval_local_experiment_simple.sh
 
 set -euo pipefail
@@ -20,7 +20,7 @@ QUERY_FILE="${QUERY_FILE:-./queries.txt}"
 #  - __QUERY__  -> actual query string
 #  - __ROOT__   -> ROOT path
 #  - __OUTPUT__ -> OUTPUT_DIR path
-QUERY_CMD="${QUERY_CMD:-}"
+QUERY_EXEC_TEMPLATE="${QUERY_EXEC_TEMPLATE:-graphrag query \"__QUERY__\" --method local --root \"__ROOT__\" --data \"__OUTPUT__\" --streaming --verbose}"
 
 if [[ ! -f "$ROOT/settings.yaml" ]]; then
   echo "[ERROR] Missing settings.yaml at ROOT: $ROOT" >&2
@@ -32,11 +32,11 @@ if [[ ! -f "$QUERY_FILE" ]]; then
   exit 1
 fi
 
-if [[ -z "$QUERY_CMD" ]]; then
+if [[ -z "$QUERY_EXEC_TEMPLATE" ]]; then
   cat >&2 <<'EOF'
-[ERROR] QUERY_CMD is required.
+[ERROR] QUERY_EXEC_TEMPLATE is required.
 Example:
-QUERY_CMD='graphrag query "__QUERY__" --method local --root "__ROOT__" --data "__OUTPUT__" --streaming --verbose'
+QUERY_EXEC_TEMPLATE='graphrag query "__QUERY__" --method local --root "__ROOT__" --data "__OUTPUT__" --streaming --verbose'
 EOF
   exit 1
 fi
@@ -84,11 +84,10 @@ while IFS= read -r q; do
 
         set_local_search_flags "$p" "$h" "$c"
 
-        cmd="${QUERY_CMD//__QUERY__/$q}"
+        cmd="${QUERY_EXEC_TEMPLATE//__QUERY__/$q}"
         cmd="${cmd//__ROOT__/$ROOT}"
         cmd="${cmd//__OUTPUT__/$OUTPUT_DIR}"
 
-        # shellcheck disable=SC2086
         bash -lc "$cmd" > "${run_log_dir}/stdout.txt" 2> "${run_log_dir}/stderr.txt" || true
 
         if [[ -f "$ROOT/logs/query.log" ]]; then
