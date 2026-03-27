@@ -1,6 +1,10 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 1.2.1
+
+- patch: bump nltk to resolve [CVE-2025-14009](https://github.com/advisories/GHSA-7p94-766c-hgjp)
+
 ## 1.2.0
 
 - minor: Add Drift Reduce response and streaming endpoint
