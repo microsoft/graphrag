@@ -2,6 +2,10 @@
 
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 2.7.2
+
+- patch: bump nltk to resolve [CVE-2025-14009](https://github.com/advisories/GHSA-7p94-766c-hgjp)
+
 ## 2.7.1
 
 - patch: Pin pandas==2.3.3.
