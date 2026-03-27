@@ -299,6 +299,7 @@ def local_search_streaming(
     )
 
     entities_ = read_indexer_entities(entities, communities, community_level)
+    communities_ = read_indexer_communities(communities, community_reports)
     covariates_ = read_indexer_covariates(covariates) if covariates is not None else []
     prompt = load_search_prompt(config.local_search.prompt)
 
@@ -306,6 +307,7 @@ def local_search_streaming(
     search_engine = get_local_search_engine(
         config=config,
         reports=read_indexer_reports(community_reports, communities, community_level),
+        communities=communities_,
         text_units=read_indexer_text_units(text_units),
         entities=entities_,
         relationships=read_indexer_relationships(relationships),

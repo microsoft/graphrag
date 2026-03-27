@@ -10,6 +10,7 @@ import pandas as pd
 from graphrag_llm.tokenizer import Tokenizer
 from graphrag_vectors import VectorStore
 
+from graphrag.data_model.community import Community
 from graphrag.data_model.community_report import CommunityReport
 from graphrag.data_model.covariate import Covariate
 from graphrag.data_model.entity import Entity
@@ -22,6 +23,14 @@ from graphrag.query.context_builder.community_context import (
 )
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
+)
+from graphrag.query.context_builder.local_experiment_selector import (
+    SelectionResult,
+    select_flat_ranked,
+    select_leaf_only,
+    select_leaf_then_parent_mix,
+    select_pyramid,
+    sort_reports_by_priority,
 )
 from graphrag.query.context_builder.entity_extraction import (
     EntityVectorStoreKey,
@@ -59,6 +68,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         entity_text_embeddings: VectorStore,
         text_embedder: "LLMEmbedding",
         text_units: list[TextUnit] | None = None,
+        communities: list[Community] | None = None,
         community_reports: list[CommunityReport] | None = None,
         relationships: list[Relationship] | None = None,
         covariates: dict[str, list[Covariate]] | None = None,
@@ -73,10 +83,13 @@ class LocalSearchMixedContext(LocalContextBuilder):
             covariates = {}
         if text_units is None:
             text_units = []
+        if communities is None:
+            communities = []
         self.entities = {entity.id: entity for entity in entities}
         self.community_reports = {
             community.community_id: community for community in community_reports
         }
+        self.communities = {community.id: community for community in communities}
         self.text_units = {unit.id: unit for unit in text_units}
         self.relationships = {
             relationship.id: relationship for relationship in relationships
@@ -146,6 +159,18 @@ class LocalSearchMixedContext(LocalContextBuilder):
             k=top_k_mapped_entities,
             oversample_scaler=2,
         )
+
+        experiment_enabled = bool(kwargs.get("experiment_enabled", False))
+        if experiment_enabled:
+            return self._build_experimental_summary_context(
+                selected_entities=selected_entities,
+                conversation_history=conversation_history,
+                conversation_history_max_turns=conversation_history_max_turns,
+                conversation_history_user_turns_only=conversation_history_user_turns_only,
+                max_context_tokens=max_context_tokens,
+                column_delimiter=column_delimiter,
+                **kwargs,
+            )
 
         # build context
         final_context = list[str]()
@@ -219,6 +244,179 @@ class LocalSearchMixedContext(LocalContextBuilder):
             context_chunks="\n\n".join(final_context),
             context_records=final_context_data,
         )
+
+    def _build_experimental_summary_context(
+        self,
+        selected_entities: list[Entity],
+        conversation_history: ConversationHistory | None,
+        conversation_history_max_turns: int | None,
+        conversation_history_user_turns_only: bool,
+        max_context_tokens: int,
+        column_delimiter: str,
+        **kwargs: dict[str, Any],
+    ) -> ContextBuilderResult:
+        final_context: list[str] = []
+        final_context_data: dict[str, pd.DataFrame] = {}
+        warnings: list[str] = []
+
+        selection_policy = str(kwargs.get("community_selection_policy", "leaf_only"))
+        history_enabled = bool(kwargs.get("experiment_history_enabled", False))
+        covariate_enabled = bool(kwargs.get("experiment_covariate_enabled", False))
+        experiment_history_max_turns = int(
+            kwargs.get(
+                "experiment_history_max_turns",
+                kwargs.get("conversation_history_max_turns", 3),
+            )
+        )
+
+        if history_enabled and conversation_history:
+            (
+                conversation_history_context,
+                conversation_history_context_data,
+            ) = conversation_history.build_context(
+                tokenizer=self.tokenizer,
+                include_user_turns_only=False,
+                max_qa_turns=experiment_history_max_turns,
+                column_delimiter=column_delimiter,
+                max_context_tokens=max_context_tokens,
+                recency_bias=False,
+            )
+            if conversation_history_context.strip():
+                final_context.append(conversation_history_context)
+                final_context_data = conversation_history_context_data
+                max_context_tokens -= len(
+                    self.tokenizer.encode(conversation_history_context)
+                )
+        else:
+            _ = conversation_history_max_turns
+            _ = conversation_history_user_turns_only
+
+        community_context, community_context_data, selection_result = (
+            self._build_experimental_community_context(
+                selected_entities=selected_entities,
+                max_context_tokens=max(max_context_tokens, 0),
+                selection_policy=selection_policy,
+                column_delimiter=column_delimiter,
+            )
+        )
+        warnings.extend(selection_result.warnings)
+        if community_context.strip():
+            final_context.append(community_context)
+            final_context_data = {**final_context_data, **community_context_data}
+            max_context_tokens -= len(self.tokenizer.encode(community_context))
+
+        if covariate_enabled and max_context_tokens > 0:
+            selected_covariates = list(self.covariates.keys())
+            for covariate_name in selected_covariates:
+                covariate_context, covariate_context_data = build_covariates_context(
+                    selected_entities=selected_entities,
+                    covariates=self.covariates[covariate_name],
+                    tokenizer=self.tokenizer,
+                    max_context_tokens=max_context_tokens,
+                    column_delimiter=column_delimiter,
+                    context_name=covariate_name,
+                )
+                if covariate_context.strip():
+                    final_context.append(covariate_context)
+                    final_context_data[covariate_name.lower()] = covariate_context_data
+                    max_context_tokens -= len(self.tokenizer.encode(covariate_context))
+
+        final_context_data["experiment_meta"] = pd.DataFrame([
+            {
+                "experiment_enabled": True,
+                "selection_policy": selection_policy,
+                "history_enabled": history_enabled,
+                "covariate_enabled": covariate_enabled,
+                "experiment_condition_id": kwargs.get("experiment_condition_id", ""),
+                "warnings": "; ".join(warnings),
+                "selected_community_ids": ",".join(
+                    [report.community_id for report in selection_result.selected_reports]
+                ),
+                "selected_community_titles": ",".join(
+                    [report.title for report in selection_result.selected_reports]
+                ),
+                "debug": str(selection_result.debug),
+                "prompt_logging_enabled": bool(
+                    kwargs.get("prompt_logging_enabled", False)
+                ),
+            }
+        ])
+
+        return ContextBuilderResult(
+            context_chunks="\n\n".join(final_context),
+            context_records=final_context_data,
+        )
+
+    def _build_experimental_community_context(
+        self,
+        selected_entities: list[Entity],
+        max_context_tokens: int,
+        selection_policy: str,
+        column_delimiter: str,
+    ) -> tuple[str, dict[str, pd.DataFrame], SelectionResult]:
+        if len(selected_entities) == 0 or len(self.community_reports) == 0:
+            empty_result = SelectionResult([], [], {"policy": selection_policy})
+            return ("", {"reports": pd.DataFrame()}, empty_result)
+
+        community_matches: dict[str, int] = {}
+        for entity in selected_entities:
+            if entity.community_ids:
+                for community_id in entity.community_ids:
+                    community_matches[community_id] = (
+                        community_matches.get(community_id, 0) + 1
+                    )
+        ranked_reports = sort_reports_by_priority(
+            [
+                self.community_reports[community_id]
+                for community_id in community_matches
+                if community_id in self.community_reports
+            ],
+            community_matches=community_matches,
+        )
+
+        if selection_policy == "leaf_only":
+            selection_result = select_leaf_only(
+                ranked_reports=ranked_reports,
+                community_by_id=self.communities,
+                tokenizer=self.tokenizer,
+                token_budget=max_context_tokens,
+            )
+        elif selection_policy == "leaf_then_parent_mix":
+            selection_result = select_leaf_then_parent_mix(
+                ranked_reports=ranked_reports,
+                community_by_id=self.communities,
+                tokenizer=self.tokenizer,
+                token_budget=max_context_tokens,
+            )
+        elif selection_policy == "pyramid":
+            selection_result = select_pyramid(
+                ranked_reports=ranked_reports,
+                community_by_id=self.communities,
+                tokenizer=self.tokenizer,
+                token_budget=max_context_tokens,
+            )
+        else:
+            selection_result = select_flat_ranked(
+                ranked_reports=ranked_reports,
+                tokenizer=self.tokenizer,
+                token_budget=max_context_tokens,
+            )
+
+        context_text, context_data = build_community_context(
+            community_reports=selection_result.selected_reports,
+            tokenizer=self.tokenizer,
+            use_community_summary=True,
+            column_delimiter=column_delimiter,
+            shuffle_data=False,
+            include_community_rank=False,
+            min_community_rank=0,
+            max_context_tokens=max_context_tokens,
+            single_batch=True,
+            context_name="Reports",
+        )
+        if isinstance(context_text, list):
+            context_text = "\n\n".join(context_text)
+        return str(context_text), context_data, selection_result
 
     def _build_community_context(
         self,

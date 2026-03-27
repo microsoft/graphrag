@@ -267,6 +267,12 @@ class LocalSearchDefaults:
     top_k_entities: int = 10
     top_k_relationships: int = 10
     max_context_tokens: int = 12_000
+    experiment_enabled: bool = False
+    community_selection_policy: str = "leaf_only"
+    experiment_history_enabled: bool = False
+    experiment_covariate_enabled: bool = False
+    experiment_history_max_turns: int = 3
+    prompt_logging_enabled: bool = False
     completion_model_id: str = DEFAULT_COMPLETION_MODEL_ID
     embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 

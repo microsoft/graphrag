@@ -37,6 +37,7 @@ from graphrag.query.structured_search.local_search.search import LocalSearch
 def get_local_search_engine(
     config: GraphRagConfig,
     reports: list[CommunityReport],
+    communities: list[Community],
     text_units: list[TextUnit],
     entities: list[Entity],
     relationships: list[Relationship],
@@ -70,6 +71,7 @@ def get_local_search_engine(
         system_prompt=system_prompt,
         context_builder=LocalSearchMixedContext(
             community_reports=reports,
+            communities=communities,
             text_units=text_units,
             entities=entities,
             relationships=relationships,
@@ -86,6 +88,17 @@ def get_local_search_engine(
             "community_prop": ls_config.community_prop,
             "conversation_history_max_turns": ls_config.conversation_history_max_turns,
             "conversation_history_user_turns_only": True,
+            "experiment_enabled": ls_config.experiment_enabled,
+            "community_selection_policy": ls_config.community_selection_policy,
+            "experiment_history_enabled": ls_config.experiment_history_enabled,
+            "experiment_covariate_enabled": ls_config.experiment_covariate_enabled,
+            "experiment_history_max_turns": ls_config.experiment_history_max_turns,
+            "experiment_condition_id": (
+                f"{ls_config.community_selection_policy}:"
+                f"h{int(ls_config.experiment_history_enabled)}:"
+                f"c{int(ls_config.experiment_covariate_enabled)}"
+            ),
+            "prompt_logging_enabled": ls_config.prompt_logging_enabled,
             "top_k_mapped_entities": ls_config.top_k_entities,
             "top_k_relationships": ls_config.top_k_relationships,
             "include_entity_rank": True,

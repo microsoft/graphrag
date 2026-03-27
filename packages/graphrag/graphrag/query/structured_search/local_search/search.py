@@ -4,6 +4,7 @@
 """LocalSearch implementation."""
 
 import logging
+import json
 import time
 from collections.abc import AsyncGenerator, AsyncIterator
 from typing import TYPE_CHECKING, Any
@@ -105,6 +106,11 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
                 response_type=self.response_type,
                 preview_fields={"system_prompt_preview": search_prompt, "query": query},
             )
+            self._log_final_prompt_payload(
+                context_records=context_result.context_records,
+                query=query,
+                search_prompt=search_prompt,
+            )
 
             messages_builder = (
                 CompletionMessagesBuilder()
@@ -184,6 +190,11 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         search_prompt = self.system_prompt.format(
             context_data=context_result.context_chunks, response_type=self.response_type
         )
+        self._log_final_prompt_payload(
+            context_records=context_result.context_records,
+            query=query,
+            search_prompt=search_prompt,
+        )
 
         messages_builder = (
             CompletionMessagesBuilder()
@@ -205,3 +216,39 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             for callback in self.callbacks:
                 callback.on_llm_new_token(response_text)
             yield response_text
+
+    def _log_final_prompt_payload(
+        self,
+        context_records: dict[str, Any],
+        query: str,
+        search_prompt: str,
+    ) -> None:
+        experiment_meta_df = context_records.get("experiment_meta")
+        if experiment_meta_df is None or getattr(experiment_meta_df, "empty", True):
+            return
+
+        record = experiment_meta_df.iloc[0].to_dict()
+        if not bool(record.get("prompt_logging_enabled", False)):
+            return
+        payload = {
+            "experiment_condition_id": record.get("experiment_condition_id", ""),
+            "selection_policy": record.get("selection_policy", ""),
+            "history_on": bool(record.get("history_enabled", False)),
+            "covariate_on": bool(record.get("covariate_enabled", False)),
+            "query": query,
+            "selected_community_ids": (
+                str(record.get("selected_community_ids", "")).split(",")
+                if record.get("selected_community_ids")
+                else []
+            ),
+            "selected_community_titles": (
+                str(record.get("selected_community_titles", "")).split(",")
+                if record.get("selected_community_titles")
+                else []
+            ),
+            "warning": bool(record.get("warnings")),
+            "warning_messages": record.get("warnings", ""),
+            "token_count_context": len(self.tokenizer.encode(str(search_prompt))),
+            "final_system_prompt": search_prompt,
+        }
+        logger.info("local_search_prompt_payload=%s", json.dumps(payload, ensure_ascii=False))

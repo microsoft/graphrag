@@ -60,3 +60,27 @@ Below are the key parameters of the [LocalSearch class](https://github.com/micro
 
 An example of a local search scenario can be found in the following [notebook](../examples_notebooks/local_search.ipynb).
 
+## Experimental Summary-only Mode
+
+Local search now supports an opt-in experimental path that preserves the default behavior unless explicitly enabled.
+
+### Experimental options
+
+* `experiment_enabled`: enable summary-only experimental context construction.
+* `community_selection_policy`: one of `leaf_only`, `leaf_then_parent_mix`, `pyramid`, `flat_ranked`.
+* `experiment_history_enabled`: include conversation history in experimental mode.
+* `experiment_covariate_enabled`: include covariate tables in experimental mode.
+* `experiment_history_max_turns`: max QA turns in experimental history context (default `3`).
+* `prompt_logging_enabled`: emit final prompt payload logging before the LLM call.
+
+### Condition ID reproducibility
+
+Condition IDs use the deterministic pattern:
+
+`<policy>:h<history_enabled>:c<covariate_enabled>`
+
+This yields exactly 16 conditions (4 policies × 2 history settings × 2 covariate settings), e.g.:
+
+* `leaf_only:h0:c0`
+* `leaf_only:h1:c0`
+* `pyramid:h1:c1`
