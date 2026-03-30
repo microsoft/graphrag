@@ -1916,17 +1916,17 @@
 
 <h1 id="question-generation">Question Generation ❔</h1>
 <h2 id="entity-based-question-generation">Entity-based Question Generation</h2>
-<p>The <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/question_gen/">question generation</a> method combines structured data from the knowledge graph with unstructured data from the input documents to generate candidate questions related to specific entities.</p>
+<p>The <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/query/question_gen/">question generation</a> method combines structured data from the knowledge graph with unstructured data from the input documents to generate candidate questions related to specific entities.</p>
 <h2 id="methodology">Methodology</h2>
 <p>Given a list of prior user questions, the question generation method uses the same context-building approach employed in <a href="../local_search/">local search</a> to extract and prioritize relevant structured and unstructured data, including entities, relationships, covariates, community reports and raw text chunks. These data records are then fitted into a single LLM prompt to generate candidate follow-up questions that represent the most important or urgent information content or themes in the data.</p>
 <h2 id="configuration">Configuration</h2>
-<p>Below are the key parameters of the <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/question_gen/local_gen.py">Question Generation class</a>:</p>
+<p>Below are the key parameters of the <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/query/question_gen/local_gen.py">Question Generation class</a>:</p>
 <ul>
 <li><code>model</code>: Language model chat completion object to be used for response generation</li>
-<li><code>context_builder</code>: <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/local_search/mixed_context.py">context builder</a> object to be used for preparing context data from collections of knowledge model objects, using the same context builder class as in local search</li>
-<li><code>system_prompt</code>: prompt template used to generate candidate questions. Default template can be found at <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/prompts/query/question_gen_system_prompt.py">system_prompt</a></li>
+<li><code>context_builder</code>: <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/query/structured_search/local_search/mixed_context.py">context builder</a> object to be used for preparing context data from collections of knowledge model objects, using the same context builder class as in local search</li>
+<li><code>system_prompt</code>: prompt template used to generate candidate questions. Default template can be found at <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/prompts/query/question_gen_system_prompt.py">system_prompt</a></li>
 <li><code>llm_params</code>: a dictionary of additional parameters (e.g., temperature, max_tokens) to be passed to the LLM call</li>
-<li><code>context_builder_params</code>: a dictionary of additional parameters to be passed to the <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/local_search/mixed_context.py"><code>context_builder</code></a> object when building context for the question generation prompt</li>
+<li><code>context_builder_params</code>: a dictionary of additional parameters to be passed to the <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/query/structured_search/local_search/mixed_context.py"><code>context_builder</code></a> object when building context for the question generation prompt</li>
 <li><code>callbacks</code>: optional callback functions, can be used to provide custom event handlers for LLM's completion streaming events</li>
 </ul>
 <h2 id="how-to-use">How to Use</h2>

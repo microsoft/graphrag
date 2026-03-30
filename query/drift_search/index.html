@@ -1939,7 +1939,7 @@
 <h1 id="drift-search">DRIFT Search 🔎</h1>
 <h2 id="combining-local-and-global-search">Combining Local and Global Search</h2>
 <p>GraphRAG is a technique that uses large language models (LLMs) to create knowledge graphs and summaries from unstructured text documents and leverages them to improve retrieval-augmented generation (RAG) operations on private datasets. It offers comprehensive global overviews of large, private troves of unstructured text documents while also enabling exploration of detailed, localized information. By using LLMs to create comprehensive knowledge graphs that connect and describe entities and relationships contained in those documents, GraphRAG leverages semantic structuring of the data to generate responses to a wide variety of complex user queries.</p>
-<p>DRIFT search (Dynamic Reasoning and Inference with Flexible Traversal) builds upon Microsoft’s GraphRAG technique, combining characteristics of both global and local search to generate detailed responses in a method that balances computational costs with quality outcomes using our <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/drift_search/">drift search</a> method.</p>
+<p>DRIFT search (Dynamic Reasoning and Inference with Flexible Traversal) builds upon Microsoft’s GraphRAG technique, combining characteristics of both global and local search to generate detailed responses in a method that balances computational costs with quality outcomes using our <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/query/structured_search/drift_search/">drift search</a> method.</p>
 <h2 id="methodology">Methodology</h2>
 <p align="center">
 <img src="../../img/drift-search-diagram.png" alt="Figure 1. An entire DRIFT search hierarchy highlighting the three core phases of the DRIFT search process." align="center" />
@@ -1949,13 +1949,13 @@ Figure 1. An entire DRIFT search hierarchy highlighting the three core phases of
 
 <p>DRIFT Search introduces a new approach to local search queries by including community information in the search process. This greatly expands the breadth of the query’s starting point and leads to retrieval and usage of a far higher variety of facts in the final answer. This addition expands the GraphRAG query engine by providing a more comprehensive option for local search, which uses community insights to refine a query into detailed follow-up questions.</p>
 <h2 id="configuration">Configuration</h2>
-<p>Below are the key parameters of the <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/drift_search/search.py">DRIFTSearch class</a>:</p>
+<p>Below are the key parameters of the <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/query/structured_search/drift_search/search.py">DRIFTSearch class</a>:</p>
 <ul>
 <li><code>model</code>: Language model chat completion object to be used for response generation</li>
-<li><code>context_builder</code>: <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/drift_context.py">context builder</a> object to be used for preparing context data from community reports and query information</li>
-<li><code>config</code>: model to define the DRIFT Search hyperparameters. <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/config/models/drift_search_config.py">DRIFT Config model</a></li>
+<li><code>context_builder</code>: <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/query/structured_search/drift_search/drift_context.py">context builder</a> object to be used for preparing context data from community reports and query information</li>
+<li><code>config</code>: model to define the DRIFT Search hyperparameters. <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/config/models/drift_search_config.py">DRIFT Config model</a></li>
 <li><code>tokenizer</code>: token encoder for tracking the budget for the algorithm.</li>
-<li><code>query_state</code>: a state object as defined in <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/state.py">Query State</a> that allows to track execution of a DRIFT Search instance, alongside follow ups and <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/action.py">DRIFT actions</a>.</li>
+<li><code>query_state</code>: a state object as defined in <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/query/structured_search/drift_search/state.py">Query State</a> that allows to track execution of a DRIFT Search instance, alongside follow ups and <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/query/structured_search/drift_search/action.py">DRIFT actions</a>.</li>
 </ul>
 <h2 id="how-to-use">How to Use</h2>
 <p>An example of a drift search scenario can be found in the following <a href="../../examples_notebooks/drift_search/">notebook</a>.</p>

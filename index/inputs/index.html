@@ -2268,7 +2268,7 @@
 </table>
 <p>Also see the <a href="../outputs/">outputs</a> documentation for the final documents table schema saved to parquet after pipeline completion.</p>
 <h2 id="bring-your-own-dataframe">Bring-your-own DataFrame</h2>
-<p>GraphRAG's <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py">indexing API method</a> allows you to pass in your own pandas DataFrame and bypass all of the input loading/parsing described in the next section. This is convenient if you have content in a format or storage location we don't support out-of-the-box. <em>You must ensure that your input DataFrame conforms to the schema described above.</em> All of the chunking behavior described later will proceed exactly the same.</p>
+<p>GraphRAG's <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/api/index.py">indexing API method</a> allows you to pass in your own pandas DataFrame and bypass all of the input loading/parsing described in the next section. This is convenient if you have content in a format or storage location we don't support out-of-the-box. <em>You must ensure that your input DataFrame conforms to the schema described above.</em> All of the chunking behavior described later will proceed exactly the same.</p>
 <h2 id="custom-file-handling">Custom File Handling</h2>
 <p>We use an injectable InputReader provider class. This means you can implement any input file handling you want in a class that extends InputReader and register it with the InputReaderFactory. See the <a href="https://microsoft.github.io/graphrag/index/architecture/">architecture page</a> for more info on our standard provider pattern.</p>
 <h2 id="formats">Formats</h2>

@@ -1783,7 +1783,7 @@
 
 <h1 id="default-configuration-mode-using-yamljson">Default Configuration Mode (using YAML/JSON)</h1>
 <p>The default configuration mode may be configured by using a <code>settings.yml</code> or <code>settings.json</code> file in the data project root. If a <code>.env</code> file is present along with this config file, then it will be loaded, and the environment variables defined therein will be available for token replacements in your configuration document using <code>${ENV_VAR}</code> syntax. We initialize with YML by default in <code>graphrag init</code> but you may use the equivalent JSON form if preferred.</p>
-<p>Many of these config values have defaults. Rather than replicate them here, please refer to the <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/config/defaults.py">constants in the code</a> directly.</p>
+<p>Many of these config values have defaults. Rather than replicate them here, please refer to the <a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/config/defaults.py">constants in the code</a> directly.</p>
 <p>For example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># .env</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nv">GRAPHRAG_API_KEY</span><span class="o">=</span>some_api_key
