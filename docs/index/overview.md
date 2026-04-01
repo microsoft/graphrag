@@ -30,7 +30,7 @@ uv run poe index --root <data_root> # default config mode
 
 ### Python API
 
-Please see the indexing API [python file](https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py) for the recommended method to call directly from Python code.
+Please see the indexing API [python file](https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/api/index.py) for the recommended method to call directly from Python code.
 
 ## Further Reading
 
