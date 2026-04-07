@@ -39,6 +39,7 @@ if TYPE_CHECKING:
 
 
 litellm.suppress_debug_info = True
+litellm.enable_json_schema_validation = True
 
 
 class LiteLLMCompletion(LLMCompletion):
