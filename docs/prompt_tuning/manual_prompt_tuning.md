@@ -10,7 +10,7 @@ Each of these prompts may be overridden by writing a custom prompt file in plain
 
 ### Entity/Relationship Extraction
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/index/extract_graph.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/prompts/index/extract_graph.py)
 
 #### Tokens
 
@@ -22,7 +22,7 @@ Each of these prompts may be overridden by writing a custom prompt file in plain
 
 ### Summarize Entity/Relationship Descriptions
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/index/summarize_descriptions.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/prompts/index/summarize_descriptions.py)
 
 #### Tokens
 
@@ -31,7 +31,7 @@ Each of these prompts may be overridden by writing a custom prompt file in plain
 
 ### Claim Extraction
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/index/extract_claims.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/prompts/index/extract_claims.py)
 
 #### Tokens
 
@@ -46,7 +46,7 @@ See the [configuration documentation](../config/overview.md) for details on how 
 
 ### Generate Community Reports
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/index/community_report.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/prompts/index/community_report.py)
 
 #### Tokens
 
@@ -56,7 +56,7 @@ See the [configuration documentation](../config/overview.md) for details on how 
 
 ### Local Search
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/query/local_search_system_prompt.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/prompts/query/local_search_system_prompt.py)
 
 #### Tokens
 
@@ -65,11 +65,11 @@ See the [configuration documentation](../config/overview.md) for details on how 
 
 ### Global Search
 
-[Mapper Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/query/global_search_map_system_prompt.py)
+[Mapper Prompt Source](http://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/prompts/query/global_search_map_system_prompt.py)
 
-[Reducer Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/query/global_search_reduce_system_prompt.py)
+[Reducer Prompt Source](http://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/prompts/query/global_search_reduce_system_prompt.py)
 
-[Knowledge Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/query/global_search_knowledge_system_prompt.py)
+[Knowledge Prompt Source](http://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/prompts/query/global_search_knowledge_system_prompt.py)
 
 Global search uses a map/reduce approach to summarization. You can tune these prompts independently. This search also includes the ability to adjust the use of general knowledge from the model's training.
 
@@ -80,7 +80,7 @@ Global search uses a map/reduce approach to summarization. You can tune these pr
 
 ### Drift Search
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/query/drift_search_system_prompt.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/prompts/query/drift_search_system_prompt.py)
 
 #### Tokens
 
