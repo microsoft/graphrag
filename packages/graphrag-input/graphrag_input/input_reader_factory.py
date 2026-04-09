@@ -81,6 +81,10 @@ def create_input_reader(config: InputConfig, storage: Storage) -> InputReader:
                 from graphrag_input.markitdown import MarkItDownFileReader
 
                 register_input_reader(InputType.MarkItDown, MarkItDownFileReader)
+            case InputType.Parquet:
+                from graphrag_input.parquet import ParquetFileReader
+
+                register_input_reader(InputType.Parquet, ParquetFileReader)
             case _:
                 msg = f"InputConfig.type '{input_strategy}' is not registered in the InputReaderFactory. Registered types: {', '.join(input_reader_factory.keys())}."
                 raise ValueError(msg)

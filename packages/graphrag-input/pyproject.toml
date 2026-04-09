@@ -34,7 +34,8 @@ dependencies = [
     "graphrag-storage==3.0.8    ",
     "pydantic~=2.10",
     "markitdown~=0.1.0",
-    "markitdown[pdf]"
+    "markitdown[pdf]",
+    "pyarrow>=14.0.0"
 ]
 
 [project.urls]
