@@ -1,6 +1,11 @@
 # Changelog
-
 Note: version releases in the 0.x.y range may introduce breaking changes.
+
+## 3.0.9
+
+- patch: Support client side json validation.
+- patch: fix broken documentation links.
+- patch: implement parquet reader
 
 ## 3.0.8
 
@@ -63,16 +68,16 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 - major: Monorepo restructure
 
   New Packages:
-  - graphrag-cache
-  - graphrag-chunking
-  - graphrag-common
-  - graphrag-input
-  - graphrag-llm
-  - graphrag-storage
-  - graphrag-vectors
+    - graphrag-cache
+    - graphrag-chunking
+    - graphrag-common
+    - graphrag-input
+    - graphrag-llm
+    - graphrag-storage
+    - graphrag-vectors
 
   Changes:
-  - New config: run graphrag init --force to reinitialize config with new layout and options.
+    - New config: run graphrag init --force to reinitialize config with new layout and options.
 
 ## 2.7.1
 
