@@ -9,7 +9,7 @@ readme = "README.md"
 requires-python = ">=3.11,<3.14"
 
 dependencies = [
-    "streamlit==1.43.0",
+    "streamlit==1.54.0",
     "azure-search-documents~=11.4",
     "azure-storage-blob~=12.20",
     "azure-identity~=1.16",
