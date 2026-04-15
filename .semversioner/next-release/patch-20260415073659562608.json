@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fix TypeError in dry-run logging caused by extra positional argument with no format placeholder."
+}
