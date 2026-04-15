@@ -6,8 +6,6 @@
 import logging
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from graphrag.cli.index import _run_index
 from graphrag.config.enums import IndexingMethod
 
