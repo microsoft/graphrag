@@ -97,8 +97,27 @@ class LLMCompletionResponse(ChatCompletion, Generic[ResponseFormat]):
     @computed_field
     @property
     def content(self) -> str:
-        """Get the content of the first choice message."""
-        return self.choices[0].message.content or ""
+        """Get the content of the first choice message.
+
+        Falls back to function tool-call arguments when `content` is empty.
+        Some providers return structured payloads via tool calls instead of
+        assistant message content.
+        """
+        if not self.choices:
+            return ""
+
+        message = self.choices[0].message
+        if message.content:
+            return message.content
+
+        if message.tool_calls:
+            for tool_call in message.tool_calls:
+                if tool_call.type != "function":
+                    continue
+                if tool_call.function.arguments:
+                    return tool_call.function.arguments
+
+        return ""
 
 
 class LLMCompletionArgs(
