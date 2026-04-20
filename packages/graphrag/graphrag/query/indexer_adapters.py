@@ -221,5 +221,5 @@ def _filter_under_community_level(
 ) -> pd.DataFrame:
     return cast(
         "pd.DataFrame",
-        df[df.level <= community_level],
+        df[(df.level <= community_level) | df.level.isna()],
     )
