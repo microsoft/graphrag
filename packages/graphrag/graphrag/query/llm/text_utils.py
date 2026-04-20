@@ -17,7 +17,7 @@ from graphrag.tokenizer.get_tokenizer import get_tokenizer
 logger = logging.getLogger(__name__)
 
 
-def batched(iterable: Iterator, n: int):
+def batched(iterable: Iterator, n: int) -> Iterator[tuple]:
     """
     Batch data into tuples of length n. The last batch may be shorter.
 
@@ -32,7 +32,7 @@ def batched(iterable: Iterator, n: int):
         yield batch
 
 
-def chunk_text(text: str, max_tokens: int, tokenizer: Tokenizer | None = None):
+def chunk_text(text: str, max_tokens: int, tokenizer: Tokenizer | None = None) -> Iterator[str]:
     """Chunk text by token length."""
     if tokenizer is None:
         tokenizer = get_tokenizer()
