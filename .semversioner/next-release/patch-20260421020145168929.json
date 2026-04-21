@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add return type hints to generator functions in query/llm/text_utils.py"
+}
