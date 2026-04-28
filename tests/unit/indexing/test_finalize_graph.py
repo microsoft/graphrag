@@ -192,7 +192,7 @@ class TestFinalizeEntities:
         assert table.written[0]["degree"] == 0
 
     async def test_deduplicates_by_title(self):
-        """Duplicate titles should be skipped."""
+        """Duplicate (title, type) pairs should be skipped."""
         table = FakeTable([
             _make_entity_row("A"),
             _make_entity_row("A"),
@@ -204,6 +204,22 @@ class TestFinalizeEntities:
         assert len(table.written) == 2
         titles = [r["title"] for r in table.written]
         assert titles == ["A", "B"]
+
+    async def test_preserves_same_title_different_type(self):
+        """Entities with the same title but different types must not be merged."""
+        table = FakeTable([
+            _make_entity_row("Python", entity_type="LANGUAGE"),
+            _make_entity_row("Python", entity_type="CONCEPT"),
+            _make_entity_row("Java", entity_type="LANGUAGE"),
+        ])
+        degree_map = {"Python": 2, "Java": 1}
+        await finalize_entities(table, degree_map)
+
+        assert len(table.written) == 3
+        pairs = [(r["title"], r["type"]) for r in table.written]
+        assert ("Python", "LANGUAGE") in pairs
+        assert ("Python", "CONCEPT") in pairs
+        assert ("Java", "LANGUAGE") in pairs
 
     async def test_skips_empty_title(self):
         """Rows with empty or missing title should be skipped."""
