@@ -10,6 +10,7 @@ snapshots, and LLM cache entries.
 Tabular data (DataFrames / parquet) should use CosmosTableProvider instead.
 """
 
+import contextlib
 import json
 import logging
 import re
@@ -144,7 +145,9 @@ class AzureCosmosStorage(Storage):
                 if file_pattern.search(item["id"]):
                     yield item["id"]
         except Exception:  # noqa: BLE001
-            logger.warning("Error searching Cosmos DB for pattern %s", file_pattern.pattern)
+            logger.warning(
+                "Error searching Cosmos DB for pattern %s", file_pattern.pattern
+            )
 
     async def get(
         self, key: str, as_bytes: bool | None = None, encoding: str | None = None
@@ -163,14 +166,15 @@ class AzureCosmosStorage(Storage):
             )
             body = item.get("body")
             result = json.dumps(body) if not isinstance(body, str) else body
-            if as_bytes:
-                return result.encode(encoding or self._encoding)
-            return result
         except CosmosResourceNotFoundError:
             return None
         except Exception:
             logger.exception("Error reading item %s", namespaced)
             return None
+        else:
+            if as_bytes:
+                return result.encode(encoding or self._encoding)
+            return result
 
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Store *value* under *key*.
@@ -204,15 +208,14 @@ class AzureCosmosStorage(Storage):
             return False
         namespaced = self._namespaced_key(key)
         try:
-            self._container_client.read_item(
-                item=namespaced, partition_key=namespaced
-            )
-            return True
+            self._container_client.read_item(item=namespaced, partition_key=namespaced)
         except CosmosResourceNotFoundError:
             return False
         except Exception:
             logger.exception("Error checking item %s", namespaced)
             return False
+        else:
+            return True
 
     async def delete(self, key: str) -> None:
         """Delete *key*."""
@@ -255,12 +258,10 @@ class AzureCosmosStorage(Storage):
                 )
             )
             for item in items:
-                try:
+                with contextlib.suppress(CosmosResourceNotFoundError):
                     self._container_client.delete_item(
                         item=item["id"], partition_key=item["id"]
                     )
-                except CosmosResourceNotFoundError:
-                    pass
 
     def child(self, name: str | None) -> "AzureCosmosStorage":
         """Create a child storage with an extended namespace prefix.
@@ -270,17 +271,14 @@ class AzureCosmosStorage(Storage):
         if name is None:
             return self
         child_ns = f"{self._namespace}:{name}" if self._namespace else name
-        child = AzureCosmosStorage.__new__(AzureCosmosStorage)
-        child._cosmos_client = self._cosmos_client
-        child._database_client = self._database_client
-        child._container_client = self._container_client
-        child._database_name = self._database_name
-        child._connection_string = self._connection_string
-        child._cosmosdb_account_url = self._cosmosdb_account_url
-        child._container_name = self._container_name
-        child._encoding = self._encoding
-        child._namespace = child_ns
-        return child
+        return AzureCosmosStorage(
+            database_name=self._database_name,
+            container_name=self._container_name,
+            connection_string=self._connection_string,
+            account_url=self._cosmosdb_account_url,
+            encoding=self._encoding,
+            namespace=child_ns,
+        )
 
     def keys(self) -> list[str]:
         """List all keys in the current namespace."""

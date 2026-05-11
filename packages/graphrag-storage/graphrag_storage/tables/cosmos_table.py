@@ -84,6 +84,7 @@ class CosmosTable(Table):
     # ------------------------------------------------------------------
 
     def __aiter__(self) -> AsyncIterator[Any]:
+        """Iterate rows asynchronously."""
         return self._aiter_impl()
 
     async def _aiter_impl(self) -> AsyncIterator[Any]:
@@ -114,7 +115,7 @@ class CosmosTable(Table):
             parameters=parameters,
             partition_key=self._namespace,
         ):
-            results.append(item)
+            results.append(item)  # noqa: PERF401
         return int(results[0]) if results else 0
 
     async def has(self, row_id: str) -> bool:
@@ -124,9 +125,10 @@ class CosmosTable(Table):
             await self._container.read_item(
                 item=cosmos_id, partition_key=self._namespace
             )
-            return True
         except Exception:  # noqa: BLE001
             return False
+        else:
+            return True
 
     # ------------------------------------------------------------------
     # Write

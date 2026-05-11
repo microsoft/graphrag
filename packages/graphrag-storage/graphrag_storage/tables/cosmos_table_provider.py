@@ -12,8 +12,8 @@ Partition key : /namespace
 Document id   : {table_name}:{row_key}
 
 Every document carries two internal fields used for routing:
-    namespace  – partition key, set by child() hierarchy
-    table_name – discriminator for per-table queries
+    namespace  - partition key, set by child() hierarchy
+    table_name - discriminator for per-table queries
 
 All queries target a single namespace partition (no cross-partition fan-out).
 """
@@ -43,24 +43,13 @@ _DEFAULT_PAGE_SIZE = 100
 _DEFAULT_BATCH_SIZE = 50
 _MAX_BATCH_SIZE = 100
 
-# Cosmos system / internal fields to exclude from DataFrame columns.
-_INTERNAL_FIELDS = frozenset({
-    "_rid",
-    "_self",
-    "_etag",
-    "_attachments",
-    "_ts",
-    "namespace",
-    "table_name",
-})
-
 
 class CosmosTableProvider(TableProvider):
     """TableProvider backed by Azure Cosmos DB (NoSQL API, async SDK).
 
     Each table is stored as a set of documents within a single container,
-    discriminated by the ``table_name`` field.  Namespace isolation (used
-    by the update pipeline's delta / previous split) is achieved via the
+    discriminated by the ``table_name`` field. Namespace isolation (used
+    by the update pipeline's delta/previous split) is achieved via the
     ``/namespace`` partition key.
     """
 
@@ -110,9 +99,7 @@ class CosmosTableProvider(TableProvider):
             raise ValueError(msg)
 
         if connection_string:
-            self._cosmos_client = CosmosClient.from_connection_string(
-                connection_string
-            )
+            self._cosmos_client = CosmosClient.from_connection_string(connection_string)
         else:
             self._cosmos_client = CosmosClient(
                 url=account_url,  # type: ignore[arg-type]
@@ -138,10 +125,8 @@ class CosmosTableProvider(TableProvider):
         if self._container is not None:
             return self._container
 
-        db: DatabaseProxy = (
-            await self._cosmos_client.create_database_if_not_exists(  # type: ignore[union-attr]
-                id=self._database_name
-            )
+        db: DatabaseProxy = await self._cosmos_client.create_database_if_not_exists(  # type: ignore[union-attr]
+            id=self._database_name
         )
         self._container = await db.create_container_if_not_exists(
             id=self._container_name,
@@ -177,7 +162,7 @@ class CosmosTableProvider(TableProvider):
             max_item_count=_DEFAULT_PAGE_SIZE,
         ).by_page():
             async for doc in page:
-                docs.append(_strip_cosmos_metadata(doc))
+                docs.append(_strip_cosmos_metadata(doc))  # noqa: PERF401
 
         if docs:
             return pd.DataFrame(docs)
@@ -225,9 +210,7 @@ class CosmosTableProvider(TableProvider):
     async def has(self, table_name: str) -> bool:
         """Check whether any documents exist for *table_name*."""
         container = await self._ensure_container()
-        query = (
-            "SELECT VALUE COUNT(1) FROM c WHERE c.table_name = @table_name"
-        )
+        query = "SELECT VALUE COUNT(1) FROM c WHERE c.table_name = @table_name"
         parameters: list[dict[str, Any]] = [
             {"name": "@table_name", "value": table_name},
         ]
@@ -237,7 +220,7 @@ class CosmosTableProvider(TableProvider):
             parameters=parameters,
             partition_key=self._namespace,
         ):
-            results.append(item)
+            results.append(item)  # noqa: PERF401
         if results and results[0] > 0:
             return True
 
@@ -277,7 +260,7 @@ class CosmosTableProvider(TableProvider):
             query=query,
             partition_key=self._namespace,
         ):
-            names.append(item)
+            names.append(item)  # noqa: PERF401
         return names
 
     def open(
@@ -299,7 +282,7 @@ class CosmosTableProvider(TableProvider):
     # child() — namespace isolation
     # ------------------------------------------------------------------
 
-    def child(self, name: str | None) -> "CosmosTableProvider":
+    def child(self, name: str | None) -> CosmosTableProvider:
         """Create a child provider with an extended namespace."""
         if name is None:
             return self
@@ -326,9 +309,7 @@ class CosmosTableProvider(TableProvider):
     # Internal helpers
     # ------------------------------------------------------------------
 
-    async def _delete_table(
-        self, container: ContainerProxy, table_name: str
-    ) -> None:
+    async def _delete_table(self, container: ContainerProxy, table_name: str) -> None:
         """Delete all documents for a table in the current namespace."""
         query = "SELECT c.id FROM c WHERE c.table_name = @table_name"
         parameters: list[dict[str, Any]] = [
@@ -399,7 +380,7 @@ class CosmosTableProvider(TableProvider):
             query=query,
             parameters=parameters,
         ):
-            results.append(item)
+            results.append(item)  # noqa: PERF401
         return bool(results and results[0] > 0)
 
 
