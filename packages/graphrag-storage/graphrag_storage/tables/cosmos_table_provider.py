@@ -4,7 +4,7 @@
 """Cosmos DB native table provider implementation.
 
 Stores each DataFrame row as a Cosmos document, eliminating the
-parquet serialisation round-trip used by ParquetTableProvider.
+parquet serialization round-trip used by ParquetTableProvider.
 
 Container schema
 ----------------
@@ -119,7 +119,7 @@ class CosmosTableProvider(TableProvider):
         self._container_lock = asyncio.Lock()
 
     # ------------------------------------------------------------------
-    # Lazy initialisation (async work we can't do in __init__)
+    # Lazy initialization (async work we can't do in __init__)
     # ------------------------------------------------------------------
 
     async def _ensure_container(self) -> ContainerProxy:

@@ -19,7 +19,7 @@ This causes:
 | `child()` is a no-op (`return self`) | Update runs have no namespace isolation — delta/previous collide |
 | `clear()` drops the entire database | No granularity control |
 | Sync SDK used inside async methods | Blocks the event loop |
-| Unparameterized f-string queries | SQL injection surface (suppressed with noqa) |
+| Non-parameterized f-string queries | SQL injection surface (suppressed with noqa) |
 
 ## Design: `CosmosTableProvider`
 
@@ -154,7 +154,7 @@ Implements `Table` ABC for streaming row access:
 `table_provider.child()` to build delta/previous providers instead of
 `Storage.child()` → `create_table_provider()`.
 
-For Parquet/CSV: `child()` delegates to `Storage.child()`, identical behaviour.
+For Parquet/CSV: `child()` delegates to `Storage.child()`, identical behavior.
 For Cosmos: `child()` extends the namespace string. Same API, different isolation mechanism.
 
 ### 7. `AzureCosmosStorage` simplified to key-value only (~200 lines, was ~440)
@@ -223,7 +223,7 @@ always target a single namespace partition.
 | `child()` broken (no-op) | `child()` works via namespace partitioning |
 | `clear()` drops entire database | `clear()` scopes to namespace partition |
 | Sync SDK blocking event loop | Async SDK throughout |
-| Unparameterized queries | All queries parameterized |
+| Non-parameterized queries | All queries parameterized |
 | ~440 lines of workaround code | ~950 lines total (326 kv-storage + 453 table-provider + 171 table) — clean, idiomatic Cosmos code |
 | Parquet as intermediate format | No parquet involved for Cosmos path |
 | No streaming capability | True server-side pagination in `CosmosTable` |
