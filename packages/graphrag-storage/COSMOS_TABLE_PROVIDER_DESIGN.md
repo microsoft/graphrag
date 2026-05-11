@@ -201,6 +201,18 @@ Cosmos implementation needs to run an async query. We solve this with
 running, using a thread pool executor as fallback. This matches the pattern
 used elsewhere in the codebase.
 
+### `enable_cross_partition_query` doesn't work in async SDK (v4.9)
+
+The async SDK (`azure.cosmos.aio`) leaks `enable_cross_partition_query` through
+to `aiohttp.ClientSession._request()`, causing a `TypeError`. This affects
+legacy fallback reads which must do cross-partition queries against old containers
+(partition key `/id`).
+
+**Workaround:** Omit `enable_cross_partition_query` entirely and don't set
+`partition_key`. When `partition_key` is omitted, the async SDK automatically
+performs a cross-partition query. New-schema queries are unaffected because they
+always target a single namespace partition.
+
 ## What We Get
 
 | Before | After |

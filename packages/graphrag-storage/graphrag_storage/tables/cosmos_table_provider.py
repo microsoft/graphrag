@@ -358,7 +358,6 @@ class CosmosTableProvider(TableProvider):
         async for page in self._legacy_container.query_items(
             query=query,
             parameters=parameters,
-            enable_cross_partition_query=True,
             max_item_count=_DEFAULT_PAGE_SIZE,
         ).by_page():
             async for doc in page:
@@ -390,7 +389,6 @@ class CosmosTableProvider(TableProvider):
         async for item in self._legacy_container.query_items(
             query=query,
             parameters=parameters,
-            enable_cross_partition_query=True,
         ):
             results.append(item)
         return bool(results and results[0] > 0)
