@@ -15,6 +15,31 @@ class TableProviderConfig(BaseModel):
     """Allow extra fields to support custom table provider implementations."""
 
     type: str = Field(
-        description="The table type to use.",
+        description="The table type to use. Builtin types include 'parquet', 'csv', and 'cosmosdb'.",
         default=TableType.Parquet,
+    )
+
+    connection_string: str | None = Field(
+        description="The connection string for Cosmos DB.",
+        default=None,
+    )
+
+    account_url: str | None = Field(
+        description="The account URL for Cosmos DB (used with managed identity).",
+        default=None,
+    )
+
+    database_name: str | None = Field(
+        description="The Cosmos DB database name.",
+        default=None,
+    )
+
+    container_name: str | None = Field(
+        description="The Cosmos DB container name for table storage.",
+        default=None,
+    )
+
+    legacy_container: str | None = Field(
+        description="Optional legacy Cosmos DB container name for read-time migration fallback.",
+        default=None,
     )

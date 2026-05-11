@@ -138,3 +138,13 @@ class CSVTableProvider(TableProvider):
             truncate=truncate,
             encoding=encoding,
         )
+
+    def child(self, name: str | None) -> "CSVTableProvider":
+        """Create a child provider backed by a child storage namespace."""
+        if name is None:
+            return self
+        child_storage = self._storage.child(name)
+        if not isinstance(child_storage, FileStorage):
+            msg = "CSVTableProvider only works with FileStorage backends for now."
+            raise TypeError(msg)
+        return CSVTableProvider(storage=child_storage)

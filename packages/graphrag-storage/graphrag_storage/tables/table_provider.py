@@ -100,3 +100,22 @@ class TableProvider(ABC):
             Table:
                 A Table instance for streaming row operations.
         """
+
+    def child(self, name: str | None) -> "TableProvider":
+        """Create a namespaced child provider.
+
+        Used by the update pipeline to isolate delta/previous table sets.
+        Default implementation returns self (no namespacing).
+        Subclasses should override to provide proper isolation.
+
+        Args
+        ----
+            name: str | None
+                The namespace name for the child provider.
+
+        Returns
+        -------
+            TableProvider:
+                A child table provider instance.
+        """
+        return self

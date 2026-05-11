@@ -72,6 +72,12 @@ def create_table_provider(
                 )
 
                 register_table_provider(TableType.CSV, CSVTableProvider)
+            case TableType.CosmosDB:
+                from graphrag_storage.tables.cosmos_table_provider import (
+                    CosmosTableProvider,
+                )
+
+                register_table_provider(TableType.CosmosDB, CosmosTableProvider)
             case _:
                 msg = f"TableProviderConfig.type '{table_type}' is not registered in the TableProviderFactory. Registered types: {', '.join(table_provider_factory.keys())}."
                 raise ValueError(msg)
