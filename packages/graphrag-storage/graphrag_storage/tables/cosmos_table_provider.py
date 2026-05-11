@@ -40,6 +40,9 @@ logger = logging.getLogger(__name__)
 
 _DEFAULT_PAGE_SIZE = 100
 
+_DEFAULT_BATCH_SIZE = 50
+_MAX_BATCH_SIZE = 100
+
 # Cosmos system / internal fields to exclude from DataFrame columns.
 _INTERNAL_FIELDS = frozenset({
     "_rid",
@@ -74,12 +77,15 @@ class CosmosTableProvider(TableProvider):
         container_name: str | None = None,
         namespace: str = "",
         legacy_container: str | None = None,
+        batch_size: int = _DEFAULT_BATCH_SIZE,
         # Allow pre-built internals for child() and testing.
         _cosmos_client: CosmosClient | None = None,
         _container: ContainerProxy | None = None,
         _legacy_container: ContainerProxy | None = None,
         **kwargs: Any,
     ) -> None:
+        self._batch_size = min(max(batch_size, 1), _MAX_BATCH_SIZE)
+
         if _container is not None:
             # Fast path: child() or test injection.
             self._cosmos_client = _cosmos_client
@@ -200,6 +206,7 @@ class CosmosTableProvider(TableProvider):
         records = json.loads(
             df.to_json(orient="records", lines=False, force_ascii=False)
         )
+        docs = []
         for index, row in enumerate(records):
             row_key = row.pop("id", index)
             doc = {
@@ -211,7 +218,9 @@ class CosmosTableProvider(TableProvider):
             # Preserve the pipeline's id value so it round-trips.
             if "id" in df.columns:
                 doc["row_id"] = row_key
-            await container.upsert_item(body=doc)
+            docs.append(doc)
+
+        await _batch_upsert(container, docs, self._namespace, self._batch_size)
 
     async def has(self, table_name: str) -> bool:
         """Check whether any documents exist for *table_name*."""
@@ -278,13 +287,12 @@ class CosmosTableProvider(TableProvider):
         truncate: bool = True,
     ) -> Table:
         """Open a table for streaming row-by-row access."""
-        # _ensure_container() is async; CosmosTable will need the container.
-        # We use a lazy pattern: pass self so the table can call _ensure_container.
         return _LazyCosmosTable(
             provider=self,
             table_name=table_name,
             transformer=transformer,
             truncate=truncate,
+            batch_size=self._batch_size,
         )
 
     # ------------------------------------------------------------------
@@ -301,6 +309,7 @@ class CosmosTableProvider(TableProvider):
             _container=self._container,
             _legacy_container=self._legacy_container,
             namespace=child_ns,
+            batch_size=self._batch_size,
         )
 
     # ------------------------------------------------------------------
@@ -394,6 +403,37 @@ class CosmosTableProvider(TableProvider):
         return bool(results and results[0] > 0)
 
 
+async def _batch_upsert(
+    container: ContainerProxy,
+    docs: list[dict[str, Any]],
+    partition_key: str,
+    batch_size: int,
+) -> None:
+    """Upsert *docs* using transactional batches with single-upsert fallback.
+
+    Documents are split into chunks of *batch_size* (max 100). Each chunk is
+    sent as a transactional batch.  If a batch fails (e.g. payload too large),
+    the chunk is retried as individual upserts so that partial progress is
+    never lost.
+    """
+    from azure.cosmos.exceptions import CosmosBatchOperationError
+
+    for start in range(0, len(docs), batch_size):
+        chunk = docs[start : start + batch_size]
+        try:
+            ops = [("upsert", (doc,)) for doc in chunk]
+            await container.execute_item_batch(ops, partition_key=partition_key)
+        except (CosmosBatchOperationError, Exception):  # noqa: BLE001
+            logger.warning(
+                "Transactional batch failed for %d docs at offset %d; "
+                "falling back to individual upserts.",
+                len(chunk),
+                start,
+            )
+            for doc in chunk:
+                await container.upsert_item(body=doc)
+
+
 class _LazyCosmosTable(Table):
     """Wrapper that lazily resolves the container for CosmosTable.
 
@@ -407,11 +447,13 @@ class _LazyCosmosTable(Table):
         table_name: str,
         transformer: RowTransformer | None,
         truncate: bool,
+        batch_size: int = _DEFAULT_BATCH_SIZE,
     ) -> None:
         self._provider = provider
         self._table_name = table_name
         self._transformer = transformer
         self._truncate = truncate
+        self._batch_size = batch_size
         self._inner: CosmosTable | None = None
 
     async def _ensure_inner(self) -> CosmosTable:
@@ -423,6 +465,7 @@ class _LazyCosmosTable(Table):
                 namespace=self._provider._namespace,  # noqa: SLF001
                 transformer=self._transformer,
                 truncate=self._truncate,
+                batch_size=self._batch_size,
             )
         return self._inner
 

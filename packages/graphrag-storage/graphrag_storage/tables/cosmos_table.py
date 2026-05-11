@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 _DEFAULT_PAGE_SIZE = 100
+_DEFAULT_BATCH_SIZE = 50
 
 
 def _identity(row: dict[str, Any]) -> Any:
@@ -66,6 +67,7 @@ class CosmosTable(Table):
         transformer: RowTransformer | None = None,
         truncate: bool = True,
         page_size: int = _DEFAULT_PAGE_SIZE,
+        batch_size: int = _DEFAULT_BATCH_SIZE,
     ) -> None:
         """Initialise with a Cosmos container and table/namespace identifiers."""
         self._container = container
@@ -74,6 +76,7 @@ class CosmosTable(Table):
         self._transformer = transformer or _identity
         self._truncate = truncate
         self._page_size = page_size
+        self._batch_size = batch_size
         self._write_rows: list[dict[str, Any]] = []
 
     # ------------------------------------------------------------------
@@ -142,6 +145,7 @@ class CosmosTable(Table):
         if self._truncate and self._write_rows:
             await self._delete_table_docs()
 
+        docs = []
         for index, row in enumerate(self._write_rows):
             doc = dict(row)
             row_key = doc.pop("id", index)
@@ -150,7 +154,16 @@ class CosmosTable(Table):
             doc["table_name"] = self._table_name
             if row_key != doc["id"]:
                 doc["row_id"] = row_key
-            await self._container.upsert_item(body=doc)
+            docs.append(doc)
+
+        if docs:
+            from graphrag_storage.tables.cosmos_table_provider import (
+                _batch_upsert,
+            )
+
+            await _batch_upsert(
+                self._container, docs, self._namespace, self._batch_size
+            )
 
         self._write_rows = []
 

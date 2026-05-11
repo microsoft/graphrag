@@ -43,3 +43,8 @@ class TableProviderConfig(BaseModel):
         description="Optional legacy Cosmos DB container name for read-time migration fallback.",
         default=None,
     )
+
+    batch_size: int = Field(
+        description="Number of documents per transactional batch write for Cosmos DB. Max 100.",
+        default=50,
+    )
