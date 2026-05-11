@@ -20,6 +20,7 @@ All queries target a single namespace partition (no cross-partition fan-out).
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from typing import Any
@@ -115,6 +116,7 @@ class CosmosTableProvider(TableProvider):
         self._legacy_container_name = legacy_container
         self._container: ContainerProxy | None = None  # type: ignore[assignment]
         self._legacy_container: ContainerProxy | None = None
+        self._container_lock = asyncio.Lock()
 
     # ------------------------------------------------------------------
     # Lazy initialisation (async work we can't do in __init__)
@@ -125,19 +127,22 @@ class CosmosTableProvider(TableProvider):
         if self._container is not None:
             return self._container
 
-        db: DatabaseProxy = await self._cosmos_client.create_database_if_not_exists(  # type: ignore[union-attr]
-            id=self._database_name
-        )
-        self._container = await db.create_container_if_not_exists(
-            id=self._container_name,
-            partition_key=PartitionKey(path="/namespace", kind="Hash"),
-        )
+        async with self._container_lock:
+            if self._container is not None:
+                return self._container
 
-        if self._legacy_container_name:
-            # Legacy container already exists — just get a reference.
-            self._legacy_container = db.get_container_client(
-                self._legacy_container_name
+            db: DatabaseProxy = await self._cosmos_client.create_database_if_not_exists(  # type: ignore[union-attr]
+                id=self._database_name
             )
+            self._container = await db.create_container_if_not_exists(
+                id=self._container_name,
+                partition_key=PartitionKey(path="/namespace", kind="Hash"),
+            )
+
+            if self._legacy_container_name:
+                self._legacy_container = db.get_container_client(
+                    self._legacy_container_name
+                )
 
         return self._container
 
@@ -201,8 +206,7 @@ class CosmosTableProvider(TableProvider):
                 **row,
             }
             # Preserve the pipeline's id value so it round-trips.
-            if "id" in df.columns:
-                doc["row_id"] = row_key
+            doc["row_id"] = row_key
             docs.append(doc)
 
         await _batch_upsert(container, docs, self._namespace, self._batch_size)
@@ -404,7 +408,7 @@ async def _batch_upsert(
         try:
             ops = [("upsert", (doc,)) for doc in chunk]
             await container.execute_item_batch(ops, partition_key=partition_key)
-        except (CosmosBatchOperationError, Exception):  # noqa: BLE001
+        except CosmosBatchOperationError:
             logger.warning(
                 "Transactional batch failed for %d docs at offset %d; "
                 "falling back to individual upserts.",

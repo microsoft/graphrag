@@ -9,6 +9,8 @@ import inspect
 import logging
 from typing import TYPE_CHECKING, Any
 
+from azure.cosmos.exceptions import CosmosResourceNotFoundError
+
 from graphrag_storage.tables.table import RowTransformer, Table
 
 if TYPE_CHECKING:
@@ -47,8 +49,12 @@ _COSMOS_SYSTEM_KEYS = frozenset({
 
 
 def _strip_cosmos_metadata(doc: dict[str, Any]) -> dict[str, Any]:
-    """Remove Cosmos system properties and internal fields from a document."""
-    return {k: v for k, v in doc.items() if k not in _COSMOS_SYSTEM_KEYS}
+    """Remove Cosmos system properties and restore original id."""
+    result = {k: v for k, v in doc.items() if k not in _COSMOS_SYSTEM_KEYS}
+    # Restore the pipeline's original id from row_id if present.
+    if "row_id" in result:
+        result["id"] = result.pop("row_id")
+    return result
 
 
 class CosmosTable(Table):
@@ -125,7 +131,7 @@ class CosmosTable(Table):
             await self._container.read_item(
                 item=cosmos_id, partition_key=self._namespace
             )
-        except Exception:  # noqa: BLE001
+        except CosmosResourceNotFoundError:
             return False
         else:
             return True
@@ -154,8 +160,7 @@ class CosmosTable(Table):
             doc["id"] = f"{self._table_name}:{row_key}"
             doc["namespace"] = self._namespace
             doc["table_name"] = self._table_name
-            if row_key != doc["id"]:
-                doc["row_id"] = row_key
+            doc["row_id"] = row_key
             docs.append(doc)
 
         if docs:
