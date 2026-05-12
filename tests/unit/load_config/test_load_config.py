@@ -155,3 +155,43 @@ def test_load_config():
     assert config_with_env_vars.nested_list[0].nested_int == 7
     assert config_with_env_vars.nested_list[1].nested_str == "list_value_2"
     assert config_with_env_vars.nested_list[1].nested_int == 8
+
+
+def test_load_config_preserves_literal_dollar_signs():
+    """Bare ``$`` characters in config values must be preserved verbatim.
+
+    Regex anchors like ``.*\\.md$`` in fields such as ``file_pattern`` are valid
+    config values; ``string.Template.substitute`` previously raised
+    ``ValueError`` for these, crashing config load. The loader now uses
+    ``safe_substitute`` so invalid placeholders are passed through unchanged.
+    """
+    config_directory = Path(__file__).parent / "fixtures"
+    config_path = config_directory / "config_with_dollar.yaml"
+
+    config = load_config(
+        config_initializer=TestConfigModel,
+        config_path=config_path,
+        set_cwd=False,
+    )
+
+    assert config.name == "match_dollar_$"
+    assert config.nested.nested_str == ".*\\.md$"
+    assert config.nested_list[1].nested_str == "trailing$"
+
+
+def test_load_config_mixed_env_var_and_literal_dollar():
+    """``${VAR}`` substitution and bare ``$`` literals must coexist."""
+    config_directory = Path(__file__).parent / "fixtures"
+    config_path = config_directory / "config_with_dollar_and_env.yaml"
+    env_path = config_directory / "test.env"
+
+    cwd = Path.cwd()
+    config = load_config(
+        config_initializer=TestConfigModel,
+        config_path=config_path,
+        dot_env_path=env_path,
+    )
+    os.chdir(cwd)
+
+    assert config.name == "env_name"
+    assert config.nested.nested_str == ".*\\.md$"
