@@ -369,12 +369,14 @@ output_storage:
   container_name: graphrag-kv              # new container for metadata
 
 table_provider:
-  type: cosmosdb                           # NEW — routes to CosmosTableProvider
-  account_url: https://myaccount.documents.azure.com:443/
-  database_name: graphrag
-  container_name: graphrag-tables          # new container for tabular data
-  legacy_container: graphrag-output        # optional — enables read-time fallback
+  type: cosmosdb                           # NEW - routes to CosmosTableProvider
+  container_name: graphrag-tables          # table-specific: new container for tabular data
+  legacy_container: graphrag-output        # table-specific: optional migration fallback
 ```
+
+Connection details (`account_url`, `connection_string`, `database_name`) are NOT
+duplicated on `table_provider`. The factory extracts them from `output_storage`
+automatically when `table_provider.type` is `cosmosdb`.
 
 When `legacy_container` is set, the fallback read path is active. Once migration is
 complete and verified, the user removes `legacy_container` from config and optionally

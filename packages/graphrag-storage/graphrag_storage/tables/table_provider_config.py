@@ -19,21 +19,6 @@ class TableProviderConfig(BaseModel):
         default=TableType.Parquet,
     )
 
-    connection_string: str | None = Field(
-        description="The connection string for Cosmos DB.",
-        default=None,
-    )
-
-    account_url: str | None = Field(
-        description="The account URL for Cosmos DB (used with managed identity).",
-        default=None,
-    )
-
-    database_name: str | None = Field(
-        description="The Cosmos DB database name.",
-        default=None,
-    )
-
     container_name: str | None = Field(
         description="The Cosmos DB container name for table storage.",
         default=None,
