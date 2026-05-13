@@ -319,15 +319,17 @@ class CosmosTableProvider(TableProvider):
         parameters: list[dict[str, Any]] = [
             {"name": "@table_name", "value": table_name},
         ]
-        async for page in container.query_items(
-            query=query,
-            parameters=parameters,
-            partition_key=self._namespace,
-        ).by_page():
-            async for doc in page:
-                await container.delete_item(
-                    item=doc["id"], partition_key=self._namespace
-                )
+        ids: list[str] = [
+            doc["id"]
+            async for page in container.query_items(
+                query=query,
+                parameters=parameters,
+                partition_key=self._namespace,
+            ).by_page()
+            async for doc in page
+        ]
+        if ids:
+            await _batch_delete(container, ids, self._namespace, self._batch_size)
 
     # ------------------------------------------------------------------
     # Legacy fallback reads
@@ -417,6 +419,34 @@ async def _batch_upsert(
             )
             for doc in chunk:
                 await container.upsert_item(body=doc)
+
+
+async def _batch_delete(
+    container: ContainerProxy,
+    item_ids: list[str],
+    partition_key: str,
+    batch_size: int,
+) -> None:
+    """Delete items by ID using transactional batches with single-delete fallback.
+
+    Same chunking and fallback strategy as :func:`_batch_upsert`.
+    """
+    from azure.cosmos.exceptions import CosmosBatchOperationError
+
+    for start in range(0, len(item_ids), batch_size):
+        chunk = item_ids[start : start + batch_size]
+        try:
+            ops = [("delete", (item_id,)) for item_id in chunk]
+            await container.execute_item_batch(ops, partition_key=partition_key)
+        except CosmosBatchOperationError:
+            logger.warning(
+                "Transactional batch delete failed for %d items at offset %d; "
+                "falling back to individual deletes.",
+                len(chunk),
+                start,
+            )
+            for item_id in chunk:
+                await container.delete_item(item=item_id, partition_key=partition_key)
 
 
 class _LazyCosmosTable(Table):
