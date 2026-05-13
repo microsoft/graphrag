@@ -89,7 +89,7 @@ jobs:
         run: |
           uv run poe test_smoke
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: smoke-test-artifacts-${{ matrix.python-version }}-${{ runner.os }}
