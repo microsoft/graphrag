@@ -116,7 +116,7 @@ def _run_index(
     )
 
     if dry_run:
-        logger.info("Dry run complete, exiting...", True)
+        logger.info("Dry run complete, exiting...")
         sys.exit(0)
 
     _register_signal_handlers()
