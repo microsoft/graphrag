@@ -25,7 +25,7 @@ requires-python = ">=3.11,<3.14"
 
 [dependency-groups]
 dev = [
-    "coverage~=7.6",
+    "coverage~=7.13",
     "deptry~=0.21",
     "ipykernel~=6.29",
     "jupyter~=1.1",
