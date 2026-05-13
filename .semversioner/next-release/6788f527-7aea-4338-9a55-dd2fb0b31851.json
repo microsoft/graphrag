@@ -1,0 +1,4 @@
+{
+  "description": "Fix deprecated imports in example notebooks (ModelType, LanguageModelConfig, ModelManager).",
+  "type": "patch"
+}
