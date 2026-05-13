@@ -1,0 +1,10 @@
+name: "match_dollar_$"
+value: 100
+nested:
+  nested_str: ".*\\.md$"
+  nested_int: 42
+nested_list:
+  - nested_str: "list_value_1"
+    nested_int: 7
+  - nested_str: "trailing$"
+    nested_int: 8

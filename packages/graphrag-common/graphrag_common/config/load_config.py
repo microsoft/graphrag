@@ -83,12 +83,21 @@ def _get_parser_for_file(file_path: str | Path) -> Callable[[str], dict[str, Any
 
 
 def _parse_env_variables(text: str) -> str:
-    """Parse environment variables in the configuration text."""
-    try:
-        return Template(text).substitute(os.environ)
-    except KeyError as error:
-        msg = f"Environment variable not found: {error}"
-        raise ConfigParsingError(msg) from error
+    r"""Parse environment variables in the configuration text.
+
+    Uses ``Template.safe_substitute`` so that bare ``$`` characters appearing in
+    legitimate config values (for example, regex anchors like ``.*\.md$`` in a
+    ``file_pattern``) are passed through unchanged instead of raising a
+    ``ValueError`` for invalid placeholders. Missing environment variables are
+    still detected up-front and surfaced as ``ConfigParsingError``.
+    """
+    template = Template(text)
+    for match in template.pattern.finditer(text):
+        name = match.group("named") or match.group("braced")
+        if name is not None and name not in os.environ:
+            msg = f"Environment variable not found: '{name}'"
+            raise ConfigParsingError(msg)
+    return template.safe_substitute(os.environ)
 
 
 def _recursive_merge_dicts(dest: dict[str, Any], src: dict[str, Any]) -> None:

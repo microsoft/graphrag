@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Preserve bare `$` characters in config values (e.g. `file_pattern: \".*\\\\.md$\"`) by using `Template.safe_substitute`; missing env vars still raise `ConfigParsingError`."
+}
