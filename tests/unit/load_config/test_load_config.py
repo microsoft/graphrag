@@ -155,3 +155,30 @@ def test_load_config():
     assert config_with_env_vars.nested_list[0].nested_int == 7
     assert config_with_env_vars.nested_list[1].nested_str == "list_value_2"
     assert config_with_env_vars.nested_list[1].nested_int == 8
+
+
+def test_load_config_preserves_literal_dollar_sign(tmp_path: Path) -> None:
+    """Bare ``$`` in a config value (e.g. regex anchor) must not crash the loader."""
+    config_path = tmp_path / "settings.yaml"
+    config_path.write_text(
+        'name: "regex value .*\\\\.md$"\n'
+        "value: 1\n"
+        "nested:\n"
+        '  nested_str: "ends with $"\n'
+        "  nested_int: 2\n"
+        "nested_list:\n"
+        '  - nested_str: "$$ is literal"\n'
+        "    nested_int: 3\n",
+        encoding="utf-8",
+    )
+
+    config = load_config(
+        config_initializer=TestConfigModel,
+        config_path=config_path,
+        load_dot_env_file=False,
+        set_cwd=False,
+    )
+
+    assert config.name == "regex value .*\\.md$"
+    assert config.nested.nested_str == "ends with $"
+    assert config.nested_list[0].nested_str == "$ is literal"
