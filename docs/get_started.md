@@ -21,6 +21,7 @@ mkdir graphrag_quickstart
 cd graphrag_quickstart
 python -m venv .venv
 ```
+
 ### Activate Python Virtual Environment - Unix/MacOS
 
 ```bash
@@ -78,17 +79,17 @@ In addition to setting your API key, Azure OpenAI users should set the variables
 type: chat
 model_provider: azure
 model: gpt-4.1
-deployment_name: <AZURE_DEPLOYMENT_NAME>
+azure_deployment_name: <AZURE_DEPLOYMENT_NAME>
 api_base: https://<instance>.openai.azure.com
 api_version: 2024-02-15-preview # You can customize this for other versions
 ```
 
 #### Using Managed Auth on Azure
 
-To use managed auth, edit the auth_type in your model config and *remove* the api_key line:
+To use managed auth, edit the auth_method in your model config and remove the api_key line:
 
 ```yaml
-auth_type: azure_managed_identity # Default auth_type is is api_key
+auth_method: azure_managed_identity # Default auth_method is is api_key
 ```
 
 You will also need to login with [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli) and select the subscription with your endpoint.
