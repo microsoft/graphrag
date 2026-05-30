@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Native CosmosTableProvider with namespace partitioning, transactional batch writes, and simplified AzureCosmosStorage."
-}

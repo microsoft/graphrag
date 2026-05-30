@@ -1,6 +1,11 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.1.0
+
+- minor: Native CosmosTableProvider with namespace partitioning, transactional batch writes, and simplified AzureCosmosStorage.
+- patch: Update litellm dependency.
+
 ## 3.0.9
 
 - patch: Support client side json validation.
