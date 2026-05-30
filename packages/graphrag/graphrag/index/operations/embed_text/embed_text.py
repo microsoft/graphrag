@@ -133,6 +133,13 @@ async def _flush_embedding_buffer(
             )
         )
 
+    if documents:
+        dims = {len(d.vector) for d in documents}
+        if len(dims) > 1:
+            msg = f"Inconsistent embedding dimensions: {dims}. Check that your embedding model returns consistent vector sizes."
+            callbacks.error(msg)
+            raise ValueError(msg)
+
     vector_store.load_documents(documents)
 
     if skipped > 0:
