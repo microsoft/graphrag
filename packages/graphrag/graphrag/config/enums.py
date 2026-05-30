@@ -8,6 +8,19 @@ from __future__ import annotations
 from enum import Enum
 
 
+class ModelType(str, Enum):
+    """The type of language model to use (deprecated: kept for backward compatibility)."""
+
+    Chat = "chat"
+    """Chat-based language model."""
+    Embedding = "embedding"
+    """Embedding-based language model."""
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
+
 class ReportingType(str, Enum):
     """The reporting configuration type for the pipeline."""
 
