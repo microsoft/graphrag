@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Allow non-OpenAI service_tier values in LLMCompletionResponse so indexing does not fail with LiteLLM-routed providers (e.g. Gemini via OpenRouter)."
+}

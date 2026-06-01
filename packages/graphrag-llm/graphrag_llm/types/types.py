@@ -91,6 +91,12 @@ class LLMCompletionResponse(ChatCompletion, Generic[ResponseFormat]):
     provided ResponseFormat model.
     """
 
+    # Widen OpenAI's strict `service_tier` literal. Non-OpenAI providers routed
+    # through LiteLLM (e.g. Gemini via OpenRouter) return values outside OpenAI's
+    # enum, which would otherwise fail pydantic validation when constructing this
+    # model. graphrag-llm does not use this field. See issue #2389.
+    service_tier: str | None = None  # type: ignore
+
     formatted_response: ResponseFormat | None = None  # type: ignore
     """Formatted response according to the specified response_format json schema."""
 
