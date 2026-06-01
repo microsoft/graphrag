@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 from unittest import mock
 
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 
@@ -24,6 +25,18 @@ def test_default_config() -> None:
         embedding_models=DEFAULT_EMBEDDING_MODELS,  # type: ignore
     )
     assert_graphrag_configs(actual, expected)
+
+
+def test_lancedb_vector_store_whitespace_db_uri_uses_default() -> None:
+    actual = GraphRagConfig(
+        completion_models=DEFAULT_COMPLETION_MODELS,  # type: ignore
+        embedding_models=DEFAULT_EMBEDDING_MODELS,  # type: ignore
+        vector_store={"db_uri": "   "},
+    )
+
+    # Whitespace-only values are equivalent to an omitted db_uri.
+    expected_db_uri = Path(graphrag_config_defaults.vector_store.db_uri).resolve()
+    assert actual.vector_store.db_uri == str(expected_db_uri)
 
 
 @mock.patch.dict(os.environ, {"CUSTOM_API_KEY": FAKE_API_KEY}, clear=True)

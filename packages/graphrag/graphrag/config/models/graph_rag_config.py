@@ -270,7 +270,8 @@ class GraphRagConfig(BaseModel):
         """Validate the vector store configuration."""
         store = self.vector_store
         if store.type == VectorStoreType.LanceDB:
-            if not store.db_uri or store.db_uri.strip == "":
+            # Treat whitespace-only values the same as a missing db_uri.
+            if not store.db_uri or store.db_uri.strip() == "":
                 store.db_uri = graphrag_config_defaults.vector_store.db_uri
             store.db_uri = str(Path(store.db_uri).resolve())
 

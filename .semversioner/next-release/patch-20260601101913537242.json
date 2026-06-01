@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fix whitespace-only LanceDB vector store db_uri fallback."
+}
