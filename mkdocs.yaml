@@ -62,6 +62,50 @@ nav:
           - Document: "data/operation_dulce/Operation Dulce v2 1 1.md"
 plugins:
   - search
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: zh
+          name: 中文
+          build: true
+          nav_translations:
+            Home: 首页
+            Welcome: 欢迎
+            Getting Started: 快速开始
+            Development Guide: 开发指南
+            Indexing: 索引
+            Overview: 概述
+            Architecture: 架构
+            Dataflow: 数据流
+            Methods: 方法
+            Inputs: 输入
+            Outputs: 输出
+            Custom Graphs: 自定义图
+            Prompt Tuning: 提示词调优
+            Auto Tuning: 自动调优
+            Manual Tuning: 手动调优
+            Query: 查询
+            Global Search: 全局搜索
+            Local Search: 局部搜索
+            DRIFT Search: DRIFT 搜索
+            Question Generation: 问题生成
+            Notebooks: 笔记本
+            Configuration: 配置
+            Init Command: 初始化命令
+            Detailed Configuration: 详细配置
+            Language Model Selection: 模型选择
+            CLI: CLI
+            Extras: 附录
+            Microsoft Research Blog: 微软研究博客
+            Visualization Guide: 可视化指南
+            Operation Dulce: Operation Dulce
+            About: 关于
+            Document: 文档
   - exclude-search:
       exclude:
         - "data/operation_dulce/Operation Dulce v2 1 1.md"
