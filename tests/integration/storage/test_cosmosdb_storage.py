@@ -100,8 +100,8 @@ async def test_clear():
         output = await storage.get("easter.json")
         assert output is None
 
-        assert storage._container_client is None  # noqa: SLF001
-        assert storage._database_client is None  # noqa: SLF001
+        assert storage._container_client is not None  # noqa: SLF001
+        assert storage._database_client is not None  # noqa: SLF001
     finally:
         await storage.clear()
 

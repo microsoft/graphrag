@@ -61,15 +61,15 @@ def get_update_table_providers(
 ) -> tuple[TableProvider, TableProvider, TableProvider]:
     """Get table providers for the update index run."""
     output_storage = create_storage(config.output_storage)
-    update_storage = create_storage(config.update_output_storage)
-    timestamped_storage = update_storage.child(timestamp)
-    delta_storage = timestamped_storage.child("delta")
-    previous_storage = timestamped_storage.child("previous")
-
     output_table_provider = create_table_provider(config.table_provider, output_storage)
-    previous_table_provider = create_table_provider(
-        config.table_provider, previous_storage
-    )
-    delta_table_provider = create_table_provider(config.table_provider, delta_storage)
+
+    # Build update providers via table_provider.child() so that Cosmos
+    # providers use namespace isolation while file/blob providers delegate
+    # to Storage.child() for filesystem paths.
+    update_storage = create_storage(config.update_output_storage)
+    update_base_provider = create_table_provider(config.table_provider, update_storage)
+    timestamped_provider = update_base_provider.child(timestamp)
+    delta_table_provider = timestamped_provider.child("delta")
+    previous_table_provider = timestamped_provider.child("previous")
 
     return output_table_provider, previous_table_provider, delta_table_provider

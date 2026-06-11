@@ -1,0 +1,14 @@
+{
+  "changes": [
+    {
+      "description": "Native CosmosTableProvider with namespace partitioning, transactional batch writes, and simplified AzureCosmosStorage.",
+      "type": "minor"
+    },
+    {
+      "description": "Update litellm dependency.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2026-05-28T15:17:20+00:00",
+  "version": "3.1.0"
+}

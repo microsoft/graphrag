@@ -59,15 +59,16 @@ async def run_pipeline(
         update_timestamp = time.strftime("%Y%m%d-%H%M%S")
         timestamped_storage = update_storage.child(update_timestamp)
         delta_storage = timestamped_storage.child("delta")
-        delta_table_provider = create_table_provider(
-            config.table_provider, delta_storage
+        # Build table providers via child() so Cosmos providers use namespace
+        # isolation while file/blob providers delegate to Storage.child().
+        update_base_provider = create_table_provider(
+            config.table_provider, update_storage
         )
+        update_table_provider = update_base_provider.child(update_timestamp)
+        delta_table_provider = update_table_provider.child("delta")
         # copy the previous output to a backup folder, so we can replace it with the update
         # we'll read from this later when we merge the old and new indexes
-        previous_storage = timestamped_storage.child("previous")
-        previous_table_provider = create_table_provider(
-            config.table_provider, previous_storage
-        )
+        previous_table_provider = update_table_provider.child("previous")
 
         await _copy_previous_output(output_table_provider, previous_table_provider)
 

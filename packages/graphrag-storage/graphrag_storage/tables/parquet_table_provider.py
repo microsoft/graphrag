@@ -136,3 +136,9 @@ class ParquetTableProvider(TableProvider):
                 A ParquetTable instance for row-by-row access.
         """
         return ParquetTable(self._storage, table_name, transformer, truncate=truncate)
+
+    def child(self, name: str | None) -> "ParquetTableProvider":
+        """Create a child provider backed by a child storage namespace."""
+        if name is None:
+            return self
+        return ParquetTableProvider(storage=self._storage.child(name))
