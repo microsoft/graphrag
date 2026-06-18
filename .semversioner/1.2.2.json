@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "description": "bump typer to resolve https://nvd.nist.gov/vuln/detail/CVE-2026-7246",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2026-06-18T13:46:52+00:00",
+  "version": "1.2.2"
+}
