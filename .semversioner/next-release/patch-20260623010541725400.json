@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fix vector store db_uri whitespace validation \u2014 .strip was referenced as a method object instead of being called, causing whitespace-only URIs to bypass the default fallback"
+}
