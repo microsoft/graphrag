@@ -91,6 +91,15 @@ class LanceDBVectorStore(VectorStore):
             if document.vector is None:
                 continue
 
+            actual_vector_size = len(document.vector)
+            if actual_vector_size != self.vector_size:
+                msg = (
+                    f"Vector for document '{document.id}' has dimension "
+                    f"{actual_vector_size}, but index '{self.index_name}' is "
+                    f"configured with vector_size {self.vector_size}."
+                )
+                raise ValueError(msg)
+
             ids.append(str(document.id))
             vectors.append(np.array(document.vector, dtype=np.float32))
             create_dates.append(document.create_date)
