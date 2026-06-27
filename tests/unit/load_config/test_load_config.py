@@ -155,3 +155,30 @@ def test_load_config():
     assert config_with_env_vars.nested_list[0].nested_int == 7
     assert config_with_env_vars.nested_list[1].nested_str == "list_value_2"
     assert config_with_env_vars.nested_list[1].nested_int == 8
+
+
+def test_load_config_preserves_literal_dollar_signs(tmp_path: Path) -> None:
+    """Literal dollar signs such as regex anchors should not be parsed as env vars."""
+    pattern = r".*\.md$"
+    config_path = tmp_path / "settings.yaml"
+    config_path.write_text(
+        f"""
+name: '{pattern}'
+value: 100
+nested:
+  nested_str: "nested_value"
+  nested_int: 42
+nested_list:
+  - nested_str: "list_value_1"
+    nested_int: 7
+""",
+        encoding="utf-8",
+    )
+
+    config = load_config(
+        config_initializer=TestConfigModel,
+        config_path=config_path,
+        set_cwd=False,
+    )
+
+    assert config.name == pattern
