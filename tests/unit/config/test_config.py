@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 from unittest import mock
 
+import graphrag.config.defaults as defs
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 
@@ -24,6 +25,19 @@ def test_default_config() -> None:
         embedding_models=DEFAULT_EMBEDDING_MODELS,  # type: ignore
     )
     assert_graphrag_configs(actual, expected)
+
+
+def test_blank_lancedb_uri_uses_default(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    config = GraphRagConfig(
+        completion_models=DEFAULT_COMPLETION_MODELS,  # type: ignore
+        embedding_models=DEFAULT_EMBEDDING_MODELS,  # type: ignore
+        vector_store={"type": "lancedb", "db_uri": " \t "},
+    )
+
+    assert config.vector_store.db_uri == str(
+        (tmp_path / defs.graphrag_config_defaults.vector_store.db_uri).resolve()
+    )
 
 
 @mock.patch.dict(os.environ, {"CUSTOM_API_KEY": FAKE_API_KEY}, clear=True)
