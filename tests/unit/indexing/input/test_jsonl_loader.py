@@ -40,3 +40,24 @@ async def test_jsonl_loader_one_file_with_title():
     documents = await reader.read_files()
     assert len(documents) == 3
     assert documents[0].title == "Hello"
+
+
+async def test_jsonl_loader_ignores_blank_lines(tmp_path):
+    (tmp_path / "input.jsonl").write_text(
+        '{"title":"Hello","text":"Hi"}\n\n   \n{"title":"Goodbye","text":"Bye"}\n',
+        encoding="utf-8",
+    )
+    config = InputConfig(
+        type=InputType.JsonLines,
+        title_column="title",
+    )
+    storage = create_storage(
+        StorageConfig(
+            base_dir=str(tmp_path),
+        )
+    )
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
+    assert len(documents) == 2
+    assert [doc.title for doc in documents] == ["Hello", "Goodbye"]
+    assert [doc.text for doc in documents] == ["Hi", "Bye"]

@@ -34,5 +34,5 @@ class JSONLinesFileReader(StructuredFileReader):
             - output - list with a TextDocument for each row in the file.
         """
         text = await self._storage.get(path, encoding=self._encoding)
-        rows = [json.loads(line) for line in text.splitlines()]
+        rows = [json.loads(line) for line in text.splitlines() if line.strip()]
         return await self.process_data_columns(rows, path)

@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Ignore blank lines when loading JSONL input files."
+}
