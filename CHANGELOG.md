@@ -41,7 +41,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 - patch: Add filtering, timestamp explosion, insert/count/remove/update operations to vector store API. Add top-level vector_size config to VectorStoreConfig.
 - patch: add csv table smoke tests
 - patch: add manual release instructions
-- patch: add streamming to the two first workflows
+- patch: add streaming to the two first workflows
 - patch: add support for cosmosdb output
 - patch: create_communities streaming
 - patch: create_final_documents streaming
@@ -154,7 +154,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 ## 2.1.0
 
 - minor: Add support for JSON input files.
-- minor: Updated the prompt tunning client to support csv-metadata injection and updated output file types to match the new naming convention.
+- minor: Updated the prompt tuning client to support csv-metadata injection and updated output file types to match the new naming convention.
 - patch: Add check for custom model types while config loading
 - patch: Adds general-purpose pipeline run state object.
 
@@ -260,7 +260,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 ## 0.5.0
 
 - minor: Data model changes.
-- patch: Add Parquet as part of the default emitters when not pressent
+- patch: Add Parquet as part of the default emitters when not present
 - patch: Centralized prompts and export all for easier injection.
 - patch: Cleanup of artifact outputs/schemas.
 - patch: Config and docs updates.
