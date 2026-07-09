@@ -9,11 +9,25 @@ from litellm import model_cost
 from typing_extensions import Self
 
 
-class ModelCosts(TypedDict):
+class ModelCosts(TypedDict, total=False):
     """Model costs."""
 
     input_cost_per_token: float
     output_cost_per_token: float
+    cache_read_input_token_cost: float
+    max_input_tokens: int
+    mode: str
+
+
+ADDITIONAL_MODEL_COSTS: dict[str, ModelCosts] = {
+    "minimax/MiniMax-M3": {
+        "input_cost_per_token": 0.6 / 1_000_000,
+        "output_cost_per_token": 2.4 / 1_000_000,
+        "cache_read_input_token_cost": 0.12 / 1_000_000,
+        "max_input_tokens": 1_000_000,
+        "mode": "chat",
+    },
+}
 
 
 class ModelCostRegistry:
@@ -30,7 +44,7 @@ class ModelCostRegistry:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):
-            self._model_costs = model_cost
+            self._model_costs = {**model_cost, **ADDITIONAL_MODEL_COSTS}
             self._initialized = True
 
     def register_model_costs(self, model: str, costs: ModelCosts) -> None:

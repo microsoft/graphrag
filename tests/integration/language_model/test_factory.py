@@ -15,6 +15,7 @@ from graphrag_llm.completion import (
 )
 from graphrag_llm.config import ModelConfig
 from graphrag_llm.embedding import LLMEmbedding, create_embedding, register_embedding
+from graphrag_llm.model_cost_registry import model_cost_registry
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Iterator
@@ -68,6 +69,17 @@ def test_create_custom_chat_model():
         )
     )
     assert isinstance(model, CustomChatModel)
+
+
+def test_minimax_m3_model_costs_registered():
+    costs = model_cost_registry.get_model_costs("minimax/MiniMax-M3")
+
+    assert costs is not None
+    assert costs["input_cost_per_token"] == 0.6 / 1_000_000
+    assert costs["output_cost_per_token"] == 2.4 / 1_000_000
+    assert costs["cache_read_input_token_cost"] == 0.12 / 1_000_000
+    assert costs["max_input_tokens"] == 1_000_000
+    assert costs["mode"] == "chat"
 
 
 def test_create_custom_embedding_llm():
