@@ -40,7 +40,7 @@ This is the list of summarized reports for each community.
 | full_content         | str   | LM-generated full report. |
 | rank                 | float | LM-derived relevance ranking of the report based on member entity salience
 | rating_explanation   | str   | LM-derived explanation of the rank. |
-| findings             | dict[] | LM-derived list of the top 5-10 insights from the community. Each item contains `summary` and `explanation` values. |
+| findings             | dict  | LM-derived list of the top 5-10 insights from the community. Contains `summary` and `explanation` values. |
 | full_content_json    | json  | Full JSON output as returned by the LM. Most fields are extracted into columns, but this JSON is sent for query summarization so we leave it to allow for prompt tuning to add fields/content by end users. |
 | period               | str   | Date of ingest, used for incremental update merges. ISO8601 |
 | size                 | int   | Size of the community (entity count), used for incremental update merges. |
@@ -69,8 +69,7 @@ List of document content after import.
 | title         | str   | Filename, unless otherwise configured during CSV import. |
 | text          | str   | Full text of the document. |
 | text_unit_ids | str[] | List of text units (chunks) that were parsed from the document. |
-| creation_date | str   | Creation timestamp of the source document, represented as an ISO8601 string. |
-| raw_data      | dict  | Source row/object data loaded from structured inputs (or `null` for plain text). |
+| metadata      | dict  | If specified during CSV import, this is a dict of metadata for the document. |
 
 ## entities
 List of all entities found in the data by the LM.
@@ -105,5 +104,5 @@ List of all text chunks parsed from the input documents.
 | n_tokens          | int   | Number of tokens in the chunk. This should normally match the `chunk_size` config parameter, except for the last chunk which is often shorter. |
 | document_id       | str   | ID of the document the chunk came from. |
 | entity_ids        | str[] | List of entities found in the text unit. |
-| relationship_ids  | str[] | List of relationships found in the text unit. |
+| relationships_ids | str[] | List of relationships found in the text unit. |
 | covariate_ids     | str[] | Optional list of covariates found in the text unit. |
