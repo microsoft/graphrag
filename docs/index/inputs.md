@@ -96,7 +96,7 @@ As described above, structured source fields are available via `raw_data` and ma
 
 Next, the `chunks` block needs to instruct the chunker how to handle this metadata when creating text units. By default, it is ignored. We have the following setting to include it:
 
-- `prepend_metadata`. This instructs the importer to copy the selected document fields into the start of every text chunk. Values are copied as key: value pairs on new lines.
+- `prepend_metadata`. This instructs the importer to copy the selected document fields into the start of every text chunk. Values are copied as key: value pairs on new lines. For structured inputs, the `raw_data` object contains any other fields present in the source file (for CSV, this is all other column data).
 
 ### Examples
 

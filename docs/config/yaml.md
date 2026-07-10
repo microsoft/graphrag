@@ -103,7 +103,7 @@ These settings configure how we parse documents into text chunks. This is necess
 - `encoding_model` **str** - The text encoding model to use for splitting on token boundaries.
 - `size` **int** - The max chunk size in tokens.
 - `overlap` **int** - The chunk overlap in tokens.
-- `prepend_metadata` **list[str]** - Document fields to prepend on each chunk. These can be standard document fields (`id`, `title`, `text`, `creation_date`) or fields from the source row/object stored in `raw_data`.
+- `prepend_metadata` **list[str]** - Document fields to prepend on each chunk. These can be standard document fields (`id`, `title`, `text`, `creation_date`) or fields from the source row/object stored in `raw_data`. For structured inputs, the `raw_data` object contains any other fields present in the source file (for CSV, this is all other column data).
 
 ## Outputs and Storage
 
