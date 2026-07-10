@@ -2,7 +2,7 @@
 
 ## The GraphRAG Knowledge Model
 
-The knowledge model is a specification for data outputs that conform to our data-model definition. You can find these definitions in the python/graphrag/graphrag/model folder within the GraphRAG repository. The following entity types are provided. The fields here represent the fields that are text-embedded by default.
+The knowledge model is a specification for data outputs that conform to our data-model definition. You can find these definitions in the `packages/graphrag/graphrag/data_model` folder within the GraphRAG repository. The following entity types are provided. The fields here represent the fields that are text-embedded by default.
 
 - `Document` - An input document into the system. These either represent individual rows in a CSV or individual .txt files.
 - `TextUnit` - A chunk of text to analyze. The size of these chunks, their overlap, and whether they adhere to any data boundaries may be configured below.

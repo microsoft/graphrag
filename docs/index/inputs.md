@@ -12,7 +12,7 @@ All input formats are loaded within GraphRAG and passed to the indexing pipeline
 | text          | str  | The full text of the document. |
 | title         | str  | Name of the document. Some formats allow this to be configured. |
 | creation_date | str  | The creation date of the document, represented as an ISO8601 string. This is harvested from the source file system. |
-| metadata      | dict | Optional additional document metadata. More details below. |
+| raw_data      | dict | Optional source row/object for structured inputs. This can be used for metadata prepending during chunking. |
 
 Also see the [outputs](outputs.md) documentation for the final documents table schema saved to parquet after pipeline completion.
 
@@ -26,7 +26,7 @@ We use an injectable InputReader provider class. This means you can implement an
 
 ## Formats
 
-We support three file formats out-of-the-box. This covers the overwhelming majority of use cases we have encountered. If you have a different format, we recommend either implementing your own InputReader or writing a script to convert to one of these, which are widely used and supported by many tools and libraries.
+We support multiple file formats out-of-the-box. If you have a different format, we recommend either implementing your own InputReader or writing a script to convert to one of these.
 
 ### Plain Text
 
@@ -40,11 +40,23 @@ With the CSV format you can configure the `text_column`, and `title_column` if y
 
 ### JSON
 
-JSON files (typically ending in a .json extension) contain [structured objects](https://www.json.org/). These are loaded using python's [`json.loads` method](https://docs.python.org/3/library/json.html), so your files must be properly compliant. JSON files may contain a single object in the file *or* the file may contain an array of objects at the root. We will check for and handle either of these cases. As with CSV, multiple files will be concatenated into a final table, and the `text_column` and `title_column` config options will be applied to the properties of each loaded object. Note that the specialized jsonl format produced by some libraries (one full JSON object on each line, not in an array) is not currently supported.
+JSON files (typically ending in a .json extension) contain [structured objects](https://www.json.org/). These are loaded using python's [`json.loads` method](https://docs.python.org/3/library/json.html), so your files must be properly compliant. JSON files may contain a single object in the file *or* the file may contain an array of objects at the root. We will check for and handle either of these cases. As with CSV, multiple files will be concatenated into a final table, and the `text_column` and `title_column` config options will be applied to the properties of each loaded object.
 
-## Metadata
+### JSON Lines
 
-With the structured file formats (CSV and JSON) you can configure any number of columns to be added to a persisted `metadata` field in the DataFrame. This is configured by supplying a list of column names to collect. If this is configured, the output `metadata` column will have a dict containing a key for each column, and the value of the column for that document. This metadata can optionally be used later in the GraphRAG pipeline.
+JSONL files (typically ending in a .jsonl extension) are loaded one JSON object per line. Blank/whitespace-only lines are skipped.
+
+### Parquet
+
+Parquet files (typically ending in a .parquet extension) are loaded as structured rows, similar to CSV/JSON behavior for `text_column`, `title_column`, and `id_column`.
+
+### MarkItDown
+
+MarkItDown input supports document conversion via the MarkItDown reader.
+
+## Field Prepending
+
+For structured file formats, source row/object content is preserved in `raw_data`. During chunking, you can use `chunking.prepend_metadata` to prepend selected fields into each chunk. Fields can reference standard document fields (`id`, `title`, `text`, `creation_date`) or keys from `raw_data`.
 
 ### Example
 
@@ -59,16 +71,16 @@ An early space shooter game,Space Invaders,arcade
 settings.yaml
 
 ```yaml
-input:
-    metadata: [title,tag]
+chunking:
+    prepend_metadata: [title,tag]
 ```
 
 Documents DataFrame
 
-| id                    | title          | text                        | creation_date                 | metadata                                       |
+| id                    | title          | text                        | creation_date                 | raw_data                                       |
 | --------------------- | -------------- | --------------------------- | ----------------------------- | ---------------------------------------------- |
-| (generated from text) | Hello World    | My first program            | (create date of software.csv) | { "title": "Hello World", "tag": "tutorial" }  |
-| (generated from text) | Space Invaders | An early space shooter game | (create date of software.csv) | { "title": "Space Invaders", "tag": "arcade" } |
+| (generated from text) | Hello World    | My first program            | (create date of software.csv) | { "text": "My first program", "title": "Hello World", "tag": "tutorial" }  |
+| (generated from text) | Space Invaders | An early space shooter game | (create date of software.csv) | { "text": "An early space shooter game", "title": "Space Invaders", "tag": "arcade" } |
 
 ## Chunking and Metadata
 
@@ -78,13 +90,13 @@ Imagine the following scenario: you are indexing a collection of news articles. 
 
 ### Input Config
 
-As described above, when documents are imported you can specify a list of `metadata` columns to include with each row. This must be configured for the per-chunk copying to work.
+As described above, structured source fields are available via `raw_data` and may be referenced directly by field name during chunk prepending.
 
 ### Chunking Config
 
 Next, the `chunks` block needs to instruct the chunker how to handle this metadata when creating text units. By default, it is ignored. We have the following setting to include it:
 
-- `prepend_metadata`. This instructs the importer to copy the contents of the `metadata` column for each row into the start of every single text chunk. This metadata is copied as key: value pairs on new lines.
+- `prepend_metadata`. This instructs the importer to copy the selected document fields into the start of every text chunk. Values are copied as key: value pairs on new lines.
 
 ### Examples
 
