@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fix #2389 - Loosen service_tier type to str | None to allow for more flexibility in service tier representation."
+}
