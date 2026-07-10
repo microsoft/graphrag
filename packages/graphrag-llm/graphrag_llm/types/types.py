@@ -94,6 +94,9 @@ class LLMCompletionResponse(ChatCompletion, Generic[ResponseFormat]):
     formatted_response: ResponseFormat | None = None  # type: ignore
     """Formatted response according to the specified response_format json schema."""
 
+    service_tier: str | None = None  # type: ignore
+    """Loosen the type to str | None to allow for more flexibility in service tier representation."""
+
     @computed_field
     @property
     def content(self) -> str:
