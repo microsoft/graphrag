@@ -34,5 +34,28 @@ class JSONLinesFileReader(StructuredFileReader):
             - output - list with a TextDocument for each row in the file.
         """
         text = await self._storage.get(path, encoding=self._encoding)
-        rows = [json.loads(line) for line in text.splitlines()]
+        rows: list[dict] = []
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            if not line.strip():
+                continue
+
+            try:
+                parsed_row = json.loads(line)
+            except json.JSONDecodeError:
+                logger.warning(
+                    "Skipping malformed JSONL row in %s at line %s",
+                    path,
+                    line_number,
+                )
+                continue
+
+            if isinstance(parsed_row, dict):
+                rows.append(parsed_row)
+            else:
+                logger.warning(
+                    "Skipping non-object JSONL row in %s at line %s",
+                    path,
+                    line_number,
+                )
+
         return await self.process_data_columns(rows, path)
