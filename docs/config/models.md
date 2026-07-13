@@ -28,6 +28,31 @@ embedding_models:
 
 See [Detailed Configuration](yaml.md) for more details on configuration. [View LiteLLM basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`).
 
+## MiniMax Text Models
+
+GraphRAG can call `MiniMax-M3` and `MiniMax-M2.7` through either supported API protocol. Use the `minimax` model provider for OpenAI-compatible requests and the `anthropic` model provider for Anthropic-compatible requests.
+
+| Region | Protocol | `model_provider` | `api_base` |
+| --- | --- | --- | --- |
+| Global | OpenAI-compatible | `minimax` | `https://api.minimax.io/v1` |
+| China | OpenAI-compatible | `minimax` | `https://api.minimaxi.com/v1` |
+| Global | Anthropic-compatible | `anthropic` | `https://api.minimax.io/anthropic` |
+| China | Anthropic-compatible | `anthropic` | `https://api.minimaxi.com/anthropic` |
+
+Select the provider and base URL from the same row. LiteLLM appends `/chat/completions` to the OpenAI-compatible base or `/v1/messages` to the Anthropic-compatible base, so do not append `/v1` to an Anthropic-compatible base URL.
+
+```yaml
+completion_models:
+  default_completion_model:
+    model_provider: minimax
+    model: MiniMax-M3
+    auth_method: api_key
+    api_key: ${MINIMAX_API_KEY}
+    api_base: https://api.minimax.io/v1
+```
+
+Use `MiniMax-M2.7` as the model value when that model is required. The cost registry recognizes both protocol aliases, including long-context and service-tier pricing for `MiniMax-M3`.
+
 ## Model Selection Considerations
 
 GraphRAG has been most thoroughly tested with the gpt-4 series of models from OpenAI, including gpt-4 gpt-4-turbo, gpt-4o, and gpt-4o-mini. Our [arXiv paper](https://arxiv.org/abs/2404.16130), for example, performed quality evaluation using gpt-4-turbo. As stated above, non-OpenAI models are supported through the use of LiteLLM but the suite of gpt-4 series of models from OpenAI remain the most tested and supported suite of models for GraphRAG – in other words, these are the models we know best and can help resolve issues with.

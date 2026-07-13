@@ -78,8 +78,12 @@ class DefaultMetricsProcessor(MetricsProcessor):
         response: "LLMCompletionResponse",
     ) -> None:
         """Process LMChatCompletion metrics."""
-        prompt_tokens = response.usage.prompt_tokens if response.usage else 0
-        completion_tokens = response.usage.completion_tokens if response.usage else 0
+        usage = response.usage
+        if usage is None:
+            return
+
+        prompt_tokens = usage.prompt_tokens
+        completion_tokens = usage.completion_tokens
         total_tokens = prompt_tokens + completion_tokens
 
         if total_tokens > 0:
@@ -89,13 +93,35 @@ class DefaultMetricsProcessor(MetricsProcessor):
             metrics["total_tokens"] = total_tokens
 
             model_id = f"{model_config.model_provider}/{model_config.model}"
-            model_costs = model_cost_registry.get_model_costs(model_id)
+            prompt_token_details = usage.prompt_tokens_details
+            cache_read_input_tokens = (
+                prompt_token_details.cached_tokens if prompt_token_details else 0
+            ) or 0
+            usage_extra = usage.model_extra or {}
+            cache_read_input_tokens = int(
+                usage_extra.get("cache_read_input_tokens") or cache_read_input_tokens
+            )
+            cache_creation_input_tokens = int(
+                usage_extra.get("cache_creation_input_tokens") or 0
+            )
+            service_tier = (
+                response.service_tier
+                or input_args.get("service_tier")
+                or model_config.call_args.get("service_tier")
+            )
+            calculated_costs = model_cost_registry.calculate_costs(
+                model_id,
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+                cache_read_input_tokens=cache_read_input_tokens,
+                cache_creation_input_tokens=cache_creation_input_tokens,
+                service_tier=service_tier,
+            )
 
-            if not model_costs:
+            if calculated_costs is None:
                 return
 
-            input_cost = prompt_tokens * model_costs["input_cost_per_token"]
-            output_cost = completion_tokens * model_costs["output_cost_per_token"]
+            input_cost, output_cost = calculated_costs
             total_cost = input_cost + output_cost
 
             metrics["responses_with_cost"] = 1
@@ -119,12 +145,16 @@ class DefaultMetricsProcessor(MetricsProcessor):
             metrics["total_tokens"] = prompt_tokens
 
             model_id = f"{model_config.model_provider}/{model_config.model}"
-            model_costs = model_cost_registry.get_model_costs(model_id)
+            calculated_costs = model_cost_registry.calculate_costs(
+                model_id,
+                prompt_tokens=prompt_tokens,
+                completion_tokens=0,
+            )
 
-            if not model_costs:
+            if calculated_costs is None:
                 return
 
-            input_cost = prompt_tokens * model_costs["input_cost_per_token"]
+            input_cost, _ = calculated_costs
             metrics["responses_with_cost"] = 1
             metrics["input_cost"] = input_cost
             metrics["total_cost"] = input_cost
