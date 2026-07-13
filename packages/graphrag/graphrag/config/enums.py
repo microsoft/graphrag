@@ -7,6 +7,30 @@ from __future__ import annotations
 
 from enum import Enum
 
+import warnings
+
+
+class ModelType(str, Enum):
+    """Backward-compatible alias for model configuration type.
+
+    .. deprecated::
+        Use ``LLMProviderType`` from ``graphrag_llm.config.types`` instead.
+        This alias is kept for backward compatibility with v2.x APIs.
+    """
+
+    LLM = "llm"
+    Embedding = "embedding"
+
+    @classmethod
+    def _missing_(cls, value: object) -> "ModelType | None":
+        warnings.warn(
+            f"Unknown ModelType value '{value}'. "
+            "Consider using graphrag_llm.config.types.LLMProviderType instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return None
+
 
 class ReportingType(str, Enum):
     """The reporting configuration type for the pipeline."""
