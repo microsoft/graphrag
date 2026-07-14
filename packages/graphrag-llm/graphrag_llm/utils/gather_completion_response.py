@@ -30,7 +30,7 @@ def gather_completion_response(
     if isinstance(response, Iterator):
         return "".join(chunk.choices[0].delta.content or "" for chunk in response)
 
-    return response.choices[0].message.content or ""
+    return response.content
 
 
 async def gather_completion_response_async(
@@ -54,4 +54,4 @@ async def gather_completion_response_async(
 
         return gathered_content
 
-    return response.choices[0].message.content or ""
+    return response.content

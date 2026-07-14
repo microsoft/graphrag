@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fix structured response parsing when providers return tool calls with empty message content"
+}
