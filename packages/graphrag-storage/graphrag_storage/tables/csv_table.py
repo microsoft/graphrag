@@ -105,7 +105,7 @@ class CSVTable(Table):
             with Path.open(file_path, "r", encoding=self._encoding) as f:
                 reader = csv.DictReader(f)
                 for row in reader:
-                    yield _apply_transformer(self._transformer, row)  # noqa: ASYNC119
+                    yield _apply_transformer(self._transformer, row)
 
     async def length(self) -> int:
         """Return the number of rows in the table."""
