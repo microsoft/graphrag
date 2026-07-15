@@ -1,15 +1,45 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
+# Dependabot configuration for the GraphRAG uv workspace monorepo.
 # Please see the documentation for all configuration options:
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # Python dependencies managed by uv. The workspace root (/) holds the shared
+  # uv.lock and the dev dependency group; each workspace member manifest lives
+  # under packages/*. The unified-search-app project is intentionally excluded
+  # (it lives at the repo root, not under packages/, and is maintained separately).
+  - package-ecosystem: "uv"
+    directories:
+      - "/"
+      - "/packages/*"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      # Azure SDKs tend to move together; keep them in a single PR.
+      azure:
+        patterns:
+          - "azure-*"
+      # Development and release tooling (lint, type-check, test, docs, release).
+      dev-tooling:
+        patterns:
+          - "pytest*"
+          - "ruff"
+          - "pyright"
+          - "ipykernel"
+          - "jupyter"
+          - "nbconvert"
+          - "coverage"
+          - "deptry"
+          - "poethepoet"
+          - "semversioner"
+          - "pandas-stubs"
+          - "mkdocs*"
   - package-ecosystem: "github-actions"
-    # Workflow files stored in the default location of `.github/workflows`. (You don't need to specify `/.github/workflows` for `directory`. You can use `directory: "/"`.)
+    # Workflow files stored in the default location of `.github/workflows`.
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
