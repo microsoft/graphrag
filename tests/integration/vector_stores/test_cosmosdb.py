@@ -76,24 +76,21 @@ def test_clear():
         database_name="testclear",
         index_name="testclear",
     )
-    try:
-        vector_store.connect()
+    vector_store.connect()
 
-        doc = VectorStoreDocument(
-            id="test",
-            vector=[0.1, 0.2, 0.3, 0.4, 0.5],
-        )
+    doc = VectorStoreDocument(
+        id="test",
+        vector=[0.1, 0.2, 0.3, 0.4, 0.5],
+    )
 
-        vector_store.create_index()
-        vector_store.load_documents([doc])
-        result = vector_store.search_by_id("test")
-        assert result.id == "test"
+    vector_store.create_index()
+    vector_store.load_documents([doc])
+    result = vector_store.search_by_id("test")
+    assert result.id == "test"
 
-        # Clear and verify document is removed
-        vector_store.clear()
-        assert vector_store._database_exists() is False  # noqa: SLF001
-    finally:
-        pass
+    # Clear and verify document is removed
+    vector_store.clear()
+    assert vector_store._database_exists() is False  # noqa: SLF001
 
 
 def test_vector_store_customization():

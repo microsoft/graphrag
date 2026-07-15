@@ -92,4 +92,4 @@ def _update_and_merge_text_units(
         initial_id, initial_id + len(delta_text_units)
     )
     # Merge the final text units
-    return pd.concat([old_text_units, delta_text_units], ignore_index=True, copy=False)
+    return pd.concat([old_text_units, delta_text_units], ignore_index=True)

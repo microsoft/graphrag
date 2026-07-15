@@ -19,7 +19,6 @@ def finalize_community_reports(
         communities.loc[:, ["community", "parent", "children", "size", "period"]],
         on="community",
         how="left",
-        copy=False,
     )
 
     community_reports["community"] = community_reports["community"].astype(int)

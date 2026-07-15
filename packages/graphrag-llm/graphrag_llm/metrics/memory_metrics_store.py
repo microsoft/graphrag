@@ -74,7 +74,7 @@ class MemoryMetricsStore(MetricsStore):
 
     @property
     def id(self) -> str:
-        """Get the ID of the metrics store."""
+        """The ID of the metrics store."""
         return self._id
 
     def update_metrics(self, *, metrics: "Metrics") -> None:
