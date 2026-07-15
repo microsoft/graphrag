@@ -44,7 +44,7 @@ dependencies = [
     "graphrag-storage==3.1.0",
     "graphrag-vectors==3.1.0",
     "graspologic-native~=1.2",
-    "json-repair~=0.30",
+    "json-repair~=0.60",
     "networkx~=3.4",
     "nltk~=3.9",
     "numpy~=2.1",
