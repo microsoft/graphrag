@@ -203,3 +203,62 @@ def test_dynamic_community_selection_handles_str_children():
         assert child_id in selector.reports, (
             f"Child {child} (as '{child_id}') should be found in reports"
         )
+
+
+def test_dynamic_community_selection_no_level_zero():
+    """DynamicCommunitySelection should not crash when no communities exist at level 0."""
+    communities = [
+        Community(
+            id="comm-1",
+            short_id="1",
+            title="Community at Level 1",
+            level="1",
+            parent="",
+            children=[],
+        ),
+        Community(
+            id="comm-2",
+            short_id="2",
+            title="Community at Level 2",
+            level="2",
+            parent="",
+            children=[],
+        ),
+    ]
+
+    reports = [
+        CommunityReport(
+            id="report-1",
+            short_id="1",
+            title="Report 1",
+            community_id="1",
+            summary="Summary 1",
+            full_content="Full content 1",
+            rank=1.0,
+        ),
+        CommunityReport(
+            id="report-2",
+            short_id="2",
+            title="Report 2",
+            community_id="2",
+            summary="Summary 2",
+            full_content="Full content 2",
+            rank=1.0,
+        ),
+    ]
+
+    model = create_mock_model()
+    tokenizer = create_mock_tokenizer()
+
+    selector = DynamicCommunitySelection(
+        community_reports=reports,
+        communities=communities,
+        model=model,
+        tokenizer=tokenizer,
+        threshold=1,
+        keep_parent=False,
+        max_level=2,
+    )
+
+    assert selector.starting_communities == []
+    assert "0" not in selector.levels
