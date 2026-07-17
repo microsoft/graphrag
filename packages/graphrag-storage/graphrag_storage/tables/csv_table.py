@@ -103,8 +103,8 @@ class CSVTable(Table):
         if isinstance(self._storage, FileStorage):
             file_path = self._storage.get_path(self._file_key)
             with Path.open(file_path, "r", encoding=self._encoding) as f:
-                rows = list(csv.DictReader(f))
-            for row in rows:
+                reader = csv.DictReader(f)
+            for row in reader:
                 yield _apply_transformer(self._transformer, row)
 
     async def length(self) -> int:
