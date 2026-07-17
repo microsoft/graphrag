@@ -6,7 +6,6 @@
 import json
 import logging
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
 
 from azure.identity import DefaultAzureCredential
@@ -97,6 +96,7 @@ class BlobWorkflowLogger(logging.Handler):
         if self._base_dir:
             blob_path = f"{self._base_dir.strip('/')}/{blob_path}"
         self._blob_name = blob_path
+        self._blob_client = self._blob_service_client.get_blob_client(
             self._container_name, self._blob_name
         )
         if not self._blob_client.exists():

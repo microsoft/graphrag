@@ -4,7 +4,6 @@
 """Unit tests for the BlobWorkflowLogger."""
 
 import json
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -81,7 +80,7 @@ def test_init_uses_provided_blob_name(mock_blob_service, mock_credential):
     """Test that the provided blob name is honored and nested under base_dir."""
     logger = _make_logger()
 
-    assert logger._blob_name == str(Path("logs") / "test.logs.json")  # noqa: SLF001
+    assert logger._blob_name == "logs/test.logs.json"  # noqa: SLF001
 
 
 def test_rotate_blob_does_not_reinitialize_handler(mock_blob_service, mock_credential):
