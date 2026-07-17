@@ -15,7 +15,10 @@ from graphrag.data_model.covariate import Covariate
 from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
-from graphrag.query.context_builder.builders import ContextBuilderResult
+from graphrag.query.context_builder.builders import (
+    ContextBuilderResult,
+    LocalContextBuilder,
+)
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )
@@ -40,7 +43,6 @@ from graphrag.query.input.retrieval.community_reports import (
     get_candidate_communities,
 )
 from graphrag.query.input.retrieval.text_units import get_candidate_text_units
-from graphrag.query.structured_search.base import LocalContextBuilder
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 if TYPE_CHECKING:

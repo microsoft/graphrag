@@ -10,7 +10,10 @@ from graphrag_llm.tokenizer import Tokenizer
 from graphrag.data_model.community import Community
 from graphrag.data_model.community_report import CommunityReport
 from graphrag.data_model.entity import Entity
-from graphrag.query.context_builder.builders import ContextBuilderResult
+from graphrag.query.context_builder.builders import (
+    ContextBuilderResult,
+    GlobalContextBuilder,
+)
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )
@@ -20,7 +23,6 @@ from graphrag.query.context_builder.conversation_history import (
 from graphrag.query.context_builder.dynamic_community_selection import (
     DynamicCommunitySelection,
 )
-from graphrag.query.structured_search.base import GlobalContextBuilder
 from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 

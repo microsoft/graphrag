@@ -223,4 +223,7 @@ class DRIFTPrimer:
         primer_folds = self.config.primer_folds or 1  # Ensure at least one fold
         if primer_folds == 1:
             return [reports]
-        return [pd.DataFrame(fold) for fold in np.array_split(reports, primer_folds)]
+        return [
+            reports.iloc[indices]
+            for indices in np.array_split(np.arange(len(reports)), primer_folds)
+        ]
