@@ -51,7 +51,7 @@ class WorkflowProfiler:
 
     @property
     def metrics(self) -> WorkflowMetrics:
-        """Return collected metrics as a WorkflowMetrics dataclass."""
+        """The collected metrics as a WorkflowMetrics dataclass."""
         return WorkflowMetrics(
             overall=self._elapsed,
             peak_memory_bytes=self._peak_memory,

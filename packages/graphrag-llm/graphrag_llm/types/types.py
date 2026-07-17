@@ -100,7 +100,7 @@ class LLMCompletionResponse(ChatCompletion, Generic[ResponseFormat]):
     @computed_field
     @property
     def content(self) -> str:
-        """Get the content of the first choice message."""
+        """The content of the first choice message."""
         return self.choices[0].message.content or ""
 
 
@@ -191,13 +191,13 @@ class LLMEmbeddingResponse(CreateEmbeddingResponse):
     @computed_field
     @property
     def embeddings(self) -> list[list[float]]:
-        """Get the embeddings as a list of lists of floats."""
+        """The embeddings as a list of lists of floats."""
         return [data.embedding for data in self.data]
 
     @computed_field
     @property
     def first_embedding(self) -> list[float]:
-        """Get the first embedding."""
+        """The first embedding."""
         return self.embeddings[0] if self.embeddings else []
 
 

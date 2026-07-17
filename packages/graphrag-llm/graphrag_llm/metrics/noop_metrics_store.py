@@ -20,7 +20,7 @@ class NoopMetricsStore(MetricsStore):
 
     @property
     def id(self) -> str:
-        """Get the ID of the metrics store."""
+        """The ID of the metrics store."""
         return ""
 
     def update_metrics(self, *, metrics: Metrics) -> None:
