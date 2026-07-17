@@ -41,7 +41,7 @@ class MetricsStore(ABC):
     @property
     @abstractmethod
     def id(self) -> str:
-        """Get the ID of the metrics store."""
+        """The ID of the metrics store."""
         raise NotImplementedError
 
     @abstractmethod

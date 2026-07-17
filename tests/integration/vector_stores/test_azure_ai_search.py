@@ -121,7 +121,7 @@ class TestAzureAISearchVectorStore:
         )
         assert len(vector_results) == 2
         assert vector_results[0].document.id == "doc1"
-        assert vector_results[0].score == 0.9
+        assert vector_results[0].score == pytest.approx(0.9)
 
         # Define a simple text embedder function for testing
         def mock_embedder(text: str) -> list[float]:
@@ -190,7 +190,7 @@ class TestAzureAISearchVectorStore:
         )
         assert len(vector_results) == 2
         assert vector_results[0].document.id == "doc1"
-        assert vector_results[0].score == 0.9
+        assert vector_results[0].score == pytest.approx(0.9)
 
         # Define a simple text embedder function for testing
         def mock_embedder(text: str) -> list[float]:
