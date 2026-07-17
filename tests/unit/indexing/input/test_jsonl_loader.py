@@ -40,3 +40,20 @@ async def test_jsonl_loader_one_file_with_title():
     documents = await reader.read_files()
     assert len(documents) == 3
     assert documents[0].title == "Hello"
+
+
+async def test_jsonl_loader_skips_blank_and_invalid_rows():
+    config = InputConfig(
+        type=InputType.JsonLines,
+        title_column="title",
+    )
+    storage = create_storage(
+        StorageConfig(
+            base_dir="tests/unit/indexing/input/data/jsonl-with-invalid-and-blank-lines",
+        )
+    )
+    reader = create_input_reader(config, storage)
+    documents = await reader.read_files()
+
+    assert len(documents) == 3
+    assert [document.title for document in documents] == ["Hello", "Goodbye", "Adios"]

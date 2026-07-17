@@ -1,0 +1,7 @@
+{ "title": "Hello", "text": "Hi how are you today?"}
+
+not json
+{ "title": "Goodbye", "text": "I'm outta here"}
+   
+["not", "an", "object"]
+{ "title": "Adios", "text": "See you later"}
