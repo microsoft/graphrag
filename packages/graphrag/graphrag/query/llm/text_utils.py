@@ -6,8 +6,9 @@
 import json
 import logging
 import re
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from itertools import islice
+from typing import TypeVar
 
 from graphrag_llm.tokenizer import Tokenizer
 from json_repair import repair_json
@@ -16,8 +17,10 @@ from graphrag.tokenizer.get_tokenizer import get_tokenizer
 
 logger = logging.getLogger(__name__)
 
+_T = TypeVar("_T")
 
-def batched(iterable: Iterator, n: int) -> Iterator[tuple]:
+
+def batched(iterable: Iterable[_T], n: int) -> Iterator[tuple[_T, ...]]:
     """
     Batch data into tuples of length n. The last batch may be shorter.
 
