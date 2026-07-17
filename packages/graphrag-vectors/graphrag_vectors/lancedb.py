@@ -96,7 +96,7 @@ class LanceDBVectorStore(VectorStore):
                 msg = (
                     f"Vector for document '{document.id}' has dimension "
                     f"{actual_vector_size}, but index '{self.index_name}' is "
-                    f"configured with vector_size {self.vector_size}."
+                    f"configured with vector_size {self.vector_size}"
                 )
                 raise ValueError(msg)
 
