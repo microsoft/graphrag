@@ -102,10 +102,13 @@ class CSVTable(Table):
         """Implement async iteration over rows."""
         if isinstance(self._storage, FileStorage):
             file_path = self._storage.get_path(self._file_key)
-            with Path.open(file_path, "r", encoding=self._encoding) as f:
+            f = Path.open(file_path, "r", encoding=self._encoding)
+            try:
                 reader = csv.DictReader(f)
-            for row in reader:
-                yield _apply_transformer(self._transformer, row)
+                for row in reader:
+                    yield _apply_transformer(self._transformer, row)
+            finally:
+                f.close()
 
     async def length(self) -> int:
         """Return the number of rows in the table."""
