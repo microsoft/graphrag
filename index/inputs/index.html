@@ -855,21 +855,54 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#json-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parquet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#markitdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MarkItDown
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#metadata" class="md-nav__link">
+  <a href="#field-prepending" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Metadata
+        Field Prepending
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Metadata">
+    <nav class="md-nav" aria-label="Field Prepending">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2084,21 +2117,54 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#json-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parquet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parquet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#markitdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MarkItDown
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#metadata" class="md-nav__link">
+  <a href="#field-prepending" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Metadata
+        Field Prepending
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Metadata">
+    <nav class="md-nav" aria-label="Field Prepending">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2260,9 +2326,9 @@
 <td>The creation date of the document, represented as an ISO8601 string. This is harvested from the source file system.</td>
 </tr>
 <tr>
-<td>metadata</td>
+<td>raw_data</td>
 <td>dict</td>
-<td>Optional additional document metadata. More details below.</td>
+<td>Optional source row/object for structured inputs. This can be used for metadata prepending during chunking.</td>
 </tr>
 </tbody>
 </table>
@@ -2272,16 +2338,22 @@
 <h2 id="custom-file-handling">Custom File Handling</h2>
 <p>We use an injectable InputReader provider class. This means you can implement any input file handling you want in a class that extends InputReader and register it with the InputReaderFactory. See the <a href="https://microsoft.github.io/graphrag/index/architecture/">architecture page</a> for more info on our standard provider pattern.</p>
 <h2 id="formats">Formats</h2>
-<p>We support three file formats out-of-the-box. This covers the overwhelming majority of use cases we have encountered. If you have a different format, we recommend either implementing your own InputReader or writing a script to convert to one of these, which are widely used and supported by many tools and libraries.</p>
+<p>We support multiple file formats out-of-the-box. If you have a different format, we recommend either implementing your own InputReader or writing a script to convert to one of these.</p>
 <h3 id="plain-text">Plain Text</h3>
 <p>Plain text files (typically ending in .txt file extension). With plain text files we import the entire file contents as the <code>text</code> field, and the <code>title</code> is always the filename.</p>
 <h3 id="comma-delimited">Comma-delimited</h3>
 <p>CSV files (typically ending in a .csv extension). These are loaded using pandas' <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html"><code>read_csv</code> method</a> with default options. Each row in a CSV file is treated as a single document. If you have multiple CSV files in your input folder, they will be concatenated into a single resulting <code>documents</code> DataFrame.</p>
 <p>With the CSV format you can configure the <code>text_column</code>, and <code>title_column</code> if your data has structured content you would prefer to use. If you do not configure these within the <code>input</code> block of your settings.yaml, the title will be the filename as described in the schema above. The <code>text_column</code> is assumed to be "text" in your file if not configured specifically. We will also look for and use an "id" column if present, otherwise the ID will be generated as described above.</p>
 <h3 id="json">JSON</h3>
-<p>JSON files (typically ending in a .json extension) contain <a href="https://www.json.org/">structured objects</a>. These are loaded using python's <a href="https://docs.python.org/3/library/json.html"><code>json.loads</code> method</a>, so your files must be properly compliant. JSON files may contain a single object in the file <em>or</em> the file may contain an array of objects at the root. We will check for and handle either of these cases. As with CSV, multiple files will be concatenated into a final table, and the <code>text_column</code> and <code>title_column</code> config options will be applied to the properties of each loaded object. Note that the specialized jsonl format produced by some libraries (one full JSON object on each line, not in an array) is not currently supported.</p>
-<h2 id="metadata">Metadata</h2>
-<p>With the structured file formats (CSV and JSON) you can configure any number of columns to be added to a persisted <code>metadata</code> field in the DataFrame. This is configured by supplying a list of column names to collect. If this is configured, the output <code>metadata</code> column will have a dict containing a key for each column, and the value of the column for that document. This metadata can optionally be used later in the GraphRAG pipeline.</p>
+<p>JSON files (typically ending in a .json extension) contain <a href="https://www.json.org/">structured objects</a>. These are loaded using python's <a href="https://docs.python.org/3/library/json.html"><code>json.loads</code> method</a>, so your files must be properly compliant. JSON files may contain a single object in the file <em>or</em> the file may contain an array of objects at the root. We will check for and handle either of these cases. As with CSV, multiple files will be concatenated into a final table, and the <code>text_column</code> and <code>title_column</code> config options will be applied to the properties of each loaded object.</p>
+<h3 id="json-lines">JSON Lines</h3>
+<p>JSONL files (typically ending in a .jsonl extension) are loaded one JSON object per line. Blank/whitespace-only lines are skipped.</p>
+<h3 id="parquet">Parquet</h3>
+<p>Parquet files (typically ending in a .parquet extension) are loaded as structured rows, similar to CSV/JSON behavior for <code>text_column</code>, <code>title_column</code>, and <code>id_column</code>.</p>
+<h3 id="markitdown">MarkItDown</h3>
+<p>MarkItDown input supports document conversion via the MarkItDown reader.</p>
+<h2 id="field-prepending">Field Prepending</h2>
+<p>For structured file formats, source row/object content is preserved in <code>raw_data</code>. During chunking, you can use <code>chunking.prepend_metadata</code> to prepend selected fields into each chunk. Fields can reference standard document fields (<code>id</code>, <code>title</code>, <code>text</code>, <code>creation_date</code>) or keys from <code>raw_data</code>.</p>
 <h3 id="example">Example</h3>
 <p>software.csv</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>text,title,tag
@@ -2289,8 +2361,8 @@
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>An early space shooter game,Space Invaders,arcade
 </code></pre></div>
 <p>settings.yaml</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">input</span><span class="p">:</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">title</span><span class="p p-Indicator">,</span><span class="nv">tag</span><span class="p p-Indicator">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">chunking</span><span class="p">:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">prepend_metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">title</span><span class="p p-Indicator">,</span><span class="nv">tag</span><span class="p p-Indicator">]</span>
 </code></pre></div>
 <p>Documents DataFrame</p>
 <table>
@@ -2300,7 +2372,7 @@
 <th>title</th>
 <th>text</th>
 <th>creation_date</th>
-<th>metadata</th>
+<th>raw_data</th>
 </tr>
 </thead>
 <tbody>
@@ -2309,14 +2381,14 @@
 <td>Hello World</td>
 <td>My first program</td>
 <td>(create date of software.csv)</td>
-<td>{ "title": "Hello World", "tag": "tutorial" }</td>
+<td>{ "text": "My first program", "title": "Hello World", "tag": "tutorial" }</td>
 </tr>
 <tr>
 <td>(generated from text)</td>
 <td>Space Invaders</td>
 <td>An early space shooter game</td>
 <td>(create date of software.csv)</td>
-<td>{ "title": "Space Invaders", "tag": "arcade" }</td>
+<td>{ "text": "An early space shooter game", "title": "Space Invaders", "tag": "arcade" }</td>
 </tr>
 </tbody>
 </table>
@@ -2324,11 +2396,11 @@
 <p>As described on the <a href="../default_dataflow/#phase-1-compose-textunits">default dataflow</a> page, documents are <em>chunked</em> into smaller "text units" for processing. This is done because document content size often exceeds the available context window for a given language model. There are a handful of settings you can adjust for this chunking, the most relevant being the <code>chunk_size</code> and <code>overlap</code>. We also support a metadata processing scheme that can improve indexing results for some use cases. We will describe this feature in detail here.</p>
 <p>Imagine the following scenario: you are indexing a collection of news articles. Each article text starts with a headline and author, and then proceeds with the content. When documents are chunked, they are split evenly according to your configured chunk size. In other words, the first <em>n</em> tokens are read into a text unit, and then the next <em>n</em>, until the end of the content. This means that front matter at the beginning of the document (such as the headline and author in this example) <em>is not copied to each chunk</em>. It only exists in the first chunk. When we later retrieve those chunks for summarization, they may therefore be missing shared information about the source document that should always be provided to the model. We have configuration options to copy repeated content into each text unit to address this issue.</p>
 <h3 id="input-config">Input Config</h3>
-<p>As described above, when documents are imported you can specify a list of <code>metadata</code> columns to include with each row. This must be configured for the per-chunk copying to work.</p>
+<p>As described above, structured source fields are available via <code>raw_data</code> and may be referenced directly by field name during chunk prepending.</p>
 <h3 id="chunking-config">Chunking Config</h3>
 <p>Next, the <code>chunks</code> block needs to instruct the chunker how to handle this metadata when creating text units. By default, it is ignored. We have the following setting to include it:</p>
 <ul>
-<li><code>prepend_metadata</code>. This instructs the importer to copy the contents of the <code>metadata</code> column for each row into the start of every single text chunk. This metadata is copied as key: value pairs on new lines.</li>
+<li><code>prepend_metadata</code>. This instructs the importer to copy the selected document fields into the start of every text chunk. Values are copied as key: value pairs on new lines. For structured inputs, the <code>raw_data</code> object contains any other fields present in the source file (for CSV, this is all other column data).</li>
 </ul>
 <h3 id="examples">Examples</h3>
 <p>The following are several examples to help illustrate how chunking config and metadata prepending works for each file format. Note that we are using word count here as "tokens" for the illustration, but language model tokens are <a href="https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them">not equivalent to words</a>.</p>

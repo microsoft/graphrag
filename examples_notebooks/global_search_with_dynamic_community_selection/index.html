@@ -2585,8 +2585,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2607,9 +2607,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.models.language_model_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LanguageModelConfig</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.language_model.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.indexer_adapters</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">read_indexer_communities</span><span class="p">,</span>
     <span class="n">read_indexer_entities</span><span class="p">,</span>
@@ -2619,13 +2616,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">GlobalCommunityContext</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.query.structured_search.global_search.search</span><span class="w"> </span><span class="kn">import</span> <span class="n">GlobalSearch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag_llm.completion</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_completion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag_llm.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelConfig</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-2">import os
 
 import pandas as pd
-from graphrag.config.enums import ModelType
-from graphrag.config.models.language_model_config import LanguageModelConfig
-from graphrag.language_model.manager import ModelManager
 from graphrag.query.indexer_adapters import (
     read_indexer_communities,
     read_indexer_entities,
@@ -2634,31 +2630,9 @@ from graphrag.query.indexer_adapters import (
 from graphrag.query.structured_search.global_search.community_context import (
     GlobalCommunityContext,
 )
-from graphrag.query.structured_search.global_search.search import GlobalSearch</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 4</span>
-<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> os
-<span class="ansi-green-fg">      2</span> 
-<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> pandas <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> pd
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.config.enums <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelType
-<span class="ansi-green-fg">      5</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.config.models.language_model_config <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LanguageModelConfig
-<span class="ansi-green-fg">      6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.language_model.manager <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelManager
-<span class="ansi-green-fg">      7</span> from graphrag.query.indexer_adapters import (
-
-<span class="ansi-red-fg">ImportError</span>: cannot import name 'ModelType' from 'graphrag.config.enums' (/home/runner/work/graphrag/graphrag/packages/graphrag/graphrag/config/enums.py)</pre>
+from graphrag.query.structured_search.global_search.search import GlobalSearch
+from graphrag_llm.completion import create_completion
+from graphrag_llm.config import ModelConfig</div>
 </div>
 </div>
 </div>
@@ -2686,8 +2660,8 @@ from graphrag.query.structured_search.global_search.search import GlobalSearch</
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2709,18 +2683,13 @@ from graphrag.query.structured_search.global_search.search import GlobalSearch</
 
 <span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"GRAPHRAG_API_KEY"</span><span class="p">]</span>
 
-<span class="n">config</span> <span class="o">=</span> <span class="n">LanguageModelConfig</span><span class="p">(</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="n">ModelType</span><span class="o">.</span><span class="n">Chat</span><span class="p">,</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">ModelConfig</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s2">"litellm"</span><span class="p">,</span>
     <span class="n">model_provider</span><span class="o">=</span><span class="s2">"openai"</span><span class="p">,</span>
     <span class="n">model</span><span class="o">=</span><span class="s2">"gpt-4.1"</span><span class="p">,</span>
-    <span class="n">max_retries</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="p">()</span><span class="o">.</span><span class="n">get_or_create_chat_model</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">"global_search"</span><span class="p">,</span>
-    <span class="n">model_type</span><span class="o">=</span><span class="n">ModelType</span><span class="o">.</span><span class="n">Chat</span><span class="p">,</span>
-    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">create_completion</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
 <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">get_tokenizer</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 </pre></div>
@@ -2728,45 +2697,15 @@ from graphrag.query.structured_search.global_search.search import GlobalSearch</
 
 api_key = os.environ["GRAPHRAG_API_KEY"]
 
-config = LanguageModelConfig(
-    api_key=api_key,
-    type=ModelType.Chat,
+config = ModelConfig(
+    type="litellm",
     model_provider="openai",
     model="gpt-4.1",
-    max_retries=20,
+    api_key=api_key,
 )
-model = ModelManager().get_or_create_chat_model(
-    name="global_search",
-    model_type=ModelType.Chat,
-    config=config,
-)
+model = create_completion(config)
 
 tokenizer = get_tokenizer(config)</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 5</span>
-<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.tokenizer.get_tokenizer <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> get_tokenizer
-<span class="ansi-green-fg">      2</span> 
-<span class="ansi-green-fg">      3</span> api_key = os.environ[<span class="ansi-yellow-fg">"GRAPHRAG_API_KEY"</span>]
-<span class="ansi-green-fg">      4</span> 
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> config = LanguageModelConfig(
-<span class="ansi-green-fg">      6</span>     api_key=api_key,
-<span class="ansi-green-fg">      7</span>     type=ModelType.Chat,
-<span class="ansi-green-fg">      8</span>     model_provider=<span class="ansi-yellow-fg">"openai"</span>,
-
-<span class="ansi-red-fg">NameError</span>: name 'LanguageModelConfig' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2902,21 +2841,144 @@ report_df.head()</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 5</span>
-<span class="ansi-green-fg">      1</span> community_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_TABLE}.parquet")
-<span class="ansi-green-fg">      2</span> entity_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_TABLE}.parquet")
-<span class="ansi-green-fg">      3</span> report_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_REPORT_TABLE}.parquet")
-<span class="ansi-green-fg">      4</span> 
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> communities = read_indexer_communities(community_df, report_df)
-<span class="ansi-green-fg">      6</span> reports = read_indexer_reports(
-<span class="ansi-green-fg">      7</span>     report_df,
-<span class="ansi-green-fg">      8</span>     community_df,
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Total report count: 10
+Report count after filtering by community level None: 10
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="ansi-red-fg">NameError</span>: name 'read_indexer_communities' is not defined</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>human_readable_id</th>
+<th>community</th>
+<th>level</th>
+<th>parent</th>
+<th>children</th>
+<th>title</th>
+<th>summary</th>
+<th>full_content</th>
+<th>rank</th>
+<th>rating_explanation</th>
+<th>findings</th>
+<th>full_content_json</th>
+<th>period</th>
+<th>size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>9785e64b429dacd70cce8238051f3438b387ebcd6920ef...</td>
+<td>7</td>
+<td>7</td>
+<td>1</td>
+<td>0</td>
+<td>[]</td>
+<td>Paranormal Military Squad and Operation Dulce</td>
+<td>This community centers on the Paranormal Milit...</td>
+<td># Paranormal Military Squad and Operation Dulc...</td>
+<td>8.5</td>
+<td>The impact severity rating is high due to the ...</td>
+<td>[{'explanation': 'The Paranormal Military Squa...</td>
+<td>{\n    "title": "Paranormal Military Squad and...</td>
+<td>2026-01-13</td>
+<td>4</td>
+</tr>
+<tr>
+<th>1</th>
+<td>212c8ff1796bff731abe3d54f3216511ab15d5fb0d97eb...</td>
+<td>8</td>
+<td>8</td>
+<td>1</td>
+<td>0</td>
+<td>[]</td>
+<td>Paranormal Military Squad: Leadership and Scie...</td>
+<td>This community centers on the Paranormal Milit...</td>
+<td># Paranormal Military Squad: Leadership and Sc...</td>
+<td>8.0</td>
+<td>The community poses a high impact due to its i...</td>
+<td>[{'explanation': 'Taylor Cruz, often referred ...</td>
+<td>{\n    "title": "Paranormal Military Squad: Le...</td>
+<td>2026-01-13</td>
+<td>3</td>
+</tr>
+<tr>
+<th>2</th>
+<td>dbff99eaacade8ac4337a9bde0f533313445f0643ab3d0...</td>
+<td>9</td>
+<td>9</td>
+<td>1</td>
+<td>0</td>
+<td>[]</td>
+<td>Paranormal Military Squad and Operation: Dulce...</td>
+<td>This community centers around the Paranormal M...</td>
+<td># Paranormal Military Squad and Operation: Dul...</td>
+<td>8.5</td>
+<td>The community poses a high impact severity due...</td>
+<td>[{'explanation': 'The military complex is the ...</td>
+<td>{\n    "title": "Paranormal Military Squad and...</td>
+<td>2026-01-13</td>
+<td>3</td>
+</tr>
+<tr>
+<th>3</th>
+<td>b6e8ab1ac8ecc605bbec09ad78819b95ac08d62c5a9991...</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-1</td>
+<td>[7, 8, 9]</td>
+<td>Paranormal Military Squad and Operation: Dulce</td>
+<td>This community centers on the Paranormal Milit...</td>
+<td># Paranormal Military Squad and Operation: Dul...</td>
+<td>8.5</td>
+<td>The community poses a high impact due to its e...</td>
+<td>[{'explanation': 'Taylor Cruz is the central a...</td>
+<td>{\n    "title": "Paranormal Military Squad and...</td>
+<td>2026-01-13</td>
+<td>10</td>
+</tr>
+<tr>
+<th>4</th>
+<td>97038bee58306d13b709b615fb2b816cae0c11273a9e73...</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>-1</td>
+<td>[]</td>
+<td>Team of Agents Investigating Dulce Base</td>
+<td>This community centers on a specialized team o...</td>
+<td># Team of Agents Investigating Dulce Base\n\nT...</td>
+<td>7.5</td>
+<td>The impact severity rating is high due to the ...</td>
+<td>[{'explanation': 'The core of this community i...</td>
+<td>{\n    "title": "Team of Agents Investigating ...</td>
+<td>2026-01-13</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -2935,8 +2997,8 @@ report_df.head()</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2977,27 +3039,6 @@ report_df.head()</div>
         "tokenizer": tokenizer,
     },
 )</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> context_builder = GlobalCommunityContext(
-<span class="ansi-green-fg">      2</span>     community_reports=reports,
-<span class="ansi-green-fg">      3</span>     communities=communities,
-<span class="ansi-green-fg">      4</span>     entities=entities,  <span style="color: rgb(95,135,135)"># default to None if you don't want to use community weights for ranking</span>
-
-<span class="ansi-red-fg">NameError</span>: name 'GlobalCommunityContext' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3049,7 +3090,6 @@ report_df.head()</div>
 <span class="n">map_llm_params</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">"max_tokens"</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
     <span class="s2">"temperature"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-    <span class="s2">"response_format"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"json_object"</span><span class="p">},</span>
 <span class="p">}</span>
 
 <span class="n">reduce_llm_params</span> <span class="o">=</span> <span class="p">{</span>
@@ -3073,7 +3113,6 @@ report_df.head()</div>
 map_llm_params = {
     "max_tokens": 1000,
     "temperature": 0.0,
-    "response_format": {"type": "json_object"},
 }
 
 reduce_llm_params = {
@@ -3085,8 +3124,8 @@ reduce_llm_params = {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3109,10 +3148,10 @@ reduce_llm_params = {
     <span class="n">context_builder</span><span class="o">=</span><span class="n">context_builder</span><span class="p">,</span>
     <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span>
     <span class="n">max_data_tokens</span><span class="o">=</span><span class="mi">12_000</span><span class="p">,</span>  <span class="c1"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
-    <span class="n">map_llm_params</span><span class="o">=</span><span class="n">map_llm_params</span><span class="p">,</span>
-    <span class="n">reduce_llm_params</span><span class="o">=</span><span class="n">reduce_llm_params</span><span class="p">,</span>
+    <span class="n">map_llm_params</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">map_llm_params</span><span class="p">),</span>
+    <span class="n">reduce_llm_params</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">reduce_llm_params</span><span class="p">),</span>
     <span class="n">allow_general_knowledge</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># set this to True will add instruction to encourage the LLM to incorporate general knowledge in the response, which may increase hallucinations, but could be useful in some use cases.</span>
-    <span class="n">json_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># set this to False if your LLM model does not support JSON mode.</span>
+    <span class="n">json_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">context_builder_params</span><span class="o">=</span><span class="n">context_builder_params</span><span class="p">,</span>
     <span class="n">concurrent_coroutines</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
     <span class="n">response_type</span><span class="o">=</span><span class="s2">"multiple paragraphs"</span><span class="p">,</span>  <span class="c1"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
@@ -3123,35 +3162,14 @@ reduce_llm_params = {
     context_builder=context_builder,
     tokenizer=tokenizer,
     max_data_tokens=12_000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
-    map_llm_params=map_llm_params,
-    reduce_llm_params=reduce_llm_params,
+    map_llm_params=dict(map_llm_params),
+    reduce_llm_params=dict(reduce_llm_params),
     allow_general_knowledge=False,  # set this to True will add instruction to encourage the LLM to incorporate general knowledge in the response, which may increase hallucinations, but could be useful in some use cases.
-    json_mode=True,  # set this to False if your LLM model does not support JSON mode.
+    json_mode=False,
     context_builder_params=context_builder_params,
     concurrent_coroutines=32,
     response_type="multiple paragraphs",  # free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report
 )</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[8]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> search_engine = GlobalSearch(
-<span class="ansi-green-fg">      2</span>     model=model,
-<span class="ansi-green-fg">      3</span>     context_builder=context_builder,
-<span class="ansi-green-fg">      4</span>     tokenizer=tokenizer,
-
-<span class="ansi-red-fg">NameError</span>: name 'GlobalSearch' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3193,16 +3211,31 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[9]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search_engine.search(<span class="ansi-yellow-fg">"What is operation dulce?"</span>)
-<span class="ansi-green-fg">      2</span> 
-<span class="ansi-green-fg">      3</span> print(result.response)
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>## Overview of Operation: Dulce
 
-<span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
+Operation: Dulce is a classified, high-stakes mission orchestrated by the Paranormal Military Squad, an elite unit specializing in the investigation and management of anomalous phenomena. The primary objective of the operation is to investigate the enigmatic Dulce Base, a secretive and technologically advanced underground facility. The mission is characterized by its complexity, uncertainty, and the potential for significant implications regarding security, intelligence, and possibly the future of humanity [Data: Reports (4, 7)].
+
+## Mission Objectives and Structure
+
+The operation is multifaceted, involving rescue missions, reconnaissance, and direct confrontation with unknown dangers within the Dulce Base. The team is tasked with addressing existential threats and handling advanced alien technology, positioning the Paranormal Military Squad as a critical asset in safeguarding national security against unconventional and potentially existential threats [Data: Reports (3, 7)]. The mission structure requires strict adherence to protocols, adaptability, and close collaboration among key personnel, including Sam Rivera, Alex Mercer, and Taylor Cruz [Data: Reports (4)].
+
+## Operational Challenges and Threats
+
+Participants in Operation: Dulce face both psychological and physical threats, including advanced surveillance systems and the need for electronic anomaly detection. The environment within Dulce Base is fraught with unknown dangers, demanding coordinated efforts, technical expertise, and heightened vigilance from all operatives. The classified nature of the mission and the presence of anomalous phenomena necessitate resourcefulness and a high degree of operational security [Data: Reports (3, 4, 8)].
+
+## Strategic Importance and Implications
+
+Operation: Dulce serves as a focal point for the Paranormal Military Squad, acting as a nexus for critical decision-making and collaboration among highly skilled operatives. The investigation is associated with the potential discovery of advanced weaponry, cosmic secrets, and findings that could fundamentally reshape understandings of security, technology, and the nature of reality itself [Data: Reports (4)].
+
+## Infrastructure and Support
+
+The operation is supported by a secure, technologically advanced infrastructure. This includes high-security facilities such as briefing rooms and mainframe rooms, as well as specialized equipment like encrypted radio transmitters. The planning and execution of Operation: Dulce are conducted from secure military complexes, emphasizing operational readiness and the protection of sensitive information. A dedicated communications system and robust technical infrastructure are essential for coordinating the investigation and ensuring the safety and effectiveness of the squad [Data: Reports (5, 9, 6, 7)].
+
+## Conclusion
+
+In summary, Operation: Dulce is a classified mission of critical importance, led by the Paranormal Military Squad to investigate the secretive Dulce Base. The operation involves confronting existential threats, managing advanced alien technology, and navigating a highly complex and dangerous environment. Its successful execution may have far-reaching consequences for national security, technological advancement, and humanity’s understanding of anomalous phenomena [Data: Reports (3, 4, 5, 6, 7, 8, 9)].
+</pre>
 </div>
 </div>
 </div>
@@ -3240,17 +3273,110 @@ result.context_data["reports"]</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 2</span>
-<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># inspect the data used to build the context for the LLM responses</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> result.context_data[<span class="ansi-yellow-fg">"reports"</span>]
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>title</th>
+<th>occurrence weight</th>
+<th>content</th>
+<th>rank</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>4</td>
+<td>Dulce Base and Operation: Dulce Community</td>
+<td>1.0</td>
+<td># Dulce Base and Operation: Dulce Community\n\...</td>
+<td>9.0</td>
+</tr>
+<tr>
+<th>1</th>
+<td>3</td>
+<td>Paranormal Military Squad and Operation: Dulce</td>
+<td>1.0</td>
+<td># Paranormal Military Squad and Operation: Dul...</td>
+<td>8.5</td>
+</tr>
+<tr>
+<th>2</th>
+<td>8</td>
+<td>Paranormal Military Squad: Leadership and Scie...</td>
+<td>1.0</td>
+<td># Paranormal Military Squad: Leadership and Sc...</td>
+<td>8.0</td>
+</tr>
+<tr>
+<th>3</th>
+<td>5</td>
+<td>Dulce Base Operational Command: Briefing Room ...</td>
+<td>0.4</td>
+<td># Dulce Base Operational Command: Briefing Roo...</td>
+<td>7.5</td>
+</tr>
+<tr>
+<th>4</th>
+<td>2</td>
+<td>Alien Technology Retrieval and Analysis at Dul...</td>
+<td>0.2</td>
+<td># Alien Technology Retrieval and Analysis at D...</td>
+<td>9.0</td>
+</tr>
+<tr>
+<th>5</th>
+<td>9</td>
+<td>Paranormal Military Squad and Operation: Dulce...</td>
+<td>0.2</td>
+<td># Paranormal Military Squad and Operation: Dul...</td>
+<td>8.5</td>
+</tr>
+<tr>
+<th>6</th>
+<td>6</td>
+<td>Dulce Base Mainframe Room Technology Network</td>
+<td>0.2</td>
+<td># Dulce Base Mainframe Room Technology Network...</td>
+<td>7.5</td>
+</tr>
+<tr>
+<th>7</th>
+<td>1</td>
+<td>Team of Agents Investigating Dulce Base</td>
+<td>0.2</td>
+<td># Team of Agents Investigating Dulce Base\n\nT...</td>
+<td>7.5</td>
+</tr>
+<tr>
+<th>8</th>
+<td>7</td>
+<td>Paranormal Military Squad and Operation Dulce</td>
+<td>0.4</td>
+<td># Paranormal Military Squad and Operation Dulc...</td>
+<td>8.5</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -3322,18 +3448,10 @@ print(
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 2</span>
-<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># inspect number of LLM calls and tokens in dynamic community selection</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> llm_calls = result.llm_calls_categories[<span class="ansi-yellow-fg">"build_context"</span>]
-<span class="ansi-green-fg">      3</span> prompt_tokens = result.prompt_tokens_categories[<span class="ansi-yellow-fg">"build_context"</span>]
-<span class="ansi-green-fg">      4</span> output_tokens = result.output_tokens_categories[<span class="ansi-yellow-fg">"build_context"</span>]
-<span class="ansi-green-fg">      5</span> print(
-
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Build context LLM calls: 10. Prompt tokens: 11051. Output tokens: 1170.
+Map-reduce LLM calls: 3. Prompt tokens: 11475. Output tokens: 1202.
+</pre>
 </div>
 </div>
 </div>

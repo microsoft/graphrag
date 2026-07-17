@@ -2148,8 +2148,8 @@
 </tr>
 <tr>
 <td>findings</td>
-<td>dict</td>
-<td>LM-derived list of the top 5-10 insights from the community. Contains <code>summary</code> and <code>explanation</code> values.</td>
+<td>dict[]</td>
+<td>LM-derived list of the top 5-10 insights from the community. Each item contains <code>summary</code> and <code>explanation</code> values.</td>
 </tr>
 <tr>
 <td>full_content_json</td>
@@ -2258,9 +2258,14 @@
 <td>List of text units (chunks) that were parsed from the document.</td>
 </tr>
 <tr>
-<td>metadata</td>
+<td>creation_date</td>
+<td>str</td>
+<td>Creation timestamp of the source document, represented as an ISO8601 string.</td>
+</tr>
+<tr>
+<td>raw_data</td>
 <td>dict</td>
-<td>If specified during CSV import, this is a dict of metadata for the document.</td>
+<td>Source row/object data loaded from structured inputs (or <code>null</code> for plain text).</td>
 </tr>
 </tbody>
 </table>
@@ -2382,7 +2387,7 @@
 <td>List of entities found in the text unit.</td>
 </tr>
 <tr>
-<td>relationships_ids</td>
+<td>relationship_ids</td>
 <td>str[]</td>
 <td>List of relationships found in the text unit.</td>
 </tr>

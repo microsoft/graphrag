@@ -1842,7 +1842,7 @@
 </ul>
 <h2 id="input-files-and-chunking">Input Files and Chunking</h2>
 <h3 id="input">input</h3>
-<p>Our pipeline can ingest .csv, .txt, or .json data from an input location. See the <a href="../../index/inputs/">inputs page</a> for more details and examples.</p>
+<p>Our pipeline can ingest <code>.csv</code>, <code>.txt</code>, <code>.json</code>, <code>.jsonl</code>, <code>.parquet</code>, or MarkItDown-supported files from an input location. See the <a href="../../index/inputs/">inputs page</a> for more details and examples.</p>
 <h4 id="fields_1">Fields</h4>
 <ul>
 <li><code>storage</code> <strong>StorageConfig</strong></li>
@@ -1853,22 +1853,22 @@
 <li><code>container_name</code> <strong>str</strong> - (blob/cosmosdb only) The Azure Storage container name.</li>
 <li><code>account_url</code> <strong>str</strong> - (blob only) The storage account blob URL to use.</li>
 <li><code>database_name</code> <strong>str</strong> - (cosmosdb only) The database name to use.</li>
-<li><code>type</code> <strong>text|csv|json</strong> - The type of input data to load. Default is <code>text</code></li>
+<li><code>type</code> <strong>text|csv|json|jsonl|parquet|markitdown</strong> - The type of input data to load. Default is <code>text</code></li>
 <li><code>encoding</code> <strong>str</strong> - The encoding of the input file. Default is <code>utf-8</code></li>
-<li><code>file_pattern</code> <strong>str</strong> - A regex to match input files. Default is <code>.*\.csv$</code>, <code>.*\.txt$</code>, or <code>.*\.json$</code> depending on the specified <code>type</code>, but you can customize it if needed.</li>
+<li><code>file_pattern</code> <strong>str</strong> - A regex to match input files. Defaults are derived from <code>type</code> (for example <code>.*\.csv$</code>, <code>.*\.txt$</code>, <code>.*\.json$</code>, <code>.*\.jsonl$</code>, <code>.*\.parquet$</code>), but you can customize it if needed.</li>
 <li><code>id_column</code> <strong>str</strong> - The input ID column to use.</li>
 <li><code>title_column</code> <strong>str</strong> - The input title column to use.</li>
 <li><code>text_column</code> <strong>str</strong> - The input text column to use.</li>
 </ul>
 <h3 id="chunking">chunking</h3>
-<p>These settings configure how we parse documents into text chunks. This is necessary because very large documents may not fit into a single context window, and graph extraction accuracy can be modulated. Also note the <code>metadata</code> setting in the input document config, which will replicate document metadata into each chunk.</p>
+<p>These settings configure how we parse documents into text chunks. This is necessary because very large documents may not fit into a single context window, and graph extraction accuracy can be modulated. You can also prepend selected document fields (standard fields like <code>title</code> or values from <code>raw_data</code>) into each chunk.</p>
 <h4 id="fields_2">Fields</h4>
 <ul>
 <li><code>type</code> <strong>tokens|sentence</strong> - The chunking type to use.</li>
 <li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use for splitting on token boundaries.</li>
 <li><code>size</code> <strong>int</strong> - The max chunk size in tokens.</li>
 <li><code>overlap</code> <strong>int</strong> - The chunk overlap in tokens.</li>
-<li><code>prepend_metadata</code> <strong>list[str]</strong> - Metadata fields from the source document to prepend on each chunk.</li>
+<li><code>prepend_metadata</code> <strong>list[str]</strong> - Document fields to prepend on each chunk. These can be standard document fields (<code>id</code>, <code>title</code>, <code>text</code>, <code>creation_date</code>) or fields from the source row/object stored in <code>raw_data</code>. For structured inputs, the <code>raw_data</code> object contains any other fields present in the source file (for CSV, this is all other column data).</li>
 </ul>
 <h2 id="outputs-and-storage">Outputs and Storage</h2>
 <h3 id="output">output</h3>
@@ -1882,8 +1882,6 @@
 <li><code>container_name</code> <strong>str</strong> - (blob/cosmosdb only) The Azure Storage container name.</li>
 <li><code>account_url</code> <strong>str</strong> - (blob only) The storage account blob URL to use.</li>
 <li><code>database_name</code> <strong>str</strong> - (cosmosdb only) The database name to use.</li>
-<li><code>type</code> <strong>text|csv|json</strong> - The type of input data to load. Default is <code>text</code></li>
-<li><code>encoding</code> <strong>str</strong> - The encoding of the input file. Default is <code>utf-8</code></li>
 </ul>
 <h3 id="update_output_storage">update_output_storage</h3>
 <p>The section defines a secondary storage location for running incremental indexing, to preserve your original outputs.</p>
@@ -1896,8 +1894,6 @@
 <li><code>container_name</code> <strong>str</strong> - (blob/cosmosdb only) The Azure Storage container name.</li>
 <li><code>account_url</code> <strong>str</strong> - (blob only) The storage account blob URL to use.</li>
 <li><code>database_name</code> <strong>str</strong> - (cosmosdb only) The database name to use.</li>
-<li><code>type</code> <strong>text|csv|json</strong> - The type of input data to load. Default is <code>text</code></li>
-<li><code>encoding</code> <strong>str</strong> - The encoding of the input file. Default is <code>utf-8</code></li>
 </ul>
 <h3 id="cache">cache</h3>
 <p>This section controls the cache mechanism used by the pipeline. This is used to cache LLM invocation results for faster performance when re-running the indexing process.</p>

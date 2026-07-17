@@ -1978,7 +1978,7 @@ This allows our indexer to be more resilient to network issues, to act idempoten
 <p>The following subsystems use a factory pattern that allows you to register your own implementations:</p>
 <ul>
 <li><a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag-llm/graphrag_llm/completion/completion_factory.py">language model</a> - implement your own <code>chat</code> and <code>embed</code> methods to use a model provider of choice beyond the built-in LiteLLM wrapper</li>
-<li><a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag-input/graphrag_input/input_reader.py">input reader</a> - implement your own input document reader to support file types other than text, CSV, and JSON</li>
+<li><a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag-input/graphrag_input/input_reader.py">input reader</a> - implement your own input document reader to support file types other than the built-in text, CSV, JSON, JSONL, Parquet, and MarkItDown readers</li>
 <li><a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag-cache/graphrag_cache/cache_factory.py">cache</a> - create your own cache storage location in addition to the file, blob, and CosmosDB ones we provide</li>
 <li><a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/logger/factory.py">logger</a> - create your own log writing location in addition to the built-in file and blob storage</li>
 <li><a href="https://github.com/microsoft/graphrag/blob/main/packages/graphrag-storage/graphrag_storage/tables/table_provider_factory.py">storage</a> - create your own storage provider (database, etc.) beyond the file, blob, and CosmosDB ones built in</li>
