@@ -41,6 +41,7 @@ class BlobWorkflowLogger(logging.Handler):
 
         self._connection_string = connection_string
         self.account_url = account_url
+        self._base_dir = base_dir
 
         if self._connection_string:
             self._blob_service_client = BlobServiceClient.from_connection_string(
@@ -56,18 +57,8 @@ class BlobWorkflowLogger(logging.Handler):
                 credential=DefaultAzureCredential(),
             )
 
-        if blob_name == "":
-            blob_name = f"report/{datetime.now(tz=timezone.utc).strftime('%Y-%m-%d-%H:%M:%S:%f')}.logs.json"
-
-        self._blob_name = str(Path(base_dir or "") / blob_name)
         self._container_name = container_name
-        self._blob_client = self._blob_service_client.get_blob_client(
-            self._container_name, self._blob_name
-        )
-        if not self._blob_client.exists():
-            self._blob_client.create_append_blob()
-
-        self._num_blocks = 0  # refresh block counter
+        self._rotate_blob(blob_name or None)
 
     def emit(self, record) -> None:
         """Emit a log record to blob storage."""
@@ -98,17 +89,24 @@ class BlobWorkflowLogger(logging.Handler):
             return "warning"
         return "log"
 
+    def _rotate_blob(self, blob_name: str | None = None):
+        """Create a new blob file when the current one reaches max block count."""
+        if not blob_name:
+            blob_name = f"report/{datetime.now(tz=timezone.utc).strftime('%Y-%m-%d-%H:%M:%S:%f')}.logs.json"
+        self._blob_name = str(Path(self._base_dir or "") / blob_name)
+        self._blob_client = self._blob_service_client.get_blob_client(
+            self._container_name, self._blob_name
+        )
+        if not self._blob_client.exists():
+            self._blob_client.create_append_blob()
+        self._num_blocks = 0
+
     def _write_log(self, log: dict[str, Any]):
         """Write log data to blob storage."""
         # create a new file when block count hits close 25k
-        if (
-            self._num_blocks >= self._max_block_count
-        ):  # Check if block count exceeds 25k
-            self.__init__(
-                self._connection_string,
-                self._container_name,
-                account_url=self.account_url,
-            )
+
+        if self._num_blocks >= self._max_block_count:
+            self._rotate_blob()
 
         blob_client = self._blob_service_client.get_blob_client(
             self._container_name, self._blob_name
