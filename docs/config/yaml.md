@@ -74,7 +74,7 @@ embedding_models:
 
 ### input
 
-Our pipeline can ingest .csv, .txt, or .json data from an input location. See the [inputs page](../index/inputs.md) for more details and examples.
+Our pipeline can ingest `.csv`, `.txt`, `.json`, `.jsonl`, `.parquet`, or MarkItDown-supported files from an input location. See the [inputs page](../index/inputs.md) for more details and examples.
 
 #### Fields
 
@@ -86,16 +86,16 @@ Our pipeline can ingest .csv, .txt, or .json data from an input location. See th
   - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
   - `account_url` **str** - (blob only) The storage account blob URL to use.
   - `database_name` **str** - (cosmosdb only) The database name to use.
-- `type` **text|csv|json** - The type of input data to load. Default is `text`
+- `type` **text|csv|json|jsonl|parquet|markitdown** - The type of input data to load. Default is `text`
 - `encoding` **str** - The encoding of the input file. Default is `utf-8`
-- `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$`, `.*\.txt$`, or `.*\.json$` depending on the specified `type`, but you can customize it if needed.
+- `file_pattern` **str** - A regex to match input files. Defaults are derived from `type` (for example `.*\.csv$`, `.*\.txt$`, `.*\.json$`, `.*\.jsonl$`, `.*\.parquet$`), but you can customize it if needed.
 - `id_column` **str** - The input ID column to use.
 - `title_column` **str** - The input title column to use.
 - `text_column` **str** - The input text column to use.
 
 ### chunking
 
-These settings configure how we parse documents into text chunks. This is necessary because very large documents may not fit into a single context window, and graph extraction accuracy can be modulated. Also note the `metadata` setting in the input document config, which will replicate document metadata into each chunk.
+These settings configure how we parse documents into text chunks. This is necessary because very large documents may not fit into a single context window, and graph extraction accuracy can be modulated. You can also prepend selected document fields (standard fields like `title` or values from `raw_data`) into each chunk.
 
 #### Fields
 
@@ -103,7 +103,7 @@ These settings configure how we parse documents into text chunks. This is necess
 - `encoding_model` **str** - The text encoding model to use for splitting on token boundaries.
 - `size` **int** - The max chunk size in tokens.
 - `overlap` **int** - The chunk overlap in tokens.
-- `prepend_metadata` **list[str]** - Metadata fields from the source document to prepend on each chunk.
+- `prepend_metadata` **list[str]** - Document fields to prepend on each chunk. These can be standard document fields (`id`, `title`, `text`, `creation_date`) or fields from the source row/object stored in `raw_data`. For structured inputs, the `raw_data` object contains any other fields present in the source file (for CSV, this is all other column data).
 
 ## Outputs and Storage
 
@@ -120,8 +120,6 @@ This section controls the storage mechanism used by the pipeline used for export
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
 - `account_url` **str** - (blob only) The storage account blob URL to use.
 - `database_name` **str** - (cosmosdb only) The database name to use.
-- `type` **text|csv|json** - The type of input data to load. Default is `text`
-- `encoding` **str** - The encoding of the input file. Default is `utf-8`
 
 ### update_output_storage
 
@@ -136,8 +134,6 @@ The section defines a secondary storage location for running incremental indexin
 - `container_name` **str** - (blob/cosmosdb only) The Azure Storage container name.
 - `account_url` **str** - (blob only) The storage account blob URL to use.
 - `database_name` **str** - (cosmosdb only) The database name to use.
-- `type` **text|csv|json** - The type of input data to load. Default is `text`
-- `encoding` **str** - The encoding of the input file. Default is `utf-8`
 
 ### cache
 
