@@ -163,6 +163,32 @@ class TestLanceDBVectorStore:
         store.load_documents(sample_documents_with_metadata)
         assert store.count() == 3
 
+    def test_load_documents_rejects_mismatched_vector_size(self):
+        """Test loading a batch with a wrong-sized vector raises a clear error."""
+        temp_dir = tempfile.mkdtemp()
+        try:
+            vector_store = LanceDBVectorStore(
+                db_uri=temp_dir, index_name="dim_mismatch", vector_size=5
+            )
+            vector_store.connect()
+            vector_store.create_index()
+
+            documents = [
+                VectorStoreDocument(id="good", vector=[0.1, 0.2, 0.3, 0.4, 0.5]),
+                VectorStoreDocument(id="bad", vector=[0.1, 0.2, 0.3]),
+            ]
+
+            with pytest.raises(
+                ValueError,
+                match=(
+                    "Vector for document 'bad' has dimension 3, "
+                    "but index 'dim_mismatch' is configured with vector_size 5"
+                ),
+            ):
+                vector_store.load_documents(documents)
+        finally:
+            shutil.rmtree(temp_dir)
+
     def test_search_by_id(self, store_with_fields, sample_documents_with_metadata):
         """Test searching for a document by id returns all fields."""
         store = store_with_fields
