@@ -48,7 +48,7 @@ def _update_and_merge_communities(
     # Increment only the non-NaN values in delta_communities["community"]
     community_id_mapping = {
         v: v + old_max_community_id + 1
-        for k, v in delta_communities["community"].dropna().astype(int).items()
+        for v in delta_communities["community"].dropna().astype(int)
     }
     community_id_mapping.update({-1: -1})
 
@@ -69,7 +69,7 @@ def _update_and_merge_communities(
 
     # Merge the final communities
     merged_communities = pd.concat(
-        [old_communities, delta_communities], ignore_index=True, copy=False
+        [old_communities, delta_communities], ignore_index=True
     )
 
     # Rename title
@@ -136,7 +136,7 @@ def _update_and_merge_community_reports(
 
     # Merge the final community reports
     merged_community_reports = pd.concat(
-        [old_community_reports, delta_community_reports], ignore_index=True, copy=False
+        [old_community_reports, delta_community_reports], ignore_index=True
     )
 
     # Maintain type compat with query

@@ -45,7 +45,7 @@ def _update_and_merge_relationships(
 
     # Merge the DataFrames without copying if possible
     merged_relationships = pd.concat(
-        [old_relationships, delta_relationships], ignore_index=True, copy=False
+        [old_relationships, delta_relationships], ignore_index=True
     )
 
     # Group by title and resolve conflicts

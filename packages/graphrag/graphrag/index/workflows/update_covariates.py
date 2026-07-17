@@ -77,4 +77,4 @@ def _merge_covariates(
     )
 
     # Concatenate the old and delta covariates
-    return pd.concat([old_covariates, delta_covariates], ignore_index=True, copy=False)
+    return pd.concat([old_covariates, delta_covariates], ignore_index=True)

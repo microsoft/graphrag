@@ -140,7 +140,7 @@ def _modularity_components(
         degree_sums_for[tgt_comm] += weight
         total_edge_weight += weight
 
-    if total_edge_weight == 0.0:
+    if total_edge_weight <= 0.0:
         return dict.fromkeys(communities, 0.0)
 
     return {

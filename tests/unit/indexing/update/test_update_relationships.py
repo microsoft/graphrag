@@ -9,6 +9,7 @@ with delta data from a new indexing run.
 """
 
 import pandas as pd
+import pytest
 from graphrag.index.operations.extract_graph.utils import (
     filter_orphan_relationships,
 )
@@ -90,7 +91,7 @@ class TestUpdateAndMergeRelationships:
         merged = _update_and_merge_relationships(old, delta)
 
         assert len(merged) == 1
-        assert merged.iloc[0]["weight"] == 3.0  # mean of 2.0 and 4.0
+        assert merged.iloc[0]["weight"] == pytest.approx(3.0)  # mean of 2.0 and 4.0
 
     def test_human_readable_ids_incremented(self):
         """Delta human_readable_ids should be offset by old max + 1."""
