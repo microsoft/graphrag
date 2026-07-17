@@ -35,7 +35,6 @@ def _group_and_resolve_entities(
         old_entities_df[["id", "title"]],
         on="title",
         suffixes=("_B", "_A"),
-        copy=False,
     )
     id_mapping = dict(zip(merged["id_B"], merged["id_A"], strict=True))
 
@@ -45,9 +44,7 @@ def _group_and_resolve_entities(
         initial_id, initial_id + len(delta_entities_df)
     )
     # Concat A and B
-    combined = pd.concat(
-        [old_entities_df, delta_entities_df], ignore_index=True, copy=False
-    )
+    combined = pd.concat([old_entities_df, delta_entities_df], ignore_index=True)
 
     # Group by title and resolve conflicts
     aggregated = (

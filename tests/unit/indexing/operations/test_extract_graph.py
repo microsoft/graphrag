@@ -10,6 +10,7 @@ target has no corresponding entity.
 """
 
 import pandas as pd
+import pytest
 from graphrag.index.operations.extract_graph.extract_graph import (
     _merge_entities,
     _merge_relationships,
@@ -92,7 +93,7 @@ class TestMergeRelationships:
         merged = _merge_relationships([df1, df2])
 
         assert len(merged) == 1
-        assert merged.iloc[0]["weight"] == 5.0
+        assert merged.iloc[0]["weight"] == pytest.approx(5.0)
 
     def test_distinct_pairs_stay_separate(self):
         """Different source-target pairs remain separate rows."""
@@ -249,7 +250,7 @@ class TestFilterOrphanRelationships:
         filtered = filter_orphan_relationships(merged_rels, merged_entities)
 
         assert set(filtered.columns) == set(merged_rels.columns)
-        assert filtered.iloc[0]["weight"] == 5.0
+        assert filtered.iloc[0]["weight"] == pytest.approx(5.0)
         assert filtered.iloc[0]["description"] == ["linked"]
 
     def test_multi_text_unit_orphan(self):

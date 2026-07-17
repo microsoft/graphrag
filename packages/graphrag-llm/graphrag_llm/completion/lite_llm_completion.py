@@ -209,12 +209,12 @@ class LiteLLMCompletion(LLMCompletion):
 
     @property
     def metrics_store(self) -> "MetricsStore":
-        """Get metrics store."""
+        """The metrics store."""
         return self._metrics_store
 
     @property
     def tokenizer(self) -> "Tokenizer":
-        """Get tokenizer."""
+        """The tokenizer."""
         return self._tokenizer
 
 

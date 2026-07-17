@@ -22,8 +22,8 @@ from graphrag.prompts.query.drift_search_system_prompt import (
     DRIFT_LOCAL_SYSTEM_PROMPT,
     DRIFT_REDUCE_PROMPT,
 )
+from graphrag.query.context_builder.builders import DRIFTContextBuilder
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
-from graphrag.query.structured_search.base import DRIFTContextBuilder
 from graphrag.query.structured_search.drift_search.primer import PrimerQueryProcessor
 from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,

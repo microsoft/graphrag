@@ -71,7 +71,7 @@ async def concat_dataframes(
     # Merge the final documents
     initial_id = old_df["human_readable_id"].max() + 1
     delta_df["human_readable_id"] = np.arange(initial_id, initial_id + len(delta_df))
-    final_df = pd.concat([old_df, delta_df], ignore_index=True, copy=False)
+    final_df = pd.concat([old_df, delta_df], ignore_index=True)
 
     await output_table_provider.write_dataframe(name, final_df)
 
