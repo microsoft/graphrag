@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -2775,11 +2775,13 @@ from graphrag.tokenizer.get_tokenizer import get_tokenizer</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 4</span>
-<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">os</span>
-<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">pandas</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">pd</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">enums</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelType
-<span class="ansi-green-fg">      5</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">models</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">language_model_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LanguageModelConfig
-<span class="ansi-green-fg">      6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">language_model</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">manager</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelManager
+<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> os
+<span class="ansi-green-fg">      2</span> 
+<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> pandas <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> pd
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.config.enums <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelType
+<span class="ansi-green-fg">      5</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.config.models.language_model_config <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LanguageModelConfig
+<span class="ansi-green-fg">      6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.language_model.manager <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelManager
+<span class="ansi-green-fg">      7</span> from graphrag.query.indexer_adapters import (
 
 <span class="ansi-red-fg">ImportError</span>: cannot import name 'ModelType' from 'graphrag.config.enums' (/home/runner/work/graphrag/graphrag/packages/graphrag/graphrag/config/enums.py)</pre>
 </div>
@@ -2876,20 +2878,12 @@ tokenizer = get_tokenizer(config)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 3</span>
-<span class="ansi-green-fg">      1</span> api_key = os.environ[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">GRAPHRAG_API_KEY</span><span class="ansi-yellow-fg">"</span>]
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span> config = <span class="ansi-yellow-bg">LanguageModelConfig</span>(
+<span class="ansi-green-fg">      1</span> api_key = os.environ[<span class="ansi-yellow-fg">"GRAPHRAG_API_KEY"</span>]
+<span class="ansi-green-fg">      2</span> 
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span> config = LanguageModelConfig(
 <span class="ansi-green-fg">      4</span>     api_key=api_key,
-<span class="ansi-green-fg">      5</span>     <span style="color: rgb(0,135,0)">type</span>=ModelType.Chat,
-<span class="ansi-green-fg">      6</span>     model_provider=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">openai</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">      7</span>     model=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">gpt-4.1</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">      8</span>     max_retries=<span class="ansi-green-fg">20</span>,
-<span class="ansi-green-fg">      9</span> )
-<span class="ansi-green-fg">     10</span> model = ModelManager().get_or_create_chat_model(
-<span class="ansi-green-fg">     11</span>     name=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">global_search</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">     12</span>     model_type=ModelType.Chat,
-<span class="ansi-green-fg">     13</span>     config=config,
-<span class="ansi-green-fg">     14</span> )
-<span class="ansi-green-fg">     16</span> tokenizer = get_tokenizer(config)
+<span class="ansi-green-fg">      5</span>     type=ModelType.Chat,
+<span class="ansi-green-fg">      6</span>     model_provider=<span class="ansi-yellow-fg">"openai"</span>,
 
 <span class="ansi-red-fg">NameError</span>: name 'LanguageModelConfig' is not defined</pre>
 </div>
@@ -3018,11 +3012,14 @@ report_df.head()</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 5</span>
-<span class="ansi-green-fg">      2</span> entity_df = pd.read_parquet(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>ENTITY_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">.parquet</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">      3</span> report_df = pd.read_parquet(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>COMMUNITY_REPORT_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">.parquet</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> communities = <span class="ansi-yellow-bg">read_indexer_communities</span>(community_df, report_df)
+<span class="ansi-green-fg">      1</span> community_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_TABLE}.parquet")
+<span class="ansi-green-fg">      2</span> entity_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_TABLE}.parquet")
+<span class="ansi-green-fg">      3</span> report_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_REPORT_TABLE}.parquet")
+<span class="ansi-green-fg">      4</span> 
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> communities = read_indexer_communities(community_df, report_df)
 <span class="ansi-green-fg">      6</span> reports = read_indexer_reports(report_df, community_df, COMMUNITY_LEVEL)
 <span class="ansi-green-fg">      7</span> entities = read_indexer_entities(entity_df, community_df, COMMUNITY_LEVEL)
+<span class="ansi-green-fg">      8</span> 
 
 <span class="ansi-red-fg">NameError</span>: name 'read_indexer_communities' is not defined</pre>
 </div>
@@ -3088,12 +3085,10 @@ report_df.head()</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> context_builder = <span class="ansi-yellow-bg">GlobalCommunityContext</span>(
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> context_builder = GlobalCommunityContext(
 <span class="ansi-green-fg">      2</span>     community_reports=reports,
 <span class="ansi-green-fg">      3</span>     communities=communities,
 <span class="ansi-green-fg">      4</span>     entities=entities,  <span style="color: rgb(95,135,135)"># default to None if you don't want to use community weights for ranking</span>
-<span class="ansi-green-fg">      5</span>     tokenizer=tokenizer,
-<span class="ansi-green-fg">      6</span> )
 
 <span class="ansi-red-fg">NameError</span>: name 'GlobalCommunityContext' is not defined</pre>
 </div>
@@ -3244,19 +3239,10 @@ reduce_llm_params = {
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[8]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> search_engine = <span class="ansi-yellow-bg">GlobalSearch</span>(
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> search_engine = GlobalSearch(
 <span class="ansi-green-fg">      2</span>     model=model,
 <span class="ansi-green-fg">      3</span>     context_builder=context_builder,
 <span class="ansi-green-fg">      4</span>     tokenizer=tokenizer,
-<span class="ansi-green-fg">      5</span>     max_data_tokens=<span class="ansi-green-fg">12_000</span>,  <span style="color: rgb(95,135,135)"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
-<span class="ansi-green-fg">      6</span>     map_llm_params=map_llm_params,
-<span class="ansi-green-fg">      7</span>     reduce_llm_params=reduce_llm_params,
-<span class="ansi-green-fg">      8</span>     allow_general_knowledge=<span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,  <span style="color: rgb(95,135,135)"># set this to True will add instruction to encourage the LLM to incorporate general knowledge in the response, which may increase hallucinations, but could be useful in some use cases.</span>
-<span class="ansi-green-fg">      9</span>     json_mode=<span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,  <span style="color: rgb(95,135,135)"># set this to False if your LLM model does not support JSON mode.</span>
-<span class="ansi-green-fg">     10</span>     context_builder_params=context_builder_params,
-<span class="ansi-green-fg">     11</span>     concurrent_coroutines=<span class="ansi-green-fg">32</span>,
-<span class="ansi-green-fg">     12</span>     response_type=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">multiple paragraphs</span><span class="ansi-yellow-fg">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
-<span class="ansi-green-fg">     13</span> )
 
 <span class="ansi-red-fg">NameError</span>: name 'GlobalSearch' is not defined</pre>
 </div>
@@ -3305,8 +3291,9 @@ print(result.response)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[9]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span>.search(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">What is operation dulce?</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">      3</span> <span style="color: rgb(0,135,0)">print</span>(result.response)
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search_engine.search(<span class="ansi-yellow-fg">"What is operation dulce?"</span>)
+<span class="ansi-green-fg">      2</span> 
+<span class="ansi-green-fg">      3</span> print(result.response)
 
 <span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
 </div>
@@ -3354,7 +3341,7 @@ result.context_data["reports"]</div>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 2</span>
 <span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># inspect the data used to build the context for the LLM responses</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">reports</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> result.context_data[<span class="ansi-yellow-fg">"reports"</span>]
 
 <span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
@@ -3406,8 +3393,8 @@ print(
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 3</span>
 <span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># inspect number of LLM calls and tokens</span>
-<span class="ansi-green-fg">      2</span> <span style="color: rgb(0,135,0)">print</span>(
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span>     <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">LLM calls: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">result</span>.llm_calls<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">. Prompt tokens: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>result.prompt_tokens<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">. Output tokens: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>result.output_tokens<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">.</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">      2</span> print(
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span>     f"LLM calls: {result.llm_calls}. Prompt tokens: {result.prompt_tokens}. Output tokens: {result.output_tokens}."
 <span class="ansi-green-fg">      4</span> )
 
 <span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>

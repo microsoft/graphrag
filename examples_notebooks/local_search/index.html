@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -2939,29 +2939,15 @@ from graphrag_vectors import IndexSchema, LanceDBVectorStore</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre><span class="ansi-green-intense-fg">21:01:27 - LiteLLM:WARNING</span>: common_utils.py:979 - litellm: could not pre-load bedrock-runtime response stream shape — Bedrock event-stream decoding will be unavailable. Error: No module named 'botocore'
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre><span class="ansi-green-intense-fg">21:01:27 - LiteLLM:WARNING</span>: common_utils.py:24 - litellm: could not pre-load sagemaker-runtime response stream shape — SageMaker event-stream decoding will be unavailable. Error: No module named 'botocore'
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 17</span>
-<span class="ansi-green-fg">     13</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">query</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">structured_search</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">local_search</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">mixed_context</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> (
+<span class="ansi-green-fg">     13</span> from graphrag.query.structured_search.local_search.mixed_context import (
 <span class="ansi-green-fg">     14</span>     LocalSearchMixedContext,
 <span class="ansi-green-fg">     15</span> )
-<span class="ansi-green-fg">     16</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">query</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">structured_search</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">local_search</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">search</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LocalSearch
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">17</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag_vectors</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> IndexSchema, LanceDBVectorStore
+<span class="ansi-green-fg">     16</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.query.structured_search.local_search.search <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LocalSearch
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">17</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag_vectors <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> IndexSchema, LanceDBVectorStore
 
 <span class="ansi-red-fg">ImportError</span>: cannot import name 'LanceDBVectorStore' from 'graphrag_vectors' (/home/runner/work/graphrag/graphrag/packages/graphrag-vectors/graphrag_vectors/__init__.py)</pre>
 </div>
@@ -3126,13 +3112,13 @@ entity_df.head()</div>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[4]</span><span class="ansi-green-fg">, line 9</span>
 <span class="ansi-green-fg">      5</span> entities = read_indexer_entities(entity_df, community_df, COMMUNITY_LEVEL)
+<span class="ansi-green-fg">      6</span> 
 <span class="ansi-green-fg">      7</span> <span style="color: rgb(95,135,135)"># load description embeddings to an in-memory lancedb vectorstore</span>
 <span class="ansi-green-fg">      8</span> <span style="color: rgb(95,135,135)"># to connect to a remote db, specify url and port values.</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">9</span> description_embedding_store = <span class="ansi-yellow-bg">LanceDBVectorStore</span>(
-<span class="ansi-green-fg">     10</span>     index_schema=IndexSchema(index_name=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">default-entity-description</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">9</span> description_embedding_store = LanceDBVectorStore(
+<span class="ansi-green-fg">     10</span>     index_schema=IndexSchema(index_name=<span class="ansi-yellow-fg">"default-entity-description"</span>)
 <span class="ansi-green-fg">     11</span> )
 <span class="ansi-green-fg">     12</span> description_embedding_store.connect(db_uri=LANCEDB_URI)
-<span class="ansi-green-fg">     14</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Entity count: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">len</span>(entity_df)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
 
 <span class="ansi-red-fg">NameError</span>: name 'LanceDBVectorStore' is not defined</pre>
 </div>
@@ -3454,7 +3440,7 @@ report_df.head()</div>
 <td>8.5</td>
 <td>The impact severity rating is high due to the ...</td>
 <td>[{'explanation': 'The Paranormal Military Squa...</td>
-<td>{\n    "title": "Paranormal Military Squad and...</td>
+<td>{\n    "title": "Paranormal Military Squad and...</td>
 <td>2026-01-13</td>
 <td>4</td>
 </tr>
@@ -3472,7 +3458,7 @@ report_df.head()</div>
 <td>8.0</td>
 <td>The community poses a high impact due to its i...</td>
 <td>[{'explanation': 'Taylor Cruz, often referred ...</td>
-<td>{\n    "title": "Paranormal Military Squad: Le...</td>
+<td>{\n    "title": "Paranormal Military Squad: Le...</td>
 <td>2026-01-13</td>
 <td>3</td>
 </tr>
@@ -3490,7 +3476,7 @@ report_df.head()</div>
 <td>8.5</td>
 <td>The community poses a high impact severity due...</td>
 <td>[{'explanation': 'The military complex is the ...</td>
-<td>{\n    "title": "Paranormal Military Squad and...</td>
+<td>{\n    "title": "Paranormal Military Squad and...</td>
 <td>2026-01-13</td>
 <td>3</td>
 </tr>
@@ -3508,7 +3494,7 @@ report_df.head()</div>
 <td>8.5</td>
 <td>The community poses a high impact due to its e...</td>
 <td>[{'explanation': 'Taylor Cruz is the central a...</td>
-<td>{\n    "title": "Paranormal Military Squad and...</td>
+<td>{\n    "title": "Paranormal Military Squad and...</td>
 <td>2026-01-13</td>
 <td>10</td>
 </tr>
@@ -3526,7 +3512,7 @@ report_df.head()</div>
 <td>7.5</td>
 <td>The impact severity rating is high due to the ...</td>
 <td>[{'explanation': 'The core of this community i...</td>
-<td>{\n    "title": "Team of Agents Investigating ...</td>
+<td>{\n    "title": "Team of Agents Investigating ...</td>
 <td>2026-01-13</td>
 <td>5</td>
 </tr>
@@ -3794,9 +3780,10 @@ tokenizer = get_tokenizer(chat_config)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[9]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">enums</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelType
-<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">models</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">language_model_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LanguageModelConfig
-<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">language_model</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">manager</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelManager
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.config.enums <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelType
+<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.config.models.language_model_config <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LanguageModelConfig
+<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.language_model.manager <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelManager
+<span class="ansi-green-fg">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.tokenizer.get_tokenizer <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> get_tokenizer
 
 <span class="ansi-red-fg">ImportError</span>: cannot import name 'ModelType' from 'graphrag.config.enums' (/home/runner/work/graphrag/graphrag/packages/graphrag/graphrag/config/enums.py)</pre>
 </div>
@@ -3874,18 +3861,14 @@ tokenizer = get_tokenizer(chat_config)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 8</span>
-<span class="ansi-green-fg">      1</span> context_builder = LocalSearchMixedContext(
-<span class="ansi-green-fg">      2</span>     community_reports=reports,
-<span class="ansi-green-fg">      3</span>     text_units=text_units,
 <span class="ansi-green-fg">      4</span>     entities=entities,
 <span class="ansi-green-fg">      5</span>     relationships=relationships,
 <span class="ansi-green-fg">      6</span>     <span style="color: rgb(95,135,135)"># if you did not run covariates during indexing, set this to None</span>
 <span class="ansi-green-fg">      7</span>     covariates=covariates,
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">8</span>     entity_text_embeddings=<span class="ansi-yellow-bg">description_embedding_store</span>,
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">8</span>     entity_text_embeddings=description_embedding_store,
 <span class="ansi-green-fg">      9</span>     embedding_vectorstore_key=EntityVectorStoreKey.ID,  <span style="color: rgb(95,135,135)"># if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE</span>
 <span class="ansi-green-fg">     10</span>     text_embedder=text_embedder,
 <span class="ansi-green-fg">     11</span>     tokenizer=tokenizer,
-<span class="ansi-green-fg">     12</span> )
 
 <span class="ansi-red-fg">NameError</span>: name 'description_embedding_store' is not defined</pre>
 </div>
@@ -4051,13 +4034,10 @@ model_params = {
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 2</span>
 <span class="ansi-green-fg">      1</span> search_engine = LocalSearch(
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span>     model=<span class="ansi-yellow-bg">chat_model</span>,
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span>     model=chat_model,
 <span class="ansi-green-fg">      3</span>     context_builder=context_builder,
 <span class="ansi-green-fg">      4</span>     tokenizer=tokenizer,
 <span class="ansi-green-fg">      5</span>     model_params=model_params,
-<span class="ansi-green-fg">      6</span>     context_builder_params=local_context_params,
-<span class="ansi-green-fg">      7</span>     response_type=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">multiple paragraphs</span><span class="ansi-yellow-fg">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
-<span class="ansi-green-fg">      8</span> )
 
 <span class="ansi-red-fg">NameError</span>: name 'chat_model' is not defined</pre>
 </div>
@@ -4115,8 +4095,8 @@ print(result.response)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[13]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span>.search(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Tell me about Agent Mercer</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">      2</span> <span style="color: rgb(0,135,0)">print</span>(result.response)
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search_engine.search(<span class="ansi-yellow-fg">"Tell me about Agent Mercer"</span>)
+<span class="ansi-green-fg">      2</span> print(result.response)
 
 <span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
 </div>
@@ -4165,9 +4145,9 @@ print(result.response)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[14]</span><span class="ansi-green-fg">, line 2</span>
-<span class="ansi-green-fg">      1</span> question = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Tell me about Dr. Jordan Hayes</span><span class="ansi-yellow-fg">"</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span>.search(question)
-<span class="ansi-green-fg">      3</span> <span style="color: rgb(0,135,0)">print</span>(result.response)
+<span class="ansi-green-fg">      1</span> question = <span class="ansi-yellow-fg">"Tell me about Dr. Jordan Hayes"</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search_engine.search(question)
+<span class="ansi-green-fg">      3</span> print(result.response)
 
 <span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
 </div>
@@ -4223,7 +4203,7 @@ print(result.response)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[15]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">entities</span><span class="ansi-yellow-fg">"</span>].head()
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result.context_data[<span class="ansi-yellow-fg">"entities"</span>].head()
 
 <span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
@@ -4268,7 +4248,7 @@ print(result.response)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[16]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">relationships</span><span class="ansi-yellow-fg">"</span>].head()
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result.context_data[<span class="ansi-yellow-fg">"relationships"</span>].head()
 
 <span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
@@ -4315,8 +4295,8 @@ print(result.response)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[17]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">reports</span><span class="ansi-yellow-fg">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-yellow-bg">result</span>.context_data:
-<span class="ansi-green-fg">      2</span>     result.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">reports</span><span class="ansi-yellow-fg">"</span>].head()
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-yellow-fg">"reports"</span> <span class="ansi-bold" style="color: rgb(0,135,0)">in</span> result.context_data:
+<span class="ansi-green-fg">      2</span>     result.context_data[<span class="ansi-yellow-fg">"reports"</span>].head()
 
 <span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
@@ -4361,7 +4341,7 @@ print(result.response)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[18]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">result</span>.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">sources</span><span class="ansi-yellow-fg">"</span>].head()
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result.context_data[<span class="ansi-yellow-fg">"sources"</span>].head()
 
 <span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
@@ -4408,8 +4388,8 @@ print(result.response)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[19]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">claims</span><span class="ansi-yellow-fg">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-yellow-bg">result</span>.context_data:
-<span class="ansi-green-fg">      2</span>     <span style="color: rgb(0,135,0)">print</span>(result.context_data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">claims</span><span class="ansi-yellow-fg">"</span>].head())
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-yellow-fg">"claims"</span> <span class="ansi-bold" style="color: rgb(0,135,0)">in</span> result.context_data:
+<span class="ansi-green-fg">      2</span>     print(result.context_data[<span class="ansi-yellow-fg">"claims"</span>].head())
 
 <span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
@@ -4489,12 +4469,10 @@ print(result.response)</div>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[20]</span><span class="ansi-green-fg">, line 2</span>
 <span class="ansi-green-fg">      1</span> question_generator = LocalQuestionGen(
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span>     model=<span class="ansi-yellow-bg">chat_model</span>,
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span>     model=chat_model,
 <span class="ansi-green-fg">      3</span>     context_builder=context_builder,
 <span class="ansi-green-fg">      4</span>     tokenizer=tokenizer,
 <span class="ansi-green-fg">      5</span>     model_params=model_params,
-<span class="ansi-green-fg">      6</span>     context_builder_params=local_context_params,
-<span class="ansi-green-fg">      7</span> )
 
 <span class="ansi-red-fg">NameError</span>: name 'chat_model' is not defined</pre>
 </div>
@@ -4554,13 +4532,13 @@ print(candidate_questions.response)</div>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[21]</span><span class="ansi-green-fg">, line 5</span>
 <span class="ansi-green-fg">      1</span> question_history = [
-<span class="ansi-green-fg">      2</span>     <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Tell me about Agent Mercer</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">      3</span>     <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">What happens in Dulce military base?</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">      2</span>     <span class="ansi-yellow-fg">"Tell me about Agent Mercer"</span>,
+<span class="ansi-green-fg">      3</span>     <span class="ansi-yellow-fg">"What happens in Dulce military base?"</span>,
 <span class="ansi-green-fg">      4</span> ]
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> candidate_questions = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">question_generator</span>.agenerate(
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> candidate_questions = await question_generator.agenerate(
 <span class="ansi-green-fg">      6</span>     question_history=question_history, context_data=<span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, question_count=<span class="ansi-green-fg">5</span>
 <span class="ansi-green-fg">      7</span> )
-<span class="ansi-green-fg">      8</span> <span style="color: rgb(0,135,0)">print</span>(candidate_questions.response)
+<span class="ansi-green-fg">      8</span> print(candidate_questions.response)
 
 <span class="ansi-red-fg">NameError</span>: name 'question_generator' is not defined</pre>
 </div>

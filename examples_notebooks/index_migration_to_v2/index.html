@@ -15,7 +15,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -2565,7 +2565,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="n">PROJECT_DIRECTORY</span> <span class="o">=</span> <span class="s2">"&lt;your project directory&gt;"</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-2"># This is the directory that has your settings.yaml
-PROJECT_DIRECTORY = "<your directory="" project="">"</your></div>
+PROJECT_DIRECTORY = "&lt;your project directory&gt;"</div>
 </div>
 </div>
 </div>
@@ -2628,9 +2628,11 @@ storage = StorageFactory().create_storage(
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 4</span>
-<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">pathlib</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> Path
-<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">load_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> load_config
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">storage</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> StorageFactory
+<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> pathlib <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> Path
+<span class="ansi-green-fg">      2</span> 
+<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.config.load_config <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> load_config
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.storage.factory <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> StorageFactory
+<span class="ansi-green-fg">      5</span> 
 <span class="ansi-green-fg">      6</span> config = load_config(Path(PROJECT_DIRECTORY))
 <span class="ansi-green-fg">      7</span> storage_config = config.output.model_dump()
 
@@ -2848,11 +2850,14 @@ await storage.delete("create_final_community_reports.parquet")</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 5</span>
-<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag_storage</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">tables</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">parquet_table_provider</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ParquetTableProvider
+<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> numpy <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> np
+<span class="ansi-green-fg">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag_storage.tables.parquet_table_provider <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ParquetTableProvider
+<span class="ansi-green-fg">      3</span> 
 <span class="ansi-green-fg">      4</span> <span style="color: rgb(95,135,135)"># Create table provider from storage</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> table_provider = ParquetTableProvider(<span class="ansi-yellow-bg">storage</span>)
-<span class="ansi-green-fg">      7</span> final_documents = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> table_provider.read_dataframe(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_documents</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">      8</span> final_text_units = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> table_provider.read_dataframe(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">create_final_text_units</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> table_provider = ParquetTableProvider(storage)
+<span class="ansi-green-fg">      6</span> 
+<span class="ansi-green-fg">      7</span> final_documents = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> table_provider.read_dataframe(<span class="ansi-yellow-fg">"create_final_documents"</span>)
+<span class="ansi-green-fg">      8</span> final_text_units = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> table_provider.read_dataframe(<span class="ansi-yellow-fg">"create_final_text_units"</span>)
 
 <span class="ansi-red-fg">NameError</span>: name 'storage' is not defined</pre>
 </div>

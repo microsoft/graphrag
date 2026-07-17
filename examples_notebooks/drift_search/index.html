@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -2707,11 +2707,13 @@ read_indexer_report_embeddings(reports, full_content_embedding_store)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 4</span>
-<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">os</span>
-<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">pandas</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">pd</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">enums</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelType
-<span class="ansi-green-fg">      5</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">models</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">drift_search_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> DRIFTSearchConfig
-<span class="ansi-green-fg">      6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-intense-fg ansi-bold">graphrag</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">config</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">models</span><span class="ansi-blue-intense-fg ansi-bold">.</span><span class="ansi-blue-intense-fg ansi-bold">language_model_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LanguageModelConfig
+<span class="ansi-green-fg">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> os
+<span class="ansi-green-fg">      2</span> 
+<span class="ansi-green-fg">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> pandas <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> pd
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.config.enums <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelType
+<span class="ansi-green-fg">      5</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.config.models.drift_search_config <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> DRIFTSearchConfig
+<span class="ansi-green-fg">      6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.config.models.language_model_config <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> LanguageModelConfig
+<span class="ansi-green-fg">      7</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> graphrag.language_model.manager <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ModelManager
 
 <span class="ansi-red-fg">ImportError</span>: cannot import name 'ModelType' from 'graphrag.config.enums' (/home/runner/work/graphrag/graphrag/packages/graphrag/graphrag/config/enums.py)</pre>
 </div>
@@ -2814,20 +2816,12 @@ text_embedder = ModelManager().get_or_create_embedding_model(
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[3]</span><span class="ansi-green-fg">, line 3</span>
-<span class="ansi-green-fg">      1</span> api_key = os.environ[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">GRAPHRAG_API_KEY</span><span class="ansi-yellow-fg">"</span>]
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span> chat_config = <span class="ansi-yellow-bg">LanguageModelConfig</span>(
+<span class="ansi-green-fg">      1</span> api_key = os.environ[<span class="ansi-yellow-fg">"GRAPHRAG_API_KEY"</span>]
+<span class="ansi-green-fg">      2</span> 
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span> chat_config = LanguageModelConfig(
 <span class="ansi-green-fg">      4</span>     api_key=api_key,
-<span class="ansi-green-fg">      5</span>     <span style="color: rgb(0,135,0)">type</span>=ModelType.Chat,
-<span class="ansi-green-fg">      6</span>     model_provider=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">openai</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">      7</span>     model=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">gpt-4.1</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">      8</span>     max_retries=<span class="ansi-green-fg">20</span>,
-<span class="ansi-green-fg">      9</span> )
-<span class="ansi-green-fg">     10</span> chat_model = ModelManager().get_or_create_chat_model(
-<span class="ansi-green-fg">     11</span>     name=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">local_search</span><span class="ansi-yellow-fg">"</span>,
-<span class="ansi-green-fg">     12</span>     model_type=ModelType.Chat,
-<span class="ansi-green-fg">     13</span>     config=chat_config,
-<span class="ansi-green-fg">     14</span> )
-<span class="ansi-green-fg">     16</span> tokenizer = get_tokenizer(chat_config)
+<span class="ansi-green-fg">      5</span>     type=ModelType.Chat,
+<span class="ansi-green-fg">      6</span>     model_provider=<span class="ansi-yellow-fg">"openai"</span>,
 
 <span class="ansi-red-fg">NameError</span>: name 'LanguageModelConfig' is not defined</pre>
 </div>
@@ -2912,19 +2906,10 @@ search = DRIFTSearch(
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[4]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> drift_params = <span class="ansi-yellow-bg">DRIFTSearchConfig</span>(
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> drift_params = DRIFTSearchConfig(
 <span class="ansi-green-fg">      2</span>     primer_folds=<span class="ansi-green-fg">1</span>,
 <span class="ansi-green-fg">      3</span>     drift_k_followups=<span class="ansi-green-fg">3</span>,
 <span class="ansi-green-fg">      4</span>     n_depth=<span class="ansi-green-fg">3</span>,
-<span class="ansi-green-fg">      5</span> )
-<span class="ansi-green-fg">      7</span> context_builder = DRIFTSearchContextBuilder(
-<span class="ansi-green-fg">      8</span>     model=chat_model,
-<span class="ansi-green-fg">      9</span>     text_embedder=text_embedder,
-<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">     16</span>     config=drift_params,
-<span class="ansi-green-fg">     17</span> )
-<span class="ansi-green-fg">     19</span> search = DRIFTSearch(
-<span class="ansi-green-fg">     20</span>     model=chat_model, context_builder=context_builder, tokenizer=tokenizer
-<span class="ansi-green-fg">     21</span> )
 
 <span class="ansi-red-fg">NameError</span>: name 'DRIFTSearchConfig' is not defined</pre>
 </div>
@@ -2969,7 +2954,7 @@ search = DRIFTSearch(
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> resp = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search</span>.search(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Who is agent Mercer?</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> resp = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search.search(<span class="ansi-yellow-fg">"Who is agent Mercer?"</span>)
 
 <span class="ansi-red-fg">NameError</span>: name 'search' is not defined</pre>
 </div>
@@ -3014,7 +2999,7 @@ search = DRIFTSearch(
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[6]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span class="ansi-yellow-bg">resp</span>.response
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> resp.response
 
 <span class="ansi-red-fg">NameError</span>: name 'resp' is not defined</pre>
 </div>
@@ -3059,7 +3044,7 @@ search = DRIFTSearch(
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 1</span>
-<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-bg">resp</span>.context_data)
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> print(resp.context_data)
 
 <span class="ansi-red-fg">NameError</span>: name 'resp' is not defined</pre>
 </div>
