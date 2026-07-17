@@ -93,8 +93,10 @@ class BlobWorkflowLogger(logging.Handler):
         """Create a new blob file when the current one reaches max block count."""
         if not blob_name:
             blob_name = f"report/{datetime.now(tz=timezone.utc).strftime('%Y-%m-%d-%H:%M:%S:%f')}.logs.json"
-        self._blob_name = str(Path(self._base_dir or "") / blob_name)
-        self._blob_client = self._blob_service_client.get_blob_client(
+        blob_path = blob_name.lstrip("/")
+        if self._base_dir:
+            blob_path = f"{self._base_dir.strip('/')}/{blob_path}"
+        self._blob_name = blob_path
             self._container_name, self._blob_name
         )
         if not self._blob_client.exists():
