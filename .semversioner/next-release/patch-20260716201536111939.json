@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix #2330 - Add explicit return type annotations for batched() and chunk_text() generators."
-}

@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix 2170 - cannot release un-acquired lock in Blob logger"
-}

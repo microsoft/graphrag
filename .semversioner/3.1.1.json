@@ -1,0 +1,38 @@
+{
+  "changes": [
+    {
+      "description": "Bump dependencies.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix #2265 - Fail fast when document vector length mismatches the configured vector_size.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix #2330 - Add explicit return type annotations for batched() and chunk_text() generators.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix #2389 - Loosen service_tier type to str | None to allow for more flexibility in service tier representation.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix .strip call - resolves #2381",
+      "type": "patch"
+    },
+    {
+      "description": "Fix 2170 - cannot release un-acquired lock in Blob logger",
+      "type": "patch"
+    },
+    {
+      "description": "Fix JSONL input loader to skip blank lines and ignore invalid JSON rows",
+      "type": "patch"
+    },
+    {
+      "description": "Fix logging bug.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2026-07-18T00:49:43+00:00",
+  "version": "3.1.1"
+}
