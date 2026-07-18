@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix #2265 - Fail fast when document vector length mismatches the configured vector_size."
-}

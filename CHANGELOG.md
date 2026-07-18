@@ -1,6 +1,17 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.1.1
+
+- patch: Bump dependencies.
+- patch: Fix #2265 - Fail fast when document vector length mismatches the configured vector_size.
+- patch: Fix #2330 - Add explicit return type annotations for batched() and chunk_text() generators.
+- patch: Fix #2389 - Loosen service_tier type to str | None to allow for more flexibility in service tier representation.
+- patch: Fix .strip call - resolves #2381
+- patch: Fix 2170 - cannot release un-acquired lock in Blob logger
+- patch: Fix JSONL input loader to skip blank lines and ignore invalid JSON rows
+- patch: Fix logging bug.
+
 ## 3.1.0
 
 - minor: Native CosmosTableProvider with namespace partitioning, transactional batch writes, and simplified AzureCosmosStorage.
