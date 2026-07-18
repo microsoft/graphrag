@@ -188,6 +188,8 @@ class ExtractGraphNLPDefaults:
     text_analyzer: TextAnalyzerDefaults = field(default_factory=TextAnalyzerDefaults)
     concurrent_requests: int = 25
     async_mode: AsyncType = AsyncType.Threaded
+    max_entities_per_chunk: int = 0
+    min_co_occurrence: int = 1
 
 
 @dataclass

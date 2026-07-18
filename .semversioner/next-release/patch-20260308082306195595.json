@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add Top-K and min co-occurrence filters to NLP edge extraction to prevent O(N^2) relationship explosion"
+}
