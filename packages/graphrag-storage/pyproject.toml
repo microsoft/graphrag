@@ -31,7 +31,7 @@ classifiers = [
 ]
 dependencies = [
     "aiofiles~=25.1",
-    "azure-cosmos~=4.9",
+    "azure-cosmos~=4.16",
     "azure-identity~=1.25",
     "azure-storage-blob~=12.24",
     "graphrag-common==3.1.1",
