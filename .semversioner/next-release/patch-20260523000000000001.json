@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Preserve literal `$` in config values (e.g. regex `file_pattern: \".*\\.md$\"`) by switching `_parse_env_variables` from `Template.substitute` to `Template.safe_substitute`; missing env vars are still detected explicitly via `Template.get_identifiers`. Fixes #2349."
+}
