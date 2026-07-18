@@ -46,7 +46,7 @@ dependencies = [
     # Hold on the 1.2.x line: graspologic-native 1.3.x changes Leiden clustering
     # output (community counts/levels), which breaks pinned regression tests and the
     # golden community data. Revisit deliberately with a golden-data refresh.
-    "graspologic-native>=1.2,<1.3",
+    "graspologic-native>=1.2,<1.4",
     "json-repair~=0.30",
     "networkx~=3.4",
     "nltk~=3.9",
