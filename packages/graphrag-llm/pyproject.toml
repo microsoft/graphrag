@@ -50,5 +50,5 @@ dependencies = [
 Source = "https://github.com/microsoft/graphrag"
 
 [build-system]
-requires = ["hatchling>=1.27.0,<2.0.0"]
+requires = ["hatchling>=1.31.0,<2.0.0"]
 build-backend = "hatchling.build"
