@@ -57,7 +57,7 @@ dependencies = [
     "spacy~=3.8",
     "blis~=1.0",
     "textblob~=0.18",
-    "tqdm~=4.67",
+    "tqdm~=4.69",
     "typing-extensions~=4.12",
     "typer~=0.16",
 ]
