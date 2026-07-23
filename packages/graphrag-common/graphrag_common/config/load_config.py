@@ -84,11 +84,12 @@ def _get_parser_for_file(file_path: str | Path) -> Callable[[str], dict[str, Any
 
 def _parse_env_variables(text: str) -> str:
     """Parse environment variables in the configuration text."""
-    try:
-        return Template(text).substitute(os.environ)
-    except KeyError as error:
-        msg = f"Environment variable not found: {error}"
-        raise ConfigParsingError(msg) from error
+    for match in Template.pattern.finditer(text):
+        env_var = match.group("named") or match.group("braced")
+        if env_var is not None and env_var not in os.environ:
+            msg = f"Environment variable not found: {env_var!r}"
+            raise ConfigParsingError(msg)
+    return Template(text).safe_substitute(os.environ)
 
 
 def _recursive_merge_dicts(dest: dict[str, Any], src: dict[str, Any]) -> None:
