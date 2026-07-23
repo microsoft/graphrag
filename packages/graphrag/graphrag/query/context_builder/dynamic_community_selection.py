@@ -67,8 +67,8 @@ class DynamicCommunitySelection:
             if community.short_id in self.reports:
                 self.levels[community.level].append(community.short_id)
 
-        # start from root communities (level 0)
-        self.starting_communities = self.levels["0"]
+        # start from root communities (level 0), if any
+        self.starting_communities = self.levels.get("0", [])
 
     async def select(self, query: str) -> tuple[list[CommunityReport], dict[str, Any]]:
         """
