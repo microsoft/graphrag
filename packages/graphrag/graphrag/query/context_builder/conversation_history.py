@@ -161,8 +161,8 @@ class ConversationHistory:
 
         Parameters
         ----------
-            user_queries_only: If True, only user queries (not assistant responses) will be included in the context, default is True.
-            max_qa_turns: Maximum number of QA turns to include in the context, default is 1.
+            include_user_turns_only: If True, only user queries (not assistant responses) will be included in the context, default is True.
+            max_qa_turns: Maximum number of QA turns to include in the context, default is 5.
             recency_bias: If True, reverse the order of the conversation history to ensure last QA got prioritized.
             column_delimiter: Delimiter to use for separating columns in the context data, default is "|".
             context_name: Name of the context, default is "Conversation History".
