@@ -40,7 +40,7 @@ or by simply running `azurite` in the terminal if already installed globally. Se
 
 # Lifecycle Scripts
 
-Our Python package utilize uv to manage dependencies and [poethepoet](https://pypi.org/project/poethepoet/) to manage build scripts.
+Our Python package uses uv to manage dependencies and [poethepoet](https://pypi.org/project/poethepoet/) to manage build scripts.
 
 Available scripts are:
 
