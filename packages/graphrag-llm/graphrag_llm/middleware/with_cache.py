@@ -67,41 +67,42 @@ def with_cache(
         cache_key = cache_key_creator(kwargs)
 
         event_loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(event_loop)
-        cached_response = event_loop.run_until_complete(cache.get(cache_key))
-        if (
-            cached_response is not None
-            and isinstance(cached_response, dict)
-            and "response" in cached_response
-            and cached_response["response"] is not None
-            and isinstance(cached_response["response"], dict)
-        ):
-            try:
-                if (
-                    metrics is not None
-                    and "metrics" in cached_response
-                    and cached_response["metrics"] is not None
-                    and isinstance(cached_response["metrics"], dict)
-                ):
-                    metrics.update(cached_response["metrics"])
-                    metrics["cached_responses"] = 1
+        try:
+            cached_response = event_loop.run_until_complete(cache.get(cache_key))
+            if (
+                cached_response is not None
+                and isinstance(cached_response, dict)
+                and "response" in cached_response
+                and cached_response["response"] is not None
+                and isinstance(cached_response["response"], dict)
+            ):
+                try:
+                    if (
+                        metrics is not None
+                        and "metrics" in cached_response
+                        and cached_response["metrics"] is not None
+                        and isinstance(cached_response["metrics"], dict)
+                    ):
+                        metrics.update(cached_response["metrics"])
+                        metrics["cached_responses"] = 1
 
-                if request_type == "chat":
-                    return LLMCompletionResponse(**cached_response["response"])
-                return LLMEmbeddingResponse(**cached_response["response"])
-            except Exception:  # noqa: BLE001
-                # Try to retrieve value from cache but if it fails, continue
-                # to make the request.
-                ...
+                    if request_type == "chat":
+                        return LLMCompletionResponse(**cached_response["response"])
+                    return LLMEmbeddingResponse(**cached_response["response"])
+                except Exception:  # noqa: BLE001
+                    # Try to retrieve value from cache but if it fails, continue
+                    # to make the request.
+                    ...
 
-        response = sync_middleware(**kwargs)
-        cache_value = {
-            "response": response.model_dump(),  # type: ignore
-            "metrics": metrics if metrics is not None else {},
-        }
-        event_loop.run_until_complete(cache.set(cache_key, cache_value))
-        event_loop.close()
-        return response
+            response = sync_middleware(**kwargs)
+            cache_value = {
+                "response": response.model_dump(),  # type: ignore
+                "metrics": metrics if metrics is not None else {},
+            }
+            event_loop.run_until_complete(cache.set(cache_key, cache_value))
+            return response
+        finally:
+            event_loop.close()
 
     async def _cache_middleware_async(
         **kwargs: Any,
