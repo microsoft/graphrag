@@ -50,6 +50,10 @@ dev = [
 [tool.uv]
 package = false
 
+[[tool.uv.index]]
+url="https://packagefeedproxy.microsoft.io/pypi/simple"
+default=true
+
 [tool.uv.workspace]
 members = ["packages/*"]
 
