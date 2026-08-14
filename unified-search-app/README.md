@@ -93,19 +93,19 @@ Run the project using streamlit: `uv run poe start`
 ![Initial page](images/image-1.png)
 
 ## Configuration panel (left panel)
-When you run the app you will see two main panels at the beginning. The left panel provides several configuration options for the app and this panel can be closed:
-1. **Datasets**: Here all the datasets you defined inside the listing.json file are shown in order inside the dropdown.
-2. **Number of suggested questions**: this option let the user to choose how many suggested question can be generated.
-3. **Search options**: This section allows to choose which searches to use in the app. At least one search should be enabled to use the app.
+When you run the app, you will see two main panels. The left panel provides several configuration options and can be closed:
+1. **Datasets**: All datasets defined in the listing.json file are shown in the dropdown.
+2. **Number of suggested questions**: This option lets you choose how many suggested questions to generate.
+3. **Search options**: This section lets you choose which searches to use in the app. At least one search must be enabled.
 
 ## Searches panel (right panel)
-In the right panel you have several functionalities. 
+The right panel provides several functions.
 1. At the top you can see general information related to the chosen dataset (name and description).
-2. Below the dataset information there is a button labeled "Suggest some questions" which analyzes the dataset using global search and generates the most important questions (the number of questions generated is the amount set in the configuration panel). If you want to select a question generated you have to click the checkbox at the left side of the question to select it. 
-3. A textbox that it is labeled as "Ask a question to compare the results" where you can type the question that you want to send.
+2. Below the dataset information, a button labeled "Suggest some questions" analyzes the dataset using global search and generates the number of questions set in the configuration panel. To select a generated question, click the checkbox to its left.
+3. A text box labeled "Ask a question to compare the results" lets you type the question that you want to send.
 4. Two tabs called Search and Community Explorer:
-    1. Search: Here all the searches results are displayed with their citations.
-    2. Community Explorer: This tab is divided in two sections: Community Reports List, and Selected Report. 
+    1. Search: All search results are displayed with their citations.
+    2. Community Explorer: This tab is divided into two sections: Community Reports List and Selected Report.
 
 ##### Suggest some question clicked
 ![Suggest some question clicked](images/image-2.png)

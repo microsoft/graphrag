@@ -11,6 +11,7 @@ ignorePaths:
   - cspell.config.yaml
   - node_modules
   - _site
+  - site/
   - /project-words.txt
   - default_pipeline.yml
   - .turbo
