@@ -2,69 +2,49 @@
 
 Thank you for your interest in contributing to GraphRAG! We welcome contributions from the community to help improve the project.
 
+> [!WARNING]
+> GraphRAG is a research project that explores the functional use of graphs to form a targeted context for question answering. Since our first release in July 2024 the capabilities of frontier models have changed dramatically, and our portfolio of research projects has diversified to match. This project is in maintenance mode. We won't be implementing new features, but we are accepting PRs for bug fixes. If you'd like to contribute a bug fix, please file an issue first so we can discuss and track it. We'll also perform dependency updates as appropriate, particularly to address CVEs as they arise.
+
 ## Code of Conduct
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA)
 declaring that you have the right to, and actually do, grant us the rights to use your contribution.
 For details, visit https://cla.microsoft.com.
 
-When you submit a pull request, a CLA-bot will automatically determine whether you need
-to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the
-instructions provided by the bot. You will only need to do this once across all repositories using our CLA.
-
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/)
 or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
-## How to Contribute
-
-1. Fork the repository and clone it to your local machine.
-2. Create a new branch for your contribution: `git checkout -b my-contribution`.
-3. Make your changes and ensure that the code passes all tests.
-4. Commit your changes: `git commit -m "Add my contribution"`.
-5. Create and commit a semver impact document by running `uv run semversioner add-change -t <major|minor|patch> -d <description>`.
-6. Push your changes to your forked repository: `git push origin my-contribution`.
-7. Open a pull request to the main repository.
 
 ## Reporting Security Issues
 
 **Please do not report security vulnerabilities through public GitHub issues.** Instead, please report them to the Microsoft Security Response Center (MSRC).
 See [SECURITY.md](./SECURITY.md) for more information.
 
-## Before you start, file an issue
+## How to Contribute, File an Issue
 
-Please follow this simple rule to help us eliminate any unnecessary wasted effort & frustration, and ensure an efficient and effective use of everyone's time - yours, ours, and other community members':
+Before filing a new issue, search existing open and closed issues first: it is likely someone else has already found the problem you're seeing, and someone may be working on or have already contributed a fix!
 
-> 👉 If you have a question, think you've discovered an issue, would like to propose a new feature, etc., then find/file an issue **BEFORE** starting work to fix/implement it.
-
-### Search existing issues first
-
-Before filing a new issue, search existing open and closed issues first: This project is moving fast! It is likely someone else has found the problem you're seeing, and someone may be working on or have already contributed a fix!
-
-If no existing item describes your issue/feature, great - please file a new issue:
+If no existing item describes your issue, great - please file a new issue:
 
 ### File a new Issue
 
-- Don't know whether you're reporting an issue or requesting a feature? File an issue
+- Think you've found a bug? File an issue
 - Have a question that you don't see answered in docs, videos, etc.? File an issue
-- Want to know if we're planning on building a particular feature? File an issue
-- Got a great idea for a new feature? File an issue/request/idea
 - Don't understand how to do something? File an issue
 - Found an existing issue that describes yours? Great - upvote and add additional commentary / info / repro-steps / etc.
 
-If from the previous guide you find yourself in the need of file an Issue please use the [issue tracker](https://github.com/microsoft/graphrag/issues).
+Since the project is in maintenance mode, we're focused on bug fixes rather than new features. If you'd like to contribute a fix, please file an issue using the [issue tracker](https://github.com/microsoft/graphrag/issues) so we can discuss and track it.
 Provide as much detail as possible to help us understand and address the problem.
 
 ### Add information
 
-**Complete the new Issue form, providing as much information as possible**. The more information you provide, the more likely your issue/ask will be understood and implemented. Helpful information includes:
+**Complete the new Issue form, providing as much information as possible**. The more information you provide, the more likely your issue will be understood and addressed. Helpful information includes:
 
 - What device you're running (inc. CPU type, memory, disk, etc.)
 - What OS your device is running
 - What tools and apps you're using (e.g. VS 2022, VSCode, etc.)
 - **We LOVE detailed repro steps!** What steps do we need to take to reproduce the issue? Assume we love to read repro steps. As much detail as you can stand is probably _barely_ enough detail for us!
 - Prefer error message text where possible or screenshots of errors if text cannot be captured
-- **If you intend to implement the fix/feature yourself then say so!** If you do not indicate otherwise we will assume that the issue is our to solve, or may label the issue as `Help-Wanted`.
 
 ### DO NOT post "+1" comments
 
