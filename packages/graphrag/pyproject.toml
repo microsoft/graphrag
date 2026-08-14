@@ -59,7 +59,7 @@ dependencies = [
     "textblob~=0.18",
     "tqdm~=4.67",
     "typing-extensions~=4.12",
-    "typer~=0.16",
+    "typer~=0.27",
 ]
 
 [project.scripts]
