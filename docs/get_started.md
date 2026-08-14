@@ -89,10 +89,10 @@ api_version: 2024-02-15-preview # You can customize this for other versions
 To use managed auth, edit the auth_method in your model config and remove the api_key line:
 
 ```yaml
-auth_method: azure_managed_identity # Default auth_method is is api_key
+auth_method: azure_managed_identity # Default auth_method is api_key
 ```
 
-You will also need to login with [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli) and select the subscription with your endpoint.
+You will also need to log in with [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli) and select the subscription with your endpoint.
 
 ## Index
 

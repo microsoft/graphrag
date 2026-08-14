@@ -159,14 +159,27 @@ class ConversationHistory:
         """
         Prepare conversation history as context data for system prompt.
 
-        Parameters
-        ----------
-            user_queries_only: If True, only user queries (not assistant responses) will be included in the context, default is True.
-            max_qa_turns: Maximum number of QA turns to include in the context, default is 1.
-            recency_bias: If True, reverse the order of the conversation history to ensure last QA got prioritized.
-            column_delimiter: Delimiter to use for separating columns in the context data, default is "|".
-            context_name: Name of the context, default is "Conversation History".
+        ARGS
+        ----
+            tokenizer: Tokenizer | None
+                Tokenizer to use for counting tokens, if None, the default tokenizer will be used.
+            include_user_turns_only: bool (default True)
+                If True, only user queries (not assistant responses) will be included in the context, default is True.
+            max_qa_turns: int | None (default 5)
+                Maximum number of QA turns to include in the context, default is 5.
+            max_context_tokens: int (default 8000)
+                Maximum number of tokens to include in the context, default is 8000.
+            recency_bias: bool (default True)
+                If True, reverse the order of the conversation history to ensure last QA got prioritized.
+            column_delimiter: str (default "|")
+                Delimiter to use for separating columns in the context data, default is "|".
+            context_name: str (default "Conversation History")
+                Name of the context, default is "Conversation History".
 
+        Returns
+        -------
+            tuple[str, dict[str, pd.DataFrame]]
+                A tuple containing the context text and a dictionary with the context name as key and a DataFrame of the conversation history as value.
         """
         tokenizer = tokenizer or get_tokenizer()
         qa_turns = self.to_qa_turns()

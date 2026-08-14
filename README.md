@@ -53,7 +53,7 @@ We strongly recommend to fine-tune your prompts following the [Prompt Tuning Gui
 
 Please see the [breaking changes](./breaking-changes.md) document for notes on our approach to versioning the project.
 
-_Always run `graphrag init --root [path] --force` between minor version bumps to ensure you have the latest config format. Run the provided migration notebook between major version bumps if you want to avoid re-indexing prior datasets. Note that this will overwrite your configuration and prompts, so backup if necessary._
+_Always run `graphrag init --root [path] --force` between minor version bumps to ensure you have the latest config format. Run the provided migration notebook between major version bumps if you want to avoid re-indexing prior datasets. Note that this will overwrite your configuration and prompts, so back them up if necessary._
 
 ## Responsible AI FAQ
 

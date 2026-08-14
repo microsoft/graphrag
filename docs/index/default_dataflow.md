@@ -53,9 +53,9 @@ flowchart TB
 
 ## Phase 1: Compose TextUnits
 
-The first phase of the default-configuration workflow is to transform input documents into _TextUnits_. A _TextUnit_ is a chunk of text that is used for our graph extraction techniques. They are also used as source-references by extracted knowledge items in order to empower breadcrumbs and provenance by concepts back to their original source text.
+The first phase of the default-configuration workflow is to transform input documents into _TextUnits_. A _TextUnit_ is a chunk of text used by our graph extraction techniques. TextUnits are also referenced by extracted knowledge items, providing provenance back to the original source text.
 
-The chunk size (counted in tokens), is user-configurable. By default this is set to 1200 tokens. Larger chunks result in lower-fidelity output and less meaningful reference texts; however, using larger chunks can result in much faster processing time.
+The chunk size (counted in tokens) is user-configurable. By default, it is set to 1200 tokens. Larger chunks result in lower-fidelity output and less meaningful reference texts; however, they can result in much faster processing.
 
 ```mermaid
 ---
