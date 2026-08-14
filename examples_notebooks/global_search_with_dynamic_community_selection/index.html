@@ -2991,9 +2991,9 @@ Report count after filtering by community level None: 10
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="build-global-context-with-dynamic-community-selection">Build global context with dynamic community selection<a class="anchor-link" href="#build-global-context-with-dynamic-community-selection">¶</a></h4><p>The goal of dynamic community selection reduce the number of community reports that need to be processed in the map-reduce operation. To that end, we take advantage of the hierachical structure of the indexed dataset. We first ask the LLM to rate how relevant each level 0 community is with respect to the user query, we then traverse down the child node(s) if the current community report is deemed relevant.</p>
-<p>You can still set a <code>COMMUNITY_LEVEL</code> to filter out lower level community reports and apply dynamic community selection on the filtered reports.</p>
-<p>Note that the dataset is quite small, with only consist of 20 communities from 2 levels (level 0 and 1). Dynamic community selection is more effective when there are large amount of content to be filtered out.</p>
+<h4 id="build-global-context-with-dynamic-community-selection">Build global context with dynamic community selection<a class="anchor-link" href="#build-global-context-with-dynamic-community-selection">¶</a></h4><p>The goal of dynamic community selection is to reduce the number of community reports processed in the map-reduce operation. To do this, we take advantage of the hierarchical structure of the indexed dataset. We first ask the LLM to rate the relevance of each level 0 community to the user query, then traverse to its child nodes if the current community report is relevant.</p>
+<p>You can still set a <code>COMMUNITY_LEVEL</code> to filter out lower-level community reports and apply dynamic community selection to the remaining reports.</p>
+<p>Note that the dataset is quite small, consisting of only 20 communities across two levels (0 and 1). Dynamic community selection is more effective when there is a large amount of content to filter out.</p>
 </div>
 </div>
 </div>
@@ -3214,34 +3214,28 @@ print(result.response)</div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>## Overview of Operation: Dulce
 
-Operation: Dulce is a classified, high-stakes mission spearheaded by the Paranormal Military Squad. Its primary objective is to investigate the enigmatic and technologically advanced underground Dulce Base. The operation is characterized by a high degree of secrecy, complexity, and significant implications for security, intelligence, and potentially the future of humanity. The mission involves uncovering hidden technologies, confronting existential threats, and managing anomalous phenomena within the base [Data: Reports (4)].
+Operation: Dulce is a classified, high-stakes mission orchestrated by the Paranormal Military Squad. Its primary objective is to investigate the enigmatic Dulce Base, a secretive and technologically advanced underground facility. The operation is notable for its focus on uncovering hidden technologies, existential threats, and anomalous phenomena within the base. The implications of the mission are considered profound, with potential consequences for security, intelligence, and possibly the future of humanity itself [Data: Reports (4, 3, 8, 7, 9, +more)].
 
-## Mission Structure and Objectives
+## Mission Structure and Personnel
 
-The structure of Operation: Dulce is multifaceted, encompassing rescue operations, reconnaissance, and direct confrontation with unknown dangers. This requires a coordinated and adaptable effort from the Paranormal Military Squad, leveraging the technical and analytical skills of agents such as Alex Mercer and Sam Rivera. The mission is designed to respond to both conventional and anomalous threats, emphasizing preparedness and the ability to adapt to rapidly changing circumstances [Data: Reports (3)].
+The operation is executed by a specialized team of agents—Alex Mercer, Jordan Hayes, Taylor Cruz, and Sam Rivera—who are tasked with uncovering the secrets of Dulce Base. The mission is characterized by rigorous communication protocols, psychological preparedness, and a strong sense of camaraderie among the agents. As the team transitions from the surface into the depths of the underground facility, they are required to maintain operational readiness in a high-risk environment, emphasizing safety, teamwork, and adaptability [Data: Reports (1)].
 
-A central focus of the operation is the investigation and management of anomalous phenomena and existential threats associated with the Dulce Base, including advanced alien technology. The squad's activities are both investigative and preventative, aiming to mitigate risks before they escalate into larger threats [Data: Reports (7)].
+## Objectives and Scope
 
-## Operational Hub and Infrastructure
+Operation: Dulce involves the Paranormal Military Squad descending into Dulce Base to investigate advanced weaponry, cosmic secrets, and potential existential threats. The aim is to uncover secrets that could reshape understandings of security, technology, and possibly the nature of reality itself. The mission is marked by complexity and uncertainty, necessitating strict adherence to protocols and adaptability among squad members. It serves as a convergence point for key personnel and is regarded as a career-defining moment for those involved [Data: Reports (4, 3, 8, 2)].
 
-Operation: Dulce is conducted from a secure military complex that serves as the operational hub for the Paranormal Military Squad. This facility is equipped with secure briefing rooms, mainframe rooms, and advanced surveillance systems, all of which facilitate mission planning, data analysis, and operational readiness. The infrastructure is designed to support the high-stakes nature of the mission, ensuring that the squad can operate with maximum efficiency and security [Data: Reports (5, 6, 9)].
+## Operational Environment and Support
 
-## Technical Capabilities and Security
+The operation is supported by a secure military complex and advanced technological infrastructure. Specialized equipment, such as encrypted radio transmitters and anomaly detection devices, is employed to ensure operational security and mission success. The team must manage both conventional and anomalous threats, requiring a coordinated effort that leverages the technical, analytical, and scientific expertise of the Paranormal Military Squad [Data: Reports (5, 9, 6, 3, 8, 7)].
 
-The success of Operation: Dulce relies heavily on advanced technical capabilities. Secure communications are maintained via encrypted radio transmitters, and logistical support is provided through an equipment bay within the military complex. These elements are critical for maintaining operational integrity and supporting the squad's objectives during the mission. The emphasis on operational secrecy and readiness is paramount, as any breach could have significant consequences for the entities involved [Data: Reports (9)].
+## Key Implications
 
-## Personnel and Significance
-
-Operation: Dulce acts as a convergence point for key personnel, notably bringing together agents such as Sam Rivera, Alex Mercer, and Taylor Cruz. For those involved, the operation is considered a career-defining moment due to its high level of uncertainty and the necessity for strict adherence to protocol. The mission's outcome may have far-reaching consequences, underscoring the importance of the squad's preparation and the gravity of their task [Data: Reports (4, 3, 8)].
-
-## Implications
-
-The implications of Operation: Dulce are profound. The mission's success or failure may significantly impact not only the Paranormal Military Squad but also broader security and intelligence interests. The operation's focus on advanced technology and existential threats suggests that its outcomes could influence humanity's understanding of anomalous phenomena and shape future responses to similar threats [Data: Reports (4, 7, 9)].
+The investigation into Dulce Base is not only about immediate tactical objectives but also about confronting unknown dangers and uncovering potentially significant risks or secrets within the facility. The operation may have far-reaching implications for the understanding of advanced technologies, existential threats, and the broader security landscape [Data: Reports (4, 3, 8, 7, 9, 1, 2, 5, 6, +more)].
 
 ---
 
 **Summary:**  
-Operation: Dulce is a covert, high-stakes mission led by the Paranormal Military Squad to investigate and manage the threats and technologies associated with the underground Dulce Base. It is supported by advanced infrastructure and technical capabilities, requires coordinated action from specialized personnel, and may have significant consequences for security and humanity's future [Data: Reports (3, 4, 5, 6, 7, 8, 9, +more)].
+Operation: Dulce is a classified mission led by a specialized military squad to investigate the secretive Dulce Base. The operation is defined by its high stakes, focus on advanced and anomalous phenomena, and the need for rigorous protocols and teamwork. The mission's outcomes may significantly impact security, technology, and humanity's understanding of existential threats [Data: Reports (4, 3, 8, 7, 9, 1, 2, 5, 6, +more)].
 </pre>
 </div>
 </div>
@@ -3359,11 +3353,11 @@ result.context_data["reports"]</div>
 </tr>
 <tr>
 <th>6</th>
-<td>1</td>
-<td>Team of Agents Investigating Dulce Base</td>
+<td>9</td>
+<td>Paranormal Military Squad and Operation: Dulce...</td>
 <td>0.2</td>
-<td># Team of Agents Investigating Dulce Base\n\nT...</td>
-<td>7.5</td>
+<td># Paranormal Military Squad and Operation: Dul...</td>
+<td>8.5</td>
 </tr>
 <tr>
 <th>7</th>
@@ -3375,11 +3369,11 @@ result.context_data["reports"]</div>
 </tr>
 <tr>
 <th>8</th>
-<td>9</td>
-<td>Paranormal Military Squad and Operation: Dulce...</td>
+<td>1</td>
+<td>Team of Agents Investigating Dulce Base</td>
 <td>0.2</td>
-<td># Paranormal Military Squad and Operation: Dul...</td>
-<td>8.5</td>
+<td># Team of Agents Investigating Dulce Base\n\nT...</td>
+<td>7.5</td>
 </tr>
 </tbody>
 </table>
@@ -3456,8 +3450,8 @@ print(
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Build context LLM calls: 10. Prompt tokens: 11051. Output tokens: 1229.
-Map-reduce LLM calls: 3. Prompt tokens: 11499. Output tokens: 1354.
+<pre>Build context LLM calls: 10. Prompt tokens: 11051. Output tokens: 1224.
+Map-reduce LLM calls: 3. Prompt tokens: 11526. Output tokens: 1293.
 </pre>
 </div>
 </div>

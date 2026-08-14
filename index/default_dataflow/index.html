@@ -2317,8 +2317,8 @@ flowchart TB
     community_report_outputs --&gt; content_embed[Content Embedding]
     end</code></pre>
 <h2 id="phase-1-compose-textunits">Phase 1: Compose TextUnits</h2>
-<p>The first phase of the default-configuration workflow is to transform input documents into <em>TextUnits</em>. A <em>TextUnit</em> is a chunk of text that is used for our graph extraction techniques. They are also used as source-references by extracted knowledge items in order to empower breadcrumbs and provenance by concepts back to their original source text.</p>
-<p>The chunk size (counted in tokens), is user-configurable. By default this is set to 1200 tokens. Larger chunks result in lower-fidelity output and less meaningful reference texts; however, using larger chunks can result in much faster processing time.</p>
+<p>The first phase of the default-configuration workflow is to transform input documents into <em>TextUnits</em>. A <em>TextUnit</em> is a chunk of text used by our graph extraction techniques. TextUnits are also referenced by extracted knowledge items, providing provenance back to the original source text.</p>
+<p>The chunk size (counted in tokens) is user-configurable. By default, it is set to 1200 tokens. Larger chunks result in lower-fidelity output and less meaningful reference texts; however, they can result in much faster processing.</p>
 <pre class="mermaid"><code>---
 title: Documents into Text Chunks
 ---
