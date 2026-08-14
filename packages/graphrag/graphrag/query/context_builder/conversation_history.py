@@ -164,7 +164,7 @@ class ConversationHistory:
             tokenizer: Tokenizer | None
                 Tokenizer to use for counting tokens, if None, the default tokenizer will be used.
             include_user_turns_only: bool (default True)
-                If True, only user queries (not assistant responses) will be included in the context, default is True. 
+                If True, only user queries (not assistant responses) will be included in the context, default is True.
             max_qa_turns: int | None (default 5)
                 Maximum number of QA turns to include in the context, default is 5.
             max_context_tokens: int (default 8000)
