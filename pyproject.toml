@@ -25,11 +25,11 @@ requires-python = ">=3.11,<3.14"
 
 [dependency-groups]
 dev = [
-    "coverage~=7.6",
+    "coverage~=7.15",
     "deptry~=0.21",
     "ipykernel~=7.3",
     "jupyter~=1.1",
-    "mkdocs-material~=9.5",
+    "mkdocs-material~=9.7",
     "mkdocs-jupyter~=0.25",
     "mkdocs-exclude-search~=0.6",
     "mkdocs-typer~=0.0.3",
