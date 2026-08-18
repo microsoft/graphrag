@@ -21,6 +21,19 @@ Raise dependency versions across this uv workspace, re-lock, and fix any code or
 fallout until `uv run poe check` and `uv run poe test_unit` are both green — without
 touching the version machinery that the release process owns.
 
+## Hard rules (non-negotiable)
+
+1. **Only the Microsoft feed proxy.** All resolves and syncs MUST use
+   `https://packagefeedproxy.microsoft.io/pypi/simple` (the `[[tool.uv.index]]` configured in
+   the root `pyproject.toml`). Never resolve against public PyPI, never add
+   `--index`/`--default-index`/`--index-url` overrides, and never set `UV_INDEX_URL` or
+   `PIP_INDEX_URL` to pypi.org. Do not disable or reorder the configured index.
+2. **Target versions must be at least 7 days old.** Only bump to a version that was released
+   more than 7 days ago. The proxy does not serve versions published within the last week —
+   syncing to a too-new version WILL fail. Before pinning a specific version, verify its
+   release date and pick the newest release older than 7 days; otherwise let the specifier
+   float and let `uv lock` choose (it can only see eligible versions on the proxy anyway).
+
 ## Layout facts
 
 - This is a **uv workspace monorepo**. The root [`pyproject.toml`](../../../pyproject.toml)
@@ -57,12 +70,15 @@ touching the version machinery that the release process owns.
    (`packages/*/pyproject.toml`) and the root `dev` group. Leave the release-owned lines
    above untouched.
 
-3. **Resolve and lock.**
+3. **Resolve and lock.** All of these use the configured Microsoft feed proxy — do not pass
+   any index override (see Hard rules).
    - For a full "get latest allowed" pass: `uv lock --upgrade`.
    - For targeted bumps after editing specifiers: `uv lock`.
    - Then install: `uv sync --all-packages`.
      If resolution fails, read the conflict, relax/adjust the offending specifier, and re-lock.
      Do not delete `uv.lock` to force it.
+   - If a sync fails to find a version you just pinned, it is almost certainly younger than 7
+     days on the proxy — step down to the newest release older than one week.
 
 4. **Static checks.** Run `uv run poe check` (this is `ruff format --check` + `ruff check` +
    `pyright`). Apply safe autofixes with `uv run poe fix`; format with `uv run poe format`.
@@ -108,6 +124,9 @@ verified, repo-specific fix patterns before improvising.
 
 ## Completion checklist
 
+- [ ] All resolves/syncs used the `packagefeedproxy.microsoft.io` index; no public-PyPI or
+      index-override was introduced.
+- [ ] No dependency was bumped to a version released within the last 7 days.
 - [ ] Only intended specifiers changed; no `graphrag-*==` pin or `version` field edited.
 - [ ] `uv.lock` regenerated via `uv lock`/`uv lock --upgrade` (not hand-edited or deleted).
 - [ ] `uv run poe check` passes (ruff format, ruff lint, pyright).
