@@ -21,5 +21,5 @@ jobs:
 
       - name: Close Dependabot PRs
         env:
-          GH_APP_ACCESS_TOKEN: ${{ env.GH_APP_ACCESS_TOKEN }}
+          GH_APP_ACCESS_TOKEN: ${{ secrets.GH_APP_ACCESS_TOKEN }}
         run: bun run ./scripts/close-dependabot-prs.ts
