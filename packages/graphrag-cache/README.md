@@ -35,8 +35,9 @@ from graphrag_cache.json_cache import JsonCache
 # May also register a custom implementation, see above for example.
 cache_factory.register("my_cache_impl", JsonCache)
 
-cache = cache_factory.create(strategy="my_cache_impl", init_args={"some_setting": "..."})
+cache = cache_factory.create(
+    strategy="my_cache_impl", init_args={"some_setting": "..."}
+)
 
 ...
-
 ```

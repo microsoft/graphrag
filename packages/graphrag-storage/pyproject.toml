@@ -31,12 +31,12 @@ classifiers = [
 ]
 dependencies = [
     "aiofiles~=25.1",
-    "azure-cosmos~=4.9",
+    "azure-cosmos~=4.16",
     "azure-identity~=1.25",
-    "azure-storage-blob~=12.24",
+    "azure-storage-blob~=12.30",
     "graphrag-common==3.1.1",
     "pandas~=3.0",
-    "pydantic~=2.10",
+    "pydantic~=2.13",
 ]
 
 [project.urls]

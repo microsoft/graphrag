@@ -24,10 +24,7 @@ Fix — split positional indices instead of the frame, then select rows with `il
 return [pd.DataFrame(fold) for fold in np.array_split(reports, n)]
 
 # Fixed — preserves columns, dtypes, and even fold sizes
-return [
-    reports.iloc[indices]
-    for indices in np.array_split(np.arange(len(reports)), n)
-]
+return [reports.iloc[indices] for indices in np.array_split(np.arange(len(reports)), n)]
 ```
 
 ### `copy=` keyword removed from `merge`/`concat`/`join`/`set_axis` etc.

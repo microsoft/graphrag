@@ -30,7 +30,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "python-dotenv~=1.0",
+    "python-dotenv~=1.2",
     "pyyaml~=6.0",
     "toml~=0.10",
 ]

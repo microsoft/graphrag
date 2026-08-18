@@ -89,9 +89,11 @@ Once you have a model implementation, you need to register it with our completio
 ```python
 from graphrag_llm.completion import LLMCompletion, register_completion
 
+
 class MyCustomCompletionModel(LLMCompletion):
     ...
     # implementation
+
 
 # elsewhere...
 register_completion("my-custom-completion-model", MyCustomCompletionModel)

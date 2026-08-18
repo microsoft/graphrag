@@ -32,7 +32,7 @@ classifiers = [
 dependencies = [
     "graphrag-common==3.1.1",
     "graphrag-storage==3.1.1",
-    "pydantic~=2.10",
+    "pydantic~=2.13",
     "markitdown[pdf]~=0.1.0",
     "pyarrow>=14.0.0"
 ]
