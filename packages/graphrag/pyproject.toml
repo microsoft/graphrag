@@ -34,7 +34,7 @@ classifiers = [
 dependencies = [
     "azure-identity~=1.25",
     "azure-search-documents~=12.0",
-    "azure-storage-blob~=12.24",
+    "azure-storage-blob~=12.30",
     "devtools~=0.12",
     "graphrag-cache==3.1.1",
     "graphrag-chunking==3.1.1",
@@ -47,19 +47,23 @@ dependencies = [
     # output (community counts/levels), which breaks pinned regression tests and the
     # golden community data. Revisit deliberately with a golden-data refresh.
     "graspologic-native>=1.2,<1.3",
-    "json-repair~=0.30",
-    "networkx~=3.4",
-    "nltk~=3.9",
-    "numpy~=2.1",
+    "json-repair~=0.63",
+    "networkx~=3.6",
+    # Hold on the 3.9.x line: nltk 3.10 changes the perceptron POS tagger /
+    # tokenizer output, which shifts the deterministic noun-phrase extraction
+    # counts and breaks the pinned NLP regression tests (test_extract_graph_nlp).
+    # Revisit deliberately with a golden-data refresh.
+    "nltk~=3.9.0",
+    "numpy~=2.4",
     "pandas~=3.0",
     "pyarrow~=25.0",
-    "pydantic~=2.10",
+    "pydantic~=2.13",
     "spacy~=3.8",
-    "blis~=1.0",
-    "textblob~=0.18",
-    "tqdm~=4.67",
-    "typing-extensions~=4.12",
-    "typer~=0.16",
+    "blis~=1.3",
+    "textblob~=0.20",
+    "tqdm~=4.70",
+    "typing-extensions~=4.16",
+    "typer~=0.27",
 ]
 
 [project.scripts]

@@ -37,8 +37,9 @@ from graphrag_storage.file_storage import FileStorage
 # May also register a custom implementation, see above for example.
 storage_factory.register("my_storage_key", FileStorage)
 
-storage = storage_factory.create(strategy="my_storage_key", init_args={"base_dir": "...", "other_settings": "..."})
+storage = storage_factory.create(
+    strategy="my_storage_key", init_args={"base_dir": "...", "other_settings": "..."}
+)
 
 ...
-
 ```
