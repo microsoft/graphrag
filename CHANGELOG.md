@@ -1,6 +1,13 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.1.2
+
+- patch: Change default package feed index.
+- patch: Fix doc string parameters.
+- patch: Preserve caller event loops in synchronous LLM cache middleware.
+- patch: Update dependencies to latest versions (dependency sweep).
+
 ## 3.1.1
 
 - patch: Bump dependencies.

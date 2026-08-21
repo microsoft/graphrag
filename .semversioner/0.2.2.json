@@ -5,7 +5,7 @@
       "type": "patch"
     },
     {
-      "description": "Add sepparate workflow for Python Tests",
+      "description": "Add separate workflow for Python Tests",
       "type": "patch"
     },
     {

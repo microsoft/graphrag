@@ -13,7 +13,7 @@
       "type": "patch"
     },
     {
-      "description": "Add full llm response to LLM PRovider output",
+      "description": "Add full llm response to LLM Provider output",
       "type": "patch"
     },
     {

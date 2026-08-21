@@ -5,7 +5,7 @@
       "type": "minor"
     },
     {
-      "description": "Updated the prompt tunning client to support csv-metadata injection and updated output file types to match the new naming convention.",
+      "description": "Updated the prompt tuning client to support csv-metadata injection and updated output file types to match the new naming convention.",
       "type": "minor"
     },
     {
