@@ -5,7 +5,7 @@
       "type": "minor"
     },
     {
-      "description": "Add Parquet as part of the default emitters when not pressent",
+      "description": "Add Parquet as part of the default emitters when not present",
       "type": "patch"
     },
     {
