@@ -48,6 +48,40 @@ from graphrag.tokenizer.get_tokenizer import get_tokenizer
 logger = logging.getLogger(__name__)
 
 
+def _normalize_entity_types(entity_types: list[str] | None) -> list[str] | None:
+    """Normalize user-provided entity types."""
+    if not entity_types:
+        return None
+
+    normalized = []
+    for entity_type in entity_types:
+        value = str(entity_type).strip()
+        if value and value not in normalized:
+            normalized.append(value)
+
+    return normalized or None
+
+
+def _merge_entity_types(
+    provided_entity_types: list[str] | None,
+    generated_entity_types: list[str] | str | None,
+) -> list[str] | None:
+    """Merge user-provided and generated entity types, preserving order."""
+    if isinstance(generated_entity_types, str):
+        generated_entity_types = [generated_entity_types]
+
+    merged = []
+    for entity_type in [
+        *(provided_entity_types or []),
+        *(generated_entity_types or []),
+    ]:
+        value = str(entity_type).strip()
+        if value and value not in merged:
+            merged.append(value)
+
+    return merged or None
+
+
 @validate_call(config={"arbitrary_types_allowed": True})
 async def generate_indexing_prompts(
     config: GraphRagConfig,
@@ -57,6 +91,7 @@ async def generate_indexing_prompts(
     language: str | None = None,
     max_tokens: int = MAX_TOKEN_COUNT,
     discover_entity_types: bool = True,
+    entity_types: list[str] | None = None,
     min_examples_required: PositiveInt = 2,
     n_subset_max: PositiveInt = 300,
     k: PositiveInt = 15,
@@ -75,6 +110,7 @@ async def generate_indexing_prompts(
     - language: The language to use for the prompts.
     - max_tokens: The maximum number of tokens to use on entity extraction prompts
     - discover_entity_types: Generate entity types.
+    - entity_types: Optional user-provided entity types to include in the generated prompts.
     - min_examples_required: The minimum number of examples required for entity extraction prompts.
     - n_subset_max: The number of text chunks to embed when using auto selection method.
     - k: The number of documents to select when using auto selection method.
@@ -120,19 +156,25 @@ async def generate_indexing_prompts(
         llm, domain=domain, persona=persona, docs=doc_list
     )
 
-    entity_types = None
+    provided_entity_types = _normalize_entity_types(entity_types)
+    generated_entity_types = None
     extract_graph_llm_settings = config.get_completion_model_config(
         config.extract_graph.completion_model_id
     )
     if discover_entity_types:
         logger.info("Generating entity types...")
-        entity_types = await generate_entity_types(
+        generated_entity_types = await generate_entity_types(
             llm,
             domain=domain,
             persona=persona,
             docs=doc_list,
             json_mode=True,
         )
+
+    entity_types = _merge_entity_types(
+        provided_entity_types=provided_entity_types,
+        generated_entity_types=generated_entity_types,
+    )
 
     logger.info("Generating entity relationship examples...")
     examples = await generate_entity_relationship_examples(

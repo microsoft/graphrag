@@ -22,6 +22,17 @@ from graphrag.utils.cli import redact
 logger = logging.getLogger(__name__)
 
 
+def _parse_entity_types(entity_types: str | None) -> list[str] | None:
+    """Parse a comma-separated list of entity types."""
+    if not entity_types:
+        return None
+
+    parsed = [entity_type.strip() for entity_type in entity_types.split(",")]
+    parsed = [entity_type for entity_type in parsed if entity_type]
+
+    return parsed or None
+
+
 async def prompt_tune(
     root: Path,
     domain: str | None,
@@ -33,6 +44,7 @@ async def prompt_tune(
     overlap: int,
     language: str | None,
     discover_entity_types: bool,
+    entity_types: str | None,
     output: Path,
     n_subset_max: int,
     k: int,
@@ -51,6 +63,7 @@ async def prompt_tune(
     - chunk_size: The chunk token size to use.
     - language: The language to use for the prompts.
     - discover_entity_types: Generate entity types.
+    - entity_types: Comma-separated list of entity types to include in generated prompts.
     - output: The output folder to store the prompts.
     - n_subset_max: The number of text chunks to embed when using auto selection method.
     - k: The number of documents to select when using auto selection method.
@@ -87,6 +100,7 @@ async def prompt_tune(
         language=language,
         max_tokens=max_tokens,
         discover_entity_types=discover_entity_types,
+        entity_types=_parse_entity_types(entity_types),
         min_examples_required=min_examples_required,
         n_subset_max=n_subset_max,
         k=k,

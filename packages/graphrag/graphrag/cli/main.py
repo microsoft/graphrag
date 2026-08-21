@@ -325,6 +325,14 @@ def _prompt_tune_cli(
         "--discover-entity-types/--no-discover-entity-types",
         help="Discover and extract unspecified entity types.",
     ),
+    entity_types: str | None = typer.Option(
+        None,
+        "--entity-types",
+        help=(
+            "Comma-separated list of entity types to include in generated prompts. "
+            "When discovery is enabled, these are merged with discovered entity types."
+        ),
+    ),
     output: Path = typer.Option(
         Path("prompts"),
         "--output",
@@ -353,6 +361,7 @@ def _prompt_tune_cli(
             overlap=overlap,
             language=language,
             discover_entity_types=discover_entity_types,
+            entity_types=entity_types,
             output=output,
             n_subset_max=n_subset_max,
             k=k,
