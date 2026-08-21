@@ -25,23 +25,23 @@ requires-python = ">=3.11,<3.14"
 
 [dependency-groups]
 dev = [
-    "coverage~=7.6",
-    "deptry~=0.21",
+    "coverage~=7.15",
+    "deptry~=0.25",
     "ipykernel~=7.3",
     "jupyter~=1.1",
-    "mkdocs-material~=9.5",
-    "mkdocs-jupyter~=0.25",
+    "mkdocs-material~=9.7",
+    "mkdocs-jupyter~=0.26",
     "mkdocs-exclude-search~=0.6",
     "mkdocs-typer~=0.0.3",
-    "nbconvert~=7.16",
+    "nbconvert~=7.17",
     "pandas-stubs~=3.0",
-    "poethepoet~=0.31",
+    "poethepoet~=0.48",
     "pyright~=1.1",
     "pytest~=9.1",
     "pytest-asyncio~=1.4",
     "pytest-dotenv~=0.5",
-    "pytest-timeout~=2.3",
-    "ruff~=0.8",
+    "pytest-timeout~=2.4",
+    "ruff~=0.16",
     "semversioner~=3.0",
     "update-toml~=0.2",
     "pytest-xdist[psutil]~=3.8.0",
@@ -224,7 +224,11 @@ ignore = [
     "PERF203", # Needs restructuring of errors, we should bail-out on first error
     "C901",    # needs refactoring to remove cyclomatic complexity
     "B008", # Needs to restructure our cli params with Typer into constants
-    "ASYNC240"
+    "ASYNC240",
+    # ruff 0.16 preview stylistic rules; opting out rather than rewriting all
+    # `# noqa` comments and rule codes in the config selectors.
+    "RUF105", # noqa-comments (prefer `ruff: ignore`)
+    "RUF201", # rule-codes-in-selectors
 ]
 
 [tool.ruff.lint.per-file-ignores]

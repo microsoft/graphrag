@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Update dependencies to latest versions (dependency sweep)."
+}

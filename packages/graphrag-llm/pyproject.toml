@@ -42,8 +42,8 @@ dependencies = [
     "nest-asyncio2~=1.7",
     # orjson is required for litellm tool calling. https://github.com/BerriAI/litellm/issues/32993
     "orjson>=3.11.6,<4.0",
-    "pydantic~=2.10",
-    "typing-extensions~=4.12",
+    "pydantic~=2.13",
+    "typing-extensions~=4.16",
 ]
 
 [project.urls]
