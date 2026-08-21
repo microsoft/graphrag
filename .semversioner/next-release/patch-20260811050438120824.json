@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Preserve caller event loops in synchronous LLM cache middleware."
-}

@@ -1,6 +1,13 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.1.2
+
+- patch: Change default package feed index.
+- patch: Fix doc string parameters.
+- patch: Preserve caller event loops in synchronous LLM cache middleware.
+- patch: Update dependencies to latest versions (dependency sweep).
+
 ## 3.1.1
 
 - patch: Bump dependencies.
@@ -52,7 +59,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 - patch: Add filtering, timestamp explosion, insert/count/remove/update operations to vector store API. Add top-level vector_size config to VectorStoreConfig.
 - patch: add csv table smoke tests
 - patch: add manual release instructions
-- patch: add streaming to the two first workflows
+- patch: add streamming to the two first workflows
 - patch: add support for cosmosdb output
 - patch: create_communities streaming
 - patch: create_final_documents streaming
@@ -138,7 +145,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 - minor: Remove Dynamic Max Retries support. Refactor typer typing in cli interface
 - minor: Update fnllm to latest. Update default graphrag configuration
 - patch: A few fixes and enhancements for better reuse and flow.
-- patch: Add full llm response to LLM Provider output
+- patch: Add full llm response to LLM PRovider output
 - patch: Fix Drift Reduce Response for non streaming calls
 - patch: Fix global search prompt to include missing formatting key
 - patch: Upgrade pyarrow dependency to >=17.0.0 to fix CVE-2024-52338
@@ -165,7 +172,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 ## 2.1.0
 
 - minor: Add support for JSON input files.
-- minor: Updated the prompt tuning client to support csv-metadata injection and updated output file types to match the new naming convention.
+- minor: Updated the prompt tunning client to support csv-metadata injection and updated output file types to match the new naming convention.
 - patch: Add check for custom model types while config loading
 - patch: Adds general-purpose pipeline run state object.
 
@@ -271,7 +278,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 ## 0.5.0
 
 - minor: Data model changes.
-- patch: Add Parquet as part of the default emitters when not present
+- patch: Add Parquet as part of the default emitters when not pressent
 - patch: Centralized prompts and export all for easier injection.
 - patch: Cleanup of artifact outputs/schemas.
 - patch: Config and docs updates.
@@ -331,7 +338,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 - patch: Optimize Create Base Documents subflow
 - patch: Optimize text unit relationship count
 - patch: Perf optimizations in map_query_to_entities()
-- patch: Remove aggregate_df from final communities and final text units
+- patch: Remove aggregate_df from final coomunities and final text units
 - patch: Remove duplicated relationships and nodes
 - patch: Remove unused column from final entities
 - patch: Reorganized api,reporter,callback code into separate components. Defined debug profiles.
@@ -422,7 +429,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 ## 0.2.2
 
 - patch: Add a check if there is no community record added in local search context
-- patch: Add separate workflow for Python Tests
+- patch: Add sepparate workflow for Python Tests
 - patch: Docs updates
 - patch: Run smoke tests on 4o
 
