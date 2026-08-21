@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1794,9 +1794,9 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a> index [OPTIONS]
 </code></pre></div>
 <p>Options:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>  -r, --root DIRECTORY            The project root directory.  [default:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>  -r, --root &lt;directory&gt;          The project root directory.  [default:
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>                                  /home/runner/work/graphrag/graphrag]
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  -m, --method [standard|fast|standard-update|fast-update]
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  -m, --method &lt;standard|fast|standard-update|fast-update&gt;
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>                                  The indexing method to use.  [default:
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>                                  standard]
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  -v, --verbose                   Run the indexing pipeline with verbose
@@ -1814,12 +1814,12 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a> init [OPTIONS]
 </code></pre></div>
 <p>Options:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>  -r, --root DIRECTORY  The project root directory.  [default:
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>                        /home/runner/work/graphrag/graphrag]
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  -m, --model TEXT      [default: gpt-4.1]
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  -e, --embedding TEXT  [default: text-embedding-3-large]
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  -f, --force           Force initialization even if the project already
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>                        exists.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>  -r, --root &lt;directory&gt;  The project root directory.  [default:
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>                          /home/runner/work/graphrag/graphrag]
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  -m, --model &lt;str&gt;       [default: gpt-4.1]
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  -e, --embedding &lt;str&gt;   [default: text-embedding-3-large]
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  -f, --force             Force initialization even if the project already
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>                          exists.
 </code></pre></div>
 <h2 id="prompt-tune">prompt-tune</h2>
 <p>Generate custom graphrag prompts with your own data (i.e. auto templating).</p>
@@ -1827,68 +1827,67 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a> prompt-tune [OPTIONS]
 </code></pre></div>
 <p>Options:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>  -r, --root DIRECTORY            The project root directory.  [default:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>  -r, --root &lt;directory&gt;          The project root directory.  [default:
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>                                  /home/runner/work/graphrag/graphrag]
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  -v, --verbose                   Run the prompt tuning pipeline with verbose
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>                                  logging.
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  --domain TEXT                   The domain your input data is related to.
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  --domain &lt;str&gt;                  The domain your input data is related to.
 <a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>                                  For example &#39;space science&#39;, &#39;microbiology&#39;,
 <a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>                                  &#39;environmental news&#39;. If not defined, a
 <a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>                                  domain will be inferred from the input data.
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>  --selection-method [all|random|top|auto]
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>  --selection-method &lt;all|random|top|auto&gt;
 <a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>                                  The text chunk selection method.  [default:
 <a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>                                  random]
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>  --n-subset-max INTEGER          The number of text chunks to embed when
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>  --n-subset-max &lt;int&gt;            The number of text chunks to embed when
 <a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>                                  --selection-method=auto.  [default: 300]
-<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>  --k INTEGER                     The maximum number of documents to select
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>  --k &lt;int&gt;                       The maximum number of documents to select
 <a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>                                  from each centroid when --selection-
 <a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>                                  method=auto.  [default: 15]
-<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>  --limit INTEGER                 The number of documents to load when
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>  --limit &lt;int&gt;                   The number of documents to load when
 <a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>                                  --selection-method={random,top}.  [default:
 <a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>                                  15]
-<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>  --max-tokens INTEGER            The max token count for prompt generation.
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>  --max-tokens &lt;int&gt;              The max token count for prompt generation.
 <a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>                                  [default: 2000]
-<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>  --min-examples-required INTEGER
-<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>                                  The minimum number of examples to
-<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>                                  generate/include in the entity extraction
-<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>                                  prompt.  [default: 2]
-<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>  --chunk-size INTEGER            The size of each example text chunk.
-<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>                                  Overrides chunking.size in the configuration
-<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>                                  file.  [default: 1200]
-<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>  --overlap INTEGER               The overlap size for chunking documents.
-<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>                                  Overrides chunking.overlap in the
-<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>                                  configuration file.  [default: 100]
-<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>  --language TEXT                 The primary language used for inputs and
-<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a>                                  outputs in graphrag prompts.
-<a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>  --discover-entity-types / --no-discover-entity-types
-<a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a>                                  Discover and extract unspecified entity
-<a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a>                                  types.  [default: discover-entity-types]
-<a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a>  -o, --output PATH               The directory to save prompts to, relative
-<a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a>                                  to the project root directory.  [default:
-<a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a>                                  prompts]
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>  --min-examples-required &lt;int&gt;   The minimum number of examples to
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>                                  generate/include in the entity extraction
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>                                  prompt.  [default: 2]
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>  --chunk-size &lt;int&gt;              The size of each example text chunk.
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>                                  Overrides chunking.size in the configuration
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>                                  file.  [default: 1200]
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>  --overlap &lt;int&gt;                 The overlap size for chunking documents.
+<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>                                  Overrides chunking.overlap in the
+<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>                                  configuration file.  [default: 100]
+<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>  --language &lt;str&gt;                The primary language used for inputs and
+<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>                                  outputs in graphrag prompts.
+<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a>  --discover-entity-types / --no-discover-entity-types
+<a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>                                  Discover and extract unspecified entity
+<a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a>                                  types.  [default: discover-entity-types]
+<a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a>  -o, --output &lt;path&gt;             The directory to save prompts to, relative
+<a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a>                                  to the project root directory.  [default:
+<a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a>                                  prompts]
 </code></pre></div>
 <h2 id="query">query</h2>
 <p>Query a knowledge graph index.</p>
 <p>Usage:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a> query [OPTIONS] QUERY
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a> query [OPTIONS] {query}
 </code></pre></div>
 <p>Options:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>  QUERY                           The query to execute.  [required]
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  -r, --root DIRECTORY            The project root directory.  [default:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>  query                           The query to execute.  [required]
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  -r, --root &lt;directory&gt;          The project root directory.  [default:
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>                                  /home/runner/work/graphrag/graphrag]
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  -m, --method [local|global|drift|basic]
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  -m, --method &lt;local|global|drift|basic&gt;
 <a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>                                  The query algorithm to use.  [default:
 <a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>                                  global]
 <a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>  -v, --verbose                   Run the query with verbose logging.
-<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>  -d, --data PATH                 Index output directory (contains the parquet
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>  -d, --data &lt;path&gt;               Index output directory (contains the parquet
 <a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>                                  files).
-<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>  --community-level INTEGER       Leiden hierarchy level from which to load
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>  --community-level &lt;int&gt;         Leiden hierarchy level from which to load
 <a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>                                  community reports. Higher values represent
 <a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>                                  smaller communities.  [default: 2]
 <a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>  --dynamic-community-selection / --no-dynamic-selection
 <a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>                                  Use global search with dynamic community
 <a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>                                  selection.  [default: no-dynamic-selection]
-<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>  --response-type TEXT            Free-form description of the desired
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>  --response-type &lt;str&gt;           Free-form description of the desired
 <a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>                                  response format (e.g. &#39;Single Sentence&#39;,
 <a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>                                  &#39;List of 3-7 Points&#39;, etc.).  [default:
 <a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>                                  Multiple Paragraphs]
@@ -1902,9 +1901,9 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a> update [OPTIONS]
 </code></pre></div>
 <p>Options:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>  -r, --root DIRECTORY            The project root directory.  [default:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>  -r, --root &lt;directory&gt;          The project root directory.  [default:
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>                                  /home/runner/work/graphrag/graphrag]
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>  -m, --method [standard|fast|standard-update|fast-update]
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>  -m, --method &lt;standard|fast|standard-update|fast-update&gt;
 <a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>                                  The indexing method to use.  [default:
 <a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>                                  standard]
 <a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>  -v, --verbose                   Run the indexing pipeline with verbose
@@ -2010,7 +2009,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "content.code.select", "navigation.footer", "navigation.tabs"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../scripts/create_cookie_banner.js"></script>
       
