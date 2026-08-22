@@ -21,13 +21,13 @@ def get_candidate_communities(
     selected_community_ids = [
         entity.community_ids for entity in selected_entities if entity.community_ids
     ]
-    selected_community_ids = [
+    selected_community_ids_set = {
         item for sublist in selected_community_ids for item in sublist
-    ]
+    }
     selected_reports = [
         community
         for community in community_reports
-        if community.id in selected_community_ids
+        if community.id in selected_community_ids_set
     ]
     return to_community_report_dataframe(
         reports=selected_reports,
