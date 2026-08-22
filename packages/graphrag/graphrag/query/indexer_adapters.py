@@ -217,9 +217,11 @@ def embed_community_reports(
 
 
 def _filter_under_community_level(
-    df: pd.DataFrame, community_level: int
+    df: pd.DataFrame, community_level: int | None
 ) -> pd.DataFrame:
+    if community_level is None:
+        return df
     return cast(
         "pd.DataFrame",
-        df[df.level <= community_level],
+        df[(df.level <= community_level) | df.level.isna()],
     )
