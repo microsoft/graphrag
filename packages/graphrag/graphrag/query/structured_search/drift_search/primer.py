@@ -5,6 +5,7 @@
 
 import logging
 import secrets
+import textwrap
 import time
 from typing import TYPE_CHECKING
 
@@ -80,10 +81,18 @@ class PrimerQueryProcessor:
         """
         template = secrets.choice(self.reports).full_content  # nosec S311
 
-        prompt = f"""Create a hypothetical answer to the following query: {query}\n\n
-                  Format it to follow the structure of the template below:\n\n
-                  {template}\n"
-                  Ensure that the hypothetical answer does not reference new named entities that are not present in the original query."""
+        prompt = (
+            textwrap.dedent(f"""\
+                Create a hypothetical answer to the following query: {query}
+
+                Format it to follow the structure of the template below:
+
+                """)
+            + template
+            + textwrap.dedent("""
+
+                Ensure that the hypothetical answer does not reference new named entities that are not present in the original query.""")
+        )
 
         model_response: LLMCompletionResponse = await self.chat_model.completion_async(
             messages=prompt
