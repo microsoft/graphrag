@@ -16,13 +16,13 @@ if TYPE_CHECKING:
 async def generate_community_report_rating(
     model: "LLMCompletion", domain: str, persona: str, docs: str | list[str]
 ) -> str:
-    """Generate an LLM persona to use for GraphRAG prompts.
+    """Generate a community report rating description for GraphRAG prompts.
 
     Parameters
     ----------
     - model (LLMCompletion): The LLM to use for generation
     - domain (str): The domain to generate a rating for
-    - persona (str): The persona to generate a rating for for
+    - persona (str): The persona to generate a rating for
     - docs (str | list[str]): Documents used to contextualize the rating
 
     Returns

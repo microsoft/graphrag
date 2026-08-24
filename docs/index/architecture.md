@@ -1,4 +1,4 @@
-# Indexing Architecture 
+# Indexing Architecture
 
 ## Key Concepts
 
@@ -48,6 +48,6 @@ The following subsystems use a factory pattern that allows you to register your 
 - [vector store](https://github.com/microsoft/graphrag/blob/main/packages/graphrag-vectors/graphrag_vectors/vector_store_factory.py) - implement your own vector store other than the built-in lancedb, Azure AI Search, and CosmosDB ones built in
 - [pipeline + workflows](https://github.com/microsoft/graphrag/blob/main/packages/graphrag/graphrag/index/workflows/factory.py) - implement your own workflow steps with a custom `run_workflow` function, or register an entire pipeline (list of named workflows)
 
-The links for each of these subsystems point to the source code of the factory, which includes registration of the default built-in implementations. In addition, we have a detailed discussion of [language models](../config/models.md), which includes and example of a custom provider, and a [sample notebook](../examples_notebooks/custom_vector_store.ipynb) that demonstrates a custom vector store.
+The links for each of these subsystems point to the source code of the factory, which includes registration of the default built-in implementations. In addition, we have a detailed discussion of [language models](../config/models.md), which includes an example of a custom provider, and a [sample notebook](../../packages/graphrag-vectors/example_notebooks/custom_vector_store.ipynb) that demonstrates a custom vector store.
 
 All of these factories allow you to register an impl using any string name you would like, even overriding built-in ones directly.

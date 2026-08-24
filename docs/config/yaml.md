@@ -356,7 +356,7 @@ These are the settings used for Leiden hierarchical clustering of the graph to c
 - `data_max_tokens` **int** - The maximum tokens to use constructing the final response from the reduces responses.
 - `map_max_length` **int** - The maximum length to request for map responses, in words.
 - `reduce_max_length` **int** - The maximum length to request for reduce responses, in words.
-- `dynamic_search_threshold` **int** - Rating threshold in include a community report.
+- `dynamic_search_threshold` **int** - Rating threshold to include a community report.
 - `dynamic_search_keep_parent` **bool** - Keep parent community if any of the child communities are relevant.
 - `dynamic_search_num_repeats` **int** - Number of times to rate the same community report.
 - `dynamic_search_use_summary` **bool** - Use community summary instead of full_context.

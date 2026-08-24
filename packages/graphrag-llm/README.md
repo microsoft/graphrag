@@ -6,11 +6,10 @@ This example demonstrates basic usage of the LLM library to interact with Azure 
 
 [Open the notebook to explore the basic completion example code](example_notebooks/basic_completion_example.ipynb)
 
-
 ## Basic Embedding
 
 This examples demonstrates how to generate text embeddings using the GraphRAG LLM library with Azure OpenAI's embedding service. It loads API credentials from environment variables, creates a ModelConfig for the Azure embedding model and configures authentication to use either API key or Azure Managed Identity. The script then creates an embedding client and processes a batch of two text strings ("Hello world" and "How are you?") to generate their vector embeddings.
 
-[Open the notebook to explore the basic embeddings example code](example_notebooks/basic_completion_example.ipynb)
+[Open the notebook to explore the basic embeddings example code](example_notebooks/basic_embedding_example.ipynb)
 
-View the [notebooks](example_notebooks/README.md) for more examples.
+View the [notebooks](notebooks/README.md) for more examples.

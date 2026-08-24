@@ -9,7 +9,7 @@ from graphrag.config.defaults import graphrag_config_defaults
 
 
 class BasicSearchConfig(BaseModel):
-    """The default configuration section for Cache."""
+    """The default configuration section for Basic Search."""
 
     prompt: str | None = Field(
         description="The basic search prompt to use.",

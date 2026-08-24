@@ -9,7 +9,7 @@ from graphrag.config.defaults import graphrag_config_defaults
 
 
 class GlobalSearchConfig(BaseModel):
-    """The default configuration section for Cache."""
+    """The default configuration section for Global Search."""
 
     map_prompt: str | None = Field(
         description="The global search mapper prompt to use.",
@@ -46,7 +46,7 @@ class GlobalSearchConfig(BaseModel):
 
     # configurations for dynamic community selection
     dynamic_search_threshold: int = Field(
-        description="Rating threshold in include a community report",
+        description="Rating threshold to include a community report",
         default=graphrag_config_defaults.global_search.dynamic_search_threshold,
     )
     dynamic_search_keep_parent: bool = Field(

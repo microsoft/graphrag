@@ -9,7 +9,7 @@ from graphrag.config.defaults import graphrag_config_defaults
 
 
 class DRIFTSearchConfig(BaseModel):
-    """The default configuration section for Cache."""
+    """The default configuration section for DRIFT Search."""
 
     prompt: str | None = Field(
         description="The drift search prompt to use.",

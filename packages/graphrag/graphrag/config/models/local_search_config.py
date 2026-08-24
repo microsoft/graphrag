@@ -9,7 +9,7 @@ from graphrag.config.defaults import graphrag_config_defaults
 
 
 class LocalSearchConfig(BaseModel):
-    """The default configuration section for Cache."""
+    """The default configuration section for Local Search."""
 
     prompt: str | None = Field(
         description="The local search prompt to use.",
