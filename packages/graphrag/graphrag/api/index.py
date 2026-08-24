@@ -43,12 +43,14 @@ async def build_index(
         The configuration.
     method : IndexingMethod default=IndexingMethod.Standard
         Styling of indexing to perform (full LLM, NLP + LLM, etc.).
-    memory_profile : bool
-        Whether to enable memory profiling.
+    is_update_run : bool default=False
+        Whether this run is an incremental update over an existing index.
     callbacks : list[WorkflowCallbacks] | None default=None
         A list of callbacks to register.
     additional_context : dict[str, Any] | None default=None
         Additional context to pass to the pipeline run. This can be accessed in the pipeline state under the 'additional_context' key.
+    verbose : bool default=False
+        Whether to enable verbose logging.
     input_documents : pd.DataFrame | None default=None.
         Override document loading and parsing and supply your own dataframe of documents to index.
 

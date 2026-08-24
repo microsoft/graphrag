@@ -49,11 +49,11 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         Initialize the DRIFTSearch class.
 
         Args:
-            llm (ChatOpenAI): The language model used for searching.
+            model (LLMCompletion): The language model used for searching.
             context_builder (DRIFTSearchContextBuilder): Builder for search context.
-            config (DRIFTSearchConfig, optional): Configuration settings for DRIFTSearch.
             tokenizer (Tokenizer, optional): Token encoder for managing tokens.
             query_state (QueryState, optional): State of the current search query.
+            callbacks (list[QueryCallbacks], optional): Callbacks to invoke during search.
         """
         super().__init__(model, context_builder, tokenizer)
 

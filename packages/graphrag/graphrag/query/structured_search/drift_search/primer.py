@@ -58,7 +58,7 @@ class PrimerQueryProcessor:
         Initialize the PrimerQueryProcessor.
 
         Args:
-            chat_llm (ChatOpenAI): The language model used to process the query.
+            chat_model (LLMCompletion): The language model used to process the query.
             text_embedder (BaseTextEmbedding): The text embedding model.
             reports (list[CommunityReport]): List of community reports.
             tokenizer (Tokenizer, optional): Token encoder for token counting.
@@ -143,7 +143,7 @@ class DRIFTPrimer:
 
         Args:
             config (DRIFTSearchConfig): Configuration settings for DRIFT search.
-            chat_llm (ChatOpenAI): The language model used for searching.
+            chat_model (LLMCompletion): The language model used for searching.
             tokenizer (Tokenizer, optional): Tokenizer for managing tokens.
         """
         self.chat_model = chat_model

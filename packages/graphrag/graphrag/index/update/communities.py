@@ -23,8 +23,6 @@ def _update_and_merge_communities(
         The old communities.
     delta_communities : pd.DataFrame
         The delta communities.
-    community_id_mapping : dict
-        The community id mapping.
 
     Returns
     -------

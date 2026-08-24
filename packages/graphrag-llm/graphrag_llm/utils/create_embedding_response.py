@@ -13,9 +13,7 @@ def create_embedding_response(
 
     Args:
         embeddings: List of embedding vectors.
-        model: The model used to create the embeddings.
-
-    Returns
+            batch_size: The number of embedding objects to generate.
     -------
         An LLMEmbeddingResponse object.
     """
