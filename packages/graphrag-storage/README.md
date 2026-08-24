@@ -1,5 +1,8 @@
 # GraphRAG Storage
 
+> [!WARNING]
+> GraphRAG is a research project that explores the functional use of graphs to form a targeted context for question answering. Since our first release in July 2024 the capabilities of frontier models have changed dramatically, and our portfolio of research projects has diversified to match. This project is largely in maintenance mode, and won't be accepting new PRs or implementing new features. We'll perform bug fixes and dependency updates as appropriate, particularly to address CVEs as they arise.
+
 This package provides a unified storage abstraction layer with support for multiple backends including file system, Azure Blob, Azure Cosmos, and memory storage. It features a factory-based creation system with configuration-driven setup and extensible architecture for implementing custom storage providers.
 
 ## Basic
@@ -14,10 +17,9 @@ Here we create a custom storage implementation by extending the base Storage cla
 
 [Open the notebook to explore the custom storage example code](example_notebooks/basic_storage_example.ipynb)
 
-
 ## Details
 
-By default, the `create_storage` comes with the following storage providers registered that correspond to the entries in the `StorageType` enum. 
+By default, the `create_storage` comes with the following storage providers registered that correspond to the entries in the `StorageType` enum.
 
 - `FileStorage`
 - `AzureBlobStorage`

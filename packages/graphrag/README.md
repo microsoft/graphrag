@@ -1,5 +1,8 @@
 # GraphRAG
 
+> [!WARNING]
+> GraphRAG is a research project that explores the functional use of graphs to form a targeted context for question answering. Since our first release in July 2024 the capabilities of frontier models have changed dramatically, and our portfolio of research projects has diversified to match. This project is largely in maintenance mode, and won't be accepting new PRs or implementing new features. We'll perform bug fixes and dependency updates as appropriate, particularly to address CVEs as they arise.
+
 👉 [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/)<br/>
 👉 [Read the docs](https://microsoft.github.io/graphrag)<br/>
 👉 [GraphRAG Arxiv](https://arxiv.org/pdf/2404.16130)

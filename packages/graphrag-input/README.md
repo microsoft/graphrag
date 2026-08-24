@@ -1,5 +1,8 @@
 # GraphRAG Inputs
 
+> [!WARNING]
+> GraphRAG is a research project that explores the functional use of graphs to form a targeted context for question answering. Since our first release in July 2024 the capabilities of frontier models have changed dramatically, and our portfolio of research projects has diversified to match. This project is largely in maintenance mode, and won't be accepting new PRs or implementing new features. We'll perform bug fixes and dependency updates as appropriate, particularly to address CVEs as they arise.
+
 This package provides input document loading utilities for GraphRAG, supporting multiple file formats including CSV, JSON, JSON Lines, and plain text.
 
 ## Supported File Types
@@ -21,22 +24,21 @@ Additionally, we support the `InputType.MarkItDown` format, which uses the [Mark
 
 Basic usage with the factory:
 
-
 1. Import a pdf with MarkItDown:
 
 ```bash
 pip install 'markitdown[pdf]' # required dependency for pdf processing
 ```
 
-
 2. YAML config example for above:
+
 ```yaml
 input:
   type: markitdown
   file_pattern: ".*\\.pdf$$"
 input_storage:
-    type: file
-    base_dir: "input"
+  type: file
+  base_dir: "input"
 ```
 
 [Open the notebook to explore the input example code](example_notebooks/input_example.ipynb)

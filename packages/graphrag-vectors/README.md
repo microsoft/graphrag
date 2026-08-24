@@ -1,5 +1,8 @@
 # GraphRAG Vectors
 
+> [!WARNING]
+> GraphRAG is a research project that explores the functional use of graphs to form a targeted context for question answering. Since our first release in July 2024 the capabilities of frontier models have changed dramatically, and our portfolio of research projects has diversified to match. This project is largely in maintenance mode, and won't be accepting new PRs or implementing new features. We'll perform bug fixes and dependency updates as appropriate, particularly to address CVEs as they arise.
+
 This package provides vector store implementations for GraphRAG with support for multiple backends including LanceDB, Azure AI Search, and Azure Cosmos DB. It offers both a convenient configuration-driven API and direct factory access for creating and managing vector stores with flexible index schema definitions.
 
 ## Basic usage with the utility function (recommended)
@@ -29,5 +32,6 @@ You can register custom vector store implementations:
 ## Configuration
 
 Vector stores are configured using:
+
 - `VectorStoreConfig`: baseline parameters for the store
 - `IndexSchema`: Schema configuration for the specific index to create/connect to (index name, field names, vector size)

@@ -1,5 +1,8 @@
 # GraphRAG LLM
 
+> [!WARNING]
+> GraphRAG is a research project that explores the functional use of graphs to form a targeted context for question answering. Since our first release in July 2024 the capabilities of frontier models have changed dramatically, and our portfolio of research projects has diversified to match. This project is largely in maintenance mode, and won't be accepting new PRs or implementing new features. We'll perform bug fixes and dependency updates as appropriate, particularly to address CVEs as they arise.
+
 ## Basic Completion
 
 This example demonstrates basic usage of the LLM library to interact with Azure OpenAI. It loads environment variables for API configuration, creates a ModelConfig for Azure OpenAI, and sends a simple question to the model. The code handles both streaming and non-streaming responses (streaming responses are printed chunk by chunk in real-time, while non-streaming responses are printed all at once). It also shows how to use the gather_completion_response utility function as a simpler alternative that automatically handles both response types and returns the complete text.
