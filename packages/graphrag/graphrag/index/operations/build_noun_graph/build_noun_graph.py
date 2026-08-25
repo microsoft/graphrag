@@ -25,6 +25,8 @@ async def build_noun_graph(
     text_analyzer: BaseNounPhraseExtractor,
     normalize_edge_weights: bool,
     cache: Cache,
+    max_entities_per_chunk: int = 0,
+    min_co_occurrence: int = 1,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Build a noun graph from text units."""
     title_to_ids = await _extract_nodes(
@@ -49,6 +51,8 @@ async def build_noun_graph(
         title_to_ids,
         nodes_df=nodes_df,
         normalize_edge_weights=normalize_edge_weights,
+        max_entities_per_chunk=max_entities_per_chunk,
+        min_co_occurrence=min_co_occurrence,
     )
     return (nodes_df, edges_df)
 
@@ -100,16 +104,33 @@ def _extract_edges(
     title_to_ids: dict[str, list[str]],
     nodes_df: pd.DataFrame,
     normalize_edge_weights: bool = True,
+    max_entities_per_chunk: int = 0,
+    min_co_occurrence: int = 1,
 ) -> pd.DataFrame:
     """Build co-occurrence edges between noun phrases.
 
     Nodes that appear in the same text unit are connected.
+
+    Two optional filters reduce O(N^2) edge explosion in
+    entity-dense corpora (e.g. scientific/technical text):
+
+    * ``max_entities_per_chunk`` – When > 0, only the K most
+      globally-frequent entities per text unit are paired,
+      capping edges at C(K,2) instead of C(N,2).
+    * ``min_co_occurrence`` – When > 1, edges that appear in
+      fewer than this many text units are discarded, removing
+      coincidental co-occurrences.
+
     Returns edges with schema [source, target, weight, text_unit_ids].
     """
     if not title_to_ids:
         return pd.DataFrame(
             columns=["source", "target", "weight", "text_unit_ids"],
         )
+
+    entity_freq: dict[str, int] = {
+        t: len(ids) for t, ids in title_to_ids.items()
+    }
 
     text_unit_to_titles: dict[str, list[str]] = defaultdict(list)
     for title, tu_ids in title_to_ids.items():
@@ -118,9 +139,17 @@ def _extract_edges(
 
     edge_map: dict[tuple[str, str], list[str]] = defaultdict(list)
     for tu_id, titles in text_unit_to_titles.items():
-        if len(titles) < 2:
+        unique_titles = sorted(set(titles))
+        if len(unique_titles) < 2:
             continue
-        for pair in combinations(sorted(set(titles)), 2):
+        if max_entities_per_chunk > 0 and len(unique_titles) > max_entities_per_chunk:
+            unique_titles = sorted(
+                unique_titles,
+                key=lambda t: entity_freq.get(t, 0),
+                reverse=True,
+            )[:max_entities_per_chunk]
+            unique_titles.sort()
+        for pair in combinations(unique_titles, 2):
             edge_map[pair].append(tu_id)
 
     records = [
@@ -131,7 +160,17 @@ def _extract_edges(
             "text_unit_ids": tu_ids,
         }
         for (src, tgt), tu_ids in edge_map.items()
+        if len(tu_ids) >= min_co_occurrence
     ]
+
+    if len(records) < len(edge_map):
+        logger.info(
+            "Edge co-occurrence filter: %d -> %d edges (min_co_occurrence=%d)",
+            len(edge_map),
+            len(records),
+            min_co_occurrence,
+        )
+
     edges_df = pd.DataFrame(
         records,
         columns=["source", "target", "weight", "text_unit_ids"],
