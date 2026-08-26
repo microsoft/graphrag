@@ -484,6 +484,35 @@ class TestLccFiltering:
         assert len(result_lcc) < len(result_no_lcc)
         assert len(result_lcc) == 1
 
+    async def test_mixed_case_titles_are_not_dropped(self):
+        """Regression for #2427: with use_lcc=True, mixed-case (BYOG) entity
+        titles must still be assigned to communities.
+
+        Previously stable_lcc uppercased node names, so the uppercased cluster
+        labels failed to match the original case-sensitive titles and the
+        entities were silently dropped, yielding empty communities.
+        """
+        title_to_entity_id = _make_title_to_entity_id([
+            ("e1", "Alice"),
+            ("e2", "Bob"),
+            ("e3", "FooBar"),
+        ])
+        relationships = _make_relationships([
+            ("r1", "Alice", "Bob", 1.0, ["t1"]),
+            ("r2", "Alice", "FooBar", 1.0, ["t1"]),
+            ("r3", "Bob", "FooBar", 1.0, ["t2"]),
+        ])
+        result = await _run_create_communities(
+            title_to_entity_id,
+            relationships,
+            max_cluster_size=10,
+            use_lcc=True,
+            seed=42,
+        )
+        assert len(result) >= 1
+        all_entity_ids = {eid for _, row in result.iterrows() for eid in row["entity_ids"]}
+        assert all_entity_ids == {"e1", "e2", "e3"}
+
 
 # -------------------------------------------------------------------
 # Golden file regression (real test data)

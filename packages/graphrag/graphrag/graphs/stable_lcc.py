@@ -7,12 +7,14 @@
 regardless of the original row order.  This is achieved by:
 
 1. Filtering to the largest connected component.
-2. Normalizing node names (HTML unescape, uppercase, strip).
-3. Sorting edges so the lesser node is always the source.
-4. Sorting edges alphabetically for deterministic row order.
-"""
+2. Sorting edges so the lesser node is always the source.
+3. Sorting edges alphabetically for deterministic row order.
 
-import html
+Node names are preserved verbatim.  Downstream steps (e.g. create_communities)
+match the resulting cluster labels against the original entity titles with an
+exact, case-sensitive lookup, so any mutation of node names here would silently
+drop entities whose titles are not already normalized (see issue #2427).
+"""
 
 import pandas as pd
 
@@ -38,18 +40,15 @@ def stable_lcc(
     Returns
     -------
     pd.DataFrame
-        A copy of the input filtered to the LCC with normalized node names
-        and deterministic edge ordering.
+        A copy of the input filtered to the LCC with deterministic edge
+        ordering.  Node names are preserved verbatim.
     """
     if relationships.empty:
         return relationships.copy()
 
-    # 1. Normalize node names
     edges = relationships.copy()
-    edges[source_column] = edges[source_column].apply(_normalize_name)
-    edges[target_column] = edges[target_column].apply(_normalize_name)
 
-    # 2. Filter to the largest connected component
+    # 1. Filter to the largest connected component
     lcc_nodes = largest_connected_component(
         edges, source_column=source_column, target_column=target_column
     )
@@ -57,19 +56,14 @@ def stable_lcc(
         edges[source_column].isin(lcc_nodes) & edges[target_column].isin(lcc_nodes)
     ]
 
-    # 3. Stabilize edge direction: lesser node always first
+    # 2. Stabilize edge direction: lesser node always first
     swapped = edges[source_column] > edges[target_column]
     edges.loc[swapped, [source_column, target_column]] = edges.loc[
         swapped, [target_column, source_column]
     ].to_numpy()
 
-    # 4. Deduplicate edges that were reversed pairs in the original data
+    # 3. Deduplicate edges that were reversed pairs in the original data
     edges = edges.drop_duplicates(subset=[source_column, target_column])
 
-    # 5. Sort for deterministic order
+    # 4. Sort for deterministic order
     return edges.sort_values([source_column, target_column]).reset_index(drop=True)
-
-
-def _normalize_name(name: str) -> str:
-    """Normalize a node name: HTML unescape, uppercase, strip whitespace."""
-    return html.unescape(name).upper().strip()
