@@ -1993,15 +1993,15 @@
 <a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="nn">...</span>
 <a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="nt">extract_graph</span><span class="p">:</span>
 <a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="nt">completion_model_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">extraction_completion_model</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span><span class="nt">prompt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/extract_graph.txt&quot;</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span><span class="nt">prompt</span><span class="p">:</span><span class="w"> </span><span class="s">"prompts/extract_graph.txt"</span>
 <a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">  </span><span class="nt">entity_types</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">organization</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">person</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">geo</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">event</span><span class="p p-Indicator">]</span>
 <a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">  </span><span class="nt">max_gleanings</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="nn">...</span>
 <a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="nt">global_search</span><span class="p">:</span>
 <a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">  </span><span class="nt">completion_model_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">query_completion_model</span>
-<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">  </span><span class="nt">map_prompt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/global_search_map_system_prompt.txt&quot;</span>
-<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">  </span><span class="nt">reduce_prompt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/global_search_reduce_system_prompt.txt&quot;</span>
-<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">  </span><span class="nt">knowledge_prompt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/global_search_knowledge_system_prompt.txt&quot;</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">  </span><span class="nt">map_prompt</span><span class="p">:</span><span class="w"> </span><span class="s">"prompts/global_search_map_system_prompt.txt"</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">  </span><span class="nt">reduce_prompt</span><span class="p">:</span><span class="w"> </span><span class="s">"prompts/global_search_reduce_system_prompt.txt"</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">  </span><span class="nt">knowledge_prompt</span><span class="p">:</span><span class="w"> </span><span class="s">"prompts/global_search_knowledge_system_prompt.txt"</span>
 </code></pre></div>
 <p>Another option would be to avoid using a language model at all for the graph extraction, instead using the <code>fast</code> <a href="../../index/methods/">indexing method</a> that uses NLP for portions of the indexing phase in lieu of LLM APIs.</p>
 <h2 id="using-custom-models">Using Custom Models</h2>
@@ -2024,7 +2024,7 @@
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
 <a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
 <a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># elsewhere...</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">register_completion</span><span class="p">(</span><span class="s2">&quot;my-custom-completion-model&quot;</span><span class="p">,</span> <span class="n">MyCustomCompletionModel</span><span class="p">)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">register_completion</span><span class="p">(</span><span class="s2">"my-custom-completion-model"</span><span class="p">,</span> <span class="n">MyCustomCompletionModel</span><span class="p">)</span>
 </code></pre></div>
 <p>Then in your config you can reference the type name you used:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">completion_models</span><span class="p">:</span>
@@ -2034,7 +2034,7 @@
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="nt">extract_graph</span><span class="p">:</span>
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="nt">completion_model_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default_completion_model</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="nt">prompt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/extract_graph.txt&quot;</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="nt">prompt</span><span class="p">:</span><span class="w"> </span><span class="s">"prompts/extract_graph.txt"</span>
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span><span class="nt">entity_types</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">organization</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">person</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">geo</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">event</span><span class="p p-Indicator">]</span>
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span><span class="nt">max_gleanings</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 </code></pre></div>

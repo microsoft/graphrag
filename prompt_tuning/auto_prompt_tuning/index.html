@@ -2016,7 +2016,7 @@ Figure 1: Auto Tuning Conceptual Diagram.
 </li>
 </ul>
 <h2 id="example-usage">Example Usage</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>-m<span class="w"> </span>graphrag<span class="w"> </span>prompt-tune<span class="w"> </span>--root<span class="w"> </span>/path/to/project<span class="w"> </span>--domain<span class="w"> </span><span class="s2">&quot;environmental news&quot;</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>-m<span class="w"> </span>graphrag<span class="w"> </span>prompt-tune<span class="w"> </span>--root<span class="w"> </span>/path/to/project<span class="w"> </span>--domain<span class="w"> </span><span class="s2">"environmental news"</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>--selection-method<span class="w"> </span>random<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--language<span class="w"> </span>English<span class="w"> </span>--max-tokens<span class="w"> </span><span class="m">2048</span><span class="w"> </span>--chunk-size<span class="w"> </span><span class="m">256</span><span class="w"> </span>--min-examples-required<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>--no-discover-entity-types<span class="w"> </span>--output<span class="w"> </span>/path/to/output
 </code></pre></div>
@@ -2035,13 +2035,13 @@ After that, it uses one of the following selection methods to pick a sample to w
 <h2 id="modify-config">Modify Config</h2>
 <p>After running auto tuning, you should modify the following config variables to pick up the new prompts on your index run. Note: Please make sure to update the correct path to the generated prompts, in this example we are using the default "prompts" path.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">extract_graph</span><span class="p">:</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">prompt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/extract_graph.txt&quot;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">prompt</span><span class="p">:</span><span class="w"> </span><span class="s">"prompts/extract_graph.txt"</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nt">summarize_descriptions</span><span class="p">:</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">prompt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/summarize_descriptions.txt&quot;</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">prompt</span><span class="p">:</span><span class="w"> </span><span class="s">"prompts/summarize_descriptions.txt"</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="nt">community_reports</span><span class="p">:</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="nt">prompt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/community_report.txt&quot;</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="nt">prompt</span><span class="p">:</span><span class="w"> </span><span class="s">"prompts/community_report.txt"</span>
 </code></pre></div>
 
 
