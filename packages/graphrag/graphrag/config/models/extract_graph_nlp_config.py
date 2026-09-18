@@ -72,3 +72,16 @@ class ExtractGraphNLPConfig(BaseModel):
         description="The async mode to use.",
         default=graphrag_config_defaults.extract_graph_nlp.async_mode,
     )
+    max_entities_per_chunk: int = Field(
+        description="Maximum number of noun-phrase entities to retain per text chunk "
+        "when building co-occurrence edges. Entities are ranked by global frequency "
+        "and only the top-K are paired, reducing edges from O(N^2) to O(K^2). "
+        "Set to 0 to disable (keep all entities).",
+        default=graphrag_config_defaults.extract_graph_nlp.max_entities_per_chunk,
+    )
+    min_co_occurrence: int = Field(
+        description="Minimum number of text units in which an edge must co-occur "
+        "to be retained. Edges appearing in fewer text units are discarded as "
+        "likely coincidental. Set to 1 to disable filtering.",
+        default=graphrag_config_defaults.extract_graph_nlp.min_co_occurrence,
+    )

@@ -213,6 +213,8 @@ def assert_extract_graph_nlp_configs(
     assert actual.normalize_edge_weights == expected.normalize_edge_weights
     assert_text_analyzer_configs(actual.text_analyzer, expected.text_analyzer)
     assert actual.concurrent_requests == expected.concurrent_requests
+    assert actual.max_entities_per_chunk == expected.max_entities_per_chunk
+    assert actual.min_co_occurrence == expected.min_co_occurrence
 
 
 def assert_prune_graph_configs(
