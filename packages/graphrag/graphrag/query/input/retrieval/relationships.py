@@ -17,7 +17,7 @@ def get_in_network_relationships(
     ranking_attribute: str = "rank",
 ) -> list[Relationship]:
     """Get all directed relationships between selected entities, sorted by ranking_attribute."""
-    selected_entity_names = [entity.title for entity in selected_entities]
+    selected_entity_names = {entity.title for entity in selected_entities}
     selected_relationships = [
         relationship
         for relationship in relationships
@@ -37,7 +37,7 @@ def get_out_network_relationships(
     ranking_attribute: str = "rank",
 ) -> list[Relationship]:
     """Get relationships from selected entities to other entities that are not within the selected entities, sorted by ranking_attribute."""
-    selected_entity_names = [entity.title for entity in selected_entities]
+    selected_entity_names = {entity.title for entity in selected_entities}
     source_relationships = [
         relationship
         for relationship in relationships
@@ -59,7 +59,7 @@ def get_candidate_relationships(
     relationships: list[Relationship],
 ) -> list[Relationship]:
     """Get all relationships that are associated with the selected entities."""
-    selected_entity_names = [entity.title for entity in selected_entities]
+    selected_entity_names = {entity.title for entity in selected_entities}
     return [
         relationship
         for relationship in relationships
@@ -72,9 +72,9 @@ def get_entities_from_relationships(
     relationships: list[Relationship], entities: list[Entity]
 ) -> list[Entity]:
     """Get all entities that are associated with the selected relationships."""
-    selected_entity_names = [relationship.source for relationship in relationships] + [
+    selected_entity_names = {relationship.source for relationship in relationships} | {
         relationship.target for relationship in relationships
-    ]
+    }
     return [entity for entity in entities if entity.title in selected_entity_names]
 
 
