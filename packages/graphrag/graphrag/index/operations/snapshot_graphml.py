@@ -7,6 +7,8 @@ import networkx as nx
 import pandas as pd
 from graphrag_storage import Storage
 
+_XML_HEADER = '<?xml version="1.0" encoding="utf-8"?>'
+
 
 async def snapshot_graphml(
     edges: pd.DataFrame,
@@ -15,5 +17,5 @@ async def snapshot_graphml(
 ) -> None:
     """Take a entire snapshot of a graph to standard graphml format."""
     graph = nx.from_pandas_edgelist(edges, edge_attr=["weight"])
-    graphml = "\n".join(nx.generate_graphml(graph))
+    graphml = _XML_HEADER + "\n" + "\n".join(nx.generate_graphml(graph))
     await storage.set(name + ".graphml", graphml)
