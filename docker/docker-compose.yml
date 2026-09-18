@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  graphrag-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATA_ROOT=/data
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./data:/data
+    command: python -m graphrag_api.server
