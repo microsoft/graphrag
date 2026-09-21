@@ -2,6 +2,10 @@
 
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 1.2.3
+
+- patch: Upgrade pyarrow to 25.x
+
 ## 1.2.2
 
 - patch: bump typer to resolve https://nvd.nist.gov/vuln/detail/CVE-2026-7246
