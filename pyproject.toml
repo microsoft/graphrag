@@ -31,18 +31,10 @@ packages = [{ include = "graphrag" }]
 [tool.poetry.scripts]
 graphrag = "graphrag.cli.main:app"
 
-[tool.poetry-dynamic-versioning]
-enable = true
-style = "pep440"
-vcs = "git"
-bump = true
-format-jinja = """
-    {%- if distance == 0 -%}
-        {{ serialize_pep440(base, stage, revision) }}
-    {%- else -%}
-        {{ serialize_pep440(base, stage, revision, dev=distance) }}
-    {%- endif -%}
-"""
+[[tool.poetry.source]]
+name = "msft"
+url = "https://packagefeedproxy.microsoft.io/pypi/simple"
+priority = "primary"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
@@ -65,7 +57,7 @@ numpy = "^1.25.2"
 graspologic = "^3.4.1"
 networkx = "^3.4.2"
 pandas = "^2.2.3"
-pyarrow = "^15.0.0"
+pyarrow = "^25.0.0"
 umap-learn = "^0.5.6"
 
 # Configuration
@@ -112,8 +104,8 @@ pytest-dotenv = "^0.5.2"
 mkdocs-typer = "^0.0.3"
 
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
-build-backend = "poetry_dynamic_versioning.backend"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry-dynamic-versioning"
 
 [tool.poe.tasks]
 _sort_imports = "ruff check --select I --fix ."

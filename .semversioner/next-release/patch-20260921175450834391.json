@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Upgrade pyarrow to 25.x"
+}
