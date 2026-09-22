@@ -33,10 +33,15 @@ same database. Configure it with:
 ```yaml
 cache:
   type: sqlite
-  database_path: cache/cache.db
+  storage:
+    type: file
+    base_dir: cache
+  database_name: cache.db
 ```
 
-Child caches use isolated namespaces within the same database.
+The database is created within the configured file storage. SQLite requires
+local random-access file operations, so blob and Cosmos storage are not
+supported. Child caches use isolated namespaces within the same database.
 
 The preregistration happens dynamically, e.g., `JsonCache` is only imported and registered if you request a `JsonCache` with `create_cache(CacheType.Json, ...)`. There is no need to manually import and register builtin cache providers when using `create_cache`.
 

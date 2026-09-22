@@ -44,10 +44,14 @@ def test_create_sqlite_cache(tmp_path):
     cache = create_cache(
         CacheConfig(
             type=CacheType.Sqlite,
-            database_path=tmp_path / "cache.db",
+            storage=StorageConfig(
+                type=StorageType.File,
+                base_dir=str(tmp_path),
+            ),
         )
     )
     assert isinstance(cache, SQLiteCache)
+    assert (tmp_path / "cache.db").exists()
 
 
 def test_create_file_cache():

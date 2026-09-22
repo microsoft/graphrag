@@ -3,8 +3,6 @@
 
 """Cache configuration model."""
 
-from pathlib import Path
-
 from graphrag_storage import StorageConfig, StorageType
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -23,11 +21,11 @@ class CacheConfig(BaseModel):
     )
 
     storage: StorageConfig | None = Field(
-        description="The storage configuration to use for file-based caches such as 'Json'.",
+        description="The storage configuration to use for storage-backed caches such as 'Json' and 'Sqlite'.",
         default_factory=lambda: StorageConfig(type=StorageType.File, base_dir="cache"),
     )
 
-    database_path: str | Path = Field(
-        description="The SQLite database path. Used only when type is 'Sqlite'.",
-        default="cache/cache.db",
+    database_name: str = Field(
+        description="The SQLite database name within the configured file storage. Used only when type is 'Sqlite'.",
+        default="cache.db",
     )

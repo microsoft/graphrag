@@ -9,8 +9,11 @@ import asyncio
 import json
 import sqlite3
 from contextlib import contextmanager
-from pathlib import Path
 from typing import TYPE_CHECKING, Any
+
+from graphrag_storage import Storage, StorageConfig, create_storage
+from graphrag_storage.file_storage import FileStorage
+from graphrag_storage.memory_storage import MemoryStorage
 
 from graphrag_cache.cache import Cache
 
@@ -23,14 +26,27 @@ class SQLiteCache(Cache):
 
     def __init__(
         self,
-        database_path: str | Path = "cache/cache.db",
+        storage: Storage | dict[str, Any] | None = None,
+        database_name: str = "cache.db",
         *,
         namespace: str = "",
         **_: Any,
     ) -> None:
         """Initialize the SQLite cache."""
-        self._database_path = Path(database_path)
-        self._database_path.parent.mkdir(parents=True, exist_ok=True)
+        if storage is None:
+            msg = "SQLiteCache requires either a Storage instance to be provided or a StorageConfig to create one."
+            raise ValueError(msg)
+        if not isinstance(storage, Storage):
+            storage = create_storage(StorageConfig(**storage))
+        if not isinstance(storage, FileStorage) or isinstance(storage, MemoryStorage):
+            msg = "SQLiteCache only supports FileStorage."
+            raise TypeError(msg)
+        if not database_name or database_name != storage.get_path(database_name).name:
+            msg = "SQLiteCache database_name must be a file name without a directory."
+            raise ValueError(msg)
+        self._storage = storage
+        self._database_name = database_name
+        self._database_path = storage.get_path(database_name)
         self._namespace = namespace
         self._initialize()
 
@@ -145,6 +161,7 @@ class SQLiteCache(Cache):
         """Create a child cache with the given name."""
         namespace = f"{self._namespace}/{name}" if self._namespace else name
         return SQLiteCache(
-            database_path=self._database_path,
+            storage=self._storage,
+            database_name=self._database_name,
             namespace=namespace,
         )

@@ -8,18 +8,20 @@ import sqlite3
 
 import pytest
 from graphrag_cache.sqlite_cache import SQLiteCache
+from graphrag_storage.file_storage import FileStorage
+from graphrag_storage.memory_storage import MemoryStorage
 
 
 @pytest.mark.asyncio
 async def test_sqlite_cache_round_trip_and_persistence(tmp_path):
-    database_path = tmp_path / "cache.db"
-    cache = SQLiteCache(database_path)
+    storage = FileStorage(base_dir=str(tmp_path))
+    cache = SQLiteCache(storage)
 
     await cache.set("key", {"text": "héllo", "items": [1, 2, 3]})
 
     assert await cache.has("key")
     assert await cache.get("key") == {"text": "héllo", "items": [1, 2, 3]}
-    assert await SQLiteCache(database_path).get("key") == {
+    assert await SQLiteCache(storage).get("key") == {
         "text": "héllo",
         "items": [1, 2, 3],
     }
@@ -27,7 +29,7 @@ async def test_sqlite_cache_round_trip_and_persistence(tmp_path):
 
 @pytest.mark.asyncio
 async def test_sqlite_cache_overwrites_and_deletes_values(tmp_path):
-    cache = SQLiteCache(tmp_path / "cache.db")
+    cache = SQLiteCache(FileStorage(base_dir=str(tmp_path)))
 
     await cache.set("key", "first")
     await cache.set("key", "second")
@@ -44,7 +46,7 @@ async def test_sqlite_cache_overwrites_and_deletes_values(tmp_path):
 
 @pytest.mark.asyncio
 async def test_sqlite_cache_child_namespaces_are_isolated(tmp_path):
-    cache = SQLiteCache(tmp_path / "cache.db")
+    cache = SQLiteCache(FileStorage(base_dir=str(tmp_path)))
     first_child = cache.child("first")
     second_child = cache.child("second")
 
@@ -60,7 +62,7 @@ async def test_sqlite_cache_child_namespaces_are_isolated(tmp_path):
 
 @pytest.mark.asyncio
 async def test_sqlite_cache_supports_concurrent_writes(tmp_path):
-    cache = SQLiteCache(tmp_path / "cache.db")
+    cache = SQLiteCache(FileStorage(base_dir=str(tmp_path)))
 
     await asyncio.gather(*(cache.set(f"key-{index}", index) for index in range(20)))
 
@@ -72,7 +74,7 @@ async def test_sqlite_cache_supports_concurrent_writes(tmp_path):
 @pytest.mark.asyncio
 async def test_sqlite_cache_removes_invalid_json(tmp_path):
     database_path = tmp_path / "cache.db"
-    cache = SQLiteCache(database_path)
+    cache = SQLiteCache(FileStorage(base_dir=str(tmp_path)))
     with sqlite3.connect(database_path) as connection:
         connection.execute(
             """
@@ -84,3 +86,29 @@ async def test_sqlite_cache_removes_invalid_json(tmp_path):
 
     assert await cache.get("invalid") is None
     assert not await cache.has("invalid")
+
+
+def test_sqlite_cache_uses_database_name_within_storage(tmp_path):
+    cache = SQLiteCache(
+        FileStorage(base_dir=str(tmp_path)),
+        database_name="custom.db",
+    )
+
+    assert (tmp_path / "custom.db").exists()
+    assert isinstance(cache, SQLiteCache)
+
+
+def test_sqlite_cache_rejects_database_path(tmp_path):
+    with pytest.raises(
+        ValueError,
+        match="database_name must be a file name without a directory",
+    ):
+        SQLiteCache(
+            FileStorage(base_dir=str(tmp_path)),
+            database_name="nested/cache.db",
+        )
+
+
+def test_sqlite_cache_rejects_non_file_storage():
+    with pytest.raises(TypeError, match="only supports FileStorage"):
+        SQLiteCache(MemoryStorage())

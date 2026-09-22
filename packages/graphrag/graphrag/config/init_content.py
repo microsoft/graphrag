@@ -66,7 +66,7 @@ cache:
   storage:
     type: {graphrag_config_defaults.cache.storage.type} # [file, blob, cosmosdb]
     base_dir: "{graphrag_config_defaults.cache.storage.base_dir}"
-  # database_path: "{graphrag_config_defaults.cache.database_path}" # Only used when type is sqlite
+  # database_name: "{graphrag_config_defaults.cache.database_name}" # Only used when type is sqlite
     
 vector_store:
   type: {vector_store_defaults.type}
