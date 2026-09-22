@@ -95,10 +95,10 @@ class SQLiteCache(Cache):
         try:
             data = json.loads(payload)
         except json.JSONDecodeError:
-            await self.delete(key)
+            await asyncio.to_thread(self._delete_if_unchanged, key, payload)
             return None
         if not isinstance(data, dict) or "result" not in data:
-            await self.delete(key)
+            await asyncio.to_thread(self._delete_if_unchanged, key, payload)
             return None
         return data["result"]
 
@@ -159,6 +159,16 @@ class SQLiteCache(Cache):
             connection.execute(
                 "DELETE FROM cache_entries WHERE namespace = ? AND key = ?",
                 (self._namespace, key),
+            )
+
+    def _delete_if_unchanged(self, key: str, payload: str) -> None:
+        with self._connect() as connection:
+            connection.execute(
+                """
+                DELETE FROM cache_entries
+                WHERE namespace = ? AND key = ? AND value_json = ?
+                """,
+                (self._namespace, key, payload),
             )
 
     async def clear(self) -> None:

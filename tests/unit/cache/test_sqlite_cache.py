@@ -4,6 +4,7 @@
 """Tests for the SQLite cache."""
 
 import asyncio
+import json
 import sqlite3
 
 import pytest
@@ -99,6 +100,28 @@ async def test_sqlite_cache_removes_invalid_payload(tmp_path, payload):
 
     assert await cache.get("invalid") is None
     assert not await cache.has("invalid")
+
+
+@pytest.mark.asyncio
+async def test_corruption_cleanup_preserves_newer_value(tmp_path):
+    class ReplacingSQLiteCache(SQLiteCache):
+        def _delete_if_unchanged(self, key: str, payload: str) -> None:
+            self._set(key, json.dumps({"result": "replacement"}))
+            super()._delete_if_unchanged(key, payload)
+
+    database_path = tmp_path / "cache.db"
+    cache = ReplacingSQLiteCache(FileStorage(base_dir=str(tmp_path)))
+    with sqlite3.connect(database_path) as connection:
+        connection.execute(
+            """
+            INSERT INTO cache_entries(namespace, key, value_json)
+            VALUES (?, ?, ?)
+            """,
+            ("", "invalid", "not json"),
+        )
+
+    assert await cache.get("invalid") is None
+    assert await cache.get("invalid") == "replacement"
 
 
 def test_sqlite_cache_uses_database_name_within_storage(tmp_path):
