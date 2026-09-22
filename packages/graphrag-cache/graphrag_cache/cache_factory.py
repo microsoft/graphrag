@@ -59,7 +59,7 @@ def create_cache(
     config_model = config.model_dump()
     cache_strategy = config.type
 
-    if not storage and config.storage:
+    if cache_strategy != CacheType.Sqlite and not storage and config.storage:
         storage = create_storage(config.storage)
 
     if cache_strategy not in cache_factory:
@@ -78,6 +78,11 @@ def create_cache(
                 from graphrag_cache.noop_cache import NoopCache
 
                 register_cache(CacheType.Noop, NoopCache)
+
+            case CacheType.Sqlite:
+                from graphrag_cache.sqlite_cache import SQLiteCache
+
+                register_cache(CacheType.Sqlite, SQLiteCache)
 
             case _:
                 msg = f"CacheConfig.type '{cache_strategy}' is not registered in the CacheFactory. Registered types: {', '.join(cache_factory.keys())}."

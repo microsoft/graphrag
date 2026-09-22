@@ -13,6 +13,7 @@ from graphrag_cache.cache_factory import cache_factory
 from graphrag_cache.json_cache import JsonCache
 from graphrag_cache.memory_cache import MemoryCache
 from graphrag_cache.noop_cache import NoopCache
+from graphrag_cache.sqlite_cache import SQLiteCache
 from graphrag_storage import StorageConfig, StorageType, create_storage
 
 # cspell:disable-next-line well-known-key
@@ -37,6 +38,16 @@ def test_create_memory_cache():
         )
     )
     assert isinstance(cache, MemoryCache)
+
+
+def test_create_sqlite_cache(tmp_path):
+    cache = create_cache(
+        CacheConfig(
+            type=CacheType.Sqlite,
+            database_path=tmp_path / "cache.db",
+        )
+    )
+    assert isinstance(cache, SQLiteCache)
 
 
 def test_create_file_cache():

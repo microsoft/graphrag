@@ -1,0 +1,86 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Tests for the SQLite cache."""
+
+import asyncio
+import sqlite3
+
+import pytest
+from graphrag_cache.sqlite_cache import SQLiteCache
+
+
+@pytest.mark.asyncio
+async def test_sqlite_cache_round_trip_and_persistence(tmp_path):
+    database_path = tmp_path / "cache.db"
+    cache = SQLiteCache(database_path)
+
+    await cache.set("key", {"text": "héllo", "items": [1, 2, 3]})
+
+    assert await cache.has("key")
+    assert await cache.get("key") == {"text": "héllo", "items": [1, 2, 3]}
+    assert await SQLiteCache(database_path).get("key") == {
+        "text": "héllo",
+        "items": [1, 2, 3],
+    }
+
+
+@pytest.mark.asyncio
+async def test_sqlite_cache_overwrites_and_deletes_values(tmp_path):
+    cache = SQLiteCache(tmp_path / "cache.db")
+
+    await cache.set("key", "first")
+    await cache.set("key", "second")
+    await cache.set("ignored", None)
+
+    assert await cache.get("key") == "second"
+    assert not await cache.has("ignored")
+
+    await cache.delete("key")
+
+    assert not await cache.has("key")
+    assert await cache.get("key") is None
+
+
+@pytest.mark.asyncio
+async def test_sqlite_cache_child_namespaces_are_isolated(tmp_path):
+    cache = SQLiteCache(tmp_path / "cache.db")
+    first_child = cache.child("first")
+    second_child = cache.child("second")
+
+    await cache.set("key", "root")
+    await first_child.set("key", "first")
+    await second_child.set("key", "second")
+    await first_child.clear()
+
+    assert await cache.get("key") == "root"
+    assert await first_child.get("key") is None
+    assert await second_child.get("key") == "second"
+
+
+@pytest.mark.asyncio
+async def test_sqlite_cache_supports_concurrent_writes(tmp_path):
+    cache = SQLiteCache(tmp_path / "cache.db")
+
+    await asyncio.gather(*(cache.set(f"key-{index}", index) for index in range(20)))
+
+    assert await asyncio.gather(
+        *(cache.get(f"key-{index}") for index in range(20))
+    ) == list(range(20))
+
+
+@pytest.mark.asyncio
+async def test_sqlite_cache_removes_invalid_json(tmp_path):
+    database_path = tmp_path / "cache.db"
+    cache = SQLiteCache(database_path)
+    with sqlite3.connect(database_path) as connection:
+        connection.execute(
+            """
+            INSERT INTO cache_entries(namespace, key, value_json)
+            VALUES (?, ?, ?)
+            """,
+            ("", "invalid", "not json"),
+        )
+
+    assert await cache.get("invalid") is None
+    assert not await cache.has("invalid")

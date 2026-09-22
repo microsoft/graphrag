@@ -254,6 +254,7 @@ class CacheDefaults:
 
     type: CacheType = CacheType.Json
     storage: CacheStorageDefaults = field(default_factory=CacheStorageDefaults)
+    database_path: str = "cache/cache.db"
 
 
 @dataclass

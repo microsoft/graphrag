@@ -24,6 +24,19 @@ By default, the `create_cache` comes with the following cache providers register
 - `JsonCache`
 - `MemoryCache`
 - `NoopCache`
+- `SQLiteCache`
+
+`SQLiteCache` stores JSON-serializable values in a local SQLite database. It uses
+WAL mode and short-lived connections so multiple workers can safely share the
+same database. Configure it with:
+
+```yaml
+cache:
+  type: sqlite
+  database_path: cache/cache.db
+```
+
+Child caches use isolated namespaces within the same database.
 
 The preregistration happens dynamically, e.g., `JsonCache` is only imported and registered if you request a `JsonCache` with `create_cache(CacheType.Json, ...)`. There is no need to manually import and register builtin cache providers when using `create_cache`.
 
