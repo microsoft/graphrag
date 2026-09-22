@@ -7,9 +7,12 @@ import asyncio
 import sqlite3
 
 import pytest
+from graphrag_cache import CacheConfig, CacheType
 from graphrag_cache.sqlite_cache import SQLiteCache
+from graphrag_storage import StorageConfig, StorageType
 from graphrag_storage.file_storage import FileStorage
 from graphrag_storage.memory_storage import MemoryStorage
+from pydantic import ValidationError
 
 
 @pytest.mark.asyncio
@@ -134,3 +137,30 @@ def test_sqlite_cache_rejects_database_path(tmp_path, database_name):
 def test_sqlite_cache_rejects_non_file_storage():
     with pytest.raises(TypeError, match="only supports FileStorage"):
         SQLiteCache(MemoryStorage())
+
+
+@pytest.mark.parametrize(
+    "storage_type",
+    [
+        StorageType.Memory,
+        StorageType.AzureBlob,
+        StorageType.AzureCosmos,
+    ],
+)
+def test_sqlite_cache_config_rejects_non_file_storage(storage_type):
+    with pytest.raises(
+        ValidationError,
+        match="Cache type 'sqlite' requires storage type 'file'",
+    ):
+        CacheConfig(
+            type=CacheType.Sqlite,
+            storage=StorageConfig(type=storage_type),
+        )
+
+
+def test_sqlite_cache_config_requires_storage():
+    with pytest.raises(
+        ValidationError,
+        match="Cache type 'sqlite' requires storage type 'file'",
+    ):
+        CacheConfig(type=CacheType.Sqlite, storage=None)
