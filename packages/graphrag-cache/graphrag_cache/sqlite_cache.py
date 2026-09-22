@@ -9,6 +9,7 @@ import asyncio
 import json
 import sqlite3
 from contextlib import contextmanager
+from pathlib import PurePosixPath, PureWindowsPath
 from typing import TYPE_CHECKING, Any
 
 from graphrag_storage import Storage, StorageConfig, create_storage
@@ -41,7 +42,18 @@ class SQLiteCache(Cache):
         if not isinstance(storage, FileStorage) or isinstance(storage, MemoryStorage):
             msg = "SQLiteCache only supports FileStorage."
             raise TypeError(msg)
-        if not database_name or database_name != storage.get_path(database_name).name:
+        database_paths = (
+            PurePosixPath(database_name),
+            PureWindowsPath(database_name),
+        )
+        if (
+            not database_name
+            or database_name == ".."
+            or any(
+                path.is_absolute() or len(path.parts) != 1 or path.name != database_name
+                for path in database_paths
+            )
+        ):
             msg = "SQLiteCache database_name must be a file name without a directory."
             raise ValueError(msg)
         self._storage = storage
@@ -85,7 +97,10 @@ class SQLiteCache(Cache):
         except json.JSONDecodeError:
             await self.delete(key)
             return None
-        return data.get("result")
+        if not isinstance(data, dict) or "result" not in data:
+            await self.delete(key)
+            return None
+        return data["result"]
 
     def _get(self, key: str) -> str | None:
         with self._connect() as connection:

@@ -71,8 +71,18 @@ async def test_sqlite_cache_supports_concurrent_writes(tmp_path):
     ) == list(range(20))
 
 
+@pytest.mark.parametrize(
+    "payload",
+    [
+        "not json",
+        "[]",
+        '"value"',
+        "null",
+        '{"debug": "missing result"}',
+    ],
+)
 @pytest.mark.asyncio
-async def test_sqlite_cache_removes_invalid_json(tmp_path):
+async def test_sqlite_cache_removes_invalid_payload(tmp_path, payload):
     database_path = tmp_path / "cache.db"
     cache = SQLiteCache(FileStorage(base_dir=str(tmp_path)))
     with sqlite3.connect(database_path) as connection:
@@ -81,7 +91,7 @@ async def test_sqlite_cache_removes_invalid_json(tmp_path):
             INSERT INTO cache_entries(namespace, key, value_json)
             VALUES (?, ?, ?)
             """,
-            ("", "invalid", "not json"),
+            ("", "invalid", payload),
         )
 
     assert await cache.get("invalid") is None
@@ -98,14 +108,26 @@ def test_sqlite_cache_uses_database_name_within_storage(tmp_path):
     assert isinstance(cache, SQLiteCache)
 
 
-def test_sqlite_cache_rejects_database_path(tmp_path):
+@pytest.mark.parametrize(
+    "database_name",
+    [
+        "/tmp/cache.db",
+        "../cache.db",
+        "nested/cache.db",
+        r"C:\temp\cache.db",
+        r"..\cache.db",
+        ".",
+        "..",
+    ],
+)
+def test_sqlite_cache_rejects_database_path(tmp_path, database_name):
     with pytest.raises(
         ValueError,
         match="database_name must be a file name without a directory",
     ):
         SQLiteCache(
             FileStorage(base_dir=str(tmp_path)),
-            database_name="nested/cache.db",
+            database_name=database_name,
         )
 
 
