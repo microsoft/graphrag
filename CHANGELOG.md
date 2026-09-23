@@ -1,6 +1,14 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.2.0
+
+- minor: Add a concurrency-safe SQLite cache provider.
+- patch: Fix broken doc links and doc string parameter mismatches.
+- patch: Update dependencies to latest versions (dependency sweep).
+- patch: Update dependencies to latest versions (dependency sweep).
+- patch: Update dependencies to latest versions.
+
 ## 3.1.2
 
 - patch: Change default package feed index.
