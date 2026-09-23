@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.11, <3.14"
 resolution-markers = [
     "python_full_version >= '3.13' and sys_platform == 'win32'",
@@ -1088,7 +1088,7 @@ wheels = [
 
 [[package]]
 name = "graphrag"
-version = "3.1.2"
+version = "3.2.0"
 source = { editable = "packages/graphrag" }
 dependencies = [
     { name = "azure-identity" },
@@ -1150,7 +1150,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-cache"
-version = "3.1.2"
+version = "3.2.0"
 source = { editable = "packages/graphrag-cache" }
 dependencies = [
     { name = "graphrag-common" },
@@ -1165,7 +1165,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-chunking"
-version = "3.1.2"
+version = "3.2.0"
 source = { editable = "packages/graphrag-chunking" }
 dependencies = [
     { name = "graphrag-common" },
@@ -1180,7 +1180,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-common"
-version = "3.1.2"
+version = "3.2.0"
 source = { editable = "packages/graphrag-common" }
 dependencies = [
     { name = "python-dotenv" },
@@ -1197,7 +1197,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-input"
-version = "3.1.2"
+version = "3.2.0"
 source = { editable = "packages/graphrag-input" }
 dependencies = [
     { name = "graphrag-common" },
@@ -1218,7 +1218,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-llm"
-version = "3.1.2"
+version = "3.2.0"
 source = { editable = "packages/graphrag-llm" }
 dependencies = [
     { name = "azure-identity" },
@@ -1304,7 +1304,7 @@ dev = [
 
 [[package]]
 name = "graphrag-storage"
-version = "3.1.2"
+version = "3.2.0"
 source = { editable = "packages/graphrag-storage" }
 dependencies = [
     { name = "aiofiles" },
@@ -1329,7 +1329,7 @@ requires-dist = [
 
 [[package]]
 name = "graphrag-vectors"
-version = "3.1.2"
+version = "3.2.0"
 source = { editable = "packages/graphrag-vectors" }
 dependencies = [
     { name = "azure-core" },
@@ -2972,7 +2972,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://packagefeedproxy.microsoft.io/pypi/simple" }
 dependencies = [
-    { name = "ptyprocess" },
+    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/pexpect/4.9/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f" }
 wheels = [

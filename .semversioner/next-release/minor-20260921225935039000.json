@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Add a concurrency-safe SQLite cache provider."
-}
