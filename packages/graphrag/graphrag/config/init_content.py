@@ -62,10 +62,11 @@ reporting:
   base_dir: "{graphrag_config_defaults.reporting.base_dir}"
 
 cache:
-  type: {graphrag_config_defaults.cache.type} # [json, memory, none]
+  type: {graphrag_config_defaults.cache.type} # [json, memory, sqlite, none]
   storage:
     type: {graphrag_config_defaults.cache.storage.type} # [file, blob, cosmosdb]
     base_dir: "{graphrag_config_defaults.cache.storage.base_dir}"
+  # database_name: "{graphrag_config_defaults.cache.database_name}" # Only used when type is sqlite
     
 vector_store:
   type: {vector_store_defaults.type}

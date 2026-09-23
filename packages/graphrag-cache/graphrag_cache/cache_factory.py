@@ -79,6 +79,11 @@ def create_cache(
 
                 register_cache(CacheType.Noop, NoopCache)
 
+            case CacheType.Sqlite:
+                from graphrag_cache.sqlite_cache import SQLiteCache
+
+                register_cache(CacheType.Sqlite, SQLiteCache)
+
             case _:
                 msg = f"CacheConfig.type '{cache_strategy}' is not registered in the CacheFactory. Registered types: {', '.join(cache_factory.keys())}."
                 raise ValueError(msg)
