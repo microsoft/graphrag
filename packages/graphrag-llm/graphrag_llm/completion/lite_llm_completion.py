@@ -269,7 +269,7 @@ def _create_base_completions(
             return LLMCompletionResponse(**response.model_dump())
 
         def _run_iterator() -> Iterator[LLMCompletionChunk]:
-            for chunk in response:
+            for chunk in response:  # type: ignore
                 yield LLMCompletionChunk(**chunk.model_dump())
 
         return _run_iterator()

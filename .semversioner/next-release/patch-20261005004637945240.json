@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Update dependencies (dependency sweep): bump litellm to 1.103.0, lancedb to 0.39.0, and refresh the lockfile."
+}
