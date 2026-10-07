@@ -3,6 +3,7 @@
 
 """MemoryCache implementation."""
 
+from collections.abc import Sequence
 from typing import Any
 
 from graphrag_cache.cache import Cache
@@ -30,6 +31,14 @@ class MemoryCache(Cache):
             - output - The value for the given key.
         """
         return self._cache.get(key)
+
+    async def get_many(self, keys: Sequence[str]) -> dict[str, Any]:
+        """Return existing cache values keyed by cache key."""
+        return {
+            key: value
+            for key in dict.fromkeys(keys)
+            if (value := self._cache.get(key)) is not None
+        }
 
     async def set(self, key: str, value: Any, debug_data: dict | None = None) -> None:
         """Set the value for the given key.

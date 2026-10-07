@@ -43,6 +43,26 @@ The database is created within the configured file storage. SQLite requires
 local random-access file operations, so blob and Cosmos storage are not
 supported. Child caches use isolated namespaces within the same database.
 
+All cache providers expose `await cache.get_many(keys)` for bulk reads. The
+result maps each existing, valid key to the same decoded value returned by
+`get()`. Missing and malformed entries are omitted, duplicate input keys appear
+at most once, and an empty input returns an empty dictionary. The default
+implementation remains compatible with custom `Cache` subclasses, while
+`MemoryCache`, `NoopCache`, and `SQLiteCache` provide backend-specific
+implementations. SQLite bulk reads use one worker dispatch and one connection,
+splitting large key sets into bounded SQL batches.
+
+An opt-in warm-cache benchmark compares bulk reads across the memory, JSON, and
+SQLite providers without enforcing a machine-dependent performance threshold:
+
+```bash
+uv run pytest -s tests/unit/cache/test_cache_benchmark.py \
+  --run-cache-benchmark
+```
+
+The benchmark reports median latency, entries per second, and time relative to
+SQLite for 1,000 entries. Setup time is excluded from the measurements.
+
 The preregistration happens dynamically, e.g., `JsonCache` is only imported and registered if you request a `JsonCache` with `create_cache(CacheType.Json, ...)`. There is no need to manually import and register builtin cache providers when using `create_cache`.
 
 If you want a clean factory with no preregistered cache providers then directly import `cache_factory` and bypass using `create_cache`. The downside is that `cache_factory.create` uses a dict for init args instead of the strongly typed `CacheConfig` used with `create_cache`.

@@ -3,6 +3,7 @@
 
 """NoopCache implementation."""
 
+from collections.abc import Sequence
 from typing import Any
 
 from graphrag_cache.cache import Cache
@@ -26,6 +27,10 @@ class NoopCache(Cache):
             - output - The value for the given key.
         """
         return None
+
+    async def get_many(self, keys: Sequence[str]) -> dict[str, Any]:
+        """Return no values."""
+        return {}
 
     async def set(
         self, key: str, value: str | bytes | None, debug_data: dict | None = None

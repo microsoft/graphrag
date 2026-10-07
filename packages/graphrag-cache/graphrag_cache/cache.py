@@ -5,10 +5,13 @@
 
 from __future__ import annotations
 
+import asyncio
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from graphrag_storage import Storage
 
 
@@ -31,6 +34,19 @@ class Cache(ABC):
         -------
             - output - The value for the given key.
         """
+
+    async def get_many(self, keys: Sequence[str]) -> dict[str, Any]:
+        """Return existing cache values keyed by cache key.
+
+        Missing or invalid entries are omitted. Duplicate keys appear at most once.
+        """
+        unique_keys = list(dict.fromkeys(keys))
+        values = await asyncio.gather(*(self.get(key) for key in unique_keys))
+        return {
+            key: value
+            for key, value in zip(unique_keys, values, strict=True)
+            if value is not None
+        }
 
     @abstractmethod
     async def set(self, key: str, value: Any, debug_data: dict | None = None) -> None:
