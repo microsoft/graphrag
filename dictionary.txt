@@ -63,6 +63,7 @@ graphintelligence
 dotenv
 tiktoken
 pydantic
+pytest
 faiss
 pyarrow
 pyaml
