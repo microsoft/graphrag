@@ -1,6 +1,10 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 3.3.0
+
+- minor: Add bulk cache reads with bounded, connection-reusing SQLite queries.
+
 ## 3.2.0
 
 - minor: Add a concurrency-safe SQLite cache provider.
