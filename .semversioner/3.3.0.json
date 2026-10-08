@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "description": "Add bulk cache reads with bounded, connection-reusing SQLite queries.",
+      "type": "minor"
+    }
+  ],
+  "created_at": "2026-10-08T17:32:46+00:00",
+  "version": "3.3.0"
+}

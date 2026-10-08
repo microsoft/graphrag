@@ -1,4 +1,0 @@
-{
-  "description": "Add bulk cache reads with bounded, connection-reusing SQLite queries.",
-  "type": "minor"
-}
