@@ -6,10 +6,12 @@
 import asyncio
 import json
 import sqlite3
+from contextlib import contextmanager
+from math import ceil
 
 import pytest
 from graphrag_cache import CacheConfig, CacheType
-from graphrag_cache.sqlite_cache import SQLiteCache
+from graphrag_cache.sqlite_cache import SQLITE_BATCH_SIZE, SQLiteCache
 from graphrag_storage import StorageConfig, StorageType
 from graphrag_storage.file_storage import FileStorage
 from graphrag_storage.memory_storage import MemoryStorage
@@ -75,6 +77,63 @@ async def test_sqlite_cache_supports_concurrent_writes(tmp_path):
     ) == list(range(20))
 
 
+@pytest.mark.asyncio
+async def test_sqlite_cache_get_many_batches_with_one_thread_and_connection(
+    tmp_path, monkeypatch
+):
+    cache = SQLiteCache(FileStorage(base_dir=str(tmp_path)))
+    key_count = SQLITE_BATCH_SIZE * 2 + 37
+    with sqlite3.connect(tmp_path / "cache.db") as connection:
+        connection.executemany(
+            """
+            INSERT INTO cache_entries(namespace, key, value_json)
+            VALUES (?, ?, ?)
+            """,
+            (
+                ("", f"key-{index}", json.dumps({"result": index}))
+                for index in range(key_count)
+            ),
+        )
+
+    thread_dispatches = 0
+    connection_count = 0
+    select_count = 0
+    original_to_thread = asyncio.to_thread
+    original_connect = cache._connect  # noqa: SLF001
+
+    async def counting_to_thread(func, /, *args, **kwargs):
+        nonlocal thread_dispatches
+        thread_dispatches += 1
+        return await original_to_thread(func, *args, **kwargs)
+
+    @contextmanager
+    def counting_connect():
+        nonlocal connection_count
+        connection_count += 1
+        with original_connect() as connection:
+
+            def count_select(statement):
+                nonlocal select_count
+                if "SELECT key, value_json" in statement:
+                    select_count += 1
+
+            connection.set_trace_callback(count_select)
+            yield connection
+
+    monkeypatch.setattr(
+        "graphrag_cache.sqlite_cache.asyncio.to_thread", counting_to_thread
+    )
+    monkeypatch.setattr(cache, "_connect", counting_connect)
+
+    keys = [f"key-{index}" for index in range(key_count)]
+    result = await cache.get_many([*keys, "missing", keys[0]])
+
+    assert result == {f"key-{index}": index for index in range(key_count)}
+    assert thread_dispatches == 1
+    assert connection_count == 1
+    assert select_count == ceil((key_count + 1) / SQLITE_BATCH_SIZE)
+
+
 @pytest.mark.parametrize(
     "payload",
     [
@@ -122,6 +181,63 @@ async def test_corruption_cleanup_preserves_newer_value(tmp_path):
 
     assert await cache.get("invalid") is None
     assert await cache.get("invalid") == "replacement"
+
+
+@pytest.mark.asyncio
+async def test_get_many_removes_invalid_payloads(tmp_path):
+    cache = SQLiteCache(FileStorage(base_dir=str(tmp_path)))
+    with sqlite3.connect(tmp_path / "cache.db") as connection:
+        connection.executemany(
+            """
+            INSERT INTO cache_entries(namespace, key, value_json)
+            VALUES (?, ?, ?)
+            """,
+            [
+                ("", "valid", '{"result": {"value": 1}}'),
+                ("", "invalid-json", "not json"),
+                ("", "invalid-envelope", '{"debug": true}'),
+            ],
+        )
+
+    assert await cache.get_many(["valid", "invalid-json", "invalid-envelope"]) == {
+        "valid": {"value": 1}
+    }
+    assert not await cache.has("invalid-json")
+    assert not await cache.has("invalid-envelope")
+
+
+@pytest.mark.asyncio
+async def test_get_many_corruption_cleanup_preserves_newer_value(tmp_path):
+    class ReplacingSQLiteCache(SQLiteCache):
+        def _delete_many_if_unchanged(self, connection, entries):
+            self._set("invalid", json.dumps({"result": "replacement"}))
+            super()._delete_many_if_unchanged(connection, entries)
+
+    cache = ReplacingSQLiteCache(FileStorage(base_dir=str(tmp_path)))
+    with sqlite3.connect(tmp_path / "cache.db") as connection:
+        connection.execute(
+            """
+            INSERT INTO cache_entries(namespace, key, value_json)
+            VALUES (?, ?, ?)
+            """,
+            ("", "invalid", "not json"),
+        )
+
+    assert await cache.get_many(["invalid"]) == {}
+    assert await cache.get("invalid") == "replacement"
+
+
+@pytest.mark.asyncio
+async def test_get_many_supports_concurrent_reader_and_writer(tmp_path):
+    cache = SQLiteCache(FileStorage(base_dir=str(tmp_path)))
+    await asyncio.gather(
+        *(cache.set(f"key-{index}", index) for index in range(20)),
+        cache.get_many([f"key-{index}" for index in range(20)]),
+    )
+
+    assert await cache.get_many([f"key-{index}" for index in range(20)]) == {
+        f"key-{index}": index for index in range(20)
+    }
 
 
 def test_sqlite_cache_uses_database_name_within_storage(tmp_path):
