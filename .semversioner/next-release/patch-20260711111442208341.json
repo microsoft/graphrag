@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fix #2427 - preserve original node names in stable_lcc so case-sensitive BYOG entity titles are not dropped from communities."
+}
