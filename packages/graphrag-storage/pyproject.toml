@@ -31,9 +31,9 @@ classifiers = [
 ]
 dependencies = [
     "aiofiles~=25.1",
-    "azure-cosmos~=4.16",
-    "azure-identity~=1.25",
-    "azure-storage-blob~=12.30",
+    "azure-cosmos~=4.17",
+    "azure-identity~=1.26",
+    "azure-storage-blob~=12.31",
     "graphrag-common==3.3.0",
     "pandas~=3.0",
     "pydantic~=2.13",

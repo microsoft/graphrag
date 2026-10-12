@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Unpack
 from graphrag_llm.threading.embedding_thread_runner import embedding_thread_runner
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Generator
 
     from graphrag_cache import Cache, CacheKeyCreator
 
@@ -93,7 +93,7 @@ class LLMEmbedding(ABC):
         response_handler: "ThreadedLLMEmbeddingResponseHandler",
         concurrency: int,
         queue_limit: int = 0,
-    ) -> "Iterator[ThreadedLLMEmbeddingFunction]":
+    ) -> "Generator[ThreadedLLMEmbeddingFunction, None, None]":
         """Run an embedding thread pool.
 
         Args

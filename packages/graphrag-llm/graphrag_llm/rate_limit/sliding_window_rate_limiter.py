@@ -6,7 +6,7 @@
 import threading
 import time
 from collections import deque
-from collections.abc import Iterator
+from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Any
 
@@ -62,7 +62,7 @@ class SlidingWindowRateLimiter(RateLimiter):
             self._stagger = self._period_in_seconds / self._rpp
 
     @contextmanager
-    def acquire(self, token_count: int) -> Iterator[None]:
+    def acquire(self, token_count: int) -> Generator[None, None, None]:
         """
         Acquire Rate Limiter.
 

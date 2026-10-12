@@ -7,7 +7,7 @@ import asyncio
 import sys
 import threading
 import time
-from collections.abc import Awaitable, Iterator
+from collections.abc import Awaitable, Generator
 from contextlib import contextmanager
 from queue import Empty, Queue
 from typing import TYPE_CHECKING, Protocol, Unpack, runtime_checkable
@@ -120,7 +120,7 @@ def embedding_thread_runner(
     concurrency: int,
     queue_limit: int = 0,
     metrics_store: "MetricsStore | None" = None,
-) -> Iterator[ThreadedLLMEmbeddingFunction]:
+) -> Generator[ThreadedLLMEmbeddingFunction, None, None]:
     """Run an embedding thread pool.
 
     Args
