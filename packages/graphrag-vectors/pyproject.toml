@@ -37,7 +37,7 @@ dependencies = [
     "graphrag-common==3.3.0",
     "lancedb~=0.38.0",
     "numpy~=2.4",
-    "pyarrow~=25.0",
+    "pyarrow>=25,<27",
     "pydantic~=2.13",
 ]
 
