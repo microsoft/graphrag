@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Unpack
 from graphrag_llm.threading.completion_thread_runner import completion_thread_runner
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncIterator, Iterator
+    from collections.abc import AsyncIterator, Generator, Iterator
 
     from graphrag_cache import Cache, CacheKeyCreator
 
@@ -167,7 +167,7 @@ class LLMCompletion(ABC):
         response_handler: "ThreadedLLMCompletionResponseHandler",
         concurrency: int,
         queue_limit: int = 0,
-    ) -> "Iterator[ThreadedLLMCompletionFunction]":
+    ) -> "Generator[ThreadedLLMCompletionFunction, None, None]":
         """Run a completion thread pool.
 
         Args

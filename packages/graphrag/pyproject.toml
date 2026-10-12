@@ -32,9 +32,9 @@ classifiers = [
 ]
 
 dependencies = [
-    "azure-identity~=1.25",
+    "azure-identity~=1.26",
     "azure-search-documents~=12.0",
-    "azure-storage-blob~=12.30",
+    "azure-storage-blob~=12.31",
     "devtools~=0.12",
     "graphrag-cache==3.3.0",
     "graphrag-chunking==3.3.0",

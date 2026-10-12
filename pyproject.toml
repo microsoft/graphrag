@@ -27,7 +27,7 @@ requires-python = ">=3.11,<3.14"
 dev = [
     "coverage~=7.16",
     "deptry~=0.25",
-    "ipykernel~=7.3",
+    "ipykernel~=7.4",
     "jupyter~=1.1",
     "mkdocs-material~=9.7",
     "mkdocs-jupyter~=0.26",
