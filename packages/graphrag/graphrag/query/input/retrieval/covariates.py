@@ -16,7 +16,7 @@ def get_candidate_covariates(
     covariates: list[Covariate],
 ) -> list[Covariate]:
     """Get all covariates that are related to selected entities."""
-    selected_entity_names = [entity.title for entity in selected_entities]
+    selected_entity_names = {entity.title for entity in selected_entities}
     return [
         covariate
         for covariate in covariates
