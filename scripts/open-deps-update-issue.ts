@@ -18,7 +18,7 @@ const body = {
     base_branch: "main",
     custom_instructions:
       "Use the update-deps skill to update all dependencies to their latest versions.",
-    model: "claude-opus-4.8",
+    model: "claude-opus-5.5",
   },
 };
 
