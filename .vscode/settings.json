@@ -33,10 +33,7 @@
   "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "neverOpen",
   "azureFunctions.preDeployTask": "npm prune (functions)",
-  "appService.zipIgnorePattern": [
-    "node_modules{,/**}",
-    ".vscode{,/**}"
-  ],
+  "appService.zipIgnorePattern": ["node_modules{,/**}", ".vscode{,/**}"],
   "python.defaultInterpreterPath": "python/services/.venv/bin/python",
   "python.languageServer": "Pylance",
   "cSpell.customDictionaries": {
@@ -48,5 +45,7 @@
     },
     "custom": true, // Enable the `custom` dictionary
     "internal-terms": true // Disable the `internal-terms` dictionary
-  }
+  },
+  "python-envs.defaultEnvManager": "ms-python.python:poetry",
+  "python-envs.defaultPackageManager": "ms-python.python:poetry"
 }
