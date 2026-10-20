@@ -1,6 +1,9 @@
 # Changelog
-
 Note: version releases in the 0.x.y range may introduce breaking changes.
+
+## 1.2.4
+
+- patch: Update json-repair
 
 ## 1.2.3
 

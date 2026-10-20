@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "description": "Update json-repair",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2026-10-20T14:40:56+00:00",
+  "version": "1.2.4"
+}
