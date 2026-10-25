@@ -205,6 +205,36 @@ class TestFinalizeEntities:
         titles = [r["title"] for r in table.written]
         assert titles == ["A", "B"]
 
+
+    async def test_keeps_same_title_different_type(self):
+        """Entities sharing a title but with different types must all be kept (issue #1718)."""
+        table = FakeTable([
+            _make_entity_row("IBM", entity_type="ORGANIZATION"),
+            _make_entity_row("IBM", entity_type="GEO"),
+        ])
+        degree_map = {"IBM": 4}
+        await finalize_entities(table, degree_map)
+
+        assert len(table.written) == 2
+        types = {r["type"] for r in table.written}
+        assert types == {"ORGANIZATION", "GEO"}
+        # both retain the degree looked up by title
+        assert all(r["degree"] == 4 for r in table.written)
+
+    async def test_deduplicates_same_title_and_type(self):
+        """True duplicates (same title AND type) are still collapsed to one."""
+        table = FakeTable([
+            _make_entity_row("IBM", entity_type="ORGANIZATION"),
+            _make_entity_row("IBM", entity_type="ORGANIZATION"),
+            _make_entity_row("IBM", entity_type="GEO"),
+        ])
+        degree_map = {"IBM": 1}
+        await finalize_entities(table, degree_map)
+
+        assert len(table.written) == 2
+        pairs = [(r["title"], r["type"]) for r in table.written]
+        assert pairs == [("IBM", "ORGANIZATION"), ("IBM", "GEO")]
+
     async def test_skips_empty_title(self):
         """Rows with empty or missing title should be skipped."""
         table = FakeTable([
