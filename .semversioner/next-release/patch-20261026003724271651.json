@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Update dependencies (litellm 1.106.0, lancedb 0.40, pyarrow 26, ruff 0.17) and fix resulting lint/type issues."
+}

@@ -7,7 +7,7 @@ import asyncio
 import sys
 import threading
 import time
-from collections.abc import Awaitable, Iterator
+from collections.abc import Awaitable, Generator, Iterator
 from contextlib import contextmanager
 from queue import Empty, Queue
 from typing import TYPE_CHECKING, Protocol, Unpack, runtime_checkable
@@ -147,7 +147,7 @@ def completion_thread_runner(
     concurrency: int,
     queue_limit: int = 0,
     metrics_store: "MetricsStore | None" = None,
-) -> Iterator[ThreadedLLMCompletionFunction]:
+) -> Generator[ThreadedLLMCompletionFunction, None, None]:
     """Run a completion thread pool.
 
     Args

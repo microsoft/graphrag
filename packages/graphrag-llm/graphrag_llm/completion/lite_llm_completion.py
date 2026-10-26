@@ -4,7 +4,7 @@
 """LLMCompletion based on litellm."""
 
 from collections.abc import AsyncIterator, Iterator
-from typing import TYPE_CHECKING, Any, Unpack
+from typing import TYPE_CHECKING, Any, Unpack, cast
 
 import litellm
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
@@ -22,6 +22,7 @@ from graphrag_llm.utils import (
 
 if TYPE_CHECKING:
     from graphrag_cache import Cache, CacheKeyCreator
+    from litellm import CustomStreamWrapper
 
     from graphrag_llm.config import ModelConfig
     from graphrag_llm.metrics import MetricsProcessor, MetricsStore
@@ -262,8 +263,11 @@ def _create_base_completions(
         if json_object and "response_format" not in new_args:
             new_args["response_format"] = {"type": "json_object"}
 
-        response = litellm.completion(
-            **new_args,
+        response = cast(
+            "ModelResponse | CustomStreamWrapper",
+            litellm.completion(
+                **new_args,
+            ),
         )
         if isinstance(response, ModelResponse):
             return LLMCompletionResponse(**response.model_dump())
