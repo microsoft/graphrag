@@ -6,6 +6,12 @@ completion_models:
     api_version: "2025-04-01-preview"
     model: gpt-4.1
     azure_deployment_name: gpt-4.1
+    retry:
+      type: exponential_backoff
+      max_retries: 7
+      base_delay: 2.0
+      jitter: true
+      max_delay: 60.0
     rate_limit:
       type: sliding_window
       tokens_per_period: 250_000
@@ -18,6 +24,12 @@ embedding_models:
     api_version: "2025-04-01-preview"
     model: text-embedding-3-large
     azure_deployment_name: text-embedding-3-large
+    retry:
+      type: exponential_backoff
+      max_retries: 7
+      base_delay: 2.0
+      jitter: true
+      max_delay: 60.0
     rate_limit:
       type: sliding_window
       tokens_per_period: 250_000
