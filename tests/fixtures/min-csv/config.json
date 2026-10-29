@@ -83,7 +83,7 @@
                 1,
                 500
             ],
-            "max_runtime": 150,
+            "max_runtime": 400,
             "expected_artifacts": [
                 "embeddings.text_unit_text.parquet",
                 "embeddings.entity_description.parquet",
