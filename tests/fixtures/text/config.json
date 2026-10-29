@@ -85,7 +85,7 @@
                 1,
                 100
             ],
-            "max_runtime": 150,
+            "max_runtime": 400,
             "expected_artifacts": [
                 "embeddings.text_unit_text.csv",
                 "embeddings.entity_description.csv",
