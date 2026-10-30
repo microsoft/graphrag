@@ -46,6 +46,9 @@ dependencies = [
     "typing-extensions~=4.16",
 ]
 
+[project.optional-dependencies]
+copilot = ["github-copilot-sdk~=1.0.26; python_version >= '3.11'"]
+
 [project.urls]
 Source = "https://github.com/microsoft/graphrag"
 

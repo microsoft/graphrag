@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Add an optional GitHub Copilot SDK completion provider to graphrag-llm."
+}

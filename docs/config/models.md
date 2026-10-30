@@ -28,6 +28,50 @@ embedding_models:
 
 See [Detailed Configuration](yaml.md) for more details on configuration. [View LiteLLM basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`).
 
+## GitHub Copilot
+
+The built-in `copilot` completion provider uses the official GitHub Copilot SDK
+and is registered through the same completion factory as other built-in
+providers. It works with both GraphRAG's CLI and library APIs; no application-side
+registration or provider conditionals are needed.
+
+Install the extra into the environment running GraphRAG (Python 3.11+):
+
+```shell
+pip install "graphrag-llm[copilot]"
+```
+
+Authenticate with the Copilot CLI or the SDK's environment-based GitHub token
+authentication, and choose an exact model ID available to your account:
+
+```yaml
+completion_models:
+  default_completion_model:
+    type: copilot
+    model_provider: copilot
+    model: gpt-6.1-sol
+    timeout: 120
+```
+
+Omit `api_key`, API endpoint settings, and unsupported `call_args` such as
+`temperature`, `top_p`, `seed`, `max_tokens`, and `max_completion_tokens`.
+The provider rejects unsupported parameters instead of silently ignoring them.
+Copilot does not provide embeddings: keep `embedding_models` configured for a
+different provider. Available models, rate limits and usage charges depend on
+your Copilot subscription.
+
+DRIFT search is currently incompatible because it supplies sampling and
+token-limit parameters internally, even when they are omitted from `call_args`.
+Use another completion provider for DRIFT.
+
+The provider supports text completions, sync/async streaming and native
+schema-based structured responses with Pydantic validation. Tools are disabled.
+Requests use fresh sessions with no shared history; supplied multi-turn history
+is rendered as a role-labelled transcript, not native role-separated messages.
+Each uncached request starts and stops its own CLI client, which adds startup
+overhead. See the [standalone provider documentation](https://github.com/microsoft/graphrag/tree/main/packages/graphrag-llm#github-copilot-completion-provider)
+for lifecycle, authentication, usage metrics and other limitations.
+
 ## Model Selection Considerations
 
 GraphRAG has been most thoroughly tested with the gpt-4 series of models from OpenAI, including gpt-4 gpt-4-turbo, gpt-4o, and gpt-4o-mini. Our [arXiv paper](https://arxiv.org/abs/2404.16130), for example, performed quality evaluation using gpt-4-turbo. As stated above, non-OpenAI models are supported through the use of LiteLLM but the suite of gpt-4 series of models from OpenAI remain the most tested and supported suite of models for GraphRAG – in other words, these are the models we know best and can help resolve issues with.

@@ -104,6 +104,13 @@ def create_completion(
                     completion_type=LLMProviderType.MockLLM,
                     completion_initializer=MockLLMCompletion,
                 )
+            case LLMProviderType.Copilot:
+                from graphrag_llm.completion.copilot_completion import CopilotCompletion
+
+                register_completion(
+                    completion_type=LLMProviderType.Copilot,
+                    completion_initializer=CopilotCompletion,
+                )
             case _:
                 msg = f"ModelConfig.type '{strategy}' is not registered in the CompletionFactory. Registered strategies: {', '.join(completion_factory.keys())}"
                 raise ValueError(msg)

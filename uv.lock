@@ -1087,6 +1087,19 @@ wheels = [
 ]
 
 [[package]]
+name = "github-copilot-sdk"
+version = "1.0.26"
+source = { registry = "https://packagefeedproxy.microsoft.io/pypi/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "python-dateutil" },
+]
+wheels = [
+    { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/github-copilot-sdk/1.0.26/github_copilot_sdk-1.0.26-py3-none-any.whl", hash = "sha256:0854a5a34e3d89a8392ddafff5de78df2071937354f97c4865536b3c5ba15abe", size = 924388, upload_time = "2026-10-29T16:37:17Z" },
+]
+
+[[package]]
 name = "graphrag"
 version = "3.3.0"
 source = { editable = "packages/graphrag" }
@@ -1233,10 +1246,16 @@ dependencies = [
     { name = "typing-extensions" },
 ]
 
+[package.optional-dependencies]
+copilot = [
+    { name = "github-copilot-sdk" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "azure-identity", specifier = "~=1.25" },
     { name = "fastapi", specifier = ">=0.136.3,<1.0" },
+    { name = "github-copilot-sdk", marker = "python_full_version >= '3.11' and extra == 'copilot'", specifier = "~=1.0.26" },
     { name = "graphrag-cache", editable = "packages/graphrag-cache" },
     { name = "graphrag-common", editable = "packages/graphrag-common" },
     { name = "jinja2", specifier = "~=3.1" },
@@ -1246,6 +1265,7 @@ requires-dist = [
     { name = "pydantic", specifier = "~=2.13" },
     { name = "typing-extensions", specifier = "~=4.16" },
 ]
+provides-extras = ["copilot"]
 
 [[package]]
 name = "graphrag-monorepo"
@@ -1256,6 +1276,7 @@ source = { virtual = "." }
 dev = [
     { name = "coverage" },
     { name = "deptry" },
+    { name = "github-copilot-sdk" },
     { name = "ipykernel" },
     { name = "jupyter" },
     { name = "mkdocs-exclude-search" },
@@ -1282,6 +1303,7 @@ dev = [
 dev = [
     { name = "coverage", specifier = "~=7.16" },
     { name = "deptry", specifier = "~=0.25" },
+    { name = "github-copilot-sdk", specifier = "~=1.0.26" },
     { name = "ipykernel", specifier = "~=7.3" },
     { name = "jupyter", specifier = "~=1.1" },
     { name = "mkdocs-exclude-search", specifier = "~=0.6" },
