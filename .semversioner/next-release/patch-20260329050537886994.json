@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add XML declaration header to GraphML snapshot for Gephi compatibility"
+}
