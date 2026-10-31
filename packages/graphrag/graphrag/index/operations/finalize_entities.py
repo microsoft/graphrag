@@ -17,7 +17,7 @@ async def finalize_entities(
 ) -> list[dict[str, Any]]:
     """Read entity rows, enrich with degree, and write back.
 
-    Streams through the entities table, deduplicates by title,
+    Streams through the entities table, deduplicates by (title, type),
     assigns degree from the pre-computed degree map, and writes
     each finalized row back to the same table (safe when using
     truncate=True, which reads from the original and writes to
@@ -36,14 +36,15 @@ async def finalize_entities(
             Sample of up to 5 entity rows for logging.
     """
     sample_rows: list[dict[str, Any]] = []
-    seen_titles: set[str] = set()
+    seen_entities: set[tuple[str, str]] = set()
     human_readable_id = 0
 
     async for row in entities_table:
         title = row.get("title")
-        if not title or title in seen_titles:
+        entity_type = row.get("type", "")
+        if not title or (title, entity_type) in seen_entities:
             continue
-        seen_titles.add(title)
+        seen_entities.add((title, entity_type))
         row["degree"] = degree_map.get(title, 0)
         row["human_readable_id"] = human_readable_id
         row["id"] = str(uuid4())
