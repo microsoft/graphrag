@@ -37,7 +37,7 @@ jobs:
       fail-fast: false # Continue running all jobs even if one fails
     env:
       DEBUG: 1
-      GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GRAPHRAG_API_KEY: ${{ secrets.GRAPHRAG_API_KEY }}
       GRAPHRAG_API_BASE: ${{ secrets.GRAPHRAG_API_BASE }}
       # Azure AI Search config
       AZURE_AI_SEARCH_URL_ENDPOINT: ${{ secrets.AZURE_AI_SEARCH_URL_ENDPOINT }}
@@ -60,6 +60,7 @@ jobs:
               - '**/*.ipynb'
               - '.github/workflows/python*.yml'
               - 'tests/smoke/**/*'
+              - 'tests/fixtures/**/*'
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
