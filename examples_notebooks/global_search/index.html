@@ -3306,35 +3306,459 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Async request failed with exception=litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 888, in acompletion
+    headers, response = await self.make_openai_chat_completion_request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;4 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 300, in async_wrapper
+    result: Final = await func(*args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 447, in make_openai_chat_completion_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 423, in make_openai_chat_completion_request
+    raw_response = await openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 386, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 2907, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...&lt;55 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1992, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1777, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 647, in acompletion
+    response = await _resolve_dispatched_chat_response(init_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 712, in _resolve_dispatched_chat_response
+    return await pending
+           ^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 948, in acompletion
+    raise OpenAIError(
+    ...&lt;4 lines&gt;...
+    )
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 64, in _request_count_middleware_async
+    return await async_middleware(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 72, in _request_count_middleware_async
+    result = await async_middleware(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 80, in _metrics_middleware_async
+    response = await async_middleware(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py", line 291, in _base_completion_async
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **new_args,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 2065, in wrapper_async
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1861, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 700, in acompletion
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;3 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Exception in _map_response_single_batch
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 888, in acompletion
+    headers, response = await self.make_openai_chat_completion_request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;4 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 300, in async_wrapper
+    result: Final = await func(*args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 447, in make_openai_chat_completion_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 423, in make_openai_chat_completion_request
+    raw_response = await openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 386, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 2907, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...&lt;55 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1992, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1777, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 647, in acompletion
+    response = await _resolve_dispatched_chat_response(init_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 712, in _resolve_dispatched_chat_response
+    return await pending
+           ^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 948, in acompletion
+    raise OpenAIError(
+    ...&lt;4 lines&gt;...
+    )
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag/graphrag/query/structured_search/global_search/search.py", line 238, in _map_response_single_batch
+    model_response = await self.model.completion_async(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;3 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py", line 194, in completion_async
+    response = await self._completion_async(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;4 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 64, in _request_count_middleware_async
+    return await async_middleware(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 72, in _request_count_middleware_async
+    result = await async_middleware(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 80, in _metrics_middleware_async
+    response = await async_middleware(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py", line 291, in _base_completion_async
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **new_args,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 2065, in wrapper_async
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1861, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 700, in acompletion
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;3 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Async request failed with exception=litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 888, in acompletion
+    headers, response = await self.make_openai_chat_completion_request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;4 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 300, in async_wrapper
+    result: Final = await func(*args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 447, in make_openai_chat_completion_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 423, in make_openai_chat_completion_request
+    raw_response = await openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 386, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 2907, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...&lt;55 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1992, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1777, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 647, in acompletion
+    response = await _resolve_dispatched_chat_response(init_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 712, in _resolve_dispatched_chat_response
+    return await pending
+           ^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 948, in acompletion
+    raise OpenAIError(
+    ...&lt;4 lines&gt;...
+    )
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 64, in _request_count_middleware_async
+    return await async_middleware(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 72, in _request_count_middleware_async
+    result = await async_middleware(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 80, in _metrics_middleware_async
+    response = await async_middleware(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py", line 291, in _base_completion_async
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **new_args,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 2065, in wrapper_async
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1861, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 700, in acompletion
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;3 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Exception in _map_response_single_batch
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 888, in acompletion
+    headers, response = await self.make_openai_chat_completion_request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;4 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 300, in async_wrapper
+    result: Final = await func(*args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 447, in make_openai_chat_completion_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 423, in make_openai_chat_completion_request
+    raw_response = await openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 386, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 2907, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...&lt;55 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1992, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1777, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 647, in acompletion
+    response = await _resolve_dispatched_chat_response(init_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 712, in _resolve_dispatched_chat_response
+    return await pending
+           ^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 948, in acompletion
+    raise OpenAIError(
+    ...&lt;4 lines&gt;...
+    )
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag/graphrag/query/structured_search/global_search/search.py", line 238, in _map_response_single_batch
+    model_response = await self.model.completion_async(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;3 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py", line 194, in completion_async
+    response = await self._completion_async(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;4 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 64, in _request_count_middleware_async
+    return await async_middleware(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 72, in _request_count_middleware_async
+    result = await async_middleware(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 80, in _metrics_middleware_async
+    response = await async_middleware(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py", line 291, in _base_completion_async
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **new_args,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 2065, in wrapper_async
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1861, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 700, in acompletion
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;3 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Warning: All map responses have score 0 (i.e., no relevant information found from the dataset), returning a canned 'I do not know' answer. You can try enabling `allow_general_knowledge` to encourage the LLM to incorporate relevant general knowledge, at the risk of increasing hallucinations.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>## Overview of Operation Dulce
-
-Operation Dulce is a classified, high-stakes mission led by the Paranormal Military Squad, an elite unit specializing in the investigation and management of anomalous phenomena, existential threats, and advanced alien technology. The operation centers on the enigmatic Dulce Base, a secretive and technologically advanced underground facility reputed to house hidden technologies, existential threats, and cosmic secrets. The mission is considered to have profound implications for security, intelligence, and potentially the future of humanity [Data: Reports (4, 7)].
-
-## Mission Objectives and Scope
-
-The primary objective of Operation Dulce is to investigate the Dulce Base, uncovering and analyzing hidden technologies and anomalous phenomena within its confines. The operation involves confronting unknown dangers, including advanced weaponry and potentially reality-altering discoveries. The findings from this mission may fundamentally reshape understandings of security, technology, and the nature of reality itself [Data: Reports (4, 2)].
-
-## Structure and Execution
-
-Operation Dulce is the focal mission for the Paranormal Military Squad, requiring strict adherence to protocols, advanced technical preparation, and a coordinated team effort. The mission is marked by uncertainty and demands adaptability as the squad descends into the Dulce Base. Key personnel involved include Sam Rivera, Alex Mercer, Taylor Cruz, and Dr. Jordan Hayes, whose participation underscores the mission's significance and complexity [Data: Reports (0, 3, 1, 8, 4, +more)].
-
-The operation is supported by secure facilities, advanced communication systems, and specialized equipment, all coordinated from a military complex that acts as the operational hub for the squad. The high-security briefing room within Dulce Base serves as the central location for mission planning and execution, emphasizing the importance of security, technological capability, and operational readiness [Data: Reports (5, 9)].
-
-## Key Activities and Implications
-
-A critical aspect of Operation Dulce involves the retrieval and analysis of enigmatic alien technology discovered at a crash site and subsequently studied at Dulce Base. The operation's activities have the potential to fundamentally alter human understanding of physics and reality, highlighting its significance for both scientific advancement and national security [Data: Reports (2)].
-
-The mission is characterized by its complexity and significance, serving as a career-defining moment for those involved. Its classified status and the presence of anomalous phenomena demand heightened vigilance and resourcefulness from all participants. The success or failure of Operation Dulce may have significant consequences due to the sensitive nature of the mission and the potential risks involved [Data: Reports (4, 1, 0, 8, 9, +more)].
-
-## Organizational Structure
-
-Operation Dulce is hierarchical and mission-centric, with the Paranormal Military Squad at its core. The squad is supported by specialized agents, advanced communications systems, and secure infrastructure, reflecting its elite status and critical role in national security [Data: Reports (7, 5)].
-
----
-
-**Summary:**  
-Operation Dulce is a top-secret mission focused on investigating the Dulce Base, a facility associated with advanced technology and anomalous phenomena. Led by the Paranormal Military Squad, the operation involves high-level security, specialized personnel, and advanced infrastructure. Its outcomes may have far-reaching implications for science, security, and humanity's understanding of reality [Data: Reports (4, 7, 0, 3, 1, 8, 2, 5, 9, +more)].
+<pre>I am sorry but I am unable to answer this question given the provided data.
 </pre>
 </div>
 </div>
@@ -3529,7 +3953,7 @@ print(
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>LLM calls: 3. Prompt tokens: 12930. Output tokens: 1516.
+<pre>LLM calls: 2. Prompt tokens: 11395. Output tokens: 0.
 </pre>
 </div>
 </div>

@@ -3211,58 +3211,878 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre># Overview of Operation: Dulce
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Async request failed with exception=litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 888, in acompletion
+    headers, response = await self.make_openai_chat_completion_request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;4 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 300, in async_wrapper
+    result: Final = await func(*args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 447, in make_openai_chat_completion_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 423, in make_openai_chat_completion_request
+    raw_response = await openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 386, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 2907, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...&lt;55 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1992, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1777, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
 
-Operation: Dulce is a classified, high-stakes mission orchestrated by the Paranormal Military Squad. Its primary objective is to investigate the enigmatic Dulce Base, a secretive and technologically advanced underground facility. The operation is notable for its focus on uncovering hidden technologies, managing existential threats, and exploring anomalous phenomena within the base. The implications of this mission are considered profound, with potential consequences for security, intelligence, and possibly the future of humanity itself [Data: Reports (4, 3, 7, 8, 5)].
+During handling of the above exception, another exception occurred:
 
----
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 647, in acompletion
+    response = await _resolve_dispatched_chat_response(init_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 712, in _resolve_dispatched_chat_response
+    return await pending
+           ^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 948, in acompletion
+    raise OpenAIError(
+    ...&lt;4 lines&gt;...
+    )
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
 
-## Core Objectives and Activities
+During handling of the above exception, another exception occurred:
 
-### Investigation and Retrieval of Alien Technology
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 64, in _request_count_middleware_async
+    return await async_middleware(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 72, in _request_count_middleware_async
+    result = await async_middleware(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 80, in _metrics_middleware_async
+    response = await async_middleware(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py", line 291, in _base_completion_async
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **new_args,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 2065, in wrapper_async
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1861, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 700, in acompletion
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;3 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">AuthenticationError</span>                       Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:888</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.acompletion</span><span class="ansi-blue-fg">(self, messages, optional_params, litellm_params, provider_config, model, model_response, logging_obj, timeout, api_key, api_base, api_version, organization, client, max_retries, headers, drop_params, stream_options, fake_stream, shared_session)</span>
+<span class="ansi-green-fg">    877</span> logging_obj.pre_call(
+<span class="ansi-green-fg">    878</span>     <span style="color: rgb(0,135,0)">input</span>=data[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">messages</span><span class="ansi-yellow-fg">"</span>],
+<span class="ansi-green-fg">    879</span>     api_key=openai_aclient.api_key,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    885</span>     },
+<span class="ansi-green-fg">    886</span> )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">888</span> headers, response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.make_openai_chat_completion_request(
+<span class="ansi-green-fg">    889</span>     openai_aclient=openai_aclient,
+<span class="ansi-green-fg">    890</span>     data=data,
+<span class="ansi-green-fg">    891</span>     timeout=timeout,
+<span class="ansi-green-fg">    892</span>     logging_obj=logging_obj,
+<span class="ansi-green-fg">    893</span> )
+<span class="ansi-green-fg">    894</span> stringified_response = provider_config.transform_parsed_response_dict(response.model_dump())
 
-A central component of Operation: Dulce is the retrieval and analysis of enigmatic alien technology. This technology was initially discovered at a crash site and subsequently transferred to Dulce Base for further study. The operation involves a sequence of activities: securing the crash site, retrieving the alien devices and circuitry—believed to be of extraterrestrial origin—and transporting them to the base. The analysis of this technology is expected to drive significant advancements in scientific understanding, particularly in physics and the nature of reality [Data: Reports (2)].
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py:300</span>, in <span class="ansi-cyan-fg">track_llm_api_timing.&lt;locals&gt;.decorator.&lt;locals&gt;.async_wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    299</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">300</span>     result: Final = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> func(*args, **kwargs)
+<span class="ansi-green-fg">    301</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> result
 
-### Management of Existential Threats and Anomalous Phenomena
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:447</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.make_openai_chat_completion_request</span><span class="ansi-blue-fg">(self, openai_aclient, data, timeout, logging_obj)</span>
+<span class="ansi-green-fg">    446</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">447</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e
 
-The mission is not limited to technological investigation. It also encompasses the identification and management of existential threats and unexplained phenomena that may be present within or associated with Dulce Base. The Paranormal Military Squad is tasked with safeguarding national security against these unconventional threats, positioning the operation as a critical line of defense [Data: Reports (4, 7, 8)].
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:423</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.make_openai_chat_completion_request</span><span class="ansi-blue-fg">(self, openai_aclient, data, timeout, logging_obj)</span>
+<span class="ansi-green-fg">    422</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">423</span>     raw_response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)
+<span class="ansi-green-fg">    424</span>     end_time = time.time()
 
----
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py:386</span>, in <span class="ansi-cyan-fg">async_to_raw_response_wrapper.&lt;locals&gt;.wrapped</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    384</span> kwargs[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">extra_headers</span><span class="ansi-yellow-fg">"</span>] = extra_headers
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">386</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(LegacyAPIResponse[R], <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> func(*args, **kwargs))
 
-## Key Personnel and Operational Complexity
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py:2907</span>, in <span class="ansi-cyan-fg">AsyncCompletions.create</span><span class="ansi-blue-fg">(self, messages, model, audio, frequency_penalty, function_call, functions, logit_bias, logprobs, max_completion_tokens, max_tokens, metadata, modalities, moderation, n, parallel_tool_calls, prediction, presence_penalty, prompt_cache_key, prompt_cache_options, prompt_cache_retention, reasoning_effort, response_format, safety_identifier, seed, service_tier, stop, store, stream, stream_options, temperature, tool_choice, tools, top_logprobs, top_p, user, verbosity, web_search_options, extra_headers, extra_query, extra_body, timeout)</span>
+<span class="ansi-green-fg">   2906</span> validate_response_format(response_format)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2907</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._post(
+<span class="ansi-green-fg">   2908</span>     <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">/chat/completions</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2909</span>     body=<span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_maybe_transform(
+<span class="ansi-green-fg">   2910</span>         {
+<span class="ansi-green-fg">   2911</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">messages</span><span class="ansi-yellow-fg">"</span>: messages,
+<span class="ansi-green-fg">   2912</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">model</span><span class="ansi-yellow-fg">"</span>: model,
+<span class="ansi-green-fg">   2913</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">audio</span><span class="ansi-yellow-fg">"</span>: audio,
+<span class="ansi-green-fg">   2914</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">frequency_penalty</span><span class="ansi-yellow-fg">"</span>: frequency_penalty,
+<span class="ansi-green-fg">   2915</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">function_call</span><span class="ansi-yellow-fg">"</span>: function_call,
+<span class="ansi-green-fg">   2916</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">functions</span><span class="ansi-yellow-fg">"</span>: functions,
+<span class="ansi-green-fg">   2917</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">logit_bias</span><span class="ansi-yellow-fg">"</span>: logit_bias,
+<span class="ansi-green-fg">   2918</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">logprobs</span><span class="ansi-yellow-fg">"</span>: logprobs,
+<span class="ansi-green-fg">   2919</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">max_completion_tokens</span><span class="ansi-yellow-fg">"</span>: max_completion_tokens,
+<span class="ansi-green-fg">   2920</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">max_tokens</span><span class="ansi-yellow-fg">"</span>: max_tokens,
+<span class="ansi-green-fg">   2921</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metadata</span><span class="ansi-yellow-fg">"</span>: metadata,
+<span class="ansi-green-fg">   2922</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">modalities</span><span class="ansi-yellow-fg">"</span>: modalities,
+<span class="ansi-green-fg">   2923</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">moderation</span><span class="ansi-yellow-fg">"</span>: moderation,
+<span class="ansi-green-fg">   2924</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">n</span><span class="ansi-yellow-fg">"</span>: n,
+<span class="ansi-green-fg">   2925</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">parallel_tool_calls</span><span class="ansi-yellow-fg">"</span>: parallel_tool_calls,
+<span class="ansi-green-fg">   2926</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">prediction</span><span class="ansi-yellow-fg">"</span>: prediction,
+<span class="ansi-green-fg">   2927</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">presence_penalty</span><span class="ansi-yellow-fg">"</span>: presence_penalty,
+<span class="ansi-green-fg">   2928</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">prompt_cache_key</span><span class="ansi-yellow-fg">"</span>: prompt_cache_key,
+<span class="ansi-green-fg">   2929</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">prompt_cache_options</span><span class="ansi-yellow-fg">"</span>: prompt_cache_options,
+<span class="ansi-green-fg">   2930</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">prompt_cache_retention</span><span class="ansi-yellow-fg">"</span>: prompt_cache_retention,
+<span class="ansi-green-fg">   2931</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">reasoning_effort</span><span class="ansi-yellow-fg">"</span>: reasoning_effort,
+<span class="ansi-green-fg">   2932</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">response_format</span><span class="ansi-yellow-fg">"</span>: response_format,
+<span class="ansi-green-fg">   2933</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">safety_identifier</span><span class="ansi-yellow-fg">"</span>: safety_identifier,
+<span class="ansi-green-fg">   2934</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">seed</span><span class="ansi-yellow-fg">"</span>: seed,
+<span class="ansi-green-fg">   2935</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">service_tier</span><span class="ansi-yellow-fg">"</span>: service_tier,
+<span class="ansi-green-fg">   2936</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">stop</span><span class="ansi-yellow-fg">"</span>: stop,
+<span class="ansi-green-fg">   2937</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">store</span><span class="ansi-yellow-fg">"</span>: store,
+<span class="ansi-green-fg">   2938</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">stream</span><span class="ansi-yellow-fg">"</span>: stream,
+<span class="ansi-green-fg">   2939</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">stream_options</span><span class="ansi-yellow-fg">"</span>: stream_options,
+<span class="ansi-green-fg">   2940</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">temperature</span><span class="ansi-yellow-fg">"</span>: temperature,
+<span class="ansi-green-fg">   2941</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">tool_choice</span><span class="ansi-yellow-fg">"</span>: tool_choice,
+<span class="ansi-green-fg">   2942</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">tools</span><span class="ansi-yellow-fg">"</span>: tools,
+<span class="ansi-green-fg">   2943</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">top_logprobs</span><span class="ansi-yellow-fg">"</span>: top_logprobs,
+<span class="ansi-green-fg">   2944</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">top_p</span><span class="ansi-yellow-fg">"</span>: top_p,
+<span class="ansi-green-fg">   2945</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">user</span><span class="ansi-yellow-fg">"</span>: user,
+<span class="ansi-green-fg">   2946</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">verbosity</span><span class="ansi-yellow-fg">"</span>: verbosity,
+<span class="ansi-green-fg">   2947</span>             <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">web_search_options</span><span class="ansi-yellow-fg">"</span>: web_search_options,
+<span class="ansi-green-fg">   2948</span>         },
+<span class="ansi-green-fg">   2949</span>         completion_create_params.CompletionCreateParamsStreaming
+<span class="ansi-green-fg">   2950</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> stream
+<span class="ansi-green-fg">   2951</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> completion_create_params.CompletionCreateParamsNonStreaming,
+<span class="ansi-green-fg">   2952</span>     ),
+<span class="ansi-green-fg">   2953</span>     options=make_request_options(
+<span class="ansi-green-fg">   2954</span>         extra_headers=extra_headers,
+<span class="ansi-green-fg">   2955</span>         extra_query=extra_query,
+<span class="ansi-green-fg">   2956</span>         extra_body=extra_body,
+<span class="ansi-green-fg">   2957</span>         timeout=timeout,
+<span class="ansi-green-fg">   2958</span>         security={<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">bearer_auth</span><span class="ansi-yellow-fg">"</span>: <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>},
+<span class="ansi-green-fg">   2959</span>     ),
+<span class="ansi-green-fg">   2960</span>     cast_to=ChatCompletion,
+<span class="ansi-green-fg">   2961</span>     stream=stream <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,
+<span class="ansi-green-fg">   2962</span>     stream_cls=AsyncStream[ChatCompletionChunk],
+<span class="ansi-green-fg">   2963</span> )
 
-Operation: Dulce is characterized by its complexity and the high degree of uncertainty involved. The mission requires strict adherence to protocols, adaptability, and collaboration among squad members. Key personnel include Sam Rivera, Alex Mercer, and Taylor Cruz, whose roles converge at Dulce Base. The operation demands critical decision-making and heightened vigilance, especially given the presence of advanced security systems and unknown dangers within the facility [Data: Reports (4, 3, 8, 1)].
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py:1992</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.post</span><span class="ansi-blue-fg">(self, path, cast_to, body, content, files, options, stream, stream_cls)</span>
+<span class="ansi-green-fg">   1989</span> opts = FinalRequestOptions.construct(
+<span class="ansi-green-fg">   1990</span>     method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">post</span><span class="ansi-yellow-fg">"</span>, url=path, json_data=body, content=content, files=<span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_to_httpx_files(files), **options
+<span class="ansi-green-fg">   1991</span> )
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1992</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
 
----
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py:1777</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls)</span>
+<span class="ansi-green-fg">   1776</span>     log.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Re-raising status error</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1777</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._make_status_error_from_response(err.response) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">   1779</span> <span class="ansi-bold" style="color: rgb(0,135,0)">break</span>
 
-## Infrastructure and Security
+<span class="ansi-red-fg">AuthenticationError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
 
-The operation is supported by advanced technological infrastructure. This includes secure military complexes, briefing rooms, encrypted communications, and specialized equipment, all designed to ensure operational readiness and maintain security during the investigation. The transfer of alien technology to a secure facility like Dulce Base underscores the need for controlled environments to prevent unauthorized access or unintended consequences [Data: Reports (5, 9, 6, 2)].
+During handling of the above exception, another exception occurred:
 
----
+<span class="ansi-red-fg">OpenAIError</span>                               Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py:647</span>, in <span class="ansi-cyan-fg">acompletion</span><span class="ansi-blue-fg">(model, messages, functions, function_call, timeout, temperature, top_p, n, stream, stream_options, stop, max_tokens, max_completion_tokens, modalities, prediction, audio, presence_penalty, frequency_penalty, logit_bias, user, response_format, seed, tools, tool_choice, parallel_tool_calls, logprobs, top_logprobs, deployment_id, reasoning_effort, verbosity, safety_identifier, service_tier, store, prompt_cache_key, base_url, api_version, api_key, model_list, extra_headers, thinking, web_search_options, include_server_side_tool_invocations, shared_session, enable_json_schema_validation, **kwargs)</span>
+<span class="ansi-green-fg">    646</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> asyncio.iscoroutine(init_response):
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">647</span>     response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> _resolve_dispatched_chat_response(init_response)
+<span class="ansi-green-fg">    648</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
 
-## Strategic and World-Altering Implications
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py:712</span>, in <span class="ansi-cyan-fg">_resolve_dispatched_chat_response</span><span class="ansi-blue-fg">(pending)</span>
+<span class="ansi-green-fg">    709</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">_resolve_dispatched_chat_response</span>(
+<span class="ansi-green-fg">    710</span>     pending: Coroutine[<span style="color: rgb(0,135,0)">object</span>, <span style="color: rgb(0,135,0)">object</span>, ModelResponse | CustomStreamWrapper],
+<span class="ansi-green-fg">    711</span> ) -&gt; ModelResponse | CustomStreamWrapper:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">712</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> pending
 
-Operation: Dulce is widely regarded as a career-defining and potentially world-altering mission. The findings from the investigation may reshape understandings of security, technology, and the very nature of reality. The operation’s outcomes could have far-reaching effects, not only for those directly involved but also for broader scientific and security communities [Data: Reports (4, 3, 2)].
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:948</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.acompletion</span><span class="ansi-blue-fg">(self, messages, optional_params, litellm_params, provider_config, model, model_response, logging_obj, timeout, api_key, api_base, api_version, organization, client, max_retries, headers, drop_params, stream_options, fake_stream, shared_session)</span>
+<span class="ansi-green-fg">    946</span> message = <span style="color: rgb(0,135,0)">getattr</span>(e, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">message</span><span class="ansi-yellow-fg">"</span>, <span style="color: rgb(0,135,0)">str</span>(e))
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">948</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> OpenAIError(
+<span class="ansi-green-fg">    949</span>     status_code=status_code,
+<span class="ansi-green-fg">    950</span>     message=message,
+<span class="ansi-green-fg">    951</span>     headers=error_headers,
+<span class="ansi-green-fg">    952</span>     body=exception_body,
+<span class="ansi-green-fg">    953</span> )
 
----
+<span class="ansi-red-fg">OpenAIError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
 
-## Summary Table
+During handling of the above exception, another exception occurred:
 
-| Aspect                        | Details                                                                                  | Data Reference                |
-|-------------------------------|------------------------------------------------------------------------------------------|-------------------------------|
-| Mission Objective             | Investigate Dulce Base, retrieve and analyze alien technology, manage existential threats | (4, 3, 7, 8, 5, 2)            |
-| Key Entities                  | Paranormal Military Squad, alien technology, Dulce Base, crash site                      | (2, 4, 3, 7, 8)               |
-| Personnel                     | Sam Rivera, Alex Mercer, Taylor Cruz                                                     | (4, 3, 8, 1)                  |
-| Infrastructure                | Secure complexes, briefing rooms, encrypted comms, specialized equipment                 | (5, 9, 6, 2)                  |
-| Implications                  | Security, intelligence, scientific advancement, existential risk management              | (4, 3, 7, 8, 2)               |
+<span class="ansi-red-fg">AuthenticationError</span>                       Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[9]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search_engine.search(<span class="ansi-yellow-fg">"What is operation dulce?"</span>)
+<span class="ansi-green-fg">      2</span> 
+<span class="ansi-green-fg">      3</span> print(result.response)
 
----
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag/graphrag/query/structured_search/global_search/search.py:160</span>, in <span class="ansi-cyan-fg">GlobalSearch.search</span><span class="ansi-blue-fg">(self, query, conversation_history, **kwargs)</span>
+<span class="ansi-green-fg">    157</span> llm_calls, prompt_tokens, output_tokens = {}, {}, {}
+<span class="ansi-green-fg">    159</span> start_time = time.time()
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">160</span> context_result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.context_builder.build_context(
+<span class="ansi-green-fg">    161</span>     query=query,
+<span class="ansi-green-fg">    162</span>     conversation_history=conversation_history,
+<span class="ansi-green-fg">    163</span>     **<span style="color: rgb(0,135,0)">self</span>.context_builder_params,
+<span class="ansi-green-fg">    164</span> )
+<span class="ansi-green-fg">    165</span> llm_calls[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">build_context</span><span class="ansi-yellow-fg">"</span>] = context_result.llm_calls
+<span class="ansi-green-fg">    166</span> prompt_tokens[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">build_context</span><span class="ansi-yellow-fg">"</span>] = context_result.prompt_tokens
 
-## Conclusion
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag/graphrag/query/structured_search/global_search/community_context.py:101</span>, in <span class="ansi-cyan-fg">GlobalCommunityContext.build_context</span><span class="ansi-blue-fg">(self, query, conversation_history, use_community_summary, column_delimiter, shuffle_data, include_community_rank, min_community_rank, community_rank_name, include_community_weight, community_weight_name, normalize_community_weight, max_context_tokens, context_name, conversation_history_user_turns_only, conversation_history_max_turns, **kwargs)</span>
+<span class="ansi-green-fg">     96</span> community_reports = <span style="color: rgb(0,135,0)">self</span>.community_reports
+<span class="ansi-green-fg">     97</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span>.dynamic_community_selection <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">     98</span>     (
+<span class="ansi-green-fg">     99</span>         community_reports,
+<span class="ansi-green-fg">    100</span>         dynamic_info,
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">101</span>     ) = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>.dynamic_community_selection.select(query)
+<span class="ansi-green-fg">    102</span>     llm_calls += dynamic_info[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">llm_calls</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">    103</span>     prompt_tokens += dynamic_info[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">prompt_tokens</span><span class="ansi-yellow-fg">"</span>]
 
-In summary, Operation: Dulce is a covert mission of exceptional importance, centered on the investigation of Dulce Base and the analysis of alien technology retrieved from a crash site. The operation is marked by its complexity, the need for advanced security and infrastructure, and the involvement of key personnel. Its outcomes may have transformative effects on science, security, and humanity’s understanding of reality [Data: Reports (4, 3, 7, 8, 5, 2, 1, 9, 6, +more)].
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag/graphrag/query/context_builder/dynamic_community_selection.py:93</span>, in <span class="ansi-cyan-fg">DynamicCommunitySelection.select</span><span class="ansi-blue-fg">(self, query)</span>
+<span class="ansi-green-fg">     90</span> relevant_communities = <span style="color: rgb(0,135,0)">set</span>()
+<span class="ansi-green-fg">     92</span> <span class="ansi-bold" style="color: rgb(0,135,0)">while</span> queue:
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">93</span>     gather_results = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> asyncio.gather(*[
+<span class="ansi-green-fg">     94</span>         rate_relevancy(
+<span class="ansi-green-fg">     95</span>             query=query,
+<span class="ansi-green-fg">     96</span>             description=(
+<span class="ansi-green-fg">     97</span>                 <span style="color: rgb(0,135,0)">self</span>.reports[community].summary
+<span class="ansi-green-fg">     98</span>                 <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span>.use_summary
+<span class="ansi-green-fg">     99</span>                 <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span style="color: rgb(0,135,0)">self</span>.reports[community].full_content
+<span class="ansi-green-fg">    100</span>             ),
+<span class="ansi-green-fg">    101</span>             model=<span style="color: rgb(0,135,0)">self</span>.model,
+<span class="ansi-green-fg">    102</span>             tokenizer=<span style="color: rgb(0,135,0)">self</span>.tokenizer,
+<span class="ansi-green-fg">    103</span>             rate_query=<span style="color: rgb(0,135,0)">self</span>.rate_query,
+<span class="ansi-green-fg">    104</span>             num_repeats=<span style="color: rgb(0,135,0)">self</span>.num_repeats,
+<span class="ansi-green-fg">    105</span>             semaphore=<span style="color: rgb(0,135,0)">self</span>.semaphore,
+<span class="ansi-green-fg">    106</span>             **<span style="color: rgb(0,135,0)">self</span>.model_params,
+<span class="ansi-green-fg">    107</span>         )
+<span class="ansi-green-fg">    108</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> community <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> queue
+<span class="ansi-green-fg">    109</span>     ])
+<span class="ansi-green-fg">    111</span>     communities_to_rate = []
+<span class="ansi-green-fg">    112</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> community, result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">zip</span>(queue, gather_results, strict=<span class="ansi-bold" style="color: rgb(0,135,0)">True</span>):
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.13.17/x64/lib/python3.13/asyncio/tasks.py:384</span>, in <span class="ansi-cyan-fg">Task.__wakeup</span><span class="ansi-blue-fg">(self, future)</span>
+<span class="ansi-green-fg">    382</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">__wakeup</span>(<span style="color: rgb(0,135,0)">self</span>, future):
+<span class="ansi-green-fg">    383</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">384</span>         <span class="ansi-black-fg ansi-yellow-bg">future</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">result</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    385</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">BaseException</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> exc:
+<span class="ansi-green-fg">    386</span>         <span style="color: rgb(95,135,135)"># This may also be a cancellation.</span>
+<span class="ansi-green-fg">    387</span>         <span style="color: rgb(0,135,0)">self</span>.__step(exc)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.13.17/x64/lib/python3.13/asyncio/tasks.py:313</span>, in <span class="ansi-cyan-fg">Task.__step_run_and_handle_result</span><span class="ansi-blue-fg">(***failed resolving arguments***)</span>
+<span class="ansi-green-fg">    309</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">    310</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> exc <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">    311</span>         <span style="color: rgb(95,135,135)"># We use the `send` method directly, because coroutines</span>
+<span class="ansi-green-fg">    312</span>         <span style="color: rgb(95,135,135)"># don't have `__iter__` and `__next__` methods.</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">313</span>         result = <span class="ansi-black-fg ansi-yellow-bg">coro</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">send</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-intense-fg ansi-yellow-bg ansi-bold">None</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    314</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    315</span>         result = coro.throw(exc)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag/graphrag/query/context_builder/rate_relevancy.py:60</span>, in <span class="ansi-cyan-fg">rate_relevancy</span><span class="ansi-blue-fg">(query, description, model, tokenizer, rate_query, num_repeats, semaphore, **model_params)</span>
+<span class="ansi-green-fg">     58</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> _ <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">range</span>(num_repeats):
+<span class="ansi-green-fg">     59</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> semaphore <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> semaphore <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> nullcontext():
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">60</span>         model_response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> model.completion_async(
+<span class="ansi-green-fg">     61</span>             messages=messages_builder.build(),
+<span class="ansi-green-fg">     62</span>             response_format_json_object=<span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
+<span class="ansi-green-fg">     63</span>             **model_params,
+<span class="ansi-green-fg">     64</span>         )
+<span class="ansi-green-fg">     65</span>         response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> gather_completion_response_async(model_response)
+<span class="ansi-green-fg">     66</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py:194</span>, in <span class="ansi-cyan-fg">LiteLLMCompletion.completion_async</span><span class="ansi-blue-fg">(self, **kwargs)</span>
+<span class="ansi-green-fg">    191</span>     messages = [{<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">role</span><span class="ansi-yellow-fg">"</span>: <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">user</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">content</span><span class="ansi-yellow-fg">"</span>: messages}]
+<span class="ansi-green-fg">    193</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">194</span>     response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span>._completion_async(
+<span class="ansi-green-fg">    195</span>         messages=messages,
+<span class="ansi-green-fg">    196</span>         metrics=request_metrics,
+<span class="ansi-green-fg">    197</span>         response_format=response_format,
+<span class="ansi-green-fg">    198</span>         **kwargs,  <span style="color: rgb(95,135,135)"># type: ignore</span>
+<span class="ansi-green-fg">    199</span>     )
+<span class="ansi-green-fg">    200</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> response_format <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">    201</span>         structured_response = structure_completion_response(
+<span class="ansi-green-fg">    202</span>             response.content, response_format
+<span class="ansi-green-fg">    203</span>         )
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py:64</span>, in <span class="ansi-cyan-fg">with_logging.&lt;locals&gt;._request_count_middleware_async</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     61</span> metrics: Metrics | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metrics</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     63</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">64</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_middleware(**kwargs)
+<span class="ansi-green-fg">     65</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-fg">     66</span>     retries = metrics.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">retries</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py:72</span>, in <span class="ansi-cyan-fg">with_request_count.&lt;locals&gt;._request_count_middleware_async</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     70</span>     metrics[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">failed_response_count</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-green-fg">0</span>
+<span class="ansi-green-fg">     71</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">72</span>     result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_middleware(**kwargs)
+<span class="ansi-green-fg">     73</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">     74</span>         metrics[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">successful_response_count</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-green-fg">1</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py:80</span>, in <span class="ansi-cyan-fg">with_metrics.&lt;locals&gt;._metrics_middleware_async</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     77</span> metrics: Metrics | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metrics</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     79</span> start_time = time.time()
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">80</span> response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_middleware(**kwargs)
+<span class="ansi-green-fg">     81</span> end_time = time.time()
+<span class="ansi-green-fg">     83</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py:291</span>, in <span class="ansi-cyan-fg">_create_base_completions.&lt;locals&gt;._base_completion_async</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">    288</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> json_object <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">response_format</span><span class="ansi-yellow-fg">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> new_args:
+<span class="ansi-green-fg">    289</span>     new_args[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">response_format</span><span class="ansi-yellow-fg">"</span>] = {<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">type</span><span class="ansi-yellow-fg">"</span>: <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">json_object</span><span class="ansi-yellow-fg">"</span>}
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">291</span> response = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> litellm.acompletion(
+<span class="ansi-green-fg">    292</span>     **new_args,
+<span class="ansi-green-fg">    293</span> )
+<span class="ansi-green-fg">    294</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(response, ModelResponse):
+<span class="ansi-green-fg">    295</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> LLMCompletionResponse(**response.model_dump())
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py:2065</span>, in <span class="ansi-cyan-fg">client.&lt;locals&gt;.wrapper_async</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">   2063</span>     timeout: Final = _get_wrapper_timeout(kwargs=kwargs, exception=e)
+<span class="ansi-green-fg">   2064</span>     <span style="color: rgb(0,135,0)">setattr</span>(e, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">timeout</span><span class="ansi-yellow-fg">"</span>, timeout)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2065</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e
+<span class="ansi-green-fg">   2067</span> <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
+<span class="ansi-green-fg">   2068</span>     <span style="color: rgb(95,135,135)"># Restore trace_id/session_id contextvars to their pre-call value once</span>
+<span class="ansi-green-fg">   2069</span>     <span style="color: rgb(95,135,135)"># this call (in this asyncio Task) is fully done - see</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   2077</span>     <span style="color: rgb(95,135,135)"># corresponding terminal handler (async_success_handler) restores it once</span>
+<span class="ansi-green-fg">   2078</span>     <span style="color: rgb(95,135,135)"># streaming genuinely finishes; aclose()/__del__ cover early termination.</span>
+<span class="ansi-green-fg">   2079</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> _is_streaming_response_for_correlation(result):
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py:1861</span>, in <span class="ansi-cyan-fg">client.&lt;locals&gt;.wrapper_async</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">   1859</span> <span style="color: rgb(95,135,135)"># MODEL CALL</span>
+<span class="ansi-green-fg">   1860</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1861</span>     result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> original_function(*args, **kwargs)
+<span class="ansi-green-fg">   1862</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> deployment_error:
+<span class="ansi-green-fg">   1863</span>     _deployment_call_end_time = datetime.datetime.now()  <span style="color: rgb(95,135,135)"># noqa: DTZ005  # matches the naive datetimes this whole function already times start_time/end_time with</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py:700</span>, in <span class="ansi-cyan-fg">acompletion</span><span class="ansi-blue-fg">(model, messages, functions, function_call, timeout, temperature, top_p, n, stream, stream_options, stop, max_tokens, max_completion_tokens, modalities, prediction, audio, presence_penalty, frequency_penalty, logit_bias, user, response_format, seed, tools, tool_choice, parallel_tool_calls, logprobs, top_logprobs, deployment_id, reasoning_effort, verbosity, safety_identifier, service_tier, store, prompt_cache_key, base_url, api_version, api_key, model_list, extra_headers, thinking, web_search_options, include_server_side_tool_invocations, shared_session, enable_json_schema_validation, **kwargs)</span>
+<span class="ansi-green-fg">    698</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-fg">    699</span>     custom_llm_provider = custom_llm_provider <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">openai</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">700</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    701</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    702</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    703</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">original_exception</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">e</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    704</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">completion_kwargs</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">completion_kwargs</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    705</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_kwargs</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    706</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:2675</span>, in <span class="ansi-cyan-fg">exception_type</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, completion_kwargs, extra_kwargs)</span>
+<span class="ansi-green-fg">   2673</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(e, error_type):
+<span class="ansi-green-fg">   2674</span>         <span style="color: rgb(0,135,0)">setattr</span>(e, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">litellm_response_headers</span><span class="ansi-yellow-fg">"</span>, litellm_response_headers)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2675</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e  <span style="color: rgb(95,135,135)"># it's already mapped</span>
+<span class="ansi-green-fg">   2676</span> raised_exc: Final = APIConnectionError(
+<span class="ansi-green-fg">   2677</span>     message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>original_exception<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>_redact_string(traceback.format_exc())<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2678</span>     llm_provider=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2679</span>     model=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2680</span> )
+<span class="ansi-green-fg">   2681</span> <span style="color: rgb(0,135,0)">setattr</span>(raised_exc, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">litellm_response_headers</span><span class="ansi-yellow-fg">"</span>, litellm_response_headers)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:2436</span>, in <span class="ansi-cyan-fg">exception_type</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, completion_kwargs, extra_kwargs)</span>
+<span class="ansi-green-fg">   2422</span>     extract_and_raise_litellm_exception(
+<span class="ansi-green-fg">   2423</span>         response=<span style="color: rgb(0,135,0)">getattr</span>(original_exception, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">response</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>),
+<span class="ansi-green-fg">   2424</span>         error_str=error_str,
+<span class="ansi-green-fg">   2425</span>         model=model,
+<span class="ansi-green-fg">   2426</span>         custom_llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">   2427</span>     )
+<span class="ansi-green-fg">   2428</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (
+<span class="ansi-green-fg">   2429</span>     custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">openai</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   2430</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">text-completion-openai</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   2434</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">runwayml</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   2435</span> ):
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2436</span>     <span class="ansi-black-fg ansi-yellow-bg">_map_openai_exception</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   2437</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2438</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">original_exception</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">mappable_exception</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2439</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2440</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">error_str</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">error_str</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2441</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2442</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">exception_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">exception_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2443</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_information</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_information</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2444</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2445</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">anthropic</span><span class="ansi-yellow-fg">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">anthropic_text</span><span class="ansi-yellow-fg">"</span>:  <span style="color: rgb(95,135,135)"># one of the anthropics</span>
+<span class="ansi-green-fg">   2446</span>     _map_anthropic_exception(
+<span class="ansi-green-fg">   2447</span>         model=model,
+<span class="ansi-green-fg">   2448</span>         original_exception=mappable_exception,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   2453</span>         extra_information=extra_information,
+<span class="ansi-green-fg">   2454</span>     )
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:409</span>, in <span class="ansi-cyan-fg">_map_openai_exception</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, error_str, exception_type, exception_provider, extra_information)</span>
+<span class="ansi-green-fg">    401</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> BadRequestError(
+<span class="ansi-green-fg">    402</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    403</span>         llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    406</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    407</span>     )
+<span class="ansi-green-fg">    408</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> original_exception.status_code == <span class="ansi-green-fg">401</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">409</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> AuthenticationError(
+<span class="ansi-green-fg">    410</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">AuthenticationError: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    411</span>         llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">    412</span>         model=model,
+<span class="ansi-green-fg">    413</span>         response=<span style="color: rgb(0,135,0)">getattr</span>(original_exception, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">response</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>),
+<span class="ansi-green-fg">    414</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    415</span>     )
+<span class="ansi-green-fg">    416</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> original_exception.status_code == <span class="ansi-green-fg">404</span>:
+<span class="ansi-green-fg">    417</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> NotFoundError(
+<span class="ansi-green-fg">    418</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">NotFoundError: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    419</span>         model=model,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    422</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    423</span>     )
+
+<span class="ansi-red-fg">AuthenticationError</span>: litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Async request failed with exception=litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 888, in acompletion
+    headers, response = await self.make_openai_chat_completion_request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;4 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 300, in async_wrapper
+    result: Final = await func(*args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 447, in make_openai_chat_completion_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 423, in make_openai_chat_completion_request
+    raw_response = await openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 386, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 2907, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...&lt;55 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1992, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1777, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 647, in acompletion
+    response = await _resolve_dispatched_chat_response(init_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 712, in _resolve_dispatched_chat_response
+    return await pending
+           ^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 948, in acompletion
+    raise OpenAIError(
+    ...&lt;4 lines&gt;...
+    )
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 64, in _request_count_middleware_async
+    return await async_middleware(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 72, in _request_count_middleware_async
+    result = await async_middleware(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 80, in _metrics_middleware_async
+    response = await async_middleware(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py", line 291, in _base_completion_async
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **new_args,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 2065, in wrapper_async
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1861, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 700, in acompletion
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;3 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Async request failed with exception=litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 888, in acompletion
+    headers, response = await self.make_openai_chat_completion_request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;4 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 300, in async_wrapper
+    result: Final = await func(*args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 447, in make_openai_chat_completion_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 423, in make_openai_chat_completion_request
+    raw_response = await openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 386, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 2907, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...&lt;55 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1992, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1777, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 647, in acompletion
+    response = await _resolve_dispatched_chat_response(init_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 712, in _resolve_dispatched_chat_response
+    return await pending
+           ^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 948, in acompletion
+    raise OpenAIError(
+    ...&lt;4 lines&gt;...
+    )
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 64, in _request_count_middleware_async
+    return await async_middleware(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 72, in _request_count_middleware_async
+    result = await async_middleware(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 80, in _metrics_middleware_async
+    response = await async_middleware(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py", line 291, in _base_completion_async
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **new_args,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 2065, in wrapper_async
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1861, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 700, in acompletion
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;3 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Async request failed with exception=litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 888, in acompletion
+    headers, response = await self.make_openai_chat_completion_request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;4 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 300, in async_wrapper
+    result: Final = await func(*args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 447, in make_openai_chat_completion_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 423, in make_openai_chat_completion_request
+    raw_response = await openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 386, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 2907, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...&lt;55 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1992, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1777, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 647, in acompletion
+    response = await _resolve_dispatched_chat_response(init_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 712, in _resolve_dispatched_chat_response
+    return await pending
+           ^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 948, in acompletion
+    raise OpenAIError(
+    ...&lt;4 lines&gt;...
+    )
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 64, in _request_count_middleware_async
+    return await async_middleware(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 72, in _request_count_middleware_async
+    result = await async_middleware(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 80, in _metrics_middleware_async
+    response = await async_middleware(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py", line 291, in _base_completion_async
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **new_args,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 2065, in wrapper_async
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1861, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 700, in acompletion
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;3 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Async request failed with exception=litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 888, in acompletion
+    headers, response = await self.make_openai_chat_completion_request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;4 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 300, in async_wrapper
+    result: Final = await func(*args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 447, in make_openai_chat_completion_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 423, in make_openai_chat_completion_request
+    raw_response = await openai_aclient.chat.completions.with_raw_response.create(**data, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 386, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 2907, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...&lt;55 lines&gt;...
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1992, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1777, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 647, in acompletion
+    response = await _resolve_dispatched_chat_response(init_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 712, in _resolve_dispatched_chat_response
+    return await pending
+           ^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 948, in acompletion
+    raise OpenAIError(
+    ...&lt;4 lines&gt;...
+    )
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 64, in _request_count_middleware_async
+    return await async_middleware(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 72, in _request_count_middleware_async
+    result = await async_middleware(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 80, in _metrics_middleware_async
+    response = await async_middleware(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/completion/lite_llm_completion.py", line 291, in _base_completion_async
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **new_args,
+        ^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 2065, in wrapper_async
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1861, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 700, in acompletion
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;3 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.
 </pre>
 </div>
 </div>
@@ -3301,110 +4121,17 @@ result.context_data["reports"]</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[10]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># inspect the data used to build the context for the LLM responses</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> result.context_data[<span class="ansi-yellow-fg">"reports"</span>]
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>title</th>
-<th>occurrence weight</th>
-<th>content</th>
-<th>rank</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>4</td>
-<td>Dulce Base and Operation: Dulce Community</td>
-<td>1.0</td>
-<td># Dulce Base and Operation: Dulce Community\n\...</td>
-<td>9.0</td>
-</tr>
-<tr>
-<th>1</th>
-<td>3</td>
-<td>Paranormal Military Squad and Operation: Dulce</td>
-<td>1.0</td>
-<td># Paranormal Military Squad and Operation: Dul...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>2</th>
-<td>8</td>
-<td>Paranormal Military Squad: Leadership and Scie...</td>
-<td>1.0</td>
-<td># Paranormal Military Squad: Leadership and Sc...</td>
-<td>8.0</td>
-</tr>
-<tr>
-<th>3</th>
-<td>7</td>
-<td>Paranormal Military Squad and Operation Dulce</td>
-<td>0.4</td>
-<td># Paranormal Military Squad and Operation Dulc...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>4</th>
-<td>5</td>
-<td>Dulce Base Operational Command: Briefing Room ...</td>
-<td>0.4</td>
-<td># Dulce Base Operational Command: Briefing Roo...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>5</th>
-<td>9</td>
-<td>Paranormal Military Squad and Operation: Dulce...</td>
-<td>0.2</td>
-<td># Paranormal Military Squad and Operation: Dul...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>6</th>
-<td>6</td>
-<td>Dulce Base Mainframe Room Technology Network</td>
-<td>0.2</td>
-<td># Dulce Base Mainframe Room Technology Network...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>7</th>
-<td>1</td>
-<td>Team of Agents Investigating Dulce Base</td>
-<td>0.2</td>
-<td># Team of Agents Investigating Dulce Base\n\nT...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>8</th>
-<td>2</td>
-<td>Alien Technology Retrieval and Analysis at Dul...</td>
-<td>0.2</td>
-<td># Alien Technology Retrieval and Analysis at D...</td>
-<td>9.0</td>
-</tr>
-</tbody>
-</table>
-</div>
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3476,10 +4203,18 @@ print(
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Build context LLM calls: 10. Prompt tokens: 11051. Output tokens: 1188.
-Map-reduce LLM calls: 3. Prompt tokens: 11701. Output tokens: 1755.
-</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="color: rgb(95,135,135)"># inspect number of LLM calls and tokens in dynamic community selection</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> llm_calls = result.llm_calls_categories[<span class="ansi-yellow-fg">"build_context"</span>]
+<span class="ansi-green-fg">      3</span> prompt_tokens = result.prompt_tokens_categories[<span class="ansi-yellow-fg">"build_context"</span>]
+<span class="ansi-green-fg">      4</span> output_tokens = result.output_tokens_categories[<span class="ansi-yellow-fg">"build_context"</span>]
+<span class="ansi-green-fg">      5</span> print(
+
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>

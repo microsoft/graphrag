@@ -4073,9 +4073,197 @@ print(result.response)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Request failed with exception=litellm.AuthenticationError: AuthenticationError: OpenAIException - Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1310, in embedding
+    headers, sync_embedding_response = self.make_sync_openai_embedding_request(
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        openai_client=openai_client,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;2 lines&gt;...
+        logging_obj=logging_obj,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 347, in sync_wrapper
+    result: Final = func(*args, **kwargs)
+                    ~~~~^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1185, in make_sync_openai_embedding_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1179, in make_sync_openai_embedding_request
+    raw_response = openai_client.embeddings.with_raw_response.create(**data, timeout=timeout)
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 369, in wrapped
+    return cast(LegacyAPIResponse[R], func(*args, **kwargs))
+                                      ~~~~^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/embeddings.py", line 136, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/embeddings",
+        ^^^^^^^^^^^^^^
+    ...&lt;9 lines&gt;...
+        cast_to=CreateEmbeddingResponse,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1375, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1148, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 6308, in embedding
+    response = openai_chat_completions.embedding(
+        model=model,
+    ...&lt;10 lines&gt;...
+        shared_session=shared_session,
+    )
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1341, in embedding
+    raise OpenAIError(status_code=status_code, message=error_text, headers=error_headers)
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 49, in _request_count_middleware
+    return sync_middleware(**kwargs)
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 53, in _request_count_middleware
+    result = sync_middleware(**kwargs)
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 56, in _metrics_middleware
+    response = sync_middleware(**kwargs)
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/embedding/lite_llm_embedding.py", line 188, in _base_embedding
+    response = litellm.embedding(**new_args)
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1745, in wrapper
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1591, in wrapper
+    result = original_function(*args, **kwargs)
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 7110, in embedding
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;2 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
+<span class="ansi-red-fg">AuthenticationError</span>                       Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1310</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.embedding</span><span class="ansi-blue-fg">(self, model, input, timeout, logging_obj, model_response, optional_params, api_key, api_base, client, aembedding, max_retries, shared_session)</span>
+<span class="ansi-green-fg">   1309</span> headers: <span style="color: rgb(0,135,0)">dict</span> | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1310</span> headers, sync_embedding_response = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">make_sync_openai_embedding_request</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   1311</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">openai_client</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">openai_client</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1312</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">data</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">data</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1313</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1314</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">logging_obj</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">logging_obj</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1315</span> <span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1317</span> <span style="color: rgb(95,135,135)">## LOGGING</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py:347</span>, in <span class="ansi-cyan-fg">track_llm_api_timing.&lt;locals&gt;.decorator.&lt;locals&gt;.sync_wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    346</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">347</span>     result: Final = <span class="ansi-black-fg ansi-yellow-bg">func</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">args</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    348</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> result
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1185</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.make_sync_openai_embedding_request</span><span class="ansi-blue-fg">(self, openai_client, data, timeout, logging_obj)</span>
+<span class="ansi-green-fg">   1184</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1185</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1179</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.make_sync_openai_embedding_request</span><span class="ansi-blue-fg">(self, openai_client, data, timeout, logging_obj)</span>
+<span class="ansi-green-fg">   1178</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1179</span>     raw_response = <span class="ansi-black-fg ansi-yellow-bg">openai_client</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embeddings</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">with_raw_response</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">create</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">data</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1181</span>     headers: Final = <span style="color: rgb(0,135,0)">dict</span>(raw_response.headers)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py:369</span>, in <span class="ansi-cyan-fg">to_raw_response_wrapper.&lt;locals&gt;.wrapped</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    367</span> kwargs[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">extra_headers</span><span class="ansi-yellow-fg">"</span>] = extra_headers
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">369</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(LegacyAPIResponse[R], <span class="ansi-black-fg ansi-yellow-bg">func</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">args</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/embeddings.py:136</span>, in <span class="ansi-cyan-fg">Embeddings.create</span><span class="ansi-blue-fg">(self, input, model, dimensions, encoding_format, user, extra_headers, extra_query, extra_body, timeout)</span>
+<span class="ansi-green-fg">    134</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> obj
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">136</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_post</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    137</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">/embeddings</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    138</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">body</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">maybe_transform</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">params</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">embedding_create_params</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">EmbeddingCreateParams</span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    139</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">options</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">make_request_options</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    140</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_headers</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_headers</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    141</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_query</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_query</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    142</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_body</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_body</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    143</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    144</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">post_parser</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">parser</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    145</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">security</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">{</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">bearer_auth</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">:</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-intense-fg ansi-yellow-bg ansi-bold">True</span><span class="ansi-black-fg ansi-yellow-bg">}</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    146</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    147</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">cast_to</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">CreateEmbeddingResponse</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    148</span> <span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py:1375</span>, in <span class="ansi-cyan-fg">SyncAPIClient.post</span><span class="ansi-blue-fg">(self, path, cast_to, body, content, options, files, stream, stream_cls)</span>
+<span class="ansi-green-fg">   1372</span> opts = FinalRequestOptions.construct(
+<span class="ansi-green-fg">   1373</span>     method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">post</span><span class="ansi-yellow-fg">"</span>, url=path, json_data=body, content=content, files=to_httpx_files(files), **options
+<span class="ansi-green-fg">   1374</span> )
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1375</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(ResponseT, <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">request</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">cast_to</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">opts</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">stream</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">stream</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">stream_cls</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">stream_cls</span><span class="ansi-black-fg ansi-yellow-bg">)</span>)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py:1148</span>, in <span class="ansi-cyan-fg">SyncAPIClient.request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls)</span>
+<span class="ansi-green-fg">   1147</span>     log.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Re-raising status error</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1148</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._make_status_error_from_response(err.response) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">   1150</span> <span class="ansi-bold" style="color: rgb(0,135,0)">break</span>
+
+<span class="ansi-red-fg">AuthenticationError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">OpenAIError</span>                               Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py:6308</span>, in <span class="ansi-cyan-fg">embedding</span><span class="ansi-blue-fg">(model, input, dimensions, encoding_format, timeout, api_base, api_version, api_key, api_type, caching, user, custom_llm_provider, litellm_call_id, logger_fn, **kwargs)</span>
+<span class="ansi-green-fg">   6307</span>     <span style="color: rgb(95,135,135)">## EMBEDDING CALL</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">6308</span>     response = <span class="ansi-black-fg ansi-yellow-bg">openai_chat_completions</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   6309</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6310</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">input</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">input</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6311</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">api_base</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">api_base</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6312</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">api_key</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">api_key</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6313</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">logging_obj</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">logging</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6314</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6315</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">model_response</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">EmbeddingResponse</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6316</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">optional_params</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">optional_params</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6317</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">client</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">client</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6318</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">aembedding</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">aembedding</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6319</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">max_retries</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">max_retries</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6320</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">shared_session</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">shared_session</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6321</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   6322</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">databricks</span><span class="ansi-yellow-fg">"</span>:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1341</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.embedding</span><span class="ansi-blue-fg">(self, model, input, timeout, logging_obj, model_response, optional_params, api_key, api_base, client, aembedding, max_retries, shared_session)</span>
+<span class="ansi-green-fg">   1340</span>     error_headers = <span style="color: rgb(0,135,0)">getattr</span>(error_response, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">headers</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1341</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> OpenAIError(status_code=status_code, message=error_text, headers=error_headers)
+
+<span class="ansi-red-fg">OpenAIError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">AuthenticationError</span>                       Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[13]</span><span class="ansi-green-fg">, line 1</span>
 <span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search_engine.search(<span class="ansi-yellow-fg">"Tell me about Agent Mercer"</span>)
 <span class="ansi-green-fg">      2</span> print(result.response)
@@ -4126,28 +4314,162 @@ print(result.response)</div>
 <span class="ansi-green-fg">     69</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
 <span class="ansi-green-fg">     70</span>         ):
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-vectors/graphrag_vectors/vector_store.py:188</span>, in <span class="ansi-cyan-fg">VectorStore.similarity_search_by_text</span><span class="ansi-blue-fg">(self, text, text_embedder, k, select, filters, include_vectors)</span>
-<span class="ansi-green-fg">    186</span> query_embedding = text_embedder(text)
-<span class="ansi-green-fg">    187</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query_embedding:
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">188</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">similarity_search_by_vector</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">    189</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">query_embedding</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">query_embedding</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    190</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">k</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">k</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    191</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">select</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">select</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    192</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">filters</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">filters</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    193</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">include_vectors</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">include_vectors</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    194</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    195</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> []
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-vectors/graphrag_vectors/vector_store.py:186</span>, in <span class="ansi-cyan-fg">VectorStore.similarity_search_by_text</span><span class="ansi-blue-fg">(self, text, text_embedder, k, select, filters, include_vectors)</span>
+<span class="ansi-green-fg">    176</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">similarity_search_by_text</span>(
+<span class="ansi-green-fg">    177</span>     <span style="color: rgb(0,135,0)">self</span>,
+<span class="ansi-green-fg">    178</span>     text: <span style="color: rgb(0,135,0)">str</span>,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    183</span>     include_vectors: <span style="color: rgb(0,135,0)">bool</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
+<span class="ansi-green-fg">    184</span> ) -&gt; <span style="color: rgb(0,135,0)">list</span>[VectorStoreSearchResult]:
+<span class="ansi-green-fg">    185</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""Perform a text-based similarity search."""</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">186</span>     query_embedding = <span class="ansi-black-fg ansi-yellow-bg">text_embedder</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">text</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    187</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query_embedding:
+<span class="ansi-green-fg">    188</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span>.similarity_search_by_vector(
+<span class="ansi-green-fg">    189</span>             query_embedding=query_embedding,
+<span class="ansi-green-fg">    190</span>             k=k,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    193</span>             include_vectors=include_vectors,
+<span class="ansi-green-fg">    194</span>         )
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-vectors/graphrag_vectors/lancedb.py:207</span>, in <span class="ansi-cyan-fg">LanceDBVectorStore.similarity_search_by_vector</span><span class="ansi-blue-fg">(self, query_embedding, k, select, filters, include_vectors)</span>
-<span class="ansi-green-fg">    204</span> <span class="ansi-yellow-fg">"""Perform a vector-based similarity search."""</span>
-<span class="ansi-green-fg">    205</span> query_embedding = np.array(query_embedding, dtype=np.float32)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">207</span> query = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">document_collection</span>.search(
-<span class="ansi-green-fg">    208</span>     query=query_embedding, vector_column_name=<span style="color: rgb(0,135,0)">self</span>.vector_field
-<span class="ansi-green-fg">    209</span> )
-<span class="ansi-green-fg">    211</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> filters <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg">    212</span>     query = query.where(<span style="color: rgb(0,135,0)">self</span>._compile_filter(filters), prefilter=<span class="ansi-bold" style="color: rgb(0,135,0)">True</span>)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag/graphrag/query/context_builder/entity_extraction.py:64</span>, in <span class="ansi-cyan-fg">map_query_to_entities.&lt;locals&gt;.&lt;lambda&gt;</span><span class="ansi-blue-fg">(t)</span>
+<span class="ansi-green-fg">     58</span> matched_entities = []
+<span class="ansi-green-fg">     59</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query != <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>:
+<span class="ansi-green-fg">     60</span>     <span style="color: rgb(95,135,135)"># get entities with highest semantic similarity to query</span>
+<span class="ansi-green-fg">     61</span>     <span style="color: rgb(95,135,135)"># oversample to account for excluded entities</span>
+<span class="ansi-green-fg">     62</span>     search_results = text_embedding_vectorstore.similarity_search_by_text(
+<span class="ansi-green-fg">     63</span>         text=query,
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">64</span>         text_embedder=<span class="ansi-bold" style="color: rgb(0,135,0)">lambda</span> t: <span class="ansi-black-fg ansi-yellow-bg">text_embedder</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">input</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">[</span><span class="ansi-black-fg ansi-yellow-bg">t</span><span class="ansi-black-fg ansi-yellow-bg">]</span><span class="ansi-black-fg ansi-yellow-bg">)</span>.first_embedding,
+<span class="ansi-green-fg">     65</span>         k=k * oversample_scaler,
+<span class="ansi-green-fg">     66</span>     )
+<span class="ansi-green-fg">     67</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> search_results:
+<span class="ansi-green-fg">     68</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> embedding_vectorstore_key == EntityVectorStoreKey.ID <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">isinstance</span>(
+<span class="ansi-green-fg">     69</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
+<span class="ansi-green-fg">     70</span>         ):
 
-<span class="ansi-red-fg">AttributeError</span>: 'LanceDBVectorStore' object has no attribute 'document_collection'</pre>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/embedding/lite_llm_embedding.py:130</span>, in <span class="ansi-cyan-fg">LiteLLMEmbedding.embedding</span><span class="ansi-blue-fg">(self, **kwargs)</span>
+<span class="ansi-green-fg">    127</span>     request_metrics = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">    129</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">130</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">metrics</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">request_metrics</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    131</span> <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
+<span class="ansi-green-fg">    132</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> request_metrics:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py:49</span>, in <span class="ansi-cyan-fg">with_logging.&lt;locals&gt;._request_count_middleware</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     47</span> metrics: Metrics | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metrics</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     48</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">49</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">sync_middleware</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     50</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-fg">     51</span>     retries = metrics.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">retries</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py:53</span>, in <span class="ansi-cyan-fg">with_request_count.&lt;locals&gt;._request_count_middleware</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     51</span>     metrics[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">failed_response_count</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-green-fg">0</span>
+<span class="ansi-green-fg">     52</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">53</span>     result = <span class="ansi-black-fg ansi-yellow-bg">sync_middleware</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     54</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">     55</span>         metrics[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">successful_response_count</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-green-fg">1</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py:56</span>, in <span class="ansi-cyan-fg">with_metrics.&lt;locals&gt;._metrics_middleware</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     54</span> metrics: Metrics | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metrics</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     55</span> start_time = time.time()
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">56</span> response = <span class="ansi-black-fg ansi-yellow-bg">sync_middleware</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     57</span> end_time = time.time()
+<span class="ansi-green-fg">     59</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/embedding/lite_llm_embedding.py:188</span>, in <span class="ansi-cyan-fg">_create_base_embeddings.&lt;locals&gt;._base_embedding</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">    185</span> kwargs.pop(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metrics</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>)  <span style="color: rgb(95,135,135)"># Remove metrics if present</span>
+<span class="ansi-green-fg">    186</span> new_args: <span style="color: rgb(0,135,0)">dict</span>[<span style="color: rgb(0,135,0)">str</span>, Any] = {**base_args, **kwargs}
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">188</span> response = <span class="ansi-black-fg ansi-yellow-bg">litellm</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">new_args</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    189</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> LLMEmbeddingResponse(**response.model_dump())
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py:1745</span>, in <span class="ansi-cyan-fg">client.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">   1741</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> logging_obj:
+<span class="ansi-green-fg">   1742</span>     logging_obj.failure_handler(
+<span class="ansi-green-fg">   1743</span>         e, traceback_exception, start_time, end_time
+<span class="ansi-green-fg">   1744</span>     )  <span style="color: rgb(95,135,135)"># DO NOT MAKE THREADED - router retry fallback relies on this!</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1745</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py:1591</span>, in <span class="ansi-cyan-fg">client.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">   1589</span>         print_verbose(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Error while checking max token limit: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>e<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">   1590</span> <span style="color: rgb(95,135,135)"># MODEL CALL</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1591</span> result = <span class="ansi-black-fg ansi-yellow-bg">original_function</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">args</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1592</span> end_time = datetime.datetime.now()
+<span class="ansi-green-fg">   1593</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> _is_streaming_request(
+<span class="ansi-green-fg">   1594</span>     kwargs=kwargs,
+<span class="ansi-green-fg">   1595</span>     call_type=call_type,
+<span class="ansi-green-fg">   1596</span> ):
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py:7110</span>, in <span class="ansi-cyan-fg">embedding</span><span class="ansi-blue-fg">(model, input, dimensions, encoding_format, timeout, api_base, api_version, api_key, api_type, caching, user, custom_llm_provider, litellm_call_id, logger_fn, **kwargs)</span>
+<span class="ansi-green-fg">   7104</span> litellm_logging_obj.post_call(
+<span class="ansi-green-fg">   7105</span>     <span style="color: rgb(0,135,0)">input</span>=<span style="color: rgb(0,135,0)">input</span>,
+<span class="ansi-green-fg">   7106</span>     api_key=api_key,
+<span class="ansi-green-fg">   7107</span>     original_response=<span style="color: rgb(0,135,0)">str</span>(e),
+<span class="ansi-green-fg">   7108</span> )
+<span class="ansi-green-fg">   7109</span> <span style="color: rgb(95,135,135)">## Map to OpenAI Exception</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">7110</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   7111</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7112</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">original_exception</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">e</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7113</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7114</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">extra_kwargs</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7115</span> <span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:2675</span>, in <span class="ansi-cyan-fg">exception_type</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, completion_kwargs, extra_kwargs)</span>
+<span class="ansi-green-fg">   2673</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(e, error_type):
+<span class="ansi-green-fg">   2674</span>         <span style="color: rgb(0,135,0)">setattr</span>(e, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">litellm_response_headers</span><span class="ansi-yellow-fg">"</span>, litellm_response_headers)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2675</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e  <span style="color: rgb(95,135,135)"># it's already mapped</span>
+<span class="ansi-green-fg">   2676</span> raised_exc: Final = APIConnectionError(
+<span class="ansi-green-fg">   2677</span>     message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>original_exception<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>_redact_string(traceback.format_exc())<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2678</span>     llm_provider=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2679</span>     model=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2680</span> )
+<span class="ansi-green-fg">   2681</span> <span style="color: rgb(0,135,0)">setattr</span>(raised_exc, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">litellm_response_headers</span><span class="ansi-yellow-fg">"</span>, litellm_response_headers)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:2436</span>, in <span class="ansi-cyan-fg">exception_type</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, completion_kwargs, extra_kwargs)</span>
+<span class="ansi-green-fg">   2422</span>     extract_and_raise_litellm_exception(
+<span class="ansi-green-fg">   2423</span>         response=<span style="color: rgb(0,135,0)">getattr</span>(original_exception, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">response</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>),
+<span class="ansi-green-fg">   2424</span>         error_str=error_str,
+<span class="ansi-green-fg">   2425</span>         model=model,
+<span class="ansi-green-fg">   2426</span>         custom_llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">   2427</span>     )
+<span class="ansi-green-fg">   2428</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (
+<span class="ansi-green-fg">   2429</span>     custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">openai</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   2430</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">text-completion-openai</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   2434</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">runwayml</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   2435</span> ):
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2436</span>     <span class="ansi-black-fg ansi-yellow-bg">_map_openai_exception</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   2437</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2438</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">original_exception</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">mappable_exception</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2439</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2440</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">error_str</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">error_str</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2441</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2442</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">exception_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">exception_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2443</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_information</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_information</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2444</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2445</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">anthropic</span><span class="ansi-yellow-fg">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">anthropic_text</span><span class="ansi-yellow-fg">"</span>:  <span style="color: rgb(95,135,135)"># one of the anthropics</span>
+<span class="ansi-green-fg">   2446</span>     _map_anthropic_exception(
+<span class="ansi-green-fg">   2447</span>         model=model,
+<span class="ansi-green-fg">   2448</span>         original_exception=mappable_exception,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   2453</span>         extra_information=extra_information,
+<span class="ansi-green-fg">   2454</span>     )
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:409</span>, in <span class="ansi-cyan-fg">_map_openai_exception</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, error_str, exception_type, exception_provider, extra_information)</span>
+<span class="ansi-green-fg">    401</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> BadRequestError(
+<span class="ansi-green-fg">    402</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    403</span>         llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    406</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    407</span>     )
+<span class="ansi-green-fg">    408</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> original_exception.status_code == <span class="ansi-green-fg">401</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">409</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> AuthenticationError(
+<span class="ansi-green-fg">    410</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">AuthenticationError: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    411</span>         llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">    412</span>         model=model,
+<span class="ansi-green-fg">    413</span>         response=<span style="color: rgb(0,135,0)">getattr</span>(original_exception, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">response</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>),
+<span class="ansi-green-fg">    414</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    415</span>     )
+<span class="ansi-green-fg">    416</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> original_exception.status_code == <span class="ansi-green-fg">404</span>:
+<span class="ansi-green-fg">    417</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> NotFoundError(
+<span class="ansi-green-fg">    418</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">NotFoundError: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    419</span>         model=model,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    422</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    423</span>     )
+
+<span class="ansi-red-fg">AuthenticationError</span>: litellm.AuthenticationError: AuthenticationError: OpenAIException - Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}</pre>
 </div>
 </div>
 </div>
@@ -4190,9 +4512,197 @@ print(result.response)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Request failed with exception=litellm.AuthenticationError: AuthenticationError: OpenAIException - Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1310, in embedding
+    headers, sync_embedding_response = self.make_sync_openai_embedding_request(
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        openai_client=openai_client,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;2 lines&gt;...
+        logging_obj=logging_obj,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 347, in sync_wrapper
+    result: Final = func(*args, **kwargs)
+                    ~~~~^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1185, in make_sync_openai_embedding_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1179, in make_sync_openai_embedding_request
+    raw_response = openai_client.embeddings.with_raw_response.create(**data, timeout=timeout)
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 369, in wrapped
+    return cast(LegacyAPIResponse[R], func(*args, **kwargs))
+                                      ~~~~^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/embeddings.py", line 136, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/embeddings",
+        ^^^^^^^^^^^^^^
+    ...&lt;9 lines&gt;...
+        cast_to=CreateEmbeddingResponse,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1375, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1148, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 6308, in embedding
+    response = openai_chat_completions.embedding(
+        model=model,
+    ...&lt;10 lines&gt;...
+        shared_session=shared_session,
+    )
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1341, in embedding
+    raise OpenAIError(status_code=status_code, message=error_text, headers=error_headers)
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 49, in _request_count_middleware
+    return sync_middleware(**kwargs)
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 53, in _request_count_middleware
+    result = sync_middleware(**kwargs)
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 56, in _metrics_middleware
+    response = sync_middleware(**kwargs)
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/embedding/lite_llm_embedding.py", line 188, in _base_embedding
+    response = litellm.embedding(**new_args)
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1745, in wrapper
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1591, in wrapper
+    result = original_function(*args, **kwargs)
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 7110, in embedding
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;2 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
+<span class="ansi-red-fg">AuthenticationError</span>                       Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1310</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.embedding</span><span class="ansi-blue-fg">(self, model, input, timeout, logging_obj, model_response, optional_params, api_key, api_base, client, aembedding, max_retries, shared_session)</span>
+<span class="ansi-green-fg">   1309</span> headers: <span style="color: rgb(0,135,0)">dict</span> | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1310</span> headers, sync_embedding_response = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">make_sync_openai_embedding_request</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   1311</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">openai_client</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">openai_client</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1312</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">data</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">data</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1313</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1314</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">logging_obj</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">logging_obj</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1315</span> <span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1317</span> <span style="color: rgb(95,135,135)">## LOGGING</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py:347</span>, in <span class="ansi-cyan-fg">track_llm_api_timing.&lt;locals&gt;.decorator.&lt;locals&gt;.sync_wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    346</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">347</span>     result: Final = <span class="ansi-black-fg ansi-yellow-bg">func</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">args</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    348</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> result
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1185</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.make_sync_openai_embedding_request</span><span class="ansi-blue-fg">(self, openai_client, data, timeout, logging_obj)</span>
+<span class="ansi-green-fg">   1184</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1185</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1179</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.make_sync_openai_embedding_request</span><span class="ansi-blue-fg">(self, openai_client, data, timeout, logging_obj)</span>
+<span class="ansi-green-fg">   1178</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1179</span>     raw_response = <span class="ansi-black-fg ansi-yellow-bg">openai_client</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embeddings</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">with_raw_response</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">create</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">data</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1181</span>     headers: Final = <span style="color: rgb(0,135,0)">dict</span>(raw_response.headers)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py:369</span>, in <span class="ansi-cyan-fg">to_raw_response_wrapper.&lt;locals&gt;.wrapped</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    367</span> kwargs[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">extra_headers</span><span class="ansi-yellow-fg">"</span>] = extra_headers
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">369</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(LegacyAPIResponse[R], <span class="ansi-black-fg ansi-yellow-bg">func</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">args</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/embeddings.py:136</span>, in <span class="ansi-cyan-fg">Embeddings.create</span><span class="ansi-blue-fg">(self, input, model, dimensions, encoding_format, user, extra_headers, extra_query, extra_body, timeout)</span>
+<span class="ansi-green-fg">    134</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> obj
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">136</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_post</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    137</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">/embeddings</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    138</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">body</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">maybe_transform</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">params</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">embedding_create_params</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">EmbeddingCreateParams</span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    139</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">options</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">make_request_options</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    140</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_headers</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_headers</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    141</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_query</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_query</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    142</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_body</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_body</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    143</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    144</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">post_parser</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">parser</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    145</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">security</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">{</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">bearer_auth</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">:</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-intense-fg ansi-yellow-bg ansi-bold">True</span><span class="ansi-black-fg ansi-yellow-bg">}</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    146</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    147</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">cast_to</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">CreateEmbeddingResponse</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    148</span> <span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py:1375</span>, in <span class="ansi-cyan-fg">SyncAPIClient.post</span><span class="ansi-blue-fg">(self, path, cast_to, body, content, options, files, stream, stream_cls)</span>
+<span class="ansi-green-fg">   1372</span> opts = FinalRequestOptions.construct(
+<span class="ansi-green-fg">   1373</span>     method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">post</span><span class="ansi-yellow-fg">"</span>, url=path, json_data=body, content=content, files=to_httpx_files(files), **options
+<span class="ansi-green-fg">   1374</span> )
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1375</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(ResponseT, <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">request</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">cast_to</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">opts</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">stream</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">stream</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">stream_cls</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">stream_cls</span><span class="ansi-black-fg ansi-yellow-bg">)</span>)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py:1148</span>, in <span class="ansi-cyan-fg">SyncAPIClient.request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls)</span>
+<span class="ansi-green-fg">   1147</span>     log.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Re-raising status error</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1148</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._make_status_error_from_response(err.response) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">   1150</span> <span class="ansi-bold" style="color: rgb(0,135,0)">break</span>
+
+<span class="ansi-red-fg">AuthenticationError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">OpenAIError</span>                               Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py:6308</span>, in <span class="ansi-cyan-fg">embedding</span><span class="ansi-blue-fg">(model, input, dimensions, encoding_format, timeout, api_base, api_version, api_key, api_type, caching, user, custom_llm_provider, litellm_call_id, logger_fn, **kwargs)</span>
+<span class="ansi-green-fg">   6307</span>     <span style="color: rgb(95,135,135)">## EMBEDDING CALL</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">6308</span>     response = <span class="ansi-black-fg ansi-yellow-bg">openai_chat_completions</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   6309</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6310</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">input</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">input</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6311</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">api_base</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">api_base</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6312</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">api_key</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">api_key</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6313</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">logging_obj</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">logging</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6314</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6315</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">model_response</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">EmbeddingResponse</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6316</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">optional_params</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">optional_params</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6317</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">client</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">client</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6318</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">aembedding</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">aembedding</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6319</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">max_retries</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">max_retries</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6320</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">shared_session</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">shared_session</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6321</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   6322</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">databricks</span><span class="ansi-yellow-fg">"</span>:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1341</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.embedding</span><span class="ansi-blue-fg">(self, model, input, timeout, logging_obj, model_response, optional_params, api_key, api_base, client, aembedding, max_retries, shared_session)</span>
+<span class="ansi-green-fg">   1340</span>     error_headers = <span style="color: rgb(0,135,0)">getattr</span>(error_response, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">headers</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1341</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> OpenAIError(status_code=status_code, message=error_text, headers=error_headers)
+
+<span class="ansi-red-fg">OpenAIError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">AuthenticationError</span>                       Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[14]</span><span class="ansi-green-fg">, line 2</span>
 <span class="ansi-green-fg">      1</span> question = <span class="ansi-yellow-fg">"Tell me about Dr. Jordan Hayes"</span>
 <span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> result = <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search_engine.search(question)
@@ -4244,28 +4754,162 @@ print(result.response)</div>
 <span class="ansi-green-fg">     69</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
 <span class="ansi-green-fg">     70</span>         ):
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-vectors/graphrag_vectors/vector_store.py:188</span>, in <span class="ansi-cyan-fg">VectorStore.similarity_search_by_text</span><span class="ansi-blue-fg">(self, text, text_embedder, k, select, filters, include_vectors)</span>
-<span class="ansi-green-fg">    186</span> query_embedding = text_embedder(text)
-<span class="ansi-green-fg">    187</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query_embedding:
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">188</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">similarity_search_by_vector</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">    189</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">query_embedding</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">query_embedding</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    190</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">k</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">k</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    191</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">select</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">select</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    192</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">filters</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">filters</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    193</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">include_vectors</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">include_vectors</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    194</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    195</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> []
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-vectors/graphrag_vectors/vector_store.py:186</span>, in <span class="ansi-cyan-fg">VectorStore.similarity_search_by_text</span><span class="ansi-blue-fg">(self, text, text_embedder, k, select, filters, include_vectors)</span>
+<span class="ansi-green-fg">    176</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">similarity_search_by_text</span>(
+<span class="ansi-green-fg">    177</span>     <span style="color: rgb(0,135,0)">self</span>,
+<span class="ansi-green-fg">    178</span>     text: <span style="color: rgb(0,135,0)">str</span>,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    183</span>     include_vectors: <span style="color: rgb(0,135,0)">bool</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
+<span class="ansi-green-fg">    184</span> ) -&gt; <span style="color: rgb(0,135,0)">list</span>[VectorStoreSearchResult]:
+<span class="ansi-green-fg">    185</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""Perform a text-based similarity search."""</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">186</span>     query_embedding = <span class="ansi-black-fg ansi-yellow-bg">text_embedder</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">text</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    187</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query_embedding:
+<span class="ansi-green-fg">    188</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span>.similarity_search_by_vector(
+<span class="ansi-green-fg">    189</span>             query_embedding=query_embedding,
+<span class="ansi-green-fg">    190</span>             k=k,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    193</span>             include_vectors=include_vectors,
+<span class="ansi-green-fg">    194</span>         )
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-vectors/graphrag_vectors/lancedb.py:207</span>, in <span class="ansi-cyan-fg">LanceDBVectorStore.similarity_search_by_vector</span><span class="ansi-blue-fg">(self, query_embedding, k, select, filters, include_vectors)</span>
-<span class="ansi-green-fg">    204</span> <span class="ansi-yellow-fg">"""Perform a vector-based similarity search."""</span>
-<span class="ansi-green-fg">    205</span> query_embedding = np.array(query_embedding, dtype=np.float32)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">207</span> query = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">document_collection</span>.search(
-<span class="ansi-green-fg">    208</span>     query=query_embedding, vector_column_name=<span style="color: rgb(0,135,0)">self</span>.vector_field
-<span class="ansi-green-fg">    209</span> )
-<span class="ansi-green-fg">    211</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> filters <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg">    212</span>     query = query.where(<span style="color: rgb(0,135,0)">self</span>._compile_filter(filters), prefilter=<span class="ansi-bold" style="color: rgb(0,135,0)">True</span>)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag/graphrag/query/context_builder/entity_extraction.py:64</span>, in <span class="ansi-cyan-fg">map_query_to_entities.&lt;locals&gt;.&lt;lambda&gt;</span><span class="ansi-blue-fg">(t)</span>
+<span class="ansi-green-fg">     58</span> matched_entities = []
+<span class="ansi-green-fg">     59</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query != <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>:
+<span class="ansi-green-fg">     60</span>     <span style="color: rgb(95,135,135)"># get entities with highest semantic similarity to query</span>
+<span class="ansi-green-fg">     61</span>     <span style="color: rgb(95,135,135)"># oversample to account for excluded entities</span>
+<span class="ansi-green-fg">     62</span>     search_results = text_embedding_vectorstore.similarity_search_by_text(
+<span class="ansi-green-fg">     63</span>         text=query,
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">64</span>         text_embedder=<span class="ansi-bold" style="color: rgb(0,135,0)">lambda</span> t: <span class="ansi-black-fg ansi-yellow-bg">text_embedder</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">input</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">[</span><span class="ansi-black-fg ansi-yellow-bg">t</span><span class="ansi-black-fg ansi-yellow-bg">]</span><span class="ansi-black-fg ansi-yellow-bg">)</span>.first_embedding,
+<span class="ansi-green-fg">     65</span>         k=k * oversample_scaler,
+<span class="ansi-green-fg">     66</span>     )
+<span class="ansi-green-fg">     67</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> search_results:
+<span class="ansi-green-fg">     68</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> embedding_vectorstore_key == EntityVectorStoreKey.ID <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">isinstance</span>(
+<span class="ansi-green-fg">     69</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
+<span class="ansi-green-fg">     70</span>         ):
 
-<span class="ansi-red-fg">AttributeError</span>: 'LanceDBVectorStore' object has no attribute 'document_collection'</pre>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/embedding/lite_llm_embedding.py:130</span>, in <span class="ansi-cyan-fg">LiteLLMEmbedding.embedding</span><span class="ansi-blue-fg">(self, **kwargs)</span>
+<span class="ansi-green-fg">    127</span>     request_metrics = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">    129</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">130</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">metrics</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">request_metrics</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    131</span> <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
+<span class="ansi-green-fg">    132</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> request_metrics:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py:49</span>, in <span class="ansi-cyan-fg">with_logging.&lt;locals&gt;._request_count_middleware</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     47</span> metrics: Metrics | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metrics</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     48</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">49</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">sync_middleware</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     50</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-fg">     51</span>     retries = metrics.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">retries</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py:53</span>, in <span class="ansi-cyan-fg">with_request_count.&lt;locals&gt;._request_count_middleware</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     51</span>     metrics[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">failed_response_count</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-green-fg">0</span>
+<span class="ansi-green-fg">     52</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">53</span>     result = <span class="ansi-black-fg ansi-yellow-bg">sync_middleware</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     54</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">     55</span>         metrics[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">successful_response_count</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-green-fg">1</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py:56</span>, in <span class="ansi-cyan-fg">with_metrics.&lt;locals&gt;._metrics_middleware</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     54</span> metrics: Metrics | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metrics</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     55</span> start_time = time.time()
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">56</span> response = <span class="ansi-black-fg ansi-yellow-bg">sync_middleware</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     57</span> end_time = time.time()
+<span class="ansi-green-fg">     59</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/embedding/lite_llm_embedding.py:188</span>, in <span class="ansi-cyan-fg">_create_base_embeddings.&lt;locals&gt;._base_embedding</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">    185</span> kwargs.pop(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metrics</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>)  <span style="color: rgb(95,135,135)"># Remove metrics if present</span>
+<span class="ansi-green-fg">    186</span> new_args: <span style="color: rgb(0,135,0)">dict</span>[<span style="color: rgb(0,135,0)">str</span>, Any] = {**base_args, **kwargs}
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">188</span> response = <span class="ansi-black-fg ansi-yellow-bg">litellm</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">new_args</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    189</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> LLMEmbeddingResponse(**response.model_dump())
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py:1745</span>, in <span class="ansi-cyan-fg">client.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">   1741</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> logging_obj:
+<span class="ansi-green-fg">   1742</span>     logging_obj.failure_handler(
+<span class="ansi-green-fg">   1743</span>         e, traceback_exception, start_time, end_time
+<span class="ansi-green-fg">   1744</span>     )  <span style="color: rgb(95,135,135)"># DO NOT MAKE THREADED - router retry fallback relies on this!</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1745</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py:1591</span>, in <span class="ansi-cyan-fg">client.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">   1589</span>         print_verbose(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Error while checking max token limit: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>e<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">   1590</span> <span style="color: rgb(95,135,135)"># MODEL CALL</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1591</span> result = <span class="ansi-black-fg ansi-yellow-bg">original_function</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">args</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1592</span> end_time = datetime.datetime.now()
+<span class="ansi-green-fg">   1593</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> _is_streaming_request(
+<span class="ansi-green-fg">   1594</span>     kwargs=kwargs,
+<span class="ansi-green-fg">   1595</span>     call_type=call_type,
+<span class="ansi-green-fg">   1596</span> ):
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py:7110</span>, in <span class="ansi-cyan-fg">embedding</span><span class="ansi-blue-fg">(model, input, dimensions, encoding_format, timeout, api_base, api_version, api_key, api_type, caching, user, custom_llm_provider, litellm_call_id, logger_fn, **kwargs)</span>
+<span class="ansi-green-fg">   7104</span> litellm_logging_obj.post_call(
+<span class="ansi-green-fg">   7105</span>     <span style="color: rgb(0,135,0)">input</span>=<span style="color: rgb(0,135,0)">input</span>,
+<span class="ansi-green-fg">   7106</span>     api_key=api_key,
+<span class="ansi-green-fg">   7107</span>     original_response=<span style="color: rgb(0,135,0)">str</span>(e),
+<span class="ansi-green-fg">   7108</span> )
+<span class="ansi-green-fg">   7109</span> <span style="color: rgb(95,135,135)">## Map to OpenAI Exception</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">7110</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   7111</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7112</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">original_exception</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">e</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7113</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7114</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">extra_kwargs</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7115</span> <span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:2675</span>, in <span class="ansi-cyan-fg">exception_type</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, completion_kwargs, extra_kwargs)</span>
+<span class="ansi-green-fg">   2673</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(e, error_type):
+<span class="ansi-green-fg">   2674</span>         <span style="color: rgb(0,135,0)">setattr</span>(e, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">litellm_response_headers</span><span class="ansi-yellow-fg">"</span>, litellm_response_headers)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2675</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e  <span style="color: rgb(95,135,135)"># it's already mapped</span>
+<span class="ansi-green-fg">   2676</span> raised_exc: Final = APIConnectionError(
+<span class="ansi-green-fg">   2677</span>     message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>original_exception<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>_redact_string(traceback.format_exc())<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2678</span>     llm_provider=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2679</span>     model=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2680</span> )
+<span class="ansi-green-fg">   2681</span> <span style="color: rgb(0,135,0)">setattr</span>(raised_exc, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">litellm_response_headers</span><span class="ansi-yellow-fg">"</span>, litellm_response_headers)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:2436</span>, in <span class="ansi-cyan-fg">exception_type</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, completion_kwargs, extra_kwargs)</span>
+<span class="ansi-green-fg">   2422</span>     extract_and_raise_litellm_exception(
+<span class="ansi-green-fg">   2423</span>         response=<span style="color: rgb(0,135,0)">getattr</span>(original_exception, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">response</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>),
+<span class="ansi-green-fg">   2424</span>         error_str=error_str,
+<span class="ansi-green-fg">   2425</span>         model=model,
+<span class="ansi-green-fg">   2426</span>         custom_llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">   2427</span>     )
+<span class="ansi-green-fg">   2428</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (
+<span class="ansi-green-fg">   2429</span>     custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">openai</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   2430</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">text-completion-openai</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   2434</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">runwayml</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   2435</span> ):
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2436</span>     <span class="ansi-black-fg ansi-yellow-bg">_map_openai_exception</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   2437</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2438</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">original_exception</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">mappable_exception</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2439</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2440</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">error_str</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">error_str</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2441</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2442</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">exception_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">exception_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2443</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_information</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_information</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2444</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2445</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">anthropic</span><span class="ansi-yellow-fg">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">anthropic_text</span><span class="ansi-yellow-fg">"</span>:  <span style="color: rgb(95,135,135)"># one of the anthropics</span>
+<span class="ansi-green-fg">   2446</span>     _map_anthropic_exception(
+<span class="ansi-green-fg">   2447</span>         model=model,
+<span class="ansi-green-fg">   2448</span>         original_exception=mappable_exception,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   2453</span>         extra_information=extra_information,
+<span class="ansi-green-fg">   2454</span>     )
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:409</span>, in <span class="ansi-cyan-fg">_map_openai_exception</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, error_str, exception_type, exception_provider, extra_information)</span>
+<span class="ansi-green-fg">    401</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> BadRequestError(
+<span class="ansi-green-fg">    402</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    403</span>         llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    406</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    407</span>     )
+<span class="ansi-green-fg">    408</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> original_exception.status_code == <span class="ansi-green-fg">401</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">409</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> AuthenticationError(
+<span class="ansi-green-fg">    410</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">AuthenticationError: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    411</span>         llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">    412</span>         model=model,
+<span class="ansi-green-fg">    413</span>         response=<span style="color: rgb(0,135,0)">getattr</span>(original_exception, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">response</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>),
+<span class="ansi-green-fg">    414</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    415</span>     )
+<span class="ansi-green-fg">    416</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> original_exception.status_code == <span class="ansi-green-fg">404</span>:
+<span class="ansi-green-fg">    417</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> NotFoundError(
+<span class="ansi-green-fg">    418</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">NotFoundError: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    419</span>         model=model,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    422</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    423</span>     )
+
+<span class="ansi-red-fg">AuthenticationError</span>: litellm.AuthenticationError: AuthenticationError: OpenAIException - Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}</pre>
 </div>
 </div>
 </div>
@@ -4621,9 +5265,197 @@ print(candidate_questions.response)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Request failed with exception=litellm.AuthenticationError: AuthenticationError: OpenAIException - Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1310, in embedding
+    headers, sync_embedding_response = self.make_sync_openai_embedding_request(
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        openai_client=openai_client,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...&lt;2 lines&gt;...
+        logging_obj=logging_obj,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py", line 347, in sync_wrapper
+    result: Final = func(*args, **kwargs)
+                    ~~~~^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1185, in make_sync_openai_embedding_request
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1179, in make_sync_openai_embedding_request
+    raw_response = openai_client.embeddings.with_raw_response.create(**data, timeout=timeout)
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py", line 369, in wrapped
+    return cast(LegacyAPIResponse[R], func(*args, **kwargs))
+                                      ~~~~^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/embeddings.py", line 136, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/embeddings",
+        ^^^^^^^^^^^^^^
+    ...&lt;9 lines&gt;...
+        cast_to=CreateEmbeddingResponse,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1375, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1148, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 6308, in embedding
+    response = openai_chat_completions.embedding(
+        model=model,
+    ...&lt;10 lines&gt;...
+        shared_session=shared_session,
+    )
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py", line 1341, in embedding
+    raise OpenAIError(status_code=status_code, message=error_text, headers=error_headers)
+litellm.llms.openai.common_utils.OpenAIError: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py", line 49, in _request_count_middleware
+    return sync_middleware(**kwargs)
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py", line 53, in _request_count_middleware
+    result = sync_middleware(**kwargs)
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py", line 56, in _metrics_middleware
+    response = sync_middleware(**kwargs)
+  File "/home/runner/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/embedding/lite_llm_embedding.py", line 188, in _base_embedding
+    response = litellm.embedding(**new_args)
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1745, in wrapper
+    raise e
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py", line 1591, in wrapper
+    result = original_function(*args, **kwargs)
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py", line 7110, in embedding
+    raise exception_type(
+          ~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;2 lines&gt;...
+        extra_kwargs=kwargs,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2675, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2436, in exception_type
+    _map_openai_exception(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...&lt;5 lines&gt;...
+        extra_information=extra_information,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 409, in _map_openai_exception
+    raise AuthenticationError(
+    ...&lt;5 lines&gt;...
+    )
+litellm.exceptions.AuthenticationError: litellm.AuthenticationError: AuthenticationError: OpenAIException - Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
+<span class="ansi-red-fg">AuthenticationError</span>                       Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1310</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.embedding</span><span class="ansi-blue-fg">(self, model, input, timeout, logging_obj, model_response, optional_params, api_key, api_base, client, aembedding, max_retries, shared_session)</span>
+<span class="ansi-green-fg">   1309</span> headers: <span style="color: rgb(0,135,0)">dict</span> | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1310</span> headers, sync_embedding_response = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">make_sync_openai_embedding_request</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   1311</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">openai_client</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">openai_client</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1312</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">data</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">data</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1313</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1314</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">logging_obj</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">logging_obj</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1315</span> <span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1317</span> <span style="color: rgb(95,135,135)">## LOGGING</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/logging_utils.py:347</span>, in <span class="ansi-cyan-fg">track_llm_api_timing.&lt;locals&gt;.decorator.&lt;locals&gt;.sync_wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    346</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">347</span>     result: Final = <span class="ansi-black-fg ansi-yellow-bg">func</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">args</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    348</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> result
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1185</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.make_sync_openai_embedding_request</span><span class="ansi-blue-fg">(self, openai_client, data, timeout, logging_obj)</span>
+<span class="ansi-green-fg">   1184</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1185</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1179</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.make_sync_openai_embedding_request</span><span class="ansi-blue-fg">(self, openai_client, data, timeout, logging_obj)</span>
+<span class="ansi-green-fg">   1178</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1179</span>     raw_response = <span class="ansi-black-fg ansi-yellow-bg">openai_client</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embeddings</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">with_raw_response</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">create</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">data</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1181</span>     headers: Final = <span style="color: rgb(0,135,0)">dict</span>(raw_response.headers)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_legacy_response.py:369</span>, in <span class="ansi-cyan-fg">to_raw_response_wrapper.&lt;locals&gt;.wrapped</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    367</span> kwargs[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">extra_headers</span><span class="ansi-yellow-fg">"</span>] = extra_headers
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">369</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(LegacyAPIResponse[R], <span class="ansi-black-fg ansi-yellow-bg">func</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">args</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/resources/embeddings.py:136</span>, in <span class="ansi-cyan-fg">Embeddings.create</span><span class="ansi-blue-fg">(self, input, model, dimensions, encoding_format, user, extra_headers, extra_query, extra_body, timeout)</span>
+<span class="ansi-green-fg">    134</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> obj
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">136</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_post</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    137</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">/embeddings</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    138</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">body</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">maybe_transform</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">params</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">embedding_create_params</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">EmbeddingCreateParams</span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    139</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">options</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">make_request_options</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    140</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_headers</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_headers</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    141</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_query</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_query</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    142</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_body</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_body</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    143</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    144</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">post_parser</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">parser</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    145</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">security</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">{</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">bearer_auth</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">:</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-intense-fg ansi-yellow-bg ansi-bold">True</span><span class="ansi-black-fg ansi-yellow-bg">}</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    146</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    147</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">cast_to</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">CreateEmbeddingResponse</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    148</span> <span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py:1375</span>, in <span class="ansi-cyan-fg">SyncAPIClient.post</span><span class="ansi-blue-fg">(self, path, cast_to, body, content, options, files, stream, stream_cls)</span>
+<span class="ansi-green-fg">   1372</span> opts = FinalRequestOptions.construct(
+<span class="ansi-green-fg">   1373</span>     method=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">post</span><span class="ansi-yellow-fg">"</span>, url=path, json_data=body, content=content, files=to_httpx_files(files), **options
+<span class="ansi-green-fg">   1374</span> )
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1375</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(ResponseT, <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">request</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">cast_to</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">opts</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">stream</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">stream</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">stream_cls</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">stream_cls</span><span class="ansi-black-fg ansi-yellow-bg">)</span>)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/openai/_base_client.py:1148</span>, in <span class="ansi-cyan-fg">SyncAPIClient.request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls)</span>
+<span class="ansi-green-fg">   1147</span>     log.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Re-raising status error</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1148</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>._make_status_error_from_response(err.response) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">   1150</span> <span class="ansi-bold" style="color: rgb(0,135,0)">break</span>
+
+<span class="ansi-red-fg">AuthenticationError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">OpenAIError</span>                               Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py:6308</span>, in <span class="ansi-cyan-fg">embedding</span><span class="ansi-blue-fg">(model, input, dimensions, encoding_format, timeout, api_base, api_version, api_key, api_type, caching, user, custom_llm_provider, litellm_call_id, logger_fn, **kwargs)</span>
+<span class="ansi-green-fg">   6307</span>     <span style="color: rgb(95,135,135)">## EMBEDDING CALL</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">6308</span>     response = <span class="ansi-black-fg ansi-yellow-bg">openai_chat_completions</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   6309</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6310</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">input</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">input</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6311</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">api_base</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">api_base</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6312</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">api_key</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">api_key</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6313</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">logging_obj</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">logging</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6314</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6315</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">model_response</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">EmbeddingResponse</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6316</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">optional_params</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">optional_params</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6317</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">client</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">client</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6318</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">aembedding</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">aembedding</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6319</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">max_retries</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">max_retries</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6320</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">shared_session</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">shared_session</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   6321</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   6322</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">databricks</span><span class="ansi-yellow-fg">"</span>:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/llms/openai/openai.py:1341</span>, in <span class="ansi-cyan-fg">OpenAIChatCompletion.embedding</span><span class="ansi-blue-fg">(self, model, input, timeout, logging_obj, model_response, optional_params, api_key, api_base, client, aembedding, max_retries, shared_session)</span>
+<span class="ansi-green-fg">   1340</span>     error_headers = <span style="color: rgb(0,135,0)">getattr</span>(error_response, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">headers</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1341</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> OpenAIError(status_code=status_code, message=error_text, headers=error_headers)
+
+<span class="ansi-red-fg">OpenAIError</span>: Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-fg">AuthenticationError</span>                       Traceback (most recent call last)
 <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[21]</span><span class="ansi-green-fg">, line 5</span>
 <span class="ansi-green-fg">      1</span> question_history = [
 <span class="ansi-green-fg">      2</span>     <span class="ansi-yellow-fg">"Tell me about Agent Mercer"</span>,
@@ -4684,28 +5516,162 @@ print(candidate_questions.response)</div>
 <span class="ansi-green-fg">     69</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
 <span class="ansi-green-fg">     70</span>         ):
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-vectors/graphrag_vectors/vector_store.py:188</span>, in <span class="ansi-cyan-fg">VectorStore.similarity_search_by_text</span><span class="ansi-blue-fg">(self, text, text_embedder, k, select, filters, include_vectors)</span>
-<span class="ansi-green-fg">    186</span> query_embedding = text_embedder(text)
-<span class="ansi-green-fg">    187</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query_embedding:
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">188</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">similarity_search_by_vector</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
-<span class="ansi-green-fg">    189</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">query_embedding</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">query_embedding</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    190</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">k</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">k</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    191</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">select</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">select</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    192</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">filters</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">filters</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    193</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">include_vectors</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">include_vectors</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">    194</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">    195</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> []
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-vectors/graphrag_vectors/vector_store.py:186</span>, in <span class="ansi-cyan-fg">VectorStore.similarity_search_by_text</span><span class="ansi-blue-fg">(self, text, text_embedder, k, select, filters, include_vectors)</span>
+<span class="ansi-green-fg">    176</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-blue-fg">similarity_search_by_text</span>(
+<span class="ansi-green-fg">    177</span>     <span style="color: rgb(0,135,0)">self</span>,
+<span class="ansi-green-fg">    178</span>     text: <span style="color: rgb(0,135,0)">str</span>,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    183</span>     include_vectors: <span style="color: rgb(0,135,0)">bool</span> = <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
+<span class="ansi-green-fg">    184</span> ) -&gt; <span style="color: rgb(0,135,0)">list</span>[VectorStoreSearchResult]:
+<span class="ansi-green-fg">    185</span> <span style="color: rgb(188,188,188)">    </span><span class="ansi-yellow-fg">"""Perform a text-based similarity search."""</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">186</span>     query_embedding = <span class="ansi-black-fg ansi-yellow-bg">text_embedder</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">text</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    187</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query_embedding:
+<span class="ansi-green-fg">    188</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span>.similarity_search_by_vector(
+<span class="ansi-green-fg">    189</span>             query_embedding=query_embedding,
+<span class="ansi-green-fg">    190</span>             k=k,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    193</span>             include_vectors=include_vectors,
+<span class="ansi-green-fg">    194</span>         )
 
-<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-vectors/graphrag_vectors/lancedb.py:207</span>, in <span class="ansi-cyan-fg">LanceDBVectorStore.similarity_search_by_vector</span><span class="ansi-blue-fg">(self, query_embedding, k, select, filters, include_vectors)</span>
-<span class="ansi-green-fg">    204</span> <span class="ansi-yellow-fg">"""Perform a vector-based similarity search."""</span>
-<span class="ansi-green-fg">    205</span> query_embedding = np.array(query_embedding, dtype=np.float32)
-<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">207</span> query = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">document_collection</span>.search(
-<span class="ansi-green-fg">    208</span>     query=query_embedding, vector_column_name=<span style="color: rgb(0,135,0)">self</span>.vector_field
-<span class="ansi-green-fg">    209</span> )
-<span class="ansi-green-fg">    211</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> filters <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg">    212</span>     query = query.where(<span style="color: rgb(0,135,0)">self</span>._compile_filter(filters), prefilter=<span class="ansi-bold" style="color: rgb(0,135,0)">True</span>)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag/graphrag/query/context_builder/entity_extraction.py:64</span>, in <span class="ansi-cyan-fg">map_query_to_entities.&lt;locals&gt;.&lt;lambda&gt;</span><span class="ansi-blue-fg">(t)</span>
+<span class="ansi-green-fg">     58</span> matched_entities = []
+<span class="ansi-green-fg">     59</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> query != <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>:
+<span class="ansi-green-fg">     60</span>     <span style="color: rgb(95,135,135)"># get entities with highest semantic similarity to query</span>
+<span class="ansi-green-fg">     61</span>     <span style="color: rgb(95,135,135)"># oversample to account for excluded entities</span>
+<span class="ansi-green-fg">     62</span>     search_results = text_embedding_vectorstore.similarity_search_by_text(
+<span class="ansi-green-fg">     63</span>         text=query,
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">64</span>         text_embedder=<span class="ansi-bold" style="color: rgb(0,135,0)">lambda</span> t: <span class="ansi-black-fg ansi-yellow-bg">text_embedder</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">input</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">[</span><span class="ansi-black-fg ansi-yellow-bg">t</span><span class="ansi-black-fg ansi-yellow-bg">]</span><span class="ansi-black-fg ansi-yellow-bg">)</span>.first_embedding,
+<span class="ansi-green-fg">     65</span>         k=k * oversample_scaler,
+<span class="ansi-green-fg">     66</span>     )
+<span class="ansi-green-fg">     67</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> search_results:
+<span class="ansi-green-fg">     68</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> embedding_vectorstore_key == EntityVectorStoreKey.ID <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">isinstance</span>(
+<span class="ansi-green-fg">     69</span>             result.document.id, <span style="color: rgb(0,135,0)">str</span>
+<span class="ansi-green-fg">     70</span>         ):
 
-<span class="ansi-red-fg">AttributeError</span>: 'LanceDBVectorStore' object has no attribute 'document_collection'</pre>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/embedding/lite_llm_embedding.py:130</span>, in <span class="ansi-cyan-fg">LiteLLMEmbedding.embedding</span><span class="ansi-blue-fg">(self, **kwargs)</span>
+<span class="ansi-green-fg">    127</span>     request_metrics = <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">    129</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">130</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">metrics</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">request_metrics</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    131</span> <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
+<span class="ansi-green-fg">    132</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> request_metrics:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_logging.py:49</span>, in <span class="ansi-cyan-fg">with_logging.&lt;locals&gt;._request_count_middleware</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     47</span> metrics: Metrics | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metrics</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     48</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">49</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">sync_middleware</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     50</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-fg">     51</span>     retries = metrics.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">retries</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>) <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_request_count.py:53</span>, in <span class="ansi-cyan-fg">with_request_count.&lt;locals&gt;._request_count_middleware</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     51</span>     metrics[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">failed_response_count</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-green-fg">0</span>
+<span class="ansi-green-fg">     52</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">53</span>     result = <span class="ansi-black-fg ansi-yellow-bg">sync_middleware</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     54</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">     55</span>         metrics[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">successful_response_count</span><span class="ansi-yellow-fg">"</span>] = <span class="ansi-green-fg">1</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/middleware/with_metrics.py:56</span>, in <span class="ansi-cyan-fg">with_metrics.&lt;locals&gt;._metrics_middleware</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">     54</span> metrics: Metrics | <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> = kwargs.get(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metrics</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">     55</span> start_time = time.time()
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">56</span> response = <span class="ansi-black-fg ansi-yellow-bg">sync_middleware</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     57</span> end_time = time.time()
+<span class="ansi-green-fg">     59</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> metrics <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/packages/graphrag-llm/graphrag_llm/embedding/lite_llm_embedding.py:188</span>, in <span class="ansi-cyan-fg">_create_base_embeddings.&lt;locals&gt;._base_embedding</span><span class="ansi-blue-fg">(**kwargs)</span>
+<span class="ansi-green-fg">    185</span> kwargs.pop(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">metrics</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>)  <span style="color: rgb(95,135,135)"># Remove metrics if present</span>
+<span class="ansi-green-fg">    186</span> new_args: <span style="color: rgb(0,135,0)">dict</span>[<span style="color: rgb(0,135,0)">str</span>, Any] = {**base_args, **kwargs}
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">188</span> response = <span class="ansi-black-fg ansi-yellow-bg">litellm</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">embedding</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">new_args</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    189</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> LLMEmbeddingResponse(**response.model_dump())
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py:1745</span>, in <span class="ansi-cyan-fg">client.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">   1741</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> logging_obj:
+<span class="ansi-green-fg">   1742</span>     logging_obj.failure_handler(
+<span class="ansi-green-fg">   1743</span>         e, traceback_exception, start_time, end_time
+<span class="ansi-green-fg">   1744</span>     )  <span style="color: rgb(95,135,135)"># DO NOT MAKE THREADED - router retry fallback relies on this!</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1745</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/utils.py:1591</span>, in <span class="ansi-cyan-fg">client.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">   1589</span>         print_verbose(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Error while checking max token limit: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>e<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">   1590</span> <span style="color: rgb(95,135,135)"># MODEL CALL</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1591</span> result = <span class="ansi-black-fg ansi-yellow-bg">original_function</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">args</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1592</span> end_time = datetime.datetime.now()
+<span class="ansi-green-fg">   1593</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> _is_streaming_request(
+<span class="ansi-green-fg">   1594</span>     kwargs=kwargs,
+<span class="ansi-green-fg">   1595</span>     call_type=call_type,
+<span class="ansi-green-fg">   1596</span> ):
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/main.py:7110</span>, in <span class="ansi-cyan-fg">embedding</span><span class="ansi-blue-fg">(model, input, dimensions, encoding_format, timeout, api_base, api_version, api_key, api_type, caching, user, custom_llm_provider, litellm_call_id, logger_fn, **kwargs)</span>
+<span class="ansi-green-fg">   7104</span> litellm_logging_obj.post_call(
+<span class="ansi-green-fg">   7105</span>     <span style="color: rgb(0,135,0)">input</span>=<span style="color: rgb(0,135,0)">input</span>,
+<span class="ansi-green-fg">   7106</span>     api_key=api_key,
+<span class="ansi-green-fg">   7107</span>     original_response=<span style="color: rgb(0,135,0)">str</span>(e),
+<span class="ansi-green-fg">   7108</span> )
+<span class="ansi-green-fg">   7109</span> <span style="color: rgb(95,135,135)">## Map to OpenAI Exception</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">7110</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   7111</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7112</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">original_exception</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">e</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7113</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7114</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">extra_kwargs</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   7115</span> <span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:2675</span>, in <span class="ansi-cyan-fg">exception_type</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, completion_kwargs, extra_kwargs)</span>
+<span class="ansi-green-fg">   2673</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(e, error_type):
+<span class="ansi-green-fg">   2674</span>         <span style="color: rgb(0,135,0)">setattr</span>(e, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">litellm_response_headers</span><span class="ansi-yellow-fg">"</span>, litellm_response_headers)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2675</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e  <span style="color: rgb(95,135,135)"># it's already mapped</span>
+<span class="ansi-green-fg">   2676</span> raised_exc: Final = APIConnectionError(
+<span class="ansi-green-fg">   2677</span>     message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>original_exception<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>_redact_string(traceback.format_exc())<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2678</span>     llm_provider=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2679</span>     model=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">   2680</span> )
+<span class="ansi-green-fg">   2681</span> <span style="color: rgb(0,135,0)">setattr</span>(raised_exc, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">litellm_response_headers</span><span class="ansi-yellow-fg">"</span>, litellm_response_headers)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:2436</span>, in <span class="ansi-cyan-fg">exception_type</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, completion_kwargs, extra_kwargs)</span>
+<span class="ansi-green-fg">   2422</span>     extract_and_raise_litellm_exception(
+<span class="ansi-green-fg">   2423</span>         response=<span style="color: rgb(0,135,0)">getattr</span>(original_exception, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">response</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>),
+<span class="ansi-green-fg">   2424</span>         error_str=error_str,
+<span class="ansi-green-fg">   2425</span>         model=model,
+<span class="ansi-green-fg">   2426</span>         custom_llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">   2427</span>     )
+<span class="ansi-green-fg">   2428</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (
+<span class="ansi-green-fg">   2429</span>     custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">openai</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   2430</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">text-completion-openai</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   2434</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">runwayml</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">   2435</span> ):
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2436</span>     <span class="ansi-black-fg ansi-yellow-bg">_map_openai_exception</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   2437</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">model</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2438</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">original_exception</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">mappable_exception</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2439</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">custom_llm_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2440</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">error_str</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">error_str</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2441</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">exception_type</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2442</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">exception_provider</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">exception_provider</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2443</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">extra_information</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">extra_information</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2444</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2445</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">anthropic</span><span class="ansi-yellow-fg">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> custom_llm_provider == <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">anthropic_text</span><span class="ansi-yellow-fg">"</span>:  <span style="color: rgb(95,135,135)"># one of the anthropics</span>
+<span class="ansi-green-fg">   2446</span>     _map_anthropic_exception(
+<span class="ansi-green-fg">   2447</span>         model=model,
+<span class="ansi-green-fg">   2448</span>         original_exception=mappable_exception,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   2453</span>         extra_information=extra_information,
+<span class="ansi-green-fg">   2454</span>     )
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">~/work/graphrag/graphrag/.venv/lib/python3.13/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py:409</span>, in <span class="ansi-cyan-fg">_map_openai_exception</span><span class="ansi-blue-fg">(model, original_exception, custom_llm_provider, error_str, exception_type, exception_provider, extra_information)</span>
+<span class="ansi-green-fg">    401</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> BadRequestError(
+<span class="ansi-green-fg">    402</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    403</span>         llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    406</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    407</span>     )
+<span class="ansi-green-fg">    408</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> original_exception.status_code == <span class="ansi-green-fg">401</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">409</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> AuthenticationError(
+<span class="ansi-green-fg">    410</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">AuthenticationError: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    411</span>         llm_provider=custom_llm_provider,
+<span class="ansi-green-fg">    412</span>         model=model,
+<span class="ansi-green-fg">    413</span>         response=<span style="color: rgb(0,135,0)">getattr</span>(original_exception, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">response</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>),
+<span class="ansi-green-fg">    414</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    415</span>     )
+<span class="ansi-green-fg">    416</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> original_exception.status_code == <span class="ansi-green-fg">404</span>:
+<span class="ansi-green-fg">    417</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> NotFoundError(
+<span class="ansi-green-fg">    418</span>         message=<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">NotFoundError: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>exception_provider<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg"> - </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>message<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>,
+<span class="ansi-green-fg">    419</span>         model=model,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    422</span>         litellm_debug_info=extra_information,
+<span class="ansi-green-fg">    423</span>     )
+
+<span class="ansi-red-fg">AuthenticationError</span>: litellm.AuthenticationError: AuthenticationError: OpenAIException - Error code: 401 - {'error': {'message': 'Incorrect API key provided: ArzIHXTm************************************************************************dHdW. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}</pre>
 </div>
 </div>
 </div>
