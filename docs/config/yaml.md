@@ -50,7 +50,7 @@ embedding_models:
 - `api_key` **str|None** - The OpenAI API key to use.
 - `api_base` **str|None** - The API base url to use.
 - `api_version` **str|None** - The API version.
-- `auth_method` **api_key|azure_managed_identity** - Indicate how you want to authenticate requests.
+- `auth_method` **api_key|azure_managed_identity|provider** - Indicate how you want to authenticate requests. `provider` delegates authentication to the LiteLLM provider; omit `api_key` and any credential overrides. See [provider-managed authentication](models.md#provider-managed-authentication).
 - `azure_deployment_name` **str|None** - The deployment name to use if your model is hosted on Azure. Note that if your deployment name on Azure matches the model name, this is unnecessary.
 - retry **RetryConfig|None** - Retry settings. default=`None`, no retries.
   - type **exponential_backoff|immediate** - Type of retry approach. default=`exponential_backoff`

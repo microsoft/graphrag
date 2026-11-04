@@ -237,7 +237,11 @@ def _create_base_completions(
     base_args: dict[str, Any] = {
         "drop_params": drop_unsupported_params,
         "model": f"{model_provider}/{model}",
-        "api_key": model_config.api_key,
+        **(
+            {"api_key": model_config.api_key}
+            if model_config.auth_method != AuthMethod.Provider
+            else {}
+        ),
         "api_base": model_config.api_base,
         "api_version": model_config.api_version,
         **model_config.call_args,
@@ -255,6 +259,7 @@ def _create_base_completions(
         mock_response: str | None = kwargs.pop("mock_response", None)
         json_object: bool | None = kwargs.pop("response_format_json_object", None)
         new_args: dict[str, Any] = {**base_args, **kwargs}
+        model_config.validate_provider_auth_args(new_args)
 
         if model_config.mock_responses and mock_response is not None:
             new_args["mock_response"] = mock_response
@@ -281,6 +286,7 @@ def _create_base_completions(
         mock_response: str | None = kwargs.pop("mock_response", None)
         json_object: bool | None = kwargs.pop("response_format_json_object", None)
         new_args: dict[str, Any] = {**base_args, **kwargs}
+        model_config.validate_provider_auth_args(new_args)
 
         if model_config.mock_responses and mock_response is not None:
             new_args["mock_response"] = mock_response
