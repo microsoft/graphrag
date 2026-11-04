@@ -28,6 +28,7 @@ def test_default_config() -> None:
 
 
 def test_load_provider_managed_models(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("GRAPHRAG_API_KEY", "unrelated-key")
     (tmp_path / "settings.yaml").write_text(
         """completion_models:
