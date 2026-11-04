@@ -57,7 +57,7 @@ class ModelConfig(BaseModel):
 
     auth_method: AuthMethod = Field(
         default=AuthMethod.ApiKey,
-        description="The authentication method to use. (default: api_key)",
+        description="The authentication method: api_key, azure_managed_identity, or provider (delegate authentication to LiteLLM). (default: api_key)",
     )
 
     azure_deployment_name: str | None = Field(
@@ -99,9 +99,38 @@ class ModelConfig(BaseModel):
             if self.api_key is not None:
                 msg = "api_key should not be set when using Azure Managed Identity."
                 raise ValueError(msg)
+        elif self.auth_method == AuthMethod.Provider:
+            if self.api_key is not None:
+                msg = "api_key should not be set when auth_method=provider."
+                raise ValueError(msg)
+            self.validate_provider_auth_args(self.call_args)
+            self.validate_provider_auth_args(self.model_extra or {})
         elif not self.api_key:
             msg = "api_key must be set when auth_method=api_key."
             raise ValueError(msg)
+
+    def validate_provider_auth_args(self, args: dict[str, Any]) -> None:
+        """Reject credential overrides when authentication belongs to the provider."""
+        if self.auth_method != AuthMethod.Provider:
+            return
+        credential_args = {
+            "api_key",
+            "api_token",
+            "azure_ad_token",
+            "azure_ad_token_provider",
+        }
+        conflicting_args = credential_args.intersection(args)
+        if conflicting_args:
+            msg = f"Credential arguments should not be set when auth_method=provider: {', '.join(sorted(conflicting_args))}."
+            raise ValueError(msg)
+        for header_arg in ("headers", "extra_headers"):
+            headers = args.get(header_arg)
+            if isinstance(headers, dict) and any(
+                str(name).lower() in {"authorization", "api-key", "x-api-key"}
+                for name in headers
+            ):
+                msg = f"Authentication headers in {header_arg} should not be set when auth_method=provider."
+                raise ValueError(msg)
 
     @model_validator(mode="after")
     def _validate_model(self):

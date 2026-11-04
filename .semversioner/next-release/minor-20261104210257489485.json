@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Add explicit provider-managed authentication for LiteLLM completion and embedding models."
+}

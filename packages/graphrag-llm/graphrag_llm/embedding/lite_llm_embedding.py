@@ -170,7 +170,11 @@ def _create_base_embeddings(
     base_args: dict[str, Any] = {
         "drop_params": drop_unsupported_params,
         "model": f"{model_provider}/{model}",
-        "api_key": model_config.api_key,
+        **(
+            {"api_key": model_config.api_key}
+            if model_config.auth_method != AuthMethod.Provider
+            else {}
+        ),
         "api_base": model_config.api_base,
         "api_version": model_config.api_version,
         **model_config.call_args,
@@ -184,6 +188,7 @@ def _create_base_embeddings(
     def _base_embedding(**kwargs: Any) -> LLMEmbeddingResponse:
         kwargs.pop("metrics", None)  # Remove metrics if present
         new_args: dict[str, Any] = {**base_args, **kwargs}
+        model_config.validate_provider_auth_args(new_args)
 
         response = litellm.embedding(**new_args)
         return LLMEmbeddingResponse(**response.model_dump())
@@ -191,6 +196,7 @@ def _create_base_embeddings(
     async def _base_embedding_async(**kwargs: Any) -> LLMEmbeddingResponse:
         kwargs.pop("metrics", None)  # Remove metrics if present
         new_args: dict[str, Any] = {**base_args, **kwargs}
+        model_config.validate_provider_auth_args(new_args)
 
         response = await litellm.aembedding(**new_args)
         return LLMEmbeddingResponse(**response.model_dump())

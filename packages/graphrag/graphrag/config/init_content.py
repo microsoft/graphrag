@@ -20,8 +20,8 @@ completion_models:
   {defs.DEFAULT_COMPLETION_MODEL_ID}:
     model_provider: {defs.DEFAULT_MODEL_PROVIDER}
     model: <DEFAULT_COMPLETION_MODEL>
-    auth_method: {defs.DEFAULT_COMPLETION_MODEL_AUTH_TYPE} # or azure_managed_identity
-    api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file, or remove if managed identity
+    auth_method: {defs.DEFAULT_COMPLETION_MODEL_AUTH_TYPE} # or azure_managed_identity, provider
+    api_key: ${{GRAPHRAG_API_KEY}} # set in .env; remove for managed identity or provider auth
     retry:
       type: exponential_backoff
 
@@ -29,8 +29,8 @@ embedding_models:
   {defs.DEFAULT_EMBEDDING_MODEL_ID}:
     model_provider: {defs.DEFAULT_MODEL_PROVIDER}
     model: <DEFAULT_EMBEDDING_MODEL>
-    auth_method: {defs.DEFAULT_EMBEDDING_MODEL_AUTH_TYPE}
-    api_key: ${{GRAPHRAG_API_KEY}}
+    auth_method: {defs.DEFAULT_EMBEDDING_MODEL_AUTH_TYPE} # or azure_managed_identity, provider
+    api_key: ${{GRAPHRAG_API_KEY}} # remove for managed identity or provider auth
     retry:
       type: exponential_backoff
 

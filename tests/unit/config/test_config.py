@@ -7,6 +7,7 @@ from unittest import mock
 
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag_llm.config import AuthMethod
 
 from tests.unit.config.utils import (
     DEFAULT_COMPLETION_MODELS,
@@ -24,6 +25,31 @@ def test_default_config() -> None:
         embedding_models=DEFAULT_EMBEDDING_MODELS,  # type: ignore
     )
     assert_graphrag_configs(actual, expected)
+
+
+def test_load_provider_managed_models(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setenv("GRAPHRAG_API_KEY", "unrelated-key")
+    (tmp_path / "settings.yaml").write_text(
+        """completion_models:
+  default_completion_model:
+    model_provider: github_copilot
+    model: gpt-4o
+    auth_method: provider
+embedding_models:
+  default_embedding_model:
+    model_provider: github_copilot
+    model: text-embedding-3-small
+    auth_method: provider
+""",
+        encoding="utf-8",
+    )
+    config = load_config(tmp_path)
+    completion = config.completion_models["default_completion_model"]
+    embedding = config.embedding_models["default_embedding_model"]
+    assert completion.auth_method == AuthMethod.Provider
+    assert embedding.auth_method == AuthMethod.Provider
+    assert completion.api_key is None
+    assert embedding.api_key is None
 
 
 @mock.patch.dict(os.environ, {"CUSTOM_API_KEY": FAKE_API_KEY}, clear=True)
