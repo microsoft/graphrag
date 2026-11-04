@@ -191,7 +191,7 @@ def _create_base_embeddings(
         model_config.validate_provider_auth_args(new_args)
 
         response = litellm.embedding(**new_args)
-        return LLMEmbeddingResponse(**response.model_dump())
+        return _convert_embedding_response(response, new_args["model"])
 
     async def _base_embedding_async(**kwargs: Any) -> LLMEmbeddingResponse:
         kwargs.pop("metrics", None)  # Remove metrics if present
@@ -199,6 +199,16 @@ def _create_base_embeddings(
         model_config.validate_provider_auth_args(new_args)
 
         response = await litellm.aembedding(**new_args)
-        return LLMEmbeddingResponse(**response.model_dump())
+        return _convert_embedding_response(response, new_args["model"])
 
     return _base_embedding, _base_embedding_async
+
+
+def _convert_embedding_response(
+    response: litellm.EmbeddingResponse, requested_model: str
+) -> LLMEmbeddingResponse:
+    """Convert a response, retaining the requested model if the provider omits it."""
+    data = response.model_dump()
+    if data.get("model") is None:
+        data["model"] = requested_model
+    return LLMEmbeddingResponse(**data)

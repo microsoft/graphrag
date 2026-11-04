@@ -13,6 +13,7 @@ from graphrag_llm.config import AuthMethod, MetricsConfig, ModelConfig
 from graphrag_llm.embedding import create_embedding
 from graphrag_llm.types import LLMCompletionResponse
 from litellm.types.utils import Delta, ModelResponseStream, StreamingChoices, Usage
+from pydantic import ValidationError
 
 
 @pytest.mark.parametrize("request_type", ["chat", "embedding"])
@@ -249,3 +250,88 @@ async def test_existing_auth_preserves_credential_arguments(
         assert args["api_key"] is None
         assert args["azure_ad_token_provider"] is token_provider
         get_provider.assert_called_once()
+
+
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize(
+    "model_fields",
+    [{}, {"model": None}, {"model": "actual-upstream-model"}, {"model": ""}],
+)
+@pytest.mark.parametrize(
+    "requested_model",
+    ["github_copilot/text-embedding-3-small", "github_copilot/request-override"],
+)
+async def test_embedding_response_model_normalization(
+    monkeypatch: pytest.MonkeyPatch,
+    is_async: bool,
+    model_fields,
+    requested_model: str,
+) -> None:
+    response_data = {
+        "object": "list",
+        "data": [
+            {"object": "embedding", "index": 0, "embedding": [0.1, 0.2]},
+            {"object": "embedding", "index": 1, "embedding": [0.3, 0.4]},
+        ],
+        "usage": {"prompt_tokens": 4, "total_tokens": 4},
+        **model_fields,
+    }
+    upstream = Mock(spec=litellm.EmbeddingResponse)
+    upstream.model_dump.return_value = response_data.copy()
+    request = (
+        AsyncMock(return_value=upstream) if is_async else Mock(return_value=upstream)
+    )
+    monkeypatch.setattr(litellm, "aembedding" if is_async else "embedding", request)
+    model = create_embedding(
+        ModelConfig(
+            model_provider="github_copilot",
+            model="text-embedding-3-small",
+            auth_method=AuthMethod.Provider,
+            metrics=None,
+            call_args={"model": requested_model},
+        )
+    )
+    if is_async:
+        result = await model.embedding_async(input=["first", "second"])
+    else:
+        result = model.embedding(input=["first", "second"])
+    expected_model = model_fields.get("model")
+    if expected_model is None:
+        expected_model = requested_model
+    assert result.model == expected_model
+    assert request.call_args.kwargs["model"] == requested_model
+    assert result.embeddings == [[0.1, 0.2], [0.3, 0.4]]
+    assert [item.index for item in result.data] == [0, 1]
+    assert result.usage.prompt_tokens == 4
+    assert result.usage.total_tokens == 4
+
+
+@pytest.mark.parametrize("is_async", [False, True])
+async def test_embedding_response_invalid_model_still_rejected(
+    monkeypatch: pytest.MonkeyPatch, is_async: bool
+) -> None:
+    upstream = Mock(spec=litellm.EmbeddingResponse)
+    upstream.model_dump.return_value = {
+        "object": "list",
+        "data": [],
+        "model": 123,
+        "usage": {"prompt_tokens": 0, "total_tokens": 0},
+    }
+    request = (
+        AsyncMock(return_value=upstream) if is_async else Mock(return_value=upstream)
+    )
+    monkeypatch.setattr(litellm, "aembedding" if is_async else "embedding", request)
+    model = create_embedding(
+        ModelConfig(
+            model_provider="github_copilot",
+            model="text-embedding-3-small",
+            auth_method=AuthMethod.Provider,
+            metrics=None,
+        )
+    )
+    if is_async:
+        with pytest.raises(ValidationError, match="model"):
+            await model.embedding_async(input=["hello"])
+    else:
+        with pytest.raises(ValidationError, match="model"):
+            model.embedding(input=["hello"])
