@@ -52,6 +52,8 @@ embedding_models:
 
 Use model identifiers available to your provider and account. Model availability,
 embedding dimensions, and structured-output support must meet your workflow's requirements.
+If LiteLLM has no pricing metadata for a model, GraphRAG records token and request
+usage, logs a warning, and omits unavailable cost metrics rather than treating them as zero.
 All inference still goes through GraphRAG -> LiteLLM -> the provider API.
 LiteLLM owns device-flow login, credential caching, refresh, and HTTP transport.
 An initial request can require interactive login; provision the LiteLLM provider's

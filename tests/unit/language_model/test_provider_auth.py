@@ -12,7 +12,7 @@ from graphrag_llm.completion import create_completion
 from graphrag_llm.config import AuthMethod, MetricsConfig, ModelConfig
 from graphrag_llm.embedding import create_embedding
 from graphrag_llm.types import LLMCompletionResponse
-from litellm.types.utils import Delta, ModelResponseStream, StreamingChoices
+from litellm.types.utils import Delta, ModelResponseStream, StreamingChoices, Usage
 
 
 @pytest.mark.parametrize("request_type", ["chat", "embedding"])
@@ -20,6 +20,7 @@ from litellm.types.utils import Delta, ModelResponseStream, StreamingChoices
 @pytest.mark.parametrize("with_metrics", [False, True])
 async def test_provider_auth_omits_credentials(
     monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
     request_type: str,
     is_async: bool,
     with_metrics: bool,
@@ -38,6 +39,7 @@ async def test_provider_auth_omits_credentials(
         response = litellm.ModelResponse(
             model=model_name,
             choices=[{"message": {"role": "assistant", "content": "hello"}}],
+            usage={"prompt_tokens": 2, "completion_tokens": 1, "total_tokens": 3},
         )
         function_name = "acompletion" if is_async else "completion"
     else:
@@ -45,6 +47,7 @@ async def test_provider_auth_omits_credentials(
         response = litellm.EmbeddingResponse(
             model=model_name,
             data=[{"object": "embedding", "index": 0, "embedding": [0.1, 0.2]}],
+            usage=Usage(prompt_tokens=2, completion_tokens=0, total_tokens=2),
         )
         function_name = "aembedding" if is_async else "embedding"
     request = (
@@ -81,6 +84,14 @@ async def test_provider_auth_omits_credentials(
     assert "azure_ad_token" not in args
     assert "azure_ad_token_provider" not in args
     azure_credential.assert_not_called()
+    if with_metrics:
+        metrics = model.metrics_store.get_metrics()
+        assert metrics["prompt_tokens"] >= 2
+        assert metrics["responses_with_tokens"] >= 1
+        assert metrics["successful_response_count"] >= 1
+        assert "responses_with_cost" not in metrics
+        assert "total_cost" not in metrics
+        assert "pricing unavailable" in caplog.text
 
 
 @pytest.mark.parametrize("request_type", ["chat", "embedding"])
