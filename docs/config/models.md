@@ -61,6 +61,19 @@ LiteLLM owns device-flow login, credential caching, refresh, and HTTP transport.
 An initial request can require interactive login; provision the LiteLLM provider's
 authentication before running unattended jobs. GraphRAG does not manage or copy tokens.
 
+For GitHub Copilot, run this interactively from the repository root with your `uv`
+environment already prepared:
+
+```shell
+uv run --no-sync python -u -c "from litellm.llms.github_copilot.authenticator import Authenticator; Authenticator().get_api_key(); print('LiteLLM Copilot authentication succeeded.')"
+```
+
+Complete the displayed device login in your browser using your Copilot-enabled account.
+LiteLLM caches the credentials for subsequent chat and embedding requests. This login
+is separate from signing in to GitHub Copilot CLI. See the upstream
+[LiteLLM GitHub Copilot documentation](https://docs.litellm.ai/docs/providers/github_copilot)
+for authentication details.
+
 Remove `api_key` entirely, including `${GRAPHRAG_API_KEY}` placeholders from generated
 settings. Provider mode rejects an explicitly configured key (even an empty string),
 `api_key`, `api_token`, `azure_ad_token`, or `azure_ad_token_provider` overrides in
