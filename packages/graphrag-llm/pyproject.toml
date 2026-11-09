@@ -32,17 +32,17 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "azure-identity~=1.25",
+    "azure-identity~=1.27",
     # fastapi is required for litellm tool calling. https://github.com/BerriAI/litellm/issues/32993
-    "fastapi>=0.136.3,<1.0",
+    "fastapi>=0.162.0,<1.0",
     "graphrag-cache==3.3.0",
     "graphrag-common==3.3.0",
     "jinja2~=3.1",
-    "litellm==1.100.1",
+    "litellm==1.106.6",
     "nest-asyncio2~=1.7",
     # orjson is required for litellm tool calling. https://github.com/BerriAI/litellm/issues/32993
-    "orjson>=3.11.6,<4.0",
-    "pydantic~=2.13",
+    "orjson>=3.13.0,<4.0",
+    "pydantic~=2.14",
     "typing-extensions~=4.16",
 ]
 

@@ -31,14 +31,14 @@ classifiers = [
 ]
 dependencies = [
     "azure-core~=1.41",
-    "azure-cosmos~=4.16",
-    "azure-identity~=1.25",
+    "azure-cosmos~=4.17",
+    "azure-identity~=1.27",
     "azure-search-documents~=12.0",
     "graphrag-common==3.3.0",
-    "lancedb~=0.38.0",
+    "lancedb~=0.41.0",
     "numpy~=2.4",
-    "pyarrow~=25.0",
-    "pydantic~=2.13",
+    "pyarrow~=26.0",
+    "pydantic~=2.14",
 ]
 
 [project.urls]
