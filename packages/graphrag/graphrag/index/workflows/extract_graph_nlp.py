@@ -52,6 +52,10 @@ async def run_workflow(
             relationships_table=relationships_table,
             text_analyzer=text_analyzer,
             normalize_edge_weights=(config.extract_graph_nlp.normalize_edge_weights),
+            max_entities_per_chunk=(
+                config.extract_graph_nlp.max_entities_per_chunk
+            ),
+            min_co_occurrence=config.extract_graph_nlp.min_co_occurrence,
         )
 
     logger.info("Workflow completed: extract_graph_nlp")
@@ -65,6 +69,8 @@ async def extract_graph_nlp(
     relationships_table: Table,
     text_analyzer: BaseNounPhraseExtractor,
     normalize_edge_weights: bool,
+    max_entities_per_chunk: int = 0,
+    min_co_occurrence: int = 1,
 ) -> dict[str, list[dict[str, Any]]]:
     """Extract noun-phrase graph and stream results to output tables."""
     extracted_nodes, extracted_edges = await build_noun_graph(
@@ -72,6 +78,8 @@ async def extract_graph_nlp(
         text_analyzer=text_analyzer,
         normalize_edge_weights=normalize_edge_weights,
         cache=cache,
+        max_entities_per_chunk=max_entities_per_chunk,
+        min_co_occurrence=min_co_occurrence,
     )
 
     if len(extracted_nodes) == 0:
