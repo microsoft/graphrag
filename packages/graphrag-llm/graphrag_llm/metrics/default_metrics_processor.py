@@ -3,11 +3,14 @@
 
 """Default Metrics Processor."""
 
+import logging
 from typing import TYPE_CHECKING, Any
 
 from graphrag_llm.metrics.metrics_processor import MetricsProcessor
 from graphrag_llm.model_cost_registry import model_cost_registry
 from graphrag_llm.types import LLMCompletionResponse, LLMEmbeddingResponse
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Iterator
@@ -91,7 +94,14 @@ class DefaultMetricsProcessor(MetricsProcessor):
             model_id = f"{model_config.model_provider}/{model_config.model}"
             model_costs = model_cost_registry.get_model_costs(model_id)
 
-            if not model_costs:
+            if not model_costs or not {
+                "input_cost_per_token",
+                "output_cost_per_token",
+            }.issubset(model_costs):
+                logger.warning(
+                    "Completion pricing unavailable for model %s; token usage is recorded but cost metrics are omitted.",
+                    model_id,
+                )
                 return
 
             input_cost = prompt_tokens * model_costs["input_cost_per_token"]
@@ -121,7 +131,11 @@ class DefaultMetricsProcessor(MetricsProcessor):
             model_id = f"{model_config.model_provider}/{model_config.model}"
             model_costs = model_cost_registry.get_model_costs(model_id)
 
-            if not model_costs:
+            if not model_costs or "input_cost_per_token" not in model_costs:
+                logger.warning(
+                    "Embedding pricing unavailable for model %s; token usage is recorded but cost metrics are omitted.",
+                    model_id,
+                )
                 return
 
             input_cost = prompt_tokens * model_costs["input_cost_per_token"]

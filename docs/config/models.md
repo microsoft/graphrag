@@ -28,6 +28,65 @@ embedding_models:
 
 See [Detailed Configuration](yaml.md) for more details on configuration. [View LiteLLM basic usage](https://docs.litellm.ai/docs/#basic-usage) for details on how models are called (The `model_provider` is the portion prior to `/` while the `model` is the portion following the `/`).
 
+## Provider-managed Authentication
+
+Some LiteLLM providers manage their own authentication instead of accepting an API key.
+Set `auth_method: provider` explicitly for these providers, for both completion and
+embedding models. For example, LiteLLM's `github_copilot` provider supports:
+
+```yaml
+completion_models:
+  default_completion_model:
+    type: litellm
+    model_provider: github_copilot
+    model: gpt-4o
+    auth_method: provider
+
+embedding_models:
+  default_embedding_model:
+    type: litellm
+    model_provider: github_copilot
+    model: text-embedding-3-small
+    auth_method: provider
+```
+
+Use model identifiers available to your provider and account. Model availability,
+embedding dimensions, and structured-output support must meet your workflow's requirements.
+If LiteLLM has no pricing metadata for a model, GraphRAG records token and request
+usage, logs a warning, and omits unavailable cost metrics rather than treating them as zero.
+If an embedding response omits its model identifier, GraphRAG uses the model
+identifier sent in that request; any model identifier returned by the provider is preserved.
+All inference still goes through GraphRAG -> LiteLLM -> the provider API.
+LiteLLM owns device-flow login, credential caching, refresh, and HTTP transport.
+An initial request can require interactive login; provision the LiteLLM provider's
+authentication before running unattended jobs. GraphRAG does not manage or copy tokens.
+
+For GitHub Copilot, run this interactively from the repository root with your `uv`
+environment already prepared:
+
+```shell
+uv run --no-sync python -u -c "from litellm.llms.github_copilot.authenticator import Authenticator; Authenticator().get_api_key(); print('LiteLLM Copilot authentication succeeded.')"
+```
+
+Complete the displayed device login in your browser using your Copilot-enabled account.
+LiteLLM caches the credentials for subsequent chat and embedding requests. This login
+is separate from signing in to GitHub Copilot CLI. See the upstream
+[LiteLLM GitHub Copilot documentation](https://docs.litellm.ai/docs/providers/github_copilot)
+for authentication details.
+
+Remove `api_key` entirely, including `${GRAPHRAG_API_KEY}` placeholders from generated
+settings. Provider mode rejects an explicitly configured key (even an empty string),
+`api_key`, `api_token`, `azure_ad_token`, or `azure_ad_token_provider` overrides in
+`call_args` or per-call arguments, and authentication headers in `headers` or
+`extra_headers`. Non-authentication headers and normal generation arguments remain
+available. GraphRAG omits its API-key argument and does not create an Azure credential.
+This does not disable environment variables or credential stores used internally by
+LiteLLM; use the intended provider's documented authentication setup.
+
+The default `auth_method: api_key` still requires a nonempty key.
+`auth_method: azure_managed_identity` remains the Azure authentication option.
+Provider mode does not imply that every LiteLLM provider supports keyless authentication.
+
 ## Model Selection Considerations
 
 GraphRAG has been most thoroughly tested with the gpt-4 series of models from OpenAI, including gpt-4 gpt-4-turbo, gpt-4o, and gpt-4o-mini. Our [arXiv paper](https://arxiv.org/abs/2404.16130), for example, performed quality evaluation using gpt-4-turbo. As stated above, non-OpenAI models are supported through the use of LiteLLM but the suite of gpt-4 series of models from OpenAI remain the most tested and supported suite of models for GraphRAG – in other words, these are the models we know best and can help resolve issues with.
