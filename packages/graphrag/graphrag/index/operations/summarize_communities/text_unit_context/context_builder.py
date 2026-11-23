@@ -166,8 +166,8 @@ def build_level_context(
     sub_context_df = sub_context_df.merge(
         sub_report_df, on=schemas.COMMUNITY_ID, how="left"
     )
-    sub_context_df.rename(
-        columns={schemas.COMMUNITY_ID: schemas.SUB_COMMUNITY}, inplace=True
+    sub_context_df = sub_context_df.rename(
+        columns={schemas.COMMUNITY_ID: schemas.SUB_COMMUNITY}
     )
 
     # collect all sub communities' contexts for each community

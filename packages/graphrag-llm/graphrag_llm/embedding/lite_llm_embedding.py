@@ -3,7 +3,7 @@
 
 """LLMEmbedding based on litellm."""
 
-from typing import TYPE_CHECKING, Any, Unpack
+from typing import TYPE_CHECKING, Any, Unpack, cast
 
 import litellm
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
@@ -185,7 +185,7 @@ def _create_base_embeddings(
         kwargs.pop("metrics", None)  # Remove metrics if present
         new_args: dict[str, Any] = {**base_args, **kwargs}
 
-        response = litellm.embedding(**new_args)
+        response = cast("litellm.EmbeddingResponse", litellm.embedding(**new_args))
         return LLMEmbeddingResponse(**response.model_dump())
 
     async def _base_embedding_async(**kwargs: Any) -> LLMEmbeddingResponse:
