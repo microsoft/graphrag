@@ -41,6 +41,7 @@ jobs:
       GRAPHRAG_API_BASE: ${{ secrets.GRAPHRAG_API_BASE }}
 
     runs-on: ${{ matrix.os }}
+    environment: integration # scopes the Azure OIDC subject to this environment
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
