@@ -20,6 +20,7 @@ on:
 permissions:
   contents: read
   pull-requests: read
+  id-token: write # required for Azure OIDC login
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -37,7 +38,6 @@ jobs:
       fail-fast: false # Continue running all jobs even if one fails
     env:
       DEBUG: 1
-      GRAPHRAG_API_KEY: ${{ secrets.GRAPHRAG_API_KEY }}
       GRAPHRAG_API_BASE: ${{ secrets.GRAPHRAG_API_BASE }}
 
     runs-on: ${{ matrix.os }}
@@ -69,6 +69,15 @@ jobs:
         shell: bash
         run: |
           uv sync --all-packages
+
+      # The notebooks fall back to Entra ID auth when GRAPHRAG_API_KEY is unset;
+      # DefaultAzureCredential picks up this Azure CLI login.
+      - name: Azure login (OIDC)
+        uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Notebook Test
         run: |
