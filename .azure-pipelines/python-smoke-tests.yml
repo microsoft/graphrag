@@ -6,6 +6,7 @@
 #
 # Pipeline variables (set in Azure DevOps, not in this file):
 #   GRAPHRAG_API_BASE - Azure OpenAI endpoint
+#   AZURE_AI_SEARCH_URL_ENDPOINT - Azure AI Search endpoint (Entra ID auth, no key)
 
 trigger:
   branches:
@@ -31,12 +32,6 @@ pr:
 
 variables:
   pythonVersion: "3.13"
-  # Only the min-csv fixture runs for now: the text fixture also needs
-  # Azure AI Search, which is not configured for this pipeline yet.
-  smokeFixtures: min-csv
-  # The test harness requires these to be set even for fixtures that use LanceDB.
-  AZURE_AI_SEARCH_URL_ENDPOINT: https://unused.invalid
-  AZURE_AI_SEARCH_API_KEY: unused
 
 jobs:
   - job: smoke_tests
@@ -65,7 +60,7 @@ jobs:
       - script: uv build --all-packages
         displayName: Build
 
-      # The fixtures use auth_method: azure_managed_identity;
+      # The fixtures use Entra ID auth for Azure OpenAI and Azure AI Search;
       # DefaultAzureCredential picks up the Azure CLI login made by this task.
       - task: AzureCLI@2
         displayName: Smoke Test
@@ -73,10 +68,11 @@ jobs:
           azureSubscription: graphrag-oss-ci
           scriptType: pscore
           scriptLocation: inlineScript
-          inlineScript: uv run pytest ./tests/smoke -k "$(smokeFixtures)"
+          inlineScript: uv run poe test_smoke
         env:
           DEBUG: 1
           GRAPHRAG_API_BASE: $(GRAPHRAG_API_BASE)
+          AZURE_AI_SEARCH_URL_ENDPOINT: $(AZURE_AI_SEARCH_URL_ENDPOINT)
 
       - publish: tests/fixtures
         artifact: smoke-test-artifacts-$(Agent.OS)
