@@ -8,6 +8,7 @@ from typing import Any
 import lancedb
 import numpy as np
 import pyarrow as pa
+from lancedb.index import IvfFlat
 
 from graphrag_vectors.filtering import (
     AndExpr,
@@ -71,9 +72,7 @@ class LanceDBVectorStore(VectorStore):
         )
 
         # Create index now that schema exists
-        self.document_collection.create_index(
-            vector_column_name=self.vector_field, index_type="IVF_FLAT"
-        )
+        self.document_collection.create_index(self.vector_field, config=IvfFlat())
 
         # Remove the dummy document used to set up the schema
         self.document_collection.delete(f"{self.id_field} = '__DUMMY__'")

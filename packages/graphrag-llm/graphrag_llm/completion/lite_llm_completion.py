@@ -4,7 +4,7 @@
 """LLMCompletion based on litellm."""
 
 from collections.abc import AsyncIterator, Iterator
-from typing import TYPE_CHECKING, Any, Unpack
+from typing import TYPE_CHECKING, Any, Unpack, cast
 
 import litellm
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
@@ -262,8 +262,9 @@ def _create_base_completions(
         if json_object and "response_format" not in new_args:
             new_args["response_format"] = {"type": "json_object"}
 
-        response = litellm.completion(
-            **new_args,
+        response = cast(
+            "ModelResponse | litellm.CustomStreamWrapper",
+            litellm.completion(**new_args),
         )
         if isinstance(response, ModelResponse):
             return LLMCompletionResponse(**response.model_dump())
