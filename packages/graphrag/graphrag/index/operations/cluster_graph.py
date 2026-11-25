@@ -64,7 +64,7 @@ def _compute_leiden_communities(
     hi = edge_df[["source", "target"]].max(axis=1)
     edge_df["source"] = lo
     edge_df["target"] = hi
-    edge_df.drop_duplicates(subset=["source", "target"], keep="last", inplace=True)
+    edge_df = edge_df.drop_duplicates(subset=["source", "target"], keep="last")
 
     if use_lcc:
         edge_df = stable_lcc(edge_df)

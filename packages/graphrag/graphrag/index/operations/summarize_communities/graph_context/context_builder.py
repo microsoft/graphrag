@@ -125,8 +125,8 @@ def _prepare_reports_at_level(
     ].combine_first(merged_node_df.loc[:, f"{schemas.EDGE_DETAILS}_y"])
 
     # Drop intermediate columns
-    merged_node_df.drop(
-        columns=[f"{schemas.EDGE_DETAILS}_x", f"{schemas.EDGE_DETAILS}_y"], inplace=True
+    merged_node_df = merged_node_df.drop(
+        columns=[f"{schemas.EDGE_DETAILS}_x", f"{schemas.EDGE_DETAILS}_y"]
     )
 
     # Aggregate node and edge details
@@ -314,10 +314,7 @@ def _get_subcontext_df(
     sub_report_df = _drop_community_level(_at_level(level, report_df))
     sub_context_df = _at_level(level, local_context_df)
     sub_context_df = join(sub_context_df, sub_report_df, schemas.COMMUNITY_ID)
-    sub_context_df.rename(
-        columns={schemas.COMMUNITY_ID: schemas.SUB_COMMUNITY}, inplace=True
-    )
-    return sub_context_df
+    return sub_context_df.rename(columns={schemas.COMMUNITY_ID: schemas.SUB_COMMUNITY})
 
 
 def _get_community_df(

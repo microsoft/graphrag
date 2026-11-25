@@ -38,9 +38,9 @@ async def _prep_tables():
 
     # edit the tables to eliminate final fields that wouldn't be on the inputs
     entities = load_test_table("entities")
-    entities.drop(columns=["degree"], inplace=True)
+    entities = entities.drop(columns=["degree"])
     await context.output_table_provider.write_dataframe("entities", entities)
     relationships = load_test_table("relationships")
-    relationships.drop(columns=["combined_degree"], inplace=True)
+    relationships = relationships.drop(columns=["combined_degree"])
     await context.output_table_provider.write_dataframe("relationships", relationships)
     return context
