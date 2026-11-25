@@ -1,0 +1,84 @@
+# Python Smoke Tests (Azure DevOps)
+#
+# Runs the smoke tests against Azure OpenAI with Entra ID auth (no API key).
+# These run in Azure DevOps because GitHub-hosted Actions runners cannot obtain
+# Entra ID tokens for the tenant that hosts the Azure OpenAI resource.
+#
+# Pipeline variables (set in Azure DevOps, not in this file):
+#   GRAPHRAG_API_BASE - Azure OpenAI endpoint
+
+trigger:
+  branches:
+    include:
+      - main
+      - "*/main" # match branches like feature/main
+  paths:
+    exclude:
+      - "**/*.md"
+      - .semversioner
+
+pr:
+  autoCancel: true # only run for the latest commit
+  drafts: false # skip draft PRs
+  branches:
+    include:
+      - main
+      - "*/main"
+  paths:
+    exclude:
+      - "**/*.md"
+      - .semversioner
+
+variables:
+  pythonVersion: "3.13"
+  # Only the min-csv fixture runs for now: the text fixture also needs
+  # Azure AI Search, which is not configured for this pipeline yet.
+  smokeFixtures: min-csv
+  # The test harness requires these to be set even for fixtures that use LanceDB.
+  AZURE_AI_SEARCH_URL_ENDPOINT: https://unused.invalid
+  AZURE_AI_SEARCH_API_KEY: unused
+
+jobs:
+  - job: smoke_tests
+    displayName: Smoke tests
+    timeoutInMinutes: 90
+    strategy:
+      matrix:
+        ubuntu:
+          vmImage: ubuntu-latest
+        windows:
+          vmImage: windows-latest
+    pool:
+      vmImage: $(vmImage)
+    steps:
+      - task: UsePythonVersion@0
+        displayName: Set up Python $(pythonVersion)
+        inputs:
+          versionSpec: $(pythonVersion)
+
+      - script: python -m pip install uv
+        displayName: Install uv
+
+      - script: uv sync --all-packages
+        displayName: Install dependencies
+
+      - script: uv build --all-packages
+        displayName: Build
+
+      # The fixtures use auth_method: azure_managed_identity;
+      # DefaultAzureCredential picks up the Azure CLI login made by this task.
+      - task: AzureCLI@2
+        displayName: Smoke Test
+        inputs:
+          azureSubscription: graphrag-oss-ci
+          scriptType: pscore
+          scriptLocation: inlineScript
+          inlineScript: uv run pytest ./tests/smoke -k "$(smokeFixtures)"
+        env:
+          DEBUG: 1
+          GRAPHRAG_API_BASE: $(GRAPHRAG_API_BASE)
+
+      - publish: tests/fixtures
+        artifact: smoke-test-artifacts-$(Agent.OS)
+        displayName: Upload smoke test artifacts
+        condition: always()
