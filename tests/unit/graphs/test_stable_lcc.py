@@ -94,21 +94,37 @@ def test_shuffled_rows_produce_same_result():
 
 
 # ---------------------------------------------------------------------------
-# Name normalization tests
+# Name preservation tests
 # ---------------------------------------------------------------------------
 
 
-def test_normalizes_node_names():
-    """Node names should be uppercased, stripped, and HTML-unescaped."""
+def test_preserves_node_names():
+    """Node names must be preserved verbatim (case, whitespace, HTML entities).
+
+    Downstream community construction matches cluster labels against the
+    original entity titles with an exact, case-sensitive lookup, so any
+    mutation here would silently drop mixed-case entities (issue #2427).
+    """
     rels = _make_relationships(
         ("  alice  ", "bob", 1.0),
         ("bob", "carol &amp; dave", 1.0),
     )
     result = stable_lcc(rels)
     all_nodes = set(result["source"]).union(result["target"])
-    assert "ALICE" in all_nodes
-    assert "BOB" in all_nodes
-    assert "CAROL & DAVE" in all_nodes
+    assert "  alice  " in all_nodes
+    assert "bob" in all_nodes
+    assert "carol &amp; dave" in all_nodes
+
+
+def test_mixed_case_nodes_survive_lcc():
+    """A mixed-case node connected to the LCC must not be dropped or renamed."""
+    rels = _make_relationships(
+        ("Alice", "Bob", 1.0),
+        ("Bob", "FooBar", 1.0),
+    )
+    result = stable_lcc(rels)
+    all_nodes = set(result["source"]).union(result["target"])
+    assert all_nodes == {"Alice", "Bob", "FooBar"}
 
 
 # ---------------------------------------------------------------------------
