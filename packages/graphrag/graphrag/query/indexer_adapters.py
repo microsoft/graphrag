@@ -219,7 +219,16 @@ def embed_community_reports(
 def _filter_under_community_level(
     df: pd.DataFrame, community_level: int
 ) -> pd.DataFrame:
+    nan_count = df.level.isna().sum()
+    if nan_count > 0:
+        orphan_pct = nan_count / len(df) * 100
+        if orphan_pct > 10:
+            logger.warning(
+                "%.0f%% of entities have no community assignment. "
+                "Consider checking your community detection settings.",
+                orphan_pct,
+            )
     return cast(
         "pd.DataFrame",
-        df[df.level <= community_level],
+        df[(df.level <= community_level) | df.level.isna()],
     )
