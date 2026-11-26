@@ -4,6 +4,8 @@
 """A module containing 'SummarizationResult' and 'SummarizeExtractor' models."""
 
 import json
+import logging
+import traceback
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -12,6 +14,8 @@ from graphrag.index.typing.error_handler import ErrorHandlerFn
 if TYPE_CHECKING:
     from graphrag_llm.completion import LLMCompletion
     from graphrag_llm.types import LLMCompletionResponse
+
+logger = logging.getLogger(__name__)
 
 # these tokens are used in the prompt
 ENTITY_NAME_KEY = "entity_name"
@@ -59,18 +63,33 @@ class SummarizeExtractor:
         descriptions: list[str],
     ) -> SummarizationResult:
         """Call method definition."""
-        result = ""
-        if len(descriptions) == 0:
+        try:
             result = ""
-        elif len(descriptions) == 1:
-            result = descriptions[0]
-        else:
-            result = await self._summarize_descriptions(id, descriptions)
+            if len(descriptions) == 0:
+                result = ""
+            elif len(descriptions) == 1:
+                result = descriptions[0]
+            else:
+                result = await self._summarize_descriptions(id, descriptions)
 
-        return SummarizationResult(
-            id=id,
-            description=result or "",
-        )
+            return SummarizationResult(
+                id=id,
+                description=result or "",
+            )
+        except Exception as e:  # pragma: no cover - defensive logging
+            logger.exception("error summarizing descriptions")
+            self._on_error(
+                e,
+                traceback.format_exc(),
+                {
+                    "id": id,
+                    "descriptions": descriptions,
+                },
+            )
+            return SummarizationResult(
+                id=id,
+                description="",
+            )
 
     async def _summarize_descriptions(
         self, id: str | tuple[str, str], descriptions: list[str]
