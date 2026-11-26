@@ -119,10 +119,12 @@ def build_covariates_context(
     current_tokens = tokenizer.num_tokens(current_context_text)
 
     all_context_records = [header]
+    # Build index dict for O(1) lookups instead of scanning all covariates per entity
+    cov_by_subject: dict[str, list[Covariate]] = defaultdict(list)
+    for cov in covariates:
+        cov_by_subject[cov.subject_id].append(cov)
     for entity in selected_entities:
-        selected_covariates.extend([
-            cov for cov in covariates if cov.subject_id == entity.title
-        ])
+        selected_covariates.extend(cov_by_subject.get(entity.title, []))
 
     for covariate in selected_covariates:
         new_context = [
@@ -255,7 +257,7 @@ def _filter_relationships(
 
     # within out-of-network relationships, prioritize mutual relationships
     # (i.e. relationships with out-network entities that are shared with multiple selected entities)
-    selected_entity_names = [entity.title for entity in selected_entities]
+    selected_entity_names = {entity.title for entity in selected_entities}
     out_network_source_names = [
         relationship.source
         for relationship in out_network_relationships
@@ -269,19 +271,19 @@ def _filter_relationships(
     out_network_entity_names = list(
         set(out_network_source_names + out_network_target_names)
     )
+
+    # Build index dicts for O(1) lookups instead of scanning all relationships per entity
+    by_source = defaultdict(list)
+    by_target = defaultdict(list)
+    for rel in out_network_relationships:
+        by_source[rel.source].append(rel.target)
+        by_target[rel.target].append(rel.source)
+
     out_network_entity_links = defaultdict(int)
     for entity_name in out_network_entity_names:
-        targets = [
-            relationship.target
-            for relationship in out_network_relationships
-            if relationship.source == entity_name
-        ]
-        sources = [
-            relationship.source
-            for relationship in out_network_relationships
-            if relationship.target == entity_name
-        ]
-        out_network_entity_links[entity_name] = len(set(targets + sources))
+        out_network_entity_links[entity_name] = len(
+            set(by_source.get(entity_name, []) + by_target.get(entity_name, []))
+        )
 
     # sort out-network relationships by number of links and rank_attributes
     for rel in out_network_relationships:
