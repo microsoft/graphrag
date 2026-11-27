@@ -1,7 +1,7 @@
 completion_models:
   default_completion_model:
     model_provider: azure
-    api_key: ${GRAPHRAG_API_KEY}
+    auth_method: azure_managed_identity
     api_base: ${GRAPHRAG_API_BASE}
     api_version: "2025-04-01-preview"
     model: gpt-4.1
@@ -19,7 +19,7 @@ completion_models:
 embedding_models:
   default_embedding_model:
     model_provider: azure
-    api_key: ${GRAPHRAG_API_KEY}
+    auth_method: azure_managed_identity
     api_base: ${GRAPHRAG_API_BASE}
     api_version: "2025-04-01-preview"
     model: text-embedding-3-large
@@ -38,7 +38,6 @@ embedding_models:
 vector_store:
   type: "azure_ai_search"
   url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
-  api_key: ${AZURE_AI_SEARCH_API_KEY}
   container_name: "simple_text_ci"
 
 table_provider:
